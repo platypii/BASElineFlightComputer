@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+
+	<com.platypii.baseline.ui.ElevationTimePlot
+	    android:id="@+id/elevationPlot"
+	    android:layout_width="225dp"
+	    android:layout_height="0dip"
+	    android:layout_above="@+id/altitudeView"
+	    android:layout_alignParentTop="true"
+	   	android:layout_margin="2dp" />
+
+	<include layout="@layout/altitude_view"
+	    android:id="@+id/altitudeView"
+	    android:layout_width="225dp"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:layout_alignParentLeft="true"
+	   	android:layout_margin="2dp" />
+		
+	<com.platypii.baseline.ui.AnalogAltimeter
+        android:id="@+id/analogAltimeter"
+	    android:layout_width="0dip"
+	    android:layout_height="match_parent"
+	    android:layout_toLeftOf="@+id/linearAltimeter"
+	    android:layout_toRightOf="@id/elevationPlot" />
+
+    <com.platypii.baseline.ui.LinearAltimeter
+	    android:id="@+id/linearAltimeter"
+	    android:layout_width="55dp"
+	    android:layout_height="match_parent"
+	    android:layout_alignParentRight="true"
+	    android:layout_alignParentTop="true" />
+
+</RelativeLayout>
+
+    	    

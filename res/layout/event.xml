@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical" >
+	
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+	    android:padding="4dp" >
+
+		<TextView
+			android:id="@+id/idLabel"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:textColor="#ffffffff"
+	        android:textSize="26dp"
+	        android:text="" />
+
+		<TextView
+		    style="@style/header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+		    android:layout_marginTop="15dp"
+			android:text="TRIGGER" />
+
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="5dp"
+		    android:orientation="vertical"
+		    android:background="@drawable/panel"
+		    android:padding="5dp" >
+	
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="FLIGHT MODE" />
+		
+   			<Spinner
+			    android:id="@+id/triggerMode"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content" />
+			
+		</LinearLayout>
+			
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="5dp"
+		    android:orientation="vertical"
+		    android:background="@drawable/panel"
+		    android:padding="5dp" >
+	
+    		<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="SENSOR" />
+		
+			<include
+				android:id="@+id/triggerPanel"
+				layout="@layout/audible_sensor_event" />
+			
+		</LinearLayout>
+			
+   	    <TextView
+		    style="@style/header"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+		    android:layout_marginTop="20dp"
+	        android:text="SOUND" />
+		
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="5dp"
+		    android:orientation="vertical"
+		    android:background="@drawable/panel"
+		    android:padding="5dp" >
+
+			<TextView
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:text="SAMPLE" />
+		    
+			<Spinner
+				android:id="@+id/soundSpinner"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content" />
+
+			<CheckBox
+				android:id="@+id/loopBox"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Loop" />
+			
+		</LinearLayout>
+	
+		<TextView
+		    style="@style/header"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="20dp"
+		    android:text="MODIFIERS" />
+	
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="5dp"
+		    android:orientation="vertical"
+		    android:background="@drawable/panel"
+		    android:padding="5dp" >
+		
+			<TextView
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:text="BALANCE" />
+
+			<com.platypii.baseline.audible.DynamicSeekBar
+				android:id="@+id/balanceBar"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+			
+		</LinearLayout>
+			
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="5dp"
+		    android:orientation="vertical"
+		    android:background="@drawable/panel"
+		    android:padding="5dp" >
+		
+    		<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="SENSOR" />
+		
+			<include
+				android:id="@+id/modifierPanel"
+				layout="@layout/audible_sensor_event" />
+			
+		</LinearLayout>
+			
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="5dp"
+		    android:orientation="vertical"
+		    android:background="@drawable/panel"
+		    android:padding="5dp" >
+		
+			<TextView
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:text="OPTIONS" />
+
+			<CheckBox
+				android:id="@+id/fadeBox"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Fade on GPS signal loss" />
+			
+		</LinearLayout>
+			
+		<View
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:layout_weight="1" />
+
+		<LinearLayout
+	        style="?android:attr/buttonBarStyle"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+			android:layout_marginTop="20dp"
+	        android:background="#33000000" >
+	
+	        <Button android:id="@+id/eventDelete"
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:focusable="true"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="Delete"/>
+	
+	        <Button android:id="@+id/eventSave"
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:focusable="true"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="Save"/>
+	
+		</LinearLayout>
+
+	</LinearLayout>
+	
+</ScrollView>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical" >
+		
+	 <LinearLayout
+		android:id="@+id/addEvent"
+		android:clickable="true"
+		android:focusable="true"
+		android:layout_width="match_parent"
+		android:layout_height="?android:attr/listPreferredItemHeight"
+		android:orientation="horizontal"
+		android:background="?android:attr/listChoiceBackgroundIndicator">
+	
+		<ImageView
+			android:layout_width="50dip"
+			android:layout_height="50dip"
+			android:layout_gravity="center"
+			android:gravity="center"
+			android:scaleType="center"
+			android:duplicateParentState="true"
+			android:src="@drawable/ic_menu_add" />
+
+		<TextView
+			android:duplicateParentState="true"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textColor="?android:attr/textColorPrimary"
+			android:text="Add Event" />
+		
+	 </LinearLayout>
+
+	 <ImageView
+	     android:layout_width="match_parent"
+	     android:layout_height="wrap_content"
+	     android:scaleType="fitXY"
+	     android:gravity="fill_horizontal"
+	     android:src="@android:drawable/divider_horizontal_dark" />
+	
+	 <ListView
+	     android:id="@android:id/list"
+	     android:layout_width="match_parent"
+	     android:layout_height="0dip"
+	     android:layout_weight="1" />
+ 
+</LinearLayout>
+	    

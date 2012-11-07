@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="audiblePref"
+        android:persistent="false"
+        android:title="Audible Settings"
+        android:summary="Program the audible sound events"
+        android:widgetLayout="@layout/ic_sound" />
+    
+    <Preference
+        android:key="groundLevelPref"
+        android:persistent="false"
+        android:title="Adjust Ground Level"
+        android:summary="Set the current ground level"
+        android:widgetLayout="@layout/altitude_label" />
+    
+    <CheckBoxPreference
+        android:key="metricPref"
+        android:title="Metric Units"
+        android:summary="Use metric units, instead of imperial"
+        android:defaultValue="false" />
+
+    <!-- 
+    <CheckBoxPreference
+        android:key="persistentPref"
+        android:title="Persistent Home Location"
+        android:summary="Save home location between sessions"
+        android:defaultValue="false" />
+         -->
+ 
+    <Preference
+        android:key="sensorsPref"
+        android:persistent="false"
+        android:title="Sensor Debug"
+        android:summary="Display current sensor data"
+        android:widgetLayout="@layout/ic_sensors" />
+    
+</PreferenceScreen>
