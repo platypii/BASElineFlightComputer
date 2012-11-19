@@ -30,7 +30,7 @@ public class AjaxPostJump {
 	        // Execute HTTP Post Request
 	        HttpResponse response = httpclient.execute(httppost);
 
-	        // Do something with response...
+	        // TODO: Do something with response... check status
 
 	        return response.toString();
 	        
@@ -41,7 +41,6 @@ public class AjaxPostJump {
 	    }
 	    
 	    return null;
-		
 	}
 	
 }

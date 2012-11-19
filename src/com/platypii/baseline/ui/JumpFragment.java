@@ -118,7 +118,7 @@ public class JumpFragment extends Fragment {
             public void onClick(View v) {
                 Export.writeCsv(context, jump);
                 String filename = jump.jumpName + ".csv";
-                AjaxPostJump.postJump(filename);
+                String response = AjaxPostJump.postJump(filename);
             }
         });
         
