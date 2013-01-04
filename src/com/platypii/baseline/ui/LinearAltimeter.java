@@ -36,7 +36,7 @@ public class LinearAltimeter extends View {
     private RectF rect = new RectF();
     
     
-    // Initialize from XML
+    /** Initialize from XML */
     public LinearAltimeter(Context context, AttributeSet attrs) {
         super(context, attrs);
 

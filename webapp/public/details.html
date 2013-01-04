@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title> BASEline </title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" type="text/css" href="simple.css">
+  </head>
+
+  <body bgcolor="#dddddd">
+
+    <div class="main panel">
+
+      <img alt="BASEline" src="header.png">
+
+      <div class="content">
+
+	Summary, Sensor Integration, Logging, Feedback
+
+	BASEline is a mobile app designed to improve human performance by giving athletes real-time audible feedback. Phone sensors provide real-time data on speed, position, orientation, etc.
+
+	<h2>WARNING</h2>
+
+	Software is provided "as is," with no warranty of any kind. Skydiving is dangerous, don't be stupid. 
+	<ol>
+	  <li>
+	    <h3>Requirements</h3>
+
+	    To obtain accurate altitude data, some devices have built-in barometric pressure sensors. If not present, the software will fallback to GPS-based altitude; however, <b>GPS ALTITUDE IS NOT RELIABLE</b>.
+
+	    Devices known to have a barometric altimeter: 
+	    <ul>
+	      <li>Samsung Galaxy Nexus, Galaxy SIII, Galaxy Note</li>
+	      <li>Motorola Droid 4, Xoom 1 & 2</li>
+	      <li>Huawei Ascend D</li>
+	      <li>Sony Xperia Active</li>
+	    </ul>
+	    Android 3.0 or greater is required. 
+
+	    <!-- Rumored: Xperia GO, LG Eclipse 4G LTE -->
+
+	  </li>
+
+	  <li>
+	    <h3>Visual Altimeter and Flight Computer</h3>
+
+	    The user's altitude, and other data is displayed by the app through the various tabs. Altitude is always measured Above Ground Level (AGL). Ground level is calibrated when the app is started such that the altitude always starts at zero. To change the ground level, go to Settings, and select "Adjust Ground Level". Drag up and down to change the ground level.
+
+	  </li>
+
+	  <li>
+	    <h3>Audible</h3>
+
+	    The audible lets you to create custom audio events based on sensor readings. 
+
+	    Each audible event consists of 3 parts:
+	    <ul>
+	      <li> <b>Trigger</b> - The event fires when all the trigger conditions are satisfied. </li>
+	      <li> <b>Sound</b> - This is the sound sample that will play when triggered. </li>
+	      <li> <b>Modifiers</b> - This allows you to modify the sound based on phone sensors. </li>
+	    </ul>
+	  </li>
+
+	  <li>
+	    <h3>Navigation</h3>
+
+	    Navigation is achieved by setting a "home" location, and then using audible events to indicate distance and bearing to the home location. 
+
+	    <ul>
+	      <li> "Home" location is set on first GPS lock, or set by user in Map tab. </li>
+	      <li> Audible can be programmed to use "Distance Home" and "Bearing Home" sensors. </li>
+	      <li> Bearing Home is the angle difference between the direction of travel and the bearing to the home location. </li>
+	    </ul>
+	  </li>
+
+	  <li>
+	    <h3>Jump Log</h3>
+
+	    The Jump Log records all sensor readings while the app is running.
+
+	    <ul>
+	      <li> Exporting requires pulling lots of sensor data from the database, and can be very slow! </li>
+	      <li> Files are exported to the phone's "Download" directory (<i>/sdcard/Download/</i>). </li>
+	      <li> To access the "Download" directory, connect the phone to the computer using the USB cable. The phone must be set to connect as a "Media Device" (MTP), not as a Camera (PTP). </li>
+	    </ul>
+	  </li>
+
+	</ol>
+
+      </div>
+
+    </div>
+
+    <div class="footer panel center platypii">
+      <a href="contact.html">Platypii Industries, LLC</a>
+    </div>
+
+  </body>
+</html>
+
+

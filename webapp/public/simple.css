@@ -1,0 +1,102 @@
+
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    background: #cdd url(dana.jpg) center center fixed no-repeat;
+    -moz-background-size: cover;
+    background-size: cover;
+    color: #eee;
+    font-family: Palatino,serif;
+//    font-family: helvetica,arial,sans-serif;
+}
+
+/* text style */
+h2,h3 {
+    margin-top: 8px;
+}
+a {
+    text-decoration: none;
+    color: #eee;
+}
+a:hover {
+    text-decoration: underline;
+}
+p {
+    margin-bottom: 10px;
+}
+ol {
+    font-size: x-large;
+}
+li {
+    font-size: large;
+    margin-left: 1.5em;
+}
+
+/* semi-transparent black panel */
+.panel {
+    position: relative;
+    background: rgba(0,0,0,0.6);
+    border-radius: 10px;
+}
+
+/* splash page */
+.splash {
+    position: absolute;
+    width: 960px;
+    height: 520px;
+    top: 50%;
+    left: 50%;
+    margin-top: -260px;
+    margin-left: -480px;
+}
+
+/* manual */
+.main {
+    width: 960px;
+    margin: 32px auto;
+}
+
+.content {
+    padding: 15px;
+}
+
+.ss {
+    width: 320px;
+    margin: 0px auto;
+}
+
+/* center */
+.center {
+    text-align: center;
+}
+
+/* contact */
+.container {
+    position: absolute;
+    width: 550px;
+    height: 500px;
+    top: 50%;
+    left: 50%;
+    margin-top: -250px;
+    margin-left: -275px;
+}
+.logo {
+    margin-top: 0;
+    padding: 80px;
+}
+
+/* Platypii Industries */
+.platypii {
+    font-size: large;
+    font-family: Palatino,serif;
+    font-weight: bold;
+}
+
+/* footer */
+.footer {
+    width: 280px;
+    margin: 32px auto;
+    padding: 10px;
+}
