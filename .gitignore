@@ -2,4 +2,7 @@
 
 
 bin
+gen
+
+webapp/node_modules
 
