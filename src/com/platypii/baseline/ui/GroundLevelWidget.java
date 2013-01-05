@@ -41,6 +41,7 @@ public class GroundLevelWidget extends View implements OnGestureListener {
     private Paint paint = new Paint();
     private Paint text = new Paint();
     private Path path = new Path();
+    private Bitmap jumper;
     
     // Gestures
     private GestureDetector gestures;
@@ -59,6 +60,8 @@ public class GroundLevelWidget extends View implements OnGestureListener {
         text.setTextAlign(Align.RIGHT);
         text.setColor(0xff111111);
         gestures = new GestureDetector(this);
+
+        jumper = BitmapFactory.decodeResource(getResources(), R.drawable.jumper);
     }
     
     @Override
@@ -79,19 +82,19 @@ public class GroundLevelWidget extends View implements OnGestureListener {
         altitude += offset;
 
         // x coordinates
-        float center_x = left  + width * 0.3f;
-        float span = 40; // the width of the talus
+        final float center_x = left  + width * 0.3f;
+        final float span = 40; // the width of the talus
 
         // y coordinates
-        int zero = bottom - padding_bottom;
-        float max_y = (float)Math.max(default_max_altitude, altitude);
-        float y = getY(bottom, top, (float)altitude, max_y);
-        float y50 = getY(bottom, top, 40, max_y); // 50m
-        float y1000 = getY(bottom, top, 304.8f, max_y); // 1000ft 
-        float talus = Math.min(zero + (zero - y50), Math.max(y50, y)); // height of the top of the talus
+        final int zero = bottom - padding_bottom;
+        final float max_y = (float)Math.max(default_max_altitude, altitude);
+        final float y = getY(bottom, top, (float)altitude, max_y);
+        final float y50 = getY(bottom, top, 40, max_y); // 50m
+        final float y1000 = getY(bottom, top, 304.8f, max_y); // 1000ft 
+        final float talus = Math.min(zero + (zero - y50), Math.max(y50, y)); // height of the top of the talus
         
         // Background
-        Shader sunset = new LinearGradient(left, zero, left, y1000, 0xffccddee, 0xff4488dd, Shader.TileMode.CLAMP);
+        final Shader sunset = new LinearGradient(left, zero, left, y1000, 0xffccddee, 0xff4488dd, Shader.TileMode.CLAMP);
         paint.setShader(sunset);
         canvas.drawRect(left, top, right, bottom, paint);
         paint.setShader(null);
@@ -122,7 +125,6 @@ public class GroundLevelWidget extends View implements OnGestureListener {
         canvas.drawPath(path, paint);
         
         // Draw jumper
-        Bitmap jumper = BitmapFactory.decodeResource(getResources(), R.drawable.jumper);
         float aspect = jumper.getWidth() / (float)jumper.getHeight();
         float jumper_height = zero - y50; // 50m tall jumper
         float jumper_width = aspect * jumper_height;

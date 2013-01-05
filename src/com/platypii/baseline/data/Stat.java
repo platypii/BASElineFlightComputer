@@ -1,5 +1,7 @@
 package com.platypii.baseline.data;
 
+import java.util.Locale;
+
 
 // A class to track mean and variance
 public class Stat {
@@ -36,7 +38,7 @@ public class Stat {
   }
 
   public String toString() {
-    return String.format("%.3f ± %.3f", mean, var());
+    return String.format(Locale.US, "%.3f ± %.3f", mean, var());
 //      return mean + " ± " + var();
   }
 

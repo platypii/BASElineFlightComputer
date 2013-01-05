@@ -7,7 +7,7 @@
 <!-- android:debuggable="true" -->
     
     <uses-sdk android:minSdkVersion="13"
-              android:targetSdkVersion="14" />
+              android:targetSdkVersion="17" />
     
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -40,7 +40,8 @@
         android:icon="@drawable/ic_wingsuit"
         android:label="@string/app_name"
 	    android:theme="@+style/Theme.Holo"
-	    android:hardwareAccelerated="true" >
+	    android:hardwareAccelerated="true"
+	    android:allowBackup="true" >
         
 		<uses-library android:name="com.google.android.maps" />
 

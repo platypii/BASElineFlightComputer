@@ -73,9 +73,9 @@ public class EventsListFragment extends ListFragment {
             public void onClick(DialogInterface dialog, int which) {
                 String id = input.getText().toString();
                 if(id == null || id.equals("")) {
-                    Toast.makeText(context, "Invalid event name", Toast.LENGTH_SHORT);
+                    Toast.makeText(context, "Invalid event name", Toast.LENGTH_SHORT).show();
                 } else if(MyDatabase.events.events.containsKey(id)) {
-                    Toast.makeText(context, "Event name already exists", Toast.LENGTH_SHORT);
+                    Toast.makeText(context, "Event name already exists", Toast.LENGTH_SHORT).show();
                 } else {
                     // Create new event
                     Event event = new Event(id);

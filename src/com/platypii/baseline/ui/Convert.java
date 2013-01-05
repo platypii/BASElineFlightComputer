@@ -1,5 +1,6 @@
 package com.platypii.baseline.ui;
 
+import java.util.Locale;
 import com.google.android.maps.GeoPoint;
 import android.location.Location;
 import android.text.format.DateFormat;
@@ -146,7 +147,7 @@ public class Convert {
         	if(m < MILES) {
         		return Math.round(m * 3.2808399) + "ft";
 	        } else {
-	        	return String.format("%.2fmi", m * 0.000621371192);
+	        	return String.format(Locale.US, "%.2fmi", m * 0.000621371192);
 	        }
         }
 	}
@@ -315,12 +316,12 @@ public class Convert {
         if(Double.isNaN(hPa))
             return "";
         else
-            return String.format("%.2fhPa", hPa);
+            return String.format(Locale.US, "%.2fhPa", hPa);
     }
 
     public static String latlong(double latitude, double longitude) {
-        String lat = String.format("%.6f%c", Math.abs(latitude), latitude < 0? 'S' : 'N');
-        String lng = String.format("%.6f%c", Math.abs(longitude), longitude < 0? 'W' : 'E');
+        String lat = String.format(Locale.US, "%.6f%c", Math.abs(latitude), latitude < 0? 'S' : 'N');
+        String lng = String.format(Locale.US, "%.6f%c", Math.abs(longitude), longitude < 0? 'W' : 'E');
         return lat + "," + lng;
     }
 
@@ -355,15 +356,15 @@ public class Convert {
             // Less than 1 hour
             long min = ms / 60000;
             long sec = (ms / 1000) % 60;
-            return String.format("%d:%2d.%3d", min, sec, ms % 1000);
+            return String.format(Locale.US, "%d:%2d.%3d", min, sec, ms % 1000);
         } else if(ms < 86400000) {
             // Less than 1 day
             long hour = ms / 60000;
             long min = ms / 60000;
             long sec = (ms / 1000) % 60;
-            return String.format("%d:%2d:%2d.%3d", hour, min, sec, ms % 1000);
+            return String.format(Locale.US, "%d:%2d:%2d.%3d", hour, min, sec, ms % 1000);
         } else {
-            return String.format("%s.%3d", DateFormat.format("kk:mm:ss", ms), ms % 1000);
+            return String.format(Locale.US, "%s.%3d", DateFormat.format("kk:mm:ss", ms), ms % 1000);
         }
     }
     
@@ -410,13 +411,13 @@ public class Convert {
      * @return G-force
      */
     public static String force(double mpss) {
-        return String.format("%.1fg", mpss / 9.80665);
+        return String.format(Locale.US, "%.1fg", mpss / 9.80665);
     }
     public static String force(double mpss, boolean units) {
     	if(units)
-    		return String.format("%.1fg", mpss / 9.80665);
+    		return String.format(Locale.US, "%.1fg", mpss / 9.80665);
     	else
-    		return String.format("%.1f", mpss / 9.80665);
+    		return String.format(Locale.US, "%.1f", mpss / 9.80665);
     }
 
     /**

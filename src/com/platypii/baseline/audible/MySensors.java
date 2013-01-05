@@ -1,5 +1,6 @@
 package com.platypii.baseline.audible;
 
+import java.util.Locale;
 import android.util.Log;
 
 import com.platypii.baseline.data.MyAltimeter;
@@ -219,7 +220,7 @@ public class MySensors {
 			return MyLocationManager.glideAngle;
 		}
 		public String formatValue(double value) {
-			return String.format("%.0f", value);
+			return String.format(Locale.US, "%.0f", value);
 		}
 		@Override
 		public double parseValue(String input) throws NumberFormatException {
@@ -254,7 +255,7 @@ public class MySensors {
 		}
 		@Override
 		public String formatValue(double value) {
-			return String.format("%.0f", value);
+			return String.format(Locale.US, "%.0f", value);
 		}
 		@Override
 		public double parseValue(String input) throws NumberFormatException {
@@ -341,7 +342,7 @@ public class MySensors {
 		}
 		@Override
 		public String formatValue(double value) {
-			return String.format("%.0f", value);
+			return String.format(Locale.US, "%.0f", value);
 		}
 		@Override
 		public double parseValue(String input) throws NumberFormatException {
@@ -419,7 +420,7 @@ public class MySensors {
 		}
 		@Override
 		public String formatValue(double value) {
-			return String.format("%.0f", value);
+			return String.format(Locale.US, "%.0f", value);
 		}
 		@Override
 		public double parseValue(String input) throws NumberFormatException {
