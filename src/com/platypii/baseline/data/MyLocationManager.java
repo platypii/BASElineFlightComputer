@@ -304,13 +304,17 @@ public class MyLocationManager {
         if(time == null || time.equals("")) {
             return 0;
         } else {
-            assert time.indexOf('.') == 6;
-            long hour = Integer.parseInt(time.substring(0, 2));
-            long min = Integer.parseInt(time.substring(2, 4));
-            // double sec = Double.parseDouble(utc.substring(4));
-            long sec = Integer.parseInt(time.substring(4, 6));
-            long ms = (long) (1000 * Double.parseDouble(time.substring(6)));
-            return hour * 3600000 + min * 60000 + sec * 1000 + ms;
+            try {
+                assert time.indexOf('.') == 6;
+                long hour = Integer.parseInt(time.substring(0, 2));
+                long min = Integer.parseInt(time.substring(2, 4));
+                // double sec = Double.parseDouble(utc.substring(4));
+                long sec = Integer.parseInt(time.substring(4, 6));
+                long ms = time.length() <= 6? 0 : (long) (1000 * Double.parseDouble(time.substring(6)));
+                return hour * 3600000 + min * 60000 + sec * 1000 + ms;
+            } catch(Exception e) {
+                return 0;
+            }
         }
     }
     
