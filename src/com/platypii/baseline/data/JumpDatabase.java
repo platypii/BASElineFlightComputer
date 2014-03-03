@@ -1,6 +1,5 @@
 package com.platypii.baseline.data;
 
-
 import java.util.ArrayList;
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,7 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
 
 public class JumpDatabase {
 
@@ -19,9 +17,9 @@ public class JumpDatabase {
     private DatabaseHelper databaseHelper;
     private SQLiteDatabase db;
 
-    public ArrayList<Jump> jumps = new ArrayList<Jump>();
-    
-    public int lastJumpNumber = 0; // The current number of jumps (including in progress)
+    public ArrayList<Jump> jumps;
+
+    public int lastJumpNumber; // The current number of jumps (including in progress)
     private Jump currentJump = null; // Null unless a jump is in progress
 
 
@@ -30,29 +28,35 @@ public class JumpDatabase {
         db = databaseHelper.getWritableDatabase();
         
         // Load from database
+        loadJumps();
+    }
+
+    private void loadJumps() {
+        jumps = new ArrayList<Jump>();
+        lastJumpNumber = 0;
+
         Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
         while(cursor.moveToNext()) {
             // Load each row from cursor
             Jump jump = new Jump(cursor);
             jumps.add(jump);
             if(lastJumpNumber < jump.jumpNumber)
-            	lastJumpNumber = jump.jumpNumber;
-        }
-        
-    	// Find the end of improperly terminated jumps
-        for(int i = 0; i < jumps.size(); i++) {
-        	Jump jump = jumps.get(i);
-	        if(jump.jumpNumber >= 0 && jump.timeEnd == Long.MAX_VALUE) {
-	        	// Improperly ended jump
-	        	if(i < jumps.size() - 1) {
-	        		Jump next = jumps.get(i + 1);
-	        		endJump(jump, next.timeStart - 1);
-	        	} else {
-	        		endJump(jump, System.currentTimeMillis());
-	        	}
-	        }
+                lastJumpNumber = jump.jumpNumber;
         }
 
+        // Find the end of improperly terminated jumps
+        for(int i = 0; i < jumps.size(); i++) {
+            Jump jump = jumps.get(i);
+            if(jump.jumpNumber >= 0 && jump.timeEnd == Long.MAX_VALUE) {
+                // Improperly ended jump
+                if(i < jumps.size() - 1) {
+                    Jump next = jumps.get(i + 1);
+                    endJump(jump, next.timeStart - 1);
+                } else {
+                    endJump(jump, System.currentTimeMillis());
+                }
+            }
+        }
     }
 
     /**
@@ -65,7 +69,12 @@ public class JumpDatabase {
         jumps.add(currentJump); // Save local copy
         db.insert(TABLE_NAME, null, currentJump.getContentValues()); // Insert into db
     }
-    
+
+    public void deleteJump(Jump jump) {
+        db.delete(TABLE_NAME, "jump_name = ?", new String[]{jump.jumpName});
+        loadJumps();
+    }
+
     /**
      * Ends a jump when back in ground mode
      */
@@ -74,14 +83,14 @@ public class JumpDatabase {
         endJump(currentJump, endTime);
     }
     private void endJump(Jump jump, long endTime) {
-    	if(jump != null) {
-	        // Update local jump
-    		jump.timeEnd = endTime;
-	        // Update database
-	        ContentValues values = new ContentValues();
-	        values.put("time_end", Long.toString(endTime));
-	        db.update(TABLE_NAME, values, "_id=?", new String[]{Integer.toString(jump.jumpNumber)});
-    	}
+        if(jump != null) {
+            // Update local jump
+            jump.timeEnd = endTime;
+            // Update database
+            ContentValues values = new ContentValues();
+            values.put("time_end", Long.toString(endTime));
+            db.update(TABLE_NAME, values, "_id=?", new String[]{Integer.toString(jump.jumpNumber)});
+        }
     }
     
 
@@ -108,6 +117,5 @@ public class JumpDatabase {
             onCreate(db);
         }
     }
-    
-}
 
+}
