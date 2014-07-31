@@ -113,7 +113,7 @@ public class MainActivity extends MapActivity {
         bar.setDisplayShowTitleEnabled(false);
         bar.setDisplayShowHomeEnabled(false);
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        
+
         // Tabs
         bar.addTab(bar.newTab().setText("Alti")
                       .setTabListener(new TabListener<AltimeterFragment>(this, "Altimeter", AltimeterFragment.class)), true);
@@ -128,7 +128,7 @@ public class MainActivity extends MapActivity {
         bar.show();
 
     }
-    
+
 	/**
 	 * Perform startup checks, and if it fails, notify the user
 	 */

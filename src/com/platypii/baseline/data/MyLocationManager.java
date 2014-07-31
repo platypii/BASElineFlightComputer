@@ -231,17 +231,44 @@ public class MyLocationManager {
 /*                
             } else if(split[0].equals("$GPGLL")) {
                 // Lat/Long data
-                double latitude = parseDegreesMinutes(split[1], split[2]);
-                double longitude = parseDegreesMinutes(split[3], split[4]);
+                latitude = parseDegreesMinutes(split[1], split[2]);
+                longitude = parseDegreesMinutes(split[3], split[4]);
                 long time = parseUTC(split[5]); // 123456 = 12:34:56 UTC
                 boolean status = split[6].equals("A"); // A = active, V = void
  */
+            } else if(split[0].equals("$GLGSV")) {
+                // GNSS satellite in view
+                satellitesInView = Integer.parseInt(split[3]);
+
+            } else if(split[0].equals("$GNGNS")) {
+                // Fixes data for single or combined (GPS, GLONASS, etc) satellite navigation systems
+                lastFixMillis = dateTime + parseTime(split[1]);
+                latitude = parseDegreesMinutes(split[2], split[3]);
+                longitude = parseDegreesMinutes(split[4], split[5]);
+                if(split[9].equals("")) {
+                    assert split[10].equals("");
+                    altitude_gps = Double.NaN;
+                } else {
+                    assert split[10].equals("M"); // Meters
+                    altitude_gps = Double.parseDouble(split[9]);
+                }
+                if(!split[7].equals("")) {
+                    satellitesUsed = Integer.parseInt(split[7]);
+                }
+
+            } else if(split[0].equals("$GPVTG")) {
+                bearing = split[1].equals("")? Double.NaN : Double.parseDouble(split[1]); // Course over ground
+                groundSpeed = split[5].equals("")? Double.NaN : Convert.kts2mps(Double.parseDouble(split[5])); // Speed over ground
+
+            } else if(split[0].equals("$GNGSA")) {
+                // pdop, hdop, vdop, ...
+
             } else {
                 Log.e("NMEA", "["+timestamp+"] Unknown NMEA command: " + nmea);
             }
         }
     };
-    
+
     /**
      * Parse DDDMM.MMMM,N into decimal degrees
      * @param dm The latitude or longitude in "DDDMM.MMMM" format

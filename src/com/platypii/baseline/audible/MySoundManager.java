@@ -131,7 +131,7 @@ public class MySoundManager {
         }
         
         final android.media.AudioTrack audioTrack = new android.media.AudioTrack(AudioManager.STREAM_MUSIC,
-                sampleRate, AudioFormat.CHANNEL_CONFIGURATION_MONO,
+                sampleRate, AudioFormat.CHANNEL_OUT_MONO,
                 AudioFormat.ENCODING_PCM_16BIT, numSamples,
                 android.media.AudioTrack.MODE_STATIC);
         audioTrack.write(generatedSnd, 0, generatedSnd.length);
