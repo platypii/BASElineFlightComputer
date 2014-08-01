@@ -69,28 +69,34 @@ public class MyAltimeter {
             Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
             if(sensor != null) {
                 // Start sensor updates
-                SensorEventListener sensorListener = new SensorEventListener() {
-                    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-                    public void onSensorChanged(SensorEvent event) {
-                        long millis = System.currentTimeMillis(); // Record time as soon as possible
-                        assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
-                        // Log.w("Altimeter", "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
-                        updateBarometer(millis, event);
-                    }
-                };
-                sensorManager.registerListener(sensorListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+                sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
             }
             
             // Start GPS updates
-            MyLocationManager.addListener(new MyLocationListener() {    
-    			public void onLocationChanged(MyLocation loc) {
-    				MyAltimeter.updateGPS(loc);
-    			}
-            });
+            MyLocationManager.addListener(locationListener);
         }
     }
 
-    
+    // Sensor Event Listener
+    private static SensorEventListener sensorEventListener = new AltimeterSensorEventListener();
+    private static class AltimeterSensorEventListener implements SensorEventListener {
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+        public void onSensorChanged(SensorEvent event) {
+            long millis = System.currentTimeMillis(); // Record time as soon as possible
+            assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
+            // Log.w("Altimeter", "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
+            MyAltimeter.updateBarometer(millis, event);
+        }
+    }
+
+    // Location Listener
+    private static MyLocationListener locationListener = new AltimeterLocationListener();
+    private static class AltimeterLocationListener implements MyLocationListener {
+        public void onLocationChanged(MyLocation loc) {
+            MyAltimeter.updateGPS(loc);
+        }
+    }
+
     /**
      * Process new barometer reading
      */
