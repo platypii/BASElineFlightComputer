@@ -54,7 +54,7 @@ public class MyLocation extends Measurement {
     
     @Override
     public String toString() {
-        return loc.toString();
+        return loc().toString();
     }
 
 }

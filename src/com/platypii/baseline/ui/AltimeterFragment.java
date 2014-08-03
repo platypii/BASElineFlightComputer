@@ -10,14 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 public class AltimeterFragment extends Fragment {
 
     // Periodic UI updates
     private Handler handler = new Handler();
     private static final int updateInterval = 80; // in milliseconds
-    
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -50,6 +48,3 @@ public class AltimeterFragment extends Fragment {
     }
 
 }
-
-
-

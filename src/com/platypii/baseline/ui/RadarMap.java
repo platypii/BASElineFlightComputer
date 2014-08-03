@@ -22,18 +22,18 @@ import android.util.AttributeSet;
 import android.view.View;
 
 
-public class RadarMap extends View {
-    
+public class RadarMap extends View implements MyLocationListener {
+
     // Avoid creating new objects unnecessarily
-	private Point pt = new Point();
-	private Point homePoint = new Point();
+    private Point pt = new Point();
+    private Point homePoint = new Point();
     private Paint paint = new Paint();
     private BlurMaskFilter blurMask;
     private Path clip = new Path();
     private Path path = new Path();
     private static Path hand = new Path();
     static {
-    	final float scale = 6;
+        final float scale = 6;
         final float w1 = 5; // Width of the arrow
         final float w2 = 2; // Depth of the notch
         hand.moveTo(-w1 * scale,  10 * scale);
@@ -44,7 +44,7 @@ public class RadarMap extends View {
     private final static int sweep[] = new int[]{0xff001100, 0xff002211, 0xff005511}; // SweepGradient colors
     private SweepGradient gradient;
     private Bitmap pin;
-    
+
     // Only valid during execution of onDraw()
     private float center_x;
     private float center_y;
@@ -54,7 +54,6 @@ public class RadarMap extends View {
     // Draw options
     private static final float VIEW_DISTANCE = 200; // The view radius in meters
 
-    
     public RadarMap(Context context, AttributeSet attrs) {
         super(context, attrs);
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -65,26 +64,22 @@ public class RadarMap extends View {
         pin = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_pin);
 
         // Start GPS updates
-        MyLocationManager.addListener(new MyLocationListener() {    
-			public void onLocationChanged(MyLocation loc) {
-                postInvalidate();
-			}
-        });
-        
+        MyLocationManager.addListener(this);
+
     }
-    
+
     @Override
     protected void onSizeChanged(int width, int height, int oldW, int oldH) {
         center_x = width / 2.0f;
         center_y = height / 2.0f;
         radius = Math.min(center_x, center_y) - 5;
-        
+
         clip.rewind();
         clip.addCircle(center_x, center_y, radius, Path.Direction.CW);
         gradient = new SweepGradient(center_x, center_y, sweep, null);
     }
-    	
-	@Override
+        
+    @Override
     protected void onDraw(Canvas canvas) {
         final float density = getResources().getDisplayMetrics().density;
         theta = Double.isNaN(MyLocationManager.bearing)? 0 : -MyLocationManager.bearing;
@@ -122,38 +117,38 @@ public class RadarMap extends View {
             path.rewind();
             boolean empty = true;
             synchronized(MyLocationManager.history) {
-	            for(MyLocation loc : MyLocationManager.history) {
-	            	locToPoint(loc.loc(), pt);
-	            	if(empty) {
-	                	path.moveTo(pt.x, pt.y);
-	                	empty = false;
-	            	} else {
-	                	path.lineTo(pt.x, pt.y);
-	            	}
-	            }
+                for(MyLocation loc : MyLocationManager.history) {
+                    locToPoint(loc.loc(), pt);
+                    if(empty) {
+                        path.moveTo(pt.x, pt.y);
+                        empty = false;
+                    } else {
+                        path.lineTo(pt.x, pt.y);
+                    }
+                }
             }
             canvas.drawPath(path, paint);
         }
-        
+
         // Draw path to home
         if(MyLocationManager.lastLoc != null && MyFlightManager.homeLoc != null) {
             // Home location to screen pixels
-        	locToPoint(MyFlightManager.homeLoc, homePoint);
+            locToPoint(MyFlightManager.homeLoc, homePoint);
 
             // Draw path to home
             paint.setColor(0xffeeeeee);
             paint.setStrokeWidth(2 * density);
-        	canvas.drawLine(center_x, center_y, homePoint.x, homePoint.y, paint);
+            canvas.drawLine(center_x, center_y, homePoint.x, homePoint.y, paint);
         }
 
         // My Location
         if(MyLocationManager.lastLoc != null) {
-	        paint.setColor(0xff991111);
-	        paint.setStyle(Paint.Style.FILL);
-	        canvas.save();
-	        canvas.translate(center_x, center_y);
-	        canvas.drawPath(hand, paint);
-	        canvas.restore();
+            paint.setColor(0xff991111);
+            paint.setStyle(Paint.Style.FILL);
+            canvas.save();
+            canvas.translate(center_x, center_y);
+            canvas.drawPath(hand, paint);
+            canvas.restore();
         }
 
         // Clear clipping
@@ -165,7 +160,7 @@ public class RadarMap extends View {
             locToPoint(MyFlightManager.homeLoc, homePoint);
 
             // Draw the home icon
-        	// canvas.drawCircle(pt2.x, pt2.y, 5, paint);
+            // canvas.drawCircle(pt2.x, pt2.y, 5, paint);
             canvas.drawBitmap(pin, homePoint.x - 16*density, homePoint.y - 30*density, paint);
         }
 
@@ -174,27 +169,30 @@ public class RadarMap extends View {
     /**
      * Maps a Location to screen space
      */
-	private Point locToPoint(Location loc, Point out) {
-		if(MyLocationManager.lastLoc != null) {
-			Location currLoc = MyLocationManager.lastLoc.loc();
-			float dist = currLoc.distanceTo(loc);
-			float bearing = currLoc.bearingTo(loc);
-			// float r = radius * dist / VIEW_DISTANCE;
-			// float r = radius * (1 - 1 / (dist / VIEW_DISTANCE + 1));
-			float r = (float) (radius * (1 - Math.pow(2, -dist / VIEW_DISTANCE)));
-			int x = (int) (center_x + r * Math.sin(Math.toRadians(bearing + theta)));
-			int y = (int) (center_y - r * Math.cos(Math.toRadians(bearing + theta)));
-			if(out != null) {
-				out.set(x, y);
-				return out;
-			} else {
-				return new Point(x, y);
-			}
-		} else {
-			return null;
-		}
-	}
+    private Point locToPoint(Location loc, Point out) {
+        if(MyLocationManager.lastLoc != null) {
+            Location currLoc = MyLocationManager.lastLoc.loc();
+            float dist = currLoc.distanceTo(loc);
+            float bearing = currLoc.bearingTo(loc);
+            // float r = radius * dist / VIEW_DISTANCE;
+            // float r = radius * (1 - 1 / (dist / VIEW_DISTANCE + 1));
+            float r = (float) (radius * (1 - Math.pow(2, -dist / VIEW_DISTANCE)));
+            int x = (int) (center_x + r * Math.sin(Math.toRadians(bearing + theta)));
+            int y = (int) (center_y - r * Math.cos(Math.toRadians(bearing + theta)));
+            if(out != null) {
+                out.set(x, y);
+                return out;
+            } else {
+                return new Point(x, y);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    // Location updates
+    public void onLocationChanged(MyLocation loc) {
+        postInvalidate();
+    }
 
 }
-
-

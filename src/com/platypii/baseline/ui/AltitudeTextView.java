@@ -14,21 +14,20 @@ import android.widget.TextView;
  * @author platypii
  *
  */
-public class AltitudeTextView extends TextView {
+public class AltitudeTextView extends TextView implements MyAltitudeListener {
 
     public AltitudeTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         // Start altitude updates
-        MyAltimeter.addListener(new MyAltitudeListener() {    
-            public void doInBackground(MyAltitude alt) {}
-            public void onPostExecute() {
-            	AltitudeTextView.this.setText(Convert.distance(MyAltimeter.altitude));
-            }
-        });
+        MyAltimeter.addListener(this);
         
     }
 
+    // Altitude updates
+    public void altitudeDoInBackground(MyAltitude alt) {}
+    public void altitudeOnPostExecute() {
+        AltitudeTextView.this.setText(Convert.distance(MyAltimeter.altitude));
+    }
+
 }
-
-

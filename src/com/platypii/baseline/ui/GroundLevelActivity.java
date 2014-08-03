@@ -10,18 +10,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-
 /**
  * Activity that allows the user to set the ground level
  * @author platypii
  */
-public class GroundLevelActivity extends Activity {
-    
+public class GroundLevelActivity extends Activity implements MyAltitudeListener, GroundLevelWidgetListener {
+
     // Views
     private GroundLevelWidget widget;
     private TextView altitudeLabel;
-    
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,22 +34,14 @@ public class GroundLevelActivity extends Activity {
         getActionBar().hide();
 
         // Load saved offset
-        if(savedInstanceState != null && savedInstanceState.containsKey("Offset"))
-        	widget.setOffset(savedInstanceState.getDouble("Offset"));
-        
+        if(savedInstanceState != null && savedInstanceState.containsKey("Offset")) {
+            widget.setOffset(savedInstanceState.getDouble("Offset"));
+        }
+
         // Notify us when the user changes the altitude offset, or the pressure changes
-        widget.addListener(new GroundLevelWidgetListener() {
-            public void onGroundLevelChanged() {
-                update();
-            }
-        });
-        MyAltimeter.addListener(new MyAltitudeListener() {
-            public void doInBackground(MyAltitude alt) {}
-            public void onPostExecute() {
-                update();
-            }
-        });
-        
+        widget.addListener(this);
+        MyAltimeter.addListener(this);
+
     }
 
     private void update() {
@@ -64,8 +54,8 @@ public class GroundLevelActivity extends Activity {
     
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-    	// Save tab state
-		outState.putDouble("Offset", widget.offset);
+        // Save tab state
+        outState.putDouble("Offset", widget.offset);
     }
 
     public void clickZero(View v) {
@@ -74,21 +64,25 @@ public class GroundLevelActivity extends Activity {
         widget.setOffset(-altitude);
         update();
     }
-    
+
     public void clickSet(View v) {
         // Adjust barometer
         MyAltimeter.setGroundLevel(MyAltimeter.ground_level - widget.offset);
         widget.setOffset(0);
         finish();
     }
-    
+
     public void clickCancel(View v) {
         finish();
     }
-    
+
+    // Listeners
+    public void altitudeDoInBackground(MyAltitude alt) {}
+    public void altitudeOnPostExecute() {
+        update();
+    }
+    public void onGroundLevelChanged() {
+        update();
+    }
+
 }
-
-
-
-
-

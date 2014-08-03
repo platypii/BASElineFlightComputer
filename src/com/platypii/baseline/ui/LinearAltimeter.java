@@ -20,7 +20,7 @@ import android.view.View;
  * Draws a thermometer-style altitude indicator
  * @author platypii
  */
-public class LinearAltimeter extends View {
+public class LinearAltimeter extends View implements MyAltitudeListener {
 
     // Drawing options
     private static final double max_altitude = 12000 * Convert.FT; // TODO: variable altimeter scale
@@ -34,8 +34,7 @@ public class LinearAltimeter extends View {
     private Path border = new Path();
     private Path mercury = new Path();
     private RectF rect = new RectF();
-    
-    
+
     /** Initialize from XML */
     public LinearAltimeter(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -50,16 +49,11 @@ public class LinearAltimeter extends View {
         textOutline.setStrokeWidth(1.5f * density);
         textOutline.setColor(0xeeeeeeee);
         textOutline.setStyle(Paint.Style.STROKE);
-        
+
         // Start altitude updates
-        MyAltimeter.addListener(new MyAltitudeListener() {    
-            public void doInBackground(MyAltitude alt) {}
-            public void onPostExecute() {
-                invalidate();
-            }
-        });
+        MyAltimeter.addListener(this);
     }
-    
+
     @Override
     protected void onSizeChanged(int width, int height, int oldW, int oldH) {
         final float density = getResources().getDisplayMetrics().density;
@@ -93,15 +87,15 @@ public class LinearAltimeter extends View {
         mercury.lineTo(center_x + radius2, bottom);
         rect.set(center_x - radius2, bottom - radius2, center_x + radius2, bottom + radius2);
         mercury.arcTo(rect, 0, 180);
-    
+
     }
-    
+
     @Override
     protected void onDraw(Canvas canvas) {
         final float density = getResources().getDisplayMetrics().density;
     	final int width = canvas.getWidth();
         final int height = canvas.getHeight();
-        
+
         final int right = (int) (width - margin * density);
         int top = (int) (margin * density);
         int bottom = (int) (height - margin * density);
@@ -116,7 +110,7 @@ public class LinearAltimeter extends View {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(0xff000000);
         canvas.drawPath(border, paint);
-        
+
         // Draw alerts
         // 2-colors: 0xff770000, 0xffcc1111
         // 3-colors: 0xff660000, 0xff991111, 0xffee0000
@@ -152,7 +146,7 @@ public class LinearAltimeter extends View {
                 canvas.drawText(Integer.toString(i), text_x, y + 6 * density, textOutline);
             canvas.drawText(Integer.toString(i), text_x, y + 6 * density, text);
         }
-        
+
         // Altitude
         if(!Double.isNaN(MyAltimeter.altitude)) {
             float y = getY(bottom, top, MyAltimeter.altitude, max_altitude);
@@ -179,6 +173,10 @@ public class LinearAltimeter extends View {
         return bottom - (bottom - top) * percent;
     }
 
+    // Altitude updates
+    public void altitudeDoInBackground(MyAltitude alt) {}
+    public void altitudeOnPostExecute() {
+        invalidate();
+    }
+
 }
-
-

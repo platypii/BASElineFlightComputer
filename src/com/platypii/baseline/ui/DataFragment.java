@@ -13,8 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
-public class DataFragment extends Fragment {
+public class DataFragment extends Fragment implements MyLocationListener {
 
     private TextView speedLabel;
     private TextView glideLabel;
@@ -24,7 +23,6 @@ public class DataFragment extends Fragment {
     // Periodic UI updates
     private Handler handler = new Handler();
     private static final int updateInterval = 80; // in milliseconds
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -36,21 +34,13 @@ public class DataFragment extends Fragment {
         glideLabel = (TextView)view.findViewById(R.id.glideLabel);
         vxLabel = (TextView)view.findViewById(R.id.vxLabel);
         vyLabel = (TextView)view.findViewById(R.id.vyLabel);
-        
+
         // Initial update
         updateGPS(MyLocationManager.lastLoc);
-        
+
         // GPS updates
-        MyLocationManager.addListener(new MyLocationListener() {
-            public void onLocationChanged(final MyLocation loc) {
-                handler.post(new Runnable() {
-                    public void run() {
-                        updateGPS(loc);
-                    }
-                });
-            }
-        });
-        
+        MyLocationManager.addListener(this);
+
         // Periodic UI updates
         handler.post(new Runnable() {
             public void run() {
@@ -59,7 +49,7 @@ public class DataFragment extends Fragment {
                 handler.postDelayed(this, updateInterval);
             }
         });
-        
+
         return view;
     }
 
@@ -80,7 +70,14 @@ public class DataFragment extends Fragment {
             vyLabel.setText("");
         }
     }
-    
+
+    // Location updates
+    public void onLocationChanged(final MyLocation loc) {
+        handler.post(new Runnable() {
+            public void run() {
+                updateGPS(loc);
+            }
+        });
+    }
+
 }
-
-

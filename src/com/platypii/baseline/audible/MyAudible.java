@@ -34,10 +34,10 @@ public class MyAudible {
         
             // Start altitude updates
             MyAltimeter.addListener(new MyAltitudeListener() {    
-                public void doInBackground(MyAltitude alt) {
+                public void altitudeDoInBackground(MyAltitude alt) {
                     update();
                 }
-                public void onPostExecute() {}
+                public void altitudeOnPostExecute() {}
             });
             
             // GPS updates

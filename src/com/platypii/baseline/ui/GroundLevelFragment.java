@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 
 // Sets ground level
-public class GroundLevelFragment extends Fragment {
+public class GroundLevelFragment extends Fragment implements MyAltitudeListener, GroundLevelWidgetListener {
     
     // Views
     private GroundLevelWidget widget;
@@ -31,19 +31,10 @@ public class GroundLevelFragment extends Fragment {
         widget = (GroundLevelWidget)view.findViewById(R.id.groundLevelWidget);
 
         // Notify us when the user changes the altitude offset, or the pressure changes
-        widget.addListener(new GroundLevelWidgetListener() {
-            public void onGroundLevelChanged() {
-                update();
-            }
-        });
-        MyAltimeter.addListener(new MyAltitudeListener() {
-            public void doInBackground(MyAltitude alt) {}
-            public void onPostExecute() {
-                update();
-            }
-        });
+        widget.addListener(this);
+        MyAltimeter.addListener(this);
 
-    	return view;
+        return view;
     }
 
     private void update() {
@@ -53,6 +44,16 @@ public class GroundLevelFragment extends Fragment {
         altitudeLabel.setText(Convert.distance(altitude));
         widget.invalidate(); // redraw
     }
+
+    // Listeners
+    public void altitudeDoInBackground(MyAltitude alt) {}
+    public void altitudeOnPostExecute() {
+        update();
+    }
+    public void onGroundLevelChanged() {
+        update();
+    }
+
 }
 
 

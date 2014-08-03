@@ -26,11 +26,11 @@ import android.widget.ImageButton;
 import java.util.List;
 
 
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements MyLocationListener, OnTouchListener {
 
     private Context context;
     private FrameLayout mapContainer;
-	private MapView mapView;
+    private MapView mapView;
     private MapController mapControl;
 
     private boolean dragged = false;
@@ -72,16 +72,16 @@ public class MapFragment extends Fragment {
         // Home button listener
         ImageButton homeButton = (ImageButton) overlayView.findViewById(R.id.homeButton);
         homeButton.setOnClickListener(new OnClickListener() {
-			public void onClick(View arg0) {
-				// Set home location
-				// Use map center
-				GeoPoint gp = mapView.getMapCenter();
-				Location loc = new Location("Map");
-				loc.setLatitude(1E-6 * gp.getLatitudeE6());
-				loc.setLongitude(1E-6 * gp.getLongitudeE6());
-				MyFlightManager.homeLoc = loc;
-				mapView.postInvalidate();
-			}
+            public void onClick(View arg0) {
+                // Set home location
+                // Use map center
+                GeoPoint gp = mapView.getMapCenter();
+                Location loc = new Location("Map");
+                loc.setLatitude(1E-6 * gp.getLatitudeE6());
+                loc.setLongitude(1E-6 * gp.getLongitudeE6());
+                MyFlightManager.homeLoc = loc;
+                mapView.postInvalidate();
+            }
         });
 
         // Map Overlays
@@ -95,20 +95,10 @@ public class MapFragment extends Fragment {
         // overlays.add(new MapScaleBarOverlay(context));
 
         // Start GPS updates
-        MyLocationManager.addListener(new MyLocationListener() {
-            public void onLocationChanged(MyLocation loc) {
-                update();
-            }
-        });
+        MyLocationManager.addListener(this);
 
         // Drag listener
-        mapView.setOnTouchListener(new OnTouchListener() {
-			public boolean onTouch(View arg0, MotionEvent arg1) {
-				dragged = true;
-				lastDrag = System.currentTimeMillis();
-				return false; // also call map drag handler
-			}
-        });
+        mapView.setOnTouchListener(this);
 
         return view;
     }
@@ -124,27 +114,27 @@ public class MapFragment extends Fragment {
         if(loc != null && !paused) {
             // Update Map
             GeoPoint gp = Convert.locToGeoPoint(loc.latitude, loc.longitude);
-        	if(dragged && System.currentTimeMillis() - lastDrag > SNAP_BACK_TIME) {
-        		// Snap back to point
-        		dragged = false;
-        		mapControl.animateTo(gp);
-        	} else if(!dragged) {
-        		// Jump to point
-	            mapControl.setCenter(gp);
-	            
-	            // TODO: Zoom depends on speed. Display 10 seconds ahead
-	            // double speed = MyLocationManager.groundSpeed;
-	            // double latitude = mapView.getMapCenter().getLatitudeE6() * 1E-6;
-	            // double ppm = (mapView.getProjection().metersToEquatorPixels(1) / (Math.cos(Math.toRadians(latitude)))); // pixels per meter
-	            // int zoom = 15;
-	            // mapControl.setZoom(zoom);
-	            // mapControl.zoomToSpan(latSpanE6, lonSpanE6);
-	            // mapControl.zoomIn();
-	            // mapControl.setZoom(19);
-        	}
+            if(dragged && System.currentTimeMillis() - lastDrag > SNAP_BACK_TIME) {
+                // Snap back to point
+                dragged = false;
+                mapControl.animateTo(gp);
+            } else if(!dragged) {
+                // Jump to point
+                mapControl.setCenter(gp);
+                
+                // TODO: Zoom depends on speed. Display 10 seconds ahead
+                // double speed = MyLocationManager.groundSpeed;
+                // double latitude = mapView.getMapCenter().getLatitudeE6() * 1E-6;
+                // double ppm = (mapView.getProjection().metersToEquatorPixels(1) / (Math.cos(Math.toRadians(latitude)))); // pixels per meter
+                // int zoom = 15;
+                // mapControl.setZoom(zoom);
+                // mapControl.zoomToSpan(latSpanE6, lonSpanE6);
+                // mapControl.zoomIn();
+                // mapControl.setZoom(19);
+            }
         }
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();
@@ -158,6 +148,16 @@ public class MapFragment extends Fragment {
         paused = true;
     }
 
+    // Location updates
+    public void onLocationChanged(MyLocation loc) {
+        update();
+    }
+
+    // Drag listener
+    public boolean onTouch(View arg0, MotionEvent arg1) {
+        dragged = true;
+        lastDrag = System.currentTimeMillis();
+        return false; // also call map drag handler
+    }
+
 }
-
-

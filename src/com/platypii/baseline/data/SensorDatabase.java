@@ -23,11 +23,11 @@ public class SensorDatabase {
         
         // Start altimeter updates
         MyAltimeter.addListener(new MyAltitudeListener() {
-            public void doInBackground(MyAltitude measure) {
+            public void altitudeDoInBackground(MyAltitude measure) {
                 // Log to database
                 saveMeasurement(measure);
             }
-            public void onPostExecute() {}
+            public void altitudeOnPostExecute() {}
         });
         // Start location updates
         MyLocationManager.addListener(new MyLocationListener() {

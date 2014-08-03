@@ -60,10 +60,10 @@ public class MyFlightManager {
             
             // Start altitude updates
             MyAltimeter.addListener(new MyAltitudeListener() {    
-                public void doInBackground(MyAltitude alt) {
+                public void altitudeDoInBackground(MyAltitude alt) {
                     update();
                 }
-                public void onPostExecute() {}
+                public void altitudeOnPostExecute() {}
             });
             
             // Note: Right now the flight mode does not depend on GPS. 

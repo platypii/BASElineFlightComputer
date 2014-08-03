@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-public class FlightFragment extends Fragment {
+public class FlightFragment extends Fragment implements MyLocationListener {
 
     private TextView etgLabel;
     private TextView distLabel;
@@ -36,18 +36,10 @@ public class FlightFragment extends Fragment {
 
         // Initial update
         update();
-        
+
         // GPS updates
-        MyLocationManager.addListener(new MyLocationListener() {
-            public void onLocationChanged(final MyLocation loc) {
-                handler.post(new Runnable() {
-                    public void run() {
-                        updateGPS(loc);
-                    }
-                });
-            }
-        });
-        
+        MyLocationManager.addListener(this);
+
         // Periodic UI updates
         handler.post(new Runnable() {
             public void run() {
@@ -56,33 +48,35 @@ public class FlightFragment extends Fragment {
                 handler.postDelayed(this, updateInterval);
             }
         });
-        
+
         return view;
     }
 
     private void updateGPS(MyLocation loc) {
         if(loc != null && MyFlightManager.homeLoc != null) {
-        	double distance = loc.loc().distanceTo(MyFlightManager.homeLoc);
-        	distLabel.setText(Convert.distance2(distance));
+            double distance = loc.loc().distanceTo(MyFlightManager.homeLoc);
+            distLabel.setText(Convert.distance2(distance));
         } else {
-        	distLabel.setText("");
+            distLabel.setText("");
         }
     }
-    
+
     // Updates the UI elements
     private void update() {
         double etg = -MyAltimeter.altitude / MyAltimeter.climb;
         if(Double.isNaN(etg) || Double.isInfinite(etg) || etg < 0.01 || Math.abs(MyAltimeter.climb) < 0.1 * Convert.MPH || 24 * 60 * 60 < etg)
             etgLabel.setText("");
         else
-        	etgLabel.setText(Convert.time3((long) (1000 * etg)));
+            etgLabel.setText(Convert.time3((long) (1000 * etg)));
+    }
+
+    // Location updates
+    public void onLocationChanged(final MyLocation loc) {
+        handler.post(new Runnable() {
+            public void run() {
+                updateGPS(loc);
+            }
+        });
     }
 
 }
-
-
-
-
-
-
-

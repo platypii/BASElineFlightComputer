@@ -192,7 +192,7 @@ public class MyAltimeter {
             protected Void doInBackground(MyAltitude... params) {
                 synchronized(listeners) {
                     for(MyAltitudeListener listener : listeners) {
-                        listener.doInBackground(params[0]);
+                        listener.altitudeDoInBackground(params[0]);
                     }
                 }
                 return null;
@@ -200,7 +200,7 @@ public class MyAltimeter {
             @Override
             protected void onPostExecute(Void result) {
                 for(MyAltitudeListener listener : listeners) {
-                    listener.onPostExecute();
+                    listener.altitudeOnPostExecute();
                 }
             }
         }.execute(myAltitude);

@@ -15,7 +15,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 
-public class AnalogAltimeter extends View {
+public class AnalogAltimeter extends View implements MyAltitudeListener {
     
     // Drawing options
     private static final double max_altitude = 12000 * Convert.FT; // TODO: not actually used
@@ -46,12 +46,7 @@ public class AnalogAltimeter extends View {
         paint.setAntiAlias(true);
         
         // Start altitude updates
-        MyAltimeter.addListener(new MyAltitudeListener() {    
-            public void doInBackground(MyAltitude alt) {}
-            public void onPostExecute() {
-                invalidate();
-            }
-        });
+        MyAltimeter.addListener(this);
         
     }
     
@@ -172,6 +167,10 @@ public class AnalogAltimeter extends View {
         }
     }
 
+    // Altitude updates
+    public void altitudeDoInBackground(MyAltitude alt) {}
+    public void altitudeOnPostExecute() {
+        invalidate();
+    }
+
 }
-
-

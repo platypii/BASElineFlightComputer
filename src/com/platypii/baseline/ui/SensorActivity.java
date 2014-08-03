@@ -19,7 +19,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 
-public class SensorActivity extends Activity {
+public class SensorActivity extends Activity implements MyAltitudeListener, MyLocationListener {
 
     // Barometer
     private TextView pressureLabel;
@@ -103,24 +103,11 @@ public class SensorActivity extends Activity {
         // addPlot("Linear Position", MySensorManager.linearAccelHistory, 2, 90, 120);
 
         // Start GPS updates
-        MyLocationManager.addListener(new MyLocationListener() {
-            public void onLocationChanged(final MyLocation loc) {
-                handler.post(new Runnable() {
-                    public void run() {
-                        updateGPS(loc);
-                    }
-                });
-            }
-        });
+        MyLocationManager.addListener(this);
         updateGPS(MyLocationManager.lastLoc);
         
         // Start altitude updates
-        MyAltimeter.addListener(new MyAltitudeListener() {    
-            public void doInBackground(MyAltitude alt) {}
-            public void onPostExecute() {
-                updateAltimeter();
-            }
-        });
+        MyAltimeter.addListener(this);
         updateAltimeter();
 
         // Periodic UI updates
@@ -194,8 +181,18 @@ public class SensorActivity extends Activity {
             lastFixLabel.setText("Last fix: ");
         }
     }
+
+    // Listeners
+    public void onLocationChanged(final MyLocation loc) {
+        handler.post(new Runnable() {
+            public void run() {
+                updateGPS(loc);
+            }
+        });
+    }
+    public void altitudeDoInBackground(MyAltitude alt) {}
+    public void altitudeOnPostExecute() {
+        updateAltimeter();
+    }
     
 }
-
-
-
