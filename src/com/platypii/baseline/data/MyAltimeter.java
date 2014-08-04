@@ -28,8 +28,8 @@ public class MyAltimeter {
 
     // Pressure data
     public static float pressure = Float.NaN; // hPa (millibars)
-    public static double pressure_altitude = Double.NaN; // pressure converted to altitude under standard conditions
-    public static double altitude_raw = Double.NaN; // pressure altitude adjusted for ground level
+    public static double pressure_altitude = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
+    public static double altitude_raw = Double.NaN; // pressure altitude adjusted for ground level (unfiltered)
     
     // GPS data
     private static double altitude_gps = Double.NaN;
@@ -52,7 +52,7 @@ public class MyAltimeter {
 	private static final int maxHistory = 5 * 60; // Maximum number of measurements to keep in memory
 	public static SyncedList<MyAltitude> history = new SyncedList<MyAltitude>(maxHistory);
     // public static MyAltitude myAltitude; // Measurement
-    public static Stat pressure_altitude_agl_stat = new Stat(); // Statistics on the mean and variance of the sensor
+    public static Stat pressure_altitude_stat = new Stat(); // Statistics on the mean and variance of the sensor
     private static int n = 0; // number of samples
 
     
@@ -129,9 +129,9 @@ public class MyAltimeter {
         double dt = Double.isNaN(prevAltitude)? 0 : (lastFixNano - prevLastFix) * 1E-9;
         // Log.d("Altimeter", "Raw Altitude AGL: " + Convert.distance(altitude_raw) + ", dt = " + dt);
 
-    	filter.update(altitude_raw, dt);
+        filter.update(pressure_altitude, dt);
 
-		altitude = filter.x;
+        altitude = filter.x - ground_level;
 		climb = filter.v;
 
         // Log.d("Altimeter", "alt = " + altitude + ", climb = " + climb);
@@ -186,7 +186,7 @@ public class MyAltimeter {
     	MyAltitude myAltitude = new MyAltitude(lastFixMillis, altitude, climb, pressure, altitude_gps);
     	history.addLast(myAltitude);
         // Notify listeners (using AsyncTask so the altimeter never blocks!)
-        pressure_altitude_agl_stat.addSample(altitude_raw);
+        pressure_altitude_stat.addSample(pressure_altitude);
         new AsyncTask<MyAltitude,Void,Void>() {
             @Override
             protected Void doInBackground(MyAltitude... params) {
@@ -234,8 +234,7 @@ public class MyAltimeter {
      */
     private static double pressureToAltitude(double pressure) {
         // Barometric formula
-        double agl = -temp0 * (1 - Math.pow(pressure / pressure0, EXP)) / L; 
-        return altitude0 + agl;
+        return altitude0 - temp0 * (1 - Math.pow(pressure / pressure0, EXP)) / L;
     }
     
     /**

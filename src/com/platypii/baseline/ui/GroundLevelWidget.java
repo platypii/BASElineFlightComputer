@@ -42,7 +42,8 @@ public class GroundLevelWidget extends View implements OnGestureListener {
     private Paint text = new Paint();
     private Path path = new Path();
     private Bitmap jumper;
-    
+    private RectF cliffEdge = new RectF();
+
     // Gestures
     private GestureDetector gestures;
     private Handler handler = new Handler();
@@ -59,7 +60,7 @@ public class GroundLevelWidget extends View implements OnGestureListener {
         text.setAntiAlias(true);
         text.setTextAlign(Align.RIGHT);
         text.setColor(0xff111111);
-        gestures = new GestureDetector(this);
+        gestures = new GestureDetector(context, this);
 
         jumper = BitmapFactory.decodeResource(getResources(), R.drawable.jumper);
     }
@@ -110,7 +111,7 @@ public class GroundLevelWidget extends View implements OnGestureListener {
             canvas.drawLine(left, (int)grid_y, right, (int)grid_y, paint);
             canvas.drawText(Convert.distance(meters), right - 1, grid_y - 3, text);
         }
-        
+
         // Draw ground
         paint.setColor(0xff000000);
         paint.setStyle(Style.FILL);
@@ -123,20 +124,20 @@ public class GroundLevelWidget extends View implements OnGestureListener {
         path.lineTo(right, bottom);
         path.lineTo(left, bottom);
         canvas.drawPath(path, paint);
-        
+
         // Draw jumper
-        float aspect = jumper.getWidth() / (float)jumper.getHeight();
-        float jumper_height = zero - y50; // 50m tall jumper
-        float jumper_width = aspect * jumper_height;
-        RectF cliffEdge = new RectF(center_x - 5 - jumper_width, y + 2 - jumper_height, center_x - 5, y + 2);
+        final float aspect = jumper.getWidth() / (float)jumper.getHeight();
+        final float jumper_height = zero - y50; // 50m tall jumper
+        final float jumper_width = aspect * jumper_height;
+        cliffEdge.set(center_x - 5 - jumper_width, y + 2 - jumper_height, center_x - 5, y + 2);
         canvas.drawBitmap(jumper, null, cliffEdge, null); 
 //      canvas.drawBitmap(bmp, center_x - 50, y - 134, null);
-        
+
     }
-    
+
     // Returns the screen-space y coordinate
     private float getY(int bottom, int top, float y, float max_y) {
-        float height = bottom - top - padding_top - padding_bottom;
+        final float height = bottom - top - padding_top - padding_bottom;
         return bottom - padding_bottom - height * y / max_y;
     }
 

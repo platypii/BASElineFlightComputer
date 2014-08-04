@@ -138,7 +138,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     private void updateAltimeter() {
         pressureLabel.setText("Pressure: " + Convert.pressure(MyAltimeter.pressure));
         rawAltitudeLabel.setText("Raw Altitude: " + Convert.distance(MyAltimeter.altitude_raw, 2));
-        barStatsLabel.setText("Stats: mean = " + Convert.distance(MyAltimeter.pressure_altitude_agl_stat.mean(), 2) + ", stdev = " + Convert.distance(Math.sqrt(MyAltimeter.pressure_altitude_agl_stat.var()), 2));
+        barStatsLabel.setText("MSL Stats: mean = " + Convert.distance(MyAltimeter.pressure_altitude_stat.mean(), 2) + ", stdev = " + Convert.distance(Math.sqrt(MyAltimeter.pressure_altitude_stat.var()), 2));
         altitudeLabel.setText("Altitude (official): " + Convert.distance(MyAltimeter.altitude, 2));
     }
 
