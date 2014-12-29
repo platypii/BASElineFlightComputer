@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <string name="app_name">BASEline</string>
-	<string name="api_map_key">0rL3T5Pf32FSphGIlDVzX0pr_B5otV8BMF59sDQ</string>
-	<string name="api_map_key_desktop">0rL3T5Pf32FSaRNuaLjUhHIGMTebtBOSmmQqnXg</string>
-	<string name="api_map_key_laptop">0rL3T5Pf32FQIRNmLNy7OvmxlYDAZyCffh_tztA</string>
-        
-</resources>
