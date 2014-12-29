@@ -27,7 +27,7 @@ public class MySensorManager {
     /**
      * Initializes location services
      * 
-     * @param theContext The Application context
+     * @param appContext The Application context
      */
     public static synchronized void initSensors(Context appContext) {
         if(_instance == null) {
@@ -77,7 +77,9 @@ public class MySensorManager {
         StringBuffer buffer = new StringBuffer();
         List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
         for(Sensor sensor : sensors) {
-            buffer.append(sensor.getVendor() + " - " + sensor.getName());
+            buffer.append(sensor.getVendor());
+            buffer.append(" - ");
+            buffer.append(sensor.getName());
             buffer.append('\n');
         }
         return buffer;

@@ -7,11 +7,11 @@ import android.hardware.SensorEventListener;
 
 public class MySensorListener implements SensorEventListener {
 
-	public int sensor_type;
+	public final int sensor_type;
 	
 	// History
 	private static final int maxHistory = 300; // Maximum number of measurements to keep in memory
-	public SyncedList<MySensorEvent> history = new SyncedList<MySensorEvent>(maxHistory);
+	public final SyncedList<MySensorEvent> history = new SyncedList<>(maxHistory);
 	public MySensorEvent lastSensorEvent;
 	
 	

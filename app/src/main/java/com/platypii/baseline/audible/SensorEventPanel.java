@@ -29,12 +29,12 @@ public class SensorEventPanel {
     public double max;
 
     // Panel
-    private Spinner sensorSpinner;
-    private TextView minLabel;
-    private TextView maxLabel;
-    private DynamicSeekBar minBar;
-    private DynamicSeekBar maxBar;
-    private View rangePanel; // The range panel
+    private final Spinner sensorSpinner;
+    private final TextView minLabel;
+    private final TextView maxLabel;
+    private final DynamicSeekBar minBar;
+    private final DynamicSeekBar maxBar;
+    private final View rangePanel; // The range panel
     
 
     /**
@@ -56,7 +56,7 @@ public class SensorEventPanel {
         rangePanel = panel.findViewById(R.id.sensorRange);
 
         // Set up the panel
-        sensorSpinner.setAdapter(new ArrayAdapter<MySensor>(context, R.layout.spinner_item, MySensors.getSensors()));
+        sensorSpinner.setAdapter(new ArrayAdapter<>(context, R.layout.spinner_item, MySensors.getSensors()));
         sensorSpinner.setSelection(indexOf(MySensors.getSensors(), sensorEvent.sensor));
 
         // Update on user interaction
@@ -141,7 +141,7 @@ public class SensorEventPanel {
     /**
      * Listeners to update the UI on user input
      */
-    private OnSeekBarChangeListener changeListener = new OnSeekBarChangeListener() {
+    private final OnSeekBarChangeListener changeListener = new OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         	min = minBar.getValue();
             max = maxBar.getValue();
@@ -150,7 +150,7 @@ public class SensorEventPanel {
         public void onStartTrackingTouch(SeekBar seekBar) {}
         public void onStopTrackingTouch(SeekBar seekBar) {}
     };
-    private OnEditorActionListener editListener = new OnEditorActionListener() {
+    private final OnEditorActionListener editListener = new OnEditorActionListener() {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			try {
 				min = sensor.parseValue(minLabel.getText().toString());

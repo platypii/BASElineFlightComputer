@@ -13,7 +13,7 @@ import android.widget.TextView;
 public class AltimeterFragment extends Fragment {
 
     // Periodic UI updates
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private static final int updateInterval = 80; // in milliseconds
 
     @Override

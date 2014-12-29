@@ -10,15 +10,15 @@ import android.os.Parcelable;
 public class Jump implements Parcelable {
 
 	// Jump summary
-    public String jumpName;
-    public int jumpNumber;
+    public final String jumpName;
+    public final int jumpNumber;
     
-    public long timeStart; // The start time of the jump (beginning of climb mode)
+    public final long timeStart; // The start time of the jump (beginning of climb mode)
     public long timeEnd; // The end time of the jump (return to ground mode)
 
     // Jump data (only loaded on-demand)
     public boolean loaded = false;
-	public ArrayList<Measurement> jumpData = null;
+	public final ArrayList<Measurement> jumpData = new ArrayList<>();
     public double exitAlt = Double.NaN;
     public long dataStart = Long.MAX_VALUE; // First data point
     public long dataEnd = Long.MIN_VALUE; // Last data point
@@ -47,8 +47,6 @@ public class Jump implements Parcelable {
      */
     public void loadJump() {
     	loaded = false;
-    	if(jumpData == null)
-    		jumpData = new ArrayList<Measurement>();
     	synchronized(jumpData) {
 	    	// Initialize
     		jumpData.clear();

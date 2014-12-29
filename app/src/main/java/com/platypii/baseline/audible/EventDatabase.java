@@ -1,7 +1,5 @@
 package com.platypii.baseline.audible;
 
-import com.platypii.baseline.audible.ModeEvent;
-import com.platypii.baseline.audible.SensorEvent;
 import com.platypii.baseline.ui.Convert;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,18 +18,18 @@ public class EventDatabase {
     private static final int DATABASE_VERSION = 2;
     private static final String TABLE_NAME = "Events";
 
-    private DatabaseHelper databaseHelper;
-    private SQLiteDatabase db;
+    private final DatabaseHelper databaseHelper;
+    private final SQLiteDatabase db;
 
     // Events
-    public HashMap<String,Event> events = new HashMap<String,Event>();
-    public List<Event> eventList = new ArrayList<Event>();
+    public final HashMap<String,Event> events = new HashMap<>();
+    public final List<Event> eventList = new ArrayList<>();
     
     // Special values (TODO: Read special values from DB)
-    public double breakoff_altitude = 4500 * Convert.FT;
-    public double deploy_altitude = 3500 * Convert.FT;
-    public double harddeck_altitude = 1800 * Convert.FT;
-    public double seatbelt_altitude = 1800 * Convert.FT;
+    public final double breakoff_altitude = 4500 * Convert.FT;
+    public final double deploy_altitude = 3500 * Convert.FT;
+    public final double harddeck_altitude = 1800 * Convert.FT;
+    private final double seatbelt_altitude = 1800 * Convert.FT;
 
 
     public EventDatabase(Context context) {
@@ -86,9 +84,7 @@ public class EventDatabase {
         }
 
         // Local copy
-        if(events.containsKey(event.id)) {
-            // Already in list
-        } else {
+        if(!events.containsKey(event.id)) {
             events.put(event.id, event);
             eventList.add(event);
         }

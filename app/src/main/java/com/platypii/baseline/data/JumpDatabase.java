@@ -14,10 +14,10 @@ public class JumpDatabase {
     private static final int DATABASE_VERSION = 1;
     private static final String TABLE_NAME = "Jumps";
 
-    private DatabaseHelper databaseHelper;
-    private SQLiteDatabase db;
+    private final DatabaseHelper databaseHelper;
+    private final SQLiteDatabase db;
 
-    public ArrayList<Jump> jumps;
+    public final ArrayList<Jump> jumps = new ArrayList<>();
 
     public int lastJumpNumber; // The current number of jumps (including in progress)
     private Jump currentJump = null; // Null unless a jump is in progress
@@ -32,7 +32,7 @@ public class JumpDatabase {
     }
 
     private void loadJumps() {
-        jumps = new ArrayList<Jump>();
+        jumps.clear();
         lastJumpNumber = 0;
 
         Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);

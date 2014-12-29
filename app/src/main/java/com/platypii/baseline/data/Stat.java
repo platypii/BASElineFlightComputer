@@ -7,9 +7,9 @@ import java.util.Locale;
 public class Stat {
 
   long n = 0;
-  double total = 0.0;
-  double mean = 0.0;
-  double M2 = 0.0;
+  private double total = 0.0;
+  private double mean = 0.0;
+  private double M2 = 0.0;
 
 
   public void addSample(double x) {

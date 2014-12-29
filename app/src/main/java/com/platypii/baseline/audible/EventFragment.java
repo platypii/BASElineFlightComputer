@@ -28,7 +28,7 @@ import android.widget.TextView;
 public class EventFragment extends Fragment {
 
     private Context context;
-    public Event event;
+    private Event event;
     
     // Views
     private TextView idLabel;
@@ -92,10 +92,10 @@ public class EventFragment extends Fragment {
         
         // Load event
         idLabel.setText(event.id);
-        triggerModeSpinner.setAdapter(new ArrayAdapter<String>(context, R.layout.spinner_item, Event.modes));
+        triggerModeSpinner.setAdapter(new ArrayAdapter<>(context, R.layout.spinner_item, Event.modes));
         triggerModeSpinner.setSelection(indexOf(Event.modes, event.triggerModeEvent.mode));
         triggerSensorPanel = new SensorEventPanel(context, triggerSensorView, event.triggerSensorEvent);
-        soundSpinner.setAdapter(new ArrayAdapter<String>(context, R.layout.spinner_item, MySoundManager.samples));
+        soundSpinner.setAdapter(new ArrayAdapter<>(context, R.layout.spinner_item, MySoundManager.samples));
         soundSpinner.setSelection(MySoundManager.samples.indexOf(event.sampleName));
         loopBox.setChecked(event.sampleLoop);
         balanceBar.setMinMax(0, 1, 0.01);
@@ -146,7 +146,7 @@ public class EventFragment extends Fragment {
     /**
      * Save the UI settings to the Event
      */
-    public void saveEvent() {
+    void saveEvent() {
         // Terminate event if it's firing
         event.terminate();
 

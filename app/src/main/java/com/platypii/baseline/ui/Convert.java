@@ -202,9 +202,6 @@ public class Convert {
     public static String speed2(double mps) {
         return speed2(mps, 0, true);
     }
-    public static String speed2(double mps, int precision) {
-    	return speed2(mps, 0, true);
-    }
     public static String speed2(double mps, int precision, boolean units) {
         if(Double.isNaN(mps)) {
             return "";
@@ -238,7 +235,7 @@ public class Convert {
 
     /**
      * Convert the bearing to a human readable format
-     * @param degrees
+     * @param degrees bearing in degrees
      * @return "40° (N)"
      */
     public static String bearing1(double degrees) {
@@ -262,7 +259,7 @@ public class Convert {
     
     /**
      * Convert the bearing to a human readable format, with more precision
-     * @param degrees
+     * @param degrees bearing in degrees
      * @return "40° (NE)"
      */
     public static String bearing2(double degrees) {

@@ -44,11 +44,11 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     
     // Sensors
     private LinearLayout sensorLayout;
-    private ArrayList<SensorPlot> plots = new ArrayList<SensorPlot>();
+    private final ArrayList<SensorPlot> plots = new ArrayList<>();
     
     // Periodic UI updates    
-    private Handler handler = new Handler();
-    private int updateInterval = 100; // in milliseconds
+    private final Handler handler = new Handler();
+    private final int updateInterval = 100; // in milliseconds
     
     
     @Override

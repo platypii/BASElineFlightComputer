@@ -7,8 +7,10 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 
+import com.platypii.baseline.R;
 
-public class TabListener<T extends Fragment> implements ActionBar.TabListener {
+
+class TabListener<T extends Fragment> implements ActionBar.TabListener {
     private final Activity mActivity;
     private final String mTag;
     private final Class<T> mClass;
@@ -19,7 +21,7 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
         this(activity, tag, clz, null);
     }
 
-    public TabListener(Activity activity, String tag, Class<T> clz, Bundle args) {
+    private TabListener(Activity activity, String tag, Class<T> clz, Bundle args) {
         mActivity = activity;
         mTag = tag;
         mClass = clz;
@@ -44,7 +46,7 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
             // ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN); // set type of animation
             // ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
             // ft.setCustomAnimations(R.anim.slide_in, R.anim.slide_in);
-            ft.add(android.R.id.content, mFragment, mTag);
+            ft.add(R.id.tab_container, mFragment, mTag);
         } else {
             ft.attach(mFragment);
         }

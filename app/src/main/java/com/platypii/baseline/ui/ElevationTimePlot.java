@@ -13,9 +13,9 @@ import com.platypii.baseline.data.MyAltitude;
 
 public class ElevationTimePlot extends PlotView {
 
-    private DataSeries series = new DataSeries();
+    private final DataSeries series = new DataSeries();
     private final long window = 15000; // The size of the view window, in milliseconds
-    private PlotMode mode = PlotMode.AREA;
+    private final PlotMode mode = PlotMode.AREA;
     
 
     public ElevationTimePlot(Context context, AttributeSet attrs) {
@@ -65,7 +65,7 @@ public class ElevationTimePlot extends PlotView {
     }
 
     // Always show 60 seconds
-    Bounds bounds = new Bounds();
+    private final Bounds bounds = new Bounds();
     @Override
     public Bounds getBounds(int width, int height, Bounds dataBounds) {
         long currentTime = System.currentTimeMillis();

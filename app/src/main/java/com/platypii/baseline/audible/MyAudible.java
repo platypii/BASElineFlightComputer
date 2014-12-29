@@ -8,7 +8,6 @@ import com.platypii.baseline.data.MyLocation;
 import com.platypii.baseline.data.MyLocationListener;
 import com.platypii.baseline.data.MyLocationManager;
 
-import android.content.Context;
 import android.os.Handler;
 
 
@@ -20,15 +19,14 @@ public class MyAudible {
 
     
     // Periodic UI updates
-    private static Handler handler = new Handler();
+    private static final Handler handler = new Handler();
     private static final int updateInterval = 100; // in milliseconds
 
     
     /**
      * Initialize flight services
-     * @param context The application context
      */
-    public static synchronized void initAudible(Context context) {
+    public static synchronized void initAudible() {
         if(_instance == null) {
             _instance = new MyAudible();
         

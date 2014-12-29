@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 
 public class DataSeries implements Iterable<DataSeries.Point> {
 
-	private ArrayList<Point> points = new ArrayList<Point>();
+	private final ArrayList<Point> points = new ArrayList<>();
 	private int n = 0;
 	
 	public class Point {

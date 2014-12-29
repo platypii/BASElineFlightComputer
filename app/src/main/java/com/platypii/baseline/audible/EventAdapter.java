@@ -14,10 +14,10 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 
-public class EventAdapter extends ArrayAdapter<Event> {
+class EventAdapter extends ArrayAdapter<Event> {
 
-    private LayoutInflater inflater;
-    private List<Event> events;
+    private final LayoutInflater inflater;
+    private final List<Event> events;
     
 
     public EventAdapter(Context context, int textViewResourceId, List<Event> events) {

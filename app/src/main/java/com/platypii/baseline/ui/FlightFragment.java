@@ -21,7 +21,7 @@ public class FlightFragment extends Fragment implements MyLocationListener {
     private TextView distLabel;
 
     // Periodic UI updates
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private static final int updateInterval = 80; // in milliseconds
 
 

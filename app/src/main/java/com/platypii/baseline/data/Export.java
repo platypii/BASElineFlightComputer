@@ -79,7 +79,7 @@ public class Export {
      * @param cursor The Cursor representing the rows of data
      * @param progress An optional progress dialog to report to
      */
-    public static void writeCsv(Context context, String filename, Cursor cursor, ProgressDialog progress) {
+    private static void writeCsv(Context context, String filename, Cursor cursor, ProgressDialog progress) {
         String columns[] = cursor.getColumnNames();
         if(columns.length == 0 || cursor.getCount() == 0)
             return;
@@ -212,7 +212,7 @@ public class Export {
      * @param context The application context
      * @return An output stream pointing to the file, else null
      */
-    public static OutputStream openFile(String filename, Context context) {
+    private static OutputStream openFile(String filename, Context context) {
         // Note: could just as easily return a PrintWriter too.
         OutputStream os = null;
         if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {

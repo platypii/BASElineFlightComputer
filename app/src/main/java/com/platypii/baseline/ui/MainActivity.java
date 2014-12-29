@@ -30,6 +30,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnSystemUiVisibilityChangeListener;
+import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 
 
@@ -42,13 +43,13 @@ public class MainActivity extends Activity {
 	private Context appContext;
     // private WakeLock wakeLock;
 
-    public static long startTime = System.currentTimeMillis(); // Session start time (when the app started)
+    public static final long startTime = System.currentTimeMillis(); // Session start time (when the app started)
 
     // Method tracing. This is slow! Exports log when back is pressed.
     private static final boolean PROFILING = false;
 
     // Periodic UI updates
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private static final int updateInterval = 500; // in milliseconds
 
     // Menu items
@@ -64,7 +65,8 @@ public class MainActivity extends Activity {
     		Debug.startMethodTracing(); // Method tracing is SLOW
             Log.w("Profiling", "Method tracing started");
     	}
-        
+
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 //        requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(LayoutParams.FLAG_FULLSCREEN);
@@ -78,7 +80,7 @@ public class MainActivity extends Activity {
         
         // Hide soft keys
         // TODO: if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-        final View rootView = findViewById(android.R.id.content);
+        final View rootView = findViewById(R.id.tab_container);
         rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         rootView.setOnSystemUiVisibilityChangeListener(new OnSystemUiVisibilityChangeListener() {
             public void onSystemUiVisibilityChange(int visibility) {
@@ -97,13 +99,20 @@ public class MainActivity extends Activity {
         // wakeLock.acquire();
 
         // Initialize Services
+        Log.i("Main", "Initializing sound");
         MySoundManager.initSounds(appContext);
+        Log.i("Main", "Initializing database");
         MyDatabase.initDatabase(appContext);
+        Log.i("Main", "Initializing location");
         MyLocationManager.initLocation(appContext);
+        Log.i("Main", "Initializing sensors");
         MySensorManager.initSensors(appContext);
+        Log.i("Main", "Initializing altimeter");
         MyAltimeter.initAltimeter(appContext);
+        Log.i("Main", "Initializing flight");
         MyFlightManager.initFlight(appContext);
-        MyAudible.initAudible(appContext);
+        Log.i("Main", "Initializing audible");
+        MyAudible.initAudible();
         
         // Check for barometer, gps enabled, etc
         systemCheck();
@@ -111,29 +120,32 @@ public class MainActivity extends Activity {
         // Action bar
         final ActionBar bar = getActionBar();
         if(bar != null) {
+            Log.i("Main", "Initializing action bar");
             bar.setDisplayShowTitleEnabled(false);
             bar.setDisplayShowHomeEnabled(false);
             bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
             // Tabs
             bar.addTab(bar.newTab().setText("Alti")
-                    .setTabListener(new TabListener<AltimeterFragment>(this, "Altimeter", AltimeterFragment.class)), true);
+                    .setTabListener(new TabListener<>(this, "Altimeter", AltimeterFragment.class)), true);
             bar.addTab(bar.newTab().setText("Flight")
-                    .setTabListener(new TabListener<FlightFragment>(this, "Flight", FlightFragment.class)));
+                    .setTabListener(new TabListener<>(this, "Flight", FlightFragment.class)));
             bar.addTab(bar.newTab().setText("Data")
-                    .setTabListener(new TabListener<DataFragment>(this, "Data", DataFragment.class)));
+                    .setTabListener(new TabListener<>(this, "Data", DataFragment.class)));
             bar.addTab(bar.newTab().setText("Map")
-                    .setTabListener(new TabListener<AccuracyFragment>(this, "Map", AccuracyFragment.class)));
+                    .setTabListener(new TabListener<>(this, "Map", AccuracyFragment.class)));
             if (savedInstanceState != null && savedInstanceState.containsKey("Tab"))
                 bar.setSelectedNavigationItem(savedInstanceState.getInt("Tab"));
             bar.show();
+        } else {
+            Log.e("Main", "No action bar!");
         }
     }
 
 	/**
 	 * Perform startup checks, and if it fails, notify the user
 	 */
-	public void systemCheck() {
+    void systemCheck() {
 		// Check for GPS enabled
 		final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 		if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -296,8 +308,9 @@ public class MainActivity extends Activity {
         super.onDestroy();
         Log.e("Main", "Destroying!");
         // Terminate jump
-    	if(MyFlightManager.jumping)
-    		MyDatabase.jumps.endJump(System.currentTimeMillis());
+        if(MyFlightManager.jumping) {
+            MyDatabase.jumps.endJump(System.currentTimeMillis());
+        }
         
         // TODO: Flush cache
 
@@ -306,8 +319,10 @@ public class MainActivity extends Activity {
     }
     
     private void terminate() {
-    	if(MyFlightManager.jumping)
-    		MyDatabase.jumps.endJump(System.currentTimeMillis());
+        Log.w("Main", "terminating application");
+        if(MyFlightManager.jumping) {
+            MyDatabase.jumps.endJump(System.currentTimeMillis());
+        }
         MainActivity.this.finish();
         System.exit(0);
     }

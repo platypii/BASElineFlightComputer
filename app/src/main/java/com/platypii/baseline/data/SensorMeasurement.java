@@ -5,8 +5,8 @@ import android.hardware.SensorEvent;
 import android.util.Log;
 
 
-// Copies an android SensorEvent
-public class SensorMeasurement extends Measurement {
+/** Copies an android SensorEvent */
+class SensorMeasurement extends Measurement {
 
     public SensorMeasurement(SensorEvent event) {
 

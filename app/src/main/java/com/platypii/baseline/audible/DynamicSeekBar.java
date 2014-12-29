@@ -9,8 +9,8 @@ import android.widget.SeekBar;
 public class DynamicSeekBar extends SeekBar {
     
     private double step = 1;
-    public double min = 0;
-    public double max = 1;
+    private double min = 0;
+    private double max = 1;
     private static final int STEPS = 800;
     
     private double value = 0;
@@ -52,7 +52,7 @@ public class DynamicSeekBar extends SeekBar {
 
     // Change listeners
     // Updates the UI on changes
-    private OnSeekBarChangeListener changeListener = new OnSeekBarChangeListener() {
+    private final OnSeekBarChangeListener changeListener = new OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if(fromUser) {
                 // Drag to shift range

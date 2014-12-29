@@ -16,8 +16,8 @@ import android.util.AttributeSet;
 
 public class ElevationDistancePlot extends PlotView {
 
-    private DataSeries series = new DataSeries();
-    private PlotMode mode = PlotMode.LINE;
+    private final DataSeries series = new DataSeries();
+    private final PlotMode mode = PlotMode.LINE;
     
     
     public ElevationDistancePlot(Context context, AttributeSet attrs) {
@@ -40,8 +40,8 @@ public class ElevationDistancePlot extends PlotView {
     @Override
     public void drawData(Canvas canvas) {
         series.reset();
-        float groundDistance = MyLocationManager.groundDistance;
-        double altitude = MyAltimeter.altitude;
+        final float groundDistance = MyLocationManager.groundDistance;
+        final double altitude = MyAltimeter.altitude;
         // Copy values to local history (so that we don't block while drawing circles)
         synchronized(MyLocationManager.history) {
             for(MyLocation loc : MyLocationManager.history) {
@@ -68,7 +68,7 @@ public class ElevationDistancePlot extends PlotView {
         drawPoint(canvas, groundDistance, altitude, 6, 0xff1122ff);
     }
     
-    private Bounds bounds = new Bounds();
+    private final Bounds bounds = new Bounds();
     @Override
     public Bounds getBounds(int width, int height, Bounds dataBounds) {
         // Always show +/- 1000ft

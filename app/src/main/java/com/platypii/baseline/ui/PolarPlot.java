@@ -11,7 +11,7 @@ import android.util.AttributeSet;
 
 public class PolarPlot extends PlotView {
 
-    private final long window = 60000; // The size of the view window, in milliseconds
+    private static final long window = 60000; // The size of the view window, in milliseconds
     
 
     public PolarPlot(Context context, AttributeSet attrs) {
@@ -56,7 +56,7 @@ public class PolarPlot extends PlotView {
     }
     
     // Always keep square aspect ratio
-    private Bounds bounds = new Bounds();
+    private final Bounds bounds = new Bounds();
     @Override
     public Bounds getBounds(int width, int height, Bounds dataBounds) {
         bounds.set(dataBounds);

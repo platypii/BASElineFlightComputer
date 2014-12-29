@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -11,8 +11,7 @@
             android:id="@+id/map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="com.platypii.accuracytrick.ui.MyMapFragment" />
-            <!-- android:name="com.google.android.gms.maps.MapFragment" -->
+            android:name="com.platypii.baseline.ui.AccuracyFragment" />
 
         <com.platypii.accuracytrick.ui.AltitudeTextView
             android:id="@+id/altitudeView"

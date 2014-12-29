@@ -22,30 +22,30 @@ import android.view.SurfaceView;
 public abstract class PlotView extends SurfaceView implements SurfaceHolder.Callback {
     
     // Drawing stuff
-    public int padding_top = 0;
-    public int padding_bottom = 0;
-    public int padding_left = 0;
-    public int padding_right = 0;
+    int padding_top = 0;
+    int padding_bottom = 0;
+    int padding_left = 0;
+    int padding_right = 0;
 
-    public double x_major_units = 1;
-    public double y_major_units = 1;
+    double x_major_units = 1;
+    double y_major_units = 1;
     
     // Default bounds
-    Bounds min = new Bounds(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-    Bounds max = new Bounds(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+    final Bounds min = new Bounds(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+    final Bounds max = new Bounds(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
     
     // Avoid creating new objects unnecessarily
-    protected Paint paint = new Paint();
-    private Paint text = new Paint();
-    private Path path = new Path();
+    final Paint paint = new Paint();
+    private final Paint text = new Paint();
+    private final Path path = new Path();
     
     private final float density = getResources().getDisplayMetrics().density;
-    public double EPSILON = 0.001;
+    public final double EPSILON = 0.001;
     
     // THE FOLLOWING FIELDS ARE ONLY VALID IN THE PLOTVIEW.DRAWPLOT() CONTEXT:
     // View bounds lag behind data bounds by 1 refresh. Faster.
     private Bounds bounds; // The current view bounds
-    private Bounds dataBounds = new Bounds(); // the data bounds from the last draw
+    private final Bounds dataBounds = new Bounds(); // the data bounds from the last draw
 
     // The current view bounds (in screen space)
     public int bottom = 100;
@@ -53,7 +53,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     public int left = 0;
     public int right = 200;
 
-    public enum PlotMode { DOT, LINE, AREA };
+    public enum PlotMode { DOT, LINE, AREA }
 
     
     public PlotView(Context context, AttributeSet attrs) {
@@ -70,9 +70,9 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     // Secondary drawing thread
     private DrawingThread drawingThread;
     private class DrawingThread extends Thread {
-        private SurfaceHolder _surfaceHolder;
+        private final SurfaceHolder _surfaceHolder;
         private boolean running = false;
-        public DrawingThread(SurfaceHolder surfaceHolder) {
+        public DrawingThread(final SurfaceHolder surfaceHolder) {
             _surfaceHolder = surfaceHolder;
         }
         @Override
@@ -158,7 +158,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * Called when rendering the plot, must be overridden to draw the data.
      * Implementations should call drawPoint() and drawPath() to actually draw the data.
      */
-    public abstract void drawData(Canvas canvas);
+    protected abstract void drawData(Canvas canvas);
 
     /**
      * Draws a point (input given in plot space)
@@ -199,7 +199,6 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * @param canvas The canvas to draw on
      * @param series The data series to draw
      * @param radius The width of the path
-     * @param color The color of the path
      */
     public void drawLine(Canvas canvas, DataSeries series, float radius) {
     	if(series.size() > 0) {
@@ -287,7 +286,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     	}
     }
     
-    private Bounds myBounds = new Bounds();
+    private final Bounds myBounds = new Bounds();
     /**
      * Return the view bounds in plot-space
      */
@@ -393,7 +392,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     }
 	
     // Returns the bounds in plot-space, including padding
-    private Bounds realBounds = new Bounds();
+    private final Bounds realBounds = new Bounds();
     public Bounds getRealBounds() {
         double ppm_x = ((right - padding_right) - (left + padding_left)) / (bounds.right - bounds.left); // pixels per meter
         double rLeft = bounds.left - padding_left / ppm_x; // min x-coordinate in plot-space

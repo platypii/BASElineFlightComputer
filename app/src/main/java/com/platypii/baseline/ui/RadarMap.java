@@ -25,13 +25,13 @@ import android.view.View;
 public class RadarMap extends View implements MyLocationListener {
 
     // Avoid creating new objects unnecessarily
-    private Point pt = new Point();
-    private Point homePoint = new Point();
-    private Paint paint = new Paint();
-    private BlurMaskFilter blurMask;
-    private Path clip = new Path();
-    private Path path = new Path();
-    private static Path hand = new Path();
+    private final Point pt = new Point();
+    private final Point homePoint = new Point();
+    private final Paint paint = new Paint();
+    private final BlurMaskFilter blurMask;
+    private final Path clip = new Path();
+    private final Path path = new Path();
+    private static final Path hand = new Path();
     static {
         final float scale = 6;
         final float w1 = 5; // Width of the arrow
@@ -43,7 +43,7 @@ public class RadarMap extends View implements MyLocationListener {
     }
     private final static int sweep[] = new int[]{0xff001100, 0xff002211, 0xff005511}; // SweepGradient colors
     private SweepGradient gradient;
-    private Bitmap pin;
+    private final Bitmap pin;
 
     // Only valid during execution of onDraw()
     private float center_x;

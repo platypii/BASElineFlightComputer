@@ -87,7 +87,7 @@ public class Event implements Parcelable {
      * Create an event from a parcel.
      * @param p The parcel to read from.
      */
-    public Event(Parcel p) {
+    private Event(Parcel p) {
         id = p.readString();
         enabled = p.readInt() == 1;
         // Trigger parameters
@@ -256,8 +256,8 @@ public class Event implements Parcelable {
     }
     @Override
     public boolean equals(Object obj) {
-        Event other = (Event) obj; // throws a ClassCastException for non-SoundEvents
-        return id.equals(other.id);
+        final Event other = (obj instanceof Event)? (Event)(obj) : null;
+        return other != null && id.equals(other.id);
     }
 
 }

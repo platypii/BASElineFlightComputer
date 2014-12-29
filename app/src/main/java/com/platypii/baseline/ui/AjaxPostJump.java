@@ -12,7 +12,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.util.Log;
 
 
-public class AjaxPostJump {
+class AjaxPostJump {
 
 	
 	public static String postJump(String filename) {

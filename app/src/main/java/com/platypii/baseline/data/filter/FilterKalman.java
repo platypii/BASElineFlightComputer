@@ -10,10 +10,10 @@ public class FilterKalman extends Filter {
 	// TODO: Acceleration
 
     // Kalman filter to update altitude and climb
-    private final double sensorVar = 2400; // measurement variance (found experimentally)
-    private final double accelVar = 8; // acceleration variance (pulled from my ass)
+    private static final double sensorVar = 2400; // measurement variance (found experimentally)
+    private static final double accelVar = 8; // acceleration variance (pulled from my ass)
     
-    private final double r = sensorVar;
+    private static final double r = sensorVar;
     private double p11 = 1;
     private double p12 = 0;
     private double p21 = 0;

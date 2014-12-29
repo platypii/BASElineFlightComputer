@@ -26,7 +26,7 @@ public class JumpsListFragment extends ListFragment {
         super.onActivityCreated(savedState);
         
         // Populate list
-        setListAdapter(new ArrayAdapter<Jump>(context, R.layout.simple_list_item, MyDatabase.jumps.jumps));
+        setListAdapter(new ArrayAdapter<>(context, R.layout.simple_list_item, MyDatabase.jumps.jumps));
     }
     
     @Override

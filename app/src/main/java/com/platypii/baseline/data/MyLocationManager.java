@@ -26,7 +26,7 @@ public class MyLocationManager {
     private static LocationManager manager;
     
     // Listeners
-    private static ArrayList<MyLocationListener> listeners = new ArrayList<MyLocationListener>();
+    private static final ArrayList<MyLocationListener> listeners = new ArrayList<>();
     
     // GPS status
     public static boolean isEnabled = true;
@@ -64,7 +64,7 @@ public class MyLocationManager {
     public static MyLocation prevLoc; // 2nd to last
 
 	private static final int maxHistory = 600; // Maximum number of measurements to keep in memory
-    public static SyncedList<MyLocation> history = new SyncedList<MyLocation>(maxHistory);
+    public static final SyncedList<MyLocation> history = new SyncedList<>(maxHistory);
 
 
     /**
@@ -97,8 +97,8 @@ public class MyLocationManager {
     }
 
     // This is where we package up all the location data, build a MyLocation, and notify our friends.
-    private static Location tempLoc1 = new Location("gps"); // Temporary android location
-    private static Location tempLoc2 = new Location("gps");
+    private static final Location tempLoc1 = new Location("gps"); // Temporary android location
+    private static final Location tempLoc2 = new Location("gps");
     private static void updateLocation() {
 
         // Store location
@@ -139,7 +139,7 @@ public class MyLocationManager {
     }
 
     // NMEA listener
-    private static GpsStatus.NmeaListener nmeaListener = new GpsStatus.NmeaListener() {
+    private static final GpsStatus.NmeaListener nmeaListener = new GpsStatus.NmeaListener() {
         // timestamp is seconds
         public void onNmeaReceived(long timestamp, String nmea) {
             
@@ -306,7 +306,7 @@ public class MyLocationManager {
     	}
     }
     
-    private static Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+    private static final Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
     /**
      * Parse DDMMYY into milliseconds since epoch
      */
@@ -364,7 +364,7 @@ public class MyLocationManager {
     }
     
     // Null listener does nothing. all data comes from NMEA.
-    private static LocationListener nullListener = new LocationListener() {
+    private static final LocationListener nullListener = new LocationListener() {
         public void onLocationChanged(Location loc) {
             if(loc.hasAccuracy())
                 hAcc = loc.getAccuracy();

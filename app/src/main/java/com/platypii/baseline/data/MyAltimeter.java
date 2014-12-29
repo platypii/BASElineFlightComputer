@@ -24,7 +24,7 @@ public class MyAltimeter {
     private static MyAltimeter _instance;
     
     // Listeners
-    private static ArrayList<MyAltitudeListener> listeners = new ArrayList<MyAltitudeListener>();
+    private static final ArrayList<MyAltitudeListener> listeners = new ArrayList<>();
 
     // Pressure data
     public static float pressure = Float.NaN; // hPa (millibars)
@@ -38,7 +38,7 @@ public class MyAltimeter {
     public static double ground_level = Double.NaN;
     
     // Data filter
-    private static Filter filter = new FilterKalman(); // Unfiltered(), AlphaBeta(), MovingAverage(), etc
+    private static final Filter filter = new FilterKalman(); // Unfiltered(), AlphaBeta(), MovingAverage(), etc
     
     // Official altitude data
     public static double altitude = Double.NaN; // Meters AGL
@@ -50,9 +50,9 @@ public class MyAltimeter {
 
     // History
 	private static final int maxHistory = 5 * 60; // Maximum number of measurements to keep in memory
-	public static SyncedList<MyAltitude> history = new SyncedList<MyAltitude>(maxHistory);
+	public static final SyncedList<MyAltitude> history = new SyncedList<>(maxHistory);
     // public static MyAltitude myAltitude; // Measurement
-    public static Stat pressure_altitude_stat = new Stat(); // Statistics on the mean and variance of the sensor
+    public static final Stat pressure_altitude_stat = new Stat(); // Statistics on the mean and variance of the sensor
     private static int n = 0; // number of samples
 
     
@@ -78,7 +78,7 @@ public class MyAltimeter {
     }
 
     // Sensor Event Listener
-    private static SensorEventListener sensorEventListener = new AltimeterSensorEventListener();
+    private static final SensorEventListener sensorEventListener = new AltimeterSensorEventListener();
     private static class AltimeterSensorEventListener implements SensorEventListener {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
         public void onSensorChanged(SensorEvent event) {
@@ -90,7 +90,7 @@ public class MyAltimeter {
     }
 
     // Location Listener
-    private static MyLocationListener locationListener = new AltimeterLocationListener();
+    private static final MyLocationListener locationListener = new AltimeterLocationListener();
     private static class AltimeterLocationListener implements MyLocationListener {
         public void onLocationChanged(MyLocation loc) {
             MyAltimeter.updateGPS(loc);
@@ -169,7 +169,7 @@ public class MyAltimeter {
                 altitude = altitude_gps - ground_level;
                 climb = 0;
             } else {
-                double dt = (lastFixMillis - prevLastFix) * 1E-3;;
+                double dt = (lastFixMillis - prevLastFix) * 1E-3;
                 altitude = altitude_gps - ground_level;
                 climb = (altitude - prevAltitude) / dt; // m/s
             }
@@ -216,9 +216,9 @@ public class MyAltimeter {
     }
     
     // ISA pressure and temperature
-    private static double altitude0 = 0; // ISA height 0 meters
-    private static double pressure0 = SensorManager.PRESSURE_STANDARD_ATMOSPHERE; // ISA pressure 1013.25 hPa
-    private static double temp0 = 288.15; // ISA temperature 15 degrees celcius
+    private static final double altitude0 = 0; // ISA height 0 meters
+    private static final double pressure0 = SensorManager.PRESSURE_STANDARD_ATMOSPHERE; // ISA pressure 1013.25 hPa
+    private static final double temp0 = 288.15; // ISA temperature 15 degrees celcius
 
     // Physical constants
 //    private static final double G = 9.80665; // Gravity (m/s^2)

@@ -12,10 +12,10 @@ import android.media.SoundPool;
  * @author platypii
  */
 public class MyAudioTrack {
-    private SoundPool soundPool;
+    private final SoundPool soundPool;
 
-    public String sampleName;
-    public int soundID;
+    public final String sampleName;
+    public final int soundID;
     private int streamID;
     
     private int loop = 0; // -1 = loop, 0 = once, 1 = twice, ...

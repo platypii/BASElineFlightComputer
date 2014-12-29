@@ -24,16 +24,16 @@ public class LinearAltimeter extends View implements MyAltitudeListener {
 
     // Drawing options
     private static final double max_altitude = 12000 * Convert.FT; // TODO: variable altimeter scale
-    private static int margin = 2; // in dp
+    private static final int margin = 2; // in dp
     private static final boolean outline = false;
 
     // Avoid creating new objects unnecessarily
-    private Paint paint = new Paint();
-    private Paint text = new Paint();
-    private Paint textOutline = new Paint();
-    private Path border = new Path();
-    private Path mercury = new Path();
-    private RectF rect = new RectF();
+    private final Paint paint = new Paint();
+    private final Paint text = new Paint();
+    private final Paint textOutline = new Paint();
+    private final Path border = new Path();
+    private final Path mercury = new Path();
+    private final RectF rect = new RectF();
 
     /** Initialize from XML */
     public LinearAltimeter(Context context, AttributeSet attrs) {

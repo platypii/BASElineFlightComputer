@@ -21,9 +21,9 @@ public class MySoundManager {
     private static SoundPool soundPool;
     
     // Maps soundID's to AudioSource
-    public static ArrayList<String> samples = new ArrayList<String>(); // list of available samples
-    private static HashMap<String,Integer> sampleMap = new HashMap<String,Integer>(); // maps sampleName to soundID
-    private static ArrayList<MyAudioTrack> tracks = new ArrayList<MyAudioTrack>(); // All tracks that have been allocated so far
+    public static final ArrayList<String> samples = new ArrayList<>(); // list of available samples
+    private static final HashMap<String,Integer> sampleMap = new HashMap<>(); // maps sampleName to soundID
+    private static final ArrayList<MyAudioTrack> tracks = new ArrayList<>(); // All tracks that have been allocated so far
     
     private static boolean mute = false;
 
@@ -34,21 +34,21 @@ public class MySoundManager {
     /**
      * Initializes sound services, if not already running
      * 
-     * @param theContext The Application context
+     * @param appContext The Application context
      */
-    static synchronized public void initSounds(Context context) {
+    static synchronized public void initSounds(Context appContext) {
         if(_instance == null) {
             _instance = new MySoundManager();
 
-            audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+            audioManager = (AudioManager) appContext.getSystemService(Context.AUDIO_SERVICE);
             soundPool = new SoundPool(maxStreams, AudioManager.STREAM_MUSIC, 0);
             soundPool.setOnLoadCompleteListener(soundPoolListener);
     
             // Loads the sound assets
-            loadSample(context, R.raw.beep1, "Beep 1");
-            loadSample(context, R.raw.drum1, "Drum Beat 1");
-            loadSample(context, R.raw.heartbeat, "Heartbeat");
-            loadSample(context, R.raw.bass1, "Bass Loop 1");
+            loadSample(appContext, R.raw.beep1, "Beep 1");
+            loadSample(appContext, R.raw.drum1, "Drum Beat 1");
+            loadSample(appContext, R.raw.heartbeat, "Heartbeat");
+            loadSample(appContext, R.raw.bass1, "Bass Loop 1");
         }
     } 
     
@@ -96,7 +96,7 @@ public class MySoundManager {
     }
 
     // Notify AudioTracks when their sound has loaded. Not ideal, but this is what was given to us by Go*
-    private static SoundPool.OnLoadCompleteListener soundPoolListener = new SoundPool.OnLoadCompleteListener() {
+    private static final SoundPool.OnLoadCompleteListener soundPoolListener = new SoundPool.OnLoadCompleteListener() {
         public void onLoadComplete(SoundPool soundPool, int soundID, int status) {
             // Play sound if looping
             for(MyAudioTrack track : tracks) {

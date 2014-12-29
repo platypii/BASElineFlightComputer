@@ -14,10 +14,10 @@ public class SensorPlot extends PlotView {
 
     private MySensorListener history;
     
-    private DataSeries xSeries = new DataSeries();
-    private DataSeries ySeries = new DataSeries();
-    private DataSeries zSeries = new DataSeries();
-    private PlotMode mode = PlotMode.LINE;
+    private final DataSeries xSeries = new DataSeries();
+    private final DataSeries ySeries = new DataSeries();
+    private final DataSeries zSeries = new DataSeries();
+    private final PlotMode mode = PlotMode.LINE;
     
     
     public SensorPlot(Context context, AttributeSet attrs) {
@@ -86,7 +86,7 @@ public class SensorPlot extends PlotView {
         }
     }
     
-    private Bounds bounds = new Bounds();
+    private final Bounds bounds = new Bounds();
     @Override
     public Bounds getBounds(int width, int height, Bounds dataBounds) {
         // Show last N

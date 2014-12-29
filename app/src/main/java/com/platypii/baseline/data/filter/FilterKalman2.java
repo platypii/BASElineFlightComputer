@@ -17,13 +17,13 @@ public class FilterKalman2 extends Filter {
     private final double sensorVar = 2400; // measurement variance (found experimentally)
     private final double accelVar = 8; // acceleration variance (pulled from my ass)
     
-    private Matrix A = new Matrix(new double[][] {{1,1}, {0,1}});
+    private final Matrix A = new Matrix(new double[][] {{1,1}, {0,1}});
     private final Matrix C = new Matrix(new double[][] {{1,0}});
     private final Matrix R = new Matrix(new double[][] {{sensorVar}}); // measurement noise
-    private Matrix Q = new Matrix(new double[][] {{0.25 * accelVar, 0.5 * accelVar}, {0.5 * accelVar, accelVar}}); // process noise
+    private final Matrix Q = new Matrix(new double[][] {{0.25 * accelVar, 0.5 * accelVar}, {0.5 * accelVar, accelVar}}); // process noise
     private Matrix X = new Matrix(new double[][] {{0}, {0}}); // initial state
     private Matrix P = new Matrix(new double[][] {{1,0}, {0,1}}); // initial covariance
-    private Matrix z = new Matrix(new double[][] {{0}}); // measurement
+    private final Matrix z = new Matrix(new double[][] {{0}}); // measurement
 
 
     public void update(double altitude_raw, double dt) {

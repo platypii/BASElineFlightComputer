@@ -21,7 +21,7 @@ public class DataFragment extends Fragment implements MyLocationListener {
     private TextView vyLabel;
     
     // Periodic UI updates
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private static final int updateInterval = 80; // in milliseconds
 
     @Override

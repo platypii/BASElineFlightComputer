@@ -13,8 +13,8 @@ import java.util.LinkedList;
  */
 public class SyncedList<T> implements Iterable<T> {
 
-	private LinkedList<T> toCopy = new LinkedList<T>();
-	private LinkedList<T> values = new LinkedList<T>();
+	private final LinkedList<T> toCopy = new LinkedList<T>();
+	private final LinkedList<T> values = new LinkedList<T>();
 	private final int maxSize;
 	
 

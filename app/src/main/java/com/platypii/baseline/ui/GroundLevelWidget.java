@@ -35,18 +35,18 @@ public class GroundLevelWidget extends View implements OnGestureListener {
     
     public double offset = 0; // Altitude offset
     
-    private ArrayList<GroundLevelWidgetListener> listeners = new ArrayList<GroundLevelWidgetListener>();
+    private final ArrayList<GroundLevelWidgetListener> listeners = new ArrayList<>();
 
     // Avoid creating new objects unnecessarily
-    private Paint paint = new Paint();
-    private Paint text = new Paint();
-    private Path path = new Path();
-    private Bitmap jumper;
-    private RectF cliffEdge = new RectF();
+    private final Paint paint = new Paint();
+    private final Paint text = new Paint();
+    private final Path path = new Path();
+    private final Bitmap jumper;
+    private final RectF cliffEdge = new RectF();
 
     // Gestures
-    private GestureDetector gestures;
-    private Handler handler = new Handler();
+    private final GestureDetector gestures;
+    private final Handler handler = new Handler();
     private static final int updateInterval = 30; // in milliseconds
     private float velocity = 0; // current velocity;
     
@@ -146,7 +146,7 @@ public class GroundLevelWidget extends View implements OnGestureListener {
         velocity = 0;
     }
     
-    public void update() {
+    void update() {
         this.postInvalidate();
         // Notify listeners
         for(GroundLevelWidgetListener listener : listeners) {
@@ -157,7 +157,7 @@ public class GroundLevelWidget extends View implements OnGestureListener {
     public void onAltitudeChanged(double altitude) {
         update();
     }
-    
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return gestures.onTouchEvent(event);  
@@ -186,7 +186,7 @@ public class GroundLevelWidget extends View implements OnGestureListener {
         }
         return true;
     }
-    private Runnable flinger = new Runnable() {
+    private final Runnable flinger = new Runnable() {
         public void run() {
             offset += velocity;
             update();

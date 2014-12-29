@@ -13,9 +13,9 @@ import android.util.AttributeSet;
 
 public class GlidePlot extends PlotView {
 
-    private DataSeries series = new DataSeries();
+    private final DataSeries series = new DataSeries();
     private final long window = 20000; // The size of the view window, in milliseconds
-    private PlotMode mode = PlotMode.LINE;
+    private final PlotMode mode = PlotMode.LINE;
 
     
     public GlidePlot(Context context, AttributeSet attrs) {
@@ -65,7 +65,7 @@ public class GlidePlot extends PlotView {
         }
     }
 
-    Bounds bounds = new Bounds();
+    private final Bounds bounds = new Bounds();
     @Override
     public Bounds getBounds(int width, int height, Bounds dataBounds) {
         long currentTime = System.currentTimeMillis();

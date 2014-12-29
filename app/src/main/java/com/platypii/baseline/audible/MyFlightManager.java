@@ -36,7 +36,7 @@ public class MyFlightManager {
     
     
     // Periodic UI updates
-    private static Handler handler = new Handler();
+    private static final Handler handler = new Handler();
     private static final int updateInterval = 100; // in milliseconds
 
     
@@ -188,12 +188,12 @@ public class MyFlightManager {
             return null;
         } else {
             // Compute horizontal distance traveled at current velocity for timeToGround seconds
-            double groundDistance = timeToGround * MyLocationManager.groundSpeed;
-            double bearing = MyLocationManager.bearing;
+            final double groundDistance = timeToGround * MyLocationManager.groundSpeed;
+            final double bearing = MyLocationManager.bearing;
 
             // Compute estimated landing location
             com.platypii.baseline.data.MyLocation currentLocation = MyLocationManager.lastLoc;
-            Location landingLocation = currentLocation.moveDirection(bearing, groundDistance);
+            final Location landingLocation = currentLocation.moveDirection(bearing, groundDistance);
 
 //            Log.d("FlightManager", currentLocation + " -> " + landingLocation + " (" + groundDistance + "m, " + bearing + "°)");
 

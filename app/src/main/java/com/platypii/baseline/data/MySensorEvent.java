@@ -4,8 +4,8 @@ import android.hardware.SensorEvent;
 
 
 public class MySensorEvent {
-    public long timeMillis;
-    public int sensor;
+    public final long timeMillis;
+    public final int sensor;
     public float x;
     public float y;
     public float z;

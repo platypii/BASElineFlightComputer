@@ -13,8 +13,8 @@ public class SensorDatabase {
     private static final int DATABASE_VERSION = 3;
     private static final String TABLE_NAME = "Sensors";
 
-    private DatabaseHelper databaseHelper;
-    private SQLiteDatabase db;
+    private final DatabaseHelper databaseHelper;
+    private final SQLiteDatabase db;
 
 
     public SensorDatabase(Context context) {
@@ -54,12 +54,10 @@ public class SensorDatabase {
      * Returns all the measurements between timeStart and timeEnd
      * Warning: EXPENSIVE!
      * 
-     * @param timeStart The beginning time of the data to return
-     * @param timeEnd The end time of the data to return
      * @return All data for all rows within the time period
      */
     public Cursor queryAll(Jump jump) {
-        Cursor cursor = null;
+        Cursor cursor;
     	if(jump.jumpNumber < 0) {
     		cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
     	} else {

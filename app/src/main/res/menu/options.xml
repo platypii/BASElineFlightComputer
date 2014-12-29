@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 	
 	<item
 	    android:id="@+id/gpsOption"
 	    android:icon="@drawable/ic_menu_gps_searching"
 		android:title="GPS"
-		android:showAsAction="ifRoom" />
+		app:showAsAction="ifRoom" />
 	
 	<item
 	    android:id="@+id/alertOption"
 	    android:icon="@drawable/ic_menu_alert"
 		android:title="Alert"
 		android:visible="false"
-		android:showAsAction="ifRoom" />
+		app:showAsAction="ifRoom" />
 	
 	<item
 	    android:id="@+id/audibleOption"

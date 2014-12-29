@@ -7,11 +7,11 @@ import java.util.ArrayList;
  * A class to manage all sensors and dispatch events
  * @author platypii
  */
-public class EventManager {
+class EventManager {
 
-	private static ArrayList<EventListener> altitudeListeners = new ArrayList<EventListener>();
-	private static ArrayList<EventListener> locationListeners = new ArrayList<EventListener>();
-	private static ArrayList<EventListener> jumpListeners = new ArrayList<EventListener>();
+	private static final ArrayList<EventListener> altitudeListeners = new ArrayList<>();
+	private static final ArrayList<EventListener> locationListeners = new ArrayList<>();
+	private static final ArrayList<EventListener> jumpListeners = new ArrayList<>();
 	
 	
 	public static void registerListener(EventListener listen, int type) {

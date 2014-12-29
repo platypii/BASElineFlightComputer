@@ -39,7 +39,7 @@ public class AccuracyFragment extends MapFragment implements MyLocationListener,
     private Marker myMarker;
     private Marker myLanding;
     private Polyline targetBearing;
-    private final List<LatLng> pointList = new ArrayList<LatLng>();
+    private final List<LatLng> pointList = new ArrayList<>();
 
     public AccuracyFragment() {
         super();

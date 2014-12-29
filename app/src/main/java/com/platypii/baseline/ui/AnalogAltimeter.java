@@ -21,10 +21,10 @@ public class AnalogAltimeter extends View implements MyAltitudeListener {
     private static final double max_altitude = 12000 * Convert.FT; // TODO: not actually used
 
     // Avoid creating new objects unnecessarily
-    private Paint paint = new Paint();
-    private RectF circ = new RectF();
-    private BlurMaskFilter blurMask;
-    private static Path hand = new Path();
+    private final Paint paint = new Paint();
+    private final RectF circ = new RectF();
+    private final BlurMaskFilter blurMask;
+    private final static Path hand = new Path();
     static {
         final float w1 = 0.025f; // The radius of the dot
         final float w2 = 0.056f; // The width of the arrow
