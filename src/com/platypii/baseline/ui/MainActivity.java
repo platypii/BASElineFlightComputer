@@ -122,7 +122,7 @@ public class MainActivity extends MapActivity {
         bar.addTab(bar.newTab().setText("Data")
                       .setTabListener(new TabListener<DataFragment>(this, "Data", DataFragment.class)));
         bar.addTab(bar.newTab().setText("Map")
-                      .setTabListener(new TabListener<MapFragment>(this, "Map", MapFragment.class)));
+                      .setTabListener(new TabListener<AccuracyFragment>(this, "Map", AccuracyFragment.class)));
         if(savedInstanceState != null && savedInstanceState.containsKey("Tab"))
         	bar.setSelectedNavigationItem(savedInstanceState.getInt("Tab"));
         bar.show();

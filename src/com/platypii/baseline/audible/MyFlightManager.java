@@ -6,7 +6,6 @@ import com.platypii.baseline.data.MyAltitudeListener;
 import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.ui.Convert;
-
 import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -163,6 +162,42 @@ public class MyFlightManager {
                 flightMode = "Freefall";
             else if(Math.abs(MyAltimeter.climb) < 2 * Convert.MPH)
                 flightMode = "Ground";
+        }
+    }
+
+    /**
+     * Computes the estimated time to ground based on current location + velocity
+     */
+    public static double timeToGround() {
+        double timeToGround = -MyAltimeter.altitude / MyAltimeter.climb;
+        if(Double.isNaN(timeToGround) || Double.isInfinite(timeToGround) || timeToGround < 0.01 || Math.abs(MyAltimeter.climb) < 0.01 * Convert.MPH || 24 * 60 * 60 < timeToGround) {
+            // return NaN if we don't have an accurate landing location (climbing, very close to ground, very long estimate, etc)
+            return Double.NaN;
+        } else {
+            return timeToGround;
+        }
+    }
+
+    /**
+     * Computes the estimated landing location based on current location + velocity
+     */
+    public static Location getLandingLocation() {
+        // Compute time to ground
+        double timeToGround = timeToGround();
+        if(Double.isNaN(timeToGround)) {
+            return null;
+        } else {
+            // Compute horizontal distance traveled at current velocity for timeToGround seconds
+            double groundDistance = timeToGround * MyLocationManager.groundSpeed;
+            double bearing = MyLocationManager.bearing;
+
+            // Compute estimated landing location
+            com.platypii.baseline.data.MyLocation currentLocation = MyLocationManager.lastLoc;
+            Location landingLocation = currentLocation.moveDirection(bearing, groundDistance);
+
+//            Log.d("FlightManager", currentLocation + " -> " + landingLocation + " (" + groundDistance + "m, " + bearing + "°)");
+
+            return landingLocation;
         }
     }
 
