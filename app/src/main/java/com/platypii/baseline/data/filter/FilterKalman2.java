@@ -1,7 +1,5 @@
 package com.platypii.baseline.data.filter;
 
-import com.platypii.baseline.data.Matrix;
-
 import android.util.Log;
 
 

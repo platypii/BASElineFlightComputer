@@ -3,9 +3,8 @@ package com.platypii.baseline.data;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
-
-import com.platypii.baseline.ui.Convert;
 
 import android.content.Context;
 import android.location.Location;
@@ -15,6 +14,8 @@ import android.location.GpsStatus;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.platypii.baseline.data.measurements.MLocation;
 
 
 public class MyLocationManager {
@@ -26,11 +27,11 @@ public class MyLocationManager {
     private static LocationManager manager;
     
     // Listeners
-    private static final ArrayList<MyLocationListener> listeners = new ArrayList<>();
+    private static final List<MyLocationListener> listeners = new ArrayList<>();
     
     // GPS status
     public static boolean isEnabled = true;
-    public static float refreshRate; // Moving average of refresh rate in Hz
+    public static float refreshRate = 0; // Moving average of refresh rate in Hz
     
     // Satellite data
     public static int satellitesInView; // Satellites in view
@@ -60,11 +61,11 @@ public class MyLocationManager {
     public static float groundDistance = 0;
     
     // History
-    public static MyLocation lastLoc; // last location received
-    public static MyLocation prevLoc; // 2nd to last
+    public static MLocation lastLoc; // last location received
+    public static MLocation prevLoc; // 2nd to last
 
 	private static final int maxHistory = 600; // Maximum number of measurements to keep in memory
-    public static final SyncedList<MyLocation> history = new SyncedList<>(maxHistory);
+    public static final SyncedList<MLocation> history = new SyncedList<>(maxHistory);
 
 
     /**
@@ -96,6 +97,15 @@ public class MyLocationManager {
         }
     }
 
+    /**
+     * Remove a listener from location updates
+     */
+    public static void removeListener(MyLocationListener listener) {
+        synchronized(listeners) {
+            listeners.remove(listener);
+        }
+    }
+
     // This is where we package up all the location data, build a MyLocation, and notify our friends.
     private static final Location tempLoc1 = new Location("gps"); // Temporary android location
     private static final Location tempLoc2 = new Location("gps");
@@ -103,7 +113,7 @@ public class MyLocationManager {
 
         // Store location
     	prevLoc = lastLoc;
-    	lastLoc = new MyLocation(lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
+    	lastLoc = new MLocation(lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
     			                 hAcc, pdop, hdop, vdop, satellitesUsed, groundDistance);
 
     	if(prevLoc != null) {
@@ -116,18 +126,24 @@ public class MyLocationManager {
             
             // GPS sample refresh rate
             // TODO: Include time from last sample until now
-            long deltaTime = lastLoc.timeMillis - prevLoc.timeMillis; // time since last refresh
-            float refreshTime = 1000.0f / (float)(deltaTime);
-            refreshRate += (refreshTime - refreshRate) * 0.5f; // Moving average
+            final long deltaTime = lastLoc.timeMillis - prevLoc.timeMillis; // time since last refresh
+            if(deltaTime > 0) {
+                final float refreshTime = 1000.0f / (float) (deltaTime);
+                refreshRate += (refreshTime - refreshRate) * 0.5f; // Moving average
+                if (Double.isNaN(refreshRate)) {
+                    Log.e("MyLocationManager", "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime);
+                    refreshRate = 0;
+                }
+            }
         }
 
     	// History
-		history.addLast(lastLoc);
+		history.append(lastLoc);
 
 		// Notify listeners (using AsyncTask so the manager never blocks!)
-        new AsyncTask<MyLocation,Void,Void>() {
+        new AsyncTask<MLocation,Void,Void>() {
             @Override
-            protected Void doInBackground(MyLocation... params) {
+            protected Void doInBackground(MLocation... params) {
                 synchronized(listeners) {
                     for(MyLocationListener listener : listeners) {
                         listener.onLocationChanged(params[0]);

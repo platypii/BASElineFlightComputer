@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/header"
+            android:text="Altimeter" />
+
+        <TextView
+            android:id="@+id/pressureLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pressure: " />
+
+        <TextView
+            android:id="@+id/pressureAltitudeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Raw altitude: " />
+
+        <TextView
+            android:id="@+id/barStatsLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stats: " />
+
+        <TextView
+               android:id="@+id/altitudeLabel"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="Altitude (official): " />
+
+        <com.platypii.baseline.ElevationTimePlot
+            android:layout_width="match_parent"
+            android:layout_height="220px" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            style="@style/header"
+            android:text="GPS" />
+
+        <TextView
+            android:id="@+id/satelliteLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Satellites: " />
+
+        <TextView
+            android:id="@+id/lastFixLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Last fix: " />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/latitudeLabel"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lat: " />
+
+            <TextView
+                android:id="@+id/longitudeLabel"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Long: " />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/gpsAltitudeLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GPS altitude: " />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/hAccLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="hAcc: " />
+
+            <TextView
+                android:id="@+id/vAccLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="vAcc: " />
+
+            <TextView
+                android:id="@+id/sAccLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="sAcc: " />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/pdopLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="pdop: " />
+
+            <TextView
+                android:id="@+id/hdopLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="hdop: " />
+
+            <TextView
+                android:id="@+id/vdopLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="vdop: " />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/groundSpeedLabel"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ground speed: " />
+
+            <TextView
+                android:id="@+id/totalSpeedLabel"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Total speed: " />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/glideRatioLabel"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Glide ratio: " />
+
+            <TextView
+                android:id="@+id/glideAngleLabel"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Glide angle: " />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/bearingLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bearing: " />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            style="@style/header"
+            android:text="Sensors" />
+
+        <LinearLayout
+            android:id="@+id/sensorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+
+</ScrollView>

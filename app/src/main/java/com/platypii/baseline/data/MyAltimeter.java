@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 import com.platypii.baseline.data.filter.Filter;
 import com.platypii.baseline.data.filter.FilterKalman;
+import com.platypii.baseline.data.measurements.MAltitude;
+import com.platypii.baseline.data.measurements.MLocation;
 
 
 // Altimeter manager
@@ -50,7 +52,7 @@ public class MyAltimeter {
 
     // History
 	private static final int maxHistory = 5 * 60; // Maximum number of measurements to keep in memory
-	public static final SyncedList<MyAltitude> history = new SyncedList<>(maxHistory);
+	public static final SyncedList<MAltitude> history = new SyncedList<>(maxHistory);
     // public static MyAltitude myAltitude; // Measurement
     public static final Stat pressure_altitude_stat = new Stat(); // Statistics on the mean and variance of the sensor
     private static int n = 0; // number of samples
@@ -92,7 +94,7 @@ public class MyAltimeter {
     // Location Listener
     private static final MyLocationListener locationListener = new AltimeterLocationListener();
     private static class AltimeterLocationListener implements MyLocationListener {
-        public void onLocationChanged(MyLocation loc) {
+        public void onLocationChanged(MLocation loc) {
             MyAltimeter.updateGPS(loc);
         }
     }
@@ -143,7 +145,7 @@ public class MyAltimeter {
     /**
      * Process new GPS reading
      */
-    private static void updateGPS(MyLocation loc) {
+    private static void updateGPS(MLocation loc) {
     	// TODO: Use GPS to correct barometer drift (Kalman)
 
     	// If barometer is not present, fall back to GPS
@@ -183,13 +185,13 @@ public class MyAltimeter {
      */
     private static void updateAltitude() {
     	// Create the measurement
-    	MyAltitude myAltitude = new MyAltitude(lastFixMillis, altitude, climb, pressure, altitude_gps);
-    	history.addLast(myAltitude);
+    	MAltitude myAltitude = new MAltitude(lastFixNano, altitude, climb, pressure, altitude_gps);
+    	history.append(myAltitude);
         // Notify listeners (using AsyncTask so the altimeter never blocks!)
         pressure_altitude_stat.addSample(pressure_altitude);
-        new AsyncTask<MyAltitude,Void,Void>() {
+        new AsyncTask<MAltitude,Void,Void>() {
             @Override
-            protected Void doInBackground(MyAltitude... params) {
+            protected Void doInBackground(MAltitude... params) {
                 synchronized(listeners) {
                     for(MyAltitudeListener listener : listeners) {
                         listener.altitudeDoInBackground(params[0]);
@@ -243,6 +245,11 @@ public class MyAltimeter {
     public static void addListener(MyAltitudeListener listener) {
         synchronized(listeners) {
             listeners.add(listener);
+        }
+    }
+    public static void removeListener(MyAltitudeListener listener) {
+        synchronized(listeners) {
+            listeners.remove(listener);
         }
     }
 

@@ -1,0 +1,43 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.platypii.baseline.JumpsActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp" >
+
+    <TextView
+        android:id="@+id/filename"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/filesize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/filename"
+        android:gravity="center" />
+
+    <Button
+        android:id="@+id/exportButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/buttonBarButtonStyle"
+        android:onClick="clickExport"
+        android:text="Export Jump"
+        android:layout_alignParentBottom="true" />
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/exportButton"
+        style="?android:attr/buttonBarButtonStyle"
+        android:onClick="clickDelete"
+        android:textColor="#ffcc0000"
+        android:text="Delete Jump" />
+
+</RelativeLayout>
