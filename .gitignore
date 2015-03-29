@@ -1,3 +1,8 @@
+
+*.csv
+*.kml
+*.apk
+
 .gradle
 /local.properties
 /.idea/workspace.xml
