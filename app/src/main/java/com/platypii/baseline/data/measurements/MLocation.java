@@ -116,8 +116,8 @@ public class MLocation extends Measurement {
 //    }
     @Override
     public String toRow() {
-        // timeMillis, sensor, altitude, climb, pressure, latitude, longitude, altitude_gps, gX, gY, gZ, rotX, rotY, rotZ, acc
-        return String.format("%d,gps,,,,%f,%f,%f,,,,,,,", timeMillis, latitude, longitude, altitude_gps);
+        // timeMillis, sensor, altitude, climb, pressure, latitude, longitude, altitude_gps, vN, vE, gX, gY, gZ, rotX, rotY, rotZ, acc
+        return String.format("%d,gps,,,,%f,%f,%f,%f,%f", timeMillis, latitude, longitude, altitude_gps, vN, vE);
     }
 
 }
