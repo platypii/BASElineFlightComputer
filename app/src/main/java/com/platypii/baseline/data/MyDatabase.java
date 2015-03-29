@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.zip.GZIPOutputStream;
 
 
 // Logs altitude and location data to the database. Also contains event and jump databases
@@ -57,11 +58,11 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
         final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss");
         final String timestamp = dt.format(new Date());
 
-        // TODO: gzip log file
-        // logFile = new File(logDir, "jump-" + timestamp + ".csv.gz");
-        // log = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(logFile))));
-        logFile = new File(logDir, "jump_" + timestamp + ".csv");
-        log = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile)));
+        // gzip log file
+        logFile = new File(logDir, "jump_" + timestamp + ".csv.gz");
+        log = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(logFile))));
+//        logFile = new File(logDir, "jump_" + timestamp + ".csv");
+//        log = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile)));
 
         // Write header
         log.write("timeMillis,sensor,altitude,climb,pressure,latitude,longitude,altitude_gps,gX,gY,gZ,rotX,rotY,rotZ,acc\n");
