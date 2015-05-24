@@ -18,8 +18,6 @@ import android.os.Handler;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import java.util.ArrayList;
-
 
 public class SensorActivity extends Activity implements MyAltitudeListener, MyLocationListener {
 
@@ -46,7 +44,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     
     // Sensors
     private LinearLayout sensorLayout;
-    private final ArrayList<SensorPlot> plots = new ArrayList<>();
+//    private final ArrayList<SensorPlot> plots = new ArrayList<>();
     
     // Periodic UI updates    
     private final Handler handler = new Handler();
@@ -131,7 +129,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
 	        plot.loadHistory(history);
 	        
 	        sensorLayout.addView(plot);
-	        plots.add(plot);
+//	        plots.add(plot);
     	}
     }
 

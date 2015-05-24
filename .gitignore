@@ -1,7 +1,9 @@
 
 *.csv
+*.csv.gz
 *.kml
 *.apk
+/data
 
 .gradle
 /local.properties

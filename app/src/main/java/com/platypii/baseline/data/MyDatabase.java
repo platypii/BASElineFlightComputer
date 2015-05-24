@@ -52,7 +52,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
         }
     }
 
-    MyDatabase(Context appContext) throws IOException {
+    private MyDatabase(Context appContext) throws IOException {
         // Open log file for writing
         final File logDir = JumpLog.getLogDirectory(appContext);
         final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss");
@@ -92,7 +92,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
         }
     }
 
-    void stop() {
+    private void stop() {
         if(stopTime == -1) {
             stopTime = System.nanoTime();
 
