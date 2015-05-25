@@ -3,7 +3,7 @@ package com.platypii.baseline.data;
 import java.util.Locale;
 
 
-// A class to track mean and variance
+/** A class to track mean and variance */
 public class Stat {
 
   long n = 0;

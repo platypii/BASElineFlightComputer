@@ -21,20 +21,32 @@
         android:layout_below="@id/filename"
         android:gravity="center" />
 
-    <Button
+    <ImageButton
+        android:id="@+id/uploadButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/buttonBarButtonStyle"
+        android:onClick="clickUpload"
+        android:text="Upload Jump"
+        android:src="@drawable/upload_cloud"
+        android:contentDescription="The Cloud"
+        android:scaleType="fitCenter"
+        android:layout_centerInParent="true" />
+
+    <!--<Button
         android:id="@+id/exportButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?android:attr/buttonBarButtonStyle"
         android:onClick="clickExport"
         android:text="Export Jump"
-        android:layout_alignParentBottom="true" />
+        android:layout_above="@+id/deleteButton" />-->
 
     <Button
         android:id="@+id/deleteButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/exportButton"
+        android:layout_alignParentBottom="true"
         style="?android:attr/buttonBarButtonStyle"
         android:onClick="clickDelete"
         android:textColor="#ffcc0000"

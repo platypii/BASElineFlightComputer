@@ -11,11 +11,11 @@ public interface MyAltitudeListener {
     /**
      * Process the new reading on a background thread
      */
-    public void altitudeDoInBackground(MAltitude alt);
+    void altitudeDoInBackground(MAltitude alt);
 
     /**
      * Process the new reading on the UI thread
      */
-    public void altitudeOnPostExecute(); // post-execute doesn't get a parameter, because UI threads should just pull the latest data
+    void altitudeOnPostExecute(); // post-execute doesn't get a parameter, because UI threads should just pull the latest data
 
 }

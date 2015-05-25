@@ -5,13 +5,16 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
+import com.platypii.baseline.data.TheCloud;
 
 import java.io.File;
 
@@ -45,6 +48,22 @@ public class JumpActivity extends Activity {
 
     }
 
+    public void clickUpload(View v) {
+        new AsyncTask<Void,Void,String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                // Upload to the cloud
+                return TheCloud.upload(jump);
+            }
+            @Override
+            protected void onPostExecute(String url) {
+                Log.i("Jump", "Upload successful, opening " + url);
+                final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(browserIntent);
+            }
+        }.execute();
+    }
+
     public void clickDelete(View v) {
         //Ask the user if they want to quit
         new AlertDialog.Builder(this)
@@ -67,13 +86,13 @@ public class JumpActivity extends Activity {
             .show();
     }
 
-    public void clickExport(View v) {
-        // Share jump log using android share options
-        final Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(jump.logFile));
-        intent.setType("text/plain");
-        startActivity(intent);
-    }
+//    public void clickExport(View v) {
+//        // Share jump log using android share options
+//        final Intent intent = new Intent();
+//        intent.setAction(Intent.ACTION_SEND);
+//        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(jump.logFile));
+//        intent.setType("text/plain");
+//        startActivity(intent);
+//    }
 
 }
