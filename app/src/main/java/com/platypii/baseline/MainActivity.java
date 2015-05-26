@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.platypii.baseline.data.KVStore;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.data.MyLocationManager;
@@ -47,6 +48,8 @@ public class MainActivity extends ActionBarActivity {
 
     private void initServices() {
         // Initialize Services
+        Log.i("Main", "Initializing key value store");
+        KVStore.start(getApplication());
         Log.i("Main", "Initializing location");
         MyLocationManager.initLocation(getApplication());
         Log.i("Main", "Initializing sensors");
