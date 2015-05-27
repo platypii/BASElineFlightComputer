@@ -41,7 +41,7 @@ public class JumpActivity extends Activity {
 
         // Update views
         if(jump != null) {
-            filenameLabel.setText(jump.logFile.getName());
+            filenameLabel.setText(jump.getName());
             final long filesize = jump.logFile.length();
             filesizeLabel.setText(String.format("%dKiB", filesize / 1024));
         }
@@ -49,23 +49,10 @@ public class JumpActivity extends Activity {
     }
 
     public void clickUpload(View v) {
-        new AsyncTask<Void,Void,String>() {
-            @Override
-            protected String doInBackground(Void... voids) {
-                // Upload to the cloud
-                return TheCloud.upload(jump);
-            }
-            @Override
-            protected void onPostExecute(String url) {
-                Log.i("Jump", "Upload successful, opening " + url);
-                final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(browserIntent);
-            }
-        }.execute();
+        TheCloud.uploadAsync(jump);
     }
 
     public void clickDelete(View v) {
-        //Ask the user if they want to quit
         new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setTitle("Delete Jump")

@@ -24,8 +24,17 @@ public class Jump {
         KVStore.put(cacheKey(), url);
     }
 
+    public String getName() {
+        return logFile.getName()
+                .replaceAll(".csv.gz", "")
+                .replaceAll("_", " ")
+                .replaceAll("-", ".");
+    }
+
     @Override
     public String toString() {
-        return logFile.getName();
+        final long size = logFile.length() / 1024;
+        final String synced = getCloudUrl() != null? "✓" : "↻";
+        return getName() + " (" + size + "kb) " + synced;
     }
 }

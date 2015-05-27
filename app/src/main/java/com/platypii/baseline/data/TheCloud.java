@@ -1,5 +1,7 @@
 package com.platypii.baseline.data;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedOutputStream;
@@ -16,6 +18,21 @@ public class TheCloud {
     private static final String baselineServer = "https://base-line.ws"; // TODO
     private static final String postUrl = baselineServer + "/tracks";
 
+    public static void uploadAsync(final Jump jump) {
+        new AsyncTask<Void,Void,String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                // Upload to the cloud
+                return TheCloud.upload(jump);
+            }
+//            @Override
+//            protected void onPostExecute(String url) {
+//                 final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//                 context.startActivity(browserIntent);
+//            }
+        }.execute();
+    }
+
     public static String upload(Jump jump) {
         // Check if track is already uploaded
         final String cloudUrl = jump.getCloudUrl();
@@ -29,6 +46,7 @@ public class TheCloud {
                 final String url = baselineServer + path;
                 // Save cloud url
                 jump.setCloudUrl(url);
+                Log.i("Jump", "Upload successful, url " + url);
                 return url;
             } catch(IOException e) {
                 Log.e("Cloud", "Failed to upload file", e);
