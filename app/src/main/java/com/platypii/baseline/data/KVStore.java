@@ -1,57 +1,43 @@
 package com.platypii.baseline.data;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 public class KVStore {
 
-    private static KVStoreHelper helper;
-    private static SQLiteDatabase database;
+    private static SharedPreferences prefs;
     private static boolean started = false;
 
     public static synchronized void start(Context appContext) {
-        // Start database
-        if (!started) {
-            helper = new KVStoreHelper(appContext);
-            database = helper.getReadableDatabase();
-            Log.w("KVStore", "Database started");
+        // Load shared preferences for persistence
+        if(!started) {
+            prefs = appContext.getSharedPreferences("baseline", Context.MODE_PRIVATE);
             started = true;
         } else {
             Log.e("KVStore", "Already started");
-            if (database == null) {
-                database = helper.getReadableDatabase();
+            if(prefs == null) {
+                prefs = appContext.getSharedPreferences("baseline", Context.MODE_PRIVATE);
             }
         }
     }
 
     public static String getString(String key) {
         if(started) {
-            final String[] params = {key};
-            final Cursor cursor = database.rawQuery("SELECT value FROM kvstore WHERE key = ?", params);
-            String value = null;
-            if(cursor != null) {
-                if(cursor.getCount() > 0) {
-                    cursor.moveToFirst();
-                    value = cursor.getString(0);
-                }
-                cursor.close();
-            }
-            return value;
+            return prefs.getString(key, null);
         } else {
-            Log.e("KVStore", "Get attempted on uninitialized database");
+            Log.e("KVStore", "Get attempted on uninitialized key/value store");
             return null;
         }
     }
 
     public static void put(String key, String value) {
         if(started) {
-            final String[] params = {key, value};
-            final Cursor cursor = database.rawQuery("INSERT INTO kvstore (key,value) VALUES (?,?)", params);
-            cursor.close();
+            final SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(key, value);
+            editor.commit();
         } else {
-            Log.e("KVStore", "Put attempted on uninitialized database");
+            Log.e("KVStore", "Put attempted on uninitialized key/value store");
         }
     }
 
