@@ -13,15 +13,23 @@ import java.net.URL;
 
 public class TheCloud {
 
-    private static final String platypiiIndustries = "http://dev.platypiiindustries.com"; // TODO
-    private static final String postUrl = platypiiIndustries + "/baseline/tracks";
+    private static final String baselineServer = "https://base-line.ws"; // TODO
+    private static final String postUrl = baselineServer + "/tracks";
 
     public static String upload(Jump jump) {
-        if(isNetworkConnected()) {
+        // Check if track is already uploaded
+        final String cachedUrl = KVStore.get(jump.cacheKey());
+        if(cachedUrl != null) {
+            // Already uploaded, return url
+            return cachedUrl;
+        } else if(isNetworkConnected()) {
             // Upload to platypii industries
             try {
                 final String path = postJump(jump);
-                return platypiiIndustries + path;
+                final String url = baselineServer + path;
+                // Cache url in key-value store
+                KVStore.put(jump.cacheKey(), url);
+                return url;
             } catch(IOException e) {
                 Log.e("Cloud", "Failed to upload file", e);
                 return null;
@@ -58,6 +66,12 @@ public class TheCloud {
         } finally {
             conn.disconnect();
         }
+    }
+
+    /** Checks the key-value store to see if this track has already been uploaded */
+    private static String getCachedUrl(Jump jump) {
+        final String key = "track-" + jump.logFile.getName();
+        return KVStore.get(key);
     }
 
     private static void copy(InputStream input, OutputStream output) throws IOException {

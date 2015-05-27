@@ -2,7 +2,9 @@ package com.platypii.baseline;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -41,9 +43,19 @@ public class JumpsActivity extends ListActivity {
     @Override
     protected void onListItemClick (ListView l, View v, int position, long id) {
         final Jump jump = jumpList.get(position);
-        // Open jump activity
-        final Intent intent = new Intent(this, JumpActivity.class);
-        intent.putExtra("JUMP_FILE", jump.logFile.getName());
-        startActivity(intent);
+        // Check if synced or not
+        final String cloudUrl = jump.getCloudUrl();
+        if(cloudUrl != null) {
+            // Open cloud url in browser
+            Log.i("Jumps", "Track already synced, opening " + cloudUrl);
+            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(cloudUrl));
+            startActivity(browserIntent);
+        } else {
+            // TODO: Show "not synced" toast
+            // Open jump activity
+            final Intent intent = new Intent(this, JumpActivity.class);
+            intent.putExtra("JUMP_FILE", jump.logFile.getName());
+            startActivity(intent);
+        }
     }
 }
