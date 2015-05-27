@@ -41,7 +41,7 @@ public class JumpsActivity extends ListActivity {
     }
 
     @Override
-    protected void onListItemClick (ListView l, View v, int position, long id) {
+    protected void onListItemClick(ListView l, View v, int position, long id) {
         final Jump jump = jumpList.get(position);
         // Check if synced or not
         final String cloudUrl = jump.getCloudUrl();

@@ -26,13 +26,18 @@ public class KVStore {
         }
     }
 
-    public static String get(String key) {
+    public static String getString(String key) {
         if(started) {
             final String[] params = {key};
             final Cursor cursor = database.rawQuery("SELECT value FROM kvstore WHERE key = ?", params);
-            cursor.moveToFirst();
-            final String value = cursor.getString(0);
-            cursor.close();
+            String value = null;
+            if(cursor != null) {
+                if(cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    value = cursor.getString(0);
+                }
+                cursor.close();
+            }
             return value;
         } else {
             Log.e("KVStore", "Get attempted on uninitialized database");

@@ -18,17 +18,17 @@ public class TheCloud {
 
     public static String upload(Jump jump) {
         // Check if track is already uploaded
-        final String cachedUrl = KVStore.get(jump.cacheKey());
-        if(cachedUrl != null) {
+        final String cloudUrl = jump.getCloudUrl();
+        if(cloudUrl != null) {
             // Already uploaded, return url
-            return cachedUrl;
+            return cloudUrl;
         } else if(isNetworkConnected()) {
             // Upload to platypii industries
             try {
                 final String path = postJump(jump);
                 final String url = baselineServer + path;
-                // Cache url in key-value store
-                KVStore.put(jump.cacheKey(), url);
+                // Save cloud url
+                jump.setCloudUrl(url);
                 return url;
             } catch(IOException e) {
                 Log.e("Cloud", "Failed to upload file", e);
@@ -66,12 +66,6 @@ public class TheCloud {
         } finally {
             conn.disconnect();
         }
-    }
-
-    /** Checks the key-value store to see if this track has already been uploaded */
-    private static String getCachedUrl(Jump jump) {
-        final String key = "track-" + jump.logFile.getName();
-        return KVStore.get(key);
     }
 
     private static void copy(InputStream input, OutputStream output) throws IOException {

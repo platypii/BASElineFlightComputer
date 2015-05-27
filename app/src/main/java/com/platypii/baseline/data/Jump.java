@@ -11,13 +11,17 @@ public class Jump {
         this.logFile = logFile;
     }
 
-    public String cacheKey() {
+    private String cacheKey() {
         return "jump-" + logFile.getName();
     }
 
     /** Returns cloud url if this track has been uploaded */
     public String getCloudUrl() {
-        return KVStore.get(cacheKey());
+        return KVStore.getString(cacheKey());
+    }
+
+    public void setCloudUrl(String url) {
+        KVStore.put(cacheKey(), url);
     }
 
     @Override
