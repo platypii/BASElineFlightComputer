@@ -18,7 +18,6 @@ import com.platypii.baseline.data.measurements.MLocation;
 // Altimeter manager
 // Super important so it gets it's own class
 // TODO: Get corrections via barometer, GPS, DEM
-// TODO: Show visual warning when no altimeter data
 // TODO: Acceleration
 public class MyAltimeter {
     
@@ -55,9 +54,9 @@ public class MyAltimeter {
 	public static final SyncedList<MAltitude> history = new SyncedList<>(maxHistory);
     // public static MyAltitude myAltitude; // Measurement
     public static final Stat pressure_altitude_stat = new Stat(); // Statistics on the mean and variance of the sensor
-    private static int n = 0; // number of samples
+    private static long n = 0; // number of samples
+    public static float refreshRate = 0; // Moving average of refresh rate in Hz
 
-    
     /**
      * Initializes altimeter services, if not already running
      * @param context The Application context
@@ -105,13 +104,24 @@ public class MyAltimeter {
     private static void updateBarometer(long millis, SensorEvent event) {
         double prevAltitude = altitude;
         // double prevClimb = climb;
-        long prevLastFix = lastFixNano;
-        
+        long prevLastFixNano = lastFixNano;
+
         assert event != null;
         assert event.accuracy == 0;
         pressure = event.values[0];
         lastFixNano = event.timestamp;
         lastFixMillis = millis;
+
+        // Barometer refresh rate
+        final long deltaTime = lastFixNano - prevLastFixNano; // time since last refresh
+        if(deltaTime > 0) {
+            final float refreshTime = 1E9f / (float) (deltaTime);
+            refreshRate += (refreshTime - refreshRate) * 0.5f; // Moving average
+            if (Double.isNaN(refreshRate)) {
+                Log.e("MyAltimeter", "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime);
+                refreshRate = 0;
+            }
+        }
 
         // Convert pressure to altitude
         pressure_altitude = pressureToAltitude(pressure);
@@ -128,7 +138,7 @@ public class MyAltimeter {
         altitude_raw = pressure_altitude - ground_level; // the current pressure converted to altitude AGL. noisy.
         
         // Update the official altitude
-        double dt = Double.isNaN(prevAltitude)? 0 : (lastFixNano - prevLastFix) * 1E-9;
+        double dt = Double.isNaN(prevAltitude)? 0 : (lastFixNano - prevLastFixNano) * 1E-9;
         // Log.d("Altimeter", "Raw Altitude AGL: " + Convert.distance(altitude_raw) + ", dt = " + dt);
 
         filter.update(pressure_altitude, dt);
@@ -184,9 +194,9 @@ public class MyAltimeter {
      * Saves an official altitude measurement
      */
     private static void updateAltitude() {
-    	// Create the measurement
-    	MAltitude myAltitude = new MAltitude(lastFixNano, altitude, climb, pressure, altitude_gps);
-    	history.append(myAltitude);
+        // Create the measurement
+        final MAltitude myAltitude = new MAltitude(lastFixNano, altitude, climb, pressure, altitude_gps);
+        history.append(myAltitude);
         // Notify listeners (using AsyncTask so the altimeter never blocks!)
         pressure_altitude_stat.addSample(pressure_altitude);
         new AsyncTask<MAltitude,Void,Void>() {
@@ -208,15 +218,6 @@ public class MyAltimeter {
         }.execute(myAltitude);
     }
 
-    /**
-     * Set the ground level offset
-     */
-    public static void setGroundLevel(double new_ground_level) {
-        altitude += ground_level - new_ground_level;
-        ground_level = new_ground_level;
-        Log.i("Altimeter", "Setting ground level = " + ground_level);
-    }
-    
     // ISA pressure and temperature
     private static final double altitude0 = 0; // ISA height 0 meters
     private static final double pressure0 = SensorManager.PRESSURE_STANDARD_ATMOSPHERE; // ISA pressure 1013.25 hPa

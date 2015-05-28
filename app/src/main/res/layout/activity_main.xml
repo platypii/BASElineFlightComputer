@@ -12,6 +12,7 @@
         style="?android:attr/buttonBarButtonStyle"
         android:onClick="clickStart"
         android:textStyle="bold"
+        android:textSize="18dp"
         android:text="Start Logging" />
 
     <Button
@@ -22,6 +23,7 @@
         style="?android:attr/buttonBarButtonStyle"
         android:onClick="clickStop"
         android:textStyle="bold"
+        android:textSize="18dp"
         android:text="Stop Logging"
         android:enabled="false" />
 

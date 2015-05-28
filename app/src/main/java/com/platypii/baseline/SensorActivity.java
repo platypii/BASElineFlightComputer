@@ -26,6 +26,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     private TextView rawAltitudeLabel;
     private TextView barStatsLabel;
     private TextView altitudeLabel;
+    private TextView altitudeRefreshLabel;
     // GPS
     private TextView satelliteLabel;
     private TextView lastFixLabel;
@@ -63,7 +64,8 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         rawAltitudeLabel = (TextView)findViewById(R.id.pressureAltitudeLabel);
         barStatsLabel = (TextView)findViewById(R.id.barStatsLabel);
         altitudeLabel = (TextView)findViewById(R.id.altitudeLabel);
-        
+        altitudeRefreshLabel = (TextView)findViewById(R.id.altitudeRefreshLabel);
+
         // GPS
         satelliteLabel = (TextView)findViewById(R.id.satelliteLabel);
         lastFixLabel = (TextView)findViewById(R.id.lastFixLabel);
@@ -158,7 +160,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         }
     }
 
-    // Updates the UI elements
+    /** Updates the UI that refresh continuously, such as sample rates */
     private void update() {
         // Last fix needs to be updated continuously since it shows time since last fix
         if(MyLocationManager.lastLoc != null) {
@@ -178,6 +180,8 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         } else {
             lastFixLabel.setText("Last fix: ");
         }
+        // Altitude refresh rate
+        altitudeRefreshLabel.setText(String.format("Sample rate: %.2fHz", MyAltimeter.refreshRate));
     }
 
     // Listeners

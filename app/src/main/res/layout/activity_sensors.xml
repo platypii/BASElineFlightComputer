@@ -28,20 +28,26 @@
             android:text="Raw altitude: " />
 
         <TextView
+               android:id="@+id/altitudeLabel"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="Altitude (official): " />
+
+        <TextView
             android:id="@+id/barStatsLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Stats: " />
 
         <TextView
-               android:id="@+id/altitudeLabel"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:text="Altitude (official): " />
+            android:id="@+id/altitudeRefreshLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sample rate: " />
 
         <com.platypii.baseline.ElevationTimePlot
             android:layout_width="match_parent"
-            android:layout_height="90dp" />
+            android:layout_height="80dp" />
 
         <TextView
             android:layout_width="match_parent"
