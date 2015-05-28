@@ -48,11 +48,15 @@ public class Jump {
                 .replaceAll("-", ".");
     }
 
+    public String getSize() {
+        final long size = logFile.length() / 1024;
+        return size + "kb";
+    }
+
     @Override
     public String toString() {
         final long size = logFile.length() / 1024;
-        final String synced = getCloudData() != null? "✓" : "↻";
-        return getName() + " (" + size + "kb) " + synced;
+        return getName();
     }
 
 }

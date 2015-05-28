@@ -32,7 +32,7 @@
         android:layout_below="@id/stopButton"
         style="?android:attr/buttonBarButtonStyle"
         android:onClick="clickJumps"
-        android:text="Jumps" />
+        android:text="Tracks" />
 
     <Button
         android:id="@+id/sensorsButton"

@@ -83,6 +83,7 @@ public class MainActivity extends ActionBarActivity {
         stopButton.setEnabled(false);
         jumpsButton.setEnabled(true);
         sensorsButton.setEnabled(true);
+        clock.setText("");
         // Stop logging
         MyDatabase.stopLogging();
     }

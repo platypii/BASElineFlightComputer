@@ -59,7 +59,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
         final String timestamp = dt.format(new Date());
 
         // gzip log file
-        logFile = new File(logDir, "jump_" + timestamp + ".csv.gz");
+        logFile = new File(logDir, "track_" + timestamp + ".csv.gz");
         log = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(logFile))));
 
         // Write header

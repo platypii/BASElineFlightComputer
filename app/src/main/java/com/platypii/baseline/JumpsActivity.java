@@ -1,20 +1,25 @@
 package com.platypii.baseline;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
 import com.platypii.baseline.data.TheCloud;
+import com.platypii.baseline.data.TrackAdapter;
 
 import java.util.List;
 
@@ -30,7 +35,7 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
 
         // Initialize the ListAdapter
         jumpList = JumpLog.getJumps(getApplicationContext());
-        listAdapter = new ArrayAdapter<>(this, R.layout.jump_list, R.id.listText, jumpList);
+        listAdapter = new TrackAdapter(this, R.layout.jump_list_item, jumpList);
         setListAdapter(listAdapter);
 
         final ListView listView = getListView();
@@ -55,12 +60,12 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
         if(cloudData != null) {
             // Open cloud url in browser
             final String url = cloudData.trackUrl;
-            Log.i("Jumps", "Track synced, opening " + url);
+            Log.i("Jumps", "Track already synced, opening " + url);
             final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(browserIntent);
         } else {
-            Log.i("Jumps", "Track not synced");
-            Toast.makeText(this, "Track not synced, uploading...", Toast.LENGTH_LONG).show();
+            Log.i("Jumps", "Track not synced, uploading...");
+            Toast.makeText(this, "Syncing track...", Toast.LENGTH_LONG).show();
             // Try to start sync
             TheCloud.uploadAsync(jump);
         }

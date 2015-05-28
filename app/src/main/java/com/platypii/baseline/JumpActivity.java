@@ -56,14 +56,14 @@ public class JumpActivity extends Activity {
         new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setTitle("Delete Jump")
-            .setMessage("Are you sure you want to delete this jump?")
+            .setMessage("Are you sure you want to delete this track?")
             .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // Delete jump
                     jump.logFile.delete();
                     // Notify user
-                    Toast.makeText(getApplicationContext(), "Deleted " + jump.logFile.getName(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Deleted " + jump.getName(), Toast.LENGTH_LONG).show();
                     // Exit activity
                     finish();
                 }
