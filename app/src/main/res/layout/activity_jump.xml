@@ -22,16 +22,25 @@
         android:gravity="center" />
 
     <ImageButton
-        android:id="@+id/uploadButton"
+        android:id="@+id/openButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?android:attr/buttonBarButtonStyle"
-        android:onClick="clickUpload"
+        android:onClick="clickOpen"
         android:text="Upload Jump"
         android:src="@drawable/upload_cloud"
         android:contentDescription="The Cloud"
         android:scaleType="fitCenter"
         android:layout_centerInParent="true" />
+
+    <Button
+        android:id="@+id/kmlButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/buttonBarButtonStyle"
+        android:onClick="clickKml"
+        android:text="Open with Google Earth"
+        android:layout_above="@+id/deleteButton" />
 
     <!--<Button
         android:id="@+id/exportButton"
@@ -39,7 +48,7 @@
         android:layout_height="wrap_content"
         style="?android:attr/buttonBarButtonStyle"
         android:onClick="clickExport"
-        android:text="Export Jump"
+        android:text="Export Track"
         android:layout_above="@+id/deleteButton" />-->
 
     <Button
@@ -50,6 +59,6 @@
         style="?android:attr/buttonBarButtonStyle"
         android:onClick="clickDelete"
         android:textColor="#ffcc0000"
-        android:text="Delete Jump" />
+        android:text="Delete Track" />
 
 </RelativeLayout>

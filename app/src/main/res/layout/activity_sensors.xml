@@ -41,7 +41,7 @@
 
         <com.platypii.baseline.ElevationTimePlot
             android:layout_width="match_parent"
-            android:layout_height="220px" />
+            android:layout_height="90dp" />
 
         <TextView
             android:layout_width="match_parent"

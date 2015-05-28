@@ -3,18 +3,13 @@ package com.platypii.baseline;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
-import com.platypii.baseline.data.TheCloud;
 
 import java.io.File;
 
@@ -48,8 +43,8 @@ public class JumpActivity extends Activity {
 
     }
 
-    public void clickUpload(View v) {
-        TheCloud.uploadAsync(jump);
+    public void clickOpen(View v) {
+        Intents.openJump(this, jump);
     }
 
     public void clickDelete(View v) {
@@ -61,16 +56,24 @@ public class JumpActivity extends Activity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // Delete jump
-                    jump.logFile.delete();
-                    // Notify user
-                    Toast.makeText(getApplicationContext(), "Deleted " + jump.getName(), Toast.LENGTH_LONG).show();
-                    // Exit activity
-                    finish();
+                    if (jump.logFile.delete()) {
+                        // Notify user
+                        Toast.makeText(getApplicationContext(), "Deleted " + jump.getName(), Toast.LENGTH_LONG).show();
+                        // Exit activity
+                        finish();
+                    } else {
+                        // Delete failed
+                        Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
+                    }
                 }
 
             })
             .setNegativeButton("Cancel", null)
             .show();
+    }
+
+    public void clickKml(View v) {
+        Intents.openKml(this, jump);
     }
 
 //    public void clickExport(View v) {

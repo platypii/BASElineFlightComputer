@@ -2,20 +2,15 @@ package com.platypii.baseline;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
-import com.platypii.baseline.data.TheCloud;
 import com.platypii.baseline.data.TrackAdapter;
 
 import java.util.List;
@@ -64,20 +59,7 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         final Jump jump = jumpList.get(position);
-        // Check if synced or not
-        final CloudData cloudData = jump.getCloudData();
-        if(cloudData != null) {
-            // Open cloud url in browser
-            final String url = cloudData.trackUrl;
-            Log.i("Jumps", "Track already synced, opening " + url);
-            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(browserIntent);
-        } else {
-            Log.i("Jumps", "Track not synced, uploading...");
-            Toast.makeText(this, "Syncing track...", Toast.LENGTH_LONG).show();
-            // Try to start sync
-            TheCloud.uploadAsync(jump);
-        }
+        Intents.openJump(this, jump);
     }
 
     @Override
@@ -87,12 +69,12 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
         final Intent intent = new Intent(this, JumpActivity.class);
         intent.putExtra("JUMP_FILE", jump.logFile.getName());
         startActivity(intent);
-        return false;
+        return true;
     }
 
     private void update() {
         // Refresh sync status
-        listAdapter.notifyDataSetChanged();
+//        listAdapter.notifyDataSetChanged();
     }
 
 }

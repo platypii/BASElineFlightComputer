@@ -35,7 +35,7 @@ public class KVStore {
         if(started) {
             final SharedPreferences.Editor editor = prefs.edit();
             editor.putString(key, value);
-            editor.commit();
+            editor.apply();
         } else {
             Log.e("KVStore", "Put attempted on uninitialized key/value store");
         }
