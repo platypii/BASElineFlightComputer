@@ -1,18 +1,15 @@
 package com.platypii.baseline;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.platypii.baseline.data.CloudData;
@@ -28,6 +25,10 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
     private List<Jump> jumpList;
     private ArrayAdapter<Jump> listAdapter;
 
+    // Periodic UI updates
+    private final Handler handler = new Handler();
+    private final int updateInterval = 100; // milliseconds
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +41,14 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
 
         final ListView listView = getListView();
         listView.setOnItemLongClickListener(this);
+
+        // Start periodic UI updates
+        handler.post(new Runnable() {
+            public void run() {
+                update();
+                handler.postDelayed(this, updateInterval);
+            }
+        });
     }
 
     @Override
@@ -80,4 +89,10 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
         startActivity(intent);
         return false;
     }
+
+    private void update() {
+        // Refresh sync status
+        listAdapter.notifyDataSetChanged();
+    }
+
 }

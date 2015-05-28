@@ -1,8 +1,8 @@
 package com.platypii.baseline;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +16,7 @@ import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.MySensorManager;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 
     public static final long startTime = System.currentTimeMillis(); // Session start time (when the app started)
 
@@ -28,7 +28,7 @@ public class MainActivity extends ActionBarActivity {
 
     // Periodic UI updates
     private final Handler handler = new Handler();
-    private final int updateInterval = 32; // in milliseconds
+    private final int updateInterval = 32; // milliseconds
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
