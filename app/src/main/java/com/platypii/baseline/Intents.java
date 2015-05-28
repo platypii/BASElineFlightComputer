@@ -36,4 +36,13 @@ public class Intents {
         earthIntent.setClassName("com.google.earth", "com.google.earth.EarthActivity");
         context.startActivity(earthIntent);
     }
+
+    // Share jump log using android share options
+    public static void shareTrack(Context context, Jump jump) {
+        final Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(jump.logFile));
+        intent.setType("text/plain");
+        context.startActivity(intent);
+    }
 }

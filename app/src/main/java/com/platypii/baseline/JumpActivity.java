@@ -47,11 +47,15 @@ public class JumpActivity extends Activity {
         Intents.openJump(this, jump);
     }
 
+    public void clickKml(View v) {
+        Intents.openKml(this, jump);
+    }
+
     public void clickDelete(View v) {
         new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setTitle("Delete Jump")
-            .setMessage("Are you sure you want to delete this track?")
+            .setMessage("Delete this track?")
             .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -72,17 +76,8 @@ public class JumpActivity extends Activity {
             .show();
     }
 
-    public void clickKml(View v) {
-        Intents.openKml(this, jump);
+    public void clickShare(View v) {
+        Intents.shareTrack(this, jump);
     }
-
-//    public void clickExport(View v) {
-//        // Share jump log using android share options
-//        final Intent intent = new Intent();
-//        intent.setAction(Intent.ACTION_SEND);
-//        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(jump.logFile));
-//        intent.setType("text/plain");
-//        startActivity(intent);
-//    }
 
 }

@@ -1,10 +1,11 @@
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.platypii.baseline.JumpsActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="0dp" >
+    android:padding="0dp"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/filename"
@@ -18,47 +19,68 @@
         android:id="@+id/filesize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/filename"
         android:gravity="center" />
 
-    <ImageButton
-        android:id="@+id/openButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?android:attr/buttonBarButtonStyle"
-        android:onClick="clickOpen"
-        android:text="Upload Jump"
-        android:src="@drawable/upload_cloud"
-        android:contentDescription="The Cloud"
-        android:scaleType="fitCenter"
-        android:layout_centerInParent="true" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/kmlButton"
+        <Button
+            android:id="@+id/openButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            style="?android:attr/buttonBarButtonStyle"
+            android:onClick="clickOpen"
+            android:drawableTop="@drawable/upload_cloud"
+            android:text="View"
+            android:textColor="#dddddd" />
+
+        <Button
+            android:id="@+id/kmlButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            style="?android:attr/buttonBarButtonStyle"
+            android:onClick="clickKml"
+            android:drawableTop="@drawable/google_earth"
+            android:text="Map"
+            android:textColor="#dddddd" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?android:attr/buttonBarButtonStyle"
-        android:onClick="clickKml"
-        android:text="Open with Google Earth"
-        android:layout_above="@+id/deleteButton" />
+        android:orientation="horizontal">
 
-    <!--<Button
-        android:id="@+id/exportButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:attr/buttonBarButtonStyle"
-        android:onClick="clickExport"
-        android:text="Export Track"
-        android:layout_above="@+id/deleteButton" />-->
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            style="?android:attr/buttonBarButtonStyle"
+            android:onClick="clickDelete"
+            android:drawableTop="@drawable/delete"
+            android:text="Delete"
+            android:textColor="#dddddd" />
 
-    <Button
-        android:id="@+id/deleteButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        style="?android:attr/buttonBarButtonStyle"
-        android:onClick="clickDelete"
-        android:textColor="#ffcc0000"
-        android:text="Delete Track" />
+        <Button
+            android:id="@+id/exportButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            style="?android:attr/buttonBarButtonStyle"
+            android:onClick="clickShare"
+            android:drawableTop="@drawable/share"
+            android:text="share"
+            android:textColor="#dddddd" />
 
-</RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>
