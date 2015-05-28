@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
 import com.platypii.baseline.data.TheCloud;
@@ -50,11 +51,12 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
     protected void onListItemClick(ListView l, View v, int position, long id) {
         final Jump jump = jumpList.get(position);
         // Check if synced or not
-        final String cloudUrl = jump.getCloudUrl();
-        if(cloudUrl != null) {
+        final CloudData cloudData = jump.getCloudData();
+        if(cloudData != null) {
             // Open cloud url in browser
-            Log.i("Jumps", "Track synced, opening " + cloudUrl);
-            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(cloudUrl));
+            final String url = cloudData.trackUrl;
+            Log.i("Jumps", "Track synced, opening " + url);
+            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(browserIntent);
         } else {
             Log.i("Jumps", "Track not synced");
