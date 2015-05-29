@@ -45,19 +45,10 @@
         android:onClick="clickJumps"
         android:text="Tracks" />
 
-    <Button
-        android:id="@+id/sensorsButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:attr/buttonBarButtonStyle"
-        android:onClick="clickSensors"
-        android:text="Sensor Info" />
-
     <TextView
         android:id="@+id/clock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/sensorsButton"
         android:textSize="48sp"
         android:textIsSelectable="false"
         android:gravity="center"
