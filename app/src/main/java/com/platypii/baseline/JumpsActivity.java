@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
 import com.platypii.baseline.data.TrackAdapter;
@@ -59,16 +60,20 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         final Jump jump = jumpList.get(position);
-        Intents.openJump(this, jump);
+        Intents.openJumpActivity(this, jump);
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-        // Open jump activity
-        final Jump jump = jumpList.get(i);
-        final Intent intent = new Intent(this, JumpActivity.class);
-        intent.putExtra("JUMP_FILE", jump.logFile.getName());
-        startActivity(intent);
+    public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
+        final Jump jump = jumpList.get(position);
+        final CloudData cloudData = jump.getCloudData();
+        if(cloudData != null) {
+            // Open KML directly
+            Intents.openTrackKml(this, cloudData);
+        } else {
+            // Open track view
+            Intents.openJumpActivity(this, jump);
+        }
         return true;
     }
 

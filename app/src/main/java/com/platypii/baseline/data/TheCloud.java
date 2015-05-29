@@ -19,19 +19,23 @@ public class TheCloud {
     private static final String baselineServer = "https://base-line.ws";
     private static final String postUrl = baselineServer + "/tracks";
 
-    public static void uploadAsync(final Jump jump) {
+    public static void uploadAsync(final Jump jump, final Callback<CloudData> cb) {
         new AsyncTask<Void,Void,CloudData>() {
             @Override
             protected CloudData doInBackground(Void... voids) {
                 // Upload to the cloud
                 return TheCloud.upload(jump);
             }
-//            @Override
-//            protected void onPostExecute(String url) {
-//                 final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-//                 context.startActivity(browserIntent);
-//            }
+            @Override
+            protected void onPostExecute(CloudData cloudData) {
+                if(cb != null) {
+                    cb.call(cloudData);
+                }
+            }
         }.execute();
+    }
+    public interface Callback<T> {
+        void call(T result);
     }
 
     /** Upload to the cloud */

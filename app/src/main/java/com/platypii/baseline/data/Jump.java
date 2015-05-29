@@ -1,6 +1,11 @@
 package com.platypii.baseline.data;
 
+import android.util.Log;
+
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Jump {
 
@@ -14,7 +19,7 @@ public class Jump {
     }
 
     private String cacheKey() {
-        return "jump-" + logFile.getName();
+        return "track." + logFile.getName();
     }
 
     /** Returns cloud url info, if this track has been uploaded */
@@ -53,10 +58,22 @@ public class Jump {
         return size + "kb";
     }
 
+    public Date getDate() {
+        // Parse date from filename
+        final String dateString = getName().replaceAll("track ", "");
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH.mm.ss");
+        try {
+            return format.parse(dateString);
+        } catch (ParseException e) {
+            Log.e("Jump", "Failed to parse date from filename", e);
+            return null;
+        }
+    }
+
     @Override
     public String toString() {
-        final long size = logFile.length() / 1024;
-        return getName();
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(getDate());
     }
 
 }

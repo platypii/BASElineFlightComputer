@@ -15,7 +15,6 @@ import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.MySensorManager;
 
-
 public class MainActivity extends Activity {
 
     public static final long startTime = System.currentTimeMillis(); // Session start time (when the app started)
@@ -29,6 +28,7 @@ public class MainActivity extends Activity {
     // Periodic UI updates
     private final Handler handler = new Handler();
     private final int updateInterval = 32; // milliseconds
+    private boolean logging = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,26 +59,32 @@ public class MainActivity extends Activity {
     }
 
     public void clickStart(View v) {
-        Log.i("Main", "Starting logging");
-        startButton.setEnabled(false);
-        stopButton.setEnabled(true);
-        jumpsButton.setEnabled(false);
-        sensorsButton.setEnabled(false);
+        if(logging == false) {
+            Log.i("Main", "Starting logging");
+            logging = true;
+            startButton.setEnabled(false);
+            stopButton.setEnabled(true);
+            jumpsButton.setEnabled(false);
+            sensorsButton.setEnabled(false);
 
-        // Start logging
-        MyDatabase.startLogging(getApplicationContext());
+            // Start logging
+            MyDatabase.startLogging(getApplicationContext());
 
-        // Start periodic UI updates
-        handler.post(new Runnable() {
-            public void run() {
-            update();
-            handler.postDelayed(this, updateInterval);
-            }
-        });
+            // Start periodic UI updates
+            handler.post(new Runnable() {
+                public void run() {
+                    update();
+                    if(logging) {
+                        handler.postDelayed(this, updateInterval);
+                    }
+                }
+            });
+        }
     }
 
     public void clickStop(View v) {
         Log.i("Main", "Stopping logging");
+        logging = false;
         startButton.setEnabled(true);
         stopButton.setEnabled(false);
         jumpsButton.setEnabled(true);
@@ -101,7 +107,11 @@ public class MainActivity extends Activity {
     }
 
     private void update() {
-        clock.setText(MyDatabase.getLogTime());
+        if(logging) {
+            clock.setText(MyDatabase.getLogTime());
+        } else {
+            clock.setText("");
+        }
     }
 
 }

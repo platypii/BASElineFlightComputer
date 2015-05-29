@@ -39,7 +39,7 @@
             android:textColor="#dddddd" />
 
         <Button
-            android:id="@+id/kmlButton"
+            android:id="@+id/mapButton"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
