@@ -20,7 +20,8 @@
             android:drawableTop="@drawable/circle"
             android:textStyle="bold"
             android:textSize="18dp"
-            android:text="Record" />
+            android:text="Record"
+            android:textColor="#dddddd" />
 
         <Button
             android:id="@+id/stopButton"
@@ -33,6 +34,7 @@
             android:textStyle="bold"
             android:textSize="18dp"
             android:text="Stop"
+            android:textColor="#dddddd"
             android:enabled="false" />
 
     </LinearLayout>
@@ -43,7 +45,9 @@
         android:layout_height="wrap_content"
         style="?android:attr/buttonBarButtonStyle"
         android:onClick="clickJumps"
-        android:text="Tracks" />
+        android:drawableTop="@drawable/list"
+        android:text="Tracks"
+        android:textColor="#dddddd" />
 
     <TextView
         android:id="@+id/clock"
