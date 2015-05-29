@@ -85,11 +85,11 @@ public class MainActivity extends Activity {
     public void clickStop(View v) {
         Log.i("Main", "Stopping logging");
         logging = false;
+        clock.setText("");
         startButton.setEnabled(true);
         stopButton.setEnabled(false);
         jumpsButton.setEnabled(true);
         sensorsButton.setEnabled(true);
-        clock.setText("");
         // Stop logging
         MyDatabase.stopLogging();
     }

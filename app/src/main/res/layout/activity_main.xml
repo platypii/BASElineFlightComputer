@@ -1,37 +1,46 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_margin"
+    android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/startButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?android:attr/buttonBarButtonStyle"
-        android:onClick="clickStart"
-        android:textStyle="bold"
-        android:textSize="18dp"
-        android:text="Start Logging" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/stopButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/startButton"
-        style="?android:attr/buttonBarButtonStyle"
-        android:onClick="clickStop"
-        android:textStyle="bold"
-        android:textSize="18dp"
-        android:text="Stop Logging"
-        android:enabled="false" />
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"
+            android:onClick="clickStart"
+            android:drawableTop="@drawable/circle"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:text="Record" />
+
+        <Button
+            android:id="@+id/stopButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"
+            android:onClick="clickStop"
+            android:drawableTop="@drawable/square"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:text="Stop"
+            android:enabled="false" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/jumpsButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/stopButton"
         style="?android:attr/buttonBarButtonStyle"
         android:onClick="clickJumps"
         android:text="Tracks" />
@@ -40,7 +49,6 @@
         android:id="@+id/sensorsButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/jumpsButton"
         style="?android:attr/buttonBarButtonStyle"
         android:onClick="clickSensors"
         android:text="Sensor Info" />
@@ -56,4 +64,4 @@
         android:layout_marginTop="20dp"
         android:text="" />
 
-</RelativeLayout>
+</LinearLayout>
