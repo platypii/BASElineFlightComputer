@@ -30,19 +30,20 @@ public class MyAltimeter {
     // Pressure data
     public static float pressure = Float.NaN; // hPa (millibars)
     public static double pressure_altitude = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
-    public static double altitude_raw = Double.NaN; // pressure altitude adjusted for ground level (unfiltered)
+    public static double altitude_raw = Double.NaN; // pressure altitude adjusted for altitude offset (unfiltered)
     
     // GPS data
-    private static double altitude_gps = Double.NaN;
+    public static double altitude_gps = Double.NaN;
     
-    // Ground level
-    public static double ground_level = Double.NaN;
+    // official altitude = pressure_altitude - altitude_offset
+    // altitude_offset uses GPS to get absolute altitude right
+    public static double altitude_offset = 0.0;
     
     // Data filter
     private static final Filter filter = new FilterKalman(); // Unfiltered(), AlphaBeta(), MovingAverage(), etc
     
     // Official altitude data
-    public static double altitude = Double.NaN; // Meters AGL
+    public static double altitude = Double.NaN; // Meters AMSL
     public static double climb = Double.NaN; // Rate of climb m/s
     // public static double verticalAcceleration = Double.NaN;
     
@@ -50,8 +51,8 @@ public class MyAltimeter {
     private static long lastFixMillis; // milliseconds uptime
 
     // History
-	private static final int maxHistory = 5 * 60; // Maximum number of measurements to keep in memory
-	public static final SyncedList<MAltitude> history = new SyncedList<>(maxHistory);
+    private static final int maxHistory = 5 * 60; // Maximum number of measurements to keep in memory
+    public static final SyncedList<MAltitude> history = new SyncedList<>(maxHistory);
     // public static MyAltitude myAltitude; // Measurement
     public static final Stat pressure_altitude_stat = new Stat(); // Statistics on the mean and variance of the sensor
     private static long n = 0; // number of samples
@@ -125,17 +126,8 @@ public class MyAltimeter {
 
         // Convert pressure to altitude
         pressure_altitude = pressureToAltitude(pressure);
-        
-        // Adjust for ground level
-        if(n == 0) {
-            // First pressure reading. Calibrate ground level.
-            ground_level = pressure_altitude;
-        } else if(n < 16) {
-            // Average the first N samples
-            ground_level += (pressure_altitude - ground_level) / (n + 1);
-        }
-        n++;
-        altitude_raw = pressure_altitude - ground_level; // the current pressure converted to altitude AGL. noisy.
+
+        altitude_raw = pressure_altitude - altitude_offset; // the current pressure converted to altitude AMSL. noisy.
         
         // Update the official altitude
         double dt = Double.isNaN(prevAltitude)? 0 : (lastFixNano - prevLastFixNano) * 1E-9;
@@ -143,51 +135,52 @@ public class MyAltimeter {
 
         filter.update(pressure_altitude, dt);
 
-        altitude = filter.x - ground_level;
-		climb = filter.v;
+        altitude = filter.x - altitude_offset;
+        climb = filter.v;
 
         // Log.d("Altimeter", "alt = " + altitude + ", climb = " + climb);
 
+        n++;
         updateAltitude();
-        
     }
 
+    private static long gps_sample_count = 0;
     /**
      * Process new GPS reading
      */
     private static void updateGPS(MLocation loc) {
-    	// TODO: Use GPS to correct barometer drift (Kalman)
-
-    	// If barometer is not present, fall back to GPS
-    	if(Double.isNaN(pressure_altitude) && !Double.isNaN(loc.altitude_gps)) {
-            double prevAltitude = altitude;
-            long prevLastFix = lastFixMillis;
-
+        if(!Double.isNaN(loc.altitude_gps)) {
             altitude_gps = loc.altitude_gps;
-            lastFixMillis = loc.timeMillis;
-            
-            // Adjust for ground level
-            if(n == 0) {
-                // First altitude reading. Calibrate ground level.
-                ground_level = altitude_gps;
-            } else if(n < 20) {
-                // Average the first N samples
-                ground_level += (altitude_gps - ground_level) / (n + 1);
-            }
-            n++;
-    		
-            // Update the official altitude
-            if(Double.isNaN(prevAltitude)) {
-                altitude = altitude_gps - ground_level;
-                climb = 0;
-            } else {
-                double dt = (lastFixMillis - prevLastFix) * 1E-3;
-                altitude = altitude_gps - ground_level;
-                climb = (altitude - prevAltitude) / dt; // m/s
-            }
 
+            if(n > 0) {
+                // Log.d("Altimeter", "alt = " + altitude + ", alt_gps = " + altitude_gps + ", offset = " + altitude_offset);
+                if(gps_sample_count == 0) {
+                    // First altitude reading. Calibrate ground level.
+                    altitude_offset = pressure_altitude - altitude_gps;
+                } else if(gps_sample_count < 10) {
+                    // Average the first N samples
+                    altitude_offset += (altitude_raw - altitude_gps) / (n + 1);
+                } else {
+                    // Use GPS to correct barometer drift (moving average)
+                    altitude_offset += (altitude_raw - altitude_gps) / 10;
+                }
+            } else {
+                // No barometer use gps
+                final double prevAltitude = altitude;
+                final long prevLastFix = lastFixMillis;
+                lastFixMillis = loc.timeMillis;
+                // Update the official altitude
+                altitude = altitude_gps;
+                if(Double.isNaN(prevAltitude)) {
+                    climb = 0;
+                } else {
+                    final double dt = (lastFixMillis - prevLastFix) * 1E-3;
+                    climb = (altitude - prevAltitude) / dt; // m/s
+                }
+            }
+            gps_sample_count++;
             updateAltitude();
-    	}
+        }
     }
     
     /**

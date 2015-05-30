@@ -23,7 +23,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
 
     // Barometer
     private TextView pressureLabel;
-    private TextView rawAltitudeLabel;
+    private TextView pressureAltitudeLabel;
     private TextView barStatsLabel;
     private TextView altitudeLabel;
     private TextView altitudeRefreshLabel;
@@ -61,7 +61,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         // Find UI elements:
         // Barometer
         pressureLabel = (TextView)findViewById(R.id.pressureLabel);
-        rawAltitudeLabel = (TextView)findViewById(R.id.pressureAltitudeLabel);
+        pressureAltitudeLabel = (TextView)findViewById(R.id.pressureAltitudeLabel);
         barStatsLabel = (TextView)findViewById(R.id.barStatsLabel);
         altitudeLabel = (TextView)findViewById(R.id.altitudeLabel);
         altitudeRefreshLabel = (TextView)findViewById(R.id.altitudeRefreshLabel);
@@ -137,9 +137,9 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
 
     private void updateAltimeter() {
         pressureLabel.setText("Pressure: " + Convert.pressure(MyAltimeter.pressure));
-        rawAltitudeLabel.setText("Raw Altitude: " + Convert.distance(MyAltimeter.altitude_raw, 2));
-        barStatsLabel.setText("MSL Stats: mean = " + Convert.distance(MyAltimeter.pressure_altitude_stat.mean(), 2) + ", stdev = " + Convert.distance(Math.sqrt(MyAltimeter.pressure_altitude_stat.var()), 2));
-        altitudeLabel.setText("Altitude (official): " + Convert.distance(MyAltimeter.altitude, 2));
+        pressureAltitudeLabel.setText("Pressure Altitude: " + Convert.distance(MyAltimeter.pressure_altitude, 2));
+        barStatsLabel.setText("Pressure Stats: mean = " + Convert.distance(MyAltimeter.pressure_altitude_stat.mean(), 2) + ", stdev = " + Convert.distance(Math.sqrt(MyAltimeter.pressure_altitude_stat.var()), 2));
+        altitudeLabel.setText("Altitude (corrected): " + Convert.distance(MyAltimeter.altitude, 2));
     }
 
     private void updateGPS(MLocation loc) {
@@ -147,7 +147,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         if(loc != null) {
             latitudeLabel.setText(String.format("Lat: %.6f", MyLocationManager.latitude));
             longitudeLabel.setText(String.format("Long: %.6f", MyLocationManager.longitude));
-            gpsAltitudeLabel.setText("GPS Altitude: " + Convert.distance(MyLocationManager.altitude_gps));
+            gpsAltitudeLabel.setText("GPS Altitude: " + Convert.distance(MyAltimeter.altitude_gps));
             hAccLabel.setText("hAcc: " + Convert.distance(MyLocationManager.hAcc));
             pdopLabel.setText(String.format("pdop: %.1f", MyLocationManager.pdop));
             hdopLabel.setText(String.format("hdop: %.1f", MyLocationManager.hdop));

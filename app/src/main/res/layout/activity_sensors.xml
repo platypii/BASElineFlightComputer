@@ -25,19 +25,19 @@
             android:id="@+id/pressureAltitudeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Raw altitude: " />
-
-        <TextView
-               android:id="@+id/altitudeLabel"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:text="Altitude (official): " />
+            android:text="Pressure altitude: " />
 
         <TextView
             android:id="@+id/barStatsLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Stats: " />
+
+        <TextView
+            android:id="@+id/altitudeLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Altitude (corrected): " />
 
         <TextView
             android:id="@+id/altitudeRefreshLabel"
