@@ -11,12 +11,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.platypii.baseline.data.CloudData;
+import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.KVStore;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.MySensorManager;
+import com.platypii.baseline.data.TheCloud;
 
 public class MainActivity extends Activity {
 
@@ -57,6 +61,8 @@ public class MainActivity extends Activity {
         MySensorManager.initSensors(getApplication());
         Log.i("Main", "Initializing altimeter");
         MyAltimeter.initAltimeter(getApplication());
+
+        // TODO: Upload any unsynced files
     }
 
     public void clickStart(View v) {
@@ -75,7 +81,7 @@ public class MainActivity extends Activity {
             handler.post(new Runnable() {
                 public void run() {
                     update();
-                    if(logging) {
+                    if (logging) {
                         handler.postDelayed(this, updateInterval);
                     }
                 }
@@ -92,7 +98,18 @@ public class MainActivity extends Activity {
         jumpsButton.setEnabled(true);
         invalidateOptionsMenu();
         // Stop logging
-        MyDatabase.stopLogging();
+        final Jump jump = MyDatabase.stopLogging();
+        if(jump != null) {
+            // Begin automatic upload
+            TheCloud.uploadAsync(jump, new TheCloud.Callback<CloudData>() {
+                @Override
+                public void call(CloudData result) {
+                    Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Log.e("Main", "Error reading log file");
+        }
     }
 
     public void clickJumps(View v) {

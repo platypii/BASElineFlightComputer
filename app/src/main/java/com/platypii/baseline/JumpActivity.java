@@ -44,6 +44,7 @@ public class JumpActivity extends Activity {
             final TextView filesizeLabel = (TextView) findViewById(R.id.filesize);
             final Button openButton = (Button) findViewById(R.id.openButton);
             final Button mapButton = (Button) findViewById(R.id.mapButton);
+            final Button shareButton = (Button) findViewById(R.id.shareButton);
 
             filenameLabel.setText(jump.getName());
             filesizeLabel.setText(jump.getSize());
@@ -51,12 +52,14 @@ public class JumpActivity extends Activity {
             final CloudData cloudData = jump.getCloudData();
             if(cloudData != null) {
                 openButton.setText("Open");
-                openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.cloud, 0, 0);
+                openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.browser, 0, 0);
                 mapButton.setEnabled(true);
+                shareButton.setEnabled(true);
             } else {
                 openButton.setText("Sync");
                 openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.upload_cloud, 0, 0);
                 mapButton.setEnabled(false);
+                shareButton.setEnabled(false);
             }
         }
     }
@@ -75,7 +78,7 @@ public class JumpActivity extends Activity {
                 public void call(CloudData result) {
                     if(result != null) {
                         updateViews();
-                        Toast.makeText(JumpActivity.this, "Track sync successful", Toast.LENGTH_LONG).show();
+                        Toast.makeText(JumpActivity.this, "Track sync success", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(JumpActivity.this, "Track sync failed", Toast.LENGTH_LONG).show();
                     }

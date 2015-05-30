@@ -70,7 +70,7 @@
             android:textColor="#dddddd" />
 
         <Button
-            android:id="@+id/exportButton"
+            android:id="@+id/shareButton"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

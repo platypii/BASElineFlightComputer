@@ -42,20 +42,26 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
             Log.e("DB", "startLogging() called when database already logging");
         }
     }
-    public static synchronized void stopLogging() {
+    public static synchronized Jump stopLogging() {
         if(db != null) {
             // Stop logging
-            db.stop();
+            final File logFile = db.stop();
             db = null;
+            if(logFile != null) {
+                return new Jump(logFile);
+            } else {
+                return null;
+            }
         } else {
             Log.e("DB", "stopLogging() called when database isn't logging");
+            return null;
         }
     }
 
     private MyDatabase(Context appContext) throws IOException {
         // Open log file for writing
         final File logDir = JumpLog.getLogDirectory(appContext);
-        final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss");
+        final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
         final String timestamp = dt.format(new Date());
 
         // gzip log file
@@ -90,7 +96,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
         }
     }
 
-    private void stop() {
+    private File stop() {
         if(stopTime == -1) {
             stopTime = System.nanoTime();
 
@@ -102,12 +108,15 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
             // Close file writer
             try {
                 log.close();
+                Log.i("DB", "Logging stopped for " + logFile.getName());
+                return logFile;
             } catch (IOException e) {
                 Log.e("DB", "Failed to close log file " + logFile, e);
+                return null;
             }
-            Log.i("DB", "Logging stopped for " + logFile.getName());
         } else {
             Log.e("DB", "Logging stopped twice");
+            return null;
         }
     }
 
