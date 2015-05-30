@@ -12,11 +12,12 @@ import android.widget.Toast;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
+import com.platypii.baseline.data.SyncStatus;
 import com.platypii.baseline.data.TheCloud;
 
 import java.io.File;
 
-public class JumpActivity extends Activity {
+public class JumpActivity extends Activity implements SyncStatus.SyncListener {
 
     private Jump jump;
 
@@ -73,7 +74,7 @@ public class JumpActivity extends Activity {
             // Start upload
             // TODO: Spinner
             Toast.makeText(this, "Syncing track...", Toast.LENGTH_SHORT).show();
-            TheCloud.uploadAsync(jump, new TheCloud.Callback<CloudData>() {
+            TheCloud.upload(jump, new TheCloud.Callback<CloudData>() {
                 @Override
                 public void call(CloudData result) {
                     if(result != null) {
@@ -94,7 +95,6 @@ public class JumpActivity extends Activity {
             Intents.openTrackKml(this, cloudData);
         } else {
             Toast.makeText(getApplicationContext(), "Track not synced", Toast.LENGTH_SHORT).show();
-            // TODO: Retry upload
         }
     }
 
@@ -108,7 +108,7 @@ public class JumpActivity extends Activity {
                 public void onClick(DialogInterface dialog, int which) {
                     // Delete jump
                     // TODO: Delete from server if uploaded
-                    if (jump.logFile.delete()) {
+                    if(jump.logFile.delete()) {
                         // Notify user
                         Toast.makeText(getApplicationContext(), "Deleted " + jump.getName(), Toast.LENGTH_LONG).show();
                         // Exit activity
@@ -128,4 +128,20 @@ public class JumpActivity extends Activity {
         Intents.shareTrack(this, jump);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Listen for sync updates
+        SyncStatus.addListener(this);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Listen for sync updates
+        SyncStatus.removeListener(this);
+    }
+    @Override
+    public void syncUpdate() {
+        updateViews();
+    }
 }

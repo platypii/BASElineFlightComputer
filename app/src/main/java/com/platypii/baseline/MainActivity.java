@@ -63,6 +63,7 @@ public class MainActivity extends Activity {
         MyAltimeter.initAltimeter(getApplication());
 
         // TODO: Upload any unsynced files
+        // TheCloud.uploadAll();
     }
 
     public void clickStart(View v) {
@@ -101,7 +102,7 @@ public class MainActivity extends Activity {
         final Jump jump = MyDatabase.stopLogging();
         if(jump != null) {
             // Begin automatic upload
-            TheCloud.uploadAsync(jump, new TheCloud.Callback<CloudData>() {
+            TheCloud.upload(jump, new TheCloud.Callback<CloudData>() {
                 @Override
                 public void call(CloudData result) {
                     Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();

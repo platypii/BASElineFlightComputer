@@ -1,7 +1,6 @@
 package com.platypii.baseline;
 
 import android.app.ListActivity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -12,18 +11,15 @@ import android.widget.ListView;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
+import com.platypii.baseline.data.SyncStatus;
 import com.platypii.baseline.data.TrackAdapter;
 
 import java.util.List;
 
-public class JumpsActivity extends ListActivity implements AdapterView.OnItemLongClickListener {
+public class JumpsActivity extends ListActivity implements AdapterView.OnItemLongClickListener, SyncStatus.SyncListener {
 
     private List<Jump> jumpList;
     private ArrayAdapter<Jump> listAdapter;
-
-    // Periodic UI updates
-    private final Handler handler = new Handler();
-    private final int updateInterval = 100; // milliseconds
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +34,8 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
         final ListView listView = getListView();
         listView.setOnItemLongClickListener(this);
 
-        // Start periodic UI updates
-        handler.post(new Runnable() {
-            public void run() {
-                update();
-                handler.postDelayed(this, updateInterval);
-            }
-        });
+        // Listen for sync updates
+        SyncStatus.addListener(this);
     }
 
     @Override
@@ -55,6 +46,9 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
         jumpList.clear();
         jumpList.addAll(JumpLog.getJumps(getApplicationContext()));
         listAdapter.notifyDataSetChanged();
+
+        // Listen for sync updates
+        SyncStatus.addListener(this);
     }
 
     @Override
@@ -77,9 +71,15 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
         return true;
     }
 
-    private void update() {
-        // Refresh sync status
-//        listAdapter.notifyDataSetChanged();
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Listen for sync updates
+        SyncStatus.removeListener(this);
     }
-
+    @Override
+    public void syncUpdate() {
+        // Refresh sync status
+        listAdapter.notifyDataSetChanged();
+    }
 }

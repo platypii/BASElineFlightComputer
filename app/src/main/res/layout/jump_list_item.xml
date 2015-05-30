@@ -23,16 +23,6 @@
         android:layout_toRightOf="@+id/list_name"
         android:layout_centerVertical="true" />
 
-    <TextView
-        android:id="@+id/list_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true" />
-
     <ProgressBar
         android:id="@+id/list_spinner"
         android:layout_width="26dp"

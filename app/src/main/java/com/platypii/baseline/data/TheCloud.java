@@ -19,15 +19,16 @@ public class TheCloud {
     private static final String baselineServer = "https://base-line.ws";
     private static final String postUrl = baselineServer + "/tracks";
 
-    public static void uploadAsync(final Jump jump, final Callback<CloudData> cb) {
+    public static void upload(final Jump jump, final Callback<CloudData> cb) {
         new AsyncTask<Void,Void,CloudData>() {
             @Override
             protected CloudData doInBackground(Void... voids) {
                 // Upload to the cloud
-                return TheCloud.upload(jump);
+                return TheCloud.uploadSync(jump);
             }
             @Override
             protected void onPostExecute(CloudData cloudData) {
+                SyncStatus.update();
                 if(cb != null) {
                     cb.call(cloudData);
                 }
@@ -39,7 +40,7 @@ public class TheCloud {
     }
 
     /** Upload to the cloud */
-    public static CloudData upload(Jump jump) {
+    private static CloudData uploadSync(Jump jump) {
         // Check if track is already uploaded
         final CloudData cloudData = jump.getCloudData();
         if(cloudData != null) {

@@ -28,17 +28,13 @@ public class TrackAdapter extends ArrayAdapter<Jump> {
         final View itemView = inflater.inflate(R.layout.jump_list_item, parent, false);
         final TextView textView = (TextView) itemView.findViewById(R.id.list_name);
         final TextView sizeView = (TextView) itemView.findViewById(R.id.list_filesize);
-        final TextView statusView = (TextView) itemView.findViewById(R.id.list_status);
         final ProgressBar spinnerView = (ProgressBar) itemView.findViewById(R.id.list_spinner);
 
         textView.setText(jump.toString());
         sizeView.setText(jump.getSize());
         if(jump.getCloudData() != null) {
-            statusView.setText("✓");
-            statusView.setTextColor(0xff00aa00);
             spinnerView.setVisibility(View.GONE);
         } else {
-            statusView.setText("");
             spinnerView.setVisibility(View.VISIBLE);
         }
 
