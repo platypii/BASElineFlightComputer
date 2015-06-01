@@ -69,7 +69,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
         log = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(logFile))));
 
         // Write header
-        log.write("timeMillis,sensor,altitude,climb,pressure,latitude,longitude,altitude_gps,gX,gY,gZ,rotX,rotY,rotZ,acc\n");
+        log.write("timeMillis,sensor,altitude,climb,pressure,latitude,longitude,altitude_gps,vN,vE,satellites,gX,gY,gZ,rotX,rotY,rotZ,acc\n");
 
         // Start sensor updates
         MyAltimeter.addListener(this);

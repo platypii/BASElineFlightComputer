@@ -2,11 +2,9 @@ package com.platypii.baseline.data.measurements;
 
 import com.platypii.baseline.data.MyAltimeter;
 
-import android.location.Location;
+import android.util.Log;
 
 public class MLocation extends Measurement {
-
-    private Location loc; // android.location.Location for convenience
 
     // GPS
     public double latitude = Double.NaN; // Latitude
@@ -32,8 +30,9 @@ public class MLocation extends Measurement {
         this.altitude = MyAltimeter.altitude;
         this.climb = MyAltimeter.climb;
 
-        assert !Double.isInfinite(vN);
-        assert !Double.isInfinite(vE);
+        // Assertions
+        if(Double.isInfinite(vN)) Log.e("MLocation", "Infinite vN");
+        if(Double.isInfinite(vE)) Log.e("MLocation", "Infinite vE");
 
         // Store location data
         this.timeMillis = timeMillis;
@@ -53,8 +52,15 @@ public class MLocation extends Measurement {
 
     @Override
     public String toRow() {
-        // timeMillis, sensor, altitude, climb, pressure, latitude, longitude, altitude_gps, vN, vE, gX, gY, gZ, rotX, rotY, rotZ, acc
-        return String.format("%d,gps,,,,%f,%f,%f,%f,%f", timeMillis, latitude, longitude, altitude_gps, vN, vE);
+        final String sat_str = (numSat != -1)? Integer.toString(numSat) : "";
+        final String vN_str = isReal(vN)? Double.toString(vN) : "";
+        final String vE_str = isReal(vE)? Double.toString(vE) : "";
+        // timeMillis, sensor, altitude, climb, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
+        return String.format("%d,gps,,,,%f,%f,%f,%s,%s,%s", timeMillis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
+    }
+
+    private static boolean isReal(double x) {
+        return !(Double.isInfinite(x) || Double.isNaN(x));
     }
 
 }

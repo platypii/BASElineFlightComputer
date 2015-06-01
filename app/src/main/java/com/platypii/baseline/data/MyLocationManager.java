@@ -64,7 +64,7 @@ public class MyLocationManager {
     public static MLocation lastLoc; // last location received
     public static MLocation prevLoc; // 2nd to last
 
-	private static final int maxHistory = 600; // Maximum number of measurements to keep in memory
+    private static final int maxHistory = 600; // Maximum number of measurements to keep in memory
     public static final SyncedList<MLocation> history = new SyncedList<>(maxHistory);
 
 
@@ -79,8 +79,8 @@ public class MyLocationManager {
             // Obtain GPS locations
             manager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
             if(isEnabled) {
-            	manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, nullListener);
-            	manager.addNmeaListener(nmeaListener);
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, nullListener);
+                manager.addNmeaListener(nmeaListener);
             }
             
             // TODO: Start an interval timer to update when signal is lost
@@ -112,18 +112,39 @@ public class MyLocationManager {
     private static void updateLocation() {
 
         // Store location
-    	prevLoc = lastLoc;
-    	lastLoc = new MLocation(lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
-    			                 hAcc, pdop, hdop, vdop, satellitesUsed, groundDistance);
+        prevLoc = lastLoc;
+        lastLoc = new MLocation(lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
+                                 hAcc, pdop, hdop, vdop, satellitesUsed, groundDistance);
 
-    	if(prevLoc != null) {
+        if(prevLoc != null) {
             // Compute distance
             tempLoc1.setLatitude(prevLoc.latitude);
             tempLoc1.setLongitude(prevLoc.longitude);
             tempLoc2.setLatitude(lastLoc.latitude);
             tempLoc2.setLongitude(lastLoc.longitude);
             groundDistance += tempLoc1.distanceTo(tempLoc2);
-            
+
+            // Clear out old values
+            lastFixMillis = -1;
+            latitude = Double.NaN;
+            longitude = Double.NaN;
+            altitude_gps = Double.NaN;
+            vN = Double.NaN;
+            vE = Double.NaN;
+            groundSpeed = Double.NaN;
+            speed = Double.NaN;
+            bearing = Double.NaN;
+            glide = Double.NaN;
+            glideAngle = Double.NaN;
+            hAcc = Float.NaN;
+            // vAcc = Float.NaN;
+            // sAcc = Float.NaN;
+            pdop = Float.NaN;
+            hdop = Float.NaN;
+            vdop = Float.NaN;
+            satellitesInView = -1; // Satellites in view
+            satellitesUsed = -1; // Satellites used in last fix
+
             // GPS sample refresh rate
             // TODO: Include time from last sample until now
             final long deltaTime = lastLoc.timeMillis - prevLoc.timeMillis; // time since last refresh
@@ -137,10 +158,10 @@ public class MyLocationManager {
             }
         }
 
-    	// History
-		history.append(lastLoc);
+        // History
+        history.append(lastLoc);
 
-		// Notify listeners (using AsyncTask so the manager never blocks!)
+        // Notify listeners (using AsyncTask so the manager never blocks!)
         new AsyncTask<MLocation,Void,Void>() {
             @Override
             protected Void doInBackground(MLocation... params) {
@@ -159,19 +180,19 @@ public class MyLocationManager {
         // timestamp is seconds
         public void onNmeaReceived(long timestamp, String nmea) {
             
-        	// Log.d("NMEA", "["+timestamp+"] " + nmea);
+            // Log.v("NMEA", "["+timestamp+"] " + nmea);
 
-        	String split[] = nmea.split("[,*]");
-            assert split[0].charAt(0) == '$';
-            assert split[0].length() == 6;
-            
+            String split[] = nmea.split("[,*]");
+            if(split[0].charAt(0) != '$') Log.e("NMEA", "Invalid NMEA tag: " + split[0]);
+            if(split[0].length() == 6) Log.e("NMEA", "Invalid NMEA tag length: " + split[0]);
+
             assert nmeaChecksum(nmea);
 
             // Parse command
             if(split[0].equals("$GPGSA")) {
                 // Overall satellite data (DOP and active satellites)
                 // boolean autoDim = split[1].equals("A"); // A = Auto 2D/3D, M = Forced 2D/3D
-            	// gpsFix = split[2].equals("")? 0 : Integer.parseInt(split[2]); // 0 = null, 1 = No fix, 2 = 2D, 3 = 3D
+                // gpsFix = split[2].equals("")? 0 : Integer.parseInt(split[2]); // 0 = null, 1 = No fix, 2 = 2D, 3 = 3D
                 pdop = split[split.length-4].equals("")? Float.NaN : Float.parseFloat(split[split.length-4]);
                 hdop = split[split.length-3].equals("")? Float.NaN : Float.parseFloat(split[split.length-3]);
                 vdop = split[split.length-2].equals("")? Float.NaN : Float.parseFloat(split[split.length-2]);
@@ -217,7 +238,7 @@ public class MyLocationManager {
                 MyLocationManager.updateLocation();
 
             } else if(split[0].equals("$GPRMC")) {
-            	// Recommended minimum data for gps
+                // Recommended minimum data for gps
                 // boolean status = split[2].equals("A"); // A = active, V = void
                 latitude = parseDegreesMinutes(split[3], split[4]);
                 longitude = parseDegreesMinutes(split[5], split[6]);
@@ -234,12 +255,12 @@ public class MyLocationManager {
                 vN = groundSpeed * Math.cos(Math.toRadians(bearing));
                 vE = groundSpeed * Math.sin(Math.toRadians(bearing));
                 if(!Double.isNaN(MyAltimeter.climb)) {
-	                speed = Math.sqrt(groundSpeed * groundSpeed + MyAltimeter.climb * MyAltimeter.climb);
-	                glide = -groundSpeed / MyAltimeter.climb;
-	                glideAngle = Math.toDegrees(Math.atan(MyAltimeter.climb / groundSpeed));
+                    speed = Math.sqrt(groundSpeed * groundSpeed + MyAltimeter.climb * MyAltimeter.climb);
+                    glide = -groundSpeed / MyAltimeter.climb;
+                    glideAngle = Math.toDegrees(Math.atan(MyAltimeter.climb / groundSpeed));
                 } else {
-                	// If we don't have altimeter data, fall back to ground speed
-                	speed = groundSpeed;
+                    // If we don't have altimeter data, fall back to ground speed
+                    speed = groundSpeed;
                 }
                 
                 // Log.i("NMEA", "["+time+"] " + Convert.latlong(latitude, longitude) + ", groundSpeed = " + Convert.speed(groundSpeed) + ", bearing = " + Convert.bearing2(bearing));
@@ -309,17 +330,17 @@ public class MyLocationManager {
     }
     
     public static void setEnabled(boolean enable) {
-    	if(!isEnabled && enable) {
-    		// Enable
-    		isEnabled = true;
-        	manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, nullListener);
-        	manager.addNmeaListener(nmeaListener);
-    	} else if(isEnabled && !enable) {
-    		// Disable
-    		isEnabled = false;
-        	manager.removeUpdates(nullListener);
-        	manager.removeNmeaListener(nmeaListener);
-    	}
+        if(!isEnabled && enable) {
+            // Enable
+            isEnabled = true;
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, nullListener);
+            manager.addNmeaListener(nmeaListener);
+        } else if(isEnabled && !enable) {
+            // Disable
+            isEnabled = false;
+            manager.removeUpdates(nullListener);
+            manager.removeNmeaListener(nmeaListener);
+        }
     }
     
     private static final Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
@@ -373,7 +394,7 @@ public class MyLocationManager {
 
         short checksum1 = 0;
         for(int i = 1; i < starIndex; i++) {
-        	checksum1 ^= nmea.charAt(i);
+            checksum1 ^= nmea.charAt(i);
         }
         short checksum2 = Short.parseShort(nmea.substring(starIndex + 1, starIndex + 3), 16);
         return checksum1 == checksum2;

@@ -18,7 +18,7 @@ public class MAltitude extends Measurement {
 
     @Override
     public String toRow() {
-        // timeMillis, sensor, altitude, climb, pressure, latitude, longitude, altitude_gps, vN, vE, gX, gY, gZ, rotX, rotY, rotZ, acc
+        // timeMillis, sensor, altitude, climb, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
         return String.format("%d,alt,%f,%f,%f", timeMillis, altitude, climb, pressure);
     }
 
