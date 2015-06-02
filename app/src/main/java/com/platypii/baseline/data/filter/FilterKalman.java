@@ -1,6 +1,5 @@
 package com.platypii.baseline.data.filter;
 
-
 /**
  * Implements a Kalman Filter
  * @author platypii
@@ -21,11 +20,8 @@ public class FilterKalman extends Filter {
     
     public void update(double z, double dt) {
     	
-    	if(dt == 0) {
-    		this.x = z;
-    		this.v = 0;
-    	} else {
-    	
+    	if(dt > 0) {
+
 	        // Estimated state
 	        double predicted_altitude = x + v * dt;
 	        

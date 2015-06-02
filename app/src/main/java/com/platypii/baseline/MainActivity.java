@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
     }
 
     public void clickStart(View v) {
-        if(logging == false) {
+        if(!logging) {
             Log.i("Main", "Starting logging");
             logging = true;
             startButton.setEnabled(false);

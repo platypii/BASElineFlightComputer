@@ -21,10 +21,6 @@ public class Stat {
     M2 = M2 + delta * (x - mean);
   }
 
-  public double total() {
-    return total;
-  }
-
   public double mean() {
     return mean;
   }

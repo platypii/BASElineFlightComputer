@@ -19,7 +19,7 @@
             android:onClick="clickStart"
             android:drawableTop="@drawable/circle"
             android:textStyle="bold"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:text="Record"
             android:textColor="#dddddd" />
 
@@ -32,7 +32,7 @@
             android:onClick="clickStop"
             android:drawableTop="@drawable/square"
             android:textStyle="bold"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:text="Stop"
             android:textColor="#dddddd"
             android:enabled="false" />

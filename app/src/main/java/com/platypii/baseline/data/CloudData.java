@@ -5,8 +5,8 @@ import org.json.JSONObject;
 
 /** Class representing online track info */
 public class CloudData {
-    public String trackUrl;
-    public String trackKml;
+    public final String trackUrl;
+    public final String trackKml;
 
     CloudData(String trackUrl, String trackKml) {
         this.trackUrl = trackUrl;

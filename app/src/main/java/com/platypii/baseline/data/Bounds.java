@@ -82,22 +82,4 @@ public class Bounds {
         }
     }
     
-    /**
-     * Edits bounds to be the smallest bounds with square aspect ratio containing the old bounds
-     */
-    public void squareBounds(int width, int height) {
-        // TODO: Respect min/max constraints
-        double aspectCanvas = ((float)width) / height;
-        double boundsWidth = right - left;
-        double boundsHeight = top - bottom;
-        double aspectBounds = boundsWidth / boundsHeight;
-        if(aspectCanvas < aspectBounds) {
-            double delta = (boundsWidth / aspectCanvas - boundsHeight) / 2f;
-            set(left, top + delta, right, bottom - delta);
-        } else {
-            double delta = (boundsHeight * aspectCanvas - boundsWidth) / 2f;
-            set(left - delta, top, right + delta, bottom);
-        }
-    }
-
 }

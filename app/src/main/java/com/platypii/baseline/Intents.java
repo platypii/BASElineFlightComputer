@@ -4,15 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
-import com.platypii.baseline.data.TheCloud;
 
 import java.text.SimpleDateFormat;
 
-public class Intents {
+class Intents {
 
     /** Open jump activity */
     public static void openJumpActivity(Context context, Jump jump) {

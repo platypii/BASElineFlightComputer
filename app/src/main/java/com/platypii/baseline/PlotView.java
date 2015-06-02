@@ -40,7 +40,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     private final Path path = new Path();
 
     private final float density = getResources().getDisplayMetrics().density;
-    public final double EPSILON = 0.001;
+    final double EPSILON = 0.001;
 
     // THE FOLLOWING FIELDS ARE ONLY VALID IN THE PLOTVIEW.DRAWPLOT() CONTEXT:
     // View bounds lag behind data bounds by 1 refresh. Faster.
@@ -413,13 +413,13 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     }
 
     // Returns the screen-space x coordinate
-    public float getX(double x) {
+    float getX(double x) {
         double ppm_x = ((right - padding_right) - (left + padding_left)) / (bounds.right - bounds.left); // pixels per meter
         return (float) (left + padding_left + (x - bounds.left) * ppm_x);
     }
 
     // Returns the screen-space y coordinate
-    public float getY(double y) {
+    float getY(double y) {
         double ppm_y = ((bottom - padding_bottom) - (top + padding_top)) / (bounds.top - bounds.bottom); // pixels per meter
         return (float) (bottom - padding_bottom - (y - bounds.bottom) * ppm_y);
     }

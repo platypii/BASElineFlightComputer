@@ -30,7 +30,6 @@ public class MyLocationManager {
     private static final List<MyLocationListener> listeners = new ArrayList<>();
     
     // GPS status
-    public static boolean isEnabled = true;
     public static float refreshRate = 0; // Moving average of refresh rate in Hz
     
     // Satellite data
@@ -78,11 +77,9 @@ public class MyLocationManager {
             
             // Obtain GPS locations
             manager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-            if(isEnabled) {
-                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, nullListener);
-                manager.addNmeaListener(nmeaListener);
-            }
-            
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, nullListener);
+            manager.addNmeaListener(nmeaListener);
+
             // TODO: Start an interval timer to update when signal is lost
             
         }
@@ -326,20 +323,6 @@ public class MyLocationManager {
                 return -degrees;
             else
                 return degrees;
-        }
-    }
-    
-    public static void setEnabled(boolean enable) {
-        if(!isEnabled && enable) {
-            // Enable
-            isEnabled = true;
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, nullListener);
-            manager.addNmeaListener(nmeaListener);
-        } else if(isEnabled && !enable) {
-            // Disable
-            isEnabled = false;
-            manager.removeUpdates(nullListener);
-            manager.removeNmeaListener(nmeaListener);
         }
     }
     
