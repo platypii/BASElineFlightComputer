@@ -71,6 +71,7 @@ public class TheCloud {
         final File file = jump.logFile;
         final URL url = new URL(postUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestProperty("Content-Type", "application/gzip");
         final long contentLength = file.length();
         try {
             conn.setDoOutput(true);
