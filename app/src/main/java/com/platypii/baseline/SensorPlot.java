@@ -67,19 +67,19 @@ public class SensorPlot extends PlotView {
                 drawPoints(canvas, ySeries, 1.5f, 0xff00ee00);
                 drawPoints(canvas, zSeries, 1.5f, 0xffee00ee);
             } else if(mode == PlotMode.LINE) {
-            	paint.setStrokeMiter(2);
-            	paint.setColor(0xffee0000);
+                paint.setStrokeMiter(2);
+                paint.setColor(0xffee0000);
                 drawLine(canvas, xSeries, 1.5f);
-            	paint.setColor(0xff00ee00);
+                paint.setColor(0xff00ee00);
                 drawLine(canvas, ySeries, 1.5f);
-            	paint.setColor(0xffee00ee);
+                paint.setColor(0xffee00ee);
                 drawLine(canvas, zSeries, 1.5f);
             } else if(mode == PlotMode.AREA) {
-            	paint.setColor(0xffee0000);
+                paint.setColor(0xffee0000);
                 drawArea(canvas, xSeries, 0, 1);
-            	paint.setColor(0xff00ee00);
-            	drawArea(canvas, ySeries, 0, 1);
-            	paint.setColor(0xffee00ee);
+                paint.setColor(0xff00ee00);
+                drawArea(canvas, ySeries, 0, 1);
+                paint.setColor(0xffee00ee);
                 drawArea(canvas, zSeries, 0, 1);
             }
         }

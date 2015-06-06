@@ -46,7 +46,7 @@ public class TheCloud {
         if(cloudData != null) {
             // Already uploaded, return url
             return cloudData;
-        } else if(isNetworkConnected()) {
+        } else {
             // Upload to the cloud
             try {
                 // Save cloud data
@@ -61,9 +61,6 @@ public class TheCloud {
                 Log.e("Cloud", "Failed to parse response", e);
                 return null;
             }
-        } else {
-            Log.w("Cloud", "Network not connected");
-            return null;
         }
     }
 
@@ -114,13 +111,6 @@ public class TheCloud {
             builder.append(new String(buffer, 0, bytesRead));
         }
         return builder.toString();
-    }
-
-    private static boolean isNetworkConnected() {
-//        final ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        final NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-//        return (networkInfo != null && networkInfo.isConnected());
-        return true; // TODO
     }
 
 }
