@@ -17,7 +17,11 @@ public abstract class Measurement {
     public double pressure = Double.NaN; // Barometric pressure (hPa)
     
     // All measurements must be able to write out to CSV
-    // timeMillis, sensor, altitude, climb, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
+    // millis, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
     public abstract String toRow();
+
+    public static String header() {
+        return "millis,sensor,pressure,latitude,longitude,altitude_gps,vN,vE,satellites,gX,gY,gZ,rotX,rotY,rotZ,acc";
+    }
 }
 

@@ -55,8 +55,8 @@ public class MLocation extends Measurement {
         final String sat_str = (numSat != -1)? Integer.toString(numSat) : "";
         final String vN_str = isReal(vN)? Double.toString(vN) : "";
         final String vE_str = isReal(vE)? Double.toString(vE) : "";
-        // timeMillis, sensor, altitude, climb, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
-        return String.format("%d,gps,,,,%f,%f,%f,%s,%s,%s", timeMillis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
+        // millis, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
+        return String.format("%d,gps,,%f,%f,%f,%s,%s,%s", timeMillis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
     }
 
     private static boolean isReal(double x) {

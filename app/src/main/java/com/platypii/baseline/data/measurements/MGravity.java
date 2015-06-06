@@ -23,8 +23,8 @@ public class MGravity extends MSensor {
 
     @Override
     public String toRow() {
-        // timeMillis, sensor, altitude, climb, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
-        return String.format("%d,grv,,,,,,,,,,%f,%f,%f,,,", timeMillis, gX, gY, gZ);
+        // millis, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
+        return String.format("%d,grv,,,,,,,,%f,%f,%f", timeMillis, gX, gY, gZ);
     }
 
 }
