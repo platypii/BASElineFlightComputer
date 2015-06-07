@@ -5,11 +5,12 @@ package com.platypii.baseline.data.measurements;
  * @author platypii
  */
 public abstract class Measurement {
-    
-    public long timeMillis; // Milliseconds since epoch
-    
+
+    public long millis; // Milliseconds since epoch
+    public long nano; // Nanoseconds since boot
+
     public String sensor;
-    
+
     // Altimeter
     //public long timeNano = -1; // Nanoseconds reported by android SensorEvent
     public double altitude = Double.NaN; // Altitude
@@ -17,11 +18,10 @@ public abstract class Measurement {
     public double pressure = Double.NaN; // Barometric pressure (hPa)
     
     // All measurements must be able to write out to CSV
-    // millis, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
     public abstract String toRow();
 
     public static String header() {
-        return "millis,sensor,pressure,latitude,longitude,altitude_gps,vN,vE,satellites,gX,gY,gZ,rotX,rotY,rotZ,acc";
+        return "millis,nano,sensor,pressure,latitude,longitude,altitude_gps,vN,vE,satellites,gX,gY,gZ,rotX,rotY,rotZ,acc";
     }
 }
 

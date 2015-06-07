@@ -42,7 +42,7 @@ public class ElevationTimePlot extends PlotView {
         // Copy values to local history (so that we don't block while drawing circles)
         synchronized(MyAltimeter.history) {
             for(MAltitude alt : MyAltimeter.history) {
-                double x = alt.timeMillis - MainActivity.startTime;
+                double x = alt.millis - MainActivity.startTime;
                 double y = alt.altitude;
                 series.addPoint(x, y);
             }

@@ -168,7 +168,7 @@ public class MyAltimeter {
                 // No barometer use gps
                 final double prevAltitude = altitude;
                 final long prevLastFix = lastFixMillis;
-                lastFixMillis = loc.timeMillis;
+                lastFixMillis = loc.millis;
                 // Update the official altitude
                 altitude = altitude_gps;
                 if(Double.isNaN(prevAltitude)) {

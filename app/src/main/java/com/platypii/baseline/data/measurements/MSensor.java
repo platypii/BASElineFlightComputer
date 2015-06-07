@@ -14,7 +14,7 @@ public abstract class MSensor extends Measurement {
 
 //    public SensorMeasurement(MySensorEvent event) {
 //        // Store sensor data
-//        this.timeMillis = event.timeMillis;
+//        this.millis = event.timeMillis;
 //        // this.accuracy = event.accuracy;
 //        if(event.sensor == Sensor.TYPE_ACCELEROMETER) {
 //            this.sensor = "Acc";
@@ -40,8 +40,8 @@ public abstract class MSensor extends Measurement {
 
     @Override
     public String toRow() {
-        // millis, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
-        return String.format("%d,acc,,,,,,,,%f,%f,%f,%f,%f,%f,%f", timeMillis, gX, gY, gZ, rotX, rotY, rotZ, acc);
+        // millis, nano, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
+        return String.format(",%d,acc,,,,,,,,%f,%f,%f,%f,%f,%f,%f", nano, gX, gY, gZ, rotX, rotY, rotZ, acc);
     }
 
 }

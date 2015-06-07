@@ -8,8 +8,8 @@ package com.platypii.baseline.data.measurements;
 public class MAltitude extends Measurement {
     public String sensor = "Alt";
 
-    public MAltitude(long timeMillis, double altitude, double climb, float pressure, double altitude_gps) {
-    	this.timeMillis = timeMillis;
+    public MAltitude(long nano, double altitude, double climb, float pressure, double altitude_gps) {
+        this.nano = nano;
         this.sensor = "Alt";
         this.altitude = altitude;
         this.climb = climb;
@@ -18,8 +18,8 @@ public class MAltitude extends Measurement {
 
     @Override
     public String toRow() {
-        // millis, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
-        return String.format("%d,alt,%f", timeMillis, pressure);
+        // millis, nano, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
+        return String.format(",%d,alt,%f", nano, pressure);
     }
 
 }

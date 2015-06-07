@@ -21,7 +21,7 @@ public class MLocation extends Measurement {
     public int numSat = -1; // Number of satellites
     public float groundDistance = Float.NaN; // Ground distance since app started
 
-    public MLocation(long timeMillis, double latitude, double longitude, double altitude_gps,
+    public MLocation(long millis, double latitude, double longitude, double altitude_gps,
                      double vN, double vE,
                      float hAcc, float pdop, float hdop, float vdop,
                      int numSat, float groundDistance) {
@@ -35,7 +35,7 @@ public class MLocation extends Measurement {
         if(Double.isInfinite(vE)) Log.e("MLocation", "Infinite vE");
 
         // Store location data
-        this.timeMillis = timeMillis;
+        this.millis = millis;
         this.sensor = "GPS";
         this.latitude = latitude;
         this.longitude = longitude;
@@ -55,8 +55,8 @@ public class MLocation extends Measurement {
         final String sat_str = (numSat != -1)? Integer.toString(numSat) : "";
         final String vN_str = isReal(vN)? Double.toString(vN) : "";
         final String vE_str = isReal(vE)? Double.toString(vE) : "";
-        // millis, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
-        return String.format("%d,gps,,%f,%f,%f,%s,%s,%s", timeMillis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
+        // millis, nano, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
+        return String.format("%d,,gps,,%f,%f,%f,%s,%s,%s", millis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
     }
 
     private static boolean isReal(double x) {

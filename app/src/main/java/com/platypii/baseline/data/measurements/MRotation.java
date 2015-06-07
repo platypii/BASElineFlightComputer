@@ -3,8 +3,8 @@ package com.platypii.baseline.data.measurements;
 /** Copies an android SensorEvent */
 public class MRotation extends MSensor {
 
-    public MRotation(long millis, float x, float y, float z) {
-        this.timeMillis = millis;
+    public MRotation(long nano, float x, float y, float z) {
+        this.nano = nano;
         // this.accuracy = event.accuracy;
         this.rotX = x;
         this.rotY = y;
@@ -23,8 +23,8 @@ public class MRotation extends MSensor {
 
     @Override
     public String toRow() {
-        // millis, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
-        return String.format("%d,rot,,,,,,,,,,,%f,%f,%f,", timeMillis, rotX, rotY, rotZ);
+        // millis, nano, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
+        return String.format(",%d,rot,,,,,,,,,,,%f,%f,%f,", nano, rotX, rotY, rotZ);
     }
 
 }
