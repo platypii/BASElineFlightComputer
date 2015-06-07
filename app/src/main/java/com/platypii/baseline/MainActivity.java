@@ -34,7 +34,6 @@ public class MainActivity extends Activity {
     // Periodic UI updates
     private final Handler handler = new Handler();
     private final int updateInterval = 32; // milliseconds
-    private boolean logging = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +48,9 @@ public class MainActivity extends Activity {
 
         // Start flight services
         initServices();
+
+        // Restore start/stop state
+        updateUIState();
     }
 
     private void initServices() {
@@ -67,39 +69,23 @@ public class MainActivity extends Activity {
     }
 
     public void clickStart(View v) {
-        if(!logging) {
+        if(!MyDatabase.isLogging()) {
             Log.i("Main", "Starting logging");
-            logging = true;
-            startButton.setEnabled(false);
-            stopButton.setEnabled(true);
-            jumpsButton.setEnabled(false);
-            invalidateOptionsMenu();
 
             // Start logging
             MyDatabase.startLogging(getApplicationContext());
-
-            // Start periodic UI updates
-            handler.post(new Runnable() {
-                public void run() {
-                    update();
-                    if (logging) {
-                        handler.postDelayed(this, updateInterval);
-                    }
-                }
-            });
+            updateUIState();
         }
     }
 
     public void clickStop(View v) {
         Log.i("Main", "Stopping logging");
-        logging = false;
-        clock.setText("");
-        startButton.setEnabled(true);
-        stopButton.setEnabled(false);
-        jumpsButton.setEnabled(true);
-        invalidateOptionsMenu();
+
         // Stop logging
         final Jump jump = MyDatabase.stopLogging();
+        updateUIState();
+
+        // Upload to the cloud
         if(jump != null) {
             // Begin automatic upload
             TheCloud.upload(jump, new TheCloud.Callback<CloudData>() {
@@ -113,6 +99,32 @@ public class MainActivity extends Activity {
         }
     }
 
+    // Enables buttons and clock
+    private void updateUIState() {
+        if(MyDatabase.isLogging()) {
+            startButton.setEnabled(false);
+            stopButton.setEnabled(true);
+            jumpsButton.setEnabled(false);
+
+            // Start periodic UI updates
+            handler.post(new Runnable() {
+                public void run() {
+                    update();
+                    if (MyDatabase.isLogging()) {
+                        handler.postDelayed(this, updateInterval);
+                    }
+                }
+            });
+
+        } else {
+            clock.setText("");
+            startButton.setEnabled(true);
+            stopButton.setEnabled(false);
+            jumpsButton.setEnabled(true);
+        }
+        invalidateOptionsMenu();
+    }
+
     public void clickJumps(View v) {
         // Open jumps activity
         final Intent intent = new Intent(this, JumpsActivity.class);
@@ -120,7 +132,7 @@ public class MainActivity extends Activity {
     }
 
     private void update() {
-        if(logging) {
+        if(MyDatabase.isLogging()) {
             clock.setText(MyDatabase.getLogTime());
         } else {
             clock.setText("");
@@ -136,7 +148,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onPrepareOptionsMenu (Menu menu) {
-        return !logging;
+        return !MyDatabase.isLogging();
     }
 
     @Override

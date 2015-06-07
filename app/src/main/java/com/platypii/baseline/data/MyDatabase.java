@@ -58,6 +58,28 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
         }
     }
 
+    public static boolean isLogging() {
+        return db != null;
+    }
+
+    public static String getLogTime() {
+        if(db != null) {
+            long nanoTime;
+            if (db.stopTime == -1) {
+                nanoTime = System.nanoTime() - db.startTime;
+            } else {
+                nanoTime = db.stopTime - db.startTime;
+            }
+            final long millis = (nanoTime / 1000000L) % 1000;
+            final long seconds = (nanoTime / 1000000000L) % 60;
+            final long minutes = nanoTime / 60000000000L;
+            return String.format("%d:%02d.%03d", minutes, seconds, millis);
+        } else {
+            return "0:00.000";
+        }
+    }
+
+
     private MyDatabase(Context appContext) throws IOException {
         // Open log file for writing
         final File logDir = JumpLog.getLogDirectory(appContext);
@@ -77,23 +99,6 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
         MySensorManager.addListener(this);
 
         Log.i("DB", "Logging to " + logFile);
-    }
-
-    public static String getLogTime() {
-        if(db != null) {
-            long nanoTime;
-            if (db.stopTime == -1) {
-                nanoTime = System.nanoTime() - db.startTime;
-            } else {
-                nanoTime = db.stopTime - db.startTime;
-            }
-            final long millis = (nanoTime / 1000000L) % 1000;
-            final long seconds = (nanoTime / 1000000000L) % 60;
-            final long minutes = nanoTime / 60000000000L;
-            return String.format("%d:%02d.%03d", minutes, seconds, millis);
-        } else {
-            return "0:00.000";
-        }
     }
 
     private File stop() {
