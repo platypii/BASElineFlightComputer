@@ -1,3 +1,11 @@
 <resources>
+
     <string name="app_name">BASEline Logger</string>
+
+    <string name="username_prompt">Enter Username</string>
+    <string name="password_prompt">Enter Password</string>
+
+    <string name="error_username_required">Username Required</string>
+    <string name="error_password_required">Password Required</string>
+
 </resources>

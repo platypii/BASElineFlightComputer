@@ -3,4 +3,7 @@
     <item
         android:id="@+id/menu_item_sensor_info"
         android:title="Sensor Info" />
+    <item
+        android:id="@+id/menu_item_login"
+        android:title="Login" />
 </menu>

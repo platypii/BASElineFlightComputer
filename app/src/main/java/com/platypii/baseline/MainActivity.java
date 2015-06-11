@@ -159,6 +159,9 @@ public class MainActivity extends Activity {
                 final Intent intent = new Intent(this, SensorActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.menu_item_login:
+                AuthFlow.startFlow(this);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
