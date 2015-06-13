@@ -34,6 +34,7 @@ public class MainActivity extends Activity {
     // Periodic UI updates
     private final Handler handler = new Handler();
     private final int updateInterval = 32; // milliseconds
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +144,21 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+        this.menu = menu;
+        final MenuItem loginItem = menu.findItem(R.id.menu_item_login);
+        final MenuItem logoutItem = menu.findItem(R.id.menu_item_logout);
+        // Check signin state
+        final String auth = Auth.getAuth(this);
+        if(auth != null) {
+            // Logged in
+            loginItem.setVisible(false);
+            loginItem.setTitle("Logout " + auth);
+            logoutItem.setVisible(true);
+        } else {
+            // Logged out
+            loginItem.setVisible(true);
+            logoutItem.setVisible(false);
+        }
         return true;
     }
 
@@ -161,6 +177,11 @@ public class MainActivity extends Activity {
                 return true;
             case R.id.menu_item_login:
                 AuthFlow.startFlow(this);
+                return true;
+            case R.id.menu_item_logout:
+                Auth.setAuth(this, null);
+                Toast.makeText(this, R.string.signout_message, Toast.LENGTH_LONG).show();
+                invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

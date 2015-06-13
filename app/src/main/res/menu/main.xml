@@ -6,4 +6,7 @@
     <item
         android:id="@+id/menu_item_login"
         android:title="Login" />
+    <item
+        android:id="@+id/menu_item_logout"
+        android:title="Logout" />
 </menu>

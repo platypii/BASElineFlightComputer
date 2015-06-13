@@ -37,7 +37,7 @@ public class Auth {
     }
 
     public static boolean usernameExists(CharSequence username) throws JSONException {
-        final String postUrl = "https://base-line.ws/users/" + username;
+        final String postUrl = "https://base-line.ws/auth/user/" + username;
         try {
             Log.i("Auth", "Validating username " + username + " at url " + postUrl);
             final int status = postJson(postUrl, null);
