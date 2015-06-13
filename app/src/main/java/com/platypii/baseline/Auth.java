@@ -29,10 +29,10 @@ public class Auth {
         final SharedPreferences prefs = context.getSharedPreferences("baseline", Context.MODE_PRIVATE);
         return prefs.getString(AUTH_KEY, null);
     }
-    public static void setAuthenticated(Context context) {
+    public static void setAuth(Context context, String auth) {
         // Update preferences
         final SharedPreferences.Editor editor = context.getSharedPreferences("baseline", Context.MODE_PRIVATE).edit();
-        editor.putBoolean(Auth.AUTH_KEY, true);
+        editor.putString(Auth.AUTH_KEY, auth);
         editor.apply();
     }
 
@@ -55,16 +55,17 @@ public class Auth {
         json.put("username", username);
         json.put("password", username);
         try {
-            Log.i("Auth", "Register user " + username + " at url " + postUrl);
+            Log.i("Auth", "Registering user " + username + " at url " + postUrl);
             final int status = postJson(postUrl, json);
             if (status == 200) {
+                Log.i("Auth", "Sign up success");
                 return true;
             } else {
-                Log.e("Auth", "Userpass registration failed " + status);
+                Log.e("Auth", "Sign up failed " + status);
                 return false;
             }
         } catch(IOException e) {
-            Log.e("Auth", "Userpass registration failed", e);
+            Log.e("Auth", "Sign up failed", e);
             return false;
         }
     }
@@ -80,9 +81,10 @@ public class Auth {
             Log.i("Auth", "Validating user " + username + " at url " + postUrl);
             final int status = postJson(postUrl, json);
             if (status == 200) {
+                Log.i("Auth", "Sign in success");
                 return true;
             } else {
-                Log.e("Auth", "Userpass validation failed " + status);
+                Log.w("Auth", "Sign in failed " + status);
                 return false;
             }
         } catch(IOException e) {
@@ -96,6 +98,7 @@ public class Auth {
         final URL url = new URL(postUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         try {
+            conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             if(json != null) {
                 // Write to request body
                 conn.setDoOutput(true);
