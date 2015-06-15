@@ -4,9 +4,9 @@
         android:id="@+id/menu_item_sensor_info"
         android:title="Sensor Info" />
     <item
-        android:id="@+id/menu_item_login"
-        android:title="Login" />
+        android:id="@+id/menu_item_signin"
+        android:title="Sign In" />
     <item
-        android:id="@+id/menu_item_logout"
-        android:title="Logout" />
+        android:id="@+id/menu_item_signout"
+        android:title="Sign Out" />
 </menu>

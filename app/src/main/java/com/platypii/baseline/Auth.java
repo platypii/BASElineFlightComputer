@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class Auth {
 
-    private static final String AUTH_KEY = "is_authenticated";
+    private static final String AUTH_KEY = "auth_token";
 
     /** Return an ID string unique to this device */
     public static String getId() {
@@ -36,49 +36,14 @@ public class Auth {
         editor.apply();
     }
 
-    public static boolean usernameExists(CharSequence username) throws JSONException {
-        final String postUrl = "https://base-line.ws/auth/user/" + username;
-        try {
-            Log.i("Auth", "Validating username " + username + " at url " + postUrl);
-            final int status = postJson(postUrl, null);
-            return (status == 200);
-        } catch(IOException e) {
-            Log.e("Auth", "Username validation failed", e);
-            return false;
-        }
-    }
-
-    public static boolean signup(CharSequence username, CharSequence password) throws JSONException {
-        final String postUrl = "https://base-line.ws/auth/signup";
-        // Construct JSON request
-        final JSONObject json = new JSONObject();
-        json.put("username", username);
-        json.put("password", username);
-        try {
-            Log.i("Auth", "Registering user " + username + " at url " + postUrl);
-            final int status = postJson(postUrl, json);
-            if (status == 200) {
-                Log.i("Auth", "Sign up success");
-                return true;
-            } else {
-                Log.e("Auth", "Sign up failed " + status);
-                return false;
-            }
-        } catch(IOException e) {
-            Log.e("Auth", "Sign up failed", e);
-            return false;
-        }
-    }
-
     /** Validate against baseline server */
-    public static boolean signin(CharSequence username, CharSequence password) throws JSONException {
+    public static boolean signin(CharSequence token) throws JSONException {
         final String postUrl = "https://base-line.ws/auth/signin";
         // Construct JSON request
         final JSONObject json = new JSONObject();
-        json.put("username", username);
-        json.put("password", username);
+        json.put("id_token", token);
         try {
-            Log.i("Auth", "Validating user " + username + " at url " + postUrl);
+            Log.i("Auth", "Validating user - url = " + postUrl + ", token = " + token);
             final int status = postJson(postUrl, json);
             if (status == 200) {
                 Log.i("Auth", "Sign in success");
@@ -88,7 +53,7 @@ public class Auth {
                 return false;
             }
         } catch(IOException e) {
-            Log.e("Auth", "Userpass validation failed", e);
+            Log.e("Auth", "Token validation failed", e);
             return false;
         }
     }
@@ -115,5 +80,6 @@ public class Auth {
             conn.disconnect();
         }
     }
+
 
 }

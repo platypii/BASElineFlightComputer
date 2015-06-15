@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_id": "baseline-ccafb",
+    "project_number": "1025187389465",
+    "name": "BASEline"
+  },
+  "client": [
+    {
+      "client_info": {
+        "client_id": "android:com.platypii.baseline",
+        "client_type": 1,
+        "android_client_info": {"package_name": "com.platypii.baseline"}
+      },
+      "oauth_client": [
+        {
+          "client_id": "1025187389465-9a7sqq9m29aroq5c1shn1lq7kdklav4e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.platypii.baseline",
+            "certificate_hash": "e819ec64b81a7bb37475aed4d69ac341cc16ea9f"
+          }
+        }
+      ],
+      "services": {
+        "analytics_service": {"status": 1},
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {"status": 2},
+        "ads_service": {"status": 1}
+      }
+    }
+  ]
+}

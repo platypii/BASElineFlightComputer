@@ -145,19 +145,18 @@ public class MainActivity extends Activity {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
         this.menu = menu;
-        final MenuItem loginItem = menu.findItem(R.id.menu_item_login);
-        final MenuItem logoutItem = menu.findItem(R.id.menu_item_logout);
+        final MenuItem loginItem = menu.findItem(R.id.menu_item_signin);
+        final MenuItem logoutItem = menu.findItem(R.id.menu_item_signout);
         // Check signin state
         final String auth = Auth.getAuth(this);
         if(auth != null) {
             // Logged in
             loginItem.setVisible(false);
-            loginItem.setTitle("Logout " + auth);
             logoutItem.setVisible(true);
         } else {
             // Logged out
             loginItem.setVisible(true);
-            logoutItem.setVisible(false);
+            // TODO: logoutItem.setVisible(false);
         }
         return true;
     }
@@ -175,12 +174,13 @@ public class MainActivity extends Activity {
                 final Intent intent = new Intent(this, SensorActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.menu_item_login:
-                AuthFlow.startFlow(this);
+            case R.id.menu_item_signin:
+                GoogleAuth.signin(this);
                 return true;
-            case R.id.menu_item_logout:
-                Auth.setAuth(this, null);
-                Toast.makeText(this, R.string.signout_message, Toast.LENGTH_LONG).show();
+            case R.id.menu_item_signout:
+                if(GoogleAuth.signout(this)) {
+                    Toast.makeText(this, R.string.signout_message, Toast.LENGTH_SHORT).show();
+                }
                 invalidateOptionsMenu();
                 return true;
             default:
