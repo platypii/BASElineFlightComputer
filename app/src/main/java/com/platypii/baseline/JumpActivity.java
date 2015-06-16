@@ -72,11 +72,12 @@ public class JumpActivity extends Activity implements SyncStatus.SyncListener {
             Intents.openTrackUrl(this, cloudData);
         } else {
             // Start upload
+            final String auth = Auth.getAuth(this);
             // TODO: Spinner
             Toast.makeText(this, "Syncing track...", Toast.LENGTH_SHORT).show();
-            TheCloud.upload(jump, new TheCloud.Callback<CloudData>() {
+            TheCloud.upload(jump, auth, new Callback<CloudData>() {
                 @Override
-                public void call(CloudData result) {
+                public void apply(CloudData result) {
                     if(result != null) {
                         updateViews();
                         Toast.makeText(JumpActivity.this, "Track sync success", Toast.LENGTH_LONG).show();

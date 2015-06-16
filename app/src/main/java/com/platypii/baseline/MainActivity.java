@@ -50,6 +50,10 @@ public class MainActivity extends Activity {
         // Start flight services
         initServices();
 
+        if(Auth.getAuth(this) != null) {
+            Log.i("Auth", "User signed in");
+        }
+
         // Restore start/stop state
         updateUIState();
     }
@@ -89,9 +93,10 @@ public class MainActivity extends Activity {
         // Upload to the cloud
         if(jump != null) {
             // Begin automatic upload
-            TheCloud.upload(jump, new TheCloud.Callback<CloudData>() {
+            final String auth = Auth.getAuth(this);
+            TheCloud.upload(jump, auth, new Callback<CloudData>() {
                 @Override
-                public void call(CloudData result) {
+                public void apply(CloudData result) {
                     Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -156,7 +161,7 @@ public class MainActivity extends Activity {
         } else {
             // Logged out
             loginItem.setVisible(true);
-            // TODO: logoutItem.setVisible(false);
+            logoutItem.setVisible(false);
         }
         return true;
     }
@@ -175,7 +180,13 @@ public class MainActivity extends Activity {
                 startActivity(intent);
                 return true;
             case R.id.menu_item_signin:
-                GoogleAuth.signin(this);
+                GoogleAuth.signin(this, new Callback<String>() {
+                    @Override
+                    public void apply(String s) {
+                        Toast.makeText(MainActivity.this, "Sign in successful", Toast.LENGTH_LONG).show();
+                        invalidateOptionsMenu();
+                    }
+                });
                 return true;
             case R.id.menu_item_signout:
                 if(GoogleAuth.signout(this)) {

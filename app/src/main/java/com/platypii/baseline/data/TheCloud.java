@@ -3,6 +3,9 @@ package com.platypii.baseline.data;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.platypii.baseline.Auth;
+import com.platypii.baseline.Callback;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,28 +22,25 @@ public class TheCloud {
     private static final String baselineServer = "https://base-line.ws";
     private static final String postUrl = baselineServer + "/tracks";
 
-    public static void upload(final Jump jump, final Callback<CloudData> cb) {
+    public static void upload(final Jump jump, final String auth, final Callback<CloudData> cb) {
         new AsyncTask<Void,Void,CloudData>() {
             @Override
             protected CloudData doInBackground(Void... voids) {
                 // Upload to the cloud
-                return TheCloud.uploadSync(jump);
+                return TheCloud.uploadSync(jump, auth);
             }
             @Override
             protected void onPostExecute(CloudData cloudData) {
                 SyncStatus.update();
                 if(cb != null) {
-                    cb.call(cloudData);
+                    cb.apply(cloudData);
                 }
             }
         }.execute();
     }
-    public interface Callback<T> {
-        void call(T result);
-    }
 
     /** Upload to the cloud */
-    private static CloudData uploadSync(Jump jump) {
+    private static CloudData uploadSync(Jump jump, String auth) {
         // Check if track is already uploaded
         final CloudData cloudData = jump.getCloudData();
         if(cloudData != null) {
@@ -50,7 +50,7 @@ public class TheCloud {
             // Upload to the cloud
             try {
                 // Save cloud data
-                final CloudData result = postJump(jump);
+                final CloudData result = postJump(jump, auth);
                 jump.setCloudData(result);
                 Log.i("Jump", "Upload successful, url " + result.trackUrl);
                 return result;
@@ -64,11 +64,12 @@ public class TheCloud {
         }
     }
 
-    private static CloudData postJump(Jump jump) throws IOException, JSONException {
+    private static CloudData postJump(Jump jump, String auth) throws IOException, JSONException {
         final File file = jump.logFile;
         final URL url = new URL(postUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Content-Type", "application/gzip");
+        conn.setRequestProperty("Authorization", auth);
         final long contentLength = file.length();
         try {
             conn.setDoOutput(true);
