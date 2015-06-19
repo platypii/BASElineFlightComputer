@@ -65,7 +65,7 @@ public class GoogleAuth {
                     public void onConnected(Bundle bundle) {
                         Log.i("Auth", "Authentication successful");
                         // Get google user id
-                        getProfileId(context, callback);
+                        getAuthToken(context, callback);
                     }
                     @Override
                     public void onConnectionSuspended(int i) {
@@ -84,12 +84,14 @@ public class GoogleAuth {
     /** Resolve the current ConnectionResult error (ask user for auth) */
     private static void resolveSignInError(Activity context, ConnectionResult connectionResult) {
         Log.i("Auth", "Sign in required - " + connectionResult);
-        if(!inProgress && connectionResult.hasResolution()) {
+        if(connectionResult.hasResolution()) {
+            if(inProgress) {
+                Log.w("Auth", "Sign in already in progress");
+            }
             try {
                 inProgress = true;
-                Log.d("Auth", "Starting intent");
+                Log.d("Auth", "Resolving sign in error");
                 connectionResult.startResolutionForResult(context, RC_SIGN_IN);
-                Log.d("Auth", "Intent finished");
             } catch (IntentSender.SendIntentException e) {
                 // The intent was canceled before it was sent. Return to the default
                 // state and attempt to connect to get an updated ConnectionResult.
@@ -101,16 +103,16 @@ public class GoogleAuth {
         }
     }
 
-    private static void getProfileId(final Context context, final Callback<String> callback) {
+    private static void getAuthToken(final Context context, final Callback<String> callback) {
         new AsyncTask<String, Void, String>() {
             @Override
-            protected String doInBackground(String...params){
+            protected String doInBackground(String...params) {
                 final String accountName = Plus.AccountApi.getAccountName(googleApiClient);
                 final Account account = new Account(accountName, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-                final String scopes = "oauth2:https://www.googleapis.com/auth/userinfo.profile";
-                // final String scopes = "audience:server:client_id:" + SERVER_CLIENT_ID; // Not the app's client ID
+                String scopes = "audience:server:client_id:" + SERVER_CLIENT_ID; // Not the app's client ID
+                // scopes += " oauth2:profile";
                 try {
-                    return GoogleAuthUtil.getTokenWithNotification(context, account, scopes, null);
+                    return GoogleAuthUtil.getToken(context, account, scopes, null);
                 } catch(UserRecoverableAuthException e) {
                     Log.e("Auth", "User recoverable auth error", e);
                     context.startActivity(e.getIntent());

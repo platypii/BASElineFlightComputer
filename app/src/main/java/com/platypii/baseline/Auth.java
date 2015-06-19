@@ -38,7 +38,7 @@ public class Auth {
 
     /** Validate against baseline server */
     public static boolean signin(CharSequence token) throws JSONException {
-        final String postUrl = "https://base-line.ws/auth/signin";
+        final String postUrl = "https://base-line.ws/auth/gtoken";
         // Construct JSON request
         final JSONObject json = new JSONObject();
         json.put("id_token", token);
