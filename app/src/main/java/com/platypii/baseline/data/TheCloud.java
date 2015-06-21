@@ -3,7 +3,7 @@ package com.platypii.baseline.data;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.platypii.baseline.Auth;
+import com.platypii.baseline.Try;
 import com.platypii.baseline.Callback;
 
 import java.io.BufferedOutputStream;
@@ -22,15 +22,16 @@ public class TheCloud {
     private static final String baselineServer = "https://base-line.ws";
     private static final String postUrl = baselineServer + "/tracks";
 
-    public static void upload(final Jump jump, final String auth, final Callback<CloudData> cb) {
-        new AsyncTask<Void,Void,CloudData>() {
+    public static void upload(final Jump jump, final String auth, final Callback<Try<CloudData>> cb) {
+        Log.i("Cloud", "Uploading track with auth " + auth);
+        new AsyncTask<Void,Void,Try<CloudData>>() {
             @Override
-            protected CloudData doInBackground(Void... voids) {
+            protected Try<CloudData> doInBackground(Void... voids) {
                 // Upload to the cloud
                 return TheCloud.uploadSync(jump, auth);
             }
             @Override
-            protected void onPostExecute(CloudData cloudData) {
+            protected void onPostExecute(Try<CloudData> cloudData) {
                 SyncStatus.update();
                 if(cb != null) {
                     cb.apply(cloudData);
@@ -40,26 +41,26 @@ public class TheCloud {
     }
 
     /** Upload to the cloud */
-    private static CloudData uploadSync(Jump jump, String auth) {
+    private static Try<CloudData> uploadSync(Jump jump, String auth) {
         // Check if track is already uploaded
         final CloudData cloudData = jump.getCloudData();
         if(cloudData != null) {
             // Already uploaded, return url
-            return cloudData;
+            return new Try.Success<>(cloudData);
         } else {
             // Upload to the cloud
             try {
                 // Save cloud data
                 final CloudData result = postJump(jump, auth);
                 jump.setCloudData(result);
-                Log.i("Jump", "Upload successful, url " + result.trackUrl);
-                return result;
+                Log.i("Cloud", "Upload successful, url " + result.trackUrl);
+                return new Try.Success<>(result);
             } catch(IOException e) {
                 Log.e("Cloud", "Failed to upload file", e);
-                return null;
+                return new Try.Failure<>(e.getMessage());
             } catch(JSONException e) {
                 Log.e("Cloud", "Failed to parse response", e);
-                return null;
+                return new Try.Failure<>(e.toString());
             }
         }
     }
@@ -87,6 +88,8 @@ public class TheCloud {
                 // Read body
                 final String body = toString(conn.getInputStream());
                 return CloudData.fromJson(body);
+            } else if(status == 401) {
+                throw new IOException("authorization required");
             } else {
                 throw new IOException("http status code " + status);
             }
@@ -106,7 +109,7 @@ public class TheCloud {
 
     private static String toString(InputStream input) throws IOException {
         final StringBuilder builder = new StringBuilder();
-        byte buffer[] = new byte[1024];
+        final byte buffer[] = new byte[1024];
         int bytesRead;
         while((bytesRead = input.read(buffer)) != -1) {
             builder.append(new String(buffer, 0, bytesRead));

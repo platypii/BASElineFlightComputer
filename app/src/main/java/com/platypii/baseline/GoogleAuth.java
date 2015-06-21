@@ -21,6 +21,7 @@ import com.google.android.gms.plus.Plus;
 import java.io.IOException;
 
 public class GoogleAuth {
+    private static final String TAG = "GoogleAuth";
 
     /* Request code used to invoke sign in user interactions. */
     private static final int RC_SIGN_IN = 0;
@@ -30,7 +31,7 @@ public class GoogleAuth {
     private static boolean inProgress = false;
 
     public static void signin(final Activity context, final Callback<String> callback) {
-        Log.i("Auth", "Google sign in");
+        Log.i(TAG, "Google sign in");
         if(googleApiClient == null) {
             googleApiClient = initClient(context, callback);
         }
@@ -43,13 +44,13 @@ public class GoogleAuth {
      */
     public static boolean signout(Activity context) {
         if(Auth.getAuth(context) == null) {
-            Log.e("Auth", "Sign out called but not signed in");
+            Log.e(TAG, "Sign out called but not signed in");
             return false;
         } else {
             if(googleApiClient == null) {
                 googleApiClient = initClient(context, null);
             }
-            Log.i("Auth", "Sign out");
+            Log.i(TAG, "Sign out");
             googleApiClient.disconnect();
             Auth.setAuth(context, null);
             return true;
@@ -63,13 +64,13 @@ public class GoogleAuth {
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(Bundle bundle) {
-                        Log.i("Auth", "Authentication successful");
+                        Log.i(TAG, "Authentication successful");
                         // Get google user id
-                        getAuthToken(context, callback);
+                        getAuthToken(context, callback); // TODO: Don't call during signout
                     }
                     @Override
                     public void onConnectionSuspended(int i) {
-                        Log.e("Auth", "Google API connection suspended");
+                        Log.e(TAG, "Google API connection suspended");
                     }
                 })
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
@@ -83,14 +84,14 @@ public class GoogleAuth {
 
     /** Resolve the current ConnectionResult error (ask user for auth) */
     private static void resolveSignInError(Activity context, ConnectionResult connectionResult) {
-        Log.i("Auth", "Sign in required - " + connectionResult);
+        Log.i(TAG, "Sign in required - " + connectionResult);
         if(connectionResult.hasResolution()) {
             if(inProgress) {
-                Log.w("Auth", "Sign in already in progress");
+                Log.w(TAG, "Sign in already in progress");
             }
             try {
                 inProgress = true;
-                Log.d("Auth", "Resolving sign in error");
+                Log.d(TAG, "Resolving sign in error");
                 connectionResult.startResolutionForResult(context, RC_SIGN_IN);
             } catch (IntentSender.SendIntentException e) {
                 // The intent was canceled before it was sent. Return to the default
@@ -99,7 +100,7 @@ public class GoogleAuth {
                 googleApiClient.connect();
             }
         } else {
-            Log.e("Auth", "Sign in impossible");
+            Log.e(TAG, "Sign in impossible");
         }
     }
 
@@ -114,24 +115,26 @@ public class GoogleAuth {
                 try {
                     return GoogleAuthUtil.getToken(context, account, scopes, null);
                 } catch(UserRecoverableAuthException e) {
-                    Log.e("Auth", "User recoverable auth error", e);
+                    Log.e(TAG, "User recoverable auth error", e);
                     context.startActivity(e.getIntent());
                     return null;
                 } catch(GoogleAuthException e) {
-                    Log.e("Auth", "Error retrieving ID token", e);
+                    Log.e(TAG, "Error retrieving ID token", e);
                     return null;
                 } catch(IOException e) {
-                    Log.e("Auth", "Error retrieving ID token", e);
+                    Log.e(TAG, "Error retrieving ID token", e);
                     return null;
                 }
             }
             @Override
             protected void onPostExecute(String token) {
                 if(token != null) {
-                    Log.i("Auth", "User signed in " + token);
+                    Log.i(TAG, "User signed in " + token);
                     Auth.setAuth(context, token);
-                    // Callback to indicate success
-                    callback.apply(token);
+                    if(callback != null) {
+                        // Callback to indicate success
+                        callback.apply(token);
+                    }
                 } else {
                     Toast.makeText(context, "Sign in failed", Toast.LENGTH_SHORT).show();
                 }

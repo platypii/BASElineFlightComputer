@@ -97,10 +97,14 @@ public class MainActivity extends Activity {
         if(jump != null) {
             // Begin automatic upload
             final String auth = Auth.getAuth(this);
-            TheCloud.upload(jump, auth, new Callback<CloudData>() {
+            TheCloud.upload(jump, auth, new Callback<Try<CloudData>>() {
                 @Override
-                public void apply(CloudData result) {
-                    Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
+                public void apply(Try<CloudData> result) {
+                    if(result instanceof Try.Success) {
+                        Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Track sync failed", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         } else {

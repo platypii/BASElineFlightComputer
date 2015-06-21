@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import com.platypii.baseline.data.TheCloud;
 import java.io.File;
 
 public class JumpActivity extends Activity implements SyncStatus.SyncListener {
+    private static final String TAG = "Jump";
 
     private Jump jump;
 
@@ -75,13 +77,15 @@ public class JumpActivity extends Activity implements SyncStatus.SyncListener {
             final String auth = Auth.getAuth(this);
             // TODO: Spinner
             Toast.makeText(this, "Syncing track...", Toast.LENGTH_SHORT).show();
-            TheCloud.upload(jump, auth, new Callback<CloudData>() {
+            TheCloud.upload(jump, auth, new Callback<Try<CloudData>>() {
                 @Override
-                public void apply(CloudData result) {
-                    if(result != null) {
+                public void apply(Try<CloudData> result) {
+                    if(result instanceof Try.Success) {
                         updateViews();
                         Toast.makeText(JumpActivity.this, "Track sync success", Toast.LENGTH_LONG).show();
                     } else {
+                        final Try.Failure<CloudData> failure = (Try.Failure<CloudData>) result;
+                        Log.e(TAG, "Failed to upload track: " + failure);
                         Toast.makeText(JumpActivity.this, "Track sync failed", Toast.LENGTH_LONG).show();
                     }
                 }
