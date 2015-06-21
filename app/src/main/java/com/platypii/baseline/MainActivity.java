@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ public class MainActivity extends Activity {
     private Button startButton;
     private Button stopButton;
     private Button jumpsButton;
+    private ImageButton signinButton;
     private TextView clock;
 
     // Periodic UI updates
@@ -45,6 +47,7 @@ public class MainActivity extends Activity {
         startButton = (Button) findViewById(R.id.startButton);
         stopButton = (Button) findViewById(R.id.stopButton);
         jumpsButton = (Button) findViewById(R.id.jumpsButton);
+        signinButton = (ImageButton) findViewById(R.id.signinButton);
         clock = (TextView) findViewById(R.id.clock);
 
         // Start flight services
@@ -107,15 +110,21 @@ public class MainActivity extends Activity {
 
     // Enables buttons and clock
     private void updateUIState() {
+        if(Auth.getAuth(this) != null) {
+            signinButton.setVisibility(View.GONE);
+        } else {
+            signinButton.setVisibility(View.VISIBLE);
+        }
         if(MyDatabase.isLogging()) {
             startButton.setEnabled(false);
             stopButton.setEnabled(true);
             jumpsButton.setEnabled(false);
+            signinButton.setEnabled(false);
 
             // Start periodic UI updates
             handler.post(new Runnable() {
                 public void run() {
-                    update();
+                    updateClock();
                     if (MyDatabase.isLogging()) {
                         handler.postDelayed(this, updateInterval);
                     }
@@ -127,6 +136,7 @@ public class MainActivity extends Activity {
             startButton.setEnabled(true);
             stopButton.setEnabled(false);
             jumpsButton.setEnabled(true);
+            signinButton.setEnabled(true);
         }
         invalidateOptionsMenu();
     }
@@ -137,7 +147,24 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
-    private void update() {
+    public void clickSignIn(View v) {
+        GoogleAuth.signin(this, new Callback<String>() {
+            @Override
+            public void apply(String s) {
+                Toast.makeText(MainActivity.this, "Sign in successful", Toast.LENGTH_LONG).show();
+                updateUIState();
+            }
+        });
+    }
+
+    public void clickSignOut() {
+        if(GoogleAuth.signout(this)) {
+            Toast.makeText(this, R.string.signout_message, Toast.LENGTH_SHORT).show();
+        }
+        updateUIState();
+    }
+
+    private void updateClock() {
         if(MyDatabase.isLogging()) {
             clock.setText(MyDatabase.getLogTime());
         } else {
@@ -180,19 +207,10 @@ public class MainActivity extends Activity {
                 startActivity(intent);
                 return true;
             case R.id.menu_item_signin:
-                GoogleAuth.signin(this, new Callback<String>() {
-                    @Override
-                    public void apply(String s) {
-                        Toast.makeText(MainActivity.this, "Sign in successful", Toast.LENGTH_LONG).show();
-                        invalidateOptionsMenu();
-                    }
-                });
+                clickSignIn(null);
                 return true;
             case R.id.menu_item_signout:
-                if(GoogleAuth.signout(this)) {
-                    Toast.makeText(this, R.string.signout_message, Toast.LENGTH_SHORT).show();
-                }
-                invalidateOptionsMenu();
+                clickSignOut();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
