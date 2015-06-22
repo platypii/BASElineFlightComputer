@@ -112,21 +112,40 @@ public class JumpActivity extends Activity implements SyncStatus.SyncListener {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // Delete jump
-                    // TODO: Delete from server if uploaded
-                    if(jump.logFile.delete()) {
-                        // Notify user
-                        Toast.makeText(getApplicationContext(), "Deleted " + jump.getName(), Toast.LENGTH_LONG).show();
-                        // Exit activity
-                        finish();
+                    if(jump.getCloudData() != null) {
+                        // Delete from server
+                        TheCloud.delete(jump, Auth.getAuth(JumpActivity.this), new Callback<Boolean>() {
+                            @Override
+                            public void apply(Boolean success) {
+                                if(success) {
+                                    // Delete locally
+                                    deleteLocal();
+                                } else {
+                                    // Delete failed
+                                    Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
                     } else {
-                        // Delete failed
-                        Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
+                        // Not uploaded, just delete locally
+                        deleteLocal();
                     }
                 }
 
             })
             .setNegativeButton("Cancel", null)
             .show();
+    }
+    private void deleteLocal() {
+        if(jump.delete()) {
+            // Notify user
+            Toast.makeText(getApplicationContext(), "Deleted " + jump.getName(), Toast.LENGTH_LONG).show();
+            // Exit activity
+            finish();
+        } else {
+            // Delete failed
+            Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
+        }
     }
 
     public void clickShare(View v) {

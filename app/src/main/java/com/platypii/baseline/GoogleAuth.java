@@ -110,8 +110,7 @@ public class GoogleAuth {
             protected String doInBackground(String...params) {
                 final String accountName = Plus.AccountApi.getAccountName(googleApiClient);
                 final Account account = new Account(accountName, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-                String scopes = "audience:server:client_id:" + SERVER_CLIENT_ID; // Not the app's client ID
-                // scopes += " oauth2:profile";
+                final String scopes = "audience:server:client_id:" + SERVER_CLIENT_ID; // Not the app's client ID
                 try {
                     return GoogleAuthUtil.getToken(context, account, scopes, null);
                 } catch(UserRecoverableAuthException e) {

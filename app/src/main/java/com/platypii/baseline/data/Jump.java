@@ -70,6 +70,16 @@ public class Jump {
         }
     }
 
+    /** Delete local track file */
+    public boolean delete() {
+        if(logFile.delete()) {
+            cloudData = null;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public String toString() {
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

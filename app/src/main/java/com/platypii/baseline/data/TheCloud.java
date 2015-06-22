@@ -18,17 +18,34 @@ import java.net.URL;
 import org.json.JSONException;
 
 public class TheCloud {
+    private static final String TAG = "Cloud";
 
     private static final String baselineServer = "https://base-line.ws";
     private static final String postUrl = baselineServer + "/tracks";
 
     public static void upload(final Jump jump, final String auth, final Callback<Try<CloudData>> cb) {
-        Log.i("Cloud", "Uploading track with auth " + auth);
+        Log.i(TAG, "Uploading track with auth " + auth);
+        if(jump.getCloudData() != null) {
+            Log.e(TAG, "Track already uploaded");
+        }
         new AsyncTask<Void,Void,Try<CloudData>>() {
             @Override
             protected Try<CloudData> doInBackground(Void... voids) {
                 // Upload to the cloud
-                return TheCloud.uploadSync(jump, auth);
+                try {
+                    // Make HTTP request
+                    final CloudData result = postJump(jump, auth);
+                    // Save cloud data
+                    jump.setCloudData(result);
+                    Log.i(TAG, "Upload successful, url " + result.trackUrl);
+                    return new Try.Success<>(result);
+                } catch(IOException e) {
+                    Log.e(TAG, "Failed to upload file", e);
+                    return new Try.Failure<>(e.getMessage());
+                } catch(JSONException e) {
+                    Log.e(TAG, "Failed to parse response", e);
+                    return new Try.Failure<>(e.toString());
+                }
             }
             @Override
             protected void onPostExecute(Try<CloudData> cloudData) {
@@ -38,31 +55,6 @@ public class TheCloud {
                 }
             }
         }.execute();
-    }
-
-    /** Upload to the cloud */
-    private static Try<CloudData> uploadSync(Jump jump, String auth) {
-        // Check if track is already uploaded
-        final CloudData cloudData = jump.getCloudData();
-        if(cloudData != null) {
-            // Already uploaded, return url
-            return new Try.Success<>(cloudData);
-        } else {
-            // Upload to the cloud
-            try {
-                // Save cloud data
-                final CloudData result = postJump(jump, auth);
-                jump.setCloudData(result);
-                Log.i("Cloud", "Upload successful, url " + result.trackUrl);
-                return new Try.Success<>(result);
-            } catch(IOException e) {
-                Log.e("Cloud", "Failed to upload file", e);
-                return new Try.Failure<>(e.getMessage());
-            } catch(JSONException e) {
-                Log.e("Cloud", "Failed to parse response", e);
-                return new Try.Failure<>(e.toString());
-            }
-        }
     }
 
     private static CloudData postJump(Jump jump, String auth) throws IOException, JSONException {
@@ -95,6 +87,55 @@ public class TheCloud {
             }
         } finally {
             conn.disconnect();
+        }
+    }
+
+    /**
+     * Delete a track from the server. Return success via callback.
+     */
+    public static void delete(final Jump jump, final String auth, final Callback<Boolean> cb) {
+        Log.i(TAG, "Deleting track with auth " + auth);
+        if(jump.getCloudData() != null) {
+            new AsyncTask<Void,Void,Boolean>() {
+                @Override
+                protected Boolean doInBackground(Void... voids) {
+                    // Delete from the cloud
+                    return deleteJump(jump, auth);
+                }
+                @Override
+                protected void onPostExecute(Boolean success) {
+                    SyncStatus.update();
+                    if(cb != null) {
+                        cb.apply(success);
+                    }
+                }
+            }.execute();
+        } else {
+            Log.e(TAG, "Cannot delete track from server, not uploaded");
+        }
+    }
+
+    private static boolean deleteJump(Jump jump, String auth) {
+        try {
+            final URL url = new URL(jump.getCloudData().trackUrl);
+            final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("Authorization", auth);
+            try {
+                // Read response
+                final int status = conn.getResponseCode();
+                if(status == 200) {
+                    Log.i(TAG, "Track deleted from server");
+                    return true;
+                } else {
+                    Log.e(TAG, "Failed to delete track, http status code " + status);
+                    return false;
+                }
+            } finally {
+                conn.disconnect();
+            }
+        } catch(Exception e) {
+            Log.e(TAG, "Failed to delete track", e);
+            return false;
         }
     }
 
