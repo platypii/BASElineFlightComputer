@@ -30,7 +30,7 @@ public class GoogleAuth {
     private static GoogleApiClient googleApiClient = null;
     private static boolean inProgress = false;
 
-    public static void signin(final Activity context, final Callback<String> callback) {
+    public static void signin(final Activity context, final Callback<Boolean> callback) {
         Log.i(TAG, "Google sign in");
         if(googleApiClient == null) {
             googleApiClient = initClient(context, callback);
@@ -43,21 +43,21 @@ public class GoogleAuth {
      * @return true iff signed out successfully
      */
     public static boolean signout(Activity context) {
-        if(Auth.getAuth(context) == null) {
-            Log.e(TAG, "Sign out called but not signed in");
-            return false;
-        } else {
+        if(Auth.isAuthenticated(context)) {
             if(googleApiClient == null) {
                 googleApiClient = initClient(context, null);
             }
             Log.i(TAG, "Sign out");
             googleApiClient.disconnect();
-            Auth.setAuth(context, null);
+            Auth.setAuthenticated(context, false);
             return true;
+        } else {
+            Log.e(TAG, "Sign out called but not signed in");
+            return false;
         }
     }
 
-    private static GoogleApiClient initClient(final Activity context, final Callback<String> callback) {
+    private static GoogleApiClient initClient(final Activity context, final Callback<Boolean> callback) {
         return new GoogleApiClient.Builder(context)
                 .addApi(Plus.API)
                 .addScope(new Scope(Scopes.PROFILE))
@@ -65,9 +65,14 @@ public class GoogleAuth {
                     @Override
                     public void onConnected(Bundle bundle) {
                         Log.i(TAG, "Authentication successful");
+                        Auth.setAuthenticated(context, true);
                         // Get google user id
-                        getAuthToken(context, callback); // TODO: Don't call during signout
+                        // getAuthToken(context, callback);
+                        if(callback != null) {
+                            callback.apply(true);
+                        }
                     }
+
                     @Override
                     public void onConnectionSuspended(int i) {
                         Log.e(TAG, "Google API connection suspended");
@@ -104,7 +109,7 @@ public class GoogleAuth {
         }
     }
 
-    private static void getAuthToken(final Context context, final Callback<String> callback) {
+    public static void getAuthToken(final Context context, final Callback<String> callback) {
         new AsyncTask<String, Void, String>() {
             @Override
             protected String doInBackground(String...params) {
@@ -129,9 +134,7 @@ public class GoogleAuth {
             protected void onPostExecute(String token) {
                 if(token != null) {
                     Log.i(TAG, "User signed in " + token);
-                    Auth.setAuth(context, token);
                     if(callback != null) {
-                        // Callback to indicate success
                         callback.apply(token);
                     }
                 } else {

@@ -74,20 +74,23 @@ public class JumpActivity extends Activity implements SyncStatus.SyncListener {
             Intents.openTrackUrl(this, cloudData);
         } else {
             // Start upload
-            final String auth = Auth.getAuth(this);
-            // TODO: Spinner
-            Toast.makeText(this, "Syncing track...", Toast.LENGTH_SHORT).show();
-            TheCloud.upload(jump, auth, new Callback<Try<CloudData>>() {
+            GoogleAuth.getAuthToken(this, new Callback<String>() {
                 @Override
-                public void apply(Try<CloudData> result) {
-                    if(result instanceof Try.Success) {
-                        updateViews();
-                        Toast.makeText(JumpActivity.this, "Track sync success", Toast.LENGTH_LONG).show();
-                    } else {
-                        final Try.Failure<CloudData> failure = (Try.Failure<CloudData>) result;
-                        Log.e(TAG, "Failed to upload track: " + failure);
-                        Toast.makeText(JumpActivity.this, "Track sync failed", Toast.LENGTH_LONG).show();
-                    }
+                public void apply(String authToken) {
+                    Toast.makeText(JumpActivity.this, "Syncing track...", Toast.LENGTH_SHORT).show();
+                    TheCloud.upload(jump, authToken, new Callback<Try<CloudData>>() {
+                        @Override
+                        public void apply(Try<CloudData> result) {
+                            if(result instanceof Try.Success) {
+                                updateViews();
+                                Toast.makeText(JumpActivity.this, "Track sync success", Toast.LENGTH_LONG).show();
+                            } else {
+                                final Try.Failure<CloudData> failure = (Try.Failure<CloudData>) result;
+                                Log.e(TAG, "Failed to upload track: " + failure);
+                                Toast.makeText(JumpActivity.this, "Track sync failed", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
                 }
             });
         }
@@ -114,16 +117,22 @@ public class JumpActivity extends Activity implements SyncStatus.SyncListener {
                     // Delete jump
                     if(jump.getCloudData() != null) {
                         // Delete from server
-                        TheCloud.delete(jump, Auth.getAuth(JumpActivity.this), new Callback<Boolean>() {
+                        GoogleAuth.getAuthToken(JumpActivity.this, new Callback<String>() {
                             @Override
-                            public void apply(Boolean success) {
-                                if(success) {
-                                    // Delete locally
-                                    deleteLocal();
-                                } else {
-                                    // Delete failed
-                                    Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
-                                }
+                            public void apply(String authToken) {
+                                TheCloud.delete(jump, authToken, new Callback<Boolean>() {
+                                    @Override
+                                    public void apply(Boolean success) {
+                                        if(success) {
+                                            // Delete locally
+                                            deleteLocal();
+                                        } else {
+                                            // Delete failed
+                                            Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
+
                             }
                         });
                     } else {
@@ -133,39 +142,42 @@ public class JumpActivity extends Activity implements SyncStatus.SyncListener {
                 }
 
             })
-            .setNegativeButton("Cancel", null)
-            .show();
-    }
-    private void deleteLocal() {
-        if(jump.delete()) {
-            // Notify user
-            Toast.makeText(getApplicationContext(), "Deleted " + jump.getName(), Toast.LENGTH_LONG).show();
-            // Exit activity
-            finish();
-        } else {
-            // Delete failed
-            Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
-        }
-    }
+                    .setNegativeButton("Cancel", null)
+                            .show();
+                }
 
-    public void clickShare(View v) {
-        Intents.shareTrack(this, jump);
-    }
+                private void deleteLocal() {
+                    if(jump.delete()) {
+                        // Notify user
+                        Toast.makeText(getApplicationContext(), "Deleted " + jump.getName(), Toast.LENGTH_LONG).show();
+                        // Exit activity
+                        finish();
+                    } else {
+                        // Delete failed
+                        Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
+                    }
+                }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Listen for sync updates
-        SyncStatus.addListener(this);
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Listen for sync updates
-        SyncStatus.removeListener(this);
-    }
-    @Override
-    public void syncUpdate() {
-        updateViews();
-    }
-}
+                public void clickShare(View v) {
+                    Intents.shareTrack(this, jump);
+                }
+
+                @Override
+                protected void onResume() {
+                    super.onResume();
+                    // Listen for sync updates
+                    SyncStatus.addListener(this);
+                }
+
+                @Override
+                protected void onPause() {
+                    super.onPause();
+                    // Listen for sync updates
+                    SyncStatus.removeListener(this);
+                }
+
+                @Override
+                public void syncUpdate() {
+                    updateViews();
+                }
+            }

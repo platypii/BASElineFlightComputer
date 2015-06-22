@@ -36,7 +36,6 @@ public class MainActivity extends Activity {
     // Periodic UI updates
     private final Handler handler = new Handler();
     private final int updateInterval = 32; // milliseconds
-    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +52,7 @@ public class MainActivity extends Activity {
         // Start flight services
         initServices();
 
-        if(Auth.getAuth(this) != null) {
+        if(Auth.isAuthenticated(this)) {
             Log.i("Auth", "User signed in");
         }
 
@@ -96,15 +95,19 @@ public class MainActivity extends Activity {
         // Upload to the cloud
         if(jump != null) {
             // Begin automatic upload
-            final String auth = Auth.getAuth(this);
-            TheCloud.upload(jump, auth, new Callback<Try<CloudData>>() {
+            GoogleAuth.getAuthToken(this, new Callback<String>() {
                 @Override
-                public void apply(Try<CloudData> result) {
-                    if(result instanceof Try.Success) {
-                        Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(MainActivity.this, "Track sync failed", Toast.LENGTH_SHORT).show();
-                    }
+                public void apply(String authToken) {
+                    TheCloud.upload(jump, authToken, new Callback<Try<CloudData>>() {
+                        @Override
+                        public void apply(Try<CloudData> result) {
+                            if(result instanceof Try.Success) {
+                                Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(MainActivity.this, "Track sync failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
             });
         } else {
@@ -114,7 +117,7 @@ public class MainActivity extends Activity {
 
     // Enables buttons and clock
     private void updateUIState() {
-        if(Auth.getAuth(this) != null) {
+        if(Auth.isAuthenticated(this)) {
             signinButton.setVisibility(View.GONE);
         } else {
             signinButton.setVisibility(View.VISIBLE);
@@ -152,10 +155,14 @@ public class MainActivity extends Activity {
     }
 
     public void clickSignIn(View v) {
-        GoogleAuth.signin(this, new Callback<String>() {
+        GoogleAuth.signin(this, new Callback<Boolean>() {
             @Override
-            public void apply(String s) {
-                Toast.makeText(MainActivity.this, "Sign in successful", Toast.LENGTH_LONG).show();
+            public void apply(Boolean success) {
+                if(success) {
+                    Toast.makeText(MainActivity.this, "Sign in successful", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Sign in failed", Toast.LENGTH_LONG).show();
+                }
                 updateUIState();
             }
         });
@@ -180,12 +187,12 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
-        this.menu = menu;
+
         final MenuItem loginItem = menu.findItem(R.id.menu_item_signin);
         final MenuItem logoutItem = menu.findItem(R.id.menu_item_signout);
+
         // Check signin state
-        final String auth = Auth.getAuth(this);
-        if(auth != null) {
+        if(Auth.isAuthenticated(this)) {
             // Logged in
             loginItem.setVisible(false);
             logoutItem.setVisible(true);
