@@ -7,7 +7,6 @@ import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -126,36 +125,38 @@ public class BaseActivity extends Activity implements GoogleApiClient.Connection
     }
 
     public void getAuthToken(final Callback<String> callback) {
-        new AsyncTask<String, Void, String>() {
+        new AsyncTask<String, Void, Try<String>>() {
             @Override
-            protected String doInBackground(String...params) {
+            protected Try<String> doInBackground(String...params) {
                 final String accountName = Plus.AccountApi.getAccountName(mGoogleApiClient);
                 final Account account = new Account(accountName, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
                 final String scopes = "audience:server:client_id:" + SERVER_CLIENT_ID; // Not the app's client ID
                 try {
-                    return GoogleAuthUtil.getToken(BaseActivity.this, account, scopes, null);
+                    final String token = GoogleAuthUtil.getToken(BaseActivity.this, account, scopes, null);
+                    return new Try.Success<>(token);
                 } catch(UserRecoverableAuthException e) {
                     Log.e(TAG, "User recoverable auth error", e);
                     startActivity(e.getIntent());
-                    return null;
+                    return new Try.Failure<>("User recoverable auth error: " + e);
                 } catch(GoogleAuthException e) {
                     Log.e(TAG, "Error retrieving ID token", e);
-                    return null;
+                    return new Try.Failure<>("Auth exception: " + e);
                 } catch(IOException e) {
                     Log.e(TAG, "Error retrieving ID token", e);
-                    return null;
+                    return new Try.Failure<>("Auth IOException: " + e);
                 }
             }
             @Override
-            protected void onPostExecute(String token) {
-                if(token != null) {
+            protected void onPostExecute(Try<String> result) {
+                if(result instanceof Try.Success) {
+                    final String token = ((Try.Success<String>) result).result;
                     Log.i(TAG, "Got auth token " + token);
                     if(callback != null) {
                         callback.apply(token);
                     }
                 } else {
                     if(callback != null) {
-                        callback.error("Failed to get token");
+                        callback.error("Failed to get auth token");
                     }
                 }
             }

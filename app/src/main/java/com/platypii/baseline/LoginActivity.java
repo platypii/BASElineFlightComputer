@@ -6,6 +6,7 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -17,6 +18,8 @@ import com.google.android.gms.plus.Plus;
 public class LoginActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
     private static final String TAG = "SignIn";
 
+    private View signinButton;
+    private ProgressBar spinner;
     private TextView statusText;
 
     /* Client used to interact with Google APIs. */
@@ -39,6 +42,8 @@ public class LoginActivity extends Activity implements GoogleApiClient.Connectio
         // Find views
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         statusText = (TextView) findViewById(R.id.status_text);
+        signinButton = findViewById(R.id.sign_in_button);
+        spinner = (ProgressBar) findViewById(R.id.spinner);
 
         // Initialize GoogleApiClient
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -69,8 +74,10 @@ public class LoginActivity extends Activity implements GoogleApiClient.Connectio
             mShouldResolve = true;
             mGoogleApiClient.connect();
 
-            // Show a message to the user that we are signing in.
-            statusText.setText("Signing in...");
+            // Sign in in progress
+            signinButton.setVisibility(View.GONE);
+            spinner.setVisibility(View.VISIBLE);
+            statusText.setText("");
         }
     }
 
@@ -134,7 +141,7 @@ public class LoginActivity extends Activity implements GoogleApiClient.Connectio
             }
         } else {
             // Sign in failed, user must authenticate with sign in button
-            Log.e(TAG, "Sign in failed");
+            Log.w(TAG, "Sign in failed");
         }
     }
 }
