@@ -1,6 +1,5 @@
 package com.platypii.baseline;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Bundle;
@@ -10,10 +9,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.plus.Plus;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.KVStore;
@@ -23,7 +22,7 @@ import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.MySensorManager;
 import com.platypii.baseline.data.TheCloud;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
     private static final String TAG = "Main";
 
     public static final long startTime = System.currentTimeMillis(); // Session start time (when the app started)
@@ -31,7 +30,6 @@ public class MainActivity extends Activity {
     private Button startButton;
     private Button stopButton;
     private Button jumpsButton;
-    private ImageButton signinButton;
     private TextView clock;
 
     // Periodic UI updates
@@ -47,15 +45,10 @@ public class MainActivity extends Activity {
         startButton = (Button) findViewById(R.id.startButton);
         stopButton = (Button) findViewById(R.id.stopButton);
         jumpsButton = (Button) findViewById(R.id.jumpsButton);
-        signinButton = (ImageButton) findViewById(R.id.signinButton);
         clock = (TextView) findViewById(R.id.clock);
 
         // Start flight services
         initServices();
-
-        if(Auth.isAuthenticated(this)) {
-            Log.i(TAG, "User signed in");
-        }
 
         // Restore start/stop state
         updateUIState();
@@ -96,19 +89,25 @@ public class MainActivity extends Activity {
         // Upload to the cloud
         if(jump != null) {
             // Begin automatic upload
-            GoogleAuth.getAuthToken(this, new Callback<String>() {
+            getAuthToken(new Callback<String>() {
                 @Override
                 public void apply(String authToken) {
-                    TheCloud.upload(jump, authToken, new Callback<Try<CloudData>>() {
+                    TheCloud.upload(jump, authToken, new Callback<CloudData>() {
                         @Override
-                        public void apply(Try<CloudData> result) {
-                            if(result instanceof Try.Success) {
-                                Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(MainActivity.this, "Track sync failed", Toast.LENGTH_SHORT).show();
-                            }
+                        public void apply(CloudData cloudData) {
+                            Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void error(String error) {
+                            Toast.makeText(MainActivity.this, "Track sync failed", Toast.LENGTH_SHORT).show();
                         }
                     });
+                }
+
+                @Override
+                public void error(String error) {
+                    Toast.makeText(MainActivity.this, "Track sync failed", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -118,16 +117,10 @@ public class MainActivity extends Activity {
 
     // Enables buttons and clock
     private void updateUIState() {
-        if(Auth.isAuthenticated(this)) {
-            signinButton.setVisibility(View.GONE);
-        } else {
-            signinButton.setVisibility(View.VISIBLE);
-        }
         if(MyDatabase.isLogging()) {
             startButton.setEnabled(false);
             stopButton.setEnabled(true);
             jumpsButton.setEnabled(false);
-            signinButton.setEnabled(false);
 
             // Start periodic UI updates
             handler.post(new Runnable() {
@@ -144,7 +137,6 @@ public class MainActivity extends Activity {
             startButton.setEnabled(true);
             stopButton.setEnabled(false);
             jumpsButton.setEnabled(true);
-            signinButton.setEnabled(true);
         }
         invalidateOptionsMenu();
     }
@@ -155,28 +147,20 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
-    public void clickSignIn(View v) {
-        GoogleAuth.signin(this, new Callback<Boolean>() {
-            @Override
-            public void apply(Boolean success) {
-                if(success) {
-                    Log.i(TAG, "Sign in successful");
-                    signinButton.setVisibility(View.GONE);
-                    Toast.makeText(MainActivity.this, "Sign in successful", Toast.LENGTH_LONG).show();
-                } else {
-                    Log.e(TAG, "Sign in failed!");
-                    Toast.makeText(MainActivity.this, "Sign in failed", Toast.LENGTH_LONG).show();
-                }
-                updateUIState();
-            }
-        });
-    }
-
     public void clickSignOut() {
-        if(GoogleAuth.signout(this)) {
-            Toast.makeText(this, R.string.signout_message, Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "Sign out");
+        // Clear the default account so that GoogleApiClient will not automatically connect in the future.
+        if(mGoogleApiClient.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            mGoogleApiClient.disconnect();
+
+            // Return to SigninActivity
+            final Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            Log.e(TAG, "Sign out failed");
         }
-        updateUIState();
     }
 
     private void updateClock() {
@@ -191,20 +175,6 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
-
-        final MenuItem loginItem = menu.findItem(R.id.menu_item_signin);
-        final MenuItem logoutItem = menu.findItem(R.id.menu_item_signout);
-
-        // Check signin state
-        if(Auth.isAuthenticated(this)) {
-            // Logged in
-            loginItem.setVisible(false);
-            logoutItem.setVisible(true);
-        } else {
-            // Logged out
-            loginItem.setVisible(true);
-            logoutItem.setVisible(false);
-        }
         return true;
     }
 
@@ -220,9 +190,6 @@ public class MainActivity extends Activity {
                 // Open sensor activity
                 final Intent intent = new Intent(this, SensorActivity.class);
                 startActivity(intent);
-                return true;
-            case R.id.menu_item_signin:
-                clickSignIn(null);
                 return true;
             case R.id.menu_item_signout:
                 clickSignOut();

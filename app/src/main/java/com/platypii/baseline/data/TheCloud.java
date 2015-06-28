@@ -23,7 +23,7 @@ public class TheCloud {
     private static final String baselineServer = "https://base-line.ws";
     private static final String postUrl = baselineServer + "/tracks";
 
-    public static void upload(final Jump jump, final String auth, final Callback<Try<CloudData>> cb) {
+    public static void upload(final Jump jump, final String auth, final Callback<CloudData> cb) {
         Log.i(TAG, "Uploading track with auth " + auth);
         if(jump.getCloudData() != null) {
             Log.e(TAG, "Track already uploaded");
@@ -48,10 +48,16 @@ public class TheCloud {
                 }
             }
             @Override
-            protected void onPostExecute(Try<CloudData> cloudData) {
+            protected void onPostExecute(Try<CloudData> result) {
                 SyncStatus.update();
                 if(cb != null) {
-                    cb.apply(cloudData);
+                    if(result instanceof Try.Success) {
+                        final CloudData cloudData = ((Try.Success<CloudData>) result).result;
+                        cb.apply(cloudData);
+                    } else {
+                        final String error = ((Try.Failure<CloudData>) result).error;
+                        cb.error(error);
+                    }
                 }
             }
         }.execute();
@@ -93,7 +99,7 @@ public class TheCloud {
     /**
      * Delete a track from the server. Return success via callback.
      */
-    public static void delete(final Jump jump, final String auth, final Callback<Boolean> cb) {
+    public static void delete(final Jump jump, final String auth, final Callback<Void> cb) {
         Log.i(TAG, "Deleting track with auth " + auth);
         if(jump.getCloudData() != null) {
             new AsyncTask<Void,Void,Boolean>() {
@@ -106,7 +112,11 @@ public class TheCloud {
                 protected void onPostExecute(Boolean success) {
                     SyncStatus.update();
                     if(cb != null) {
-                        cb.apply(success);
+                        if(success) {
+                            cb.apply(null);
+                        } else {
+                            cb.error("Failed to delete track");
+                        }
                     }
                 }
             }.execute();

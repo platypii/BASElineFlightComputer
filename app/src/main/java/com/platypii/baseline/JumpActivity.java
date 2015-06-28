@@ -1,6 +1,5 @@
 package com.platypii.baseline;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -18,7 +17,7 @@ import com.platypii.baseline.data.TheCloud;
 
 import java.io.File;
 
-public class JumpActivity extends Activity implements SyncStatus.SyncListener {
+public class JumpActivity extends BaseActivity implements SyncStatus.SyncListener {
     private static final String TAG = "Jump";
 
     private Jump jump;
@@ -74,23 +73,26 @@ public class JumpActivity extends Activity implements SyncStatus.SyncListener {
             Intents.openTrackUrl(this, cloudData);
         } else {
             // Start upload
-            GoogleAuth.getAuthToken(this, new Callback<String>() {
+            getAuthToken(new Callback<String>() {
                 @Override
                 public void apply(String authToken) {
                     Toast.makeText(JumpActivity.this, "Syncing track...", Toast.LENGTH_SHORT).show();
-                    TheCloud.upload(jump, authToken, new Callback<Try<CloudData>>() {
+                    TheCloud.upload(jump, authToken, new Callback<CloudData>() {
                         @Override
-                        public void apply(Try<CloudData> result) {
-                            if(result instanceof Try.Success) {
-                                updateViews();
-                                Toast.makeText(JumpActivity.this, "Track sync success", Toast.LENGTH_LONG).show();
-                            } else {
-                                final Try.Failure<CloudData> failure = (Try.Failure<CloudData>) result;
-                                Log.e(TAG, "Failed to upload track: " + failure);
-                                Toast.makeText(JumpActivity.this, "Track sync failed", Toast.LENGTH_LONG).show();
-                            }
+                        public void apply(CloudData cloudData) {
+                            updateViews();
+                            Toast.makeText(JumpActivity.this, "Track sync success", Toast.LENGTH_LONG).show();
+                        }
+                        @Override
+                        public void error(String error) {
+                            Log.e(TAG, "Failed to upload track: " + error);
+                            Toast.makeText(JumpActivity.this, "Track sync failed", Toast.LENGTH_LONG).show();
                         }
                     });
+                }
+                @Override
+                public void error(String error) {
+                    Toast.makeText(JumpActivity.this, "Failed to get auth token", Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -117,19 +119,35 @@ public class JumpActivity extends Activity implements SyncStatus.SyncListener {
                     // Delete jump
                     if(jump.getCloudData() != null) {
                         // Delete from server
-                        GoogleAuth.getAuthToken(JumpActivity.this, new Callback<String>() {
+                        getAuthToken(new Callback<String>() {
                             @Override
                             public void apply(String authToken) {
-                                TheCloud.delete(jump, authToken, new Callback<Boolean>() {
+                                TheCloud.delete(jump, authToken, new Callback<Void>() {
                                     @Override
-                                    public void apply(Boolean success) {
-                                        if(success) {
-                                            // Delete locally
-                                            deleteLocal();
-                                        } else {
-                                            // Delete failed
-                                            Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
-                                        }
+                                    public void apply(Void v) {
+                                        // Delete locally
+                                        deleteLocal();
+                                    }
+                                    @Override
+                                    public void error(String error) {
+                                        // Delete failed
+                                        Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
+                                    }
+                                });
+
+                            }
+                            @Override
+                            public void error(String authToken) {
+                                TheCloud.delete(jump, authToken, new Callback<Void>() {
+                                    @Override
+                                    public void apply(Void v) {
+                                        // Delete locally
+                                        deleteLocal();
+                                    }
+                                    @Override
+                                    public void error(String error) {
+                                        // Delete failed
+                                        Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
                                     }
                                 });
 

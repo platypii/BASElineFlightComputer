@@ -22,7 +22,7 @@
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name="com.platypii.baseline.MainActivity"
+            android:name="MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,7 @@
         </activity>
 
         <activity
-            android:name="SensorActivity"
+            android:name="LoginActivity"
             android:label="@string/app_name" />
 
         <activity
@@ -40,6 +40,10 @@
 
         <activity
             android:name="JumpActivity"
+            android:label="@string/app_name" />
+
+        <activity
+            android:name="SensorActivity"
             android:label="@string/app_name" />
 
     </application>
