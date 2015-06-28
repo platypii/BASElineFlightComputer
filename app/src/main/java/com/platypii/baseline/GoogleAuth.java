@@ -2,7 +2,6 @@ package com.platypii.baseline;
 
 import android.accounts.Account;
 import android.app.Activity;
-import android.content.Context;
 import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +28,7 @@ public class GoogleAuth {
 
     private static GoogleApiClient googleApiClient = null;
     private static boolean inProgress = false;
+    private static boolean connected = false;
 
     public static void signin(final Activity context, final Callback<Boolean> callback) {
         Log.i(TAG, "Google sign in");
@@ -58,6 +58,7 @@ public class GoogleAuth {
     }
 
     private static GoogleApiClient initClient(final Activity context, final Callback<Boolean> callback) {
+        Log.d(TAG, "Initializing google api client");
         return new GoogleApiClient.Builder(context)
                 .addApi(Plus.API)
                 .addScope(new Scope(Scopes.PROFILE))
@@ -65,10 +66,12 @@ public class GoogleAuth {
                     @Override
                     public void onConnected(Bundle bundle) {
                         Log.i(TAG, "Authentication successful");
+                        connected = true;
                         Auth.setAuthenticated(context, true);
                         // Get google user id
                         // getAuthToken(context, callback);
                         if(callback != null) {
+                            Log.i(TAG, "Calling callback(true)");
                             callback.apply(true);
                         }
                     }
@@ -109,7 +112,26 @@ public class GoogleAuth {
         }
     }
 
-    public static void getAuthToken(final Context context, final Callback<String> callback) {
+    public static void getAuthToken(final Activity context, final Callback<String> callback) {
+        if(googleApiClient != null && connected) {
+            getAuthTokenHelper(context, callback);
+        } else if(googleApiClient == null) {
+            googleApiClient = initClient(context, new Callback<Boolean>() {
+                @Override
+                public void apply(Boolean success) {
+                    if(success) {
+                        getAuthTokenHelper(context, callback);
+                    } else {
+                        Log.e(TAG, "Failed to initialize google api client");
+                    }
+                }
+            });
+        } else {
+            Log.w(TAG, "Auth token requested, but connection not yet established: " + inProgress);
+        }
+    }
+
+    private static void getAuthTokenHelper(final Activity context, final Callback<String> callback) {
         new AsyncTask<String, Void, String>() {
             @Override
             protected String doInBackground(String...params) {

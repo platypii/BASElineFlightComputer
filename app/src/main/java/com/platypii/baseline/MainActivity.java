@@ -24,6 +24,7 @@ import com.platypii.baseline.data.MySensorManager;
 import com.platypii.baseline.data.TheCloud;
 
 public class MainActivity extends Activity {
+    private static final String TAG = "Main";
 
     public static final long startTime = System.currentTimeMillis(); // Session start time (when the app started)
 
@@ -53,7 +54,7 @@ public class MainActivity extends Activity {
         initServices();
 
         if(Auth.isAuthenticated(this)) {
-            Log.i("Auth", "User signed in");
+            Log.i(TAG, "User signed in");
         }
 
         // Restore start/stop state
@@ -62,13 +63,13 @@ public class MainActivity extends Activity {
 
     private void initServices() {
         // Initialize Services
-        Log.i("Main", "Initializing key value store");
+        Log.i(TAG, "Initializing key value store");
         KVStore.start(getApplication());
-        Log.i("Main", "Initializing location");
+        Log.i(TAG, "Initializing location");
         MyLocationManager.initLocation(getApplication());
-        Log.i("Main", "Initializing sensors");
+        Log.i(TAG, "Initializing sensors");
         MySensorManager.initSensors(getApplication());
-        Log.i("Main", "Initializing altimeter");
+        Log.i(TAG, "Initializing altimeter");
         MyAltimeter.initAltimeter(getApplication());
 
         // TODO: Upload any unsynced files
@@ -77,7 +78,7 @@ public class MainActivity extends Activity {
 
     public void clickStart(View v) {
         if(!MyDatabase.isLogging()) {
-            Log.i("Main", "Starting logging");
+            Log.i(TAG, "Starting logging");
 
             // Start logging
             MyDatabase.startLogging(getApplicationContext());
@@ -86,7 +87,7 @@ public class MainActivity extends Activity {
     }
 
     public void clickStop(View v) {
-        Log.i("Main", "Stopping logging");
+        Log.i(TAG, "Stopping logging");
 
         // Stop logging
         final Jump jump = MyDatabase.stopLogging();
@@ -111,7 +112,7 @@ public class MainActivity extends Activity {
                 }
             });
         } else {
-            Log.e("Main", "Error reading log file");
+            Log.e(TAG, "Error reading log file");
         }
     }
 
@@ -159,8 +160,11 @@ public class MainActivity extends Activity {
             @Override
             public void apply(Boolean success) {
                 if(success) {
+                    Log.i(TAG, "Sign in successful");
+                    signinButton.setVisibility(View.GONE);
                     Toast.makeText(MainActivity.this, "Sign in successful", Toast.LENGTH_LONG).show();
                 } else {
+                    Log.e(TAG, "Sign in failed!");
                     Toast.makeText(MainActivity.this, "Sign in failed", Toast.LENGTH_LONG).show();
                 }
                 updateUIState();
