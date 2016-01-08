@@ -5,9 +5,15 @@
 *.apk
 /data
 
-.gradle
+# Gradle files
+.gradle/
+build/
+
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
+
+# IDEA files
+/.idea
+*.iml
+
+# Misc
 .DS_Store
-/build
