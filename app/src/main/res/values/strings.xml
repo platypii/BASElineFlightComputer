@@ -2,6 +2,7 @@
 
     <string name="app_name">BASEline</string>
 
+    <string name="signin_failed">Sign in failed, please try again</string>
     <string name="signout_message">Signed out</string>
 
 </resources>

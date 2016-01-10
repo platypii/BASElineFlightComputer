@@ -21,16 +21,16 @@ public class MyLocationManager {
 
     // Singleton GPSManager
     private static MyLocationManager _instance;
-    
+
     // Android Location manager
     private static LocationManager manager;
-    
+
     // Listeners
     private static final List<MyLocationListener> listeners = new ArrayList<>();
-    
+
     // GPS status
     public static float refreshRate = 0; // Moving average of refresh rate in Hz
-    
+
     // Satellite data
     public static int satellitesInView = -1; // Satellites in view
     public static int satellitesUsed = -1; // Satellites used in last fix
@@ -80,7 +80,7 @@ public class MyLocationManager {
             manager.addNmeaListener(nmeaListener);
 
             // TODO: Start an interval timer to update when signal is lost
-            
+
         }
     }
 
@@ -327,7 +327,7 @@ public class MyLocationManager {
                 return degrees;
         }
     }
-    
+
     private static final Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
     /**
      * Parse DDMMYY into milliseconds since epoch
@@ -370,7 +370,7 @@ public class MyLocationManager {
             }
         }
     }
-    
+
     /** Returns true if the checksum is valid */
     private static boolean nmeaChecksum(String nmea) {
         int starIndex = nmea.indexOf('*');
@@ -392,7 +392,7 @@ public class MyLocationManager {
         }
         return true;
     }
-    
+
     /** Null listener does nothing. all data comes from NMEA */
     private static final LocationListener nullListener = new LocationListener() {
         public void onLocationChanged(Location loc) {

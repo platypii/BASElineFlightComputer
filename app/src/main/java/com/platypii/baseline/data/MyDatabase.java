@@ -91,7 +91,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
         log = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(logFile))));
 
         // Write header
-        log.write(Measurement.header() + "\n");
+        log.write(Measurement.header + "\n");
 
         // Start sensor updates
         MyAltimeter.addListener(this);

@@ -16,12 +16,11 @@ public abstract class Measurement {
     public double altitude = Double.NaN; // Altitude
     public double climb = Double.NaN; // Rate of climb
     public double pressure = Double.NaN; // Barometric pressure (hPa)
-    
+
     // All measurements must be able to write out to CSV
     public abstract String toRow();
 
-    public static String header() {
-        return "millis,nano,sensor,pressure,latitude,longitude,altitude_gps,vN,vE,satellites,gX,gY,gZ,rotX,rotY,rotZ,acc";
-    }
+    public static final String header = "millis,nano,sensor,pressure,latitude,longitude,altitude_gps,vN,vE,satellites,gX,gY,gZ,rotX,rotY,rotZ,acc";
+
 }
 

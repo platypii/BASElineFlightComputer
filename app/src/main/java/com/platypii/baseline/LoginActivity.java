@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -117,7 +118,7 @@ public class LoginActivity extends Activity implements GoogleApiClient.Connectio
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // Could not connect to Google Play Services.  The user needs to select an account,
         // grant permissions or resolve an error in order to sign in. Refer to the javadoc for
         // ConnectionResult to see possible error codes.
@@ -135,7 +136,7 @@ public class LoginActivity extends Activity implements GoogleApiClient.Connectio
                 }
             } else {
                 // Could not resolve the connection result, show the user an error dialog.
-                statusText.setText("Sign in failed, please try again");
+                statusText.setText(R.string.signin_failed);
                 statusText.setTextColor(0xffdd1111);
                 Log.e(TAG, "Sign in failed: " + connectionResult);
             }
