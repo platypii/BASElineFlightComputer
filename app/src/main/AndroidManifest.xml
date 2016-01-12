@@ -46,6 +46,10 @@
             android:name="SensorActivity"
             android:label="@string/app_name" />
 
+        <activity
+            android:name="AudibleActivity"
+            android:label="@string/app_name" />
+
     </application>
 
 </manifest>

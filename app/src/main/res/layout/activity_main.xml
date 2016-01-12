@@ -49,6 +49,16 @@
         android:text="Tracks"
         android:textColor="#dddddd" />
 
+    <Button
+        android:id="@+id/audibleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/buttonBarButtonStyle"
+        android:onClick="clickAudible"
+        android:drawableTop="@drawable/audio"
+        android:text="Audible"
+        android:textColor="#dddddd" />
+
     <TextView
         android:id="@+id/clock"
         android:layout_width="match_parent"

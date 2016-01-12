@@ -147,6 +147,12 @@ public class MainActivity extends BaseActivity {
         startActivity(intent);
     }
 
+    public void clickAudible(View v) {
+        // Open audible activity
+        final Intent intent = new Intent(this, AudibleActivity.class);
+        startActivity(intent);
+    }
+
     public void clickSignOut() {
         Log.i(TAG, "Sign out");
         // Clear the default account so that GoogleApiClient will not automatically connect in the future.
