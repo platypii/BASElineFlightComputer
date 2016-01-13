@@ -70,7 +70,7 @@ public class MyLocationManager {
      * Initializes location services
      * @param context The Application context
      */
-    public static synchronized void initLocation(Context context) {
+    public static synchronized void initLocation(Context context) throws SecurityException {
         if(_instance == null) {
             _instance = new MyLocationManager();
             

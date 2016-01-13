@@ -1,8 +1,12 @@
 package com.platypii.baseline;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,6 +40,8 @@ public class MainActivity extends BaseActivity {
     private final Handler handler = new Handler();
     private final int updateInterval = 32; // milliseconds
 
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 64;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +64,20 @@ public class MainActivity extends BaseActivity {
         // Initialize Services
         Log.i(TAG, "Initializing key value store");
         KVStore.start(getApplication());
+
         Log.i(TAG, "Initializing location");
-        MyLocationManager.initLocation(getApplication());
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // Enable location services
+            try {
+                MyLocationManager.initLocation(getApplication());
+            } catch(SecurityException e) {
+                Log.e(TAG, "Error enabling location services", e);
+            }
+        } else {
+            // request the missing permissions
+            final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+            ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_REQUEST_LOCATION);
+        }
         Log.i(TAG, "Initializing sensors");
         MySensorManager.initSensors(getApplication());
         Log.i(TAG, "Initializing altimeter");
@@ -67,6 +85,21 @@ public class MainActivity extends BaseActivity {
 
         // TODO: Upload any unsynced files
         // TheCloud.uploadAll();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if(requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+            if(grantResults.length == 1 &&
+                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                try {
+                    MyLocationManager.initLocation(getApplication());
+                } catch(SecurityException e) {
+                    Log.e(TAG, "Error enabling location services", e);
+                }
+            }
+        }
     }
 
     public void clickStart(View v) {
