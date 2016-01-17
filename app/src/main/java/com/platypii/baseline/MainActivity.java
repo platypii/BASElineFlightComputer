@@ -16,7 +16,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.plus.Plus;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.KVStore;
@@ -188,18 +190,17 @@ public class MainActivity extends BaseActivity {
 
     public void clickSignOut() {
         Log.i(TAG, "Sign out");
-        // Clear the default account so that GoogleApiClient will not automatically connect in the future.
-        if(mGoogleApiClient.isConnected()) {
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-            mGoogleApiClient.disconnect();
-
-            // Return to SigninActivity
-            final Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            Log.e(TAG, "Sign out failed");
-        }
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        Log.d(TAG, "signOut:onResult:" + status);
+                        // Return to LoginActivity
+                        final Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
     }
 
     private void updateClock() {
