@@ -24,11 +24,13 @@ public class TrackAdapter extends ArrayAdapter<Jump> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final Jump jump = jumpList.get(position);
-        final LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View itemView = inflater.inflate(R.layout.jump_list_item, parent, false);
-        final TextView textView = (TextView) itemView.findViewById(R.id.list_name);
-        final TextView sizeView = (TextView) itemView.findViewById(R.id.list_filesize);
-        final ProgressBar spinnerView = (ProgressBar) itemView.findViewById(R.id.list_spinner);
+        if(convertView == null) {
+            final LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.jump_list_item, parent, false);
+        }
+        final TextView textView = (TextView) convertView.findViewById(R.id.list_name);
+        final TextView sizeView = (TextView) convertView.findViewById(R.id.list_filesize);
+        final ProgressBar spinnerView = (ProgressBar) convertView.findViewById(R.id.list_spinner);
 
         textView.setText(jump.toString());
         sizeView.setText(jump.getSize());
@@ -38,7 +40,7 @@ public class TrackAdapter extends ArrayAdapter<Jump> {
             spinnerView.setVisibility(View.VISIBLE);
         }
 
-        return itemView;
+        return convertView;
     }
 
 }

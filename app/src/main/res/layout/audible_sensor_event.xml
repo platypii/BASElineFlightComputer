@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="left"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textColor="#ffffffff"
                 android:inputType="number|numberSigned|numberDecimal" />
 
@@ -34,7 +34,7 @@
                 android:id="@+id/unitsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textColor="#ffffffff" />
 
             <EditText
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textColor="#ffffffff"
                 android:inputType="number|numberSigned|numberDecimal" />
 

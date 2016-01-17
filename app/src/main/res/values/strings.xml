@@ -7,6 +7,9 @@
     <string name="action_tracks">Tracks</string>
     <string name="action_audible">Audible</string>
 
+    <string name="action_open">Open</string>
+    <string name="action_sync">Sync</string>
+
     <string name="signin_prompt">Sign in using your google account to enable syncing tracks with https://base-line.ws/ or view tracks online.</string>
 
     <string name="signin_failed">Sign in failed, please try again</string>

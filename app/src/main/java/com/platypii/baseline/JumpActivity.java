@@ -53,12 +53,12 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
 
             final CloudData cloudData = jump.getCloudData();
             if(cloudData != null) {
-                openButton.setText("Open");
+                openButton.setText(R.string.action_open);
                 openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.browser, 0, 0);
                 mapButton.setEnabled(true);
                 shareButton.setEnabled(true);
             } else {
-                openButton.setText("Sync");
+                openButton.setText(R.string.action_sync);
                 openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.upload_cloud, 0, 0);
                 mapButton.setEnabled(false);
                 shareButton.setEnabled(false);
