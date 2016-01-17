@@ -21,7 +21,7 @@ public class JumpLog {
             return jumps;
         } else {
             Log.e("JumpLog", "External storage directory not available");
-            return null;
+            return jumps;
         }
     }
 

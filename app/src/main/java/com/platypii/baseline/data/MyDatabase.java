@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.zip.GZIPOutputStream;
 
 
@@ -83,7 +84,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
     private MyDatabase(Context appContext) throws IOException {
         // Open log file for writing
         final File logDir = JumpLog.getLogDirectory(appContext);
-        final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
         final String timestamp = dt.format(new Date());
 
         // gzip log file

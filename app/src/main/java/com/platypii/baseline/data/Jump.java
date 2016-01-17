@@ -6,6 +6,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Jump {
 
@@ -61,7 +62,7 @@ public class Jump {
     public Date getDate() {
         // Parse date from filename
         final String dateString = getName().replaceAll("track ", "");
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH.mm.ss");
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH.mm.ss", Locale.US);
         try {
             return format.parse(dateString);
         } catch (ParseException e) {
@@ -82,7 +83,7 @@ public class Jump {
 
     @Override
     public String toString() {
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         return format.format(getDate());
     }
 

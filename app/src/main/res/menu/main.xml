@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_item_sensor_info"
-        android:title="Sensor Info" />
+        android:title="@string/action_sensor_info" />
     <item
         android:id="@+id/menu_item_signout"
-        android:title="Sign Out" />
+        android:title="@string/action_sign_out" />
 </menu>

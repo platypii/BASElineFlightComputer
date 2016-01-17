@@ -9,6 +9,7 @@ import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 class Intents {
 
@@ -39,7 +40,7 @@ class Intents {
     public static void shareTrack(Context context, Jump jump) {
         final CloudData cloudData = jump.getCloudData();
         if(cloudData != null) {
-            final SimpleDateFormat format = new SimpleDateFormat("EEE MMM d yyyy, h:mma z");
+            final SimpleDateFormat format = new SimpleDateFormat("EEE MMM d yyyy, h:mma z", Locale.US);
             final String date = format.format(jump.getDate());
 
             final Intent intent = new Intent();

@@ -21,6 +21,17 @@
         android:layout_height="wrap_content"
         android:gravity="center" />
 
+    <TextView
+        android:id="@+id/error_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/warning"
+        android:drawableStart="@drawable/warning"
+        android:textColor="#bb0000"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,7 +46,7 @@
             style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickOpen"
             android:drawableTop="@drawable/upload_cloud"
-            android:text="View"
+            android:text="@string/action_open"
             android:textColor="#dddddd" />
 
         <Button
@@ -47,7 +58,7 @@
             style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickKml"
             android:drawableTop="@drawable/google_earth"
-            android:text="Map"
+            android:text="@string/action_map"
             android:textColor="#dddddd" />
 
     </LinearLayout>
@@ -66,7 +77,7 @@
             style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickDelete"
             android:drawableTop="@drawable/delete"
-            android:text="Delete"
+            android:text="@string/action_delete"
             android:textColor="#dddddd" />
 
         <Button
@@ -78,7 +89,7 @@
             style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickShare"
             android:drawableTop="@drawable/share"
-            android:text="share"
+            android:text="@string/action_share"
             android:textColor="#dddddd" />
 
     </LinearLayout>

@@ -44,6 +44,7 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
             // Find views
             final TextView filenameLabel = (TextView) findViewById(R.id.filename);
             final TextView filesizeLabel = (TextView) findViewById(R.id.filesize);
+            final TextView errorLabel = (TextView) findViewById(R.id.error_message);
             final Button openButton = (Button) findViewById(R.id.openButton);
             final Button mapButton = (Button) findViewById(R.id.mapButton);
             final Button shareButton = (Button) findViewById(R.id.shareButton);
@@ -53,11 +54,14 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
 
             final CloudData cloudData = jump.getCloudData();
             if(cloudData != null) {
+                errorLabel.setVisibility(View.GONE);
                 openButton.setText(R.string.action_open);
                 openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.browser, 0, 0);
                 mapButton.setEnabled(true);
                 shareButton.setEnabled(true);
             } else {
+                errorLabel.setText(R.string.error_not_uploaded);
+                errorLabel.setVisibility(View.VISIBLE);
                 openButton.setText(R.string.action_sync);
                 openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.upload_cloud, 0, 0);
                 mapButton.setEnabled(false);
