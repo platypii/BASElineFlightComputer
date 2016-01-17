@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Sign in using your google account. This enables syncing with https://base-line.ws to view tracks."
+        android:text="@string/signin_prompt"
         android:gravity="center"
         android:padding="10dp" />
 

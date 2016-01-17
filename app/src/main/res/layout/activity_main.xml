@@ -20,7 +20,7 @@
             android:drawableTop="@drawable/circle"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:text="Record"
+            android:text="@string/action_record"
             android:textColor="#dddddd" />
 
         <Button
@@ -33,31 +33,40 @@
             android:drawableTop="@drawable/square"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:text="Stop"
+            android:text="@string/action_stop"
             android:textColor="#dddddd"
             android:enabled="false" />
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/jumpsButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?android:attr/buttonBarButtonStyle"
-        android:onClick="clickJumps"
-        android:drawableTop="@drawable/list"
-        android:text="Tracks"
-        android:textColor="#dddddd" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/audibleButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:attr/buttonBarButtonStyle"
-        android:onClick="clickAudible"
-        android:drawableTop="@drawable/audio"
-        android:text="Audible"
-        android:textColor="#dddddd" />
+        <!--<Button-->
+            <!--android:id="@+id/audibleButton"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--style="?android:attr/buttonBarButtonStyle"-->
+            <!--android:onClick="clickAudible"-->
+            <!--android:drawableTop="@drawable/audio"-->
+            <!--android:text="@string/action_audible"-->
+            <!--android:textColor="#dddddd" />-->
+
+        <Button
+            android:id="@+id/jumpsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"
+            android:onClick="clickJumps"
+            android:drawableTop="@drawable/list"
+            android:text="@string/action_tracks"
+            android:textColor="#dddddd" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/clock"
