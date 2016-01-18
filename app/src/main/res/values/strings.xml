@@ -16,11 +16,12 @@
     <string name="action_delete">Delete</string>
     <string name="action_share">Share</string>
 
-    <string name="signin_prompt">Sign in using your google account to enable syncing tracks with https://base-line.ws/ or view tracks online.</string>
+    <string name="signin_prompt">Sign in using your google account to enable syncing tracks with https://base-line.ws/</string>
 
     <string name="signin_failed">Sign in failed, please try again</string>
     <string name="signout_message">Signed out</string>
 
+    <string name="no_tracks">no tracks</string>
     <string name="error_not_uploaded">Error: track not synced</string>
 
     <string name="server_client_id">1025187389465-71cuhba0pqbuq2im4ldm1kj710q4oefb.apps.googleusercontent.com</string>

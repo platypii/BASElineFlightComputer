@@ -13,6 +13,7 @@ import com.platypii.baseline.data.JumpLog;
 import com.platypii.baseline.data.SyncStatus;
 import com.platypii.baseline.data.TrackAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JumpsActivity extends ListActivity implements AdapterView.OnItemLongClickListener, SyncStatus.SyncListener {
@@ -20,16 +21,21 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
     private List<Jump> jumpList;
     private ArrayAdapter<Jump> listAdapter;
 
+    private View tracksEmptyLabel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jumps);
 
+        tracksEmptyLabel = findViewById(R.id.tracks_empty);
+
         // Initialize the ListAdapter
-        jumpList = JumpLog.getJumps(getApplicationContext());
+        jumpList = new ArrayList<>();
         listAdapter = new TrackAdapter(this, R.layout.jump_list_item, jumpList);
         setListAdapter(listAdapter);
 
+        // Listen for long-clicks
         final ListView listView = getListView();
         listView.setOnItemLongClickListener(this);
 
@@ -45,6 +51,13 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
         jumpList.clear();
         jumpList.addAll(JumpLog.getJumps(getApplicationContext()));
         listAdapter.notifyDataSetChanged();
+
+        // Handle no-tracks case
+        if(jumpList.size() > 0) {
+            tracksEmptyLabel.setVisibility(View.GONE);
+        } else {
+            tracksEmptyLabel.setVisibility(View.VISIBLE);
+        }
 
         // Listen for sync updates
         SyncStatus.addListener(this);

@@ -10,18 +10,9 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="@string/signin_prompt"
+        android:autoLink="web"
         android:gravity="center"
         android:padding="10dp" />
-
-    <!--<ImageButton-->
-        <!--android:id="@+id/signinButton"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center"-->
-        <!--style="?android:attr/buttonBarButtonStyle"-->
-        <!--android:onClick="clickSignIn"-->
-        <!--android:src="@drawable/signin"-->
-        <!--android:contentDescription="Sign In"/>-->
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
