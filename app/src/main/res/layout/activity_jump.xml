@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/warning"
         android:drawableStart="@drawable/warning"
-        android:textColor="#bb0000"
+        android:textColor="#aa0000"
         android:layout_gravity="center"
         android:gravity="center"
         android:visibility="gone" />

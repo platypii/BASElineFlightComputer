@@ -113,10 +113,11 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
     }
 
     public void clickDelete(View v) {
+        final int deleteConfirmMessage = (jump.getCloudData() == null)? R.string.delete_local : R.string.delete_remote;
         new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_alert)
-            .setTitle("Delete Jump")
-            .setMessage("Delete this track?")
+            .setTitle("Delete this track?")
+            .setMessage(deleteConfirmMessage)
             .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -164,42 +165,42 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
                 }
 
             })
-                    .setNegativeButton("Cancel", null)
-                            .show();
-                }
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
 
-                private void deleteLocal() {
-                    if(jump.delete()) {
-                        // Notify user
-                        Toast.makeText(getApplicationContext(), "Deleted " + jump.getName(), Toast.LENGTH_LONG).show();
-                        // Exit activity
-                        finish();
-                    } else {
-                        // Delete failed
-                        Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
-                    }
-                }
+    private void deleteLocal() {
+        if(jump.delete()) {
+            // Notify user
+            Toast.makeText(getApplicationContext(), "Deleted " + jump.getName(), Toast.LENGTH_LONG).show();
+            // Exit activity
+            finish();
+        } else {
+            // Delete failed
+            Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
+        }
+    }
 
-                public void clickShare(View v) {
-                    Intents.shareTrack(this, jump);
-                }
+    public void clickShare(View v) {
+        Intents.shareTrack(this, jump);
+    }
 
-                @Override
-                protected void onResume() {
-                    super.onResume();
-                    // Listen for sync updates
-                    SyncStatus.addListener(this);
-                }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Listen for sync updates
+        SyncStatus.addListener(this);
+    }
 
-                @Override
-                protected void onPause() {
-                    super.onPause();
-                    // Listen for sync updates
-                    SyncStatus.removeListener(this);
-                }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Listen for sync updates
+        SyncStatus.removeListener(this);
+    }
 
-                @Override
-                public void syncUpdate() {
-                    updateViews();
-                }
-            }
+    @Override
+    public void syncUpdate() {
+        updateViews();
+    }
+}

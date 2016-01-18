@@ -23,7 +23,10 @@ public class Jump {
         return "track." + logFile.getName();
     }
 
-    /** Returns cloud url info, if this track has been uploaded */
+    /**
+     * Returns cloud url info, if this track has been uploaded.
+     * Will not initialize an upload, and will get cached, safe to use whenever.
+     */
     public CloudData getCloudData() {
         if(cloudData != null) {
             return cloudData;
