@@ -20,7 +20,7 @@ public abstract class Measurement {
     // All measurements must be able to write out to CSV
     public abstract String toRow();
 
-    public static final String header = "millis,nano,sensor,pressure,latitude,longitude,altitude_gps,vN,vE,satellites,gX,gY,gZ,rotX,rotY,rotZ,acc";
+    public static final String header = "millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc";
 
 }
 

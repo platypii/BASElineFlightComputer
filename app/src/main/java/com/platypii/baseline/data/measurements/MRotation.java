@@ -23,7 +23,7 @@ public class MRotation extends MSensor {
 
     @Override
     public String toRow() {
-        // millis, nano, sensor, pressure, latitude, longitude, altitude_gps, vN, vE, satellites, gX, gY, gZ, rotX, rotY, rotZ, acc
+        // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
         return String.format(",%d,rot,,,,,,,,,,,%f,%f,%f,", nano, rotX, rotY, rotZ);
     }
 
