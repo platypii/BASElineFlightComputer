@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -14,21 +17,27 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 
 public class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "BaseActivity";
 
     /* Client used to interact with Google APIs. */
-    GoogleApiClient mGoogleApiClient;
-    GoogleSignInAccount account;
+    private GoogleApiClient mGoogleApiClient;
+    private GoogleSignInAccount account;
 
     /* Request code used to invoke sign in user interactions. */
     private static final int RC_SIGN_IN = 0;
 
+    private boolean userClickedSignIn = false;
+
+    protected boolean isSignedIn() {
+        return account != null;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signin);
 
         final String serverClientId = getString(R.string.server_client_id);
         final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -65,6 +74,57 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
             });
         }
+
+        // Listen for sign in button click
+        final View signInButton = findViewById(R.id.sign_in_button);
+        if(signInButton != null) {
+            signInButton.setOnClickListener(signInClickListener);
+        }
+    }
+    private View.OnClickListener signInClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v){
+            if(v.getId() == R.id.sign_in_button) {
+                clickSignIn();
+            }
+        }
+    };
+
+    /**
+     * Start user sign in flow
+     */
+    protected void clickSignIn() {
+        Log.i(TAG, "User clicked sign in");
+        userClickedSignIn = true;
+
+        // Update sign in panel
+        final View signInPanel = findViewById(R.id.sign_in_panel);
+        if(signInPanel != null) {
+            findViewById(R.id.sign_in_button).setEnabled(false);
+            findViewById(R.id.sign_in_spinner).setVisibility(View.VISIBLE);
+        }
+
+        final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    public void clickSignOut() {
+        Log.i(TAG, "clickSignOut");
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        Log.d(TAG, "signOut:onResult:" + status);
+                        Toast.makeText(BaseActivity.this, "Signed out", Toast.LENGTH_LONG).show();
+
+                        // Show sign in panel
+                        final View signInPanel = findViewById(R.id.sign_in_panel);
+                        if(signInPanel != null) {
+                            signInPanel.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+        );
     }
 
     @Override
@@ -80,7 +140,12 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     protected void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        Log.d(TAG, "handleSignInResult: " + result.isSuccess());
+        final View signInPanel = findViewById(R.id.sign_in_panel);
+        if(signInPanel != null) {
+            findViewById(R.id.sign_in_button).setEnabled(true);
+            findViewById(R.id.sign_in_spinner).setVisibility(View.GONE);
+        }
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             account = result.getSignInAccount();
@@ -91,37 +156,45 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
 
             final String idToken = account.getIdToken();
             Log.d(TAG, "Got id token " + idToken); // TODO: Remove me
+
+            // Hide sign in panel
+            if(signInPanel != null) {
+                signInPanel.setVisibility(View.GONE);
+            }
         } else {
             Log.e(TAG, "Sign in failed");
-            // Could not resolve the connection result, return to LoginActivity
-            final Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+            // Show sign in panel
+            if(signInPanel != null) {
+                signInPanel.setVisibility(View.VISIBLE);
+            }
+            if(userClickedSignIn) {
+                Toast.makeText(this, "Sign in failed", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
-
-        // Sign in failed, return to LoginActivity
-        final Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
+        Log.i(TAG, "Not signed in");
     }
 
     /** Get google auth token and return asynchronously via callback */
     public void getAuthToken(final Callback<String> callback) {
-        final String token = account.getIdToken();
-        if(token != null) {
-            Log.i(TAG, "Got auth token " + token);
-            if(callback != null) {
-                callback.apply(token);
+        if(account != null) {
+            final String token = account.getIdToken();
+            if(token != null) {
+                Log.i(TAG, "Got auth token " + token);
+                if(callback != null) {
+                    callback.apply(token);
+                }
+            } else {
+                if(callback != null) {
+                    callback.error("Failed to get auth token");
+                }
             }
         } else {
-            if(callback != null) {
-                callback.error("Failed to get auth token");
-            }
+            callback.error("Not signed in");
         }
     }
 

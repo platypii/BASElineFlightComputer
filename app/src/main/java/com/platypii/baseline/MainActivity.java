@@ -17,9 +17,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
@@ -34,6 +32,8 @@ public class MainActivity extends BaseActivity {
     private static final String TAG = "Main";
 
     public static final long startTime = System.currentTimeMillis(); // Session start time (when the app started)
+
+    private Menu menu;
 
     private Button startButton;
     private Button stopButton;
@@ -131,28 +131,32 @@ public class MainActivity extends BaseActivity {
 
         // Upload to the cloud
         if(jump != null) {
-            // Begin automatic upload
-            getAuthToken(new Callback<String>() {
-                @Override
-                public void apply(String authToken) {
-                    TheCloud.upload(jump, authToken, new Callback<CloudData>() {
-                        @Override
-                        public void apply(CloudData cloudData) {
-                            Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
-                        }
+            if(isSignedIn()) {
+                // Begin automatic upload
+                getAuthToken(new Callback<String>() {
+                    @Override
+                    public void apply(String authToken) {
+                        TheCloud.upload(jump, authToken, new Callback<CloudData>() {
+                            @Override
+                            public void apply(CloudData cloudData) {
+                                Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
+                            }
 
-                        @Override
-                        public void error(String error) {
-                            Toast.makeText(MainActivity.this, "Track sync failed", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
+                            @Override
+                            public void error(String error) {
+                                Toast.makeText(MainActivity.this, "Track sync failed: " + error, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
 
-                @Override
-                public void error(String error) {
-                    Toast.makeText(MainActivity.this, "Track sync failed", Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void error(String error) {
+                        Toast.makeText(MainActivity.this, "Track sync failed: " + error, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Log.w(TAG, "Track sync failed: not signed in");
+            }
         } else {
             Log.e(TAG, "Error reading log file");
         }
@@ -196,21 +200,6 @@ public class MainActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    public void clickSignOut() {
-        Log.i(TAG, "Sign out");
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        Log.d(TAG, "signOut:onResult:" + status);
-                        // Return to LoginActivity
-                        final Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-    }
-
     private void updateClock() {
         if(MyDatabase.isLogging()) {
             clock.setText(MyDatabase.getLogTime());
@@ -221,24 +210,28 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
-    public boolean onPrepareOptionsMenu (Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         return !MyDatabase.isLogging();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        switch(item.getItemId()) {
             case R.id.menu_item_sensor_info:
                 // Open sensor activity
                 startActivity(new Intent(this, SensorActivity.class));
                 return true;
-            case R.id.menu_item_signout:
+            case R.id.menu_item_sign_in:
+                clickSignIn();
+                return true;
+            case R.id.menu_item_sign_out:
                 clickSignOut();
                 return true;
             default:
@@ -248,8 +241,11 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MY_TTS_DATA_CHECK_CODE) {
-            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: " + requestCode + ":" + resultCode + ":" + data);
+
+        if(requestCode == MY_TTS_DATA_CHECK_CODE) {
+            if(resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 // success, start the audible
                 MyAudible.initAudible(getApplication());
             } else {
@@ -261,4 +257,21 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    protected void handleSignInResult(GoogleSignInResult result) {
+        super.handleSignInResult(result);
+        Log.d(TAG, "handleSignInResult: " + result.isSuccess());
+        if(result.isSuccess()) {
+            // Update menu
+            if(menu != null) {
+                menu.findItem(R.id.menu_item_sign_in).setVisible(false);
+                menu.findItem(R.id.menu_item_sign_out).setVisible(true);
+            }
+        } else {
+            // Update menu
+            if(menu != null) {
+                menu.findItem(R.id.menu_item_sign_in).setVisible(true);
+                menu.findItem(R.id.menu_item_sign_out).setVisible(false);
+            }
+        }
+    }
 }

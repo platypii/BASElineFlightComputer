@@ -43,7 +43,8 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
     @Override
     protected void handleSignInResult(GoogleSignInResult result) {
         super.handleSignInResult(result);
-        // TODO: Update view based on sign-in state
+        // Update view based on sign-in state
+        updateViews();
     }
 
     private void updateViews() {
@@ -58,6 +59,7 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
             filenameLabel.setText(jump.getName());
             filesizeLabel.setText(jump.getSize());
 
+            // Update cloud sync state
             final CloudData cloudData = jump.getCloudData();
             if(cloudData != null) {
                 errorLabel.setVisibility(View.GONE);
@@ -70,6 +72,13 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
                 openButton.setText(R.string.action_sync);
                 openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.upload_cloud, 0, 0);
                 mapButton.setEnabled(false);
+            }
+
+            // Update view based on sign-in state
+            if(isSignedIn() || cloudData != null) {
+                openButton.setEnabled(true);
+            } else {
+                openButton.setEnabled(false);
             }
         }
     }

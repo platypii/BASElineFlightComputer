@@ -8,6 +8,7 @@
     <string name="action_audible">Audible</string>
 
     <string name="action_sensor_info">Sensor Info</string>
+    <string name="action_sign_in">Sign In</string>
     <string name="action_sign_out">Sign Out</string>
 
     <string name="action_open">View</string>
@@ -16,7 +17,7 @@
     <string name="action_delete">Delete</string>
     <string name="action_export">Export</string>
 
-    <string name="signin_prompt">Sign in using your google account to enable syncing tracks with https://base-line.ws/</string>
+    <string name="signin_prompt">Sign in using your google account to sync tracks with https://base-line.ws/</string>
 
     <string name="signin_failed">Sign in failed, please try again</string>
     <string name="signout_message">Signed out</string>
