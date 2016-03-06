@@ -44,16 +44,16 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <!--<Button-->
-            <!--android:id="@+id/audibleButton"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--style="?android:attr/buttonBarButtonStyle"-->
-            <!--android:onClick="clickAudible"-->
-            <!--android:drawableTop="@drawable/audio"-->
-            <!--android:text="@string/action_audible"-->
-            <!--android:textColor="#dddddd" />-->
+        <Button
+            android:id="@+id/audibleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"
+            android:onClick="clickAudible"
+            android:drawableTop="@drawable/audio"
+            android:text="@string/action_audible"
+            android:textColor="#dddddd" />
 
         <Button
             android:id="@+id/jumpsButton"

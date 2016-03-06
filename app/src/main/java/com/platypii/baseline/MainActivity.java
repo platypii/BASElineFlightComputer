@@ -234,10 +234,6 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_audible:
-                // Open audible activity
-                startActivity(new Intent(this, AudibleSettingsActivity.class));
-                return true;
             case R.id.menu_item_sensor_info:
                 // Open sensor activity
                 startActivity(new Intent(this, SensorActivity.class));
