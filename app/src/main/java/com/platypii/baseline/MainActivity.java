@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -44,6 +45,7 @@ public class MainActivity extends BaseActivity {
     private final int updateInterval = 32; // milliseconds
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 64;
+    private static final int MY_TTS_DATA_CHECK_CODE = 48;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +88,10 @@ public class MainActivity extends BaseActivity {
         Log.i(TAG, "Initializing altimeter");
         MyAltimeter.initAltimeter(getApplication());
         Log.i(TAG, "Initializing audible");
-        MyAudible.initAudible(getApplication());
+        // Check for TTS data
+        Intent checkIntent = new Intent();
+        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(checkIntent, MY_TTS_DATA_CHECK_CODE);
 
         // TODO: Upload any unsynced files
         // TheCloud.uploadAll();
@@ -164,7 +169,7 @@ public class MainActivity extends BaseActivity {
             handler.post(new Runnable() {
                 public void run() {
                     updateClock();
-                    if (MyDatabase.isLogging()) {
+                    if(MyDatabase.isLogging()) {
                         handler.postDelayed(this, updateInterval);
                     }
                 }
@@ -244,4 +249,20 @@ public class MainActivity extends BaseActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MY_TTS_DATA_CHECK_CODE) {
+            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                // success, start the audible
+                MyAudible.initAudible(getApplication());
+            } else {
+                // missing data, install it
+                final Intent installIntent = new Intent();
+                installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                startActivity(installIntent);
+            }
+        }
+    }
+
 }
