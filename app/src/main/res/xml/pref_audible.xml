@@ -1,0 +1,37 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="audible_enabled"
+        android:title="@string/pref_audible_enabled"
+        android:summary="@string/pref_audible_enabled_description" />
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <ListPreference
+        android:key="audible_mode"
+        android:title="@string/pref_audible_mode"
+        android:defaultValue="-1"
+        android:entries="@array/audible_modes"
+        android:entryValues="@array/audible_modes_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <EditTextPreference
+        android:key="audible_min"
+        android:title="@string/pref_audible_min"
+        android:defaultValue="0.0"
+        android:inputType="numberDecimal"
+        android:selectAllOnFocus="true" />
+
+    <EditTextPreference
+        android:key="audible_max"
+        android:title="@string/pref_audible_max"
+        android:defaultValue="1.0"
+        android:inputType="numberDecimal"
+        android:selectAllOnFocus="true" />
+
+</PreferenceScreen>

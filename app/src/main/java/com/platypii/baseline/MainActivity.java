@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.KVStore;
@@ -84,13 +85,15 @@ public class MainActivity extends BaseActivity {
         MySensorManager.initSensors(getApplication());
         Log.i(TAG, "Initializing altimeter");
         MyAltimeter.initAltimeter(getApplication());
+        Log.i(TAG, "Initializing audible");
+        MyAudible.initAudible(getApplication());
 
         // TODO: Upload any unsynced files
         // TheCloud.uploadAll();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
             if(grantResults.length == 1 &&
                     permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
@@ -184,7 +187,7 @@ public class MainActivity extends BaseActivity {
 
     public void clickAudible(View v) {
         // Open audible activity
-        final Intent intent = new Intent(this, AudibleActivity.class);
+        final Intent intent = new Intent(this, AudibleSettingsActivity.class);
         startActivity(intent);
     }
 
@@ -226,10 +229,13 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_item_audible:
+                // Open audible activity
+                startActivity(new Intent(this, AudibleSettingsActivity.class));
+                return true;
             case R.id.menu_item_sensor_info:
                 // Open sensor activity
-                final Intent intent = new Intent(this, SensorActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, SensorActivity.class));
                 return true;
             case R.id.menu_item_signout:
                 clickSignOut();

@@ -29,4 +29,29 @@
 
     <string name="server_client_id">1025187389465-71cuhba0pqbuq2im4ldm1kj710q4oefb.apps.googleusercontent.com</string>
 
+    <string-array name="audible_modes">
+        <item>Horizontal Speed</item>
+        <item>Vertical Speed</item>
+        <item>Glide Ratio</item>
+    </string-array>
+    <string-array name="audible_modes_values">
+        <item>horizontal_speed</item>
+        <item>vertical_speed</item>
+        <item>glide_ratio</item>
+    </string-array>
+
+    <!-- Audible settings -->
+    <string name="title_activity_audible_settings">Audible Settings</string>
+    <string name="pref_header_audible">Audible Settings</string>
+
+    <string name="pref_audible_enabled">Enable audible</string>
+    <string name="pref_audible_enabled_description">
+        Enable audible feedback
+    </string>
+
+    <string name="pref_audible_mode">Measurement mode</string>
+
+    <string name="pref_audible_min">Min</string>
+    <string name="pref_audible_max">Max</string>
+
 </resources>
