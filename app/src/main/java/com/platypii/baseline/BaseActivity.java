@@ -16,7 +16,7 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 
 public class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = "SignIn";
+    private static final String TAG = "BaseActivity";
 
     /* Client used to interact with Google APIs. */
     GoogleApiClient mGoogleApiClient;
@@ -79,7 +79,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    private void handleSignInResult(GoogleSignInResult result) {
+    protected void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.

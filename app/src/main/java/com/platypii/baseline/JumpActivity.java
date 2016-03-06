@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
@@ -37,6 +38,12 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
 
         // Update views
         updateViews();
+    }
+
+    @Override
+    protected void handleSignInResult(GoogleSignInResult result) {
+        super.handleSignInResult(result);
+        // TODO: Update view based on sign-in state
     }
 
     private void updateViews() {
