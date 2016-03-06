@@ -14,7 +14,7 @@
     <string name="action_sync">Sync</string>
     <string name="action_map">Map</string>
     <string name="action_delete">Delete</string>
-    <string name="action_share">Share</string>
+    <string name="action_export">Export</string>
 
     <string name="signin_prompt">Sign in using your google account to enable syncing tracks with https://base-line.ws/</string>
 

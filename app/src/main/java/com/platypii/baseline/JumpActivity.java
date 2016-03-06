@@ -47,7 +47,6 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
             final TextView errorLabel = (TextView) findViewById(R.id.error_message);
             final Button openButton = (Button) findViewById(R.id.openButton);
             final Button mapButton = (Button) findViewById(R.id.mapButton);
-            final Button shareButton = (Button) findViewById(R.id.shareButton);
 
             filenameLabel.setText(jump.getName());
             filesizeLabel.setText(jump.getSize());
@@ -58,14 +57,12 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
                 openButton.setText(R.string.action_open);
                 openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.browser, 0, 0);
                 mapButton.setEnabled(true);
-                shareButton.setEnabled(true);
             } else {
                 errorLabel.setText(R.string.error_not_uploaded);
                 errorLabel.setVisibility(View.VISIBLE);
                 openButton.setText(R.string.action_sync);
                 openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.upload_cloud, 0, 0);
                 mapButton.setEnabled(false);
-                shareButton.setEnabled(false);
             }
         }
     }
@@ -181,8 +178,8 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
         }
     }
 
-    public void clickShare(View v) {
-        Intents.shareTrack(this, jump);
+    public void clickExport(View v) {
+        Intents.shareTrackFile(this, jump);
     }
 
     @Override

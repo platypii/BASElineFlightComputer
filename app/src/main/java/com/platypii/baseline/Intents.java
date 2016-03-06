@@ -37,27 +37,28 @@ class Intents {
     }
 
     /** Share jump log using android share options */
-    public static void shareTrack(Context context, Jump jump) {
-        final CloudData cloudData = jump.getCloudData();
-        if(cloudData != null) {
-            final SimpleDateFormat format = new SimpleDateFormat("EEE MMM d yyyy, h:mma z", Locale.US);
-            final String date = format.format(jump.getDate());
-
-            final Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_SUBJECT, "BASEline Track " + date);
-            intent.putExtra(Intent.EXTRA_TEXT, jump.getCloudData().trackUrl);
-            intent.setType("text/plain");
-            context.startActivity(Intent.createChooser(intent, "Share Track"));
-        } else {
-            Log.e("Intents", "Cannot share track because not synced");
-        }
-    }
-//    public static void shareTrackFile(Context context, Jump jump) {
-//        final Intent intent = new Intent();
-//        intent.setAction(Intent.ACTION_SEND);
-//        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(jump.logFile));
-//        intent.setType("text/plain");
-//        context.startActivity(intent);
+//    public static void shareTrack(Context context, Jump jump) {
+//        final CloudData cloudData = jump.getCloudData();
+//        if(cloudData != null) {
+//            final SimpleDateFormat format = new SimpleDateFormat("EEE MMM d yyyy, h:mma z", Locale.US);
+//            final String date = format.format(jump.getDate());
+//
+//            final Intent intent = new Intent();
+//            intent.setAction(Intent.ACTION_SEND);
+//            intent.putExtra(Intent.EXTRA_SUBJECT, "BASEline Track " + date);
+//            intent.putExtra(Intent.EXTRA_TEXT, jump.getCloudData().trackUrl);
+//            intent.setType("text/plain");
+//            context.startActivity(Intent.createChooser(intent, "Share Track"));
+//        } else {
+//            Log.e("Intents", "Cannot share track because not synced");
+//        }
 //    }
+
+    public static void shareTrackFile(Context context, Jump jump) {
+        final Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(jump.logFile));
+        intent.setType("text/plain");
+        context.startActivity(intent);
+    }
 }
