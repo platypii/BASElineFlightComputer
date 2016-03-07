@@ -45,6 +45,7 @@ public class AudibleSettingsActivity extends PreferenceActivity {
         private ListPreference modePreference;
         private EditTextPreference minPreference;
         private EditTextPreference maxPreference;
+        private EditTextPreference ratePreference;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,7 @@ public class AudibleSettingsActivity extends PreferenceActivity {
             modePreference = (ListPreference) findPreference("audible_mode");
             minPreference = (EditTextPreference) findPreference("audible_min");
             maxPreference = (EditTextPreference) findPreference("audible_max");
+            ratePreference = (EditTextPreference) findPreference("audible_rate");
 
             enabledPreference.setOnPreferenceChangeListener(this);
             modePreference.setOnPreferenceChangeListener(this);
@@ -75,6 +77,7 @@ public class AudibleSettingsActivity extends PreferenceActivity {
             final CharSequence modeValue = modePreferenceIndex >= 0? modePreference.getEntries()[modePreferenceIndex] : null;
             modePreference.setSummary(modeValue);
 
+            // Minimum and maximum values
             final double min = Double.parseDouble(minPreference.getText());
             final double max = Double.parseDouble(maxPreference.getText());
             switch(audibleMode) {
@@ -95,6 +98,10 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                 default:
                     Log.e(TAG, "Invalid audible mode " + audibleMode);
             }
+
+            // Speech rate
+            final double speechRate = Double.parseDouble(ratePreference.getText());
+            ratePreference.setSummary(String.format("Every %.0f", speechRate) + " sec");
         }
 
         @Override

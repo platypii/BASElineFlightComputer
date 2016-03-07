@@ -25,6 +25,7 @@
         android:title="@string/pref_audible_min"
         android:defaultValue="60.0"
         android:inputType="numberDecimal"
+        android:numeric="decimal"
         android:selectAllOnFocus="true" />
 
     <EditTextPreference
@@ -32,6 +33,15 @@
         android:title="@string/pref_audible_max"
         android:defaultValue="120.0"
         android:inputType="numberDecimal"
+        android:numeric="decimal"
+        android:selectAllOnFocus="true" />
+
+    <EditTextPreference
+        android:key="audible_rate"
+        android:title="@string/pref_audible_rate"
+        android:defaultValue="2.0"
+        android:inputType="numberDecimal"
+        android:numeric="decimal"
         android:selectAllOnFocus="true" />
 
 </PreferenceScreen>

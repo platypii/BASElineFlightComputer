@@ -14,8 +14,6 @@ import com.platypii.baseline.data.MyLocationManager;
 public class MyAudible {
     private static final String TAG = "Audible";
 
-    private static final int delay = 2000; // milliseconds
-
     private static Speech speech;
     private static AudibleThread audibleThread;
     private static SharedPreferences prefs;
@@ -24,7 +22,7 @@ public class MyAudible {
 
     public static void initAudible(Context context) {
         speech = new Speech(context);
-        audibleThread = new AudibleThread(delay);
+        audibleThread = new AudibleThread();
 
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final boolean audibleEnabled = prefs.getBoolean("audible_enabled", false);
@@ -37,7 +35,9 @@ public class MyAudible {
 
     public static void startAudible() {
         if(isInitialized) {
-            audibleThread.start();
+            final float speechRate = Float.parseFloat(prefs.getString("audible_rate", "2.0"));
+            final int delay = (int) (speechRate * 1000f);
+            audibleThread.start(delay);
         } else {
             Log.e(TAG, "Failed to start audible: audible not initialized");
         }
@@ -63,8 +63,8 @@ public class MyAudible {
 
     private static String getMeasurement() {
         final String audibleMode = prefs.getString("audible_mode", "horizontal_speed");
-        final float min = prefs.getFloat("audible_min", 60f);
-        final float max = prefs.getFloat("audible_max", 120f);
+        final float min = Float.parseFloat(prefs.getString("audible_min", "60"));
+        final float max = Float.parseFloat(prefs.getString("audible_max", "120"));
         String measurement = "";
         switch(audibleMode) {
             case "horizontal_speed":

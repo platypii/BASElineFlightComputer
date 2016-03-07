@@ -22,13 +22,10 @@ public class AudibleThread {
         }
     };
 
-    public AudibleThread(int delay) {
-        this.delay = delay;
-    }
-
-    public void start() {
+    public void start(int delay) {
         if(!isEnabled) {
             Log.i(TAG, "Starting audible");
+            this.delay = delay;
             handler.post(audibleThread);
             isEnabled = true;
         } else {
