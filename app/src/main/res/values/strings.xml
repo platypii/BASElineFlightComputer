@@ -43,7 +43,6 @@
 
     <!-- Audible settings -->
     <string name="title_activity_audible_settings">Audible Settings</string>
-    <string name="pref_header_audible">Audible Settings</string>
 
     <string name="pref_audible_enabled">Enable audible</string>
     <string name="pref_audible_enabled_description">
@@ -52,7 +51,7 @@
 
     <string name="pref_audible_mode">Measurement mode</string>
 
-    <string name="pref_audible_min">Min</string>
-    <string name="pref_audible_max">Max</string>
+    <string name="pref_audible_min">Minimum value</string>
+    <string name="pref_audible_max">Maximum value</string>
 
 </resources>

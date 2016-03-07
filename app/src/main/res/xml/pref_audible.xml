@@ -12,7 +12,7 @@
     <ListPreference
         android:key="audible_mode"
         android:title="@string/pref_audible_mode"
-        android:defaultValue="-1"
+        android:defaultValue="horizontal_speed"
         android:entries="@array/audible_modes"
         android:entryValues="@array/audible_modes_values"
         android:negativeButtonText="@null"
@@ -23,14 +23,14 @@
     <EditTextPreference
         android:key="audible_min"
         android:title="@string/pref_audible_min"
-        android:defaultValue="0.0"
+        android:defaultValue="60.0"
         android:inputType="numberDecimal"
         android:selectAllOnFocus="true" />
 
     <EditTextPreference
         android:key="audible_max"
         android:title="@string/pref_audible_max"
-        android:defaultValue="1.0"
+        android:defaultValue="120.0"
         android:inputType="numberDecimal"
         android:selectAllOnFocus="true" />
 

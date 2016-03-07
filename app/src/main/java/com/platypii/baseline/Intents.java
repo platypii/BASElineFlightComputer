@@ -8,9 +8,6 @@ import android.util.Log;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 class Intents {
 
     /** Open jump activity */

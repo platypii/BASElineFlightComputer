@@ -77,7 +77,6 @@ public class AudibleSettingsActivity extends PreferenceActivity {
 
             final double min = Double.parseDouble(minPreference.getText());
             final double max = Double.parseDouble(maxPreference.getText());
-            String units;
             switch(audibleMode) {
                 case "glide_ratio":
                     minPreference.setTitle("Minimum Glide Ratio");
@@ -112,9 +111,13 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                 final String audibleMode = (String) value;
                 switch(audibleMode) {
                     case "horizontal_speed":
-                    case "vertical_speed":
                         // Set default min/max
                         minPreference.setText("60.0");
+                        maxPreference.setText("120.0");
+                        break;
+                    case "vertical_speed":
+                        // Set default min/max
+                        minPreference.setText("30.0");
                         maxPreference.setText("120.0");
                         break;
                     case "glide_ratio":

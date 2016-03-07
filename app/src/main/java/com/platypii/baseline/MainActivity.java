@@ -233,6 +233,13 @@ public class MainActivity extends BaseActivity {
                 return true;
             case R.id.menu_item_sign_out:
                 clickSignOut();
+
+                // Update menu
+                if(menu != null) {
+                    menu.findItem(R.id.menu_item_sign_in).setVisible(true);
+                    menu.findItem(R.id.menu_item_sign_out).setVisible(false);
+                }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

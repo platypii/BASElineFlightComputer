@@ -62,28 +62,36 @@ public class MyAudible {
     }
 
     private static String getMeasurement() {
-        final String audibleMode = prefs.getString("audible_mode", null);
+        final String audibleMode = prefs.getString("audible_mode", "horizontal_speed");
+        final float min = prefs.getFloat("audible_min", 60f);
+        final float max = prefs.getFloat("audible_max", 120f);
         String measurement = "";
         switch(audibleMode) {
             case "horizontal_speed":
                 // Read horizontal speed
                 final double horizontalSpeed = MyLocationManager.groundSpeed;
-                if(isReal(horizontalSpeed)) {
+                if(isReal(horizontalSpeed) && min <= horizontalSpeed && horizontalSpeed <= max) {
                     measurement = String.format("%.0f", horizontalSpeed);
+                } else {
+                    Log.w(TAG, "Not speaking: horizontalSpeed " + horizontalSpeed);
                 }
                 break;
             case "vertical_speed":
                 // Read vertical speed
                 final double verticalSpeed = MyAltimeter.climb;
-                if(isReal(verticalSpeed)) {
+                if(isReal(verticalSpeed) && min <= verticalSpeed && verticalSpeed <= max) {
                     measurement = String.format("%.0f", verticalSpeed);
+                } else {
+                    Log.w(TAG, "Not speaking: verticalSpeed " + verticalSpeed);
                 }
                 break;
             case "glide_ratio":
-                // Read vertical speed
+                // Read glide ratio
                 final double glideRatio = MyLocationManager.glide;
-                if(isReal(glideRatio)) {
+                if(isReal(glideRatio) && min <= glideRatio && glideRatio <= max) {
                     measurement = String.format("%.1f", glideRatio);
+                } else {
+                    Log.w(TAG, "Not speaking: glideRatio " + glideRatio);
                 }
                 break;
             default:

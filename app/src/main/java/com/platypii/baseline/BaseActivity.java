@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -161,6 +160,9 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
             if(signInPanel != null) {
                 signInPanel.setVisibility(View.GONE);
             }
+            if(userClickedSignIn) {
+                Toast.makeText(this, "Signed in", Toast.LENGTH_LONG).show();
+            }
         } else {
             Log.e(TAG, "Sign in failed");
             // Show sign in panel
@@ -171,6 +173,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
                 Toast.makeText(this, "Sign in failed", Toast.LENGTH_LONG).show();
             }
         }
+        userClickedSignIn = false;
     }
 
     @Override
