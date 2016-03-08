@@ -35,9 +35,7 @@ public class MyAudible {
 
     public static void startAudible() {
         if(isInitialized) {
-            final float speechRate = Float.parseFloat(prefs.getString("audible_rate", "2.0"));
-            final int delay = (int) (speechRate * 1000f);
-            audibleThread.start(delay);
+            audibleThread.start();
         } else {
             Log.e(TAG, "Failed to start audible: audible not initialized");
         }
@@ -59,6 +57,16 @@ public class MyAudible {
         } else {
             Log.i(TAG, "Saying nothing: no measurement");
         }
+    }
+
+    /**
+     * Gets the speech rate from preferences
+     * @return the delay between speech in milliseconds
+     */
+    static int getDelay() {
+        final float speechRate = Float.parseFloat(prefs.getString("audible_rate", "2.0"));
+        final int delay = (int) (speechRate * 1000f);
+        return delay;
     }
 
     private static String getMeasurement() {

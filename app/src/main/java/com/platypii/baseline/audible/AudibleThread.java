@@ -12,20 +12,19 @@ public class AudibleThread {
     private boolean isEnabled = false;
 
     private Handler handler = new Handler();
-    private int delay; // milliseconds
 
     private final Runnable audibleThread = new Runnable() {
         @Override
         public void run() {
             MyAudible.playAudio();
+            final int delay= MyAudible.getDelay();
             handler.postDelayed(this, delay);
         }
     };
 
-    public void start(int delay) {
+    public void start() {
         if(!isEnabled) {
             Log.i(TAG, "Starting audible");
-            this.delay = delay;
             handler.post(audibleThread);
             isEnabled = true;
         } else {
