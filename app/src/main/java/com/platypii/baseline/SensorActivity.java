@@ -163,8 +163,9 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     /** Updates the UI that refresh continuously, such as sample rates */
     private void update() {
         // Last fix needs to be updated continuously since it shows time since last fix
-        if(MyLocationManager.lastLoc != null) {
-            long timeSinceLastFix = System.currentTimeMillis() - MyLocationManager.lastFixMillis;
+        if(MyLocationManager.lastFixMillis > 0) {
+            // Set text color
+            final long timeSinceLastFix = System.currentTimeMillis() - MyLocationManager.lastFixMillis;
             if(timeSinceLastFix > 3000) {
                 float frac = (6000f - timeSinceLastFix) / (3000f);
                 frac = Math.max(0, Math.min(frac, 1));
@@ -175,9 +176,12 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
                 lastFixLabel.setTextColor(0xffb0b0b0);
             }
             String lastFix = (timeSinceLastFix / 1000) + "s";
-            lastFix += String.format(" (%.2fHz)", MyLocationManager.refreshRate); 
+            if(MyLocationManager.refreshRate > 0) {
+                lastFix += String.format(" (%.2fHz)", MyLocationManager.refreshRate);
+            }
             lastFixLabel.setText("Last fix: " + lastFix);
         } else {
+            lastFixLabel.setTextColor(0xffb0b0b0);
             lastFixLabel.setText("Last fix: ");
         }
         // Altitude refresh rate
