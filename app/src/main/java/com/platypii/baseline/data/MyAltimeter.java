@@ -20,6 +20,7 @@ import com.platypii.baseline.data.measurements.MLocation;
 // TODO: Get corrections via barometer, GPS, DEM
 // TODO: Acceleration
 public class MyAltimeter {
+    private static final String TAG = "MyAltimeter";
     
     // Singleton MyAltimeter
     private static MyAltimeter _instance;
@@ -86,7 +87,7 @@ public class MyAltimeter {
         public void onSensorChanged(SensorEvent event) {
             long millis = System.currentTimeMillis(); // Record time as soon as possible
             assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
-            // Log.w("Altimeter", "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
+            // Log.w(TAG, "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
             MyAltimeter.updateBarometer(millis, event);
         }
     }
@@ -119,7 +120,7 @@ public class MyAltimeter {
             final float refreshTime = 1E9f / (float) (deltaTime);
             refreshRate += (refreshTime - refreshRate) * 0.5f; // Moving average
             if (Double.isNaN(refreshRate)) {
-                Log.e("MyAltimeter", "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime);
+                Log.e(TAG, "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime);
                 refreshRate = 0;
             }
         }
@@ -130,8 +131,8 @@ public class MyAltimeter {
         altitude_raw = pressure_altitude - altitude_offset; // the current pressure converted to altitude AMSL. noisy.
         
         // Update the official altitude
-        double dt = Double.isNaN(prevAltitude)? 0 : (lastFixNano - prevLastFixNano) * 1E-9;
-        // Log.d("Altimeter", "Raw Altitude AGL: " + Convert.distance(altitude_raw) + ", dt = " + dt);
+        final double dt = Double.isNaN(prevAltitude)? 0 : (lastFixNano - prevLastFixNano) * 1E-9;
+        // Log.d(TAG, "Raw Altitude AGL: " + Convert.distance(altitude_raw) + ", dt = " + dt);
 
         filter.update(pressure_altitude, dt);
 
@@ -139,6 +140,10 @@ public class MyAltimeter {
         climb = filter.v;
 
         // Log.d("Altimeter", "alt = " + altitude + ", climb = " + climb);
+
+        if(Double.isNaN(altitude)) {
+            Log.w(TAG, "Altitude should not be NaN: altitude = " + altitude);
+        }
 
         n++;
         updateAltitude();
@@ -153,7 +158,7 @@ public class MyAltimeter {
             altitude_gps = loc.altitude_gps;
 
             if(n > 0) {
-                // Log.d("Altimeter", "alt = " + altitude + ", alt_gps = " + altitude_gps + ", offset = " + altitude_offset);
+                // Log.d(TAG, "alt = " + altitude + ", alt_gps = " + altitude_gps + ", offset = " + altitude_offset);
                 if(gps_sample_count == 0) {
                     // First altitude reading. Calibrate ground level.
                     altitude_offset = pressure_altitude - altitude_gps;
@@ -188,7 +193,7 @@ public class MyAltimeter {
      */
     private static void updateAltitude() {
         // Create the measurement
-        final MAltitude myAltitude = new MAltitude(lastFixNano, altitude, climb, pressure, altitude_gps);
+        final MAltitude myAltitude = new MAltitude(lastFixNano, altitude, climb, pressure);
         history.append(myAltitude);
         // Notify listeners (using AsyncTask so the altimeter never blocks!)
         pressure_altitude_stat.addSample(pressure_altitude);

@@ -16,7 +16,6 @@ public class ElevationTimePlot extends PlotView {
     private final DataSeries series = new DataSeries();
     private final long window = 15000; // The size of the view window, in milliseconds
     private final PlotMode mode = PlotMode.AREA;
-    
 
     public ElevationTimePlot(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -31,7 +30,7 @@ public class ElevationTimePlot extends PlotView {
         min.right = window;
         max.bottom = -1;
         min.top = 33 * Convert.FT;
-        
+
         x_major_units = 10000;
         y_major_units = 1 * Convert.FT;
     }
@@ -42,8 +41,8 @@ public class ElevationTimePlot extends PlotView {
         // Copy values to local history (so that we don't block while drawing circles)
         synchronized(MyAltimeter.history) {
             for(MAltitude alt : MyAltimeter.history) {
-                double x = alt.millis - MainActivity.startTime;
-                double y = alt.altitude;
+                final double x = alt.millis - MainActivity.startTime;
+                final double y = alt.altitude;
                 series.addPoint(x, y);
             }
         }
@@ -68,8 +67,8 @@ public class ElevationTimePlot extends PlotView {
     private final Bounds bounds = new Bounds();
     @Override
     public Bounds getBounds(int width, int height, Bounds dataBounds) {
-        long currentTime = System.currentTimeMillis();
-        long startTime = Math.max(0, currentTime - MainActivity.startTime - window);
+        final long currentTime = System.currentTimeMillis();
+        final long startTime = Math.max(0, currentTime - MainActivity.startTime - window);
         bounds.set(dataBounds);
         bounds.clean(min, max);
         bounds.set(startTime, bounds.top, startTime + window, bounds.bottom);
