@@ -17,6 +17,10 @@ public class DataSeries implements Iterable<DataSeries.Point> {
 			this.x = x;
 			this.y = y;
 		}
+        @Override
+        public String toString() {
+            return String.format("Point(%.1f,%.1f)", x, y);
+        }
 	}
 
 	public void addPoint(double x, double y) {

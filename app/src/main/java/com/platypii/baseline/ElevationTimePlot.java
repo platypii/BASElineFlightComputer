@@ -41,7 +41,7 @@ public class ElevationTimePlot extends PlotView {
         // Copy values to local history (so that we don't block while drawing circles)
         synchronized(MyAltimeter.history) {
             for(MAltitude alt : MyAltimeter.history) {
-                final double x = alt.millis - MainActivity.startTime;
+                final double x = (alt.nano - MyAltimeter.firstFixNano) / 1000000L; // nano -> milli
                 final double y = alt.altitude;
                 series.addPoint(x, y);
             }
@@ -67,8 +67,8 @@ public class ElevationTimePlot extends PlotView {
     private final Bounds bounds = new Bounds();
     @Override
     public Bounds getBounds(int width, int height, Bounds dataBounds) {
-        final long currentTime = System.currentTimeMillis();
-        final long startTime = Math.max(0, currentTime - MainActivity.startTime - window);
+        final long uptime = (System.nanoTime() - MainActivity.startTimeNano) / 1000000L; // millis
+        final long startTime = Math.max(0, uptime - window);
         bounds.set(dataBounds);
         bounds.clean(min, max);
         bounds.set(startTime, bounds.top, startTime + window, bounds.bottom);

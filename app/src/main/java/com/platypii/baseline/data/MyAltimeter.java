@@ -15,16 +15,17 @@ import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 
 
-// Altimeter manager
-// Super important so it gets it's own class
-// TODO: Get corrections via barometer, GPS, DEM
-// TODO: Acceleration
+/**
+ * Altimeter manager
+ * TODO: Get corrections via barometer, GPS, DEM
+ * TODO: Model acceleration
+ */
 public class MyAltimeter {
     private static final String TAG = "MyAltimeter";
-    
+
     // Singleton MyAltimeter
     private static MyAltimeter _instance;
-    
+
     // Listeners
     private static final ArrayList<MyAltitudeListener> listeners = new ArrayList<>();
 
@@ -32,22 +33,23 @@ public class MyAltimeter {
     public static float pressure = Float.NaN; // hPa (millibars)
     public static double pressure_altitude = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
     public static double altitude_raw = Double.NaN; // pressure altitude adjusted for altitude offset (unfiltered)
-    
+
     // GPS data
     public static double altitude_gps = Double.NaN;
-    
+
     // official altitude = pressure_altitude - altitude_offset
     // altitude_offset uses GPS to get absolute altitude right
     public static double altitude_offset = 0.0;
-    
+
     // Data filter
     private static final Filter filter = new FilterKalman(); // Unfiltered(), AlphaBeta(), MovingAverage(), etc
-    
+
     // Official altitude data
     public static double altitude = Double.NaN; // Meters AMSL
     public static double climb = Double.NaN; // Rate of climb m/s
     // public static double verticalAcceleration = Double.NaN;
-    
+
+    public static long firstFixNano = -1; // nanoseconds
     private static long lastFixNano; // nanoseconds
     private static long lastFixMillis; // milliseconds uptime
 
@@ -66,7 +68,7 @@ public class MyAltimeter {
     public static synchronized void initAltimeter(Context context) {
         if(_instance == null) {
             _instance = new MyAltimeter();
-            
+
             // Add sensor listener
             SensorManager sensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
             Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
@@ -74,7 +76,7 @@ public class MyAltimeter {
                 // Start sensor updates
                 sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
             }
-            
+
             // Start GPS updates
             MyLocationManager.addListener(locationListener);
         }
@@ -111,6 +113,9 @@ public class MyAltimeter {
         assert event != null;
         assert event.accuracy == 0;
         pressure = event.values[0];
+        if(firstFixNano == -1) {
+            firstFixNano = event.timestamp;
+        }
         lastFixNano = event.timestamp;
         lastFixMillis = millis;
 
@@ -187,7 +192,7 @@ public class MyAltimeter {
             updateAltitude();
         }
     }
-    
+
     /**
      * Saves an official altitude measurement
      */
@@ -227,7 +232,7 @@ public class MyAltimeter {
 //    private static final double M = 0.0289644; // Molar Mass of air (kg/mol)
     private static final double L = -0.0065; // Temperature Lapse Rate (K/m)
     private static final double EXP = 0.190263237;// - L * R / (G * M);
-    
+
     /**
      * Convert air pressure to altitude
      * @param pressure Pressure in hPa
@@ -237,7 +242,7 @@ public class MyAltimeter {
         // Barometric formula
         return altitude0 - temp0 * (1 - Math.pow(pressure / pressure0, EXP)) / L;
     }
-    
+
     /**
      * Add a new listener for us to notify
      */

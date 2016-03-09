@@ -31,7 +31,9 @@ import com.platypii.baseline.data.TheCloud;
 public class MainActivity extends BaseActivity {
     private static final String TAG = "Main";
 
-    public static final long startTime = System.currentTimeMillis(); // Session start time (when the app started)
+    // app start time
+    // public static final long startTimeMillis = System.currentTimeMillis();
+    public static final long startTimeNano = System.nanoTime();
 
     private Menu menu;
 
