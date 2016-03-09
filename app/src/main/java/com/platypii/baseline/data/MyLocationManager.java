@@ -1,10 +1,7 @@
 package com.platypii.baseline.data;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import android.content.Context;
 import android.location.Location;
@@ -18,6 +15,7 @@ import android.util.Log;
 import com.platypii.baseline.data.measurements.MLocation;
 
 public class MyLocationManager {
+    private static final String TAG = "MyLocationManager";
 
     // Singleton GPSManager
     private static MyLocationManager _instance;
@@ -81,6 +79,8 @@ public class MyLocationManager {
 
             // TODO: Start an interval timer to update when signal is lost
 
+        } else {
+            Log.w(TAG, "MyLocationManager initialized twice");
         }
     }
 
@@ -148,7 +148,7 @@ public class MyLocationManager {
                 final float refreshTime = 1000.0f / (float) (deltaTime);
                 refreshRate += (refreshTime - refreshRate) * 0.5f; // Moving average
                 if (Double.isNaN(refreshRate)) {
-                    Log.e("MyLocationManager", "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime);
+                    Log.e(TAG, "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime);
                     refreshRate = 0;
                 }
             }
@@ -183,7 +183,9 @@ public class MyLocationManager {
             if(split[0].length() != 6) Log.e("NMEA", "Invalid NMEA tag length: " + split[0]);
             final String command = split[0].substring(3,6);
 
-            nmeaChecksum(nmea);
+            if(!NMEA.nmeaChecksum(nmea)) {
+                Log.e("NMEA", "Invalid NMEA checksum");
+            }
 
             // Parse command
             switch(command) {
@@ -201,8 +203,8 @@ public class MyLocationManager {
                     break;
                 case "GGA":
                     // Fix data
-                    latitude = parseDegreesMinutes(split[2], split[3]);
-                    longitude = parseDegreesMinutes(split[4], split[5]);
+                    latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
+                    longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
                     // gpsFix = parseInt(split[6]); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
                     satellitesUsed = parseInt(split[7]);
                     hdop = parseFloat(split[8]);
@@ -235,15 +237,15 @@ public class MyLocationManager {
                 case "RMC":
                     // Recommended minimum data for gps
                     // boolean status = split[2].equals("A"); // A = active, V = void
-                    latitude = parseDegreesMinutes(split[3], split[4]);
-                    longitude = parseDegreesMinutes(split[5], split[6]);
+                    latitude = NMEA.parseDegreesMinutes(split[3], split[4]);
+                    longitude = NMEA.parseDegreesMinutes(split[5], split[6]);
                     groundSpeed = Convert.kts2mps(parseDouble(split[7])); // Speed over ground
                     bearing = parseDouble(split[8]); // Course over ground
                     // split[10], split[11]: 003.1,W magnetic Variation
                     // split[9]: Date: 230394 = 23 March 1994
                     // split[1]: Time: 123456 = 12:34:56 UTC
-                    dateTime = parseDate(split[9]);
-                    lastFixMillis = dateTime + parseTime(split[1]);
+                    dateTime = NMEA.parseDate(split[9]);
+                    lastFixMillis = dateTime + NMEA.parseTime(split[1]);
                     // Log.w("Time", "["+timestamp+"] lastFixMillis = " + lastFixMillis + ", currentTime = " + System.currentTimeMillis());
 
                     // Computed parameters
@@ -265,9 +267,9 @@ public class MyLocationManager {
                     break;
                 case "GNS":
                     // Fixes data for single or combined (GPS, GLONASS, etc) satellite navigation systems
-                    lastFixMillis = dateTime + parseTime(split[1]);
-                    latitude = parseDegreesMinutes(split[2], split[3]);
-                    longitude = parseDegreesMinutes(split[4], split[5]);
+                    lastFixMillis = dateTime + NMEA.parseTime(split[1]);
+                    latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
+                    longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
                     if(!split[9].equals("")) {
                         assert split[10].equals("M"); // Meters
                         altitude_gps = Double.parseDouble(split[9]);
@@ -301,96 +303,6 @@ public class MyLocationManager {
     }
     private static int parseInt(String str) {
         return str.equals("")? -1 : Integer.parseInt(str);
-    }
-
-    /**
-     * Parse DDDMM.MMMM,N into decimal degrees
-     * @param dm The latitude or longitude in "DDDMM.MMMM" format
-     * @param nsew The modifier "N", "S", "E", or "W"
-     * @return The latitude or longitude in decimal degrees
-     */
-    private static double parseDegreesMinutes(String dm, String nsew) {
-        if(dm.equals("")) {
-            return Double.NaN;
-        } else {
-            final int index = dm.indexOf('.') - 2;
-            if(index < 0) {
-                Log.e("NMEA", "Lat/Long format error " + dm + " " + nsew);
-            }
-            final double m = Double.parseDouble(dm.substring(index));
-            final int d = (index == 0)? 0 : Integer.parseInt(dm.substring(0, index));
-            final double degrees = d + m / 60.0;
-            
-            if(nsew.equalsIgnoreCase("S") || nsew.equalsIgnoreCase("W"))
-                return -degrees;
-            else
-                return degrees;
-        }
-    }
-
-    private static final Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-    /**
-     * Parse DDMMYY into milliseconds since epoch
-     */
-    private static long parseDate(String date) {
-        if(date == null || date.equals("")) {
-            return 0;
-        } else {
-            if(date.length() != 6) {
-                Log.e("NMEA", "Date format error " + date);
-            }
-            final int day = Integer.parseInt(date.substring(0, 2));
-            final int month = Integer.parseInt(date.substring(2, 4)) - 1; // january is 0 not 1
-            int year = 1900 + Integer.parseInt(date.substring(4, 6));
-            if(year < 1970) year += 100;
-            cal.set(Calendar.MILLISECOND, 0);
-            cal.set(year, month, day, 0, 0, 0);
-            return cal.getTime().getTime();
-        }
-    }
-    /**
-     * Parse HHMMSS.SS UTC time into milliseconds since midnight
-     */
-    private static long parseTime(String time) {
-        if(time == null || time.equals("")) {
-            return 0;
-        } else {
-            try {
-                if(time.indexOf('.') != 6) {
-                    Log.e("NMEA", "Time format error " + time);
-                }
-                final long hour = Integer.parseInt(time.substring(0, 2));
-                final long min = Integer.parseInt(time.substring(2, 4));
-                // double sec = Double.parseDouble(utc.substring(4));
-                final long sec = Integer.parseInt(time.substring(4, 6));
-                final long ms = time.length() <= 6? 0 : (long) (1000 * Double.parseDouble(time.substring(6)));
-                return hour * 3600000 + min * 60000 + sec * 1000 + ms;
-            } catch(Exception e) {
-                return 0;
-            }
-        }
-    }
-
-    /** Returns true if the checksum is valid */
-    private static boolean nmeaChecksum(String nmea) {
-        int starIndex = nmea.indexOf('*');
-
-        if(nmea.charAt(0) != '$' || nmea.charAt(6) != ',' || nmea.charAt(starIndex) != '*') {
-            Log.e("NMEA", "Invalid NMEA sentence");
-            return false;
-        }
-
-        // Compute checksum
-        short checksum1 = 0;
-        for(int i = 1; i < starIndex; i++) {
-            checksum1 ^= nmea.charAt(i);
-        }
-        short checksum2 = Short.parseShort(nmea.substring(starIndex + 1, starIndex + 3), 16);
-        if(checksum1 != checksum2) {
-            Log.e("NMEA", "Invalid NMEA checksum");
-            return false;
-        }
-        return true;
     }
 
     /** Null listener does nothing. all data comes from NMEA */
