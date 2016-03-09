@@ -78,8 +78,11 @@ public class TheCloud {
             } else {
                 conn.setFixedLengthStreamingMode((int) contentLength);
             }
+            final InputStream is = new FileInputStream(file);
             final OutputStream os = new BufferedOutputStream(conn.getOutputStream());
-            copy(new FileInputStream(file), os);
+            copy(is, os);
+            is.close();
+            os.close();
             // Read response
             final int status = conn.getResponseCode();
             if(status == 200) {

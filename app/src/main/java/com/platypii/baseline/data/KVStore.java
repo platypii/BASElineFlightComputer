@@ -11,15 +11,11 @@ public class KVStore {
 
     public static synchronized void start(Context appContext) {
         // Load shared preferences for persistence
-        if(!started) {
-            prefs = appContext.getSharedPreferences("baseline", Context.MODE_PRIVATE);
-            started = true;
-        } else {
+        if(started) {
             Log.e("KVStore", "Already started");
-            if(prefs == null) {
-                prefs = appContext.getSharedPreferences("baseline", Context.MODE_PRIVATE);
-            }
         }
+        prefs = appContext.getSharedPreferences("baseline", Context.MODE_PRIVATE);
+        started = true;
     }
 
     public static String getString(String key) {
