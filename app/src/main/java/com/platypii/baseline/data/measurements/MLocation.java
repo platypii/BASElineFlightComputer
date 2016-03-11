@@ -59,8 +59,38 @@ public class MLocation extends Measurement {
         return String.format("%d,,gps,,%f,%f,%f,%s,%s,%s", millis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
     }
 
+    @Override
+    public String toString() {
+        return String.format("MLocation(%.6f,%.6f,%.1f)", latitude, longitude, altitude_gps);
+    }
+
     private static boolean isReal(double x) {
         return !(Double.isInfinite(x) || Double.isNaN(x));
+    }
+
+    public double groundSpeed() {
+        return Math.sqrt(vN * vN + vE * vE);
+    }
+
+    public double totalSpeed() {
+        if(!Double.isNaN(climb)) {
+            return Math.sqrt(vN * vN + vE * vE + climb * climb);
+        } else {
+            // If we don't have altimeter data, fall back to ground speed
+            return Math.sqrt(vN * vN + vE * vE);
+        }
+    }
+
+    public double glideRatio() {
+        return - groundSpeed() / climb;
+    }
+
+    public double glideAngle() {
+        return Math.toDegrees(Math.atan2(MyAltimeter.climb, groundSpeed()));
+    }
+
+    public double bearing() {
+        return Math.atan2(vN, vE);
     }
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.location.GpsSatellite;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,6 +17,7 @@ import com.platypii.baseline.data.measurements.MLocation;
 
 public class MyLocationManager {
     private static final String TAG = "MyLocationManager";
+    private static final String NMEA_TAG = "NMEA";
 
     // Singleton GPSManager
     private static MyLocationManager _instance;
@@ -28,6 +30,7 @@ public class MyLocationManager {
 
     // GPS status
     public static float refreshRate = 0; // Moving average of refresh rate in Hz
+    private static boolean nmeaReceived = false;
 
     // Satellite data
     public static int satellitesInView = -1; // Satellites in view
@@ -35,22 +38,19 @@ public class MyLocationManager {
 
     // Most recent data
     public static long lastFixMillis = -1;
-    public static double latitude = Double.NaN;
-    public static double longitude = Double.NaN;
-    public static double altitude_gps = Double.NaN;
-    public static double vN = Double.NaN;
-    public static double vE = Double.NaN;
-    public static double groundSpeed = Double.NaN;
-    public static double speed = Double.NaN;
-    public static double bearing = Double.NaN;
-    public static double glide = Double.NaN;
-    public static double glideAngle = Double.NaN;
+    private static double latitude = Double.NaN;
+    private static double longitude = Double.NaN;
+    private static double altitude_gps = Double.NaN;
+    private static double vN = Double.NaN;
+    private static double vE = Double.NaN;
+    private static double groundSpeed = Double.NaN;
+    private static double bearing = Double.NaN;
     public static float hAcc = Float.NaN;
-    //public static float vAcc = Float.NaN;
-    //public static float sAcc = Float.NaN;
-    public static float pdop = Float.NaN;
-    public static float hdop = Float.NaN;
-    public static float vdop = Float.NaN;
+    //private static float vAcc = Float.NaN;
+    //private static float sAcc = Float.NaN;
+    private static float pdop = Float.NaN;
+    private static float hdop = Float.NaN;
+    private static float vdop = Float.NaN;
     private static long dateTime; // The number of milliseconds until the start of this day, midnight GMT
 
     // Computed parameters
@@ -63,7 +63,6 @@ public class MyLocationManager {
     private static final int maxHistory = 600; // Maximum number of measurements to keep in memory
     public static final SyncedList<MLocation> history = new SyncedList<>(maxHistory);
 
-
     /**
      * Initializes location services
      * @param context The Application context
@@ -75,7 +74,12 @@ public class MyLocationManager {
             // Obtain GPS locations
             manager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, nullListener);
-            manager.addNmeaListener(nmeaListener);
+            final boolean nmeaSuccess = manager.addNmeaListener(nmeaListener);
+            manager.addGpsStatusListener(statusListener);
+
+            if(!nmeaSuccess) {
+                Log.e(TAG, "Failed to start NMEA updates");
+            }
 
             // TODO: Start an interval timer to update when signal is lost
 
@@ -112,6 +116,8 @@ public class MyLocationManager {
         lastLoc = new MLocation(lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
                                  hAcc, pdop, hdop, vdop, satellitesUsed, groundDistance);
 
+        // Log.v(TAG, "MyLocationManager.updateLocation(" + lastLoc + ")");
+
         if(prevLoc != null) {
             // Compute distance
             tempLoc1.setLatitude(prevLoc.latitude);
@@ -121,25 +127,21 @@ public class MyLocationManager {
             groundDistance += tempLoc1.distanceTo(tempLoc2);
 
             // Clear out old values
-            lastFixMillis = -1;
             latitude = Double.NaN;
             longitude = Double.NaN;
             altitude_gps = Double.NaN;
             vN = Double.NaN;
             vE = Double.NaN;
             groundSpeed = Double.NaN;
-            speed = Double.NaN;
             bearing = Double.NaN;
-            glide = Double.NaN;
-            glideAngle = Double.NaN;
             hAcc = Float.NaN;
             // vAcc = Float.NaN;
             // sAcc = Float.NaN;
             pdop = Float.NaN;
             hdop = Float.NaN;
             vdop = Float.NaN;
-            satellitesInView = -1; // Satellites in view
-            satellitesUsed = -1; // Satellites used in last fix
+            // satellitesInView = -1; // Satellites in view
+            // satellitesUsed = -1; // Satellites used in last fix
 
             // GPS sample refresh rate
             // TODO: Include time from last sample until now
@@ -175,16 +177,22 @@ public class MyLocationManager {
     private static final GpsStatus.NmeaListener nmeaListener = new GpsStatus.NmeaListener() {
         // timestamp is milliseconds
         public void onNmeaReceived(long timestamp, String nmea) {
-            
-            // Log.v("NMEA", "["+timestamp+"] " + nmea);
+            nmea = nmea.trim();
+
+            // Log.v(NMEA_TAG, "["+timestamp+"] " + nmea);
+
+            if(!nmeaReceived) {
+                Log.d(NMEA_TAG, "First NMEA string received");
+                nmeaReceived = true;
+            }
 
             final String split[] = nmea.split("[,*]");
-            if(split[0].charAt(0) != '$') Log.e("NMEA", "Invalid NMEA tag: " + split[0]);
-            if(split[0].length() != 6) Log.e("NMEA", "Invalid NMEA tag length: " + split[0]);
+            if(split[0].charAt(0) != '$') Log.e(NMEA_TAG, "Invalid NMEA tag: " + split[0]);
+            if(split[0].length() != 6) Log.e(NMEA_TAG, "Invalid NMEA tag length: " + split[0]);
             final String command = split[0].substring(3,6);
 
             if(!NMEA.nmeaChecksum(nmea)) {
-                Log.e("NMEA", "Invalid NMEA checksum");
+                Log.e(NMEA_TAG, "Invalid NMEA checksum");
             }
 
             // Parse command
@@ -251,16 +259,8 @@ public class MyLocationManager {
                     // Computed parameters
                     vN = groundSpeed * Math.cos(Math.toRadians(bearing));
                     vE = groundSpeed * Math.sin(Math.toRadians(bearing));
-                    if(!Double.isNaN(MyAltimeter.climb)) {
-                        speed = Math.sqrt(groundSpeed * groundSpeed + MyAltimeter.climb * MyAltimeter.climb);
-                        glide = -groundSpeed / MyAltimeter.climb;
-                        glideAngle = Math.toDegrees(Math.atan(MyAltimeter.climb / groundSpeed));
-                    } else {
-                        // If we don't have altimeter data, fall back to ground speed
-                        speed = groundSpeed;
-                    }
 
-                    // Log.i("NMEA", "["+time+"] " + Convert.latlong(latitude, longitude) + ", groundSpeed = " + Convert.speed(groundSpeed) + ", bearing = " + Convert.bearing2(bearing));
+                    // Log.i(NMEA_TAG, "["+time+"] " + Convert.latlong(latitude, longitude) + ", groundSpeed = " + Convert.speed(groundSpeed) + ", bearing = " + Convert.bearing2(bearing));
 
                     // Update the official location!
                     MyLocationManager.updateLocation();
@@ -290,7 +290,7 @@ public class MyLocationManager {
                     groundSpeed = Convert.kts2mps(parseDouble(split[5])); // Speed over ground
                     break;
                 default:
-                    Log.e("NMEA", "["+timestamp+"] Unknown NMEA command: " + nmea);
+                    Log.e(NMEA_TAG, "["+timestamp+"] Unknown NMEA command: " + nmea);
             }
         }
     };
@@ -308,13 +308,64 @@ public class MyLocationManager {
     /** Null listener does nothing. all data comes from NMEA */
     private static final LocationListener nullListener = new LocationListener() {
         public void onLocationChanged(Location loc) {
-            if(loc.hasAccuracy())
-                hAcc = loc.getAccuracy();
-            else
-                hAcc = Float.NaN;
+            // Log.v("GPS", "onLocationChanged(" + loc + ")");
+            if(!Double.isNaN(loc.getLatitude()) && !Double.isNaN(loc.getLongitude())) {
+                // Always update accuracy
+                if(loc.hasAccuracy())
+                    hAcc = loc.getAccuracy();
+                else
+                    hAcc = Float.NaN;
+
+                if(!nmeaReceived) {
+                    // Phone is not reporting NMEA data, use location data instead
+                    Log.v("GPS", "No NMEA data, falling back to LocationManager: " + loc);
+                    lastFixMillis = loc.getTime();
+                    latitude = loc.getLatitude();
+                    longitude = loc.getLongitude();
+                    if (loc.hasAltitude())
+                        altitude_gps = loc.getAltitude();
+                    if (loc.hasSpeed())
+                        groundSpeed = loc.getSpeed();
+                    if (loc.hasBearing())
+                        bearing = loc.getBearing();
+
+                    // Update official location
+                    MyLocationManager.updateLocation();
+                }
+            }
         }
         public void onProviderDisabled(String provider) {}
         public void onProviderEnabled(String provider) {}
         public void onStatusChanged(String provider, int status, Bundle extras) {}
+    };
+
+    private static GpsStatus.Listener statusListener = new GpsStatus.Listener() {
+        @Override
+        public void onGpsStatusChanged(int event) {
+            switch(event) {
+                case GpsStatus.GPS_EVENT_STARTED:
+                    break;
+                case GpsStatus.GPS_EVENT_STOPPED:
+                    break;
+                case GpsStatus.GPS_EVENT_FIRST_FIX:
+                    break;
+                case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
+                    final GpsStatus status = manager.getGpsStatus(null);
+                    final Iterable<GpsSatellite> satellites = status.getSatellites();
+                    int count = 0;
+                    int used = 0;
+                    for(GpsSatellite sat : satellites) {
+                        count++;
+                        if(sat.usedInFix()) {
+                            used++;
+                        }
+                    }
+                    // if(satellitesInView != count || satellitesUsed != used) {
+                    //     Log.v(TAG, "Satellite Status: " + satellitesUsed + "/" + satellitesInView);
+                    // }
+                    satellitesInView = count;
+                    satellitesUsed = used;
+            }
+        }
     };
 }

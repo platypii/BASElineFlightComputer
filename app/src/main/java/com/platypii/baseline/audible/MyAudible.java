@@ -77,7 +77,7 @@ public class MyAudible {
         switch(audibleMode) {
             case "horizontal_speed":
                 // Read horizontal speed
-                final double horizontalSpeed = MyLocationManager.groundSpeed;
+                final double horizontalSpeed = MyLocationManager.lastLoc.groundSpeed();
                 if(isReal(horizontalSpeed) && min <= horizontalSpeed && horizontalSpeed <= max) {
                     measurement = String.format("%.0f", horizontalSpeed);
                 } else {
@@ -95,7 +95,7 @@ public class MyAudible {
                 break;
             case "glide_ratio":
                 // Read glide ratio
-                final double glideRatio = MyLocationManager.glide;
+                final double glideRatio = MyLocationManager.lastLoc.glideRatio();
                 if(isReal(glideRatio) && min <= glideRatio && glideRatio <= max) {
                     measurement = String.format("%.1f", glideRatio);
                 } else {

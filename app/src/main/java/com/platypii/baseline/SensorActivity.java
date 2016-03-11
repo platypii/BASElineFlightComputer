@@ -145,18 +145,18 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     private void updateGPS(MLocation loc) {
         satelliteLabel.setText("Satellites: " + MyLocationManager.satellitesInView + " visible, " + MyLocationManager.satellitesUsed + " used in fix");
         if(loc != null) {
-            latitudeLabel.setText(String.format("Lat: %.6f", MyLocationManager.latitude));
-            longitudeLabel.setText(String.format("Long: %.6f", MyLocationManager.longitude));
-            gpsAltitudeLabel.setText("GPS Altitude: " + Convert.distance(MyAltimeter.altitude_gps));
-            hAccLabel.setText("hAcc: " + Convert.distance(MyLocationManager.hAcc));
-            pdopLabel.setText(String.format("pdop: %.1f", MyLocationManager.pdop));
-            hdopLabel.setText(String.format("hdop: %.1f", MyLocationManager.hdop));
-            vdopLabel.setText(String.format("vdop: %.1f", MyLocationManager.vdop));
-            groundSpeedLabel.setText("Ground speed: " + Convert.speed(MyLocationManager.groundSpeed));
-            totalSpeedLabel.setText("Total speed: " + Convert.speed(MyLocationManager.speed));
-            glideRatioLabel.setText("Glide ratio: " + Convert.glide(MyLocationManager.glide));
-            glideAngleLabel.setText("Glide angle: " + Convert.angle(MyLocationManager.glideAngle) + "");
-            bearingLabel.setText("Bearing: " + Convert.bearing2(MyLocationManager.bearing));
+            latitudeLabel.setText(String.format("Lat: %.6f", loc.latitude));
+            longitudeLabel.setText(String.format("Long: %.6f", loc.longitude));
+            gpsAltitudeLabel.setText("GPS Altitude: " + Convert.distance(loc.altitude_gps));
+            hAccLabel.setText("hAcc: " + Convert.distance(loc.hAcc));
+            pdopLabel.setText(String.format("pdop: %.1f", loc.pdop));
+            hdopLabel.setText(String.format("hdop: %.1f", loc.hdop));
+            vdopLabel.setText(String.format("vdop: %.1f", loc.vdop));
+            groundSpeedLabel.setText("Ground speed: " + Convert.speed(loc.groundSpeed()));
+            totalSpeedLabel.setText("Total speed: " + Convert.speed(loc.totalSpeed()));
+            glideRatioLabel.setText("Glide ratio: " + Convert.glide(loc.glideRatio()));
+            glideAngleLabel.setText("Glide angle: " + Convert.angle(loc.glideAngle()));
+            bearingLabel.setText("Bearing: " + Convert.bearing2(loc.bearing()));
         }
     }
 
