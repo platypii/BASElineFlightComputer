@@ -19,7 +19,7 @@ class Speech implements TextToSpeech.OnInitListener {
 
     void speakNow(String text) {
         if(isReady) {
-            Log.i(TAG, "Saying " + text);
+            // Log.i(TAG, "Saying " + text);
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         } else {
             Log.e(TAG, "Speech not ready. Discarding message: " + text);

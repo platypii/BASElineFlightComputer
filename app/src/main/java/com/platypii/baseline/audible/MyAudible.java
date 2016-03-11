@@ -21,21 +21,30 @@ public class MyAudible {
     private static boolean isInitialized = false;
 
     public static void initAudible(Context context) {
-        speech = new Speech(context);
-        audibleThread = new AudibleThread();
-
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        speech = new Speech(context);
+
+        if(!isInitialized) {
+            isInitialized = true;
+            audibleThread = new AudibleThread();
+        } else {
+            Log.w(TAG, "Audible initialized twice");
+        }
+
         final boolean audibleEnabled = prefs.getBoolean("audible_enabled", false);
+        // final boolean audibleEnabled = Boolean.parseBoolean(prefs.getString("audible_enabled", "false"));
         if(audibleEnabled) {
             startAudible();
         }
-
-        isInitialized = true;
     }
 
     public static void startAudible() {
         if(isInitialized) {
-            audibleThread.start();
+            if(!audibleThread.isEnabled()) {
+                audibleThread.start();
+            } else {
+                Log.w(TAG, "Audible thread already started");
+            }
         } else {
             Log.e(TAG, "Failed to start audible: audible not initialized");
         }
@@ -54,8 +63,6 @@ public class MyAudible {
         if(measurement != null && measurement.length() > 0) {
             Log.i(TAG, "Saying " + measurement);
             speech.speakNow(measurement);
-        } else {
-            Log.i(TAG, "Saying nothing: no measurement");
         }
     }
 
@@ -81,7 +88,7 @@ public class MyAudible {
                 if(isReal(horizontalSpeed) && min <= horizontalSpeed && horizontalSpeed <= max) {
                     measurement = String.format("%.0f", horizontalSpeed);
                 } else {
-                    Log.w(TAG, "Not speaking: horizontalSpeed " + horizontalSpeed);
+                    Log.w(TAG, "Not speaking: horizontal speed = " + horizontalSpeed);
                 }
                 break;
             case "vertical_speed":
@@ -90,7 +97,7 @@ public class MyAudible {
                 if(isReal(verticalSpeed) && min <= verticalSpeed && verticalSpeed <= max) {
                     measurement = String.format("%.0f", verticalSpeed);
                 } else {
-                    Log.w(TAG, "Not speaking: verticalSpeed " + verticalSpeed);
+                    Log.w(TAG, "Not speaking: vertical speed = " + verticalSpeed);
                 }
                 break;
             case "glide_ratio":
@@ -99,7 +106,7 @@ public class MyAudible {
                 if(isReal(glideRatio) && min <= glideRatio && glideRatio <= max) {
                     measurement = String.format("%.1f", glideRatio);
                 } else {
-                    Log.w(TAG, "Not speaking: glideRatio " + glideRatio);
+                    Log.w(TAG, "Not speaking: glide ratio = " + glideRatio);
                 }
                 break;
             default:

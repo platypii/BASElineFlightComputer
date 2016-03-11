@@ -43,4 +43,8 @@ public class AudibleThread {
         }
     }
 
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
 }

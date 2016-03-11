@@ -63,6 +63,7 @@ public class AudibleSettingsActivity extends PreferenceActivity {
             modePreference.setOnPreferenceChangeListener(this);
             minPreference.setOnPreferenceChangeListener(this);
             maxPreference.setOnPreferenceChangeListener(this);
+            ratePreference.setOnPreferenceChangeListener(this);
 
             updateViews();
         }
@@ -71,16 +72,25 @@ public class AudibleSettingsActivity extends PreferenceActivity {
          * Set summaries and adjust defaults
          */
         private void updateViews() {
-            // Audible mode
+            // Read preferences
             final String audibleMode = modePreference.getValue();
-            final int modePreferenceIndex = modePreference.findIndexOfValue(audibleMode);
-            final CharSequence modeValue = modePreferenceIndex >= 0? modePreference.getEntries()[modePreferenceIndex] : null;
+            final double min = Double.parseDouble(minPreference.getText());
+            final double max = Double.parseDouble(maxPreference.getText());
+            final double speechRate = Double.parseDouble(ratePreference.getText());
+            // Update views
+            updateAudibleMode(audibleMode, min, max);
+            updateSpeechRate(speechRate);
+        }
+
+        private void updateAudibleMode(String audibleMode, double min, double max) {
+            Log.d(TAG, "Updating preference views");
+
+            // Audible mode
+            final CharSequence modeValue = getAudibleModeValue(audibleMode);
             modePreference.setSummary(modeValue);
 
             // Minimum and maximum values
-            final double min = Double.parseDouble(minPreference.getText());
-            final double max = Double.parseDouble(maxPreference.getText());
-            switch(audibleMode) {
+            switch (audibleMode) {
                 case "glide_ratio":
                     minPreference.setTitle("Minimum Glide Ratio");
                     maxPreference.setTitle("Maximum Glide Ratio");
@@ -98,46 +108,76 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                 default:
                     Log.e(TAG, "Invalid audible mode " + audibleMode);
             }
+        }
 
-            // Speech rate
-            final double speechRate = Double.parseDouble(ratePreference.getText());
+        private void updateSpeechRate(double speechRate) {
             ratePreference.setSummary(String.format("Every %.0f", speechRate) + " sec");
+        }
+
+        /**
+         * Gets the human readable audible mode from the id
+         * glide_ratio -> Glide Ratio
+         * @param mode the audible mode string
+         * @return a human readable audible mode string
+         */
+        private CharSequence getAudibleModeValue(String mode) {
+            final int modePreferenceIndex = modePreference.findIndexOfValue(mode);
+            return modePreferenceIndex >= 0? modePreference.getEntries()[modePreferenceIndex] : null;
         }
 
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
-
-            if (preference.getKey().equals("audible_enabled")) {
-                final boolean audibleEnabled = (Boolean) value;
-                if(audibleEnabled) {
-                    MyAudible.startAudible();
-                } else {
-                    MyAudible.stopAudible();
-                }
-            } else if (preference.getKey().equals("audible_mode")) {
-                final String audibleMode = (String) value;
-                switch(audibleMode) {
-                    case "horizontal_speed":
-                        // Set default min/max
-                        minPreference.setText("60.0");
-                        maxPreference.setText("120.0");
-                        break;
-                    case "vertical_speed":
-                        // Set default min/max
-                        minPreference.setText("30.0");
-                        maxPreference.setText("120.0");
-                        break;
-                    case "glide_ratio":
-                        // Set default min/max
-                        minPreference.setText("0.0");
-                        maxPreference.setText("3.0");
-                        break;
-                    default:
-                        Log.e(TAG, "Invalid audible mode " + audibleMode);
-                }
+            final String key = preference.getKey();
+            final String previousAudibleMode = modePreference.getValue();
+            final double previousMin = Double.parseDouble(minPreference.getText());
+            final double previousMax = Double.parseDouble(maxPreference.getText());
+            switch(key) {
+                case "audible_enabled":
+                    final boolean audibleEnabled = (Boolean) value;
+                    if(audibleEnabled) {
+                        MyAudible.startAudible();
+                    } else {
+                        MyAudible.stopAudible();
+                    }
+                    break;
+                case "audible_mode":
+                    final String audibleMode = (String) value;
+                    if(!audibleMode.equals(previousAudibleMode)) {
+                        double min = 0;
+                        double max = 120;
+                        switch (audibleMode) {
+                            case "horizontal_speed":
+                            case "vertical_speed":
+                                // Set default min/max
+                                min = 0;
+                                max = 140;
+                                break;
+                            case "glide_ratio":
+                                // Set default min/max
+                                min = 0;
+                                max = 3;
+                                break;
+                            default:
+                                Log.e(TAG, "Invalid audible mode " + audibleMode);
+                        }
+                        minPreference.setText(Double.toString(min));
+                        maxPreference.setText(Double.toString(max));
+                        updateAudibleMode(audibleMode, min, max);
+                    }
+                    break;
+                case "audible_min":
+                    final double min = Double.parseDouble((String) value);
+                    updateAudibleMode(previousAudibleMode, min, previousMax);
+                    break;
+                case "audible_max":
+                    final double max = Double.parseDouble((String) value);
+                    updateAudibleMode(previousAudibleMode, previousMin, max);
+                    break;
+                case "audible_rate":
+                    final double speechRate = Double.parseDouble((String) value);
+                    updateSpeechRate(speechRate);
+                    break;
             }
-
-            updateViews();
 
             return true;
         }
