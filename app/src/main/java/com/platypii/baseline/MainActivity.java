@@ -40,12 +40,15 @@ public class MainActivity extends BaseActivity {
 
     private Button startButton;
     private Button stopButton;
+    private Button audibleButton;
     private Button jumpsButton;
     private TextView clock;
+    private TextView signalStatus;
 
     // Periodic UI updates
     private final Handler handler = new Handler();
-    private final int updateInterval = 32; // milliseconds
+    private final int clockUpdateInterval = 32; // milliseconds
+    private final int signalUpdateInterval = 200; // milliseconds
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 64;
     private static final int MY_TTS_DATA_CHECK_CODE = 48;
@@ -60,15 +63,25 @@ public class MainActivity extends BaseActivity {
         // Find views
         startButton = (Button) findViewById(R.id.startButton);
         stopButton = (Button) findViewById(R.id.stopButton);
+        audibleButton = (Button) findViewById(R.id.audibleButton);
         jumpsButton = (Button) findViewById(R.id.jumpsButton);
         clock = (TextView) findViewById(R.id.clock);
+        signalStatus = (TextView) findViewById(R.id.signalStatus);
 
         // Start flight services
         initServices();
 
         // Restore start/stop state
         updateUIState();
-   }
+
+        // Periodic UI updates
+        handler.post(new Runnable() {
+            public void run() {
+                updateSignal();
+                handler.postDelayed(this, signalUpdateInterval);
+            }
+        });
+    }
 
     private void enableStrictMode() {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -187,6 +200,7 @@ public class MainActivity extends BaseActivity {
         if(MyDatabase.isLogging()) {
             startButton.setEnabled(false);
             stopButton.setEnabled(true);
+            audibleButton.setEnabled(false);
             jumpsButton.setEnabled(false);
 
             // Start periodic UI updates
@@ -194,7 +208,7 @@ public class MainActivity extends BaseActivity {
                 public void run() {
                     updateClock();
                     if(MyDatabase.isLogging()) {
-                        handler.postDelayed(this, updateInterval);
+                        handler.postDelayed(this, clockUpdateInterval);
                     }
                 }
             });
@@ -203,6 +217,7 @@ public class MainActivity extends BaseActivity {
             clock.setText("");
             startButton.setEnabled(true);
             stopButton.setEnabled(false);
+            audibleButton.setEnabled(true);
             jumpsButton.setEnabled(true);
         }
         invalidateOptionsMenu();
@@ -220,12 +235,49 @@ public class MainActivity extends BaseActivity {
         startActivity(intent);
     }
 
+    /**
+     * Update the text view for timer
+     */
     private void updateClock() {
         if(MyDatabase.isLogging()) {
             clock.setText(MyDatabase.getLogTime());
         } else {
             clock.setText("");
         }
+    }
+
+    /**
+     * Update the views for GPS signal strength
+     */
+    private void updateSignal() {
+        String status;
+        int statusIcon = 0;
+
+        // GPS signal status
+        if(MyLocationManager.lastFixMillis <= 0) {
+            status = "no signal";
+            statusIcon = R.drawable.status_red;
+        } else {
+            final long timeSinceLastFix = System.currentTimeMillis() - MyLocationManager.lastFixMillis;
+            if(timeSinceLastFix > 10000) {
+                status = "no signal";
+                statusIcon = R.drawable.status_red;
+            } else if(timeSinceLastFix > 3000) {
+                status = "weak signal";
+                statusIcon = R.drawable.status_yellow;
+            } else {
+                status = "good signal";
+                statusIcon = R.drawable.status_green;
+            }
+        }
+
+        // Barometer status
+        if(Double.isNaN(MyAltimeter.altitude)) {
+            status += " (no barometer)";
+        }
+
+        signalStatus.setCompoundDrawablesWithIntrinsicBounds(statusIcon, 0, 0, 0);
+        signalStatus.setText(status);
     }
 
     @Override
@@ -238,6 +290,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        // Only enable the menu if we are NOT logging
         return !MyDatabase.isLogging();
     }
 
