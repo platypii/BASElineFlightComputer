@@ -16,8 +16,8 @@ public class AudibleThread {
     private final Runnable audibleThread = new Runnable() {
         @Override
         public void run() {
-            MyAudible.playAudio();
-            final int delay= MyAudible.getDelay();
+            MyAudible.speak();
+            final int delay = MyAudible.getDelay();
             handler.postDelayed(this, delay);
         }
     };
@@ -25,7 +25,9 @@ public class AudibleThread {
     public void start() {
         if(!isEnabled) {
             Log.i(TAG, "Starting audible");
-            handler.post(audibleThread);
+            final int delay = MyAudible.getDelay();
+            handler.postDelayed(audibleThread, delay);
+            // handler.post(audibleThread);
             isEnabled = true;
         } else {
             Log.e(TAG, "Failed to start audible: audible thread already started");

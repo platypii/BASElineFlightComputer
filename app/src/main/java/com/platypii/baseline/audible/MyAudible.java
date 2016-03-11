@@ -42,6 +42,13 @@ public class MyAudible {
         if(isInitialized) {
             if(!audibleThread.isEnabled()) {
                 audibleThread.start();
+
+                // Say audible mode
+                final String audibleMode = prefs.getString("audible_mode", "");
+                speech.speakWhenReady(audibleMode.replace('_', ' '));
+
+                // Play first measurement
+                MyAudible.speakWhenReady();
             } else {
                 Log.w(TAG, "Audible thread already started");
             }
@@ -58,11 +65,17 @@ public class MyAudible {
         }
     }
 
-    static void playAudio() {
+    static void speak() {
         final String measurement = getMeasurement();
         if(measurement != null && measurement.length() > 0) {
-            Log.i(TAG, "Saying " + measurement);
             speech.speakNow(measurement);
+        }
+    }
+
+    static void speakWhenReady() {
+        final String measurement = getMeasurement();
+        if(measurement != null && measurement.length() > 0) {
+            speech.speakWhenReady(measurement);
         }
     }
 
