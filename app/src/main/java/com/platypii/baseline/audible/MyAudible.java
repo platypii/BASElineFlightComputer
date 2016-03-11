@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyLocationManager;
 
@@ -97,7 +98,7 @@ public class MyAudible {
         switch(audibleMode) {
             case "horizontal_speed":
                 // Read horizontal speed
-                final double horizontalSpeed = MyLocationManager.lastLoc.groundSpeed();
+                final double horizontalSpeed = Convert.mps2mph(MyLocationManager.lastLoc.groundSpeed());
                 if(isReal(horizontalSpeed) && min <= horizontalSpeed && horizontalSpeed <= max) {
                     measurement = String.format("%.0f", horizontalSpeed);
                 } else {
@@ -106,7 +107,7 @@ public class MyAudible {
                 break;
             case "vertical_speed":
                 // Read vertical speed
-                final double verticalSpeed = MyAltimeter.climb;
+                final double verticalSpeed = Convert.mps2mph(MyAltimeter.climb);
                 if(isReal(verticalSpeed) && min <= verticalSpeed && verticalSpeed <= max) {
                     measurement = String.format("%.0f", verticalSpeed);
                 } else {

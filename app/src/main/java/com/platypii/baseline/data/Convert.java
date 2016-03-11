@@ -21,7 +21,14 @@ public class Convert {
     public static double kts2mps(double knots) {
         return 0.51444444444444444 * knots;
     }
-    
+
+    /**
+     * Convert meters/seconds to mph
+     */
+    public static double mps2mph(double mps) {
+        return 2.23694 * mps;
+    }
+
     /**
      * Convert meters to local units
      * @param m meters

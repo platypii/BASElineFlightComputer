@@ -111,7 +111,7 @@ public class AudibleSettingsActivity extends PreferenceActivity {
         }
 
         private void updateSpeechRate(double speechRate) {
-            ratePreference.setSummary(String.format("Every %.0f", speechRate) + " sec");
+            ratePreference.setSummary("Every " + speechRate + " sec");
         }
 
         /**
