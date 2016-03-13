@@ -10,7 +10,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
-
 public class SensorPlot extends PlotView {
 
     private SyncedList<MSensor> history;

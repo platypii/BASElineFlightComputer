@@ -1,5 +1,7 @@
 package com.platypii.baseline.data;
 
+import android.text.TextUtils;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -75,5 +77,10 @@ public class SyncedList<T> implements Iterable<T> {
      */
     public int size() {
         return size;
+    }
+
+    @Override
+    public String toString() {
+        return "SyncedList(" + TextUtils.join(",", values) + ")";
     }
 }

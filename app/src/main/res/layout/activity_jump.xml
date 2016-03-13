@@ -13,7 +13,8 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:gravity="center"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:textColor="#dddddd" />
 
     <TextView
         android:id="@+id/filesize"

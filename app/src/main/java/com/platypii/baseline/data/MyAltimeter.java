@@ -23,8 +23,7 @@ import com.platypii.baseline.data.measurements.MLocation;
 public class MyAltimeter {
     private static final String TAG = "MyAltimeter";
 
-    // Singleton MyAltimeter
-    private static MyAltimeter _instance;
+    private static SensorManager sensorManager;
 
     // Listeners
     private static final ArrayList<MyAltitudeListener> listeners = new ArrayList<>();
@@ -56,29 +55,30 @@ public class MyAltimeter {
     // History
     private static final int maxHistory = 5 * 60; // Maximum number of measurements to keep in memory
     public static final SyncedList<MAltitude> history = new SyncedList<>(maxHistory);
-    // public static MyAltitude myAltitude; // Measurement
+
+    // Stats
     public static final Stat pressure_altitude_stat = new Stat(); // Statistics on the mean and variance of the sensor
     private static long n = 0; // number of samples
     public static float refreshRate = 0; // Moving average of refresh rate in Hz
 
     /**
      * Initializes altimeter services, if not already running
-     * @param context The Application context
+     * @param appContext The Application context
      */
-    public static synchronized void initAltimeter(Context context) {
-        if(_instance == null) {
-            _instance = new MyAltimeter();
-
+    public static synchronized void start(Context appContext) {
+        if(sensorManager == null) {
             // Add sensor listener
-            SensorManager sensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
-            Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-            if(sensor != null) {
+            sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
+            final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+            if (sensor != null) {
                 // Start sensor updates
                 sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
             }
 
             // Start GPS updates
             MyLocationManager.addListener(locationListener);
+        } else {
+            Log.w(TAG, "MyAltimeter already started");
         }
     }
 
@@ -254,6 +254,16 @@ public class MyAltimeter {
     public static void removeListener(MyAltitudeListener listener) {
         synchronized(listeners) {
             listeners.remove(listener);
+        }
+    }
+
+    public static void stop() {
+        MyLocationManager.removeListener(locationListener);
+        sensorManager.unregisterListener(sensorEventListener);
+        sensorManager = null;
+
+        if(listeners.size() > 0) {
+            Log.e(TAG, "Stopping location service, but listeners are still listening");
         }
     }
 

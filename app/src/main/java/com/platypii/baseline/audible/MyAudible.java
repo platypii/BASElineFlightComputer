@@ -21,9 +21,9 @@ public class MyAudible {
 
     private static boolean isInitialized = false;
 
-    public static void initAudible(Context context) {
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        speech = new Speech(context);
+    public static void init(Context appContext) {
+        prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+        speech = new Speech(appContext);
 
         if(!isInitialized) {
             isInitialized = true;
@@ -139,6 +139,21 @@ public class MyAudible {
 
     private static boolean isReal(double value) {
         return !Double.isNaN(value) && !Double.isInfinite(value);
+    }
+
+    /**
+     * Stop audible service
+     */
+    public static void terminate() {
+        if(isInitialized) {
+            if(audibleThread.isEnabled()) {
+                stopAudible();
+            }
+            audibleThread = null;
+            isInitialized = false;
+            speech = null;
+            prefs = null;
+        }
     }
 
 }

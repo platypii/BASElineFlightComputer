@@ -37,4 +37,12 @@ public class KVStore {
         }
     }
 
+    /**
+     * Stop the key value store service and free resources
+     */
+    public static void stop() {
+        started = false;
+        prefs = null;
+    }
+
 }

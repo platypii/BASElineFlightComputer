@@ -150,7 +150,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
         } else if(requestCode == MY_TTS_DATA_CHECK_CODE) {
             if(resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 // success, start the audible
-                MyAudible.initAudible(getApplication());
+                MyAudible.init(getApplicationContext());
             } else {
                 // missing data, install it
                 final Intent installIntent = new Intent();
@@ -187,7 +187,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
                 Toast.makeText(this, "Signed in", Toast.LENGTH_LONG).show();
             }
         } else {
-            Log.e(TAG, "Sign in failed");
+            Log.w(TAG, "Sign in failed");
             // Show sign in panel
             if(signInPanel != null) {
                 signInPanel.setVisibility(View.VISIBLE);

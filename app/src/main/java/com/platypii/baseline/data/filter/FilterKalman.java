@@ -32,21 +32,21 @@ public class FilterKalman extends Filter {
             double predicted_altitude = x + v * dt;
 
             // Estimated covariance
-            double q11 = 0.25 * dt*dt*dt*dt * accelVar;
-            double q12 = 0.5 * dt*dt*dt * accelVar;
-            double q21 = 0.5 * dt*dt*dt * accelVar;
-            double q22 = dt*dt * accelVar;
+            final double q11 = 0.25 * dt*dt*dt*dt * accelVar;
+            final double q12 = 0.5 * dt*dt*dt * accelVar;
+            final double q21 = 0.5 * dt*dt*dt * accelVar;
+            final double q22 = dt*dt * accelVar;
             p11 = (p11 + p12*dt + p21*dt + p22*dt*dt) + q11;
             p12 = (p12 + p22*dt) + q12;
             p21 = (p21 + p22*dt) + q21;
             p22 = (p22) + q22;
 
             // Kalman gain
-            double k1 = p11 / (p11 + r);
-            double k2 = p21 / (p11 + r);
+            final double k1 = p11 / (p11 + r);
+            final double k2 = p21 / (p11 + r);
 
             // Update state
-            double residual = z - predicted_altitude;
+            final double residual = z - predicted_altitude;
             this.x = predicted_altitude + k1 * residual;
             this.v = v + k2 * residual;
 

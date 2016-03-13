@@ -70,7 +70,7 @@ public class MySensorManager {
      *
      * @param appContext The Application context
      */
-    public static synchronized void initSensors(Context appContext) {
+    public static synchronized void start(Context appContext) {
         if(_instance == null) {
             _instance = new MySensorManager();
 

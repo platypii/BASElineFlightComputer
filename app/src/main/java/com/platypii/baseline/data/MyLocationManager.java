@@ -381,5 +381,9 @@ public class MyLocationManager {
         } catch(SecurityException e) {}
         manager = null;
         _instance = null;
+
+        if(listeners.size() > 0) {
+            Log.e(TAG, "Stopping location service, but listeners are still listening");
+        }
     }
 }
