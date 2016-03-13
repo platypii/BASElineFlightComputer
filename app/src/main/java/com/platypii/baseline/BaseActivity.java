@@ -21,7 +21,6 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.platypii.baseline.audible.MyAudible;
-import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.data.MyLocationManager;
 
 public class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -244,12 +243,8 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onDestroy();
         Log.i(TAG, "onDestroy()");
 
-        if(!MyDatabase.isLogging()) {
-            // Stop services
-            Services.stop();
-        } else {
-            Log.w(TAG, "Activity stopped, but still recording track. Leaving services running.");
-        }
+        // If track is still recording, services will take care of it
+        Services.stop();
     }
 
 }

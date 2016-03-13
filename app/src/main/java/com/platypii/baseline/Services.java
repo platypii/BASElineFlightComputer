@@ -11,6 +11,7 @@ import android.util.Log;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.data.KVStore;
 import com.platypii.baseline.data.MyAltimeter;
+import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.MySensorManager;
 
@@ -69,12 +70,16 @@ public class Services {
     public static void stop() {
         startCount--;
         if(startCount == 0) {
-            Log.i(TAG, "All activities have terminated. Stopping services.");
-            // Stop services
-            MyAudible.terminate();
-            MyAltimeter.stop();
-            MyLocationManager.stop();
-            KVStore.stop();
+            if(!MyDatabase.isLogging()) {
+                Log.i(TAG, "All activities have stopped. Stopping services.");
+                // Stop services
+                MyAudible.terminate();
+                MyAltimeter.stop();
+                MyLocationManager.stop();
+                KVStore.stop();
+            } else {
+                Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
+            }
         }
     }
 
