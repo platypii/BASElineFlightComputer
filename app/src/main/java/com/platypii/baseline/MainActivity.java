@@ -218,11 +218,11 @@ public class MainActivity extends BaseActivity {
             status = "no signal";
             statusIcon = R.drawable.status_red;
         } else {
-            final long timeSinceLastFix = System.currentTimeMillis() - MyLocationManager.lastFixMillis;
-            if(timeSinceLastFix > 10000) {
+            final long lastFixDuration = MyLocationManager.lastFixDuration();
+            if(lastFixDuration > 10000) {
                 status = "no signal";
                 statusIcon = R.drawable.status_red;
-            } else if(timeSinceLastFix > 3000) {
+            } else if(lastFixDuration > 3000) {
                 status = "weak signal";
                 statusIcon = R.drawable.status_yellow;
             } else {

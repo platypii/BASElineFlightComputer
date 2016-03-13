@@ -60,7 +60,7 @@ public class FilterKalman extends Filter {
             Log.e(TAG, "Unexpected sample data: z = " + z + ", dt = " + dt);
         }
 
-        // Log.i("Kalman", "X = " + x + ", v = " + v);
+        // Log.i(TAG, "X = " + x + ", v = " + v);
     }
 
 }

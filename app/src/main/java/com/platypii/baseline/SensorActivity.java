@@ -180,9 +180,9 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         // Last fix needs to be updated continuously since it shows time since last fix
         if(MyLocationManager.lastFixMillis > 0) {
             // Set text color
-            final long timeSinceLastFix = System.currentTimeMillis() - MyLocationManager.lastFixMillis;
-            if(timeSinceLastFix > 3000) {
-                float frac = (6000f - timeSinceLastFix) / (3000f);
+            final long lastFixDuration = MyLocationManager.lastFixDuration();
+            if(lastFixDuration > 3000) {
+                float frac = (6000f - lastFixDuration) / (3000f);
                 frac = Math.max(0, Math.min(frac, 1));
                 final int b = (int)(0xb0 * frac); // blue
                 final int gb = b + 0x100 * b; // blue + green
@@ -190,7 +190,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
             } else {
                 lastFixLabel.setTextColor(0xffb0b0b0);
             }
-            String lastFix = (timeSinceLastFix / 1000) + "s";
+            String lastFix = (lastFixDuration / 1000) + "s";
             if(MyLocationManager.refreshRate > 0) {
                 lastFix += String.format(" (%.2fHz)", MyLocationManager.refreshRate);
             }

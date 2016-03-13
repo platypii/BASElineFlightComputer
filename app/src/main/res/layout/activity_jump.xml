@@ -22,18 +22,6 @@
         android:layout_height="wrap_content"
         android:gravity="center" />
 
-    <TextView
-        android:id="@+id/error_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawablePadding="5dp"
-        android:drawableLeft="@drawable/warning"
-        android:drawableStart="@drawable/warning"
-        android:textColor="#aa0000"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:visibility="gone" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -95,6 +83,18 @@
             android:textColor="#dddddd" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/error_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="5dp"
+        android:drawableLeft="@drawable/warning"
+        android:drawableStart="@drawable/warning"
+        android:textColor="#aa0000"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:visibility="gone" />
 
     <include layout="@layout/sign_in_panel"/>
 

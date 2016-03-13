@@ -53,6 +53,9 @@ public class MyLocationManager {
     private static float vdop = Float.NaN;
     private static long dateTime; // The number of milliseconds until the start of this day, midnight GMT
 
+    // phone time = GPS time + offset
+    public static long phoneOffsetMillis = 0;
+
     // Computed parameters
     public static float groundDistance = 0;
 
@@ -62,6 +65,13 @@ public class MyLocationManager {
 
     private static final int maxHistory = 600; // Maximum number of measurements to keep in memory
     public static final SyncedList<MLocation> history = new SyncedList<>(maxHistory);
+
+    /**
+     * Returns the number of milliseconds since the last fix
+     */
+    public static long lastFixDuration() {
+        return System.currentTimeMillis() - (lastFixMillis + phoneOffsetMillis);
+    }
 
     /**
      * Initializes location services
@@ -127,23 +137,6 @@ public class MyLocationManager {
             tempLoc2.setLongitude(lastLoc.longitude);
             groundDistance += tempLoc1.distanceTo(tempLoc2);
 
-            // Clear out old values
-            latitude = Double.NaN;
-            longitude = Double.NaN;
-            altitude_gps = Double.NaN;
-            vN = Double.NaN;
-            vE = Double.NaN;
-            groundSpeed = Double.NaN;
-            bearing = Double.NaN;
-            hAcc = Float.NaN;
-            // vAcc = Float.NaN;
-            // sAcc = Float.NaN;
-            pdop = Float.NaN;
-            hdop = Float.NaN;
-            vdop = Float.NaN;
-            // satellitesInView = -1; // Satellites in view
-            // satellitesUsed = -1; // Satellites used in last fix
-
             // GPS sample refresh rate
             // TODO: Include time from last sample until now
             final long deltaTime = lastLoc.millis - prevLoc.millis; // time since last refresh
@@ -156,6 +149,26 @@ public class MyLocationManager {
                 }
             }
         }
+
+        // Update gps time offset
+        phoneOffsetMillis = System.currentTimeMillis() - lastFixMillis;
+
+        // Clear out old values
+        latitude = Double.NaN;
+        longitude = Double.NaN;
+        altitude_gps = Double.NaN;
+        vN = Double.NaN;
+        vE = Double.NaN;
+        groundSpeed = Double.NaN;
+        bearing = Double.NaN;
+        hAcc = Float.NaN;
+        // vAcc = Float.NaN;
+        // sAcc = Float.NaN;
+        pdop = Float.NaN;
+        hdop = Float.NaN;
+        vdop = Float.NaN;
+        // satellitesInView = -1; // Satellites in view
+        // satellitesUsed = -1; // Satellites used in last fix
 
         // History
         history.append(lastLoc);
@@ -174,7 +187,9 @@ public class MyLocationManager {
         }.execute(lastLoc);
     }
 
-    // NMEA listener
+    /**
+     * NMEA listener
+     */
     private static final GpsStatus.NmeaListener nmeaListener = new GpsStatus.NmeaListener() {
         // timestamp is milliseconds
         public void onNmeaReceived(long timestamp, String nmea) {
