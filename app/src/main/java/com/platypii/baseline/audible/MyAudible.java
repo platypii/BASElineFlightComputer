@@ -98,11 +98,15 @@ public class MyAudible {
         switch(audibleMode) {
             case "horizontal_speed":
                 // Read horizontal speed
-                final double horizontalSpeed = Convert.mps2mph(MyLocationManager.lastLoc.groundSpeed());
-                if(isReal(horizontalSpeed) && min <= horizontalSpeed && horizontalSpeed <= max) {
-                    measurement = String.format("%.0f", horizontalSpeed);
+                if(MyLocationManager.lastLoc != null) {
+                    final double horizontalSpeed = Convert.mps2mph(MyLocationManager.lastLoc.groundSpeed());
+                    if (isReal(horizontalSpeed) && min <= horizontalSpeed && horizontalSpeed <= max) {
+                        measurement = String.format("%.0f", horizontalSpeed);
+                    } else {
+                        Log.w(TAG, "Not speaking: horizontal speed = " + horizontalSpeed);
+                    }
                 } else {
-                    Log.w(TAG, "Not speaking: horizontal speed = " + horizontalSpeed);
+                    Log.w(TAG, "Not speaking: no gps signal received");
                 }
                 break;
             case "vertical_speed":
@@ -116,11 +120,15 @@ public class MyAudible {
                 break;
             case "glide_ratio":
                 // Read glide ratio
-                final double glideRatio = MyLocationManager.lastLoc.glideRatio();
-                if(isReal(glideRatio) && min <= glideRatio && glideRatio <= max) {
-                    measurement = String.format("%.1f", glideRatio);
+                if(MyLocationManager.lastLoc != null) {
+                    final double glideRatio = MyLocationManager.lastLoc.glideRatio();
+                    if(isReal(glideRatio) && min <= glideRatio && glideRatio <= max) {
+                        measurement = String.format("%.1f", glideRatio);
+                    } else {
+                        Log.w(TAG, "Not speaking: glide ratio = " + glideRatio);
+                    }
                 } else {
-                    Log.w(TAG, "Not speaking: glide ratio = " + glideRatio);
+                    Log.w(TAG, "Not speaking: no gps signal received");
                 }
                 break;
             default:

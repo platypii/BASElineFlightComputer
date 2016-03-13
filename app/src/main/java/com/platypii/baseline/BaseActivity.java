@@ -1,7 +1,10 @@
 package com.platypii.baseline;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,16 +20,21 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.platypii.baseline.audible.MyAudible;
+import com.platypii.baseline.data.MyDatabase;
+import com.platypii.baseline.data.MyLocationManager;
 
 public class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "BaseActivity";
 
-    /* Client used to interact with Google APIs. */
+    /* Client used to interact with Google APIs */
     private GoogleApiClient mGoogleApiClient;
     private GoogleSignInAccount account;
 
-    /* Request code used to invoke sign in user interactions. */
+    /* Request codes used to invoke user interactions */
     private static final int RC_SIGN_IN = 0;
+    static final int MY_PERMISSIONS_REQUEST_LOCATION = 64;
+    static final int MY_TTS_DATA_CHECK_CODE = 48;
 
     private boolean userClickedSignIn = false;
 
@@ -38,17 +46,21 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Initialize Google sign in
         final String serverClientId = getString(R.string.server_client_id);
         final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(serverClientId)
                 .requestEmail()
                 .build();
 
-        // Build a GoogleApiClient with access to the Google Sign-In API and the options specified by gso.
+        // Build a GoogleApiClient with access to the Google Sign-In API and the options specified by gso
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+
+        // Start flight services
+        Services.start(this);
     }
 
     @Override
@@ -135,7 +147,18 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
+        } else if(requestCode == MY_TTS_DATA_CHECK_CODE) {
+            if(resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                // success, start the audible
+                MyAudible.initAudible(getApplication());
+            } else {
+                // missing data, install it
+                final Intent installIntent = new Intent();
+                installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                startActivity(installIntent);
+            }
         }
+
     }
 
     protected void handleSignInResult(GoogleSignInResult result) {
@@ -150,11 +173,11 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
             account = result.getSignInAccount();
             Log.i(TAG, "Signed in successfully with user " + account.getDisplayName());
 
-            final String authCode = account.getServerAuthCode();
-            Log.d(TAG, "Got auth code " + authCode); // TODO: Remove me
+            // final String authCode = account.getServerAuthCode();
+            // Log.d(TAG, "Got auth code " + authCode);
 
-            final String idToken = account.getIdToken();
-            Log.d(TAG, "Got id token " + idToken); // TODO: Remove me
+            // final String idToken = account.getIdToken();
+            // Log.d(TAG, "Got id token " + idToken);
 
             // Hide sign in panel
             if(signInPanel != null) {
@@ -198,6 +221,34 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         } else {
             callback.error("Not signed in");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+            if(grantResults.length == 1 &&
+                    permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION) &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                try {
+                    MyLocationManager.start(getApplication());
+                } catch(SecurityException e) {
+                    Log.e(TAG, "Error enabling location services", e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy()");
+
+        if(!MyDatabase.isLogging()) {
+            // Stop services
+            Services.stop();
+        } else {
+            Log.w(TAG, "Activity stopped, but still recording track. Leaving services running.");
         }
     }
 

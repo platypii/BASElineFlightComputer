@@ -42,16 +42,16 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     private TextView glideRatioLabel;
     private TextView glideAngleLabel;
     private TextView bearingLabel;
-    
+
     // Sensors
     private LinearLayout sensorLayout;
-//    private final ArrayList<SensorPlot> plots = new ArrayList<>();
-    
+    // private final ArrayList<SensorPlot> plots = new ArrayList<>();
+
     // Periodic UI updates    
     private final Handler handler = new Handler();
     private final int updateInterval = 100; // in milliseconds
-    
-    
+    private Runnable updateRunnable;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +93,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         if(MySensorManager.rotation != null) {
             addPlot("Rotation", MySensorManager.rotation);
         }
-        
+
         // addPlot("Magnetic", MySensorManager.getHistory(Sensor.TYPE_MAGNETIC_FIELD));
         // addPlot("Accelerometer", MySensorManager.history.get(Sensor.TYPE_ACCELEROMETER));
         // addPlot("Gyro", MySensorManager.gyroHistory, 0, 10, 100);
@@ -101,38 +101,53 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         // addPlot("Linear Acceleration", MySensorManager.linearAccelHistory, 0, 10, 100); // Linear Acceleration = Accel - Gravity
         // addPlot("Linear Velocity", MySensorManager.linearAccelHistory, 1, 20, 100);
         // addPlot("Linear Position", MySensorManager.linearAccelHistory, 2, 90, 120);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         // Start GPS updates
         MyLocationManager.addListener(this);
         updateGPS(MyLocationManager.lastLoc);
-        
+
         // Start altitude updates
         MyAltimeter.addListener(this);
         updateAltimeter();
 
         // Periodic UI updates
-        handler.post(new Runnable() {
+        updateRunnable = new Runnable() {
             public void run() {
                 update();
                 handler.postDelayed(this, updateInterval);
             }
-        });
+        };
+        handler.post(updateRunnable);
         update();
     }
-    
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        handler.removeCallbacks(updateRunnable);
+        updateRunnable = null;
+        MyAltimeter.removeListener(this);
+        MyLocationManager.removeListener(this);
+    }
+
     private void addPlot(String label, SyncedList<MSensor> history) {
-    	if(history != null) {
-	        final TextView textView = new TextView(this);
-	        textView.setText(label);
-	        sensorLayout.addView(textView);
-	
-	        final SensorPlot plot = new SensorPlot(this, null);
-	        plot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 180));
-	        plot.loadHistory(history);
-	        
-	        sensorLayout.addView(plot);
-//	        plots.add(plot);
-    	}
+        if(history != null) {
+            final TextView textView = new TextView(this);
+            textView.setText(label);
+            sensorLayout.addView(textView);
+
+            final SensorPlot plot = new SensorPlot(this, null);
+            plot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 180));
+            plot.loadHistory(history);
+
+            sensorLayout.addView(plot);
+            // plots.add(plot);
+        }
     }
 
     private void updateAltimeter() {

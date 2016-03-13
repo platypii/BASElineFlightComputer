@@ -1,14 +1,9 @@
 package com.platypii.baseline;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.speech.tts.TextToSpeech;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,14 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
-import com.platypii.baseline.data.KVStore;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.data.MyLocationManager;
-import com.platypii.baseline.data.MySensorManager;
 import com.platypii.baseline.data.TheCloud;
 
 public class MainActivity extends BaseActivity {
@@ -50,8 +42,8 @@ public class MainActivity extends BaseActivity {
     private final int clockUpdateInterval = 32; // milliseconds
     private final int signalUpdateInterval = 200; // milliseconds
 
-    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 64;
-    private static final int MY_TTS_DATA_CHECK_CODE = 48;
+    private Runnable clockRunnable;
+    private Runnable signalRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,19 +60,26 @@ public class MainActivity extends BaseActivity {
         clock = (TextView) findViewById(R.id.clock);
         signalStatus = (TextView) findViewById(R.id.signalStatus);
 
-        // Start flight services
-        initServices();
-
         // Restore start/stop state
         updateUIState();
+    }
 
-        // Periodic UI updates
-        handler.post(new Runnable() {
-            public void run() {
-                updateSignal();
-                handler.postDelayed(this, signalUpdateInterval);
-            }
-        });
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Start signal updates
+        if(signalRunnable == null) {
+            signalRunnable = new Runnable() {
+                public void run() {
+                    updateSignal();
+                    handler.postDelayed(this, signalUpdateInterval);
+                }
+            };
+            handler.post(signalRunnable);
+        } else {
+            Log.e(TAG, "Signal updates already started");
+        }
     }
 
     private void enableStrictMode() {
@@ -96,53 +95,6 @@ public class MainActivity extends BaseActivity {
                 .penaltyLog()
                 .penaltyDeath()
                 .build());
-    }
-
-    private void initServices() {
-        // Initialize Services
-        Log.i(TAG, "Initializing key value store");
-        KVStore.start(getApplication());
-
-        Log.i(TAG, "Initializing location");
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // Enable location services
-            try {
-                MyLocationManager.initLocation(getApplication());
-            } catch(SecurityException e) {
-                Log.e(TAG, "Error enabling location services", e);
-            }
-        } else {
-            // request the missing permissions
-            final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
-            ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_REQUEST_LOCATION);
-        }
-        Log.i(TAG, "Initializing sensors");
-        MySensorManager.initSensors(getApplication());
-        Log.i(TAG, "Initializing altimeter");
-        MyAltimeter.initAltimeter(getApplication());
-        Log.i(TAG, "Initializing audible");
-        // Check for TTS data
-        Intent checkIntent = new Intent();
-        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-        startActivityForResult(checkIntent, MY_TTS_DATA_CHECK_CODE);
-
-        // TODO: Upload any unsynced files
-        // TheCloud.uploadAll();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
-            if(grantResults.length == 1 &&
-                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                try {
-                    MyLocationManager.initLocation(getApplication());
-                } catch(SecurityException e) {
-                    Log.e(TAG, "Error enabling location services", e);
-                }
-            }
-        }
     }
 
     public void clickStart(View v) {
@@ -203,22 +155,30 @@ public class MainActivity extends BaseActivity {
             audibleButton.setEnabled(false);
             jumpsButton.setEnabled(false);
 
-            // Start periodic UI updates
-            handler.post(new Runnable() {
-                public void run() {
-                    updateClock();
-                    if(MyDatabase.isLogging()) {
-                        handler.postDelayed(this, clockUpdateInterval);
+            // Start clock updates
+            if(clockRunnable == null) {
+                clockRunnable = new Runnable() {
+                    public void run() {
+                        updateClock();
+                        if (MyDatabase.isLogging()) {
+                            handler.postDelayed(this, clockUpdateInterval);
+                        }
                     }
-                }
-            });
-
+                };
+                handler.post(clockRunnable);
+            }
         } else {
             clock.setText("");
             startButton.setEnabled(true);
             stopButton.setEnabled(false);
             audibleButton.setEnabled(true);
             jumpsButton.setEnabled(true);
+
+            // Stop clock updates
+            if(clockRunnable != null) {
+                handler.removeCallbacks(clockRunnable);
+                clockRunnable = null;
+            }
         }
         invalidateOptionsMenu();
     }
@@ -251,7 +211,7 @@ public class MainActivity extends BaseActivity {
      */
     private void updateSignal() {
         String status;
-        int statusIcon = 0;
+        int statusIcon;
 
         // GPS signal status
         if(MyLocationManager.lastFixMillis <= 0) {
@@ -319,24 +279,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: " + requestCode + ":" + resultCode + ":" + data);
-
-        if(requestCode == MY_TTS_DATA_CHECK_CODE) {
-            if(resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                // success, start the audible
-                MyAudible.initAudible(getApplication());
-            } else {
-                // missing data, install it
-                final Intent installIntent = new Intent();
-                installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-                startActivity(installIntent);
-            }
-        }
-    }
-
     protected void handleSignInResult(GoogleSignInResult result) {
         super.handleSignInResult(result);
         Log.d(TAG, "handleSignInResult: " + result.isSuccess());
@@ -354,4 +296,18 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(clockRunnable != null) {
+            handler.removeCallbacks(clockRunnable);
+            clockRunnable = null;
+        }
+        if(signalRunnable != null) {
+            handler.removeCallbacks(signalRunnable);
+            signalRunnable = null;
+        }
+    }
+
 }

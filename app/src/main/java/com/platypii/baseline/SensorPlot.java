@@ -1,6 +1,7 @@
 package com.platypii.baseline;
 
 import com.platypii.baseline.data.Bounds;
+import com.platypii.baseline.data.DataSeries;
 import com.platypii.baseline.data.SyncedList;
 import com.platypii.baseline.data.measurements.MSensor;
 

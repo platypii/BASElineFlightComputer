@@ -24,7 +24,7 @@ class Speech implements TextToSpeech.OnInitListener {
     void speakNow(String text) {
         if(text != null && text.length() > 0) {
             if(isReady) {
-                Log.i(TAG, "Saying " + text);
+                Log.i(TAG, "Saying: " + text);
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
             } else {
                 Log.e(TAG, "Speech not ready. Discarding message: " + text);
@@ -35,7 +35,7 @@ class Speech implements TextToSpeech.OnInitListener {
     void speakWhenReady(String text) {
         if(text != null && text.length() > 0) {
             if(isReady) {
-                Log.i(TAG, "Saying when ready " + text);
+                Log.i(TAG, "Saying when ready: " + text);
                 tts.speak(text, TextToSpeech.QUEUE_ADD, null);
             } else {
                 Log.i(TAG, "Speech not ready. Queueing message: " + text);

@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 
 import com.platypii.baseline.data.Bounds;
 import com.platypii.baseline.data.Convert;
+import com.platypii.baseline.data.DataSeries;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.measurements.MAltitude;
 

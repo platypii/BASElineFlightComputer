@@ -1,0 +1,77 @@
+package com.platypii.baseline;
+
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.speech.tts.TextToSpeech;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
+
+import com.platypii.baseline.data.KVStore;
+import com.platypii.baseline.data.MyAltimeter;
+import com.platypii.baseline.data.MyLocationManager;
+import com.platypii.baseline.data.MySensorManager;
+
+/**
+ * Start and stop essential services
+ */
+public class Services {
+    private static final String TAG = "Services";
+
+    // Count the number of times an activity has started.
+    // This allows us to only stop services once the app is really done.
+    private static int startCount = 0;
+
+    public static void start(BaseActivity activity) {
+        if(startCount == 0) {
+            Log.i(TAG, "Starting services");
+        } else {
+            Log.d(TAG, "Services already started");
+        }
+        startCount++;
+
+        final Context appContext = activity.getApplicationContext();
+
+        // Start the various services
+        // Initialize Services
+        Log.i(TAG, "Initializing key value store");
+        KVStore.start(appContext);
+
+        Log.i(TAG, "Initializing location");
+        if(ActivityCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // Enable location services
+            try {
+                MyLocationManager.start(appContext);
+            } catch(SecurityException e) {
+                Log.e(TAG, "Error enabling location services", e);
+            }
+        } else {
+            // request the missing permissions
+            final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+            ActivityCompat.requestPermissions(activity, permissions, BaseActivity.MY_PERMISSIONS_REQUEST_LOCATION);
+        }
+        Log.i(TAG, "Initializing sensors");
+        MySensorManager.initSensors(appContext);
+        Log.i(TAG, "Initializing altimeter");
+        MyAltimeter.initAltimeter(appContext);
+        Log.i(TAG, "Initializing audible");
+        // Check for TTS data
+        final Intent checkIntent = new Intent();
+        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        activity.startActivityForResult(checkIntent, BaseActivity.MY_TTS_DATA_CHECK_CODE);
+
+        // TODO: Upload any unsynced files
+        // TheCloud.uploadAll();
+    }
+
+    public static void stop() {
+        startCount--;
+        if(startCount == 0) {
+            Log.i(TAG, "All activities have terminated. Stopping services.");
+            // Stop services
+            MyLocationManager.stop();
+        }
+    }
+
+}

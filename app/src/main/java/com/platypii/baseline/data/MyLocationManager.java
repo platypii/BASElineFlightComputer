@@ -55,7 +55,7 @@ public class MyLocationManager {
 
     // Computed parameters
     public static float groundDistance = 0;
-    
+
     // History
     public static MLocation lastLoc; // last location received
     public static MLocation prevLoc; // 2nd to last
@@ -67,17 +67,17 @@ public class MyLocationManager {
      * Initializes location services
      * @param context The Application context
      */
-    public static synchronized void initLocation(Context context) throws SecurityException {
-        if(_instance == null) {
+    public static synchronized void start(Context context) throws SecurityException {
+        if (_instance == null) {
             _instance = new MyLocationManager();
-            
+
             // Obtain GPS locations
-            manager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, nullListener);
+            manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, androidLocationListener);
             final boolean nmeaSuccess = manager.addNmeaListener(nmeaListener);
             manager.addGpsStatusListener(statusListener);
 
-            if(!nmeaSuccess) {
+            if (!nmeaSuccess) {
                 Log.e(TAG, "Failed to start NMEA updates");
             }
 
@@ -92,7 +92,7 @@ public class MyLocationManager {
      * Add a new listener to be notified of location updates
      */
     public static void addListener(MyLocationListener listener) {
-        synchronized(listeners) {
+        synchronized (listeners) {
             listeners.add(listener);
         }
     }
@@ -101,7 +101,7 @@ public class MyLocationManager {
      * Remove a listener from location updates
      */
     public static void removeListener(MyLocationListener listener) {
-        synchronized(listeners) {
+        synchronized (listeners) {
             listeners.remove(listener);
         }
     }
@@ -109,16 +109,17 @@ public class MyLocationManager {
     // This is where we package up all the location data, build a MyLocation, and notify our friends.
     private static final Location tempLoc1 = new Location("gps"); // Temporary android location
     private static final Location tempLoc2 = new Location("gps");
+
     private static void updateLocation() {
 
         // Store location
         prevLoc = lastLoc;
         lastLoc = new MLocation(lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
-                                 hAcc, pdop, hdop, vdop, satellitesUsed, groundDistance);
+                                hAcc, pdop, hdop, vdop, satellitesUsed, groundDistance);
 
         // Log.v(TAG, "MyLocationManager.updateLocation(" + lastLoc + ")");
 
-        if(prevLoc != null) {
+        if (prevLoc != null) {
             // Compute distance
             tempLoc1.setLatitude(prevLoc.latitude);
             tempLoc1.setLongitude(prevLoc.longitude);
@@ -146,7 +147,7 @@ public class MyLocationManager {
             // GPS sample refresh rate
             // TODO: Include time from last sample until now
             final long deltaTime = lastLoc.millis - prevLoc.millis; // time since last refresh
-            if(deltaTime > 0) {
+            if (deltaTime > 0) {
                 final float refreshTime = 1000.0f / (float) (deltaTime);
                 refreshRate += (refreshTime - refreshRate) * 0.5f; // Moving average
                 if (Double.isNaN(refreshRate)) {
@@ -160,11 +161,11 @@ public class MyLocationManager {
         history.append(lastLoc);
 
         // Notify listeners (using AsyncTask so the manager never blocks!)
-        new AsyncTask<MLocation,Void,Void>() {
+        new AsyncTask<MLocation, Void, Void>() {
             @Override
             protected Void doInBackground(MLocation... params) {
-                synchronized(listeners) {
-                    for(MyLocationListener listener : listeners) {
+                synchronized (listeners) {
+                    for (MyLocationListener listener : listeners) {
                         listener.onLocationChanged(params[0]);
                     }
                 }
@@ -181,29 +182,29 @@ public class MyLocationManager {
 
             // Log.v(NMEA_TAG, "["+timestamp+"] " + nmea);
 
-            if(!nmeaReceived) {
+            if (!nmeaReceived) {
                 Log.d(NMEA_TAG, "First NMEA string received");
                 nmeaReceived = true;
             }
 
             final String split[] = nmea.split("[,*]");
-            if(split[0].charAt(0) != '$') Log.e(NMEA_TAG, "Invalid NMEA tag: " + split[0]);
-            if(split[0].length() != 6) Log.e(NMEA_TAG, "Invalid NMEA tag length: " + split[0]);
-            final String command = split[0].substring(3,6);
+            if (split[0].charAt(0) != '$') Log.e(NMEA_TAG, "Invalid NMEA tag: " + split[0]);
+            if (split[0].length() != 6) Log.e(NMEA_TAG, "Invalid NMEA tag length: " + split[0]);
+            final String command = split[0].substring(3, 6);
 
-            if(!NMEA.nmeaChecksum(nmea)) {
+            if (!NMEA.nmeaChecksum(nmea)) {
                 Log.e(NMEA_TAG, "Invalid NMEA checksum");
             }
 
             // Parse command
-            switch(command) {
+            switch (command) {
                 case "GSA":
                     // Overall satellite data (DOP and active satellites)
                     // boolean autoDim = split[1].equals("A"); // A = Auto 2D/3D, M = Forced 2D/3D
                     // gpsFix = split[2].equals("")? 0 : Integer.parseInt(split[2]); // 0 = null, 1 = No fix, 2 = 2D, 3 = 3D
-                    pdop = parseFloat(split[split.length-4]);
-                    hdop = parseFloat(split[split.length-3]);
-                    vdop = parseFloat(split[split.length-2]);
+                    pdop = parseFloat(split[split.length - 4]);
+                    hdop = parseFloat(split[split.length - 3]);
+                    vdop = parseFloat(split[split.length - 2]);
                     break;
                 case "GSV":
                     // Detailed satellite data (satellites in view)
@@ -216,7 +217,7 @@ public class MyLocationManager {
                     // gpsFix = parseInt(split[6]); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
                     satellitesUsed = parseInt(split[7]);
                     hdop = parseFloat(split[8]);
-                    if(!split[9].equals("")) {
+                    if (!split[9].equals("")) {
                         assert split[10].equals("M"); // Meters
                         altitude_gps = Double.parseDouble(split[9]);
                     }
@@ -270,11 +271,11 @@ public class MyLocationManager {
                     lastFixMillis = dateTime + NMEA.parseTime(split[1]);
                     latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
                     longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
-                    if(!split[9].equals("")) {
+                    if (!split[9].equals("")) {
                         assert split[10].equals("M"); // Meters
                         altitude_gps = Double.parseDouble(split[9]);
                     }
-                    if(!split[7].equals("")) {
+                    if (!split[7].equals("")) {
                         satellitesUsed = Integer.parseInt(split[7]);
                     }
                     break;
@@ -290,33 +291,35 @@ public class MyLocationManager {
                     groundSpeed = Convert.kts2mps(parseDouble(split[5])); // Speed over ground
                     break;
                 default:
-                    Log.e(NMEA_TAG, "["+timestamp+"] Unknown NMEA command: " + nmea);
+                    Log.e(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
             }
         }
     };
 
     private static double parseDouble(String str) {
-        return str.equals("")? Double.NaN : Double.parseDouble(str);
+        return str.equals("") ? Double.NaN : Double.parseDouble(str);
     }
+
     private static float parseFloat(String str) {
-        return str.equals("")? Float.NaN : Float.parseFloat(str);
+        return str.equals("") ? Float.NaN : Float.parseFloat(str);
     }
+
     private static int parseInt(String str) {
-        return str.equals("")? -1 : Integer.parseInt(str);
+        return str.equals("") ? -1 : Integer.parseInt(str);
     }
 
     /** Null listener does nothing. all data comes from NMEA */
-    private static final LocationListener nullListener = new LocationListener() {
+    private static final LocationListener androidLocationListener = new LocationListener() {
         public void onLocationChanged(Location loc) {
             // Log.v("GPS", "onLocationChanged(" + loc + ")");
-            if(!Double.isNaN(loc.getLatitude()) && !Double.isNaN(loc.getLongitude())) {
+            if (!Double.isNaN(loc.getLatitude()) && !Double.isNaN(loc.getLongitude())) {
                 // Always update accuracy
-                if(loc.hasAccuracy())
+                if (loc.hasAccuracy())
                     hAcc = loc.getAccuracy();
                 else
                     hAcc = Float.NaN;
 
-                if(!nmeaReceived) {
+                if (!nmeaReceived) {
                     // Phone is not reporting NMEA data, use location data instead
                     Log.v("GPS", "No NMEA data, falling back to LocationManager: " + loc);
                     lastFixMillis = loc.getTime();
@@ -334,6 +337,7 @@ public class MyLocationManager {
                 }
             }
         }
+
         public void onProviderDisabled(String provider) {}
         public void onProviderEnabled(String provider) {}
         public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -342,7 +346,7 @@ public class MyLocationManager {
     private static GpsStatus.Listener statusListener = new GpsStatus.Listener() {
         @Override
         public void onGpsStatusChanged(int event) {
-            switch(event) {
+            switch (event) {
                 case GpsStatus.GPS_EVENT_STARTED:
                     break;
                 case GpsStatus.GPS_EVENT_STOPPED:
@@ -354,9 +358,9 @@ public class MyLocationManager {
                     final Iterable<GpsSatellite> satellites = status.getSatellites();
                     int count = 0;
                     int used = 0;
-                    for(GpsSatellite sat : satellites) {
+                    for (GpsSatellite sat : satellites) {
                         count++;
-                        if(sat.usedInFix()) {
+                        if (sat.usedInFix()) {
                             used++;
                         }
                     }
@@ -368,4 +372,14 @@ public class MyLocationManager {
             }
         }
     };
+
+    public static void stop() {
+        manager.removeGpsStatusListener(statusListener);
+        manager.removeNmeaListener(nmeaListener);
+        try {
+            manager.removeUpdates(androidLocationListener);
+        } catch(SecurityException e) {}
+        manager = null;
+        _instance = null;
+    }
 }

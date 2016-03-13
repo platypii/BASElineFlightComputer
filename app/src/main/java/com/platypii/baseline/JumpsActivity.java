@@ -38,9 +38,6 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
         // Listen for long-clicks
         final ListView listView = getListView();
         listView.setOnItemLongClickListener(this);
-
-        // Listen for sync updates
-        SyncStatus.addListener(this);
     }
 
     @Override
