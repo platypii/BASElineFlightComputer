@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import java.util.ArrayList;
 
@@ -65,7 +66,7 @@ public class MyAltimeter {
      * Initializes altimeter services, if not already running
      * @param appContext The Application context
      */
-    public static synchronized void start(Context appContext) {
+    public static synchronized void start(@NonNull Context appContext) {
         if(sensorManager == null) {
             // Add sensor listener
             sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
@@ -86,7 +87,7 @@ public class MyAltimeter {
     private static final SensorEventListener sensorEventListener = new AltimeterSensorEventListener();
     private static class AltimeterSensorEventListener implements SensorEventListener {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-        public void onSensorChanged(SensorEvent event) {
+        public void onSensorChanged(@NonNull SensorEvent event) {
             long millis = System.currentTimeMillis(); // Record time as soon as possible
             assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
             // Log.w(TAG, "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
@@ -97,7 +98,7 @@ public class MyAltimeter {
     // Location Listener
     private static final MyLocationListener locationListener = new AltimeterLocationListener();
     private static class AltimeterLocationListener implements MyLocationListener {
-        public void onLocationChanged(MLocation loc) {
+        public void onLocationChanged(@NonNull MLocation loc) {
             MyAltimeter.updateGPS(loc);
         }
     }

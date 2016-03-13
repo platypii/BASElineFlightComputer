@@ -2,6 +2,7 @@ package com.platypii.baseline.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 public class KVStore {
@@ -9,7 +10,7 @@ public class KVStore {
     private static SharedPreferences prefs;
     private static boolean started = false;
 
-    public static synchronized void start(Context appContext) {
+    public static synchronized void start(@NonNull Context appContext) {
         // Load shared preferences for persistence
         if(started) {
             Log.e("KVStore", "Already started");

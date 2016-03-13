@@ -57,16 +57,16 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     public enum PlotMode { DOT, LINE, AREA }
 
     public PlotView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		SurfaceHolder holder = getHolder();
-		holder.addCallback(this);
-		// drawingThread = new DrawingThread(holder);
-		paint.setAntiAlias(true);
+        super(context, attrs);
+        SurfaceHolder holder = getHolder();
+        holder.addCallback(this);
+        // drawingThread = new DrawingThread(holder);
+        paint.setAntiAlias(true);
         paint.setDither(true);
         text.setAntiAlias(true);
     }
-	
-	// SurfaceView stuff:
+
+    // SurfaceView stuff:
     // Secondary drawing thread
     private DrawingThread drawingThread;
     private class DrawingThread extends Thread {
@@ -83,9 +83,9 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
                 try {
                     canvas = _surfaceHolder.lockCanvas();
                     if(canvas != null) {
-	                    synchronized (_surfaceHolder) {
-	                        drawPlot(canvas);
-	                    }
+                        synchronized (_surfaceHolder) {
+                            drawPlot(canvas);
+                        }
                     }
                 } finally {
                     // do this in a finally so that if an exception is thrown, we don't leave the Surface in an inconsistent state
@@ -167,7 +167,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * @param color The color of the path
      */
     public void drawPoint(Canvas canvas, double x, double y, float radius, int color) {
-		dataBounds.expandBounds(x, y);
+        dataBounds.expandBounds(x, y);
         // Screen coordinates
         float sx = getX(x);
         float sy = getY(y);
@@ -188,10 +188,10 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     public void drawPoints(Canvas canvas, DataSeries series, float radius, int color) {
         paint.setColor(color);
         paint.setStyle(Paint.Style.FILL);
-    	for(Point point : series) {
-			dataBounds.expandBounds(point.x, point.y);
+        for(Point point : series) {
+            dataBounds.expandBounds(point.x, point.y);
             canvas.drawCircle(getX(point.x), getY(point.y), radius * density, paint);
-    	}
+        }
     }
 
     /**
@@ -201,14 +201,14 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * @param radius The width of the path
      */
     public void drawLine(Canvas canvas, DataSeries series, float radius) {
-    	if(series.size() > 0) {
-	        paint.setStyle(Paint.Style.STROKE);
-	        paint.setStrokeWidth(2 * radius * density);
-	        Path line = renderPath(series);
-	        if(line != null) {
-	        	canvas.drawPath(line, paint);
-	        }
-    	}
+        if(series.size() > 0) {
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(2 * radius * density);
+            Path line = renderPath(series);
+            if(line != null) {
+                canvas.drawPath(line, paint);
+            }
+        }
     }
 
     /**
@@ -219,18 +219,18 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * @param radius The width of the path
      */
     public void drawArea(Canvas canvas, DataSeries series, double y_zero, float radius) {
-    	if(series.size() > 0) {
-	        Path area = renderArea(series, y_zero);
-	        if(area != null) {
-		        paint.setStyle(Paint.Style.FILL);
-		        canvas.drawPath(area, paint);
-		        if(radius > 0) {
-		            paint.setStyle(Paint.Style.STROKE);
-		            paint.setStrokeWidth(radius);
-		        	canvas.drawPath(area, paint);
-		        }
-	        }
-    	}
+        if(series.size() > 0) {
+            Path area = renderArea(series, y_zero);
+            if(area != null) {
+                paint.setStyle(Paint.Style.FILL);
+                canvas.drawPath(area, paint);
+                if(radius > 0) {
+                    paint.setStyle(Paint.Style.STROKE);
+                    paint.setStrokeWidth(radius);
+                    canvas.drawPath(area, paint);
+                }
+            }
+        }
     }
 
     /**
@@ -238,21 +238,21 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * @param series The data series to draw
      */
     private Path renderPath(DataSeries series) {
-    	// Construct the path
-    	path.rewind();
-    	boolean empty = true;
-    	for(Point point : series) {
-			dataBounds.expandBounds(point.x, point.y);
-    		if(!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
-	    		if(empty) {
-	    			path.moveTo(getX(point.x), getY(point.y));
-	    			empty = false;
-	    		} else {
-	    			path.lineTo(getX(point.x), getY(point.y));
-	    		}
-    		}
-    	}
-    	return path;
+        // Construct the path
+        path.rewind();
+        boolean empty = true;
+        for(Point point : series) {
+            dataBounds.expandBounds(point.x, point.y);
+            if(!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
+                if(empty) {
+                    path.moveTo(getX(point.x), getY(point.y));
+                    empty = false;
+                } else {
+                    path.lineTo(getX(point.x), getY(point.y));
+                }
+            }
+        }
+        return path;
     }
 
     /**
@@ -261,29 +261,29 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * @param y_zero The y-origin, in plot-space
      */
     private Path renderArea(DataSeries series, double y_zero) {
-    	// Construct the path
-    	path.rewind();
-    	boolean empty = true;
-    	double x = Double.NaN;
-    	for(Point point : series) {
-    		if(!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
-    			dataBounds.expandBounds(point.x, point.y);
-	    		if(empty) {
-	    			path.moveTo(getX(point.x), getY(y_zero));
-	    			empty = false;
-	    		}
-    			path.lineTo(getX(point.x), getY(point.y));
-	    		x = point.x; // Save last good x for later
-    		}
-    	}
-    	if(!empty) {
-    		// Log.w("Render Area Plot", "x=" + getX(x) + ", y_zero=" + getY(y_zero));
-			path.lineTo(getX(x), getY(y_zero));
-			path.close();
-	    	return path;
-    	} else {
-    		return null;
-    	}
+        // Construct the path
+        path.rewind();
+        boolean empty = true;
+        double x = Double.NaN;
+        for(Point point : series) {
+            if(!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
+                dataBounds.expandBounds(point.x, point.y);
+                if(empty) {
+                    path.moveTo(getX(point.x), getY(y_zero));
+                    empty = false;
+                }
+                path.lineTo(getX(point.x), getY(point.y));
+                x = point.x; // Save last good x for later
+            }
+        }
+        if(!empty) {
+            // Log.w("Render Area Plot", "x=" + getX(x) + ", y_zero=" + getY(y_zero));
+            path.lineTo(getX(x), getY(y_zero));
+            path.close();
+            return path;
+        } else {
+            return null;
+        }
     }
 
     private final Bounds myBounds = new Bounds();
@@ -319,7 +319,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         int steps_x = (int)Math.ceil((end_x - start_x) / step_x);
         assert start_x < end_x && 0 < step_x;
         for(int n = 0; n < steps_x; n++) {
-        	double x = start_x + n * step_x;
+            double x = start_x + n * step_x;
             if(Math.abs(x) < EPSILON) {
                 drawXline(canvas, x, 0, 0xffee0000, formatX(x));
             } else {
@@ -342,7 +342,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         // Log.i("PlotView", "start_y = " + start_y + ", end_y = " + end_y + ", magnitude_y = " + magnitude_y + ", step_y = " + step_y);
         assert start_y <= end_y && 0 < step_y;
         for(int n = 0; n < steps_y; n++) {
-        	double y = start_y + n * step_y;
+            double y = start_y + n * step_y;
             if(Math.abs(y) < EPSILON) {
                 drawYline(canvas, y, 0, 0xffee0000, formatY(y));
             } else {
@@ -383,14 +383,14 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         // canvas.drawText(label, right - 2 * density, sy - 2 * density, text);
     }
 
-	// Override this to change how labels are displayed
+    // Override this to change how labels are displayed
     public String formatX(double x) {
         return String.format("%.f", x);
     }
     public String formatY(double y) {
         return String.format("%.f", y);
     }
-	
+
     // Returns the bounds in plot-space, including padding
     private final Bounds realBounds = new Bounds();
     public Bounds getRealBounds() {

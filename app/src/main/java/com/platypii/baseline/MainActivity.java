@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -255,7 +256,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_item_sensor_info:
                 // Open sensor activity
@@ -279,6 +280,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
     protected void handleSignInResult(GoogleSignInResult result) {
         super.handleSignInResult(result);
         Log.d(TAG, "handleSignInResult: " + result.isSuccess());

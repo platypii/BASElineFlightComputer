@@ -11,6 +11,7 @@ import android.location.LocationManager;
 import android.location.GpsStatus;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.platypii.baseline.data.measurements.MLocation;
@@ -77,7 +78,7 @@ public class MyLocationManager {
      * Initializes location services
      * @param context The Application context
      */
-    public static synchronized void start(Context context) throws SecurityException {
+    public static synchronized void start(@NonNull Context context) throws SecurityException {
         if (_instance == null) {
             _instance = new MyLocationManager();
 

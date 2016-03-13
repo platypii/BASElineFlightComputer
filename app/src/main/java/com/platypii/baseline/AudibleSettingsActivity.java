@@ -7,6 +7,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.platypii.baseline.audible.MyAudible;
@@ -122,11 +123,11 @@ public class AudibleSettingsActivity extends PreferenceActivity {
          */
         private CharSequence getAudibleModeValue(String mode) {
             final int modePreferenceIndex = modePreference.findIndexOfValue(mode);
-            return modePreferenceIndex >= 0? modePreference.getEntries()[modePreferenceIndex] : null;
+            return modePreferenceIndex >= 0? modePreference.getEntries()[modePreferenceIndex] : mode;
         }
 
         @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
+        public boolean onPreferenceChange(@NonNull Preference preference, Object value) {
             final String key = preference.getKey();
             final String previousAudibleMode = modePreference.getValue();
             final double previousMin = Double.parseDouble(minPreference.getText());

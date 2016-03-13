@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Shader.TileMode;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 
 import com.platypii.baseline.data.Bounds;
@@ -18,7 +19,7 @@ public class ElevationTimePlot extends PlotView {
     private final long window = 15000; // The size of the view window, in milliseconds
     private final PlotMode mode = PlotMode.AREA;
 
-    public ElevationTimePlot(Context context, AttributeSet attrs) {
+    public ElevationTimePlot(@NonNull Context context, AttributeSet attrs) {
         super(context, attrs);
 
         final float density = context.getResources().getDisplayMetrics().density;
@@ -37,7 +38,7 @@ public class ElevationTimePlot extends PlotView {
     }
 
     @Override
-    public void drawData(Canvas canvas) {
+    public void drawData(@NonNull Canvas canvas) {
         series.reset();
         // Copy values to local history (so that we don't block while drawing circles)
         synchronized(MyAltimeter.history) {

@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.platypii.baseline.data.measurements.MAccel;
@@ -32,7 +33,7 @@ public class MySensorManager {
 
     private static SensorEventListener androidSensorListener = new SensorEventListener() {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-        public void onSensorChanged(SensorEvent event) {
+        public void onSensorChanged(@NonNull SensorEvent event) {
             final long t = event.timestamp; // nano
             final float x = event.values[0];
             final float y = event.values[1];
@@ -70,7 +71,7 @@ public class MySensorManager {
      *
      * @param appContext The Application context
      */
-    public static synchronized void start(Context appContext) {
+    public static synchronized void start(@NonNull Context appContext) {
         if(_instance == null) {
             _instance = new MySensorManager();
 

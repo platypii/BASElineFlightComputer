@@ -91,9 +91,9 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
             signInButton.setOnClickListener(signInClickListener);
         }
     }
-    private View.OnClickListener signInClickListener = new View.OnClickListener() {
+    private final View.OnClickListener signInClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v){
+        public void onClick(@NonNull View v){
             if(v.getId() == R.id.sign_in_button) {
                 clickSignIn();
             }

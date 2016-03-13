@@ -1,6 +1,7 @@
 package com.platypii.baseline.data;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.platypii.baseline.data.measurements.MAltitude;
@@ -32,7 +33,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
     private final File logFile;
     private final BufferedWriter log;
     
-    public static synchronized void startLogging(Context appContext) {
+    public static synchronized void startLogging(@NonNull Context appContext) {
         if(db == null) {
             try {
                 db = new MyDatabase(appContext);
@@ -81,7 +82,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
     }
 
 
-    private MyDatabase(Context appContext) throws IOException {
+    private MyDatabase(@NonNull Context appContext) throws IOException {
         // Open log file for writing
         final File logDir = JumpLog.getLogDirectory(appContext);
         final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
@@ -133,14 +134,14 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
     public void altitudeOnPostExecute() {}
 
     // Location listener
-    public void onLocationChanged(MLocation measure) {
+    public void onLocationChanged(@NonNull MLocation measure) {
         if(!Double.isNaN(measure.latitude) && !Double.isNaN(measure.longitude)) {
             logLine(measure.toRow());
         }
     }
 
     // Sensor listener
-    public void onSensorChanged(Measurement measure) {
+    public void onSensorChanged(@NonNull Measurement measure) {
         logLine(measure.toRow());
     }
 

@@ -2,6 +2,7 @@ package com.platypii.baseline.data;
 
 import android.content.Context;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.File;
@@ -11,7 +12,7 @@ import java.util.List;
 public class JumpLog {
     private static final String TAG = "JumpLog";
 
-    public static synchronized List<Jump> getJumps(Context appContext) {
+    public static synchronized List<Jump> getJumps(@NonNull Context appContext) {
         final List<Jump> jumps = new ArrayList<>();
         // Load jumps from disk
         final File logDir = getLogDirectory(appContext);
@@ -27,7 +28,7 @@ public class JumpLog {
         }
     }
 
-    public static File getLogDirectory(Context context) {
+    public static File getLogDirectory(@NonNull Context context) {
         final String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             return context.getExternalFilesDir(null);

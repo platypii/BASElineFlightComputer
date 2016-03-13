@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
@@ -25,7 +26,7 @@ public class Services {
     // This allows us to only stop services once the app is really done.
     private static int startCount = 0;
 
-    public static void start(BaseActivity activity) {
+    public static void start(@NonNull BaseActivity activity) {
         startCount++;
         if(startCount == 1) {
             Log.i(TAG, "Starting services");

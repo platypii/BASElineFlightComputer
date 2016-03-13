@@ -11,7 +11,7 @@ public class AudibleThread {
 
     private boolean isEnabled = false;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     private final Runnable audibleThread = new Runnable() {
         @Override
