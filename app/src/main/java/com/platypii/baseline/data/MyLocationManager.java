@@ -359,6 +359,7 @@ public class MyLocationManager {
         public void onStatusChanged(String provider, int status, Bundle extras) {}
     };
 
+    private static GpsStatus gpsStatus;
     private static GpsStatus.Listener statusListener = new GpsStatus.Listener() {
         @Override
         public void onGpsStatusChanged(int event) {
@@ -370,8 +371,8 @@ public class MyLocationManager {
                 case GpsStatus.GPS_EVENT_FIRST_FIX:
                     break;
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-                    final GpsStatus status = manager.getGpsStatus(null);
-                    final Iterable<GpsSatellite> satellites = status.getSatellites();
+                    gpsStatus = manager.getGpsStatus(gpsStatus);
+                    final Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
                     int count = 0;
                     int used = 0;
                     for (GpsSatellite sat : satellites) {
