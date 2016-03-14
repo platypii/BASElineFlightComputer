@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.platypii.baseline.Util;
 import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyLocationManager;
@@ -100,7 +101,7 @@ public class MyAudible {
                 // Read horizontal speed
                 if(MyLocationManager.lastLoc != null) {
                     final double horizontalSpeed = Convert.mps2mph(MyLocationManager.lastLoc.groundSpeed());
-                    if (isReal(horizontalSpeed) && min <= horizontalSpeed && horizontalSpeed <= max) {
+                    if (Util.isReal(horizontalSpeed) && min <= horizontalSpeed && horizontalSpeed <= max) {
                         measurement = String.format("%.0f", horizontalSpeed);
                     } else {
                         Log.w(TAG, "Not speaking: horizontal speed = " + horizontalSpeed);
@@ -112,7 +113,7 @@ public class MyAudible {
             case "vertical_speed":
                 // Read vertical speed
                 final double verticalSpeed = Convert.mps2mph(MyAltimeter.climb);
-                if(isReal(verticalSpeed) && min <= verticalSpeed && verticalSpeed <= max) {
+                if (Util.isReal(verticalSpeed) && min <= verticalSpeed && verticalSpeed <= max) {
                     measurement = String.format("%.0f", verticalSpeed);
                 } else {
                     Log.w(TAG, "Not speaking: vertical speed = " + verticalSpeed);
@@ -122,7 +123,7 @@ public class MyAudible {
                 // Read glide ratio
                 if(MyLocationManager.lastLoc != null) {
                     final double glideRatio = MyLocationManager.lastLoc.glideRatio();
-                    if(isReal(glideRatio) && min <= glideRatio && glideRatio <= max) {
+                    if(Util.isReal(glideRatio) && min <= glideRatio && glideRatio <= max) {
                         measurement = String.format("%.1f", glideRatio);
                     } else {
                         Log.w(TAG, "Not speaking: glide ratio = " + glideRatio);
@@ -135,10 +136,6 @@ public class MyAudible {
                 Log.e(TAG, "Invalid audible mode " + audibleMode);
         }
         return measurement;
-    }
-
-    private static boolean isReal(double value) {
-        return !Double.isNaN(value) && !Double.isInfinite(value);
     }
 
     /**

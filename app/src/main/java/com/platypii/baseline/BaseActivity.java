@@ -161,7 +161,6 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     protected void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult: " + result.isSuccess());
         final View signInPanel = findViewById(R.id.sign_in_panel);
         if(signInPanel != null) {
             findViewById(R.id.sign_in_button).setEnabled(true);

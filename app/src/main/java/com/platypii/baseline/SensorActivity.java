@@ -160,8 +160,16 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     private void updateGPS(MLocation loc) {
         satelliteLabel.setText("Satellites: " + MyLocationManager.satellitesInView + " visible, " + MyLocationManager.satellitesUsed + " used in fix");
         if(loc != null) {
-            latitudeLabel.setText(String.format("Lat: %.6f", loc.latitude));
-            longitudeLabel.setText(String.format("Long: %.6f", loc.longitude));
+            if(Util.isReal(loc.latitude)) {
+                latitudeLabel.setText(String.format("Lat: %.6f", loc.latitude));
+            } else {
+                latitudeLabel.setText("Lat: ");
+            }
+            if(Util.isReal(loc.latitude)) {
+                longitudeLabel.setText(String.format("Long: %.6f", loc.longitude));
+            } else {
+                longitudeLabel.setText("Long: ");
+            }
             gpsAltitudeLabel.setText("GPS Altitude: " + Convert.distance(loc.altitude_gps));
             hAccLabel.setText("hAcc: " + Convert.distance(loc.hAcc));
             pdopLabel.setText(String.format("pdop: %.1f", loc.pdop));

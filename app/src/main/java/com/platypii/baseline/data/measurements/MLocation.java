@@ -1,5 +1,6 @@
 package com.platypii.baseline.data.measurements;
 
+import com.platypii.baseline.Util;
 import com.platypii.baseline.data.MyAltimeter;
 
 import android.util.Log;
@@ -53,8 +54,8 @@ public class MLocation extends Measurement {
     @Override
     public String toRow() {
         final String sat_str = (numSat != -1)? Integer.toString(numSat) : "";
-        final String vN_str = isReal(vN)? Double.toString(vN) : "";
-        final String vE_str = isReal(vE)? Double.toString(vE) : "";
+        final String vN_str = Util.isReal(vN)? Double.toString(vN) : "";
+        final String vE_str = Util.isReal(vE)? Double.toString(vE) : "";
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
         return String.format("%d,,gps,,%f,%f,%f,%s,%s,%s", millis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
     }
@@ -62,10 +63,6 @@ public class MLocation extends Measurement {
     @Override
     public String toString() {
         return String.format("MLocation(%.6f,%.6f,%.1f)", latitude, longitude, altitude_gps);
-    }
-
-    private static boolean isReal(double x) {
-        return !(Double.isInfinite(x) || Double.isNaN(x));
     }
 
     public double groundSpeed() {
