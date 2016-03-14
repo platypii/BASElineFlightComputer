@@ -15,26 +15,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickStart"
-            android:drawableTop="@drawable/circle"
+            android:drawableTop="@drawable/button_record"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:text="@string/action_record"
-            android:textColor="#dddddd" />
+            android:text="@string/action_record" />
 
         <Button
             android:id="@+id/stopButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickStop"
-            android:drawableTop="@drawable/square"
+            android:drawableTop="@drawable/button_stop"
             android:textStyle="bold"
             android:textSize="18sp"
             android:text="@string/action_stop"
-            android:textColor="#dddddd"
             android:enabled="false" />
 
     </LinearLayout>
@@ -49,22 +45,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickAudible"
-            android:drawableTop="@drawable/audio"
-            android:text="@string/action_audible"
-            android:textColor="#dddddd" />
+            android:drawableTop="@drawable/button_audible"
+            android:text="@string/action_audible" />
 
         <Button
             android:id="@+id/jumpsButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickJumps"
-            android:drawableTop="@drawable/list"
-            android:text="@string/action_tracks"
-            android:textColor="#dddddd" />
+            android:drawableTop="@drawable/button_tracks"
+            android:text="@string/action_tracks" />
 
     </LinearLayout>
 

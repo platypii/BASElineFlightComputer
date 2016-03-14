@@ -33,11 +33,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
-            style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickExport"
-            android:drawableTop="@drawable/share"
-            android:text="@string/action_export"
-            android:textColor="#dddddd" />
+            android:drawableTop="@drawable/button_export"
+            android:text="@string/action_export" />
 
         <Button
             android:id="@+id/deleteButton"
@@ -45,11 +43,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
-            style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickDelete"
-            android:drawableTop="@drawable/delete"
-            android:text="@string/action_delete"
-            android:textColor="#dddddd" />
+            android:drawableTop="@drawable/button_delete"
+            android:text="@string/action_delete" />
 
     </LinearLayout>
 
@@ -64,11 +60,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
-            style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickOpen"
-            android:drawableTop="@drawable/upload_cloud"
-            android:text="@string/action_open"
-            android:textColor="#dddddd" />
+            android:drawableTop="@drawable/button_view"
+            android:text="@string/action_open" />
 
         <Button
             android:id="@+id/mapButton"
@@ -76,11 +70,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
-            style="?android:attr/buttonBarButtonStyle"
             android:onClick="clickKml"
-            android:drawableTop="@drawable/google_earth"
-            android:text="@string/action_map"
-            android:textColor="#dddddd" />
+            android:drawableTop="@drawable/button_map"
+            android:text="@string/action_map" />
 
     </LinearLayout>
 
