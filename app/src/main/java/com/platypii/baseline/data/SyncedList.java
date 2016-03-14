@@ -19,9 +19,6 @@ public class SyncedList<T> implements Iterable<T> {
     private final int maxSize;
     private int size = 0;
 
-    // The last value appended
-    private T lastValue;
-
     public SyncedList(int maxSize) {
         this.maxSize = maxSize;
     }
@@ -32,7 +29,6 @@ public class SyncedList<T> implements Iterable<T> {
      */
     public void append(T value) {
         synchronized(toCopy) {
-            lastValue = value;
             toCopy.addLast(value);
             // Trim toCopy
             while(maxSize < toCopy.size()) {
@@ -41,14 +37,6 @@ public class SyncedList<T> implements Iterable<T> {
             }
         }
         size++;
-    }
-
-    /**
-     * Return the last value in the list
-     * @return the last value in the list
-     */
-    public T last() {
-        return lastValue;
     }
 
     public Iterator<T> iterator() {
