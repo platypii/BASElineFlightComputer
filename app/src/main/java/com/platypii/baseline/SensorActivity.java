@@ -101,6 +101,19 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         // addPlot("Linear Acceleration", MySensorManager.linearAccelHistory, 0, 10, 100); // Linear Acceleration = Accel - Gravity
         // addPlot("Linear Velocity", MySensorManager.linearAccelHistory, 1, 20, 100);
         // addPlot("Linear Position", MySensorManager.linearAccelHistory, 2, 90, 120);
+
+        // Set up altimeter logging
+        if(MyAltimeter.refreshRate > 0) {
+            // The number of samples needed to fill the plot
+            final int numSamples = (int)(Math.floor(MyAltimeter.refreshRate * ElevationTimePlot.window)) + 10;
+            MyAltimeter.history.setMaxSize(numSamples);
+        } else {
+            MyAltimeter.history.setMaxSize(300);
+        }
+        // Set up sensor logging
+        MySensorManager.accel.setMaxSize(300);
+        MySensorManager.gravity.setMaxSize(300);
+        MySensorManager.rotation.setMaxSize(300);
     }
 
     @Override
@@ -209,6 +222,13 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         }
         // Altitude refresh rate
         altitudeRefreshLabel.setText(String.format("Sample rate: %.2fHz", MyAltimeter.refreshRate));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MyAltimeter.history.setMaxSize(0);
+        MySensorManager.accel.setMaxSize(0);
     }
 
     // Listeners

@@ -54,8 +54,7 @@ public class MyAltimeter {
     private static long lastFixMillis; // milliseconds uptime
 
     // History
-    private static final int maxHistory = 5 * 60; // Maximum number of measurements to keep in memory
-    public static final SyncedList<MAltitude> history = new SyncedList<>(maxHistory);
+    public static final SyncedList<MAltitude> history = new SyncedList<>();
 
     // Stats
     public static final Stat pressure_altitude_stat = new Stat(); // Statistics on the mean and variance of the sensor

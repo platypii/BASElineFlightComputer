@@ -15,9 +15,10 @@ import com.platypii.baseline.data.measurements.MAltitude;
 
 public class ElevationTimePlot extends PlotView {
 
+    static final long window = 15000; // The size of the view window, in milliseconds
+    private static final PlotMode mode = PlotMode.AREA;
+
     private final DataSeries series = new DataSeries();
-    private final long window = 15000; // The size of the view window, in milliseconds
-    private final PlotMode mode = PlotMode.AREA;
 
     public ElevationTimePlot(@NonNull Context context, AttributeSet attrs) {
         super(context, attrs);

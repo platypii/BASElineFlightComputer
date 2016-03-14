@@ -16,27 +16,25 @@ public class SyncedList<T> implements Iterable<T> {
 
     private final LinkedList<T> toCopy = new LinkedList<>();
     private final LinkedList<T> values = new LinkedList<>();
-    private final int maxSize;
+    private int maxSize = 0;
     private int size = 0;
-
-    public SyncedList(int maxSize) {
-        this.maxSize = maxSize;
-    }
 
     /**
      * Adds a new value to the end of the list
      * @param value the new value to add
      */
     public void append(T value) {
-        synchronized(toCopy) {
-            toCopy.addLast(value);
-            // Trim toCopy
-            while(maxSize < toCopy.size()) {
-                toCopy.removeFirst();
-                size--;
+        if(maxSize > 0) {
+            synchronized (toCopy) {
+                toCopy.addLast(value);
+                // Trim toCopy
+                while (maxSize < toCopy.size()) {
+                    toCopy.removeFirst();
+                    size--;
+                }
             }
+            size++;
         }
-        size++;
     }
 
     public Iterator<T> iterator() {
@@ -48,14 +46,20 @@ public class SyncedList<T> implements Iterable<T> {
      * Move from the toCopy list to the values list
      */
     private void copy() {
-        synchronized(toCopy) {
-            values.addAll(toCopy);
+        if(maxSize > 0) {
+            synchronized (toCopy) {
+                values.addAll(toCopy);
+                toCopy.clear();
+            }
+            // Trim values
+            while (maxSize < values.size()) {
+                values.removeFirst();
+                size--;
+            }
+        } else {
             toCopy.clear();
-        }
-        // Trim values
-        while(maxSize < values.size()) {
-            values.removeFirst();
-            size--;
+            values.clear();
+            size = 0;
         }
     }
 
@@ -67,8 +71,13 @@ public class SyncedList<T> implements Iterable<T> {
         return size;
     }
 
+    public void setMaxSize(int maxSize) {
+        this.maxSize = maxSize;
+    }
+
     @Override
     public String toString() {
+        copy();
         return "SyncedList(" + TextUtils.join(",", values) + ")";
     }
 }

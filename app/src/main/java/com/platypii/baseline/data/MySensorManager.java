@@ -24,10 +24,9 @@ public class MySensorManager {
     private static SensorManager sensorManager;
 
     // History
-    private static final int maxHistory = 300; // Maximum number of measurements to keep in memory
-    public static final SyncedList<MSensor> accel = new SyncedList<>(maxHistory);
-    public static final SyncedList<MSensor> gravity = new SyncedList<>(maxHistory);
-    public static final SyncedList<MSensor> rotation = new SyncedList<>(maxHistory);
+    public static final SyncedList<MSensor> accel = new SyncedList<>();
+    public static final SyncedList<MSensor> gravity = new SyncedList<>();
+    public static final SyncedList<MSensor> rotation = new SyncedList<>();
 
     private static final List<MySensorListener> listeners = new ArrayList<>();
 

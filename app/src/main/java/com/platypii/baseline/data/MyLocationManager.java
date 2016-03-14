@@ -64,8 +64,7 @@ public class MyLocationManager {
     public static MLocation lastLoc; // last location received
     public static MLocation prevLoc; // 2nd to last
 
-    private static final int maxHistory = 600; // Maximum number of measurements to keep in memory
-    public static final SyncedList<MLocation> history = new SyncedList<>(maxHistory);
+    public static final SyncedList<MLocation> history = new SyncedList<>();
 
     /**
      * Returns the number of milliseconds since the last fix
@@ -371,21 +370,23 @@ public class MyLocationManager {
                 case GpsStatus.GPS_EVENT_FIRST_FIX:
                     break;
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-                    gpsStatus = manager.getGpsStatus(gpsStatus);
-                    final Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
-                    int count = 0;
-                    int used = 0;
-                    for (GpsSatellite sat : satellites) {
-                        count++;
-                        if (sat.usedInFix()) {
-                            used++;
+                    if(manager != null) {
+                        gpsStatus = manager.getGpsStatus(gpsStatus);
+                        final Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
+                        int count = 0;
+                        int used = 0;
+                        for (GpsSatellite sat : satellites) {
+                            count++;
+                            if (sat.usedInFix()) {
+                                used++;
+                            }
                         }
+                        // if(satellitesInView != count || satellitesUsed != used) {
+                        //     Log.v(TAG, "Satellite Status: " + satellitesUsed + "/" + satellitesInView);
+                        // }
+                        satellitesInView = count;
+                        satellitesUsed = used;
                     }
-                    // if(satellitesInView != count || satellitesUsed != used) {
-                    //     Log.v(TAG, "Satellite Status: " + satellitesUsed + "/" + satellitesInView);
-                    // }
-                    satellitesInView = count;
-                    satellitesUsed = used;
             }
         }
     };
