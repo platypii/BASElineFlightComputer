@@ -127,6 +127,8 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
                         Log.d(TAG, "signOut:onResult:" + status);
                         Toast.makeText(BaseActivity.this, "Signed out", Toast.LENGTH_LONG).show();
 
+                        account = null;
+
                         // Show sign in panel
                         final View signInPanel = findViewById(R.id.sign_in_panel);
                         if(signInPanel != null) {
