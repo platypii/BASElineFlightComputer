@@ -3,8 +3,8 @@ package com.platypii.baseline.data;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.platypii.baseline.Try;
-import com.platypii.baseline.Callback;
+import com.platypii.baseline.util.Try;
+import com.platypii.baseline.util.Callback;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

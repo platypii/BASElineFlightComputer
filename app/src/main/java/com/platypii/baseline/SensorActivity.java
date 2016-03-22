@@ -10,6 +10,7 @@ import com.platypii.baseline.data.MyLocationListener;
 import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.MySensorManager;
 import com.platypii.baseline.data.measurements.MSensor;
+import com.platypii.baseline.util.Util;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;

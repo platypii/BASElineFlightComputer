@@ -1,6 +1,6 @@
 package com.platypii.baseline.data.measurements;
 
-import com.platypii.baseline.Util;
+import com.platypii.baseline.util.Util;
 import com.platypii.baseline.data.MyAltimeter;
 
 import android.util.Log;

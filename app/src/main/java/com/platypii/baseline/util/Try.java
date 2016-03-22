@@ -1,4 +1,4 @@
-package com.platypii.baseline;
+package com.platypii.baseline.util;
 
 public class Try<T> {
 

@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.platypii.baseline.Util;
+import com.platypii.baseline.util.Util;
 import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyLocationManager;

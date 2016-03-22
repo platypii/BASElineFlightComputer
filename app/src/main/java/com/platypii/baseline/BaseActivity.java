@@ -22,6 +22,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.data.MyLocationManager;
+import com.platypii.baseline.util.Callback;
 
 public class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "BaseActivity";

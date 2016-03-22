@@ -15,6 +15,7 @@ import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
 import com.platypii.baseline.data.SyncStatus;
 import com.platypii.baseline.data.TheCloud;
+import com.platypii.baseline.util.Callback;
 
 import java.io.File;
 

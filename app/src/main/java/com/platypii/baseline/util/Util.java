@@ -1,4 +1,4 @@
-package com.platypii.baseline;
+package com.platypii.baseline.util;
 
 /**
  * Created by platypii on 3/13/16.

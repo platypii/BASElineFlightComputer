@@ -21,6 +21,7 @@ import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.TheCloud;
+import com.platypii.baseline.util.Callback;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "Main";
