@@ -16,8 +16,8 @@
         android:layout_height="180dp"
         android:layout_gravity="right|bottom" />
 
-    <com.platypii.baseline.AltitudeTextView
-        android:id="@+id/altitudeView"
+    <TextView
+        android:id="@+id/flightStats"
         android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,19 +24,25 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.MyAltimeter;
+import com.platypii.baseline.data.MyAltitudeListener;
 import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.data.MyLocationListener;
 import com.platypii.baseline.data.MyLocationManager;
+import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends FragmentActivity implements MyLocationListener, GoogleMap.OnCameraChangeListener, OnMapReadyCallback {
+public class MapActivity extends FragmentActivity implements MyLocationListener, MyAltitudeListener, GoogleMap.OnCameraChangeListener, OnMapReadyCallback {
     private static final String TAG = "Map";
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 64;
+
+    private AnalogAltimeter analogAltimeter;
+    private TextView flightStats;
 
     private GoogleMap map; // Might be null if Google Play services APK is not available
 
@@ -68,6 +75,9 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         setContentView(R.layout.activity_map);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+        analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
+        flightStats = (TextView) findViewById(R.id.flightStats);
+
         // Home button listener
         final ImageButton homeButton = (ImageButton) findViewById(R.id.homeButton);
         homeButton.setOnClickListener(homeButtonListener);
@@ -76,8 +86,9 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        // Start GPS updates
+        // Start sensor updates
         MyLocationManager.addListener(this);
+        MyAltimeter.addListener(this);
     }
 
     /**
@@ -174,6 +185,9 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     public void onLocationChanged(MLocation loc) {}
     @Override
     public void onLocationChangedPostExecute() {
+        if(!paused) {
+            updateFlightStats();
+        }
         if(ready && !paused) {
             final LatLng currentLoc = MyLocationManager.lastLoc.latLng();
 
@@ -198,6 +212,16 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                 final float zoom = getZoom();
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), DURATION, null);
             }
+        }
+    }
+
+    // Altitude updates
+    @Override
+    public void altitudeDoInBackground(MAltitude alt) {}
+    @Override
+    public void altitudeOnPostExecute() {
+        if(!paused) {
+            updateFlightStats();
         }
     }
 
@@ -252,6 +276,16 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         }
     }
 
+    private void updateFlightStats() {
+        analogAltimeter.setAltitude(MyAltimeter.altitudeAGL());
+        final MLocation loc = MyLocationManager.lastLoc;
+        final String altitude = " • " + Convert.distance(MyAltimeter.altitudeAGL());
+        final String fallrate = (MyAltimeter.climb < 0)? " ↓ " + Convert.speed(-MyAltimeter.climb) : " ↑ " + Convert.speed(MyAltimeter.climb);
+        final String groundSpeed = "→ " + Convert.speed(loc.groundSpeed());
+        final String glideRatio = "◢ " + Convert.glide(loc.glideRatio());
+        flightStats.setText(altitude + "\n" + fallrate + "\n" + groundSpeed + "\n" + glideRatio);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -269,7 +303,8 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Stop GPS updates
+        // Stop sensor updates
         MyLocationManager.removeListener(this);
+        MyAltimeter.removeListener(this);
     }
 }

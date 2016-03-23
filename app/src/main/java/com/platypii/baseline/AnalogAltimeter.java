@@ -1,9 +1,6 @@
 package com.platypii.baseline;
 
 import com.platypii.baseline.data.Convert;
-import com.platypii.baseline.data.MyAltimeter;
-import com.platypii.baseline.data.MyAltitudeListener;
-import com.platypii.baseline.data.measurements.MAltitude;
 
 import android.content.Context;
 import android.graphics.BlurMaskFilter;
@@ -15,9 +12,11 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class AnalogAltimeter extends View implements MyAltitudeListener {
+public class AnalogAltimeter extends View {
 
-    // Altitudes
+    private double altitude = 0.0;
+
+    // Fixed altitudes
     private static final double max_altitude = 12000 * Convert.FT;
     private static final double breakoff_altitude = 4000 * Convert.FT;
     private static final double deploy_altitude   = 3000 * Convert.FT;
@@ -51,9 +50,11 @@ public class AnalogAltimeter extends View implements MyAltitudeListener {
         final float density = getResources().getDisplayMetrics().density;
         blurMask = new BlurMaskFilter(6 * density, Blur.INNER);
         paint.setAntiAlias(true);
+    }
 
-        // Start altitude updates
-        MyAltimeter.addListener(this);
+    public void setAltitude(double altitude) {
+        this.altitude = altitude;
+        this.invalidate();
     }
 
     @Override
@@ -69,8 +70,6 @@ public class AnalogAltimeter extends View implements MyAltitudeListener {
 
         // Adjust line thickness and text size based on size
         final float scale_factor = radius / 200;
-
-        final double altitude = MyAltimeter.altitudeAGL();
 
         // Draw face
         final boolean flat = true;
@@ -200,11 +199,4 @@ public class AnalogAltimeter extends View implements MyAltitudeListener {
                 MeasureSpec.makeMeasureSpec(finalWidth, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(finalHeight, MeasureSpec.EXACTLY));
     }
-
-    // Altitude updates
-    public void altitudeDoInBackground(MAltitude alt) {}
-    public void altitudeOnPostExecute() {
-        invalidate();
-    }
-
 }
