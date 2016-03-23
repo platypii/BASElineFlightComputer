@@ -263,6 +263,10 @@ public class MainActivity extends BaseActivity {
                 // Open sensor activity
                 startActivity(new Intent(this, SensorActivity.class));
                 return true;
+            case R.id.menu_item_altimeter:
+                // Open altimeter activity
+                startActivity(new Intent(this, AltimeterActivity.class));
+                return true;
             case R.id.menu_item_sign_in:
                 clickSignIn();
                 return true;
