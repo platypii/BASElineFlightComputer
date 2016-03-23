@@ -171,6 +171,12 @@ public class MyLocationManager {
                 }
                 return null;
             }
+            @Override
+            protected void onPostExecute(Void result) {
+                for(MyLocationListener listener : listeners) {
+                    listener.onLocationChangedPostExecute();
+                }
+            }
         }.execute(lastLoc);
     }
 

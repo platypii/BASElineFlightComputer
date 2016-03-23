@@ -267,6 +267,10 @@ public class MainActivity extends BaseActivity {
                 // Open altimeter activity
                 startActivity(new Intent(this, AltimeterActivity.class));
                 return true;
+            case R.id.menu_item_map:
+                // Open map activity
+                startActivity(new Intent(this, MapActivity.class));
+                return true;
             case R.id.menu_item_sign_in:
                 clickSignIn();
                 return true;

@@ -1,5 +1,6 @@
 package com.platypii.baseline.data.measurements;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.platypii.baseline.util.Util;
 import com.platypii.baseline.data.MyAltimeter;
 
@@ -96,6 +97,42 @@ public class MLocation extends Measurement {
 
     public double bearing() {
         return Math.atan2(vN, vE);
+    }
+
+    public LatLng latLng() {
+        return new LatLng(latitude, longitude);
+    }
+
+    /**
+     * Moves the location along a bearing (degrees) by a given distance (meters)
+     */
+    public LatLng moveDirection(double bearing, double d) {
+        final double R = 6371000;
+
+        if(!Util.isReal(latitude) || !Util.isReal(longitude)) {
+            Log.e("MyLocation", "lat/long not a number: " + latitude + ", " + longitude);
+        }
+        if(Math.abs(latitude) < 0.1 && Math.abs(longitude) < 0.1) {
+            Log.e("MyLocation", "unlikely lat/long: " + latitude + ", " + longitude);
+        }
+
+        double lat = radians(latitude);
+        double lon = radians(longitude);
+        double bear = radians(bearing);
+
+        double latitude2 = Math.asin( Math.sin(lat)*Math.cos(d/R) + Math.cos(lat)*Math.sin(d/R)*Math.cos(bear) );
+        double longitude2 = lon + Math.atan2(Math.sin(bear)*Math.sin(d/R)*Math.cos(lat), Math.cos(d/R)-Math.sin(lat)*Math.sin(latitude2));
+
+//        longitude2 = (longitude2+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
+
+        return new LatLng(degrees(latitude2), degrees(longitude2));
+    }
+
+    private static double radians(double degrees) {
+        return degrees * Math.PI / 180.0;
+    }
+    private static double degrees(double radians) {
+        return radians * 180.0 / Math.PI;
     }
 
 }

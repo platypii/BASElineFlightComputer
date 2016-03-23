@@ -234,14 +234,14 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
 
     // Listeners
     @Override
-    public void onLocationChanged(final MLocation loc) {
-        handler.post(new Runnable() {
-            public void run() {
-                updateGPS(loc);
-            }
-        });
+    public void onLocationChanged(MLocation loc) {}
+    @Override
+    public void onLocationChangedPostExecute() {
+        updateGPS(MyLocationManager.lastLoc);
     }
+    @Override
     public void altitudeDoInBackground(MAltitude alt) {}
+    @Override
     public void altitudeOnPostExecute() {
         updateAltimeter();
     }

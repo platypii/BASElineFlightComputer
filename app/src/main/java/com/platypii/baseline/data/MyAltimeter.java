@@ -103,6 +103,7 @@ public class MyAltimeter {
         public void onLocationChanged(@NonNull MLocation loc) {
             MyAltimeter.updateGPS(loc);
         }
+        public void onLocationChangedPostExecute() {}
     }
 
     /**

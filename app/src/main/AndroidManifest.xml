@@ -30,6 +30,11 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
@@ -53,6 +58,9 @@
         <activity
             android:name=".AltimeterActivity"
             android:label="@string/title_activity_altimeter"/>
+        <activity
+            android:name=".MapActivity"
+            android:label="@string/title_activity_map"/>
     </application>
 
 </manifest>

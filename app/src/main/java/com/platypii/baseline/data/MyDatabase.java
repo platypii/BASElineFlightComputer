@@ -18,9 +18,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.zip.GZIPOutputStream;
 
-
-// Logs altitude and location data to the database. Also contains event and jump databases
-// AKA- The Black Box flight recorder
+/**
+ * Logs altitude and location data to the database. Also contains event and jump databases
+ * AKA- The Black Box flight recorder
+ */
 public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySensorListener {
 
     // Singleton database when logging
@@ -128,17 +129,22 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
     }
 
     // Altitude listener
+    @Override
     public void altitudeDoInBackground(MAltitude measure) {
         logLine(measure.toRow());
     }
+    @Override
     public void altitudeOnPostExecute() {}
 
     // Location listener
+    @Override
     public void onLocationChanged(@NonNull MLocation measure) {
         if(!Double.isNaN(measure.latitude) && !Double.isNaN(measure.longitude)) {
             logLine(measure.toRow());
         }
     }
+    @Override
+    public void onLocationChangedPostExecute() {}
 
     // Sensor listener
     public void onSensorChanged(@NonNull Measurement measure) {

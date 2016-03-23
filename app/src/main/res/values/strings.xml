@@ -60,4 +60,6 @@
     <string name="action_altimeter">Altimeter</string>
     <string name="title_activity_altimeter">Altimeter</string>
 
+    <string name="title_activity_map">Map</string>
+
 </resources>
