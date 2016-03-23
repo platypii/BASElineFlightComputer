@@ -1,16 +1,15 @@
 package com.platypii.baseline.data;
 
-import android.location.Location;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Util;
-
 
 /**
  * A class to log, analyze, and provide feedback on flight data
  */
 public class MyFlightManager {
+
+    public static LatLng homeLoc;
 
     /**
      * Computes the estimated time to ground based on current location + velocity

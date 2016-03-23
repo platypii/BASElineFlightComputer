@@ -56,9 +56,6 @@
             android:name=".AudibleSettingsActivity"
             android:label="@string/title_activity_audible_settings"/>
         <activity
-            android:name=".AltimeterActivity"
-            android:label="@string/title_activity_altimeter"/>
-        <activity
             android:name=".MapActivity"
             android:label="@string/title_activity_map"/>
     </application>

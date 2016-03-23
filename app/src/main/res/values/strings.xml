@@ -56,10 +56,8 @@
 
     <string name="pref_audible_rate">Speech rate</string>
 
-    <!-- Altimeter settings -->
-    <string name="action_altimeter">Altimeter</string>
-    <string name="title_activity_altimeter">Altimeter</string>
-
-    <string name="title_activity_map">Map</string>
+    <!-- Map settings -->
+    <string name="action_nav">Navigation</string>
+    <string name="title_activity_map">Navigation</string>
 
 </resources>

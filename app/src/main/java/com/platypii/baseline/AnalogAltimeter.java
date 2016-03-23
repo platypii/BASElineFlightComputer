@@ -51,7 +51,7 @@ public class AnalogAltimeter extends View implements MyAltitudeListener {
         final float density = getResources().getDisplayMetrics().density;
         blurMask = new BlurMaskFilter(6 * density, Blur.INNER);
         paint.setAntiAlias(true);
-        
+
         // Start altitude updates
         MyAltimeter.addListener(this);
     }
@@ -106,7 +106,7 @@ public class AnalogAltimeter extends View implements MyAltitudeListener {
         // Labels
         paint.setColor(0xff000000);
         paint.setStyle(Paint.Style.FILL);
-        paint.setTextSize(28 * scale_factor);
+        paint.setTextSize(30 * scale_factor);
         paint.setTextAlign(Paint.Align.CENTER);
         for(int i = 0; i < 12; i++) {
             double theta = 2 * Math.PI * i / 12;
@@ -183,10 +183,9 @@ public class AnalogAltimeter extends View implements MyAltitudeListener {
         }
     }
 
-    @Override protected void onMeasure (int widthMeasureSpec, int heightMeasureSpec)
-    {
-        int originalWidth = MeasureSpec.getSize(widthMeasureSpec);
-        int originalHeight = MeasureSpec.getSize(heightMeasureSpec);
+    @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        final int originalWidth = MeasureSpec.getSize(widthMeasureSpec);
+        final int originalHeight = MeasureSpec.getSize(heightMeasureSpec);
         int finalWidth, finalHeight;
 
         if (originalWidth > originalHeight) {

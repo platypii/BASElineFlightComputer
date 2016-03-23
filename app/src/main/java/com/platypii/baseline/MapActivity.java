@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,9 +40,12 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private GoogleMap map; // Might be null if Google Play services APK is not available
 
     // Markers
-    private Marker myLanding;
-    private Polyline targetBearing;
-    private final List<LatLng> pointList = new ArrayList<>();
+    private Marker homeMarker;
+    private Polyline homePath;
+    private final List<LatLng> homePoints = new ArrayList<>();
+    private Marker landingMarker;
+    private Polyline landingPath;
+    private final List<LatLng> landingPoints = new ArrayList<>();
 
     // Activity state
     private boolean paused = false;
@@ -62,6 +67,10 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_map);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        // Home button listener
+        final ImageButton homeButton = (ImageButton) findViewById(R.id.homeButton);
+        homeButton.setOnClickListener(homeButtonListener);
 
         // Initialize map
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -108,21 +117,50 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         Log.w(TAG, "Map ready");
     }
 
+    private View.OnClickListener homeButtonListener = new View.OnClickListener() {
+        public void onClick(View arg0) {
+            if(map != null) {
+                // Set home location to map center
+                final LatLng loc = map.getCameraPosition().target;
+                MyFlightManager.homeLoc = loc;
+                Log.i(TAG, "Setting home location: " + loc);
+
+                // Update map overlay
+                updateHome();
+            }
+        }
+    };
+
     private void addMarkers() {
         final LatLng home = new LatLng(47.239, -123.143);
 
-        // Add markers
-        myLanding = map.addMarker(new MarkerOptions()
+        // Add home location pin
+        homeMarker = map.addMarker(new MarkerOptions()
+                        .position(home)
+                        .visible(false)
+                        .title("home")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin))
+                        .anchor(0.5f,1.0f)
+        );
+        // Add line to home
+        homePath = map.addPolyline(new PolylineOptions()
+                        .visible(false)
+                        .width(6)
+                        .color(0x66ffffff)
+        );
+        // Add projected landing zone
+        landingMarker = map.addMarker(new MarkerOptions()
                         .position(home)
                         .visible(false)
                         .title("landing")
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_crosshair))
                         .anchor(0.5f,0.5f)
         );
-        targetBearing = map.addPolyline(new PolylineOptions()
+        // Add line to projected landing zone
+        landingPath = map.addPolyline(new PolylineOptions()
                         .visible(false)
                         .width(4)
-                        .color(0x55ffffff)
+                        .color(0x66ff0000)
         );
     }
 
@@ -137,23 +175,13 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     @Override
     public void onLocationChangedPostExecute() {
         if(ready && !paused) {
-            final MLocation loc = MyLocationManager.lastLoc;
-            final LatLng currentLatLng = loc.latLng();
+            final LatLng currentLoc = MyLocationManager.lastLoc.latLng();
+
+            // Update home path
+            updateHome();
 
             // Update accuracy trick marker
-            final LatLng landingLocation = MyFlightManager.getLandingLocation();
-            if(landingLocation != null) {
-                myLanding.setPosition(landingLocation);
-                myLanding.setVisible(true);
-                pointList.clear();
-                pointList.add(currentLatLng);
-                pointList.add(landingLocation);
-                targetBearing.setPoints(pointList);
-                targetBearing.setVisible(true);
-            } else {
-                myLanding.setVisible(false);
-                targetBearing.setVisible(false);
-            }
+            updateLanding();
 
             // Center map on user's location
             if(dragged && System.currentTimeMillis() - lastDrag > SNAP_BACK_TIME) {
@@ -161,15 +189,47 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                 dragged = false;
                 // Zoom based on altitude
                 final float zoom = getZoom();
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, zoom), DURATION, null);
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), DURATION, null);
             } else if(!dragged) {
                 // TODO: Jump to point
                 // map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
                 // Zoom based on altitude
                 final float zoom = getZoom();
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, zoom), DURATION, null);
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), DURATION, null);
             }
+        }
+    }
+
+    private void updateHome() {
+        if(MyFlightManager.homeLoc != null) {
+            homeMarker.setPosition(MyFlightManager.homeLoc);
+            homeMarker.setVisible(true);
+            final LatLng currentLoc = MyLocationManager.lastLoc.latLng();
+            if(currentLoc != null) {
+                homePoints.clear();
+                homePoints.add(currentLoc);
+                homePoints.add(MyFlightManager.homeLoc);
+                homePath.setPoints(homePoints);
+                homePath.setVisible(true);
+            }
+        }
+    }
+
+    private void updateLanding() {
+        final LatLng landingLocation = MyFlightManager.getLandingLocation();
+        if(landingLocation != null) {
+            final LatLng currentLoc = MyLocationManager.lastLoc.latLng();
+            landingMarker.setPosition(landingLocation);
+            landingMarker.setVisible(true);
+            landingPoints.clear();
+            landingPoints.add(currentLoc);
+            landingPoints.add(landingLocation);
+            landingPath.setPoints(landingPoints);
+            landingPath.setVisible(true);
+        } else {
+            landingMarker.setVisible(false);
+            landingPath.setVisible(false);
         }
     }
 
@@ -204,5 +264,12 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     public void onPause() {
         super.onPause();
         paused = true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Stop GPS updates
+        MyLocationManager.removeListener(this);
     }
 }

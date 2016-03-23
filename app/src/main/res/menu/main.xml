@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_item_altimeter"
-        android:title="@string/action_altimeter" />
-    <item
-        android:id="@+id/menu_item_map"
-        android:title="@string/action_map" />
+        android:id="@+id/menu_item_nav"
+        android:title="@string/action_nav" />
     <item
         android:id="@+id/menu_item_sensor_info"
         android:title="@string/action_sensor_info" />

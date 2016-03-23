@@ -7,7 +7,6 @@ import android.widget.TextView;
 import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyAltitudeListener;
-import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
