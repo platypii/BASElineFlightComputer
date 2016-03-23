@@ -15,7 +15,6 @@ import com.platypii.baseline.data.filter.FilterKalman;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 
-
 /**
  * Altimeter manager
  * TODO: Get corrections via barometer, GPS, DEM
@@ -34,9 +33,6 @@ public class MyAltimeter {
     public static double pressure_altitude = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
     public static double altitude_raw = Double.NaN; // pressure altitude adjusted for altitude offset (unfiltered)
 
-    // GPS data
-    public static double altitude_gps = Double.NaN;
-
     // official altitude = pressure_altitude - altitude_offset
     // altitude_offset uses GPS to get absolute altitude right
     public static double altitude_offset = 0.0;
@@ -48,6 +44,9 @@ public class MyAltimeter {
     public static double altitude = Double.NaN; // Meters AMSL
     public static double climb = Double.NaN; // Rate of climb m/s
     // public static double verticalAcceleration = Double.NaN;
+
+    // Ground level
+    public static double ground_level = Double.NaN;
 
     public static long firstFixNano = -1; // nanoseconds
     private static long lastFixNano; // nanoseconds
@@ -80,6 +79,10 @@ public class MyAltimeter {
         } else {
             Log.w(TAG, "MyAltimeter already started");
         }
+    }
+
+    public static double altitudeAGL() {
+        return altitude - ground_level;
     }
 
     // Sensor Event Listener
@@ -150,6 +153,15 @@ public class MyAltimeter {
             Log.w(TAG, "Altitude should not be NaN: altitude = " + altitude);
         }
 
+        // Adjust for ground level
+        if(n == 0) {
+            // First pressure reading. Calibrate ground level.
+            ground_level = pressure_altitude;
+        } else if(n < 16) {
+            // Average the first N samples
+            ground_level += (pressure_altitude - ground_level) / (n + 1);
+        }
+
         n++;
         updateAltitude();
     }
@@ -160,19 +172,21 @@ public class MyAltimeter {
      */
     private static void updateGPS(MLocation loc) {
         if(!Double.isNaN(loc.altitude_gps)) {
-            altitude_gps = loc.altitude_gps;
-
             if(n > 0) {
                 // Log.d(TAG, "alt = " + altitude + ", alt_gps = " + altitude_gps + ", offset = " + altitude_offset);
+                // GPS correction for altitude AMSL
                 if(gps_sample_count == 0) {
                     // First altitude reading. Calibrate ground level.
-                    altitude_offset = pressure_altitude - altitude_gps;
-                } else if(gps_sample_count < 10) {
-                    // Average the first N samples
-                    altitude_offset += (altitude_raw - altitude_gps) / (n + 1);
+                    final double altitude_correction = altitude_raw - loc.altitude_gps;
+                    altitude_offset = pressure_altitude - loc.altitude_gps;
+                    ground_level -= altitude_correction;
                 } else {
-                    // Use GPS to correct barometer drift (moving average)
-                    altitude_offset += (altitude_raw - altitude_gps) / 10;
+                    // Average the first N samples, then use moving average with lag 20
+                    final double altitude_error = altitude_raw - loc.altitude_gps;
+                    final long correction_factor = Math.min(gps_sample_count, 20);
+                    final double altitude_correction = altitude_error / correction_factor;
+                    altitude_offset += altitude_correction;
+                    ground_level -= altitude_correction;
                 }
             } else {
                 // No barometer use gps
@@ -180,7 +194,7 @@ public class MyAltimeter {
                 final long prevLastFix = lastFixMillis;
                 lastFixMillis = loc.millis;
                 // Update the official altitude
-                altitude = altitude_gps;
+                altitude = loc.altitude_gps;
                 if(Double.isNaN(prevAltitude)) {
                     climb = 0;
                 } else {
