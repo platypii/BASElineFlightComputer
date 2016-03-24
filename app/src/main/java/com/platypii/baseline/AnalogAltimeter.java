@@ -74,7 +74,7 @@ public class AnalogAltimeter extends View {
         // Draw face
         final boolean flat = true;
         if(flat) {
-            paint.setColor(0xddeeeeee);
+            paint.setColor(0xcceeeeee);
             paint.setStyle(Paint.Style.FILL);
             canvas.drawCircle(center_x, center_y, radius, paint);
         } else {
@@ -115,7 +115,7 @@ public class AnalogAltimeter extends View {
             canvas.drawText(Integer.toString(i), x, y, paint);
         }
         paint.setColor(0xff444444);
-        paint.setTextSize(12 * scale_factor + 2);
+        paint.setTextSize(12 * scale_factor + 4);
         canvas.drawText("x1000ft", center_x, center_y + radius * 0.3f, paint);
 
         // Draw lines

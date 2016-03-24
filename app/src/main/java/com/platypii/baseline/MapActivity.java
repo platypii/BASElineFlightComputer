@@ -1,17 +1,22 @@
 package com.platypii.baseline;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,6 +37,7 @@ import com.platypii.baseline.data.MyLocationListener;
 import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
+import com.platypii.baseline.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +84,15 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
         flightStats = (TextView) findViewById(R.id.flightStats);
 
+        analogAltimeter.setLongClickable(true);
+        analogAltimeter.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                promptForAltitude();
+                return false;
+            }
+        });
+
         // Home button listener
         final ImageButton homeButton = (ImageButton) findViewById(R.id.homeButton);
         homeButton.setOnClickListener(homeButtonListener);
@@ -112,9 +127,10 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
             ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_REQUEST_LOCATION);
         }
         if (firstLoad) {
-            final LatLng usa = new LatLng(41.2, -120.5);
-            Log.w(TAG, "Centering map on default view " + usa);
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(usa, 5));
+            final LatLng kpow = new LatLng(47.239, -123.143);
+            // final LatLng usa = new LatLng(41.2, -120.5);
+            Log.w(TAG, "Centering map on default view " + kpow);
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(kpow, 5));
             firstLoad = false;
         }
 
@@ -156,7 +172,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         // Add line to home
         homePath = map.addPolyline(new PolylineOptions()
                         .visible(false)
-                        .width(6)
+                        .width(8)
                         .color(0x66ffffff)
         );
         // Add projected landing zone
@@ -205,7 +221,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                 final float zoom = getZoom();
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), DURATION, null);
             } else if(!dragged) {
-                // TODO: Jump to point
+                // Alternate behavior: jump to point
                 // map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
                 // Zoom based on altitude
@@ -262,17 +278,21 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
      */
     private static float getZoom() {
         final double altitude = MyAltimeter.altitudeAGL();
-        if(altitude < 100) {
-            return 18;
-        } else if(altitude < 600) {
-            // Smooth scaling from 100m:18 -> 600m:12
-            double alt_a = 100;
-            double alt_b = 600;
-            float zoom_a = 18;
-            float zoom_b = 12;
-            return zoom_b + (float) ((alt_b - altitude) * (zoom_a - zoom_b) / (alt_b - alt_a));
+
+        // Piecewise linear zoom function
+        final double alts[] = {100, 600, 2000};
+        final float zooms[] = {17.8f, 14f, 12.5f};
+
+        if(altitude < alts[0]) {
+            return zooms[0];
+        } else if(altitude <= alts[1]) {
+            // Linear interpolation
+            return zooms[1] - (float) ((alts[1] - altitude) * (zooms[1] - zooms[0]) / (alts[1] - alts[0]));
+        } else if(altitude <= alts[2]) {
+            // Linear interpolation
+            return zooms[2] - (float) ((alts[2] - altitude) * (zooms[2] - zooms[1]) / (alts[2] - alts[1]));
         } else {
-            return 12;
+            return zooms[2];
         }
     }
 
@@ -286,12 +306,44 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         flightStats.setText(altitude + "\n" + fallrate + "\n" + groundSpeed + "\n" + glideRatio);
     }
 
+    private void promptForAltitude() {
+        Log.i(TAG, "Prompting for ground level adjustment");
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Set Altitude AGL");
+        builder.setMessage("Altitude above ground level in feet");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setHint("0");
+        builder.setView(input);
+        builder.setPositiveButton(R.string.set_altitude, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                final String inputText = input.getText().toString();
+                final double altitude = inputText.isEmpty()? 0.0 : Util.parseDouble(inputText) * Convert.FT;
+                if(Util.isReal(altitude)) {
+                    Log.w(TAG, "Setting altitude above ground level to " + altitude + "m");
+                    MyAltimeter.ground_level = MyAltimeter.altitude - altitude;
+                } else {
+                    Log.e(TAG, "Invalid altitude above ground level: " + altitude);
+                    Toast.makeText(MapActivity.this, "Invalid altitude", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        // Create the AlertDialog
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         paused = false;
         if(MyLocationManager.lastLoc != null) {
-            onLocationChanged(MyLocationManager.lastLoc);
+            onLocationChangedPostExecute();
         }
     }
     @Override

@@ -60,4 +60,7 @@
     <string name="action_nav">Navigation</string>
     <string name="title_activity_map">Navigation</string>
 
+    <string name="set_altitude">Set Altitude</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

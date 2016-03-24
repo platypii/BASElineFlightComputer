@@ -233,9 +233,9 @@ public class MyLocationManager {
                     // Overall satellite data (DOP and active satellites)
                     // boolean autoDim = split[1].equals("A"); // A = Auto 2D/3D, M = Forced 2D/3D
                     // gpsFix = split[2].equals("")? 0 : Integer.parseInt(split[2]); // 0 = null, 1 = No fix, 2 = 2D, 3 = 3D
-                    pdop = parseFloat(split[split.length - 4]);
-                    hdop = parseFloat(split[split.length - 3]);
-                    vdop = parseFloat(split[split.length - 2]);
+                    pdop = Util.parseFloat(split[split.length - 4]);
+                    hdop = Util.parseFloat(split[split.length - 3]);
+                    vdop = Util.parseFloat(split[split.length - 2]);
                     break;
                 case "GSV":
                     // Detailed satellite data (satellites in view)
@@ -247,12 +247,12 @@ public class MyLocationManager {
                     longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
                     final int gpsFix = parseInt(split[6]); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
                     satellitesUsed = parseInt(split[7]);
-                    hdop = parseFloat(split[8]);
+                    hdop = Util.parseFloat(split[8]);
                     if (!split[9].equals("")) {
                         if(!split[10].equals("M")) {
                             Log.e(NMEA_TAG, "Expected meters, was " + split[10] + " in nmea: " + nmea);
                         }
-                        altitude_gps = Double.parseDouble(split[9]);
+                        altitude_gps = Util.parseDouble(split[9]);
                     }
                     // double geoidSeparation = parseDouble(split[11]]); // Geoid separation according to WGS-84 ellipsoid
                     // assert split[12].equals("M")// Separation Units
@@ -286,8 +286,8 @@ public class MyLocationManager {
                     // boolean status = split[2].equals("A"); // A = active, V = void
                     latitude = NMEA.parseDegreesMinutes(split[3], split[4]);
                     longitude = NMEA.parseDegreesMinutes(split[5], split[6]);
-                    groundSpeed = Convert.kts2mps(parseDouble(split[7])); // Speed over ground
-                    bearing = parseDouble(split[8]); // Course over ground
+                    groundSpeed = Convert.kts2mps(Util.parseDouble(split[7])); // Speed over ground
+                    bearing = Util.parseDouble(split[8]); // Course over ground
                     // split[10], split[11]: 003.1,W magnetic Variation
                     // split[9]: Date: 230394 = 23 March 1994
                     // split[1]: Time: 123456 = 12:34:56 UTC
@@ -312,7 +312,7 @@ public class MyLocationManager {
                     latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
                     longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
                     if (!split[9].equals("")) {
-                        altitude_gps = Double.parseDouble(split[9]);
+                        altitude_gps = Util.parseDouble(split[9]);
                         // double geoidSeparation = parseDouble(split[10]]);
                     }
                     if (!split[7].equals("")) {
@@ -327,22 +327,14 @@ public class MyLocationManager {
 //                    boolean status = split[6].equals("A"); // A = active, V = void
 //                    break;
                 case "VTG":
-                    bearing = parseDouble(split[1]); // Course over ground
-                    groundSpeed = Convert.kts2mps(parseDouble(split[5])); // Speed over ground
+                    bearing = Util.parseDouble(split[1]); // Course over ground
+                    groundSpeed = Convert.kts2mps(Util.parseDouble(split[5])); // Speed over ground
                     break;
                 default:
                     Log.e(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
             }
         }
     };
-
-    private static double parseDouble(String str) {
-        return str.equals("") ? Double.NaN : Double.parseDouble(str);
-    }
-
-    private static float parseFloat(String str) {
-        return str.equals("") ? Float.NaN : Float.parseFloat(str);
-    }
 
     private static int parseInt(String str) {
         return str.equals("") ? -1 : Integer.parseInt(str);
@@ -352,7 +344,7 @@ public class MyLocationManager {
     private static final LocationListener androidLocationListener = new LocationListener() {
         public void onLocationChanged(Location loc) {
             // Log.v("GPS", "onLocationChanged(" + loc + ")");
-            if (!Double.isNaN(loc.getLatitude()) && !Double.isNaN(loc.getLongitude())) {
+            if (Util.isReal(loc.getLatitude()) && Util.isReal(loc.getLongitude())) {
                 // Always update accuracy
                 if (loc.hasAccuracy())
                     hAcc = loc.getAccuracy();

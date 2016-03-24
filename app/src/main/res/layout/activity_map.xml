@@ -12,8 +12,8 @@
 
     <com.platypii.baseline.AnalogAltimeter
         android:id="@+id/analogAltimeter"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_gravity="right|bottom" />
 
     <TextView
