@@ -6,6 +6,7 @@ import com.platypii.baseline.data.MyAltimeter;
 import android.util.Log;
 
 public class MLocation extends Measurement {
+    private static final String TAG = "MLocation";
 
     // GPS
     public double latitude = Double.NaN; // Latitude
@@ -31,9 +32,16 @@ public class MLocation extends Measurement {
         this.altitude = MyAltimeter.altitude;
         this.climb = MyAltimeter.climb;
 
-        // Assertions
-        if(Double.isInfinite(vN)) Log.e("MLocation", "Infinite vN");
-        if(Double.isInfinite(vE)) Log.e("MLocation", "Infinite vE");
+        // Sanity checks
+        if(!Util.isReal(latitude) || !Util.isReal(longitude)) {
+            Log.e(TAG, "lat/long not a number: " + this);
+        }
+        if(Math.abs(latitude) < 0.1 && Math.abs(longitude) < 0.1) {
+            Log.e(TAG, "unlikely lat/long: " + latitude + ", " + longitude);
+        }
+        if(Double.isInfinite(vN) || Double.isInfinite(vE)) {
+            Log.e(TAG, "infinite velocity: vN = " + vN + ", vE = " + vE);
+        }
 
         // Store location data
         this.millis = millis;
@@ -62,7 +70,7 @@ public class MLocation extends Measurement {
 
     @Override
     public String toString() {
-        return String.format("MLocation(%.6f,%.6f,%.1f)", latitude, longitude, altitude_gps);
+        return String.format("MLocation(%.6f,%.6f,%.1f,%.0f,%.0f)", latitude, longitude, altitude_gps, vN, vE);
     }
 
     public double groundSpeed() {

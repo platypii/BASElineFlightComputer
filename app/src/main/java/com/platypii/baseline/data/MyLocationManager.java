@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.platypii.baseline.data.measurements.MLocation;
+import com.platypii.baseline.util.Util;
 
 public class MyLocationManager {
     private static final String TAG = "MyLocationManager";
@@ -154,21 +155,7 @@ public class MyLocationManager {
         phoneOffsetMillis = System.currentTimeMillis() - lastFixMillis;
 
         // Clear out old values
-        latitude = Double.NaN;
-        longitude = Double.NaN;
-        altitude_gps = Double.NaN;
-        vN = Double.NaN;
-        vE = Double.NaN;
-        groundSpeed = Double.NaN;
-        bearing = Double.NaN;
-        hAcc = Float.NaN;
-        // vAcc = Float.NaN;
-        // sAcc = Float.NaN;
-        pdop = Float.NaN;
-        hdop = Float.NaN;
-        vdop = Float.NaN;
-        // satellitesInView = -1; // Satellites in view
-        // satellitesUsed = -1; // Satellites used in last fix
+        resetValues();
 
         // History
         history.append(lastLoc);
@@ -188,6 +175,27 @@ public class MyLocationManager {
     }
 
     /**
+     * Reset lat, long, speed, etc to NaN
+     */
+    private static void resetValues() {
+        latitude = Double.NaN;
+        longitude = Double.NaN;
+        altitude_gps = Double.NaN;
+        vN = Double.NaN;
+        vE = Double.NaN;
+        groundSpeed = Double.NaN;
+        bearing = Double.NaN;
+        hAcc = Float.NaN;
+        // vAcc = Float.NaN;
+        // sAcc = Float.NaN;
+        pdop = Float.NaN;
+        hdop = Float.NaN;
+        vdop = Float.NaN;
+        // satellitesInView = -1; // Satellites in view
+        // satellitesUsed = -1; // Satellites used in last fix
+    }
+
+    /**
      * NMEA listener
      */
     private static final GpsStatus.NmeaListener nmeaListener = new GpsStatus.NmeaListener() {
@@ -195,7 +203,7 @@ public class MyLocationManager {
         public void onNmeaReceived(long timestamp, String nmea) {
             nmea = nmea.trim();
 
-            // Log.v(NMEA_TAG, "["+timestamp+"] " + nmea);
+            // Log.v(NMEA_TAG, "[" + timestamp + "] " + nmea);
 
             if (!nmeaReceived) {
                 Log.d(NMEA_TAG, "First NMEA string received");
@@ -203,12 +211,14 @@ public class MyLocationManager {
             }
 
             final String split[] = nmea.split("[,*]");
-            if (split[0].charAt(0) != '$') Log.e(NMEA_TAG, "Invalid NMEA tag: " + split[0]);
-            if (split[0].length() != 6) Log.e(NMEA_TAG, "Invalid NMEA tag length: " + split[0]);
             final String command = split[0].substring(3, 6);
 
+            // Sanity checks
+            if (split[0].charAt(0) != '$' || split[0].length() != 6) {
+                Log.e(NMEA_TAG, "Invalid NMEA tag: " + split[0]);
+            }
             if (!NMEA.nmeaChecksum(nmea)) {
-                Log.e(NMEA_TAG, "Invalid NMEA checksum");
+                Log.e(NMEA_TAG, "Invalid NMEA checksum: " + nmea);
             }
 
             // Parse command
@@ -229,11 +239,13 @@ public class MyLocationManager {
                     // Fix data
                     latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
                     longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
-                    // gpsFix = parseInt(split[6]); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
+                    final int gpsFix = parseInt(split[6]); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
                     satellitesUsed = parseInt(split[7]);
                     hdop = parseFloat(split[8]);
                     if (!split[9].equals("")) {
-                        assert split[10].equals("M"); // Meters
+                        if(!split[10].equals("M")) {
+                            Log.e(NMEA_TAG, "Expected meters, was " + split[10] + " in nmea: " + nmea);
+                        }
                         altitude_gps = Double.parseDouble(split[9]);
                     }
                     // double geoidSeparation = parseDouble(split[11]]); // Geoid separation according to WGS-84 ellipsoid
@@ -243,17 +255,22 @@ public class MyLocationManager {
 
                     // TODO: hAcc, vAcc, sAcc
 
-                    // Time. At this point we actually have (at least) 3 choices of clock.
-                    // 1) timestamp parameter, is measured in seconds
+                    // Time. At this point we have (at least) 3 choices of clock.
+                    // 1) timestamp parameter, is measured in milliseconds
                     // 2) System.currentTime(), depends on how long execution takes to this point
                     // 3) GPS time, most accurate, but must be parsed carefully, since we only get milliseconds since midnight GMT
                     // split[1]: Time: 123456 = 12:34:56 UTC
                     // if(dateTime == 0 || split[1].equals(""))
-                    //   lastFixMillis = timestamp * 1000; // Alt: System.currentTimeMillis();
+                    //   lastFixMillis = timestamp; // Alt: System.currentTimeMillis();
                     // else
                     //   lastFixMillis = dateTime + parseTime(split[1]);
-                    assert 0 < lastFixMillis;
-                    assert Math.abs(System.currentTimeMillis() - lastFixMillis) < 60000; // at most 60 seconds time skew
+                    if(gpsFix == 0) {
+                        Log.v(NMEA_TAG, "Invalid fix, nmea: " + nmea);
+                    } else if(lastFixMillis <= 0) {
+                        Log.w(NMEA_TAG, "Invalid timestamp " + lastFixMillis + ", nmea: " + nmea);
+                    } else if(Math.abs(System.currentTimeMillis() - lastFixMillis) > 60000) {
+                        Log.w(NMEA_TAG, String.format("System clock off by %ds", System.currentTimeMillis() - lastFixMillis));
+                    }
 
                     // Update the official location!
                     // MyLocationManager.updateLocation();
@@ -278,8 +295,10 @@ public class MyLocationManager {
 
                     // Log.i(NMEA_TAG, "["+time+"] " + Convert.latlong(latitude, longitude) + ", groundSpeed = " + Convert.speed(groundSpeed) + ", bearing = " + Convert.bearing2(bearing));
 
-                    // Update the official location!
-                    MyLocationManager.updateLocation();
+                    if(Util.isReal(latitude) || Util.isReal(longitude) || Util.isReal(vN) || Util.isReal(vE)) {
+                        // Update the official location!
+                        MyLocationManager.updateLocation();
+                    }
                     break;
                 case "GNS":
                     // Fixes data for single or combined (GPS, GLONASS, etc) satellite navigation systems
@@ -287,8 +306,8 @@ public class MyLocationManager {
                     latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
                     longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
                     if (!split[9].equals("")) {
-                        assert split[10].equals("M"); // Meters
                         altitude_gps = Double.parseDouble(split[9]);
+                        // double geoidSeparation = parseDouble(split[10]]);
                     }
                     if (!split[7].equals("")) {
                         satellitesUsed = Integer.parseInt(split[7]);
