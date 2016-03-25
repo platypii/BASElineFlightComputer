@@ -48,7 +48,10 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 64;
 
     private AnalogAltimeter analogAltimeter;
-    private TextView flightStats;
+    private TextView flightStatsAltimeter;
+    private TextView flightStatsVario;
+    private TextView flightStatsSpeed;
+    private TextView flightStatsGlide;
 
     private GoogleMap map; // Might be null if Google Play services APK is not available
 
@@ -82,7 +85,10 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
-        flightStats = (TextView) findViewById(R.id.flightStats);
+        flightStatsAltimeter = (TextView) findViewById(R.id.flightStatsAltimeter);
+        flightStatsVario = (TextView) findViewById(R.id.flightStatsVario);
+        flightStatsSpeed = (TextView) findViewById(R.id.flightStatsSpeed);
+        flightStatsGlide = (TextView) findViewById(R.id.flightStatsGlide);
 
         analogAltimeter.setLongClickable(true);
         analogAltimeter.setOnLongClickListener(new View.OnLongClickListener() {
@@ -186,7 +192,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         // Add line to projected landing zone
         landingPath = map.addPolyline(new PolylineOptions()
                         .visible(false)
-                        .width(4)
+                        .width(8)
                         .color(0x66ff0000)
         );
     }
@@ -299,11 +305,18 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private void updateFlightStats() {
         analogAltimeter.setAltitude(MyAltimeter.altitudeAGL());
         final MLocation loc = MyLocationManager.lastLoc;
-        final String altitude = " • " + Convert.distance(MyAltimeter.altitudeAGL());
-        final String fallrate = (MyAltimeter.climb < 0)? " ↓ " + Convert.speed(-MyAltimeter.climb) : " ↑ " + Convert.speed(MyAltimeter.climb);
-        final String groundSpeed = "→ " + Convert.speed(loc.groundSpeed());
-        final String glideRatio = "◢ " + Convert.glide(loc.glideRatio());
-        flightStats.setText(altitude + "\n" + fallrate + "\n" + groundSpeed + "\n" + glideRatio);
+        flightStatsAltimeter.setText(Convert.distance(MyAltimeter.altitudeAGL()));
+        if(MyAltimeter.climb < 0) {
+            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp,0,0,0);
+            flightStatsVario.setText(Convert.speed(-MyAltimeter.climb));
+        } else {
+            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward_white_24dp,0,0,0);
+            flightStatsVario.setText(Convert.speed(MyAltimeter.climb));
+        }
+        if(loc != null) {
+            flightStatsSpeed.setText(Convert.speed(loc.groundSpeed()));
+            flightStatsGlide.setText(Convert.glide(loc.glideRatio()));
+        }
     }
 
     private void promptForAltitude() {

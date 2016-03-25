@@ -74,7 +74,7 @@ public class AnalogAltimeter extends View {
         // Draw face
         final boolean flat = true;
         if(flat) {
-            paint.setColor(0xcceeeeee);
+            paint.setColor(0xbbeeeeee);
             paint.setStyle(Paint.Style.FILL);
             canvas.drawCircle(center_x, center_y, radius, paint);
         } else {

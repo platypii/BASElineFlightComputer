@@ -54,6 +54,7 @@ public class MyLocationManager {
     private static float hdop = Float.NaN;
     private static float vdop = Float.NaN;
     private static long dateTime; // The number of milliseconds until the start of this day, midnight GMT
+    private static int gpsFix;
 
     // phone time = GPS time + offset
     public static long phoneOffsetMillis = 0;
@@ -245,7 +246,7 @@ public class MyLocationManager {
                     // Fix data
                     latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
                     longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
-                    final int gpsFix = parseInt(split[6]); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
+                    gpsFix = parseInt(split[6]); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
                     satellitesUsed = parseInt(split[7]);
                     hdop = Util.parseFloat(split[8]);
                     if (!split[9].equals("")) {
@@ -270,13 +271,6 @@ public class MyLocationManager {
                     //   lastFixMillis = timestamp; // Alt: System.currentTimeMillis();
                     // else
                     //   lastFixMillis = dateTime + parseTime(split[1]);
-                    if(gpsFix == 0) {
-                        Log.v(NMEA_TAG, "Invalid fix, nmea: " + nmea);
-                    } else if(lastFixMillis <= 0) {
-                        Log.w(NMEA_TAG, "Invalid timestamp " + lastFixMillis + ", nmea: " + nmea);
-                    } else if(Math.abs(System.currentTimeMillis() - lastFixMillis) > 60000) {
-                        Log.w(NMEA_TAG, String.format("System clock off by %ds", System.currentTimeMillis() - lastFixMillis));
-                    }
 
                     // Update the official location!
                     // MyLocationManager.updateLocation();
@@ -294,6 +288,13 @@ public class MyLocationManager {
                     dateTime = NMEA.parseDate(split[9]);
                     lastFixMillis = dateTime + NMEA.parseTime(split[1]);
                     // Log.w("Time", "["+timestamp+"] lastFixMillis = " + lastFixMillis + ", currentTime = " + System.currentTimeMillis());
+                    if(gpsFix == 0) {
+                        // Log.v(NMEA_TAG, "Invalid fix, nmea: " + nmea);
+                    } else if(lastFixMillis <= 0) {
+                        Log.w(NMEA_TAG, "Invalid timestamp " + lastFixMillis + ", nmea: " + nmea);
+                    } else if(Math.abs(System.currentTimeMillis() - lastFixMillis) > 60000) {
+                        Log.w(NMEA_TAG, String.format("System clock off by %ds", System.currentTimeMillis() - lastFixMillis));
+                    }
 
                     // Computed parameters
                     vN = groundSpeed * Math.cos(Math.toRadians(bearing));
