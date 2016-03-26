@@ -136,46 +136,7 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // Delete jump
-                    if(jump.getCloudData() != null) {
-                        // Delete from server
-                        getAuthToken(new Callback<String>() {
-                            @Override
-                            public void apply(String authToken) {
-                                TheCloud.delete(jump, authToken, new Callback<Void>() {
-                                    @Override
-                                    public void apply(Void v) {
-                                        // Delete locally
-                                        deleteLocal();
-                                    }
-                                    @Override
-                                    public void error(String error) {
-                                        // Delete failed
-                                        Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
-                                    }
-                                });
-
-                            }
-                            @Override
-                            public void error(String authToken) {
-                                TheCloud.delete(jump, authToken, new Callback<Void>() {
-                                    @Override
-                                    public void apply(Void v) {
-                                        // Delete locally
-                                        deleteLocal();
-                                    }
-                                    @Override
-                                    public void error(String error) {
-                                        // Delete failed
-                                        Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
-                                    }
-                                });
-
-                            }
-                        });
-                    } else {
-                        // Not uploaded, just delete locally
-                        deleteLocal();
-                    }
+                    deleteLocal();
                 }
 
             })
@@ -191,7 +152,7 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
             finish();
         } else {
             // Delete failed
-            Toast.makeText(getApplicationContext(), "Delete failed " + jump.getName(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Failed to delete track " + jump.getName(), Toast.LENGTH_LONG).show();
         }
     }
 

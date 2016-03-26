@@ -99,59 +99,6 @@ public class TheCloud {
         }
     }
 
-    /**
-     * Delete a track from the server. Return success via callback.
-     */
-    public static void delete(final Jump jump, final String auth, final Callback<Void> cb) {
-        Log.i(TAG, "Deleting track with auth " + auth);
-        if(jump.getCloudData() != null) {
-            new AsyncTask<Void,Void,Boolean>() {
-                @Override
-                protected Boolean doInBackground(Void... voids) {
-                    // Delete from the cloud
-                    return deleteJump(jump, auth);
-                }
-                @Override
-                protected void onPostExecute(Boolean success) {
-                    SyncStatus.update();
-                    if(cb != null) {
-                        if(success) {
-                            cb.apply(null);
-                        } else {
-                            cb.error("Failed to delete track");
-                        }
-                    }
-                }
-            }.execute();
-        } else {
-            Log.e(TAG, "Cannot delete track from server, not uploaded");
-        }
-    }
-
-    private static boolean deleteJump(Jump jump, String auth) {
-        try {
-            final URL url = new URL(jump.getCloudData().trackUrl);
-            final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestProperty("Authorization", auth);
-            try {
-                // Read response
-                final int status = conn.getResponseCode();
-                if(status == 200) {
-                    Log.i(TAG, "Track deleted from server");
-                    return true;
-                } else {
-                    Log.e(TAG, "Failed to delete track, http status code " + status);
-                    return false;
-                }
-            } finally {
-                conn.disconnect();
-            }
-        } catch(Exception e) {
-            Log.e(TAG, "Failed to delete track", e);
-            return false;
-        }
-    }
-
     private static void copy(InputStream input, OutputStream output) throws IOException {
         final byte buffer[] = new byte[1024];
         int bytesRead;

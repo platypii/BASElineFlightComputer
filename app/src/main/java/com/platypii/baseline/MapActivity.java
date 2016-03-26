@@ -251,8 +251,8 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         if(MyFlightManager.homeLoc != null) {
             homeMarker.setPosition(MyFlightManager.homeLoc);
             homeMarker.setVisible(true);
-            final LatLng currentLoc = MyLocationManager.lastLoc.latLng();
-            if(currentLoc != null) {
+            if(MyLocationManager.lastLoc != null) {
+                final LatLng currentLoc = MyLocationManager.lastLoc.latLng();
                 homePoints.clear();
                 homePoints.add(currentLoc);
                 homePoints.add(MyFlightManager.homeLoc);
@@ -287,7 +287,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
 
         // Piecewise linear zoom function
         final double alts[] = {100, 600, 2000};
-        final float zooms[] = {17.8f, 14f, 12.5f};
+        final float zooms[] = {17.9f, 14f, 12.5f};
 
         if(altitude < alts[0]) {
             return zooms[0];
