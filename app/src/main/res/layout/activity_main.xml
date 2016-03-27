@@ -11,27 +11,24 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/startButton"
+            android:id="@+id/recordButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="clickStart"
-            android:drawableTop="@drawable/button_record"
+            android:onClick="clickRecord"
+            android:drawableTop="@drawable/circle"
             android:textStyle="bold"
             android:textSize="18sp"
             android:text="@string/action_record" />
 
         <Button
-            android:id="@+id/stopButton"
+            android:id="@+id/navButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="clickStop"
-            android:drawableTop="@drawable/button_stop"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:text="@string/action_stop"
-            android:enabled="false" />
+            android:onClick="clickNav"
+            android:drawableTop="@drawable/nav"
+            android:text="@string/action_nav" />
 
     </LinearLayout>
 
@@ -46,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="clickAudible"
-            android:drawableTop="@drawable/button_audible"
+            android:drawableTop="@drawable/audio"
             android:text="@string/action_audible" />
 
         <Button
@@ -55,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="clickJumps"
-            android:drawableTop="@drawable/button_tracks"
+            android:drawableTop="@drawable/list"
             android:text="@string/action_tracks" />
 
     </LinearLayout>

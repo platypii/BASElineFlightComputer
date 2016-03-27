@@ -32,10 +32,7 @@ public class MainActivity extends BaseActivity {
 
     private Menu menu;
 
-    private Button startButton;
-    private Button stopButton;
-    private Button audibleButton;
-    private Button jumpsButton;
+    private Button recordButton;
     private TextView clock;
     private TextView signalStatus;
 
@@ -55,20 +52,17 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         // Find views
-        startButton = (Button) findViewById(R.id.startButton);
-        stopButton = (Button) findViewById(R.id.stopButton);
-        audibleButton = (Button) findViewById(R.id.audibleButton);
-        jumpsButton = (Button) findViewById(R.id.jumpsButton);
+        recordButton = (Button) findViewById(R.id.recordButton);
         clock = (TextView) findViewById(R.id.clock);
         signalStatus = (TextView) findViewById(R.id.signalStatus);
-
-        // Restore start/stop state
-        updateUIState();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
+        // Restore start/stop state
+        updateUIState();
 
         // Start signal updates
         if(signalRunnable == null) {
@@ -99,63 +93,63 @@ public class MainActivity extends BaseActivity {
                 .build());
     }
 
-    public void clickStart(View v) {
+    public void clickRecord(View v) {
         if(!MyDatabase.isLogging()) {
             Log.i(TAG, "Starting logging");
 
             // Start logging
             MyDatabase.startLogging(getApplicationContext());
             updateUIState();
+        } else {
+            Log.i(TAG, "Stopping logging");
+
+            // Stop logging
+            final Jump jump = MyDatabase.stopLogging();
+            updateUIState();
+
+            // Upload to the cloud
+            if(jump != null) {
+                uploadToCloud(jump);
+            } else {
+                Log.e(TAG, "Error reading log file");
+            }
         }
     }
 
-    public void clickStop(View v) {
-        Log.i(TAG, "Stopping logging");
+    private void uploadToCloud(final Jump jump) {
+        if(isSignedIn()) {
+            // Begin automatic upload
+            getAuthToken(new Callback<String>() {
+                @Override
+                public void apply(String authToken) {
+                    TheCloud.upload(jump, authToken, new Callback<CloudData>() {
+                        @Override
+                        public void apply(CloudData cloudData) {
+                            Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
+                        }
 
-        // Stop logging
-        final Jump jump = MyDatabase.stopLogging();
-        updateUIState();
+                        @Override
+                        public void error(String error) {
+                            Toast.makeText(MainActivity.this, "Track sync failed: " + error, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
-        // Upload to the cloud
-        if(jump != null) {
-            if(isSignedIn()) {
-                // Begin automatic upload
-                getAuthToken(new Callback<String>() {
-                    @Override
-                    public void apply(String authToken) {
-                        TheCloud.upload(jump, authToken, new Callback<CloudData>() {
-                            @Override
-                            public void apply(CloudData cloudData) {
-                                Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void error(String error) {
-                                Toast.makeText(MainActivity.this, "Track sync failed: " + error, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void error(String error) {
-                        Toast.makeText(MainActivity.this, "Track sync failed: " + error, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                Log.w(TAG, "Track sync failed: not signed in");
-            }
+                @Override
+                public void error(String error) {
+                    Toast.makeText(MainActivity.this, "Track sync failed: " + error, Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
-            Log.e(TAG, "Error reading log file");
+            Log.w(TAG, "Track sync failed: not signed in");
         }
     }
 
     // Enables buttons and clock
     private void updateUIState() {
         if(MyDatabase.isLogging()) {
-            startButton.setEnabled(false);
-            stopButton.setEnabled(true);
-            audibleButton.setEnabled(false);
-            jumpsButton.setEnabled(false);
+            recordButton.setText(R.string.action_stop);
+            recordButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.square, 0, 0);
 
             // Start clock updates
             if(clockRunnable == null) {
@@ -170,11 +164,9 @@ public class MainActivity extends BaseActivity {
                 handler.post(clockRunnable);
             }
         } else {
+            recordButton.setText(R.string.action_record);
+            recordButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.circle, 0, 0);
             clock.setText("");
-            startButton.setEnabled(true);
-            stopButton.setEnabled(false);
-            audibleButton.setEnabled(true);
-            jumpsButton.setEnabled(true);
 
             // Stop clock updates
             if(clockRunnable != null) {
@@ -183,6 +175,11 @@ public class MainActivity extends BaseActivity {
             }
         }
         invalidateOptionsMenu();
+    }
+
+    public void clickNav(View v) {
+        // Open nav activity
+        startActivity(new Intent(this, MapActivity.class));
     }
 
     public void clickJumps(View v) {
@@ -262,10 +259,6 @@ public class MainActivity extends BaseActivity {
             case R.id.menu_item_sensor_info:
                 // Open sensor activity
                 startActivity(new Intent(this, SensorActivity.class));
-                return true;
-            case R.id.menu_item_nav:
-                // Open map activity
-                startActivity(new Intent(this, MapActivity.class));
                 return true;
             case R.id.menu_item_sign_in:
                 clickSignIn();
