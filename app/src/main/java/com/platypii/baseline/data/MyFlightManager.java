@@ -30,9 +30,7 @@ public class MyFlightManager {
     public static LatLng getLandingLocation() {
         // Compute time to ground
         double timeToGround = timeToGround();
-        if(Double.isNaN(timeToGround)) {
-            return null;
-        } else {
+        if(Util.isReal(timeToGround)) {
             final MLocation loc = MyLocationManager.lastLoc;
             // Compute horizontal distance traveled at current velocity for timeToGround seconds
             double groundDistance = timeToGround * loc.groundSpeed();
@@ -45,6 +43,8 @@ public class MyFlightManager {
             // Log.d("FlightManager", currentLocation + " -> " + landingLocation + " (" + groundDistance + "m, " + bearing + "°)");
 
             return landingLocation;
+        } else {
+            return null;
         }
     }
 

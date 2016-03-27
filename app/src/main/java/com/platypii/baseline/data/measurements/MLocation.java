@@ -106,8 +106,9 @@ public class MLocation extends Measurement {
     /**
      * Moves the location along a bearing (degrees) by a given distance (meters)
      */
-    public LatLng moveDirection(double bearing, double d) {
+    public LatLng moveDirection(double bearing, double distance) {
         final double R = 6371000;
+        final double d = distance / R;
 
         if(!Util.isReal(latitude) || !Util.isReal(longitude)) {
             Log.e("MyLocation", "lat/long not a number: " + latitude + ", " + longitude);
@@ -120,12 +121,20 @@ public class MLocation extends Measurement {
         double lon = radians(longitude);
         double bear = radians(bearing);
 
-        double latitude2 = Math.asin( Math.sin(lat)*Math.cos(d/R) + Math.cos(lat)*Math.sin(d/R)*Math.cos(bear) );
-        double longitude2 = lon + Math.atan2(Math.sin(bear)*Math.sin(d/R)*Math.cos(lat), Math.cos(d/R)-Math.sin(lat)*Math.sin(latitude2));
+        // Precompute trig
+        final double sin_d = Math.sin(d);
+        final double cos_d = Math.cos(d);
+        final double sin_lat = Math.sin(lat);
+        final double cos_lat = Math.cos(lat);
+        final double sin_d_cos_lat = sin_d * cos_lat;
 
-//        longitude2 = (longitude2+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
+        final double lat2 = Math.asin(sin_lat * cos_d + sin_d_cos_lat * Math.cos(bear));
+        final double lon2 = lon + Math.atan2(Math.sin(bear) * sin_d_cos_lat, cos_d - sin_lat * Math.sin(lat2));
 
-        return new LatLng(degrees(latitude2), degrees(longitude2));
+        final double lat3 = degrees(lat2);
+        final double lon3 = mod360(degrees(lon2));
+
+        return new LatLng(lat3, lon3);
     }
 
     private static double radians(double degrees) {
@@ -133,6 +142,9 @@ public class MLocation extends Measurement {
     }
     private static double degrees(double radians) {
         return radians * 180.0 / Math.PI;
+    }
+    private static double mod360(double degrees) {
+        return ((degrees + 540) % 360) - 180;
     }
 
 }

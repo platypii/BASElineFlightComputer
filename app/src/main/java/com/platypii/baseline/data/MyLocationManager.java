@@ -365,6 +365,11 @@ public class MyLocationManager {
                     if (loc.hasBearing())
                         bearing = loc.getBearing();
 
+                    if(Util.isReal(groundSpeed) && Util.isReal(bearing)) {
+                        vN = groundSpeed * Math.cos(Math.toRadians(bearing));
+                        vE = groundSpeed * Math.sin(Math.toRadians(bearing));
+                    }
+
                     // Update official location
                     MyLocationManager.updateLocation();
                 }
