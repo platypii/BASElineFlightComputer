@@ -10,18 +10,18 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -38,7 +38,6 @@ import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Util;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +51,10 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private TextView flightStatsVario;
     private TextView flightStatsSpeed;
     private TextView flightStatsGlide;
+    private ImageButton homeButton;
+    private ImageView crosshair;
 
+    private TouchableMapFragment mapFragment;
     private GoogleMap map; // Might be null if Google Play services APK is not available
 
     // Markers
@@ -89,6 +91,8 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         flightStatsVario = (TextView) findViewById(R.id.flightStatsVario);
         flightStatsSpeed = (TextView) findViewById(R.id.flightStatsSpeed);
         flightStatsGlide = (TextView) findViewById(R.id.flightStatsGlide);
+        homeButton = (ImageButton) findViewById(R.id.homeButton);
+        crosshair = (ImageView) findViewById(R.id.crosshair);
 
         analogAltimeter.setLongClickable(true);
         analogAltimeter.setOnLongClickListener(new View.OnLongClickListener() {
@@ -104,8 +108,22 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         homeButton.setOnClickListener(homeButtonListener);
 
         // Initialize map
-        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (TouchableMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        mapFragment.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                    case MotionEvent.ACTION_UP:
+                        lastDrag = System.currentTimeMillis();
+                        crosshair.setVisibility(View.VISIBLE);
+                        homeButton.setVisibility(View.VISIBLE);
+                        break;
+                }
+                return false;
+            }
+        });
 
         // Start sensor updates
         MyLocationManager.addListener(this);
@@ -154,9 +172,9 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         public void onClick(View arg0) {
             if(map != null) {
                 // Set home location to map center
-                final LatLng loc = map.getCameraPosition().target;
-                MyFlightManager.homeLoc = loc;
-                Log.i(TAG, "Setting home location: " + loc);
+                final LatLng center = map.getCameraPosition().target;
+                MyFlightManager.homeLoc = center;
+                Log.i(TAG, "Setting home location: " + center);
 
                 // Update map overlay
                 updateHome();
@@ -173,12 +191,12 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                         .visible(false)
                         .title("home")
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin))
-                        .anchor(0.5f,1.0f)
+                        .anchor(0.5f, 1.0f)
         );
         // Add line to home
         homePath = map.addPolyline(new PolylineOptions()
                         .visible(false)
-                        .width(8)
+                        .width(10)
                         .color(0x66ffffff)
         );
         // Add projected landing zone
@@ -186,21 +204,24 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                         .position(home)
                         .visible(false)
                         .title("landing")
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_crosshair))
-                        .anchor(0.5f,0.5f)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_target))
+                        .anchor(0.5f, 0.5f)
         );
         // Add line to projected landing zone
         landingPath = map.addPolyline(new PolylineOptions()
                         .visible(false)
-                        .width(8)
+                        .width(10)
                         .color(0x66ff0000)
         );
     }
 
     @Override
     public void onCameraChange(CameraPosition position) {
-        dragged = true;
-        lastDrag = System.currentTimeMillis();
+        if(System.currentTimeMillis() - lastDrag < SNAP_BACK_TIME) {
+            dragged = true;
+            crosshair.setVisibility(View.VISIBLE);
+            homeButton.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -221,8 +242,12 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
 
             // Center map on user's location
             if(dragged && System.currentTimeMillis() - lastDrag > SNAP_BACK_TIME) {
+                Log.i(TAG, "Snapping back to current location");
                 // Snap back to point
                 dragged = false;
+                // Hide crosshair
+                crosshair.setVisibility(View.GONE);
+                homeButton.setVisibility(View.GONE);
                 // Zoom based on altitude
                 final float zoom = getZoom();
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), DURATION, null);
@@ -368,6 +393,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mapFragment.removeOnTouchListeners();
         // Stop sensor updates
         MyLocationManager.removeListener(this);
         MyAltimeter.removeListener(this);

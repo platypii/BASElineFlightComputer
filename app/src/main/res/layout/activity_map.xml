@@ -8,7 +8,7 @@
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        android:name="com.platypii.baseline.TouchableMapFragment" />
 
     <com.platypii.baseline.AnalogAltimeter
         android:id="@+id/analogAltimeter"
@@ -27,6 +27,15 @@
         android:layout_margin="2dp"
         android:background="@drawable/panel"
         android:contentDescription="pin"
-        android:src="@drawable/ic_pin" />
+        android:src="@drawable/ic_pin"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/crosshair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_crosshair"
+        android:visibility="gone" />
 
 </FrameLayout>
