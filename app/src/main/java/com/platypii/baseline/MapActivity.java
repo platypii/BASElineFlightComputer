@@ -73,8 +73,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     // Drag listener
     private boolean dragged = false;
     private long lastDrag = 0;
-    private static final long SNAP_BACK_TIME = 5000; // millis
-    private static final int DURATION = 800; // camera animation duration millis
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,10 +149,8 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
             ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_REQUEST_LOCATION);
         }
         if (firstLoad) {
-            final LatLng kpow = new LatLng(47.239, -123.143);
-            // final LatLng usa = new LatLng(41.2, -120.5);
-            Log.w(TAG, "Centering map on default view " + kpow);
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(kpow, 5));
+            Log.w(TAG, "Centering map on default view " + MapOptions.defaultLatLng);
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, 5));
             firstLoad = false;
         }
 
@@ -217,7 +213,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
 
     @Override
     public void onCameraChange(CameraPosition position) {
-        if(System.currentTimeMillis() - lastDrag < SNAP_BACK_TIME) {
+        if(System.currentTimeMillis() - lastDrag < MapOptions.SNAP_BACK_TIME) {
             dragged = true;
             crosshair.setVisibility(View.VISIBLE);
             homeButton.setVisibility(View.VISIBLE);
@@ -241,7 +237,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
             updateLanding();
 
             // Center map on user's location
-            if(dragged && System.currentTimeMillis() - lastDrag > SNAP_BACK_TIME) {
+            if(dragged && System.currentTimeMillis() - lastDrag > MapOptions.SNAP_BACK_TIME) {
                 Log.i(TAG, "Snapping back to current location");
                 // Snap back to point
                 dragged = false;
@@ -249,15 +245,15 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                 crosshair.setVisibility(View.GONE);
                 homeButton.setVisibility(View.GONE);
                 // Zoom based on altitude
-                final float zoom = getZoom();
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), DURATION, null);
+                final float zoom = MapOptions.getZoom();
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), MapOptions.zoomDuration(), null);
             } else if(!dragged) {
                 // Alternate behavior: jump to point
                 // map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
                 // Zoom based on altitude
-                final float zoom = getZoom();
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), DURATION, null);
+                final float zoom = MapOptions.getZoom();
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), MapOptions.zoomDuration(), null);
             }
         }
     }
@@ -301,29 +297,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         } else {
             landingMarker.setVisible(false);
             landingPath.setVisible(false);
-        }
-    }
-
-    /**
-     * Returns the default zoom for a given altitude
-     */
-    private static float getZoom() {
-        final double altitude = MyAltimeter.altitudeAGL();
-
-        // Piecewise linear zoom function
-        final double alts[] = {100, 600, 2000};
-        final float zooms[] = {17.9f, 14f, 12.5f};
-
-        if(altitude < alts[0]) {
-            return zooms[0];
-        } else if(altitude <= alts[1]) {
-            // Linear interpolation
-            return zooms[1] - (float) ((alts[1] - altitude) * (zooms[1] - zooms[0]) / (alts[1] - alts[0]));
-        } else if(altitude <= alts[2]) {
-            // Linear interpolation
-            return zooms[2] - (float) ((alts[2] - altitude) * (zooms[2] - zooms[1]) / (alts[2] - alts[1]));
-        } else {
-            return zooms[2];
         }
     }
 
