@@ -115,8 +115,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                     case MotionEvent.ACTION_DOWN:
                     case MotionEvent.ACTION_UP:
                         lastDrag = System.currentTimeMillis();
-                        crosshair.setVisibility(View.VISIBLE);
-                        homeButton.setVisibility(View.VISIBLE);
                         break;
                 }
                 return false;
@@ -150,7 +148,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         }
         if (firstLoad) {
             Log.w(TAG, "Centering map on default view " + MapOptions.defaultLatLng);
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, 5));
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, MapOptions.defaultZoom));
             firstLoad = false;
         }
 
