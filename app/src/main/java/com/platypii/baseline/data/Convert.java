@@ -9,7 +9,7 @@ import java.util.Locale;
  */
 public class Convert {
 
-    private static boolean metric = false;
+    public static boolean metric = false;
 
     // Convert to standard metric (1000 * FT = 304.8 * M)
     public static final double FT = 0.3048;

@@ -3,13 +3,16 @@ package com.platypii.baseline;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.platypii.baseline.audible.MyAudible;
+import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.KVStore;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyDatabase;
@@ -33,6 +36,12 @@ public class Services {
             final Context appContext = activity.getApplicationContext();
 
             // Start the various services
+
+            Log.i(TAG, "Loading app settings");
+            final SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(appContext);
+            final boolean metricEnabled = prefs.getBoolean("metric_enabled", false);
+            Convert.metric = metricEnabled;
+
             Log.i(TAG, "Starting key value store");
             KVStore.start(appContext);
 

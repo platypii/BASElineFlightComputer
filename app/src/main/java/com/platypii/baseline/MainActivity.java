@@ -256,6 +256,10 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.menu_item_settings:
+                // Open settings activity
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
             case R.id.menu_item_sensor_info:
                 // Open sensor activity
                 startActivity(new Intent(this, SensorActivity.class));
