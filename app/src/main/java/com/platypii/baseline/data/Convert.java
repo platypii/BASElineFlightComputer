@@ -13,6 +13,8 @@ public class Convert {
 
     // Convert to standard metric (1000 * FT = 304.8 * M)
     public static final double FT = 0.3048;
+    public static final double MPH = 0.44704;
+    public static final double KPH = 0.277778;
 
     /**
      * Convert knots to meters/second
@@ -90,7 +92,7 @@ public class Convert {
         } else if(Double.isInfinite(mps)) {
             return Double.toString(mps);
         } else {
-            final String unitString = units? (metric? " kph" : " mph") : "";
+            final String unitString = units? (metric? " km/h" : " mph") : "";
             final double localValue = metric? mps * 3.6 : mps * 2.23693629;
             if(precision == 0) {
                 // Faster special case for integers
@@ -133,21 +135,32 @@ public class Convert {
         }
     }
     
-    public static String glide(double glide) {
-        return glide(glide, 1);
+    public static String glide(double glideRatio) {
+        return glide(glideRatio, 1);
     }
-    public static String glide(double glide, int precision) {
-        if(Double.isNaN(glide)) {
+    public static String glide(double glideRatio, int precision) {
+        return glide(glideRatio, precision, true);
+    }
+    public static String glide(double glideRatio, int precision, boolean units) {
+        if(Double.isNaN(glideRatio)) {
             return "";
-        } else if(Double.isInfinite(glide) || Math.abs(glide) > 40) {
+        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 40) {
             return "Level";
-        } else if(precision == 0) {
-            // Faster special case for integers
-            return Math.round(glide) + " : 1";
-        } else if(glide > 0) {
-            return String.format("+%." + precision + "f : 1", glide);
         } else {
-            return String.format("%." + precision + "f : 1", glide);
+            final String value;
+            if(precision == 0) {
+                // Faster special case for integers
+                value = Long.toString(Math.round(glideRatio));
+            } else if(glideRatio > 0) {
+                value = String.format("+%." + precision + "f", glideRatio);
+            } else {
+                value = String.format("%." + precision + "f", glideRatio);
+            }
+            if(units) {
+                return value + " : 1";
+            } else {
+                return value;
+            }
         }
     }
     

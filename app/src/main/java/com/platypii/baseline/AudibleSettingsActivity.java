@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.platypii.baseline.audible.MyAudible;
+import com.platypii.baseline.data.Convert;
 
 /**
  * Settings activity for audible configuration
@@ -94,8 +95,8 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                     // Set units
                     minPreference.setTitle("Minimum Speed");
                     maxPreference.setTitle("Maximum Speed");
-                    minPreference.setSummary(String.format("%.0f", min) + " mph");
-                    maxPreference.setSummary(String.format("%.0f", max) + " mph");
+                    minPreference.setSummary(Convert.speed(min, 0, true));
+                    maxPreference.setSummary(Convert.speed(max, 0, true));
                     break;
                 default:
                     Log.e(TAG, "Invalid audible mode " + audibleMode);
@@ -135,14 +136,14 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                 case "audible_mode":
                     final String audibleMode = (String) value;
                     if(!audibleMode.equals(previousAudibleMode)) {
-                        double min = 0;
-                        double max = 120;
+                        final double min;
+                        final double max;
                         switch (audibleMode) {
                             case "horizontal_speed":
                             case "vertical_speed":
                                 // Set default min/max
                                 min = 0;
-                                max = 140;
+                                max = 62.6; // 140mph
                                 break;
                             case "glide_ratio":
                                 // Set default min/max
@@ -151,6 +152,8 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                                 break;
                             default:
                                 Log.e(TAG, "Invalid audible mode " + audibleMode);
+                                min = 0;
+                                max = 1;
                         }
                         minPreference.setText(Double.toString(min));
                         maxPreference.setText(Double.toString(max));
@@ -158,12 +161,16 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                     }
                     break;
                 case "audible_min":
+                    // Convert local units
                     final double min = Double.parseDouble((String) value);
-                    updateAudibleMode(previousAudibleMode, min, previousMax);
+                    final double min_mps = Convert.metric? min * Convert.KPH : min * Convert.MPH;
+                    updateAudibleMode(previousAudibleMode, min_mps, previousMax);
                     break;
                 case "audible_max":
+                    // Convert local units
                     final double max = Double.parseDouble((String) value);
-                    updateAudibleMode(previousAudibleMode, previousMin, max);
+                    final double max_mps = Convert.metric? max * Convert.KPH : max * Convert.MPH;
+                    updateAudibleMode(previousAudibleMode, previousMin, max_mps);
                     break;
                 case "audible_rate":
                     final double speechRate = Double.parseDouble((String) value);

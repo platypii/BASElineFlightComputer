@@ -9,12 +9,13 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
+import com.platypii.baseline.data.Convert;
 
 public class AnalogAltimeter extends View {
 
     private double altitude = 0.0;
 
-    private static final AnalogAltimeterOptions options = AnalogAltimeterOptions.imperial;
+    private final AnalogAltimeterOptions options;
 
     // Avoid creating new objects unnecessarily
     private final Paint paint = new Paint();
@@ -35,7 +36,13 @@ public class AnalogAltimeter extends View {
     public AnalogAltimeter(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        
+
+        if(Convert.metric) {
+            options = AnalogAltimeterOptions.metric;
+        } else {
+            options = AnalogAltimeterOptions.imperial;
+        }
+
         final float density = getResources().getDisplayMetrics().density;
         blurMask = new BlurMaskFilter(6 * density, Blur.INNER);
         paint.setAntiAlias(true);
