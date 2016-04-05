@@ -2,9 +2,11 @@ package com.platypii.baseline;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
@@ -154,6 +156,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
 
         // Add ui elements
         addMarkers();
+        updateHome();
 
         // Drag listener
         map.setOnCameraChangeListener(this);
@@ -167,8 +170,13 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
             if(map != null) {
                 // Set home location to map center
                 final LatLng center = map.getCameraPosition().target;
-                MyFlightManager.homeLoc = center;
                 Log.i(TAG, "Setting home location: " + center);
+                MyFlightManager.homeLoc = center;
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MapActivity.this);
+                final SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("home_latitude", Double.toString(center.latitude));
+                editor.putString("home_longitude", Double.toString(center.longitude));
+                editor.apply();
 
                 // Update map overlay
                 updateHome();

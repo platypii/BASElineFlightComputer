@@ -11,13 +11,16 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.KVStore;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyDatabase;
+import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.MySensorManager;
+import com.platypii.baseline.util.Util;
 
 /**
  * Start and stop essential services
@@ -38,9 +41,7 @@ public class Services {
             // Start the various services
 
             Log.i(TAG, "Loading app settings");
-            final SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(appContext);
-            final boolean metricEnabled = prefs.getBoolean("metric_enabled", false);
-            Convert.metric = metricEnabled;
+            loadPreferences(appContext);
 
             Log.i(TAG, "Starting key value store");
             KVStore.start(appContext);
@@ -90,6 +91,20 @@ public class Services {
             } else {
                 Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
             }
+        }
+    }
+
+    private static void loadPreferences(Context appContext) {
+        final SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(appContext);
+
+        final boolean metricEnabled = prefs.getBoolean("metric_enabled", false);
+        Convert.metric = metricEnabled;
+
+        final double home_latitude = Util.parseDouble(prefs.getString("home_latitude", null));
+        final double home_longitude = Util.parseDouble(prefs.getString("home_longitude", null));
+        if(Util.isReal(home_latitude) && Util.isReal(home_longitude)) {
+            // Set home location
+            MyFlightManager.homeLoc = new LatLng(home_latitude, home_longitude);
         }
     }
 
