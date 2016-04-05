@@ -117,7 +117,11 @@ public class MyAudible {
                 // Read vertical speed
                 final double verticalSpeed = MyAltimeter.climb;
                 if (Util.isReal(verticalSpeed) && min <= verticalSpeed && verticalSpeed <= max) {
-                    measurement = Convert.speed(verticalSpeed, 0, false);
+                    if(verticalSpeed > 0) {
+                        measurement = "+" + Convert.speed(verticalSpeed, 0, false);
+                    } else {
+                        measurement = Convert.speed(-verticalSpeed, 0, false);
+                    }
                 } else {
                     Log.w(TAG, "Not speaking: vertical speed = " + Convert.speed(verticalSpeed, 0, true));
                 }
@@ -135,6 +139,25 @@ public class MyAudible {
                     Log.w(TAG, "Not speaking: no gps signal");
                 }
                 break;
+//            case "position":
+//                // Read position N10E45
+//                if(MyLocationManager.lastLoc != null && MyLocationManager.lastFixDuration() < 5000) {
+//                    if(MyFlightManager.homeLoc != null) {
+//                        final double bearing = MyLocationManager.lastLoc.bearingTo(MyFlightManager.homeLoc);
+//                        if(-270 < bearing || bearing < 90) {
+//                            // North
+//                        } else {
+//                            // South
+//                        }
+//                        if(bearing < 180) {
+//                            // East
+//                        } else {
+//                            // West
+//                        }
+//                    }
+//                } else {
+//                    Log.w(TAG, "Not speaking: no gps signal");
+//                }
             default:
                 Log.e(TAG, "Invalid audible mode " + audibleMode);
         }

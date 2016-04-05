@@ -24,10 +24,17 @@ public class Convert {
     }
 
     /**
-     * Convert meters/seconds to mph
+     * Convert km/h to mph
      */
-    public static double mps2mph(double mps) {
-        return 2.23694 * mps;
+    public static double kph2mph(double kph) {
+        return 0.621371 * kph;
+    }
+
+    /**
+     * Convert km/h to mph
+     */
+    public static double mph2kph(double kph) {
+        return 1.60934 * kph;
     }
 
     /**
