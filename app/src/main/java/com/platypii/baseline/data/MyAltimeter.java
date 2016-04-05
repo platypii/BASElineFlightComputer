@@ -278,7 +278,7 @@ public class MyAltimeter {
         sensorManager = null;
 
         if(listeners.size() > 0) {
-            Log.e(TAG, "Stopping location service, but listeners are still listening");
+            Log.e(TAG, "Stopping altimeter service, but listeners are still listening");
         }
     }
 

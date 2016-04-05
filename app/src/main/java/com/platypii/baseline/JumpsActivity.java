@@ -91,4 +91,17 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
         // Refresh sync status
         listAdapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Start flight services
+        Services.start(this);
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Stop flight services
+        Services.stop();
+    }
 }

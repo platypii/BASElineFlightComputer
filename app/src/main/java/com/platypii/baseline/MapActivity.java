@@ -122,7 +122,13 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                 return false;
             }
         });
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Start flight services
+        Services.start(this);
         // Start sensor updates
         MyLocationManager.addListener(this);
         MyAltimeter.addListener(this);
@@ -370,11 +376,19 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mapFragment.removeOnTouchListeners();
+    public void onStop() {
+        super.onStop();
+
         // Stop sensor updates
         MyLocationManager.removeListener(this);
         MyAltimeter.removeListener(this);
+        // Stop flight services
+        Services.stop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapFragment.removeOnTouchListeners();
     }
 }

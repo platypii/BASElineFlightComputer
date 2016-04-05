@@ -177,10 +177,21 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                     updateSpeechRate(speechRate);
                     break;
             }
-
             return true;
         }
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Start flight services
+        Services.start(this);
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Stop flight services
+        Services.stop();
     }
 
 }

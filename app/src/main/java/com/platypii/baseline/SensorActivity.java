@@ -174,12 +174,12 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     private void updateGPS(MLocation loc) {
         satelliteLabel.setText("Satellites: " + MyLocationManager.satellitesInView + " visible, " + MyLocationManager.satellitesUsed + " used in fix");
         if(loc != null) {
-            if(Util.isReal(loc.latitude)) {
+            if (Util.isReal(loc.latitude)) {
                 latitudeLabel.setText(String.format("Lat: %.6f", loc.latitude));
             } else {
                 latitudeLabel.setText("Lat: ");
             }
-            if(Util.isReal(loc.latitude)) {
+            if (Util.isReal(loc.latitude)) {
                 longitudeLabel.setText(String.format("Long: %.6f", loc.longitude));
             } else {
                 longitudeLabel.setText("Long: ");
@@ -245,5 +245,17 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     public void altitudeOnPostExecute() {
         updateAltimeter();
     }
-    
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Start flight services
+        Services.start(this);
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Stop flight services
+        Services.stop();
+    }
 }

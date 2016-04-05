@@ -22,24 +22,25 @@ public class MyAudible {
     private static boolean isInitialized = false;
 
     public static void init(Context appContext) {
+        Log.i(TAG, "Initializing audible");
         prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
         speech = new Speech(appContext);
 
         if(!isInitialized) {
             isInitialized = true;
             audibleThread = new AudibleThread();
+
+            final boolean audibleEnabled = prefs.getBoolean("audible_enabled", false);
+            if(audibleEnabled) {
+                startAudible();
+            }
         } else {
             Log.w(TAG, "Audible initialized twice");
-        }
-
-        final boolean audibleEnabled = prefs.getBoolean("audible_enabled", false);
-        // final boolean audibleEnabled = Boolean.parseBoolean(prefs.getString("audible_enabled", "false"));
-        if(audibleEnabled) {
-            startAudible();
         }
     }
 
     public static void startAudible() {
+        Log.i(TAG, "Starting audible");
         if(isInitialized) {
             if(!audibleThread.isEnabled()) {
                 audibleThread.start();
@@ -86,8 +87,7 @@ public class MyAudible {
      */
     static int getDelay() {
         final float speechRate = Float.parseFloat(prefs.getString("audible_rate", "2.0"));
-        final int delay = (int) (speechRate * 1000f);
-        return delay;
+        return (int) (speechRate * 1000f);
     }
 
     private static String getMeasurement() {

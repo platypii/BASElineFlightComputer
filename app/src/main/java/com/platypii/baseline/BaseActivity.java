@@ -20,7 +20,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.util.Callback;
 
@@ -58,9 +57,6 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-        // Start flight services
-        Services.start(this);
     }
 
     @Override
@@ -72,7 +68,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
             // and the GoogleSignInResult will be available instantly.
             Log.d(TAG, "Got cached sign-in");
-            GoogleSignInResult result = opr.get();
+            final GoogleSignInResult result = opr.get();
             handleSignInResult(result);
         } else {
             // If the user has not previously signed in on this device or the sign-in has expired,
@@ -91,6 +87,9 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
         if(signInButton != null) {
             signInButton.setOnClickListener(signInClickListener);
         }
+
+        // Start flight services
+        Services.start(this);
     }
     private final View.OnClickListener signInClickListener = new View.OnClickListener() {
         @Override
@@ -132,7 +131,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
 
                         // Show sign in panel
                         final View signInPanel = findViewById(R.id.sign_in_panel);
-                        if(signInPanel != null) {
+                        if (signInPanel != null) {
                             signInPanel.setVisibility(View.VISIBLE);
                         }
                     }
@@ -151,8 +150,8 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
             handleSignInResult(result);
         } else if(requestCode == MY_TTS_DATA_CHECK_CODE) {
             if(resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                // success, start the audible
-                MyAudible.init(getApplicationContext());
+                // Notify services that TTS is ready
+                Services.onTtsLoaded(getApplicationContext());
             } else {
                 // missing data, install it
                 final Intent installIntent = new Intent();
@@ -241,9 +240,8 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.i(TAG, "onDestroy()");
+    public void onStop() {
+        super.onStop();
 
         // If track is still recording, services will take care of it
         Services.stop();
