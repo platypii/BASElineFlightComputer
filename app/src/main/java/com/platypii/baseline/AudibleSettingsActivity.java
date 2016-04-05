@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.data.Convert;
+import com.platypii.baseline.util.Util;
 
 /**
  * Settings activity for audible configuration
@@ -67,9 +68,9 @@ public class AudibleSettingsActivity extends PreferenceActivity {
         private void updateViews() {
             // Read preferences
             final String audibleMode = modePreference.getValue();
-            final double min = Double.parseDouble(minPreference.getText());
-            final double max = Double.parseDouble(maxPreference.getText());
-            final double speechRate = Double.parseDouble(ratePreference.getText());
+            final double min = Util.parseDouble(minPreference.getText());
+            final double max = Util.parseDouble(maxPreference.getText());
+            final double speechRate = Util.parseDouble(ratePreference.getText());
             // Update views
             updateAudibleMode(audibleMode, min, max);
             updateSpeechRate(speechRate);
@@ -123,8 +124,8 @@ public class AudibleSettingsActivity extends PreferenceActivity {
         public boolean onPreferenceChange(@NonNull Preference preference, Object value) {
             final String key = preference.getKey();
             final String previousAudibleMode = modePreference.getValue();
-            final double previousMin = Double.parseDouble(minPreference.getText());
-            final double previousMax = Double.parseDouble(maxPreference.getText());
+            final double previousMin = Util.parseDouble(minPreference.getText());
+            final double previousMax = Util.parseDouble(maxPreference.getText());
             switch(key) {
                 case "audible_enabled":
                     final boolean audibleEnabled = (Boolean) value;
@@ -168,16 +169,19 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                     break;
                 case "audible_min":
                     // Convert local units
-                    final double min = Double.parseDouble((String) value);
+                    final double min = Util.parseDouble((String) value);
+                    if(!Util.isReal(min)) return false;
                     updateAudibleMode(previousAudibleMode, min, previousMax);
                     break;
                 case "audible_max":
                     // Convert local units
-                    final double max = Double.parseDouble((String) value);
+                    final double max = Util.parseDouble((String) value);
+                    if(!Util.isReal(max)) return false;
                     updateAudibleMode(previousAudibleMode, previousMin, max);
                     break;
                 case "audible_rate":
-                    final double speechRate = Double.parseDouble((String) value);
+                    final double speechRate = Util.parseDouble((String) value);
+                    if(!Util.isReal(speechRate)) return false;
                     updateSpeechRate(speechRate);
                     break;
             }

@@ -96,15 +96,16 @@ public class MyAudible {
 
     private static String getMeasurement() {
         final String audibleMode = prefs.getString("audible_mode", "horizontal_speed");
-        final float min = Float.parseFloat(prefs.getString("audible_min", "0"));
-        final float max = Float.parseFloat(prefs.getString("audible_max", "62.6"));
+        final double units = Convert.metric? Convert.KPH : Convert.MPH;
+        final double min = Util.parseDouble(prefs.getString("audible_min", "-1000"));
+        final double max = Util.parseDouble(prefs.getString("audible_max", "1000"));
         String measurement = "";
         switch(audibleMode) {
             case "horizontal_speed":
                 // Read horizontal speed
                 if(MyLocationManager.lastLoc != null && MyLocationManager.lastFixDuration() < 5000) {
                     final double horizontalSpeed = MyLocationManager.lastLoc.groundSpeed();
-                    if (Util.isReal(horizontalSpeed) && min <= horizontalSpeed && horizontalSpeed <= max) {
+                    if (Util.isReal(horizontalSpeed) && min * units <= horizontalSpeed && horizontalSpeed <= max * units) {
                         measurement = Convert.speed(horizontalSpeed, 0, false);
                     } else {
                         Log.w(TAG, "Not speaking: horizontal speed = " + Convert.speed(horizontalSpeed, 0, true));
@@ -116,7 +117,7 @@ public class MyAudible {
             case "vertical_speed":
                 // Read vertical speed
                 final double verticalSpeed = MyAltimeter.climb;
-                if (Util.isReal(verticalSpeed) && min <= verticalSpeed && verticalSpeed <= max) {
+                if (Util.isReal(verticalSpeed) && min * units <= verticalSpeed && verticalSpeed <= max * units) {
                     if(verticalSpeed > 0) {
                         measurement = "+" + Convert.speed(verticalSpeed, 0, false);
                     } else {
