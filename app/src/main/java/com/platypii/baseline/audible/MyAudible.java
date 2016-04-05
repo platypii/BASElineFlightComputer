@@ -59,6 +59,10 @@ public class MyAudible {
         }
     }
 
+    public static boolean isEnabled() {
+        return isInitialized && audibleThread != null && audibleThread.isEnabled();
+    }
+
     public static void stopAudible() {
         if(isInitialized) {
             audibleThread.stop();

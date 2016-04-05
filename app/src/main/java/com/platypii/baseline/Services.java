@@ -110,7 +110,7 @@ public class Services {
         @Override
         public void run() {
             if(initialized && startCount == 0) {
-                if(!MyDatabase.isLogging()) {
+                if(!MyDatabase.isLogging() && !MyAudible.isEnabled()) {
                     Log.i(TAG, "All activities have stopped. Stopping services.");
                     // Stop services
                     MyAudible.terminate();
@@ -119,7 +119,12 @@ public class Services {
                     KVStore.stop();
                     initialized = false;
                 } else {
-                    Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
+                    if(MyDatabase.isLogging()) {
+                        Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
+                    }
+                    if(MyAudible.isEnabled()) {
+                        Log.w(TAG, "All activities have stopped, but audible still active. Leaving services running.");
+                    }
                 }
             }
         }
