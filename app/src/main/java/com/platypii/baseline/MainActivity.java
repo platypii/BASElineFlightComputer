@@ -1,9 +1,11 @@
 package com.platypii.baseline;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Menu;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.MyAltimeter;
@@ -55,6 +58,31 @@ public class MainActivity extends BaseActivity {
         recordButton = (Button) findViewById(R.id.recordButton);
         clock = (TextView) findViewById(R.id.clock);
         signalStatus = (TextView) findViewById(R.id.signalStatus);
+
+        final Button audibleButton = (Button) findViewById(R.id.audibleButton);
+        audibleButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                final SharedPreferences.Editor editor = prefs.edit();
+                if (MyAudible.isEnabled()) {
+                    // Stop audible
+                    Toast.makeText(MainActivity.this, "Stopping audible", Toast.LENGTH_SHORT).show();
+                    editor.putBoolean("audible_enabled", false);
+                    editor.apply();
+
+                    MyAudible.stopAudible();
+                } else {
+                    // Start audible
+                    Toast.makeText(MainActivity.this, "Starting audible", Toast.LENGTH_SHORT).show();
+                    editor.putBoolean("audible_enabled", true);
+                    editor.apply();
+
+                    MyAudible.startAudible();
+                }
+                return false;
+            }
+        });
     }
 
     @Override
