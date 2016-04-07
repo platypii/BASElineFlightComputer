@@ -16,6 +16,7 @@ public class AnalogAltimeter extends View {
     private double altitude = 0.0;
 
     private final AnalogAltimeterOptions options;
+    private boolean overlay = false;
 
     // Avoid creating new objects unnecessarily
     private final Paint paint = new Paint();
@@ -44,8 +45,12 @@ public class AnalogAltimeter extends View {
         }
 
         final float density = getResources().getDisplayMetrics().density;
-        blurMask = new BlurMaskFilter(6 * density, Blur.INNER);
+        blurMask = new BlurMaskFilter(8 * density, Blur.INNER);
         paint.setAntiAlias(true);
+    }
+
+    public void setOverlay(boolean overlay) {
+        this.overlay = overlay;
     }
 
     public void setAltitude(double altitude) {
@@ -68,14 +73,13 @@ public class AnalogAltimeter extends View {
         final float scale_factor = radius / 200;
 
         // Draw face
-        final boolean flat = true;
-        if(flat) {
+        if(overlay) {
             paint.setColor(0xbbeeeeee);
             paint.setStyle(Paint.Style.FILL);
             canvas.drawCircle(center_x, center_y, radius, paint);
         } else {
-            // paint.setColor(0xff000000);
-            // canvas.drawCircle(center_x, center_y, radius, paint);
+            paint.setColor(0xff000000);
+            canvas.drawCircle(center_x, center_y, radius, paint);
             paint.setColor(0xffdddddd);
             paint.setStyle(Paint.Style.FILL);
             paint.setMaskFilter(blurMask); // inset

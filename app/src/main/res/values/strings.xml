@@ -72,6 +72,9 @@
     <string name="pref_bluetooth_device">Bluetooth device</string>
     <string name="pref_bluetooth_device_description">Select bluetooth device</string>
 
+    <!-- Altimeter -->
+    <string name="action_altimeter">Altimeter</string>
+
     <!-- Settings -->
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>

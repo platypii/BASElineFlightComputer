@@ -1,7 +1,6 @@
 package com.platypii.baseline;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -9,15 +8,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog;
-import android.text.InputType;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,7 +35,6 @@ import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
-import com.platypii.baseline.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,11 +96,12 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         homeButton = (ImageButton) findViewById(R.id.homeButton);
         crosshair = (ImageView) findViewById(R.id.crosshair);
 
+        analogAltimeter.setOverlay(true);
         analogAltimeter.setLongClickable(true);
         analogAltimeter.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                promptForAltitude();
+                AltimeterActivity.promptForAltitude(MapActivity.this);
                 return false;
             }
         });
@@ -336,38 +332,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         }
     }
 
-    private void promptForAltitude() {
-        Log.i(TAG, "Prompting for ground level adjustment");
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Set Altitude AGL");
-        builder.setMessage("Altitude above ground level in feet");
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-        input.setHint("0");
-        builder.setView(input);
-        builder.setPositiveButton(R.string.set_altitude, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                final String inputText = input.getText().toString();
-                final double altitude = inputText.isEmpty()? 0.0 : Util.parseDouble(inputText) * Convert.FT;
-                if(Util.isReal(altitude)) {
-                    Log.w(TAG, "Setting altitude above ground level to " + altitude + "m");
-                    MyAltimeter.ground_level = MyAltimeter.pressure_altitude - altitude;
-                } else {
-                    Log.e(TAG, "Invalid altitude above ground level: " + altitude);
-                    Toast.makeText(MapActivity.this, "Invalid altitude", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-            }
-        });
-        // Create the AlertDialog
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -375,6 +339,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         if(Services.location.lastLoc != null) {
             onLocationChangedPostExecute();
         }
+        altitudeOnPostExecute();
     }
     @Override
     public void onPause() {

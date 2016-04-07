@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="#ff111111"
+             tools:context="com.platypii.baseline.AltimeterActivity">
+
+    <TextView
+        android:id="@+id/digitalAltimeter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLargeInverse"
+        android:textColor="#ffffffff"
+        android:textSize="56dp" />
+
+    <include
+        layout="@layout/flight_stats"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <com.platypii.baseline.AnalogAltimeter
+        android:id="@+id/analogAltimeter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

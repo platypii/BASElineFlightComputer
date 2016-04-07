@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/menu_item_altimeter"
+        android:title="@string/action_altimeter" />
+    <item
         android:id="@+id/menu_item_settings"
         android:title="@string/action_settings" />
     <item

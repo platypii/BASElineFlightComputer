@@ -287,6 +287,10 @@ public class MainActivity extends BaseActivity {
                 // Open settings activity
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
+            case R.id.menu_item_altimeter:
+                // Open altimeter activity
+                startActivity(new Intent(this, AltimeterActivity.class));
+                return true;
             case R.id.menu_item_sensor_info:
                 // Open sensor activity
                 startActivity(new Intent(this, SensorActivity.class));
