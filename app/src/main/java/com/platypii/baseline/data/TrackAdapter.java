@@ -14,7 +14,7 @@ import java.util.List;
 
 public class TrackAdapter extends ArrayAdapter<Jump> {
 
-    private List<Jump> jumpList;
+    private final List<Jump> jumpList;
 
     public TrackAdapter(Context context, int resource, List<Jump> jumpList) {
         super(context, resource, jumpList);

@@ -106,7 +106,7 @@ public class Services {
     /**
      * A thread that shuts down services after activity has stopped
      */
-    private static Runnable stopRunnable = new Runnable() {
+    private static final Runnable stopRunnable = new Runnable() {
         @Override
         public void run() {
             if(initialized && startCount == 0) {

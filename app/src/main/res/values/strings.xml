@@ -19,8 +19,9 @@
 
     <string name="signin_prompt">Sign in using your google account to sync tracks with https://base-line.ws/</string>
 
-    <string name="signin_failed">Sign in failed, please try again</string>
-    <string name="signout_message">Signed out</string>
+    <string name="signin_success">Signed in</string>
+    <string name="signin_failed">Sign in failed</string>
+    <string name="signout_success">Signed out</string>
 
     <string name="delete_local">Are you sure you want to delete this track from the local device? It has not been synced online yet.</string>
     <string name="delete_remote">Are you sure you want to delete this track from the local device? It will remain on https://base-line.ws/ for later viewing.</string>

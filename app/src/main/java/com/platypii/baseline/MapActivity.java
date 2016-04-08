@@ -171,7 +171,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         Log.w(TAG, "Map ready");
     }
 
-    private View.OnClickListener homeButtonListener = new View.OnClickListener() {
+    private final View.OnClickListener homeButtonListener = new View.OnClickListener() {
         public void onClick(View arg0) {
             if(map != null) {
                 // Set home location to map center

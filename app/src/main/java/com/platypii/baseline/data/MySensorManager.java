@@ -30,7 +30,7 @@ public class MySensorManager {
 
     private static final List<MySensorListener> listeners = new ArrayList<>();
 
-    private static SensorEventListener androidSensorListener = new SensorEventListener() {
+    private static final SensorEventListener androidSensorListener = new SensorEventListener() {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
         public void onSensorChanged(@NonNull SensorEvent event) {
             final long t = event.timestamp; // nano

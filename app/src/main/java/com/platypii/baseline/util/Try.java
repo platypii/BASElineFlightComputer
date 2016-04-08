@@ -3,7 +3,7 @@ package com.platypii.baseline.util;
 public class Try<T> {
 
     public static class Success<T2> extends Try<T2> {
-        public T2 result;
+        public final T2 result;
         public Success(T2 result) {
             this.result = result;
         }
@@ -14,9 +14,9 @@ public class Try<T> {
     }
 
     public static class Failure<T2> extends Try<T2> {
-        public String error;
+        public final String error;
         public Failure(String msg) {
-            this.error = error;
+            this.error = msg;
         }
         @Override
         public String toString() {

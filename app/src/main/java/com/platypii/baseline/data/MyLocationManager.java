@@ -382,7 +382,7 @@ public class MyLocationManager {
     };
 
     private static GpsStatus gpsStatus;
-    private static GpsStatus.Listener statusListener = new GpsStatus.Listener() {
+    private static final GpsStatus.Listener statusListener = new GpsStatus.Listener() {
         @Override
         public void onGpsStatusChanged(int event) {
             switch (event) {

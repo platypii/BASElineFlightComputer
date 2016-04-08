@@ -18,7 +18,7 @@ import java.util.List;
 public class TouchableMapFragment extends SupportMapFragment {
     private View originalContentView;
 
-    private List<View.OnTouchListener> listeners = new ArrayList<>();
+    private final List<View.OnTouchListener> listeners = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {

@@ -23,7 +23,7 @@ import com.google.android.gms.common.api.Status;
 import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.util.Callback;
 
-public class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "BaseActivity";
 
     /* Client used to interact with Google APIs */
@@ -125,7 +125,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
                     @Override
                     public void onResult(@NonNull Status status) {
                         Log.d(TAG, "signOut:onResult:" + status);
-                        Toast.makeText(BaseActivity.this, "Signed out", Toast.LENGTH_LONG).show();
+                        Toast.makeText(BaseActivity.this, R.string.signout_success, Toast.LENGTH_LONG).show();
 
                         account = null;
 
@@ -146,7 +146,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         } else if(requestCode == MY_TTS_DATA_CHECK_CODE) {
             if(resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
@@ -184,7 +184,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
                 signInPanel.setVisibility(View.GONE);
             }
             if(userClickedSignIn) {
-                Toast.makeText(this, "Signed in", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.signin_success, Toast.LENGTH_LONG).show();
             }
         } else {
             Log.w(TAG, "Sign in failed");
@@ -193,7 +193,7 @@ public class BaseActivity extends AppCompatActivity implements GoogleApiClient.O
                 signInPanel.setVisibility(View.VISIBLE);
             }
             if(userClickedSignIn) {
-                Toast.makeText(this, "Sign in failed", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
             }
         }
         userClickedSignIn = false;

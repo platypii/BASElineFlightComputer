@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SyncStatus {
 
-    private static List<SyncListener> listeners = new ArrayList<>();
+    private static final List<SyncListener> listeners = new ArrayList<>();
 
     public static void addListener(SyncListener listener) {
         listeners.add(listener);

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_av_timer_white_24dp"
         android:drawablePadding="2dp"
-        android:text="-2ft"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceLargeInverse"
         android:textColor="#ffffffff" />
 

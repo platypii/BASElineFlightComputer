@@ -12,7 +12,7 @@ class Speech implements TextToSpeech.OnInitListener {
     private static final String TAG = "Speech";
 
     private boolean isReady = false;
-    private TextToSpeech tts;
+    private final TextToSpeech tts;
 
     private List<String> queue;
 
