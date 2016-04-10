@@ -48,7 +48,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // enableStrictMode();
+        enableStrictMode();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -107,8 +107,8 @@ public class MainActivity extends BaseActivity {
 
     private void enableStrictMode() {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectDiskReads()
-                .detectDiskWrites()
+                // .detectDiskReads()
+                // .detectDiskWrites()
                 .detectNetwork()  // or .detectAll() for all detectable problems
                 .penaltyLog()
                 .build());

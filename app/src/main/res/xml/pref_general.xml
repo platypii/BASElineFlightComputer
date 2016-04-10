@@ -6,4 +6,15 @@
         android:title="@string/pref_metric"
         android:defaultValue="false"/>
 
+    <SwitchPreference
+        android:key="bluetooth_enabled"
+        android:summary="@string/pref_bluetooth_description"
+        android:title="@string/pref_bluetooth"
+        android:defaultValue="false"/>
+
+    <com.platypii.baseline.bluetooth.BluetoothDevicePreference
+        android:key="bluetooth_device"
+        android:summary="@string/pref_bluetooth_device_description"
+        android:title="@string/pref_bluetooth_device"/>
+
 </PreferenceScreen>

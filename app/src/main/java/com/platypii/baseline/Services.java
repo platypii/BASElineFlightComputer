@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.platypii.baseline.audible.MyAudible;
+import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.KVStore;
 import com.platypii.baseline.data.MyAltimeter;
@@ -57,6 +58,11 @@ public class Services {
 
             Log.i(TAG, "Starting key value store");
             KVStore.start(appContext);
+
+            Log.i(TAG, "Starting bluetooth service");
+            if(BluetoothService.preferenceEnabled) {
+                BluetoothService.start(activity);
+            }
 
             Log.i(TAG, "Starting location service");
             if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -139,6 +145,10 @@ public class Services {
 
         // Metric
         Convert.metric = prefs.getBoolean("metric_enabled", false);
+
+        // Bluetooth
+        BluetoothService.preferenceEnabled = prefs.getBoolean("bluetooth_enabled", false);
+        BluetoothService.preferenceDevice = prefs.getString("bluetooth_device", null);
 
         // Home location
         final double home_latitude = Util.parseDouble(prefs.getString("home_latitude", null));

@@ -3,6 +3,7 @@ package com.platypii.baseline.location;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.data.measurements.MLocation;
 
 /**
@@ -15,13 +16,17 @@ public class LocationService extends LocationProvider {
 
     private final LocationProviderNMEA locationProviderNMEA = new LocationProviderNMEA();
     private final LocationProviderAndroid locationProviderAndroid = new LocationProviderAndroid();
+    private final LocationProviderBluetooth locationProviderBluetooth = new LocationProviderBluetooth();
+
     private final MyLocationListener nmeaListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(MLocation loc) {
-            if(Float.isNaN(loc.hAcc)) {
-                loc.hAcc = hAcc;
+            if(!BluetoothService.preferenceEnabled) {
+                if (Float.isNaN(loc.hAcc)) {
+                    loc.hAcc = hAcc;
+                }
+                updateLocation(loc);
             }
-            updateLocation(loc);
         }
         @Override
         public void onLocationChangedPostExecute() {}
@@ -38,13 +43,28 @@ public class LocationService extends LocationProvider {
         @Override
         public void onLocationChangedPostExecute() {}
     };
+    private final MyLocationListener bluetoothListener = new MyLocationListener() {
+        @Override
+        public void onLocationChanged(MLocation loc) {
+            if(BluetoothService.preferenceEnabled) {
+                if (Float.isNaN(loc.hAcc)) {
+                    loc.hAcc = hAcc;
+                }
+                updateLocation(loc);
+            }
+        }
+        @Override
+        public void onLocationChangedPostExecute() {}
+    };
 
     @Override
     public void start(@NonNull Context context) {
         locationProviderNMEA.start(context);
-        locationProviderAndroid.start(context);
         locationProviderNMEA.addListener(nmeaListener);
+        locationProviderAndroid.start(context);
         locationProviderAndroid.addListener(androidListener);
+        locationProviderBluetooth.start(context);
+        locationProviderBluetooth.addListener(bluetoothListener);
     }
 
     @Override
@@ -52,6 +72,7 @@ public class LocationService extends LocationProvider {
         super.stop();
         locationProviderNMEA.stop();
         locationProviderAndroid.stop();
+        locationProviderBluetooth.stop();
     }
 
 }
