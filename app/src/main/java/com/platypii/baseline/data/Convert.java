@@ -141,7 +141,7 @@ public class Convert {
                 return bearingStr;
         }
     }
-    
+
     public static String glide(double glideRatio) {
         return glide(glideRatio, 1);
     }
@@ -155,11 +155,8 @@ public class Convert {
             return "Level";
         } else {
             final String value;
-            if(precision == 0) {
-                // Faster special case for integers
-                value = Long.toString(Math.round(glideRatio));
-            } else if(glideRatio > 0) {
-                value = String.format("+%." + precision + "f", glideRatio);
+            if(glideRatio < 0) {
+                value = String.format("+%." + precision + "f", -glideRatio);
             } else {
                 value = String.format("%." + precision + "f", glideRatio);
             }
@@ -170,7 +167,7 @@ public class Convert {
             }
         }
     }
-    
+
     public static String pressure(double hPa) {
         if(Double.isNaN(hPa))
             return "";
