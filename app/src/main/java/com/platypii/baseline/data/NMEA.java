@@ -85,9 +85,8 @@ public class NMEA {
     /** Returns true if the checksum is valid */
     static boolean nmeaChecksum(String nmea) {
         int starIndex = nmea.indexOf('*');
-
-        if(nmea.charAt(0) != '$' || nmea.charAt(6) != ',' || nmea.charAt(starIndex) != '*') {
-            Log.e(TAG, "Invalid NMEA sentence");
+        if(nmea == null || nmea.length() < 8 || nmea.charAt(0) != '$' || nmea.charAt(6) != ',' || starIndex == -1) {
+            Log.e(TAG, "Invalid NMEA sentence " + nmea.trim());
             return false;
         }
 
