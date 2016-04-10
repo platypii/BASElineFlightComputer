@@ -45,6 +45,24 @@
             android:layout_height="wrap_content"
             android:text="Sample rate: " />
 
+        <TextView
+            android:id="@+id/groundLevelLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ground level: " />
+
+        <TextView
+            android:id="@+id/altitudeAglLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Altitude AGL: " />
+
+        <TextView
+            android:id="@+id/fallrateLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fallrate: " />
+
         <com.platypii.baseline.ElevationTimePlot
             android:layout_width="match_parent"
             android:layout_height="80dp" />

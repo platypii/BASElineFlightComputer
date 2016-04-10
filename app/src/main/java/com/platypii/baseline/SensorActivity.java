@@ -28,6 +28,9 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     private TextView barStatsLabel;
     private TextView altitudeLabel;
     private TextView altitudeRefreshLabel;
+    private TextView groundLevelLabel;
+    private TextView altitudeAglLabel;
+    private TextView fallrateLabel;
     // GPS
     private TextView satelliteLabel;
     private TextView lastFixLabel;
@@ -66,6 +69,9 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         barStatsLabel = (TextView)findViewById(R.id.barStatsLabel);
         altitudeLabel = (TextView)findViewById(R.id.altitudeLabel);
         altitudeRefreshLabel = (TextView)findViewById(R.id.altitudeRefreshLabel);
+        groundLevelLabel = (TextView)findViewById(R.id.groundLevelLabel);
+        altitudeAglLabel = (TextView)findViewById(R.id.altitudeAglLabel);
+        fallrateLabel = (TextView)findViewById(R.id.fallrateLabel);
 
         // GPS
         satelliteLabel = (TextView)findViewById(R.id.satelliteLabel);
@@ -169,6 +175,9 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         pressureAltitudeLabel.setText("Pressure Altitude: " + Convert.distance(MyAltimeter.pressure_altitude, 2));
         barStatsLabel.setText("Pressure Stats: mean = " + Convert.distance(MyAltimeter.pressure_altitude_stat.mean(), 2) + ", stdev = " + Convert.distance(Math.sqrt(MyAltimeter.pressure_altitude_stat.var()), 2));
         altitudeLabel.setText("Altitude (corrected): " + Convert.distance(MyAltimeter.altitude, 2));
+        groundLevelLabel.setText("Ground level: " + Convert.distance(MyAltimeter.ground_level, 2) + " MSL");
+        altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(MyAltimeter.altitudeAGL(), 2) + " AGL");
+        fallrateLabel.setText("Fallrate: " + Convert.speed(-MyAltimeter.climb));
     }
 
     private void updateGPS(MLocation loc) {
