@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -83,7 +84,14 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(R.layout.activity_map);
+        try {
+            setContentView(R.layout.activity_map);
+        } catch(InflateException e) {
+            Log.e(TAG, "Google maps error #9021", e);
+            Toast.makeText(this, "Google maps error #9021", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
@@ -388,7 +396,11 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        mapFragment.removeOnTouchListeners();
+        try {
+            super.onDestroy();
+            mapFragment.removeOnTouchListeners();
+        } catch(Exception e) {
+            Log.e(TAG, "Exception in onDestroy", e);
+        }
     }
 }
