@@ -352,7 +352,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                 final double altitude = inputText.isEmpty()? 0.0 : Util.parseDouble(inputText) * Convert.FT;
                 if(Util.isReal(altitude)) {
                     Log.w(TAG, "Setting altitude above ground level to " + altitude + "m");
-                    MyAltimeter.ground_level = MyAltimeter.altitude - altitude;
+                    MyAltimeter.ground_level = MyAltimeter.pressure_altitude - altitude;
                 } else {
                     Log.e(TAG, "Invalid altitude above ground level: " + altitude);
                     Toast.makeText(MapActivity.this, "Invalid altitude", Toast.LENGTH_SHORT).show();

@@ -82,7 +82,7 @@ public class MyAltimeter {
     }
 
     public static double altitudeAGL() {
-        return altitude - ground_level;
+        return pressure_altitude - ground_level;
     }
 
     // Sensor Event Listener
@@ -180,14 +180,12 @@ public class MyAltimeter {
                     // First altitude reading. Calibrate ground level.
                     final double altitude_correction = altitude_raw - loc.altitude_gps;
                     altitude_offset = pressure_altitude - loc.altitude_gps;
-                    ground_level -= altitude_correction;
                 } else {
                     // Average the first N samples, then use moving average with lag 20
                     final double altitude_error = altitude_raw - loc.altitude_gps;
                     final long correction_factor = Math.min(gps_sample_count, 20);
                     final double altitude_correction = altitude_error / correction_factor;
                     altitude_offset += altitude_correction;
-                    ground_level -= altitude_correction;
                 }
             } else {
                 // No barometer use gps
