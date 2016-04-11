@@ -1,4 +1,4 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline.location;
 
 import com.platypii.baseline.data.measurements.MLocation;
 

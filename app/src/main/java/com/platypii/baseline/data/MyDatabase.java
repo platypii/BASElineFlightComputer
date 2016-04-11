@@ -4,9 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.platypii.baseline.Services;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.data.measurements.Measurement;
+import com.platypii.baseline.location.MyLocationListener;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -98,7 +100,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
 
         // Start sensor updates
         MyAltimeter.addListener(this);
-        MyLocationManager.addListener(this);
+        Services.location.addListener(this);
         MySensorManager.addListener(this);
 
         Log.i("DB", "Logging to " + logFile);
@@ -110,7 +112,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
 
             // Stop sensor updates
             MyAltimeter.removeListener(this);
-            MyLocationManager.removeListener(this);
+            Services.location.removeListener(this);
             MySensorManager.removeListener(this);
 
             // Close file writer

@@ -36,8 +36,8 @@ import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyAltitudeListener;
 import com.platypii.baseline.data.MyFlightManager;
-import com.platypii.baseline.data.MyLocationListener;
-import com.platypii.baseline.data.MyLocationManager;
+import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Util;
@@ -138,7 +138,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         // Start flight services
         Services.start(this);
         // Start sensor updates
-        MyLocationManager.addListener(this);
+        Services.location.addListener(this);
         MyAltimeter.addListener(this);
     }
 
@@ -248,7 +248,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
             updateFlightStats();
         }
         if(ready && !paused) {
-            final LatLng currentLoc = MyLocationManager.lastLoc.latLng();
+            final LatLng currentLoc = Services.location.lastLoc.latLng();
 
             // Update home path
             updateHome();
@@ -292,8 +292,8 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         if(MyFlightManager.homeLoc != null) {
             homeMarker.setPosition(MyFlightManager.homeLoc);
             homeMarker.setVisible(true);
-            if(MyLocationManager.lastLoc != null) {
-                final LatLng currentLoc = MyLocationManager.lastLoc.latLng();
+            if(Services.location.lastLoc != null) {
+                final LatLng currentLoc = Services.location.lastLoc.latLng();
                 homePoints.clear();
                 homePoints.add(currentLoc);
                 homePoints.add(MyFlightManager.homeLoc);
@@ -306,7 +306,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private void updateLanding() {
         final LatLng landingLocation = MyFlightManager.getLandingLocation();
         if(landingLocation != null) {
-            final LatLng currentLoc = MyLocationManager.lastLoc.latLng();
+            final LatLng currentLoc = Services.location.lastLoc.latLng();
             landingMarker.setPosition(landingLocation);
             landingMarker.setVisible(true);
             landingPoints.clear();
@@ -322,7 +322,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
 
     private void updateFlightStats() {
         analogAltimeter.setAltitude(MyAltimeter.altitudeAGL());
-        final MLocation loc = MyLocationManager.lastLoc;
+        final MLocation loc = Services.location.lastLoc;
         flightStatsAltimeter.setText(Convert.distance(MyAltimeter.altitudeAGL()));
         if(MyAltimeter.climb < 0) {
             flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp,0,0,0);
@@ -373,7 +373,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     public void onResume() {
         super.onResume();
         paused = false;
-        if(MyLocationManager.lastLoc != null) {
+        if(Services.location.lastLoc != null) {
             onLocationChangedPostExecute();
         }
     }
@@ -388,7 +388,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         super.onStop();
 
         // Stop sensor updates
-        MyLocationManager.removeListener(this);
+        Services.location.removeListener(this);
         MyAltimeter.removeListener(this);
         // Stop flight services
         Services.stop();

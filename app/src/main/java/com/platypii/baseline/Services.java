@@ -20,7 +20,7 @@ import com.platypii.baseline.data.KVStore;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.data.MyFlightManager;
-import com.platypii.baseline.data.MyLocationManager;
+import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.data.MySensorManager;
 import com.platypii.baseline.util.Util;
 
@@ -38,6 +38,8 @@ public class Services {
     // How long to wait after the last activity shutdown to restart services
     final static Handler handler = new Handler();
     private static final int shutdownDelay = 10000;
+
+    public static LocationService location;
 
     public static void start(@NonNull Activity activity) {
         startCount++;
@@ -60,7 +62,8 @@ public class Services {
             if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 // Enable location services
                 try {
-                    MyLocationManager.start(appContext);
+                    location = new LocationService();
+                    location.start(appContext);
                 } catch (SecurityException e) {
                     Log.e(TAG, "Failed to start location service", e);
                 }
@@ -115,7 +118,8 @@ public class Services {
                     // Stop services
                     MyAudible.terminate();
                     MyAltimeter.stop();
-                    MyLocationManager.stop();
+                    location.stop();
+                    location = null;
                     KVStore.stop();
                     initialized = false;
                 } else {

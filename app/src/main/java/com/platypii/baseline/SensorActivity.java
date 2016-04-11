@@ -6,8 +6,7 @@ import com.platypii.baseline.data.SyncedList;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.MyAltitudeListener;
 import com.platypii.baseline.data.measurements.MLocation;
-import com.platypii.baseline.data.MyLocationListener;
-import com.platypii.baseline.data.MyLocationManager;
+import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.data.MySensorManager;
 import com.platypii.baseline.data.measurements.MSensor;
 import com.platypii.baseline.util.Util;
@@ -128,8 +127,8 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         super.onResume();
 
         // Start GPS updates
-        MyLocationManager.addListener(this);
-        updateGPS(MyLocationManager.lastLoc);
+        Services.location.addListener(this);
+        updateGPS(Services.location.lastLoc);
 
         // Start altitude updates
         MyAltimeter.addListener(this);
@@ -152,7 +151,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         handler.removeCallbacks(updateRunnable);
         updateRunnable = null;
         MyAltimeter.removeListener(this);
-        MyLocationManager.removeListener(this);
+        Services.location.removeListener(this);
     }
 
     private void addPlot(String label, SyncedList<MSensor> history) {
@@ -181,7 +180,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     }
 
     private void updateGPS(MLocation loc) {
-        satelliteLabel.setText("Satellites: " + MyLocationManager.satellitesInView + " visible, " + MyLocationManager.satellitesUsed + " used in fix");
+        satelliteLabel.setText("Satellites: " + Services.location.satellitesInView + " visible, " + Services.location.satellitesUsed + " used in fix");
         if(loc != null) {
             if (Util.isReal(loc.latitude)) {
                 latitudeLabel.setText(String.format("Lat: %.6f", loc.latitude));
@@ -209,9 +208,9 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     /** Updates the UI that refresh continuously, such as sample rates */
     private void update() {
         // Last fix needs to be updated continuously since it shows time since last fix
-        if(MyLocationManager.lastFixMillis > 0) {
+        if(Services.location.lastFixDuration() >= 0) {
             // Set text color
-            final long lastFixDuration = MyLocationManager.lastFixDuration();
+            final long lastFixDuration = Services.location.lastFixDuration();
             if(lastFixDuration > 3000) {
                 float frac = (6000f - lastFixDuration) / (3000f);
                 frac = Math.max(0, Math.min(frac, 1));
@@ -222,8 +221,8 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
                 lastFixLabel.setTextColor(0xffb0b0b0);
             }
             String lastFix = (lastFixDuration / 1000) + "s";
-            if(MyLocationManager.refreshRate > 0) {
-                lastFix += String.format(" (%.2fHz)", MyLocationManager.refreshRate);
+            if(Services.location.refreshRate > 0) {
+                lastFix += String.format(" (%.2fHz)", Services.location.refreshRate);
             }
             lastFixLabel.setText("Last fix: " + lastFix);
         } else {
@@ -246,7 +245,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     public void onLocationChanged(MLocation loc) {}
     @Override
     public void onLocationChangedPostExecute() {
-        updateGPS(MyLocationManager.lastLoc);
+        updateGPS(Services.location.lastLoc);
     }
     @Override
     public void altitudeDoInBackground(MAltitude alt) {}

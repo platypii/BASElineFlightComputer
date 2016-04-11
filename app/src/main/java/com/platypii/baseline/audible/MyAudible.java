@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.platypii.baseline.Services;
 import com.platypii.baseline.util.Util;
 import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.MyAltimeter;
-import com.platypii.baseline.data.MyLocationManager;
 
 /**
  * Periodically gives audio feedback
@@ -103,8 +104,8 @@ public class MyAudible {
         switch(audibleMode) {
             case "horizontal_speed":
                 // Read horizontal speed
-                if(MyLocationManager.lastLoc != null && MyLocationManager.lastFixDuration() < 5000) {
-                    final double horizontalSpeed = MyLocationManager.lastLoc.groundSpeed();
+                if(Services.location.lastLoc != null && Services.location.lastFixDuration() < 5000) {
+                    final double horizontalSpeed = Services.location.lastLoc.groundSpeed();
                     if (Util.isReal(horizontalSpeed) && min * units <= horizontalSpeed && horizontalSpeed <= max * units) {
                         measurement = Convert.speed(horizontalSpeed, 0, false);
                     } else {
@@ -129,8 +130,8 @@ public class MyAudible {
                 break;
             case "glide_ratio":
                 // Read glide ratio
-                if(MyLocationManager.lastLoc != null && MyLocationManager.lastFixDuration() < 5000) {
-                    final double glideRatio = MyLocationManager.lastLoc.glideRatio();
+                if(Services.location.lastLoc != null && Services.location.lastFixDuration() < 5000) {
+                    final double glideRatio = Services.location.lastLoc.glideRatio();
                     if(Util.isReal(glideRatio) && min <= glideRatio && glideRatio <= max) {
                         measurement = Convert.glide(glideRatio, 1, false);
                     } else {

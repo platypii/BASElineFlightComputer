@@ -22,7 +22,6 @@ import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyDatabase;
-import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.data.TheCloud;
 import com.platypii.baseline.util.Callback;
 
@@ -241,11 +240,11 @@ public class MainActivity extends BaseActivity {
         int statusIcon;
 
         // GPS signal status
-        if(MyLocationManager.lastFixMillis <= 0) {
+        if(Services.location.lastFixDuration() < 0) {
             status = "no signal";
             statusIcon = R.drawable.status_red;
         } else {
-            final long lastFixDuration = MyLocationManager.lastFixDuration();
+            final long lastFixDuration = Services.location.lastFixDuration();
             if(lastFixDuration > 10000) {
                 status = "no signal";
                 statusIcon = R.drawable.status_red;

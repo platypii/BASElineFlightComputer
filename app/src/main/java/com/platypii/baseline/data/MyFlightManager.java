@@ -1,6 +1,7 @@
 package com.platypii.baseline.data;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Util;
 
@@ -30,8 +31,8 @@ public class MyFlightManager {
     public static LatLng getLandingLocation() {
         // Compute time to ground
         final double timeToGround = timeToGround();
-        if(Util.isReal(timeToGround) && MyLocationManager.lastLoc != null) {
-            final MLocation currentLocation = MyLocationManager.lastLoc;
+        if(Util.isReal(timeToGround) && Services.location.lastLoc != null) {
+            final MLocation currentLocation = Services.location.lastLoc;
 
             // Compute horizontal distance traveled at current velocity for timeToGround seconds
             double groundDistance = timeToGround * currentLocation.groundSpeed();

@@ -20,7 +20,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.platypii.baseline.data.MyLocationManager;
 import com.platypii.baseline.util.Callback;
 
 abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -231,7 +230,7 @@ abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient
                     permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION) &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 try {
-                    MyLocationManager.start(getApplication());
+                    Services.location.start(getApplication());
                 } catch(SecurityException e) {
                     Log.e(TAG, "Error enabling location services", e);
                 }

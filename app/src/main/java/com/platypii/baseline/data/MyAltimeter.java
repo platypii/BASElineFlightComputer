@@ -10,10 +10,12 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import java.util.ArrayList;
 
+import com.platypii.baseline.Services;
 import com.platypii.baseline.data.filter.Filter;
 import com.platypii.baseline.data.filter.FilterKalman;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
+import com.platypii.baseline.location.MyLocationListener;
 
 /**
  * Altimeter manager
@@ -75,7 +77,7 @@ public class MyAltimeter {
             }
 
             // Start GPS updates
-            MyLocationManager.addListener(locationListener);
+            Services.location.addListener(locationListener);
         } else {
             Log.w(TAG, "MyAltimeter already started");
         }
@@ -271,7 +273,7 @@ public class MyAltimeter {
     }
 
     public static void stop() {
-        MyLocationManager.removeListener(locationListener);
+        Services.location.removeListener(locationListener);
         sensorManager.unregisterListener(sensorEventListener);
         sensorManager = null;
 
