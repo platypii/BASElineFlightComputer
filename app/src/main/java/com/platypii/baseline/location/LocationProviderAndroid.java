@@ -13,7 +13,7 @@ import android.util.Log;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Util;
 
-public class LocationProviderAndroid extends LocationProvider {
+class LocationProviderAndroid extends LocationProvider {
     private static final String TAG = "LocationServiceAndroid";
 
     // Android Location manager
@@ -33,7 +33,7 @@ public class LocationProviderAndroid extends LocationProvider {
     /** Null listener does nothing. all data comes from NMEA */
     private final LocationListener androidLocationListener = new LocationListener() {
         public void onLocationChanged(Location loc) {
-            // Log.v("GPS", "onLocationChanged(" + loc + ")");
+            // Log.v(TAG, "onLocationChanged(" + loc + ")");
             if (Util.isReal(loc.getLatitude()) && Util.isReal(loc.getLongitude())) {
                 final float hAcc;
                 if (loc.hasAccuracy())
@@ -42,7 +42,7 @@ public class LocationProviderAndroid extends LocationProvider {
                     hAcc = Float.NaN;
 
                 // Phone is not reporting NMEA data, use location data instead
-                Log.v("GPS", "No NMEA data, falling back to LocationManager: " + loc);
+                Log.v(TAG, "No NMEA data, falling back to LocationManager: " + loc);
                 final long lastFixMillis = loc.getTime();
                 final double latitude = loc.getLatitude();
                 final double longitude = loc.getLongitude();

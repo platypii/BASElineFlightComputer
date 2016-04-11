@@ -10,11 +10,11 @@ import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Util;
 
-public class LocationProviderNMEA extends LocationProvider {
+class LocationProviderNMEA extends LocationProvider {
     private static final String TAG = "LocationServiceNMEA";
     private static final String NMEA_TAG = "NMEA";
 
-    public static boolean nmeaReceived = false;
+    public boolean nmeaReceived = false;
 
     // Most recent data
     private long lastFixMillis = -1;
@@ -25,9 +25,6 @@ public class LocationProviderNMEA extends LocationProvider {
     private double vE = Double.NaN;
     private double groundSpeed = Double.NaN;
     private double bearing = Double.NaN;
-    private float hAcc = Float.NaN;
-    //private float vAcc = Float.NaN;
-    //private float sAcc = Float.NaN;
     private float pdop = Float.NaN;
     private float hdop = Float.NaN;
     private float vdop = Float.NaN;
@@ -52,6 +49,7 @@ public class LocationProviderNMEA extends LocationProvider {
     }
 
     private void updateLocation() {
+        final float hAcc = Float.NaN;
         super.updateLocation(new MLocation(lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
                 hAcc, pdop, hdop, vdop, satellitesUsed, groundDistance));
     }

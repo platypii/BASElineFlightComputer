@@ -9,7 +9,7 @@ import java.util.TimeZone;
 /**
  * NMEA decoding functions
  */
-public class NMEA {
+class NMEA {
     private static final String TAG = "NMEA";
 
     private static final Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));

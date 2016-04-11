@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.platypii.baseline.data.SyncedList;
 import com.platypii.baseline.data.measurements.MLocation;
 
 import java.util.ArrayList;
@@ -26,16 +25,14 @@ abstract class LocationProvider {
     public int satellitesUsed = -1; // Satellites used in last fix
 
     // phone time = GPS time + offset
-    public long phoneOffsetMillis = 0;
+    private long phoneOffsetMillis = 0;
 
     // Computed parameters
-    public float groundDistance = 0;
+    float groundDistance = 0;
 
     // History
     public MLocation lastLoc; // last location received
-    public MLocation prevLoc; // 2nd to last
-
-    public final SyncedList<MLocation> history = new SyncedList<>();
+    private MLocation prevLoc; // 2nd to last
 
     /**
      * Start location updates
@@ -83,7 +80,7 @@ abstract class LocationProvider {
     /**
      * Children should call updateLocation() when they have new location information
      */
-    protected void updateLocation(MLocation loc) {
+    void updateLocation(MLocation loc) {
 
         // Store location
         prevLoc = lastLoc;
@@ -114,9 +111,6 @@ abstract class LocationProvider {
 
         // Update gps time offset
         phoneOffsetMillis = System.currentTimeMillis() - lastLoc.millis;
-
-        // History
-        history.append(lastLoc);
 
         // Notify listeners (using AsyncTask so the manager never blocks!)
         new AsyncTask<MLocation, Void, Void>() {

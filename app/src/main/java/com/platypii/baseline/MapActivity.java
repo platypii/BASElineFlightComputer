@@ -37,7 +37,6 @@ import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyAltitudeListener;
 import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.location.MyLocationListener;
-import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Util;
