@@ -70,8 +70,11 @@ public class LocationService extends LocationProvider {
     @Override
     public void stop() {
         super.stop();
+        locationProviderNMEA.removeListener(nmeaListener);
         locationProviderNMEA.stop();
+        locationProviderAndroid.removeListener(androidListener);
         locationProviderAndroid.stop();
+        locationProviderBluetooth.removeListener(bluetoothListener);
         locationProviderBluetooth.stop();
     }
 
