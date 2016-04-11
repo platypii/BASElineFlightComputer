@@ -87,7 +87,7 @@ public class SensorPlot extends PlotView {
 
     private final Bounds bounds = new Bounds();
     @Override
-    public Bounds getBounds(int width, int height, Bounds dataBounds) {
+    public Bounds getBounds(Bounds dataBounds) {
         // Show last N
         bounds.set(dataBounds);
         bounds.clean(min, max);

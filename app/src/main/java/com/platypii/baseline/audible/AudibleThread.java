@@ -6,7 +6,7 @@ import android.util.Log;
 /**
  * Periodically gives audio feedback
  */
-public class AudibleThread {
+class AudibleThread {
     private static final String TAG = "AudibleThread";
 
     private boolean isEnabled = false;

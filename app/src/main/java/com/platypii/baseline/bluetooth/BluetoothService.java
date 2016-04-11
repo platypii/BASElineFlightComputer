@@ -24,9 +24,9 @@ import java.util.UUID;
 public class BluetoothService {
     private static final String TAG = "Bluetooth";
     private static final int ENABLE_BLUETOOTH_CODE = 13;
-    private static UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static final UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    private static List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
+    private static final List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
 
     public static boolean preferenceEnabled = false;
     public static String preferenceDevice = null;
@@ -51,9 +51,8 @@ public class BluetoothService {
             final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             activity.startActivityForResult(enableBluetoothIntent, ENABLE_BLUETOOTH_CODE);
         } else {
-            Log.i(TAG, "Bluetooth is enabled");
-            connect();
-            enabled = true;
+            Log.i(TAG, "Bluetooth is enabled, connecting...");
+            enabled = connect();
         }
         return enabled;
     }
@@ -62,7 +61,7 @@ public class BluetoothService {
      * Connect to gps receiver
      * @return true iff bluetooth socket was created successfully
      */
-    public static boolean connect() {
+    private static boolean connect() {
         if(preferenceDevice != null) {
             bluetoothDevice = bluetoothAdapter.getRemoteDevice(preferenceDevice);
             final UUID uuid;

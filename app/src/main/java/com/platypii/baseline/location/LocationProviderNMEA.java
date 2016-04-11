@@ -189,7 +189,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
              default:
                  Log.w(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
          }
-    };
+    }
 
     private static int parseInt(String str) {
         return str.equals("") ? -1 : Integer.parseInt(str);

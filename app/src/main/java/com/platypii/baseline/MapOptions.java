@@ -18,7 +18,7 @@ class MapOptions {
     static final long SNAP_BACK_TIME = 5000; // millis
 
     // Maximum camera animation duration
-    static final int MAX_ANIMATION_DURATION = 900; // millis
+    private static final int MAX_ANIMATION_DURATION = 900; // millis
 
     /**
      * Returns the default zoom for a given altitude

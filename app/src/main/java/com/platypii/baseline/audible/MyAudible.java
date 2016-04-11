@@ -79,7 +79,7 @@ public class MyAudible {
         }
     }
 
-    static void speakWhenReady() {
+    private static void speakWhenReady() {
         final String measurement = getMeasurement();
         if(measurement != null && measurement.length() > 0) {
             speech.speakWhenReady(measurement);

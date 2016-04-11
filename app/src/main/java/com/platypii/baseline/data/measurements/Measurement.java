@@ -11,12 +11,6 @@ public abstract class Measurement {
 
     public String sensor;
 
-    // Altimeter
-    //public long timeNano = -1; // Nanoseconds reported by android SensorEvent
-    public double altitude = Double.NaN; // Altitude
-    public double climb = Double.NaN; // Rate of climb
-    public double pressure = Double.NaN; // Barometric pressure (hPa)
-
     // All measurements must be able to write out to CSV
     public abstract String toRow();
 

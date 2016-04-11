@@ -37,7 +37,7 @@ public class Services {
     private static boolean initialized = false;
 
     // How long to wait after the last activity shutdown to restart services
-    final static Handler handler = new Handler();
+    private final static Handler handler = new Handler();
     private static final int shutdownDelay = 10000;
 
     public static LocationService location;

@@ -26,7 +26,7 @@
         android:layout_gravity="left|top"
         android:layout_margin="2dp"
         android:background="@drawable/panel"
-        android:contentDescription="pin"
+        android:contentDescription="@string/map_pin"
         android:src="@drawable/ic_pin"
         android:visibility="gone" />
 
@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:src="@drawable/ic_crosshair"
+        android:contentDescription="@string/map_crosshair"
         android:visibility="gone" />
 
 </FrameLayout>

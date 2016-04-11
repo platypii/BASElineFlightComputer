@@ -10,19 +10,22 @@ public class MLocation extends Measurement {
     private static final String TAG = "MLocation";
 
     // GPS
-    public double latitude = Double.NaN; // Latitude
-    public double longitude = Double.NaN; // Longitude
-    public double altitude_gps = Double.NaN; // GPS altitude MSL
-    public double vN = Double.NaN; // Velocity north
-    public double vE = Double.NaN; // Velocity east
+    public final double latitude; // Latitude
+    public final double longitude; // Longitude
+    public final double altitude_gps; // GPS altitude MSL
+    public final double vN; // Velocity north
+    public final double vE; // Velocity east
     public float hAcc = Float.NaN; // Horizontal accuracy
     //public float vAcc = Float.NaN; // Vertical accuracy
     //public float sAcc = Float.NaN; // Speed accuracy
-    public float pdop = Float.NaN; // Positional dilution of precision
-    public float hdop = Float.NaN; // Horizontal dilution of precision
-    public float vdop = Float.NaN; // Vertical dilution of precision
-    public int numSat = -1; // Number of satellites
-    public float groundDistance = Float.NaN; // Ground distance since app started
+    public final float pdop; // Positional dilution of precision
+    public final float hdop; // Horizontal dilution of precision
+    public final float vdop; // Vertical dilution of precision
+    public final int numSat; // Number of satellites
+    public final float groundDistance; // Ground distance since app started
+
+    public final double altitude;  // Altitude (m)
+    public final double climb;  // Rate of climb (m/s)
 
     public MLocation(long millis, double latitude, double longitude, double altitude_gps,
                      double vN, double vE,

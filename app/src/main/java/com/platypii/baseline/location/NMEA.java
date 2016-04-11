@@ -1,5 +1,6 @@
 package com.platypii.baseline.location;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -83,9 +84,9 @@ class NMEA {
     }
 
     /** Returns true if the checksum is valid */
-    static boolean nmeaChecksum(String nmea) {
+    static boolean nmeaChecksum(@NonNull String nmea) {
         int starIndex = nmea.indexOf('*');
-        if(nmea == null || nmea.length() < 8 || nmea.charAt(0) != '$' || nmea.charAt(6) != ',' || starIndex == -1) {
+        if(nmea.length() < 8 || nmea.charAt(0) != '$' || nmea.charAt(6) != ',' || starIndex == -1) {
             Log.e(TAG, "Invalid NMEA sentence " + nmea.trim());
             return false;
         }
@@ -95,7 +96,7 @@ class NMEA {
         for(int i = 1; i < starIndex; i++) {
             checksum1 ^= nmea.charAt(i);
         }
-        short checksum2 = Short.parseShort(nmea.substring(starIndex + 1, starIndex + 3), 16);
+        final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1, starIndex + 3), 16);
         if(checksum1 != checksum2) {
             Log.e(TAG, "Invalid NMEA checksum");
             return false;

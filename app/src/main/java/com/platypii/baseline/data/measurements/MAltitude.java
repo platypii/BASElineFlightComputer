@@ -8,6 +8,11 @@ package com.platypii.baseline.data.measurements;
 public class MAltitude extends Measurement {
     public final String sensor = "Alt";
 
+    // Altimeter
+    public final double altitude;  // Altitude (m)
+    public final double climb;     // Rate of climb (m/s)
+    public final double pressure;  // Barometric pressure (hPa)
+
     public MAltitude(long nano, double altitude, double climb, float pressure) {
         this.nano = nano;
         this.altitude = altitude;

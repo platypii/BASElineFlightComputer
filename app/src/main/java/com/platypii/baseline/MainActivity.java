@@ -48,7 +48,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        enableStrictMode();
+        // enableStrictMode();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -59,29 +59,9 @@ public class MainActivity extends BaseActivity {
         signalStatus = (TextView) findViewById(R.id.signalStatus);
 
         final Button audibleButton = (Button) findViewById(R.id.audibleButton);
-        audibleButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                final SharedPreferences.Editor editor = prefs.edit();
-                if (MyAudible.isEnabled()) {
-                    // Stop audible
-                    Toast.makeText(MainActivity.this, "Stopping audible", Toast.LENGTH_SHORT).show();
-                    editor.putBoolean("audible_enabled", false);
-                    editor.apply();
-
-                    MyAudible.stopAudible();
-                } else {
-                    // Start audible
-                    Toast.makeText(MainActivity.this, "Starting audible", Toast.LENGTH_SHORT).show();
-                    editor.putBoolean("audible_enabled", true);
-                    editor.apply();
-
-                    MyAudible.startAudible();
-                }
-                return false;
-            }
-        });
+        if(audibleButton != null) {
+            audibleButton.setOnLongClickListener(audibleLongClickListener);
+        }
     }
 
     @Override
@@ -220,6 +200,30 @@ public class MainActivity extends BaseActivity {
         final Intent intent = new Intent(this, AudibleSettingsActivity.class);
         startActivity(intent);
     }
+
+    private final View.OnLongClickListener audibleLongClickListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            final SharedPreferences.Editor editor = prefs.edit();
+            if (MyAudible.isEnabled()) {
+                // Stop audible
+                Toast.makeText(MainActivity.this, "Stopping audible", Toast.LENGTH_SHORT).show();
+                editor.putBoolean("audible_enabled", false);
+                editor.apply();
+
+                MyAudible.stopAudible();
+            } else {
+                // Start audible
+                Toast.makeText(MainActivity.this, "Starting audible", Toast.LENGTH_SHORT).show();
+                editor.putBoolean("audible_enabled", true);
+                editor.apply();
+
+                MyAudible.startAudible();
+            }
+            return false;
+        }
+    };
 
     /**
      * Update the text view for timer

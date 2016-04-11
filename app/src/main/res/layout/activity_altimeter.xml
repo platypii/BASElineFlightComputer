@@ -14,7 +14,7 @@
         android:text=""
         android:textAppearance="?android:attr/textAppearanceLargeInverse"
         android:textColor="#ffffffff"
-        android:textSize="56dp" />
+        android:textSize="56sp" />
 
     <include
         layout="@layout/flight_stats"

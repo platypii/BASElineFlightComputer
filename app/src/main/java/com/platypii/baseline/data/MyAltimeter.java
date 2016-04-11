@@ -180,7 +180,6 @@ public class MyAltimeter {
                 // GPS correction for altitude AMSL
                 if(gps_sample_count == 0) {
                     // First altitude reading. Calibrate ground level.
-                    final double altitude_correction = altitude_raw - loc.altitude_gps;
                     altitude_offset = pressure_altitude - loc.altitude_gps;
                 } else {
                     // Average the first N samples, then use moving average with lag 20

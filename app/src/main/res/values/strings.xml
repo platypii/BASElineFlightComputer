@@ -64,6 +64,9 @@
     <string name="set_altitude">Set Altitude</string>
     <string name="cancel">Cancel</string>
 
+    <string name="map_crosshair">crosshair</string>
+    <string name="map_pin">pin</string>
+
     <!-- Bluetooth -->
     <string name="pref_bluetooth">Bluetooth GPS</string>
     <string name="pref_bluetooth_enabled">Bluetooth GPS is enabled</string>

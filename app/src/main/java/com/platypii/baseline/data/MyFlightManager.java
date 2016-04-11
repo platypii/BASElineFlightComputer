@@ -15,7 +15,7 @@ public class MyFlightManager {
     /**
      * Computes the estimated time to ground based on current altitude and climb
      */
-    public static double timeToGround() {
+    private static double timeToGround() {
         double timeToGround = -MyAltimeter.altitudeAGL() / MyAltimeter.climb;
         if(!Util.isReal(timeToGround) || timeToGround < 0.01 || Math.abs(MyAltimeter.climb) < 0.05 || 24 * 60 * 60 < timeToGround) {
             // return NaN if we don't have an accurate landing location (climbing, very close to ground, very long estimate, etc)

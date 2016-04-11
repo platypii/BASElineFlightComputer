@@ -62,7 +62,7 @@ public class Jump {
         return size + "kb";
     }
 
-    public Date getDate() {
+    private Date getDate() {
         // Parse date from filename
         final String dateString = getName().replaceAll("track ", "");
         final SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH.mm.ss", Locale.US);

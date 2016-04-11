@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-
 /**
  * A general view for plotting data
  * Override methods to provide a data source, and customize the input/output
@@ -131,7 +130,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         right = width;
 
         // Get plot-space bounds
-        bounds = getBounds(width, height, dataBounds);
+        bounds = getBounds(dataBounds);
         // Reset data bounds
         dataBounds.set(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 
@@ -158,7 +157,12 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * Called when rendering the plot, must be overridden to draw the data.
      * Implementations should call drawPoint() and drawPath() to actually draw the data.
      */
-    protected abstract void drawData(Canvas canvas);
+    abstract void drawData(Canvas canvas);
+
+    /**
+     * Return the view bounds in plot-space
+     */
+    abstract Bounds getBounds(Bounds dataBounds);
 
     /**
      * Draws a point (input given in plot space)
@@ -166,17 +170,17 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * @param radius The width of the path
      * @param color The color of the path
      */
-    public void drawPoint(Canvas canvas, double x, double y, float radius, int color) {
-        dataBounds.expandBounds(x, y);
-        // Screen coordinates
-        float sx = getX(x);
-        float sy = getY(y);
-        paint.setColor(color);
-        paint.setStyle(Paint.Style.FILL);
-        // paint.setStrokeCap(Cap.ROUND); // doesn't work in hardware mode
-        // canvas.drawPoint(x, y, paint);
-        canvas.drawCircle(sx, sy, radius * density, paint);
-    }
+//    public void drawPoint(Canvas canvas, double x, double y, float radius, int color) {
+//        dataBounds.expandBounds(x, y);
+//        // Screen coordinates
+//        float sx = getX(x);
+//        float sy = getY(y);
+//        paint.setColor(color);
+//        paint.setStyle(Paint.Style.FILL);
+//        // paint.setStrokeCap(Cap.ROUND); // doesn't work in hardware mode
+//        // canvas.drawPoint(x, y, paint);
+//        canvas.drawCircle(sx, sy, radius * density, paint);
+//    }
 
     /**
      * Draws a series of points as dots
@@ -286,16 +290,6 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         }
     }
 
-    private final Bounds myBounds = new Bounds();
-    /**
-     * Return the view bounds in plot-space
-     */
-    public Bounds getBounds(int width, int height, Bounds dataBounds) {
-        myBounds.set(dataBounds);
-        myBounds.clean(min, max);
-        return myBounds;
-    }
-
     // GRID LINES
     /**
      * Called when rendering the plot, must be overridden to draw the grid lines. Implementations may find drawXline() and drawYline() quite useful.
@@ -384,12 +378,8 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     }
 
     // Override this to change how labels are displayed
-    public String formatX(double x) {
-        return String.format("%.f", x);
-    }
-    public String formatY(double y) {
-        return String.format("%.f", y);
-    }
+    abstract public String formatX(double x);
+    abstract public String formatY(double y);
 
     // Returns the bounds in plot-space, including padding
     private final Bounds realBounds = new Bounds();

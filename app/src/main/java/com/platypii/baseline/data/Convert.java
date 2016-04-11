@@ -143,7 +143,7 @@ public class Convert {
     }
 
     public static String glide(double glideRatio) {
-        return glide(glideRatio, 1);
+        return glide(glideRatio, 1, true);
     }
     public static String glide(double glideRatio, int precision) {
         return glide(glideRatio, precision, true);

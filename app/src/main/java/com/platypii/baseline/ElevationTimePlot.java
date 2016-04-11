@@ -69,7 +69,7 @@ public class ElevationTimePlot extends PlotView {
     // Always show 60 seconds
     private final Bounds bounds = new Bounds();
     @Override
-    public Bounds getBounds(int width, int height, Bounds dataBounds) {
+    public Bounds getBounds(Bounds dataBounds) {
         final long uptime = (System.nanoTime() - MainActivity.startTimeNano) / 1000000L; // millis
         final long startTime = Math.max(0, uptime - window);
         bounds.set(dataBounds);

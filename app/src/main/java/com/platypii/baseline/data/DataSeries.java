@@ -35,10 +35,6 @@ public class DataSeries implements Iterable<DataSeries.Point> {
         n++;
     }
 
-    public Point getLast() {
-        return points.get(n-1);
-    }
-
     public int size() {
         return n;
     }

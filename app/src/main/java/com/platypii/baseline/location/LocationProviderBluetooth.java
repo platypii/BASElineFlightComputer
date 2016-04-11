@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import com.platypii.baseline.bluetooth.BluetoothService;
 
 class LocationProviderBluetooth extends LocationProviderNMEA {
-    private static final String TAG = "LocationServiceBluetooth";
 
     /**
      * Start location updates
