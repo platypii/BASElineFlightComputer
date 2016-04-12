@@ -99,7 +99,7 @@ public class MLocation extends Measurement {
     }
 
     public double bearing() {
-        return Math.atan2(vN, vE);
+        return Math.toDegrees(Math.atan2(vE, vN));
     }
 
     public LatLng latLng() {

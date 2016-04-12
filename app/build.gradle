@@ -10,6 +10,7 @@ android {
         targetSdkVersion 23
         versionCode 7
         versionName "2.1"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -25,4 +26,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
     compile 'com.android.support:support-v4:23.3.0'
+    androidTestCompile 'junit:junit:4.12'
+    androidTestCompile 'com.android.support:support-annotations:23.3.0'
+    androidTestCompile 'com.android.support.test:runner:0.5'
 }
