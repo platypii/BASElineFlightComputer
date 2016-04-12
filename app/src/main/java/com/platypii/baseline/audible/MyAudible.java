@@ -22,20 +22,21 @@ public class MyAudible {
     private static SharedPreferences prefs;
 
     private static boolean isInitialized = false;
+    private static boolean isEnabled = false;
 
     private static boolean northsouth = true;
 
     public static void init(Context appContext) {
         Log.i(TAG, "Initializing audible");
-        prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
         speech = new Speech(appContext);
 
         if(!isInitialized) {
             isInitialized = true;
             audibleThread = new AudibleThread();
 
-            final boolean audibleEnabled = prefs.getBoolean("audible_enabled", false);
-            if(audibleEnabled) {
+            prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+            isEnabled = prefs.getBoolean("audible_enabled", false);
+            if(isEnabled) {
                 startAudible();
             }
         } else {
@@ -46,7 +47,7 @@ public class MyAudible {
     public static void startAudible() {
         Log.i(TAG, "Starting audible");
         if(isInitialized) {
-            if(!audibleThread.isEnabled()) {
+            if(!audibleThread.isRunning()) {
                 audibleThread.start();
 
                 // Say audible mode
@@ -61,18 +62,17 @@ public class MyAudible {
         } else {
             Log.e(TAG, "Failed to start audible: audible not initialized");
         }
-    }
-
-    public static boolean isEnabled() {
-        return isInitialized && audibleThread != null && audibleThread.isEnabled();
+        isEnabled = true;
     }
 
     public static void stopAudible() {
         if(isInitialized) {
             audibleThread.stop();
+            speech.speakWhenReady("Goodbye");
         } else {
             Log.e(TAG, "Failed to stop audible: audible not initialized");
         }
+        isEnabled = false;
     }
 
     static void speak() {
@@ -197,12 +197,20 @@ public class MyAudible {
         return measurement;
     }
 
+    public static boolean isEnabled() {
+        return isEnabled;
+    }
+
+//    public static boolean isRunning() {
+//        return isInitialized && audibleThread != null && audibleThread.isRunning();
+//    }
+
     /**
      * Stop audible service
      */
     public static void terminate() {
         if(isInitialized) {
-            if(audibleThread.isEnabled()) {
+            if(audibleThread.isRunning()) {
                 stopAudible();
             }
             audibleThread = null;

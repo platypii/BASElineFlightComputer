@@ -41,8 +41,6 @@ class LocationProviderAndroid extends LocationProvider {
                 else
                     hAcc = Float.NaN;
 
-                // Phone is not reporting NMEA data, use location data instead
-                Log.v(TAG, "No NMEA data, falling back to LocationManager: " + loc);
                 final long lastFixMillis = loc.getTime();
                 final double latitude = loc.getLatitude();
                 final double longitude = loc.getLongitude();

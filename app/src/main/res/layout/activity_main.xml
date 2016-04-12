@@ -17,8 +17,6 @@
             android:layout_weight="1"
             android:onClick="clickRecord"
             android:drawableTop="@drawable/circle"
-            android:textStyle="bold"
-            android:textSize="18sp"
             android:text="@string/action_record" />
 
         <Button
@@ -43,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="clickAudible"
-            android:drawableTop="@drawable/audio"
+            android:drawableTop="@drawable/audio_on"
             android:text="@string/action_audible" />
 
         <Button

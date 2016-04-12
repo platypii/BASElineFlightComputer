@@ -35,6 +35,7 @@ public class MainActivity extends BaseActivity {
     private Menu menu;
 
     private Button recordButton;
+    private Button audibleButton;
     private TextView clock;
     private TextView signalStatus;
 
@@ -55,10 +56,10 @@ public class MainActivity extends BaseActivity {
 
         // Find views
         recordButton = (Button) findViewById(R.id.recordButton);
+        audibleButton = (Button) findViewById(R.id.audibleButton);
         clock = (TextView) findViewById(R.id.clock);
         signalStatus = (TextView) findViewById(R.id.signalStatus);
 
-        final Button audibleButton = (Button) findViewById(R.id.audibleButton);
         if(audibleButton != null) {
             audibleButton.setOnLongClickListener(audibleLongClickListener);
         }
@@ -181,6 +182,12 @@ public class MainActivity extends BaseActivity {
                 clockRunnable = null;
             }
         }
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(prefs.getBoolean("audible_enabled", false)) {
+            audibleButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio_on, 0, 0);
+        } else {
+            audibleButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio, 0, 0);
+        }
         invalidateOptionsMenu();
     }
 
@@ -221,7 +228,8 @@ public class MainActivity extends BaseActivity {
 
                 MyAudible.startAudible();
             }
-            return false;
+            updateUIState();
+            return true;
         }
     };
 

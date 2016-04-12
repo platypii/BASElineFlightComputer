@@ -9,7 +9,7 @@ import android.util.Log;
 class AudibleThread {
     private static final String TAG = "AudibleThread";
 
-    private boolean isEnabled = false;
+    private boolean isRunning = false;
 
     private final Handler handler = new Handler();
 
@@ -23,30 +23,30 @@ class AudibleThread {
     };
 
     public void start() {
-        if(!isEnabled) {
+        if(!isRunning) {
             Log.i(TAG, "Starting audible");
             final int delay = MyAudible.getDelay();
             handler.postDelayed(audibleThread, delay);
             // handler.post(audibleThread);
-            isEnabled = true;
+            isRunning = true;
         } else {
             Log.e(TAG, "Failed to start audible: audible thread already started");
         }
     }
 
     public void stop() {
-        if(isEnabled) {
+        if(isRunning) {
             Log.i(TAG, "Stopping audible");
             handler.removeCallbacks(audibleThread);
             // TODO: Block until stopped?
-            isEnabled = false;
+            isRunning = false;
         } else {
             Log.e(TAG, "Failed to stop audible: audible thread not started");
         }
     }
 
-    public boolean isEnabled() {
-        return isEnabled;
+    public boolean isRunning() {
+        return isRunning;
     }
 
 }
