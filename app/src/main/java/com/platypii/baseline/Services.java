@@ -61,7 +61,7 @@ public class Services {
 
             Log.i(TAG, "Starting bluetooth service");
             if(BluetoothService.preferenceEnabled) {
-                BluetoothService.start(activity);
+                BluetoothService.startAsync(activity);
             }
 
             Log.i(TAG, "Starting location service");

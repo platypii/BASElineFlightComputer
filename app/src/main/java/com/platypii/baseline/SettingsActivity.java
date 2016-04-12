@@ -88,7 +88,7 @@ public class SettingsActivity extends PreferenceActivity {
                 case "bluetooth_enabled":
                     BluetoothService.preferenceEnabled = (Boolean) value;
                     if(BluetoothService.preferenceEnabled) {
-                        BluetoothService.start(this.getActivity());
+                        BluetoothService.startAsync(this.getActivity());
                     } else {
                         BluetoothService.stop();
                     }
@@ -97,7 +97,7 @@ public class SettingsActivity extends PreferenceActivity {
                     BluetoothService.preferenceDevice = (String) value;
                     Log.i(TAG, "Bluetooth device selected: " + BluetoothService.preferenceDevice);
                     BluetoothService.stop();
-                    BluetoothService.start(this.getActivity());
+                    BluetoothService.startAsync(this.getActivity());
                     break;
             }
             updateViews();

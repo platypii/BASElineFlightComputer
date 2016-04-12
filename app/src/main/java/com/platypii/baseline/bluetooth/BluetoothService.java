@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.location.GpsStatus;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -31,30 +32,53 @@ public class BluetoothService {
     public static boolean preferenceEnabled = false;
     public static String preferenceDevice = null;
 
-    private static boolean enabled = false;
+    private static boolean isEnabled = false;
+    public static boolean isConnecting = false;
+    public static boolean isConnected = false;
+
     private static BluetoothAdapter bluetoothAdapter;
     private static BluetoothDevice bluetoothDevice;
     private static BluetoothSocket bluetoothSocket;
     private static BluetoothRunnable bluetoothRunnable;
 
+    public static void startAsync(final Activity activity) {
+        if(isEnabled || isConnecting || isConnecting) {
+            Log.e(TAG, "Bluetooth already enabled, or in the process of connecting");
+        }
+        isEnabled = true;
+        isConnecting = true;
+        new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground (Void...params){
+                Log.i(TAG, "Starting bluetooth service");
+                if (BluetoothService.preferenceEnabled) {
+                    isConnected = BluetoothService.start(activity);
+                    isConnecting = false;
+                }
+                return null;
+            }
+        }.execute();
+    }
+
     /**
      * Start the bluetooth service, and connect to gps receiver if selected
      * @return true iff bluetooth service started successfully
      */
-    public static boolean start(Activity activity) {
+    private static boolean start(Activity activity) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter == null) {
             // Device not supported
             Toast.makeText(activity, "Bluetooth not supported", Toast.LENGTH_LONG).show();
+            return false;
         } else if(!bluetoothAdapter.isEnabled()) {
             // Turn on bluetooth
             final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             activity.startActivityForResult(enableBluetoothIntent, ENABLE_BLUETOOTH_CODE);
+            return false;
         } else {
             Log.i(TAG, "Bluetooth is enabled, connecting...");
-            enabled = connect();
+            return connect();
         }
-        return enabled;
     }
 
     /**
@@ -73,9 +97,10 @@ public class BluetoothService {
             Log.i(TAG, "Connecting to bluetooth device: " + bluetoothDevice.getName());
             try {
                 bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+                bluetoothSocket.connect();
                 // Start listener thread to convert input stream to nmea
                 if(bluetoothRunnable == null) {
-                    bluetoothRunnable = new BluetoothRunnable(bluetoothSocket);
+                    bluetoothRunnable = new BluetoothRunnable();
                     new Thread(bluetoothRunnable).start();
                 } else {
                     Log.e(TAG, "Bluetooth listener thread already started");
@@ -95,34 +120,27 @@ public class BluetoothService {
      * Thread that reads from bluetooth input stream, and turns into NMEA sentences
      */
     private static class BluetoothRunnable implements Runnable {
-        private final BluetoothSocket bluetoothSocket;
         private boolean stop = false;
-        public BluetoothRunnable(BluetoothSocket bluetoothSocket) {
-            this.bluetoothSocket = bluetoothSocket;
-        }
         @Override
         public void run() {
             try {
-                bluetoothSocket.connect();
                 final InputStream is = bluetoothSocket.getInputStream();
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                try {
-                    String line;
-                    while(!stop && (line = reader.readLine()) != null) {
-                        final String nmea = line.trim();
-                        // Log.v(TAG, "Got line: " + nmea);
-                        // Update listeners
-                        for(GpsStatus.NmeaListener listener : listeners) {
-                            listener.onNmeaReceived(System.currentTimeMillis(), nmea);
-                        }
-                    }
-                } catch (IOException e) {
-                    if(!stop) {
-                        Log.e(TAG, "Error reading from bluetooth socket", e);
+                String line;
+                while(!stop && (line = reader.readLine()) != null) {
+                    final String nmea = line.trim();
+                    // Log.v(TAG, "Got line: " + nmea);
+                    // Update listeners
+                    for(GpsStatus.NmeaListener listener : listeners) {
+                        listener.onNmeaReceived(System.currentTimeMillis(), nmea);
                     }
                 }
             } catch (IOException e) {
-                Log.e(TAG, "Error connecting to bluetooth device", e);
+                if(!stop) {
+                    Log.e(TAG, "Error reading from bluetooth socket", e);
+                    isConnected = false;
+                    // TODO: Reconnect
+                }
             } finally {
                 bluetoothRunnable = null;
             }
@@ -133,7 +151,7 @@ public class BluetoothService {
     }
 
     public static Set<BluetoothDevice> getDevices() {
-        if(enabled && bluetoothAdapter != null) {
+        if(isEnabled && bluetoothAdapter != null) {
             return bluetoothAdapter.getBondedDevices();
         } else {
             Log.w(TAG, "Tried to get devices, but bluetooth is not enabled");
@@ -142,7 +160,7 @@ public class BluetoothService {
     }
 
     public static BluetoothDevice getDevice() {
-        if(enabled && bluetoothDevice != null) {
+        if(isEnabled && bluetoothDevice != null) {
             return bluetoothDevice;
         } else {
             Log.w(TAG, "Tried to get devices, but bluetooth is not enabled");
@@ -152,7 +170,6 @@ public class BluetoothService {
 
     public static void stop() {
         Log.i(TAG, "Stopping bluetooth service");
-        enabled = false;
         // Stop thread
         if(bluetoothRunnable != null) {
             bluetoothRunnable.stop();
@@ -165,6 +182,8 @@ public class BluetoothService {
                 Log.w(TAG, "Exception closing bluetooth socket", e);
             }
         }
+        isConnected = false;
+        isEnabled = false;
     }
 
     public static void addNmeaListener(GpsStatus.NmeaListener nmeaListener) {

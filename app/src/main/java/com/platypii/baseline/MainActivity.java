@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.platypii.baseline.audible.MyAudible;
+import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.MyAltimeter;
@@ -252,7 +253,13 @@ public class MainActivity extends BaseActivity {
         int statusIcon;
 
         // GPS signal status
-        if(Services.location.lastFixDuration() < 0) {
+        if(BluetoothService.preferenceEnabled && BluetoothService.isConnecting) {
+            status = "bluetooth connecting...";
+            statusIcon = R.drawable.warning;
+        } else if(BluetoothService.preferenceEnabled && !BluetoothService.isConnected) {
+            status = "bluetooth not connected";
+            statusIcon = R.drawable.warning;
+        } else if(Services.location.lastFixDuration() < 0) {
             status = "no signal";
             statusIcon = R.drawable.status_red;
         } else {
