@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.platypii.baseline.Services;
+import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.util.Util;
 import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.MyAltimeter;
@@ -21,6 +22,8 @@ public class MyAudible {
     private static SharedPreferences prefs;
 
     private static boolean isInitialized = false;
+
+    private static boolean northsouth = true;
 
     public static void init(Context appContext) {
         Log.i(TAG, "Initializing audible");
@@ -141,25 +144,53 @@ public class MyAudible {
                     Log.w(TAG, "Not speaking: no gps signal");
                 }
                 break;
-//            case "position":
-//                // Read position N10E45
-//                if(MyLocationManager.lastLoc != null && MyLocationManager.lastFixDuration() < 5000) {
-//                    if(MyFlightManager.homeLoc != null) {
-//                        final double bearing = MyLocationManager.lastLoc.bearingTo(MyFlightManager.homeLoc);
-//                        if(-270 < bearing || bearing < 90) {
-//                            // North
-//                        } else {
-//                            // South
-//                        }
-//                        if(bearing < 180) {
-//                            // East
-//                        } else {
-//                            // West
-//                        }
-//                    }
-//                } else {
-//                    Log.w(TAG, "Not speaking: no gps signal");
-//                }
+            case "direction":
+                if(Services.location.lastLoc != null && Services.location.lastFixDuration() < 5000) {
+                    if(MyFlightManager.homeLoc != null) {
+                        final double distance = Services.location.lastLoc.distanceTo(MyFlightManager.homeLoc);
+                        if(min <= distance && distance <= max) {
+                            final double bearing = Services.location.lastLoc.bearingTo(MyFlightManager.homeLoc);
+                            if (Math.abs(distance) > 0.3) {
+                                measurement = Convert.distance(distance) + " " + Convert.bearing(bearing);
+                            } else {
+                                measurement = "0";
+                            }
+                        }
+                    }
+                } else {
+                    Log.w(TAG, "Not speaking: no gps signal");
+                }
+                break;
+            case "position":
+                // Read position N10E45
+                if(Services.location.lastLoc != null && Services.location.lastFixDuration() < 5000) {
+                    if(MyFlightManager.homeLoc != null) {
+                        final double bearing = Services.location.lastLoc.bearingTo(MyFlightManager.homeLoc);
+                        final double distance = Services.location.lastLoc.distanceTo(MyFlightManager.homeLoc);
+                        final double distance_x = distance * Math.sin(Math.toRadians(bearing));
+                        final double distance_y = distance * Math.cos(Math.toRadians(bearing));
+                        if(northsouth && Math.abs(distance_y) > 0.3) {
+                            if (-90 < bearing && bearing < 90) {
+                                measurement = "north " + Convert.distance(distance_y, 0, false);
+                            } else {
+                                measurement = "south " + Convert.distance(distance_y, 0, false);
+                            }
+                            northsouth = false;
+                        } else if(Math.abs(distance_x) > 0.3) {
+                            if(0 < bearing) {
+                                measurement += "east " + Convert.distance(distance_x, 0, false);
+                            } else {
+                                measurement += "west " + Convert.distance(distance_x, 0, false);
+                            }
+                            northsouth = true;
+                        } else {
+                            measurement = "0";
+                        }
+                    }
+                } else {
+                    Log.w(TAG, "Not speaking: no gps signal");
+                }
+                break;
             default:
                 Log.e(TAG, "Invalid audible mode " + audibleMode);
         }

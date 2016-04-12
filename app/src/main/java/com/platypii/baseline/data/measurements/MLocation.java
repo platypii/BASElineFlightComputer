@@ -106,6 +106,32 @@ public class MLocation extends Measurement {
         return new LatLng(latitude, longitude);
     }
 
+    public double bearingTo(LatLng dest) {
+        double φ1 = Math.toRadians(latitude);
+        double φ2 = Math.toRadians(dest.latitude);
+        double Δλ = Math.toRadians(dest.longitude - longitude);
+        double y = Math.sin(Δλ) * Math.cos(φ2);
+        double x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+        return Math.toDegrees(Math.atan2(y, x));
+    }
+    private static final double R = 6371000; // meters
+    public double distanceTo(LatLng dest) {
+        double φ1 = Math.toRadians(latitude);
+        double φ2 = Math.toRadians(dest.latitude);
+        double Δφ = Math.toRadians(dest.latitude - latitude);
+        double Δλ = Math.toRadians(dest.longitude - longitude);
+
+        double sin_φ = Math.sin(Δφ/2);
+        double sin_λ = Math.sin(Δλ/2);
+
+        // Haversine formula
+        double a = sin_φ * sin_φ +
+                   Math.cos(φ1) * Math.cos(φ2) *
+                   sin_λ * sin_λ;
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+        return R * c;
+    }
     /**
      * Moves the location along a bearing (degrees) by a given distance (meters)
      */
