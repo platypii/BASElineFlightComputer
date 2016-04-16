@@ -27,6 +27,8 @@ public class BluetoothService {
     private static final int ENABLE_BLUETOOTH_CODE = 13;
     private static final UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+    private static final int reconnectDelay = 5 * 1000; // 5 seconds
+
     private static final List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
 
     public static boolean preferenceEnabled = false;
@@ -99,12 +101,11 @@ public class BluetoothService {
                 bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
                 bluetoothSocket.connect();
                 // Start listener thread to convert input stream to nmea
-                if(bluetoothRunnable == null) {
-                    bluetoothRunnable = new BluetoothRunnable();
-                    new Thread(bluetoothRunnable).start();
-                } else {
-                    Log.e(TAG, "Bluetooth listener thread already started");
+                if(bluetoothRunnable != null) {
+                    Log.w(TAG, "Bluetooth listener thread already started");
                 }
+                bluetoothRunnable = new BluetoothRunnable();
+                new Thread(bluetoothRunnable).start();
                 return true;
             } catch(IOException e) {
                 Log.e(TAG, "Exception connecting to bluetooth device", e);
@@ -123,6 +124,7 @@ public class BluetoothService {
         private boolean stop = false;
         @Override
         public void run() {
+            Log.i(TAG, "Bluetooth thread starting");
             try {
                 final InputStream is = bluetoothSocket.getInputStream();
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -139,10 +141,23 @@ public class BluetoothService {
                 if(!stop) {
                     Log.e(TAG, "Error reading from bluetooth socket", e);
                     isConnected = false;
-                    // TODO: Reconnect
+
+                    // Reconnect
+                    while(!stop && !isConnected && !isConnecting) {
+                        try {
+                            Thread.sleep(reconnectDelay);
+                            Log.i(TAG, "Attempting to reconnect to bluetooth device");
+                            isConnecting = true;
+                            isConnected = connect();
+                            isConnecting = false;
+                        } catch (InterruptedException ie) {
+                            Log.e(TAG, "Bluetooth thread interrupted");
+                        }
+                    }
                 }
             } finally {
                 bluetoothRunnable = null;
+                Log.v(TAG, "Bluetooth thread shutting down");
             }
         }
         public void stop() {
