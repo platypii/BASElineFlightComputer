@@ -61,12 +61,10 @@
             android:label="@string/title_activity_map"/>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings">
-        </activity>
+            android:label="@string/title_activity_settings"/>
         <activity
             android:name=".AltimeterActivity"
-            android:screenOrientation="landscape">
-        </activity>
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>
