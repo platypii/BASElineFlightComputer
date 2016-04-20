@@ -105,6 +105,7 @@ public class MyAudible {
         final double max = Util.parseDouble(prefs.getString("audible_max", "1000"));
         String measurement = "";
         switch(audibleMode) {
+            // TODO: True Air Speed
             case "horizontal_speed":
                 // Read horizontal speed
                 if(Services.location.lastLoc != null && Services.location.lastFixDuration() < 5000) {
