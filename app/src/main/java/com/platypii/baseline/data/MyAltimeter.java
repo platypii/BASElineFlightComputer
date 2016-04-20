@@ -93,7 +93,7 @@ public class MyAltimeter {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
         public void onSensorChanged(@NonNull SensorEvent event) {
             long millis = System.currentTimeMillis(); // Record time as soon as possible
-            assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
+            // assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
             // Log.w(TAG, "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
             MyAltimeter.updateBarometer(millis, event);
         }
@@ -112,6 +112,9 @@ public class MyAltimeter {
      * Process new barometer reading
      */
     private static void updateBarometer(long millis, SensorEvent event) {
+        if(event.values.length == 0 || Double.isNaN(event.values[0]))
+            return;
+
         double prevAltitude = altitude;
         // double prevClimb = climb;
         long prevLastFixNano = lastFixNano;

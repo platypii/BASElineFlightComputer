@@ -34,6 +34,7 @@ public class BluetoothService {
     public static boolean preferenceEnabled = false;
     public static String preferenceDevice = null;
 
+    // TODO: State machine
     private static boolean isEnabled = false;
     public static boolean isConnecting = false;
     public static boolean isConnected = false;
@@ -108,7 +109,7 @@ public class BluetoothService {
                 new Thread(bluetoothRunnable).start();
                 return true;
             } catch(IOException e) {
-                Log.e(TAG, "Exception connecting to bluetooth device", e);
+                Log.e(TAG, "Failed to connect to bluetooth device: " + e.getMessage());
                 return false;
             }
         } else {
