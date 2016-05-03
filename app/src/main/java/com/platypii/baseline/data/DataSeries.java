@@ -2,6 +2,7 @@ package com.platypii.baseline.data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 public class DataSeries implements Iterable<DataSeries.Point> {
@@ -18,7 +19,7 @@ public class DataSeries implements Iterable<DataSeries.Point> {
         }
         @Override
         public String toString() {
-            return String.format("Point(%.1f,%.1f)", x, y);
+            return String.format(Locale.US, "Point(%.1f,%.1f)", x, y);
         }
     }
 

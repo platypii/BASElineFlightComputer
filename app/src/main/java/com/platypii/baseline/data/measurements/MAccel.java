@@ -1,5 +1,7 @@
 package com.platypii.baseline.data.measurements;
 
+import java.util.Locale;
+
 /** Copies an android SensorEvent */
 public class MAccel extends MSensor {
 
@@ -22,7 +24,7 @@ public class MAccel extends MSensor {
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return String.format(",%d,acc,,,,,,,,,,,,,,%f", nano, acc);
+        return String.format(Locale.US, ",%d,acc,,,,,,,,,,,,,,%f", nano, acc);
     }
 
 }

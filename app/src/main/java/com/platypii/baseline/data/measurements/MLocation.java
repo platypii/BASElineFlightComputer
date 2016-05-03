@@ -5,6 +5,7 @@ import com.platypii.baseline.util.Util;
 import com.platypii.baseline.data.MyAltimeter;
 
 import android.util.Log;
+import java.util.Locale;
 
 public class MLocation extends Measurement {
     private static final String TAG = "MLocation";
@@ -69,12 +70,12 @@ public class MLocation extends Measurement {
         final String vN_str = Util.isReal(vN)? Double.toString(vN) : "";
         final String vE_str = Util.isReal(vE)? Double.toString(vE) : "";
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return String.format("%d,,gps,,%f,%f,%f,%s,%s,%s", millis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
+        return String.format(Locale.US, "%d,,gps,,%f,%f,%f,%s,%s,%s", millis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
     }
 
     @Override
     public String toString() {
-        return String.format("MLocation(%.6f,%.6f,%.1f,%.0f,%.0f)", latitude, longitude, altitude_gps, vN, vE);
+        return String.format(Locale.US, "MLocation(%.6f,%.6f,%.1f,%.0f,%.0f)", latitude, longitude, altitude_gps, vN, vE);
     }
 
     public double groundSpeed() {

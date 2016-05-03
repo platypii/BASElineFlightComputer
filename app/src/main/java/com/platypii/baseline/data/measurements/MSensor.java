@@ -1,5 +1,7 @@
 package com.platypii.baseline.data.measurements;
 
+import java.util.Locale;
+
 /** Copies an android SensorEvent */
 public abstract class MSensor extends Measurement {
 
@@ -41,7 +43,7 @@ public abstract class MSensor extends Measurement {
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return String.format(",%d,acc,,,,,,,,%f,%f,%f,%f,%f,%f,%f", nano, gX, gY, gZ, rotX, rotY, rotZ, acc);
+        return String.format(Locale.US, ",%d,acc,,,,,,,,%f,%f,%f,%f,%f,%f,%f", nano, gX, gY, gZ, rotX, rotY, rotZ, acc);
     }
 
 }

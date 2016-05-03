@@ -1,6 +1,8 @@
 package com.platypii.baseline.data.measurements;
 
 
+import java.util.Locale;
+
 /**
  * An altitude measurement
  * @author platypii
@@ -23,12 +25,12 @@ public class MAltitude extends Measurement {
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return String.format(",%d,alt,%f", nano, pressure);
+        return String.format(Locale.US, ",%d,alt,%f", nano, pressure);
     }
 
     @Override
     public String toString() {
-        return String.format("MAltitude(%d,%.1f)", nano, altitude);
+        return String.format(Locale.US, "MAltitude(%d,%.1f)", nano, altitude);
     }
 
 }

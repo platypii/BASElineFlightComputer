@@ -78,7 +78,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
             final long millis = (nanoTime / 1000000L) % 1000;
             final long seconds = (nanoTime / 1000000000L) % 60;
             final long minutes = nanoTime / 60000000000L;
-            return String.format("%d:%02d.%03d", minutes, seconds, millis);
+            return String.format(Locale.US, "%d:%02d.%03d", minutes, seconds, millis);
         } else {
             return "0:00.000";
         }
