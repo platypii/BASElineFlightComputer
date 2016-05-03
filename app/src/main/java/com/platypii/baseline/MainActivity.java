@@ -294,12 +294,6 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // Only enable the menu if we are NOT logging
-        return !MyDatabase.isLogging();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_item_settings:

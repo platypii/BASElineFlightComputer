@@ -8,7 +8,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Util;
