@@ -270,6 +270,9 @@ public class MainActivity extends BaseActivity {
             } else if(lastFixDuration > 3000) {
                 status = "weak signal";
                 statusIcon = R.drawable.status_yellow;
+            } else if(BluetoothService.preferenceEnabled && BluetoothService.isConnected) {
+                status = "good signal";
+                statusIcon = R.drawable.status_blue;
             } else {
                 status = "good signal";
                 statusIcon = R.drawable.status_green;
