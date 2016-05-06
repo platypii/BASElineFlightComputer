@@ -106,6 +106,21 @@ public class MyAudible {
         String measurement = "";
         switch(audibleMode) {
             // TODO: True Air Speed
+            case "total_speed":
+                // Compute total speed
+                if(Services.location.lastLoc != null && Services.location.lastFixDuration() < 5000) {
+                    final double verticalSpeed = MyAltimeter.climb;
+                    final double horizontalSpeed = Services.location.lastLoc.groundSpeed();
+                    final double totalSpeed = Math.sqrt(verticalSpeed * verticalSpeed + horizontalSpeed * horizontalSpeed);
+                    if (Util.isReal(totalSpeed) && min * units <= totalSpeed && totalSpeed <= max * units) {
+                        measurement = Convert.speed(totalSpeed, 0, false);
+                    } else {
+                        Log.w(TAG, "Not speaking: total speed = " + Convert.speed(totalSpeed, 0, true));
+                    }
+                } else {
+                    Log.w(TAG, "Not speaking: no gps signal");
+                }
+                break;
             case "horizontal_speed":
                 // Read horizontal speed
                 if(Services.location.lastLoc != null && Services.location.lastFixDuration() < 5000) {

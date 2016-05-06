@@ -34,11 +34,13 @@
     <string-array name="audible_modes">
         <item>Horizontal Speed</item>
         <item>Vertical Speed</item>
+        <item>Total Speed</item>
         <item>Glide Ratio</item>
     </string-array>
     <string-array name="audible_modes_values">
         <item>horizontal_speed</item>
         <item>vertical_speed</item>
+        <item>total_speed</item>
         <item>glide_ratio</item>
     </string-array>
 
