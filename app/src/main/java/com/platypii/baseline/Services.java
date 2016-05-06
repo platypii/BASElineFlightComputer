@@ -65,10 +65,10 @@ public class Services {
             }
 
             Log.i(TAG, "Starting location service");
+            location = new LocationService();
             if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 // Enable location services
                 try {
-                    location = new LocationService();
                     location.start(appContext);
                 } catch (SecurityException e) {
                     Log.e(TAG, "Failed to start location service", e);

@@ -77,7 +77,11 @@ public class MyAltimeter {
             }
 
             // Start GPS updates
-            Services.location.addListener(locationListener);
+            if(Services.location != null) {
+                Services.location.addListener(locationListener);
+            } else {
+                Log.e(TAG, "Location services should be initialized before altimeter");
+            }
         } else {
             Log.w(TAG, "MyAltimeter already started");
         }
