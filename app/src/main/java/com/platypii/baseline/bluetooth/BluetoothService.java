@@ -52,13 +52,21 @@ public class BluetoothService {
         isConnecting = true;
         new AsyncTask<Void,Void,Void>() {
             @Override
-            protected Void doInBackground (Void...params){
+            protected Void doInBackground(Void...params) {
                 Log.i(TAG, "Starting bluetooth service");
                 if (BluetoothService.preferenceEnabled) {
                     isConnected = BluetoothService.start(activity);
                     isConnecting = false;
                 }
                 return null;
+            }
+            @Override
+            protected void onPostExecute(Void param) {
+                if(BluetoothService.preferenceEnabled) {
+                    if(!isConnected) {
+                        Toast.makeText(activity, "Bluetooth failed to connect", Toast.LENGTH_LONG).show();
+                    }
+                }
             }
         }.execute();
     }
@@ -71,7 +79,7 @@ public class BluetoothService {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter == null) {
             // Device not supported
-            Toast.makeText(activity, "Bluetooth not supported", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "Bluetooth not supported");
             return false;
         } else if(!bluetoothAdapter.isEnabled()) {
             // Turn on bluetooth
