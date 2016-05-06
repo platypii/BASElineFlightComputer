@@ -10,6 +10,13 @@
         android:layout_height="match_parent"
         android:name="com.platypii.baseline.TouchableMapFragment" />
 
+    <ImageView
+        android:id="@+id/myLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/nav"
+        android:layout_gravity="center" />
+
     <com.platypii.baseline.AnalogAltimeter
         android:id="@+id/analogAltimeter"
         android:layout_width="160dp"

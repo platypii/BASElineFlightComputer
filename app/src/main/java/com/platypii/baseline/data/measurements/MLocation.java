@@ -141,7 +141,7 @@ public class MLocation extends Measurement {
         final double d = distance / R;
 
         if(!Util.isReal(latitude) || !Util.isReal(longitude)) {
-            Log.e("MyLocation", "lat/long not a number: " + latitude + ", " + longitude);
+            Log.e("MyLocation", "invalid lat/long: " + latitude + ", " + longitude);
         }
         if(Math.abs(latitude) < 0.1 && Math.abs(longitude) < 0.1) {
             Log.e("MyLocation", "unlikely lat/long: " + latitude + ", " + longitude);
