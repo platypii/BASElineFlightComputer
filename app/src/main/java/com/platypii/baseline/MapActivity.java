@@ -1,12 +1,9 @@
 package com.platypii.baseline;
 
-import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.InflateException;
@@ -41,8 +38,6 @@ import java.util.List;
 public class MapActivity extends FragmentActivity implements MyLocationListener, MyAltitudeListener, GoogleMap.OnCameraChangeListener, OnMapReadyCallback {
     private static final String TAG = "Map";
 
-    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 64;
-
     private AnalogAltimeter analogAltimeter;
     private TextView flightStatsAltimeter;
     private TextView flightStatsVario;
@@ -61,6 +56,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private Marker landingMarker;
     private Polyline landingPath;
     private final List<LatLng> landingPoints = new ArrayList<>();
+    private Marker myPositionOverlay;
 
     // Activity state
     private boolean paused = false;
@@ -145,18 +141,18 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     public void onMapReady(GoogleMap map) {
         this.map = map;
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // Enable location on map
-            try {
-                map.setMyLocationEnabled(true);
-            } catch(SecurityException e) {
-                Log.e(TAG, "Error enabling location", e);
-            }
-        } else {
-            // request the missing permissions
-            final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
-            ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_REQUEST_LOCATION);
-        }
+//        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//            // Enable location on map
+//            try {
+//                map.setMyLocationEnabled(true);
+//            } catch(SecurityException e) {
+//                Log.e(TAG, "Error enabling location", e);
+//            }
+//        } else {
+//            // request the missing permissions
+//            final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+//            ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_REQUEST_LOCATION);
+//        }
         if (firstLoad) {
             Log.w(TAG, "Centering map on default view " + MapOptions.defaultLatLng);
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, MapOptions.defaultZoom));
@@ -166,6 +162,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         // Add ui elements
         addMarkers();
         updateHome();
+        updateMyPosition();
 
         // Drag listener
         map.setOnCameraChangeListener(this);
@@ -224,6 +221,12 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                         .width(10)
                         .color(0x66ff0000)
         );
+        myPositionOverlay = map.addMarker(new MarkerOptions()
+                .position(home)
+                .visible(false)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.nav))
+                .anchor(0.5f, 0.5f)
+        );
     }
 
     @Override
@@ -245,10 +248,9 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         if(ready && !paused) {
             final LatLng currentLoc = Services.location.lastLoc.latLng();
 
-            // Update home path
+            // Update markers and overlays
+            updateMyPosition();
             updateHome();
-
-            // Update accuracy trick marker
             updateLanding();
 
             // Center map on user's location
@@ -329,6 +331,15 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         if(loc != null) {
             flightStatsSpeed.setText(Convert.speed(loc.groundSpeed()));
             flightStatsGlide.setText(Convert.glide(loc.glideRatio()));
+        }
+    }
+
+    private void updateMyPosition() {
+        final MLocation loc = Services.location.lastLoc;
+        if(loc != null) {
+            myPositionOverlay.setVisible(true);
+            myPositionOverlay.setPosition(loc.latLng());
+            myPositionOverlay.setRotation((float) (loc.bearing() - 45));
         }
     }
 
