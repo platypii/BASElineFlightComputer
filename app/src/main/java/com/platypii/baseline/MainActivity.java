@@ -293,6 +293,7 @@ public class MainActivity extends BaseActivity {
         this.menu = menu;
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+        updateMenu();
         return true;
     }
 
@@ -317,7 +318,7 @@ public class MainActivity extends BaseActivity {
             case R.id.menu_item_sign_out:
                 clickSignOut();
 
-                // Update menu
+                // Update menu. Can't use updateMenu() because signout is async.
                 if(menu != null) {
                     menu.findItem(R.id.menu_item_sign_in).setVisible(true);
                     menu.findItem(R.id.menu_item_sign_out).setVisible(false);
@@ -332,8 +333,14 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void handleSignInResult(GoogleSignInResult result) {
         super.handleSignInResult(result);
-        Log.d(TAG, "handleSignInResult: " + result.isSuccess());
-        if(result.isSuccess()) {
+        updateMenu();
+    }
+
+    /**
+     * Update menu based on signed in state
+     */
+    private void updateMenu() {
+        if(isSignedIn()) {
             // Update menu
             if(menu != null) {
                 menu.findItem(R.id.menu_item_sign_in).setVisible(false);
