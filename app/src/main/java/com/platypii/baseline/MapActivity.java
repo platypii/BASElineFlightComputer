@@ -224,7 +224,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         myPositionOverlay = map.addMarker(new MarkerOptions()
                 .position(home)
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.nav))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.myposition1))
                 .anchor(0.5f, 0.5f)
         );
     }
@@ -339,7 +339,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         if(loc != null) {
             myPositionOverlay.setVisible(true);
             myPositionOverlay.setPosition(loc.latLng());
-            myPositionOverlay.setRotation((float) (loc.bearing() - 45));
+            myPositionOverlay.setRotation((float) loc.bearing());
         }
     }
 
