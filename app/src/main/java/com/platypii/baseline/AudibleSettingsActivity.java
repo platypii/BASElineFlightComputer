@@ -93,6 +93,7 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                     break;
                 case "horizontal_speed":
                 case "vertical_speed":
+                case "total_speed":
                     // Set units
                     final double units = Convert.metric? Convert.KPH : Convert.MPH;
                     minPreference.setTitle("Minimum Speed");
@@ -143,6 +144,7 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                         final double max;
                         switch (audibleMode) {
                             case "horizontal_speed":
+                            case "total_speed":
                                 // Set default min/max
                                 min = 0;
                                 max = Math.round(62.6 / units); // 140mph
