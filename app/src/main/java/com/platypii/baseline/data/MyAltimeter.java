@@ -32,8 +32,9 @@ public class MyAltimeter {
 
     // Pressure data
     public static float pressure = Float.NaN; // hPa (millibars)
-    public static double pressure_altitude = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
-    public static double altitude_raw = Double.NaN; // pressure altitude adjusted for altitude offset (unfiltered)
+    public static double pressure_altitude_raw = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
+    public static double pressure_altitude_filtered = Double.NaN; // kalman filtered pressure altitude
+    // public static double altitude_raw = Double.NaN; // pressure altitude adjusted for altitude offset (unfiltered)
 
     // official altitude = pressure_altitude - altitude_offset
     // altitude_offset uses GPS to get absolute altitude right
@@ -58,7 +59,9 @@ public class MyAltimeter {
     public static final SyncedList<MAltitude> history = new SyncedList<>();
 
     // Stats
-    public static final Stat pressure_altitude_stat = new Stat(); // Statistics on the mean and variance of the sensor
+    // Model error is the difference between our filtered output and the raw pressure altitude
+    // Model error should approximate the sensor variance, even when in motion
+    public static final Stat model_error = new Stat();
     private static long n = 0; // number of samples
     public static float refreshRate = 0; // Moving average of refresh rate in Hz
 
@@ -88,7 +91,7 @@ public class MyAltimeter {
     }
 
     public static double altitudeAGL() {
-        return pressure_altitude - ground_level;
+        return pressure_altitude_filtered - ground_level;
     }
 
     // Sensor Event Listener
@@ -116,14 +119,13 @@ public class MyAltimeter {
      * Process new barometer reading
      */
     private static void updateBarometer(long millis, SensorEvent event) {
-        if(event.values.length == 0 || Double.isNaN(event.values[0]))
+        if(event == null || event.values.length == 0 || Double.isNaN(event.values[0]))
             return;
 
         double prevAltitude = altitude;
         // double prevClimb = climb;
         long prevLastFixNano = lastFixNano;
 
-        assert event != null;
         assert event.accuracy == 0;
         pressure = event.values[0];
         if(firstFixNano == -1) {
@@ -144,18 +146,22 @@ public class MyAltimeter {
         }
 
         // Convert pressure to altitude
-        pressure_altitude = pressureToAltitude(pressure);
+        pressure_altitude_raw = pressureToAltitude(pressure);
 
-        altitude_raw = pressure_altitude - altitude_offset; // the current pressure converted to altitude AMSL. noisy.
+        // altitude_raw = pressure_altitude_raw - altitude_offset; // the current pressure converted to altitude AMSL. noisy.
         
         // Update the official altitude
         final double dt = Double.isNaN(prevAltitude)? 0 : (lastFixNano - prevLastFixNano) * 1E-9;
         // Log.d(TAG, "Raw Altitude AGL: " + Convert.distance(altitude_raw) + ", dt = " + dt);
 
-        filter.update(pressure_altitude, dt);
+        filter.update(pressure_altitude_raw, dt);
 
-        altitude = filter.x - altitude_offset;
+        pressure_altitude_filtered = filter.x;
+        altitude = pressure_altitude_filtered - altitude_offset;
         climb = filter.v;
+
+        // Compute model error
+        model_error.addSample(pressure_altitude_filtered - pressure_altitude_raw);
 
         // Log.d("Altimeter", "alt = " + altitude + ", climb = " + climb);
 
@@ -166,10 +172,10 @@ public class MyAltimeter {
         // Adjust for ground level
         if(n == 0) {
             // First pressure reading. Calibrate ground level.
-            ground_level = pressure_altitude;
+            ground_level = pressure_altitude_raw;
         } else if(n < 16) {
-            // Average the first N samples
-            ground_level += (pressure_altitude - ground_level) / (n + 1);
+            // Average the first N raw samples
+            ground_level += (pressure_altitude_raw - ground_level) / (n + 1);
         }
 
         n++;
@@ -187,10 +193,10 @@ public class MyAltimeter {
                 // GPS correction for altitude AMSL
                 if(gps_sample_count == 0) {
                     // First altitude reading. Calibrate ground level.
-                    altitude_offset = pressure_altitude - loc.altitude_gps;
+                    altitude_offset = pressure_altitude_filtered - loc.altitude_gps;
                 } else {
                     // Average the first N samples, then use moving average with lag 20
-                    final double altitude_error = altitude_raw - loc.altitude_gps;
+                    final double altitude_error = altitude - loc.altitude_gps;
                     final long correction_factor = Math.min(gps_sample_count, 20);
                     final double altitude_correction = altitude_error / correction_factor;
                     altitude_offset += altitude_correction;
@@ -222,7 +228,6 @@ public class MyAltimeter {
         final MAltitude myAltitude = new MAltitude(lastFixNano, altitude, climb, pressure);
         history.append(myAltitude);
         // Notify listeners (using AsyncTask so the altimeter never blocks!)
-        pressure_altitude_stat.addSample(pressure_altitude);
         new AsyncTask<MAltitude,Void,Void>() {
             @Override
             protected Void doInBackground(MAltitude... params) {

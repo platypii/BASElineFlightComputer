@@ -24,9 +24,8 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     // Barometer
     private TextView pressureLabel;
     private TextView pressureAltitudeLabel;
-    private TextView barStatsLabel;
+    private TextView pressureAltitudeFilteredLabel;
     private TextView altitudeLabel;
-    private TextView altitudeRefreshLabel;
     private TextView groundLevelLabel;
     private TextView altitudeAglLabel;
     private TextView fallrateLabel;
@@ -65,9 +64,8 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         // Barometer
         pressureLabel = (TextView)findViewById(R.id.pressureLabel);
         pressureAltitudeLabel = (TextView)findViewById(R.id.pressureAltitudeLabel);
-        barStatsLabel = (TextView)findViewById(R.id.barStatsLabel);
+        pressureAltitudeFilteredLabel = (TextView)findViewById(R.id.pressureAltitudeFilteredLabel);
         altitudeLabel = (TextView)findViewById(R.id.altitudeLabel);
-        altitudeRefreshLabel = (TextView)findViewById(R.id.altitudeRefreshLabel);
         groundLevelLabel = (TextView)findViewById(R.id.groundLevelLabel);
         altitudeAglLabel = (TextView)findViewById(R.id.altitudeAglLabel);
         fallrateLabel = (TextView)findViewById(R.id.fallrateLabel);
@@ -170,13 +168,13 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     }
 
     private void updateAltimeter() {
-        pressureLabel.setText("Pressure: " + Convert.pressure(MyAltimeter.pressure));
-        pressureAltitudeLabel.setText("Pressure Altitude: " + Convert.distance(MyAltimeter.pressure_altitude, 2));
-        barStatsLabel.setText("Pressure Stats: mean = " + Convert.distance(MyAltimeter.pressure_altitude_stat.mean(), 2) + ", stdev = " + Convert.distance(Math.sqrt(MyAltimeter.pressure_altitude_stat.var()), 2));
-        altitudeLabel.setText("Altitude (corrected): " + Convert.distance(MyAltimeter.altitude, 2));
-        groundLevelLabel.setText("Ground level: " + Convert.distance(MyAltimeter.ground_level, 2) + " pressure alt");
-        altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(MyAltimeter.altitudeAGL(), 2) + " AGL");
-        fallrateLabel.setText("Fallrate: " + Convert.speed(-MyAltimeter.climb));
+        pressureLabel.setText(String.format("Pressure: %s (%.2fHz)", Convert.pressure(MyAltimeter.pressure), MyAltimeter.refreshRate));
+        pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(MyAltimeter.pressure_altitude_raw, 2, true));
+        pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(MyAltimeter.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(MyAltimeter.model_error.var()), 2, true));
+        altitudeLabel.setText("Altitude (gps corrected): " + Convert.distance(MyAltimeter.altitude, 2, true));
+        groundLevelLabel.setText("Ground level: " + Convert.distance(MyAltimeter.ground_level, 2, true) + " pressure alt");
+        altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(MyAltimeter.altitudeAGL(), 2, true) + " AGL");
+        fallrateLabel.setText("Fallrate: " + Convert.speed(-MyAltimeter.climb, 2, true));
     }
 
     private void updateGPS(MLocation loc) {
@@ -192,13 +190,13 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
             } else {
                 longitudeLabel.setText("Long: ");
             }
-            gpsAltitudeLabel.setText("GPS Altitude: " + Convert.distance(loc.altitude_gps));
+            gpsAltitudeLabel.setText("GPS Altitude: " + Convert.distance(loc.altitude_gps, 2, true));
             hAccLabel.setText("hAcc: " + Convert.distance(loc.hAcc));
             pdopLabel.setText(String.format("pdop: %.1f", loc.pdop));
             hdopLabel.setText(String.format("hdop: %.1f", loc.hdop));
             vdopLabel.setText(String.format("vdop: %.1f", loc.vdop));
-            groundSpeedLabel.setText("Ground speed: " + Convert.speed(loc.groundSpeed()));
-            totalSpeedLabel.setText("Total speed: " + Convert.speed(loc.totalSpeed()));
+            groundSpeedLabel.setText("Ground speed: " + Convert.speed(loc.groundSpeed(), 2, true));
+            totalSpeedLabel.setText("Total speed: " + Convert.speed(loc.totalSpeed(), 2, true));
             glideRatioLabel.setText("Glide ratio: " + Convert.glide(loc.glideRatio()));
             glideAngleLabel.setText("Glide angle: " + Convert.angle(loc.glideAngle()));
             bearingLabel.setText("Bearing: " + Convert.bearing2(loc.bearing()));
@@ -230,7 +228,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
             lastFixLabel.setText("Last fix: ");
         }
         // Altitude refresh rate
-        altitudeRefreshLabel.setText(String.format("Sample rate: %.2fHz", MyAltimeter.refreshRate));
+        pressureLabel.setText(String.format("Pressure: %s (%.2fHz)", Convert.pressure(MyAltimeter.pressure), MyAltimeter.refreshRate));
     }
 
     @Override

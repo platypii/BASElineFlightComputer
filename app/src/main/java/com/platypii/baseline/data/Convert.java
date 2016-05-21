@@ -49,15 +49,6 @@ public class Convert {
      * Convert meters to local units
      * @param m meters
      * @param precision number of decimal places
-     * @return distance string in local units
-     */
-    public static String distance(double m, int precision) {
-        return distance(m, precision, true);
-    }
-    /**
-     * Convert meters to local units
-     * @param m meters
-     * @param precision number of decimal places
      * @param units show the units?
      * @return distance string in local units
      */
@@ -175,9 +166,6 @@ public class Convert {
 
     public static String glide(double glideRatio) {
         return glide(glideRatio, 1, true);
-    }
-    public static String glide(double glideRatio, int precision) {
-        return glide(glideRatio, precision, true);
     }
     public static String glide(double glideRatio, int precision, boolean units) {
         if(Double.isNaN(glideRatio)) {
