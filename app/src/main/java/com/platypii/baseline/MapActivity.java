@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -32,6 +33,7 @@ import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
+import com.platypii.baseline.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +58,9 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private Marker landingMarker;
     private Polyline landingPath;
     private final List<LatLng> landingPoints = new ArrayList<>();
-    private Marker myPositionOverlay;
+    private Marker myPositionMarker;
+    private BitmapDescriptor myposition1;
+    private BitmapDescriptor myposition2;
 
     // Activity state
     private boolean paused = false;
@@ -91,6 +95,9 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         flightStatsGlide = (TextView) findViewById(R.id.flightStatsGlide);
         homeButton = (ImageButton) findViewById(R.id.homeButton);
         crosshair = (ImageView) findViewById(R.id.crosshair);
+
+        myposition1 = BitmapDescriptorFactory.fromResource(R.drawable.myposition1);
+        myposition2 = BitmapDescriptorFactory.fromResource(R.drawable.myposition2);
 
         analogAltimeter.setOverlay(true);
         analogAltimeter.setLongClickable(true);
@@ -141,18 +148,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     public void onMapReady(GoogleMap map) {
         this.map = map;
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-//        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            // Enable location on map
-//            try {
-//                map.setMyLocationEnabled(true);
-//            } catch(SecurityException e) {
-//                Log.e(TAG, "Error enabling location", e);
-//            }
-//        } else {
-//            // request the missing permissions
-//            final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
-//            ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_REQUEST_LOCATION);
-//        }
         if (firstLoad) {
             Log.w(TAG, "Centering map on default view " + MapOptions.defaultLatLng);
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, MapOptions.defaultZoom));
@@ -221,10 +216,10 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                         .width(10)
                         .color(0x66ff0000)
         );
-        myPositionOverlay = map.addMarker(new MarkerOptions()
+        myPositionMarker = map.addMarker(new MarkerOptions()
                 .position(home)
                 .visible(false)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.myposition1))
+                .icon(myposition2)
                 .anchor(0.5f, 0.5f)
         );
     }
@@ -337,9 +332,16 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private void updateMyPosition() {
         final MLocation loc = Services.location.lastLoc;
         if(loc != null) {
-            myPositionOverlay.setVisible(true);
-            myPositionOverlay.setPosition(loc.latLng());
-            myPositionOverlay.setRotation((float) loc.bearing());
+            myPositionMarker.setVisible(true);
+            myPositionMarker.setPosition(loc.latLng());
+            myPositionMarker.setRotation((float) loc.bearing());
+            final double groundSpeed = loc.groundSpeed();
+            if(groundSpeed > 0.05) {
+                // Speed > 0.1mph
+                myPositionMarker.setIcon(myposition1);
+            } else {
+                myPositionMarker.setIcon(myposition2);
+            }
         }
     }
 
