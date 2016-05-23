@@ -37,8 +37,8 @@
         android:selectAllOnFocus="true" />
 
     <EditTextPreference
-        android:key="audible_rate"
-        android:title="@string/pref_audible_rate"
+        android:key="audible_interval"
+        android:title="@string/pref_audible_interval"
         android:defaultValue="3.0"
         android:inputType="numberDecimal"
         android:numeric="decimal"

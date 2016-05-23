@@ -39,7 +39,7 @@ public class AudibleSettingsActivity extends PreferenceActivity {
         private ListPreference modePreference;
         private EditTextPreference minPreference;
         private EditTextPreference maxPreference;
-        private EditTextPreference ratePreference;
+        private EditTextPreference intervalPreference;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -51,13 +51,13 @@ public class AudibleSettingsActivity extends PreferenceActivity {
             modePreference = (ListPreference) findPreference("audible_mode");
             minPreference = (EditTextPreference) findPreference("audible_min");
             maxPreference = (EditTextPreference) findPreference("audible_max");
-            ratePreference = (EditTextPreference) findPreference("audible_rate");
+            intervalPreference = (EditTextPreference) findPreference("audible_interval");
 
             enabledPreference.setOnPreferenceChangeListener(this);
             modePreference.setOnPreferenceChangeListener(this);
             minPreference.setOnPreferenceChangeListener(this);
             maxPreference.setOnPreferenceChangeListener(this);
-            ratePreference.setOnPreferenceChangeListener(this);
+            intervalPreference.setOnPreferenceChangeListener(this);
 
             updateViews();
         }
@@ -70,10 +70,10 @@ public class AudibleSettingsActivity extends PreferenceActivity {
             final String audibleMode = modePreference.getValue();
             final double min = Util.parseDouble(minPreference.getText());
             final double max = Util.parseDouble(maxPreference.getText());
-            final double speechRate = Util.parseDouble(ratePreference.getText());
+            final double speechInterval = Util.parseDouble(intervalPreference.getText());
             // Update views
             updateAudibleMode(audibleMode, min, max);
-            updateSpeechRate(speechRate);
+            updateSpeechInterval(speechInterval);
         }
 
         private void updateAudibleMode(String audibleMode, double min, double max) {
@@ -86,8 +86,8 @@ public class AudibleSettingsActivity extends PreferenceActivity {
             // Minimum and maximum values
             switch (audibleMode) {
                 case "glide_ratio":
-                    minPreference.setTitle("Minimum Glide Ratio");
-                    maxPreference.setTitle("Maximum Glide Ratio");
+                    minPreference.setTitle("Minimum glide ratio");
+                    maxPreference.setTitle("Maximum glide ratio");
                     minPreference.setSummary(Convert.glide(min, 2, true));
                     maxPreference.setSummary(Convert.glide(max, 2, true));
                     break;
@@ -96,8 +96,8 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                 case "total_speed":
                     // Set units
                     final double units = Convert.metric? Convert.KPH : Convert.MPH;
-                    minPreference.setTitle("Minimum Speed");
-                    maxPreference.setTitle("Maximum Speed");
+                    minPreference.setTitle("Minimum speed");
+                    maxPreference.setTitle("Maximum speed");
                     minPreference.setSummary(Convert.speed(min * units, 0, true));
                     maxPreference.setSummary(Convert.speed(max * units, 0, true));
                     break;
@@ -106,8 +106,8 @@ public class AudibleSettingsActivity extends PreferenceActivity {
             }
         }
 
-        private void updateSpeechRate(double speechRate) {
-            ratePreference.setSummary("Every " + speechRate + " sec");
+        private void updateSpeechInterval(double speechInterval) {
+            intervalPreference.setSummary("Every " + speechInterval + " sec");
         }
 
         /**
@@ -181,10 +181,10 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                     if(!Util.isReal(max)) return false;
                     updateAudibleMode(previousAudibleMode, previousMin, max);
                     break;
-                case "audible_rate":
-                    final double speechRate = Util.parseDouble((String) value);
-                    if(!Util.isReal(speechRate)) return false;
-                    updateSpeechRate(speechRate);
+                case "audible_interval":
+                    final double speechInterval = Util.parseDouble((String) value);
+                    if(!Util.isReal(speechInterval)) return false;
+                    updateSpeechInterval(speechInterval);
                     break;
             }
             return true;

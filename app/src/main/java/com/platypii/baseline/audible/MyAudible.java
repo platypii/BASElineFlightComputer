@@ -94,8 +94,8 @@ public class MyAudible {
      * @return the delay between speech in milliseconds
      */
     static int getDelay() {
-        final float speechRate = Float.parseFloat(prefs.getString("audible_rate", "2.0"));
-        return (int) (speechRate * 1000f);
+        final float speechInterval = Float.parseFloat(prefs.getString("audible_interval", "2.0"));
+        return (int) (speechInterval * 1000f);
     }
 
     private static String getMeasurement() {
