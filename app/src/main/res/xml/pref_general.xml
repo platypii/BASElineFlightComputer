@@ -13,7 +13,7 @@
         android:defaultValue="false"/>
 
     <com.platypii.baseline.bluetooth.BluetoothDevicePreference
-        android:key="bluetooth_device"
+        android:key="bluetooth_device_id"
         android:summary="@string/pref_bluetooth_device_description"
         android:title="@string/pref_bluetooth_device"/>
 

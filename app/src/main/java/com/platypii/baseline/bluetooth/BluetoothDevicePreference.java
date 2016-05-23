@@ -8,9 +8,13 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class BluetoothDevicePreference extends ListPreference {
+
+    private final Map<String,String> deviceNames = new HashMap<>();
 
     public BluetoothDevicePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -35,7 +39,9 @@ public class BluetoothDevicePreference extends ListPreference {
             final CharSequence[] entries = new CharSequence[devices.size()];
             final CharSequence[] entryValues = new CharSequence[devices.size()];
             int i = 0;
+            deviceNames.clear();
             for(BluetoothDevice device : devices) {
+                deviceNames.put(device.getAddress(), device.getName());
                 entries[i] = device.getName();
                 entryValues[i] = device.getAddress();
                 i++;
@@ -49,6 +55,10 @@ public class BluetoothDevicePreference extends ListPreference {
             setEntries(new CharSequence[0]);
             setEntryValues(new CharSequence[0]);
         }
+    }
+
+    public String getName(String id) {
+        return deviceNames.get(id);
     }
 
 }

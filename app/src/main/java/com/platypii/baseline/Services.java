@@ -126,6 +126,7 @@ public class Services {
                     MyAltimeter.stop();
                     location.stop();
                     location = null;
+                    BluetoothService.stop();
                     KVStore.stop();
                     initialized = false;
                 } else {
@@ -148,7 +149,8 @@ public class Services {
 
         // Bluetooth
         BluetoothService.preferenceEnabled = prefs.getBoolean("bluetooth_enabled", false);
-        BluetoothService.preferenceDevice = prefs.getString("bluetooth_device", null);
+        BluetoothService.preferenceDeviceId = prefs.getString("bluetooth_device_id", null);
+        BluetoothService.preferenceDeviceName = prefs.getString("bluetooth_device_name", null);
 
         // Home location
         final double home_latitude = Util.parseDouble(prefs.getString("home_latitude", null));

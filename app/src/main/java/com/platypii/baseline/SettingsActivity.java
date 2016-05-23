@@ -1,18 +1,17 @@
 package com.platypii.baseline;
 
 import android.annotation.TargetApi;
-import android.bluetooth.BluetoothDevice;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.util.Log;
 
+import com.platypii.baseline.bluetooth.BluetoothDevicePreference;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.util.Util;
@@ -41,7 +40,7 @@ public class SettingsActivity extends PreferenceActivity {
 
         private CheckBoxPreference metricPreference;
         private SwitchPreference bluetoothPreference;
-        private ListPreference bluetoothDevicePreference;
+        private BluetoothDevicePreference bluetoothDevicePreference;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +53,7 @@ public class SettingsActivity extends PreferenceActivity {
 
             bluetoothPreference = (SwitchPreference) findPreference("bluetooth_enabled");
             bluetoothPreference.setOnPreferenceChangeListener(this);
-            bluetoothDevicePreference = (ListPreference) findPreference("bluetooth_device");
+            bluetoothDevicePreference = (BluetoothDevicePreference) findPreference("bluetooth_device_id");
             bluetoothDevicePreference.setOnPreferenceChangeListener(this);
 
             updateViews();
@@ -93,11 +92,17 @@ public class SettingsActivity extends PreferenceActivity {
                         BluetoothService.stop();
                     }
                     break;
-                case "bluetooth_device":
-                    BluetoothService.preferenceDevice = (String) value;
-                    Log.i(TAG, "Bluetooth device selected: " + BluetoothService.preferenceDevice);
+                case "bluetooth_device_id":
+                    BluetoothService.preferenceDeviceId = (String) value;
+                    BluetoothService.preferenceDeviceName = bluetoothDevicePreference.getName(BluetoothService.preferenceDeviceId);
+                    Log.i(TAG, "Bluetooth device selected: " + BluetoothService.preferenceDeviceId);
                     BluetoothService.stop();
                     BluetoothService.startAsync(this.getActivity());
+                    // Save name preference
+                    final SharedPreferences prefs2 = preference.getSharedPreferences();
+                    final SharedPreferences.Editor edit2 = prefs2.edit();
+                    edit2.putString("bluetooth_device_name", BluetoothService.preferenceDeviceName);
+                    edit2.apply();
                     break;
             }
             updateViews();
@@ -116,11 +121,12 @@ public class SettingsActivity extends PreferenceActivity {
                 bluetoothPreference.setSummary(R.string.pref_bluetooth_disabled);
             }
             bluetoothDevicePreference.setEnabled(BluetoothService.preferenceEnabled);
-            if(BluetoothService.preferenceDevice != null) {
-                final BluetoothDevice device = BluetoothService.getDevice();
-                if(device != null) {
-                    bluetoothDevicePreference.setSummary(device.getName());
-                }
+            if(BluetoothService.preferenceDeviceName != null) {
+                bluetoothDevicePreference.setSummary(BluetoothService.preferenceDeviceName);
+            } else if(BluetoothService.preferenceDeviceId != null) {
+                bluetoothDevicePreference.setSummary(BluetoothService.preferenceDeviceId);
+            } else {
+                bluetoothDevicePreference.setSummary(R.string.pref_bluetooth_device_description);
             }
         }
     }

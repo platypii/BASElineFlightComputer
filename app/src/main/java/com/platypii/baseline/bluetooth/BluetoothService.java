@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.location.GpsStatus;
 import android.os.AsyncTask;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -32,7 +33,8 @@ public class BluetoothService {
     private static final List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
 
     public static boolean preferenceEnabled = false;
-    public static String preferenceDevice = null;
+    public static String preferenceDeviceId = null;
+    public static String preferenceDeviceName = null;
 
     // TODO: State machine
     private static boolean isEnabled = false;
@@ -86,6 +88,9 @@ public class BluetoothService {
             final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             activity.startActivityForResult(enableBluetoothIntent, ENABLE_BLUETOOTH_CODE);
             return false;
+        } else if(preferenceDeviceId == null) {
+            Log.e(TAG, "Cannot connect: bluetooth device not selected");
+            return false;
         } else {
             Log.i(TAG, "Bluetooth is enabled, connecting...");
             return connect();
@@ -93,35 +98,32 @@ public class BluetoothService {
     }
 
     /**
-     * Connect to gps receiver
+     * Connect to gps receiver.
+     * Precondition: bluetooth enabled and preferenceDeviceId != null
      * @return true iff bluetooth socket was created successfully
      */
     private static boolean connect() {
-        if(preferenceDevice != null) {
-            bluetoothDevice = bluetoothAdapter.getRemoteDevice(preferenceDevice);
-            final UUID uuid;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                uuid = bluetoothDevice.getUuids()[0].getUuid();
-            } else {
-                uuid = DEFAULT_UUID;
+        bluetoothDevice = bluetoothAdapter.getRemoteDevice(preferenceDeviceId);
+        UUID uuid = DEFAULT_UUID;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            final ParcelUuid[] uuids = bluetoothDevice.getUuids();
+            if(uuids != null && uuids.length > 0) {
+                uuid = uuids[0].getUuid();
             }
-            Log.i(TAG, "Connecting to bluetooth device: " + bluetoothDevice.getName());
-            try {
-                bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
-                bluetoothSocket.connect();
-                // Start listener thread to convert input stream to nmea
-                if(bluetoothRunnable != null) {
-                    Log.w(TAG, "Bluetooth listener thread already started");
-                }
-                bluetoothRunnable = new BluetoothRunnable();
-                new Thread(bluetoothRunnable).start();
-                return true;
-            } catch(IOException e) {
-                Log.e(TAG, "Failed to connect to bluetooth device: " + e.getMessage());
-                return false;
+        }
+        Log.i(TAG, "Connecting to bluetooth device: " + bluetoothDevice.getName());
+        try {
+            bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+            bluetoothSocket.connect();
+            // Start listener thread to convert input stream to nmea
+            if(bluetoothRunnable != null) {
+                Log.w(TAG, "Bluetooth listener thread already started");
             }
-        } else {
-            Log.e(TAG, "Cannot connect: bluetooth device not selected");
+            bluetoothRunnable = new BluetoothRunnable();
+            new Thread(bluetoothRunnable).start();
+            return true;
+        } catch(IOException e) {
+            Log.e(TAG, "Failed to connect to bluetooth device: " + e.getMessage());
             return false;
         }
     }
