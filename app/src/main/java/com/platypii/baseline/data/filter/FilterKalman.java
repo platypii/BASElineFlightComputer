@@ -12,7 +12,7 @@ public class FilterKalman extends Filter {
     // TODO: Acceleration
 
     // Kalman filter to update altitude and climb
-    private static final double sensorVar = 2400; // measurement variance (found experimentally)
+    private static final double sensorVar = 1200; // measurement variance (found experimentally)
     private static final double accelVar = 4; // acceleration variance (pulled from my ass)
 
     private static final double r = sensorVar;
@@ -29,7 +29,7 @@ public class FilterKalman extends Filter {
         } else if(dt > 0) {
 
             // Estimated state
-            double predicted_altitude = x + v * dt;
+            final double predicted_altitude = x + v * dt;
 
             // Estimated covariance
             final double q11 = 0.25 * dt*dt*dt*dt * accelVar;

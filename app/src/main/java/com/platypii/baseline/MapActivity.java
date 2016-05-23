@@ -336,8 +336,8 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
             myPositionMarker.setPosition(loc.latLng());
             myPositionMarker.setRotation((float) loc.bearing());
             final double groundSpeed = loc.groundSpeed();
-            if(groundSpeed > 0.05) {
-                // Speed > 0.1mph
+            if(groundSpeed > 0.1) {
+                // Speed > 0.2mph
                 myPositionMarker.setIcon(myposition1);
             } else {
                 myPositionMarker.setIcon(myposition2);

@@ -187,6 +187,7 @@ public class MyAltimeter {
      * Process new GPS reading
      */
     private static void updateGPS(MLocation loc) {
+        // Log.d(TAG, "GPS Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + loc.millis);
         if(!Double.isNaN(loc.altitude_gps)) {
             if(n > 0) {
                 // Log.d(TAG, "alt = " + altitude + ", alt_gps = " + altitude_gps + ", offset = " + altitude_offset);
@@ -224,8 +225,9 @@ public class MyAltimeter {
      * Saves an official altitude measurement
      */
     private static void updateAltitude() {
+        // Log.d(TAG, "Altimeter Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + lastFixMillis + " " + lastFixNano);
         // Create the measurement
-        final MAltitude myAltitude = new MAltitude(lastFixNano, altitude, climb, pressure);
+        final MAltitude myAltitude = new MAltitude(lastFixMillis, lastFixNano, altitude, climb, pressure);
         history.append(myAltitude);
         // Notify listeners (using AsyncTask so the altimeter never blocks!)
         new AsyncTask<MAltitude,Void,Void>() {

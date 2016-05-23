@@ -15,7 +15,8 @@ public class MAltitude extends Measurement {
     public final double climb;     // Rate of climb (m/s)
     public final double pressure;  // Barometric pressure (hPa)
 
-    public MAltitude(long nano, double altitude, double climb, float pressure) {
+    public MAltitude(long millis, long nano, double altitude, double climb, float pressure) {
+        this.millis = millis;
         this.nano = nano;
         this.altitude = altitude;
         this.climb = climb;
@@ -25,12 +26,12 @@ public class MAltitude extends Measurement {
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return String.format(Locale.US, ",%d,alt,%f", nano, pressure);
+        return String.format(Locale.US, "%d,%d,alt,%f", millis, nano, pressure);
     }
 
     @Override
     public String toString() {
-        return String.format(Locale.US, "MAltitude(%d,%.1f)", nano, altitude);
+        return String.format(Locale.US, "MAltitude(%d,%.1f)", millis, altitude);
     }
 
 }
