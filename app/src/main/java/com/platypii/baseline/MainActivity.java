@@ -192,6 +192,12 @@ public class MainActivity extends BaseActivity {
         invalidateOptionsMenu();
     }
 
+    public void clickAltimeter(View v) {
+        // Open altimeter activity
+        final Intent intent = new Intent(this, AltimeterActivity.class);
+        startActivity(intent);
+    }
+
     public void clickNav(View v) {
         // Open nav activity
         startActivity(new Intent(this, MapActivity.class));
@@ -206,6 +212,12 @@ public class MainActivity extends BaseActivity {
     public void clickAudible(View v) {
         // Open audible activity
         final Intent intent = new Intent(this, AudibleSettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void clickSettings(View v) {
+        // Open settings activity
+        final Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 
@@ -300,14 +312,6 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.menu_item_settings:
-                // Open settings activity
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-            case R.id.menu_item_altimeter:
-                // Open altimeter activity
-                startActivity(new Intent(this, AltimeterActivity.class));
-                return true;
             case R.id.menu_item_sensor_info:
                 // Open sensor activity
                 startActivity(new Intent(this, SensorActivity.class));

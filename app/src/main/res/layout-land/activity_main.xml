@@ -3,76 +3,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/activity_horizontal_margin"
-    android:orientation="vertical" >
+    android:orientation="horizontal" >
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/recordButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="clickRecord"
-            android:drawableTop="@drawable/circle"
-            android:text="@string/action_record" />
-
-        <Button
-            android:id="@+id/navButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="clickNav"
-            android:drawableTop="@drawable/nav"
-            android:text="@string/action_nav" />
-
-        <Button
-            android:id="@+id/audibleButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="clickAudible"
-            android:drawableTop="@drawable/audio"
-            android:text="@string/action_audible" />
-
-        <Button
-            android:id="@+id/jumpsButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="clickJumps"
-            android:drawableTop="@drawable/list"
-            android:text="@string/action_tracks" />
+        <include
+            layout="@layout/button_panel"/>
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/clock"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="48sp"
-        android:textIsSelectable="false"
-        android:gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="" />
+    <LinearLayout
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        <TextView
+            android:id="@+id/clock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="48sp"
+            android:textIsSelectable="false"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="" />
 
-    <TextView
-        android:id="@+id/signalStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="20dp"
-        android:drawablePadding="10dp"
-        android:text="" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
-    <!--<include layout="@layout/sign_in_panel"/>-->
+        <TextView
+            android:id="@+id/signalStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:drawablePadding="10dp"
+            android:text="" />
+
+        <!--<include layout="@layout/sign_in_panel"/>-->
+
+    </LinearLayout>
 
 </LinearLayout>

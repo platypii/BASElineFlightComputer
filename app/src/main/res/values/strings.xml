@@ -4,8 +4,11 @@
 
     <string name="action_record">Record</string>
     <string name="action_stop">Stop</string>
-    <string name="action_tracks">Tracks</string>
     <string name="action_audible">Audible</string>
+    <string name="action_altimeter">Altimeter</string>
+    <string name="action_nav">Navigation</string>
+    <string name="action_tracks">Tracks</string>
+    <string name="action_settings">Settings</string>
 
     <string name="action_sensor_info">Sensor Info</string>
     <string name="action_sign_in">Sign In</string>
@@ -60,7 +63,6 @@
     <string name="pref_audible_interval">Speech interval</string>
 
     <!-- Map -->
-    <string name="action_nav">Navigation</string>
     <string name="title_activity_map">Navigation</string>
 
     <string name="set_altitude">Set Altitude</string>
@@ -77,11 +79,7 @@
     <string name="pref_bluetooth_device">Bluetooth device</string>
     <string name="pref_bluetooth_device_description">Select bluetooth device</string>
 
-    <!-- Altimeter -->
-    <string name="action_altimeter">Altimeter</string>
-
     <!-- Settings -->
-    <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
     <string name="pref_metric">Metric</string>
     <string name="pref_metric_description">Use metric units</string>
