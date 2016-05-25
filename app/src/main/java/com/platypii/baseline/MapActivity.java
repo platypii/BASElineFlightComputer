@@ -33,7 +33,6 @@ import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
-import com.platypii.baseline.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +63,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
 
     // Activity state
     private boolean paused = false;
-    private static boolean firstLoad = true;
     private boolean ready = false;
 
     // Drag listener
@@ -148,10 +146,17 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     public void onMapReady(GoogleMap map) {
         this.map = map;
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        if (firstLoad) {
-            Log.w(TAG, "Centering map on default view " + MapOptions.defaultLatLng);
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, MapOptions.defaultZoom));
-            firstLoad = false;
+        // Center priority: current location, home location, default location
+        if(Services.location.lastLoc != null) {
+            final LatLng center = Services.location.lastLoc.latLng();
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(center, MapOptions.getZoom()));
+            Log.i(TAG, "Centering map on " + center);
+        } else if(MyFlightManager.homeLoc != null) {
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(MyFlightManager.homeLoc, MapOptions.defaultZoom));
+            Log.w(TAG, "Centering map on home " + MyFlightManager.homeLoc);
+        } else {
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, MapOptions.defaultZoom));
+            Log.w(TAG, "Centering map on default " + MapOptions.defaultLatLng);
         }
 
         // Add ui elements
