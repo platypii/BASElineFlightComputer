@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.altimeter.MyAltitudeListener;
+import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;

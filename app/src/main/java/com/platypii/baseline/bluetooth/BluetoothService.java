@@ -11,6 +11,7 @@ import android.os.ParcelUuid;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.crash.FirebaseCrash;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +49,7 @@ public class BluetoothService {
     public static void startAsync(final Activity activity) {
         if(isEnabled || isConnecting || isConnected) {
             Log.e(TAG, "Bluetooth already enabled, or in the process of connecting");
+            FirebaseCrash.report(new Exception("Bluetooth already enabled, or in the process of connecting"));
         }
         isEnabled = true;
         isConnecting = true;
@@ -123,6 +125,7 @@ public class BluetoothService {
             return true;
         } catch(IOException e) {
             Log.e(TAG, "Failed to connect to bluetooth device: " + e.getMessage());
+            FirebaseCrash.report(e);
             return false;
         }
     }

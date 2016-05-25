@@ -3,6 +3,7 @@ package com.platypii.baseline.data;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.util.Try;
 import com.platypii.baseline.util.Callback;
 
@@ -41,9 +42,11 @@ public class TheCloud {
                     return new Try.Success<>(result);
                 } catch(IOException e) {
                     Log.e(TAG, "Failed to upload file", e);
+                    FirebaseCrash.report(e);
                     return new Try.Failure<>(e.getMessage());
                 } catch(JSONException e) {
                     Log.e(TAG, "Failed to parse response", e);
+                    FirebaseCrash.report(e);
                     return new Try.Failure<>(e.toString());
                 }
             }

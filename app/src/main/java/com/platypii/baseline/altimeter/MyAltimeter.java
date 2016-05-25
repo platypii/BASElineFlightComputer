@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import java.util.ArrayList;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Stat;
@@ -170,6 +171,7 @@ public class MyAltimeter {
             refreshRate += (refreshTime - refreshRate) * 0.5f; // Moving average
             if (Double.isNaN(refreshRate)) {
                 Log.e(TAG, "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime);
+                FirebaseCrash.report(new Exception("Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime));
                 refreshRate = 0;
             }
         }

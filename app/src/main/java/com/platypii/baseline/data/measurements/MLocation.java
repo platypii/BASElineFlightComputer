@@ -2,6 +2,7 @@ package com.platypii.baseline.data.measurements;
 
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.util.Util;
 import java.util.Locale;
@@ -37,13 +38,16 @@ public class MLocation extends Measurement {
 
         // Sanity checks
         if(!Util.isReal(latitude) || !Util.isReal(longitude)) {
-            Log.e(TAG, "lat/long not a number: " + this);
+            Log.e(TAG, "Invalid lat/long: " + this);
+            FirebaseCrash.report(new Exception("Invalid lat/long: " + this));
         }
         if(Math.abs(latitude) < 0.1 && Math.abs(longitude) < 0.1) {
-            Log.e(TAG, "unlikely lat/long: " + latitude + ", " + longitude);
+            Log.e(TAG, "Unlikely lat/long: " + latitude + ", " + longitude);
+            FirebaseCrash.report(new Exception("Unlikely lat/long: " + this));
         }
         if(Double.isInfinite(vN) || Double.isInfinite(vE)) {
-            Log.e(TAG, "infinite velocity: vN = " + vN + ", vE = " + vE);
+            Log.e(TAG, "Infinite velocity: vN = " + vN + ", vE = " + vE);
+            FirebaseCrash.report(new Exception("Infinite velocity: vN = " + vN + ", vE = " + vE));
         }
 
         // Store location data
@@ -137,13 +141,6 @@ public class MLocation extends Measurement {
     public LatLng moveDirection(double bearing, double distance) {
         final double R = 6371000;
         final double d = distance / R;
-
-        if(!Util.isReal(latitude) || !Util.isReal(longitude)) {
-            Log.e("MyLocation", "invalid lat/long: " + latitude + ", " + longitude);
-        }
-        if(Math.abs(latitude) < 0.1 && Math.abs(longitude) < 0.1) {
-            Log.e("MyLocation", "unlikely lat/long: " + latitude + ", " + longitude);
-        }
 
         double lat = radians(latitude);
         double lon = radians(longitude);

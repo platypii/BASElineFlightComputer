@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.altimeter.MyAltitudeListener;
@@ -124,6 +125,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
                 return logFile;
             } catch (IOException e) {
                 Log.e("DB", "Failed to close log file " + logFile, e);
+                FirebaseCrash.report(e);
                 return null;
             }
         } else {
@@ -166,6 +168,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
                 log.write('\n');
             } catch (IOException e) {
                 Log.e("DB", "Failed to write to log file " + logFile, e);
+                FirebaseCrash.report(e);
             }
         } else {
             Log.e("DB", "Attempted to log after closing file");

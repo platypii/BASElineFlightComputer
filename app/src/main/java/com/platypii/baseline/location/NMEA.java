@@ -3,6 +3,7 @@ package com.platypii.baseline.location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -88,6 +89,7 @@ class NMEA {
         int starIndex = nmea.indexOf('*');
         if(nmea.length() < 8 || nmea.charAt(0) != '$' || nmea.charAt(6) != ',' || starIndex == -1) {
             Log.e(TAG, "Invalid NMEA sentence: " + nmea);
+            FirebaseCrash.report(new Exception("Invalid NMEA sentence: " + nmea));
             return false;
         }
 
@@ -99,6 +101,7 @@ class NMEA {
         final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1, starIndex + 3), 16);
         if(checksum1 != checksum2) {
             Log.e(TAG, "Invalid NMEA checksum: " + nmea);
+            FirebaseCrash.report(new Exception("Invalid NMEA checksum: " + nmea));
             return false;
         }
         return true;

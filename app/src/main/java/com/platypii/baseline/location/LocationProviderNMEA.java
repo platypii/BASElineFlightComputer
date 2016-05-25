@@ -6,6 +6,7 @@ import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.platypii.baseline.bluetooth.BluetoothService;
+import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
@@ -119,6 +120,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                  if (!split[9].isEmpty()) {
                      if(!split[10].equals("M")) {
                          Log.e(NMEA_TAG, "Expected meters, was " + split[10] + " in nmea: " + nmea);
+                         FirebaseCrash.report(new Exception("Expected meters, was " + split[10] + " in nmea: " + nmea));
                      }
                      altitude_gps = Util.parseDouble(split[9]);
                  }
@@ -207,6 +209,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                  break;
              default:
                  Log.w(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
+                 FirebaseCrash.report(new Exception("Unknown NMEA command " + command + ": " + nmea));
          }
     }
 

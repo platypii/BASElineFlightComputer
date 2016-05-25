@@ -2,6 +2,7 @@ package com.platypii.baseline.data;
 
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -70,6 +71,7 @@ public class Jump {
             return format.parse(dateString);
         } catch (ParseException e) {
             Log.e("Jump", "Failed to parse date from filename", e);
+            FirebaseCrash.report(e);
             return null;
         }
     }
