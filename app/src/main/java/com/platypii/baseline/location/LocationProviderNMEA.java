@@ -23,8 +23,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     private double altitude_gps = Double.NaN;
     private double vN = Double.NaN;
     private double vE = Double.NaN;
-    private double groundSpeed = Double.NaN;
-    private double bearing = Double.NaN;
+    // private double groundSpeed = Double.NaN;
+    // private double bearing = Double.NaN;
     private float pdop = Float.NaN;
     private float hdop = Float.NaN;
     private float vdop = Float.NaN;
@@ -131,8 +131,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                  // boolean status = split[2].equals("A"); // A = active, V = void
                  latitude = NMEA.parseDegreesMinutes(split[3], split[4]);
                  longitude = NMEA.parseDegreesMinutes(split[5], split[6]);
-                 groundSpeed = Convert.kts2mps(Util.parseDouble(split[7])); // Speed over ground
-                 bearing = Util.parseDouble(split[8]); // Course over ground
+                 final double groundSpeedRMC = Convert.kts2mps(Util.parseDouble(split[7])); // Speed over ground
+                 final double bearingRMC = Util.parseDouble(split[8]); // Course over ground
                  // split[10], split[11]: 003.1,W magnetic Variation
                  // split[9]: Date: 230394 = 23 March 1994
                  // split[1]: Time: 123456 = 12:34:56 UTC
@@ -148,8 +148,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                  }
 
                  // Computed parameters
-                 vN = groundSpeed * Math.cos(Math.toRadians(bearing));
-                 vE = groundSpeed * Math.sin(Math.toRadians(bearing));
+                 vN = groundSpeedRMC * Math.cos(Math.toRadians(bearingRMC));
+                 vE = groundSpeedRMC * Math.sin(Math.toRadians(bearingRMC));
 
                  // Log.i(NMEA_TAG, "["+time+"] " + Convert.latlong(latitude, longitude) + ", groundSpeed = " + Convert.speed(groundSpeed) + ", bearing = " + Convert.bearing2(bearing));
 
@@ -172,8 +172,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                  }
                  break;
              case "VTG":
-                 bearing = Util.parseDouble(split[1]); // Course over ground
-                 groundSpeed = Convert.kts2mps(Util.parseDouble(split[5])); // Speed over ground
+                 // final double bearingVTG = Util.parseDouble(split[1]); // Course over ground
+                 // final double groundSpeedVTG = Convert.kts2mps(Util.parseDouble(split[5])); // Speed over ground
                  break;
              // case "GLL":
              //     // Lat/Long data
