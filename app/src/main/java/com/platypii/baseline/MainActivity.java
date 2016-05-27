@@ -25,13 +25,14 @@ import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.data.TheCloud;
 import com.platypii.baseline.util.Callback;
+import java.util.Locale;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "Main";
 
     // app start time
     // public static final long startTimeMillis = System.currentTimeMillis();
-    public static final long startTimeNano = System.nanoTime();
+    // public static final long startTimeNano = System.nanoTime();
 
     private Menu menu;
 
@@ -266,27 +267,30 @@ public class MainActivity extends BaseActivity {
 
         // GPS signal status
         if(BluetoothService.preferenceEnabled && BluetoothService.isConnecting) {
-            status = "bluetooth connecting...";
+            status = "GPS bluetooth connecting...";
             statusIcon = R.drawable.warning;
         } else if(BluetoothService.preferenceEnabled && !BluetoothService.isConnected) {
-            status = "bluetooth not connected";
+            status = "GPS bluetooth not connected";
             statusIcon = R.drawable.warning;
         } else if(Services.location.lastFixDuration() < 0) {
-            status = "no signal";
+            status = "GPS searching...";
             statusIcon = R.drawable.status_red;
         } else {
             final long lastFixDuration = Services.location.lastFixDuration();
+            // TODO: Use better method to determine signal.
+            // Take into account acc and dop
+            // How many of the last X expected fixes have we missed?
             if(lastFixDuration > 10000) {
-                status = "no signal";
+                status = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
                 statusIcon = R.drawable.status_red;
-            } else if(lastFixDuration > 3000) {
-                status = "weak signal";
+            } else if(lastFixDuration > 2000) {
+                status = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
                 statusIcon = R.drawable.status_yellow;
             } else if(BluetoothService.preferenceEnabled && BluetoothService.isConnected) {
-                status = "good signal";
+                status = String.format(Locale.getDefault(), "GPS bluetooth %.2fHz", Services.location.refreshRate);
                 statusIcon = R.drawable.status_blue;
             } else {
-                status = "good signal";
+                status = String.format(Locale.getDefault(), "GPS %.2fHz", Services.location.refreshRate);
                 statusIcon = R.drawable.status_green;
             }
         }

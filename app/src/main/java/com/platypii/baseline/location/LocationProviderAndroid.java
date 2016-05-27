@@ -8,6 +8,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Util;
@@ -124,7 +125,9 @@ class LocationProviderAndroid extends LocationProvider {
         manager.removeGpsStatusListener(statusListener);
         try {
             manager.removeUpdates(androidLocationListener);
-        } catch(SecurityException e) {}
+        } catch(SecurityException e) {
+            Log.w(TAG, "Exception while stopping android location updates", e);
+        }
         manager = null;
     }
 }

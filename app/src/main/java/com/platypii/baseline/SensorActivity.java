@@ -11,6 +11,7 @@ import com.platypii.baseline.data.MySensorManager;
 import com.platypii.baseline.data.measurements.MSensor;
 import com.platypii.baseline.util.Util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -18,7 +19,9 @@ import android.os.Handler;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import java.util.Locale;
 
+@SuppressLint("SetTextI18n")
 public class SensorActivity extends Activity implements MyAltitudeListener, MyLocationListener {
 
     // Barometer
@@ -160,7 +163,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     }
 
     private void updateAltimeter() {
-        pressureLabel.setText(String.format("Pressure: %s (%.2fHz)", Convert.pressure(MyAltimeter.pressure), MyAltimeter.refreshRate));
+        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(MyAltimeter.pressure), MyAltimeter.refreshRate));
         pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(MyAltimeter.pressure_altitude_raw, 2, true));
         pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(MyAltimeter.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(MyAltimeter.model_error.var()), 2, true));
         altitudeLabel.setText("Altitude (gps corrected): " + Convert.distance(MyAltimeter.altitude, 2, true));
@@ -173,20 +176,20 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         satelliteLabel.setText("Satellites: " + Services.location.satellitesInView + " visible, " + Services.location.satellitesUsed + " used in fix");
         if(loc != null) {
             if (Util.isReal(loc.latitude)) {
-                latitudeLabel.setText(String.format("Lat: %.6f", loc.latitude));
+                latitudeLabel.setText(String.format(Locale.getDefault(), "Lat: %.6f", loc.latitude));
             } else {
                 latitudeLabel.setText("Lat: ");
             }
             if (Util.isReal(loc.latitude)) {
-                longitudeLabel.setText(String.format("Long: %.6f", loc.longitude));
+                longitudeLabel.setText(String.format(Locale.getDefault(), "Long: %.6f", loc.longitude));
             } else {
                 longitudeLabel.setText("Long: ");
             }
             gpsAltitudeLabel.setText("GPS Altitude: " + Convert.distance(loc.altitude_gps, 2, true));
             hAccLabel.setText("hAcc: " + Convert.distance(loc.hAcc));
-            pdopLabel.setText(String.format("pdop: %.1f", loc.pdop));
-            hdopLabel.setText(String.format("hdop: %.1f", loc.hdop));
-            vdopLabel.setText(String.format("vdop: %.1f", loc.vdop));
+            pdopLabel.setText(String.format(Locale.getDefault(), "pdop: %.1f", loc.pdop));
+            hdopLabel.setText(String.format(Locale.getDefault(), "hdop: %.1f", loc.hdop));
+            vdopLabel.setText(String.format(Locale.getDefault(), "vdop: %.1f", loc.vdop));
             groundSpeedLabel.setText("Ground speed: " + Convert.speed(loc.groundSpeed(), 2, true));
             totalSpeedLabel.setText("Total speed: " + Convert.speed(loc.totalSpeed(), 2, true));
             glideRatioLabel.setText("Glide ratio: " + Convert.glide(loc.glideRatio()));
@@ -198,11 +201,12 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     /** Updates the UI that refresh continuously, such as sample rates */
     private void update() {
         // Last fix needs to be updated continuously since it shows time since last fix
-        if(Services.location.lastFixDuration() >= 0) {
+        final long lastFixDuration = Services.location.lastFixDuration();
+        if(lastFixDuration >= 0) {
             // Set text color
-            final long lastFixDuration = Services.location.lastFixDuration();
-            if(lastFixDuration > 3000) {
-                float frac = (6000f - lastFixDuration) / (3000f);
+            if(lastFixDuration > 2000) {
+                // Fade from white to red linearly from 2 -> 5 seconds since last fix
+                float frac = (5000f - lastFixDuration) / (3000f);
                 frac = Math.max(0, Math.min(frac, 1));
                 final int b = (int)(0xb0 * frac); // blue
                 final int gb = b + 0x100 * b; // blue + green
@@ -212,7 +216,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
             }
             String lastFix = (lastFixDuration / 1000) + "s";
             if(Services.location.refreshRate > 0) {
-                lastFix += String.format(" (%.2fHz)", Services.location.refreshRate);
+                lastFix += String.format(Locale.getDefault(), " (%.2fHz)", Services.location.refreshRate);
             }
             lastFixLabel.setText("Last fix: " + lastFix);
         } else {
@@ -220,7 +224,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
             lastFixLabel.setText("Last fix: ");
         }
         // Altitude refresh rate
-        pressureLabel.setText(String.format("Pressure: %s (%.2fHz)", Convert.pressure(MyAltimeter.pressure), MyAltimeter.refreshRate));
+        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(MyAltimeter.pressure), MyAltimeter.refreshRate));
     }
 
     @Override

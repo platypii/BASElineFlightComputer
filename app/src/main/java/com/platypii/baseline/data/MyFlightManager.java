@@ -39,11 +39,7 @@ public class MyFlightManager {
             double bearing = currentLocation.bearing();
 
             // Compute estimated landing location
-            final LatLng landingLocation = currentLocation.moveDirection(bearing, groundDistance);
-
-            // Log.d("FlightManager", currentLocation + " -> " + landingLocation + " (" + groundDistance + "m, " + bearing + "°)");
-
-            return landingLocation;
+            return currentLocation.moveDirection(bearing, groundDistance);
         } else {
             return null;
         }

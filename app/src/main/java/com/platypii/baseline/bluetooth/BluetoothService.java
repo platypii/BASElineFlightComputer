@@ -42,12 +42,11 @@ public class BluetoothService {
     public static boolean isConnected = false;
 
     private static BluetoothAdapter bluetoothAdapter;
-    private static BluetoothDevice bluetoothDevice;
     private static BluetoothSocket bluetoothSocket;
     private static BluetoothRunnable bluetoothRunnable;
 
     public static void startAsync(final Activity activity) {
-        if(isEnabled || isConnecting || isConnecting) {
+        if(isEnabled || isConnecting || isConnected) {
             Log.e(TAG, "Bluetooth already enabled, or in the process of connecting");
         }
         isEnabled = true;
@@ -103,7 +102,7 @@ public class BluetoothService {
      * @return true iff bluetooth socket was created successfully
      */
     private static boolean connect() {
-        bluetoothDevice = bluetoothAdapter.getRemoteDevice(preferenceDeviceId);
+        final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(preferenceDeviceId);
         UUID uuid = DEFAULT_UUID;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             final ParcelUuid[] uuids = bluetoothDevice.getUuids();
@@ -179,15 +178,6 @@ public class BluetoothService {
     public static Set<BluetoothDevice> getDevices() {
         if(isEnabled && bluetoothAdapter != null) {
             return bluetoothAdapter.getBondedDevices();
-        } else {
-            Log.w(TAG, "Tried to get devices, but bluetooth is not enabled");
-            return null;
-        }
-    }
-
-    public static BluetoothDevice getDevice() {
-        if(isEnabled && bluetoothDevice != null) {
-            return bluetoothDevice;
         } else {
             Log.w(TAG, "Tried to get devices, but bluetooth is not enabled");
             return null;

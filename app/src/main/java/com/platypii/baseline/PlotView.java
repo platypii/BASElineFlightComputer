@@ -120,14 +120,10 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * Draw the plot (do not override lightly)
      */
     private void drawPlot(Canvas canvas) {
-        final int width = getWidth();
-        final int height = getHeight();
-        // density = getResources().getDisplayMetrics().density;
-
-        bottom = height;
+        bottom = getHeight();
         top = 0;
         left = 0;
-        right = width;
+        right = getWidth();
 
         // Get plot-space bounds
         bounds = getBounds(dataBounds);

@@ -72,11 +72,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
          final String command = split[0].substring(3, 6);
 
          // Sanity checks
-         if (split[0].charAt(0) != '$' || split[0].length() != 6) {
-             Log.e(NMEA_TAG, "Invalid NMEA tag: " + split[0]);
-         }
-         if (!NMEA.nmeaChecksum(nmea)) {
-             Log.e(NMEA_TAG, "Invalid NMEA checksum: " + nmea);
+         if (!NMEA.validate(nmea)) {
+             Log.e(NMEA_TAG, "Invalid NMEA sentence: " + nmea);
          }
 
          // Parse command
