@@ -5,8 +5,8 @@
     <string name="action_record">Record</string>
     <string name="action_stop">Stop</string>
     <string name="action_audible">Audible</string>
-    <string name="action_altimeter">Altimeter</string>
-    <string name="action_nav">Navigation</string>
+    <string name="action_altimeter">Alti</string>
+    <string name="action_nav">Nav</string>
     <string name="action_tracks">Tracks</string>
     <string name="action_settings">Settings</string>
 

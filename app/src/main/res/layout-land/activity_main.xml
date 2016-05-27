@@ -47,8 +47,6 @@
             android:drawablePadding="10dp"
             android:text="" />
 
-        <!--<include layout="@layout/sign_in_panel"/>-->
-
     </LinearLayout>
 
 </LinearLayout>
