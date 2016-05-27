@@ -55,9 +55,6 @@ public class MyAltimeter {
     private static long lastFixNano; // nanoseconds
     private static long lastFixMillis; // milliseconds uptime
 
-    // History
-    public static final SyncedList<MAltitude> history = new SyncedList<>();
-
     // Stats
     // Model error is the difference between our filtered output and the raw pressure altitude
     // Model error should approximate the sensor variance, even when in motion
@@ -228,7 +225,6 @@ public class MyAltimeter {
         // Log.d(TAG, "Altimeter Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + lastFixMillis + " " + lastFixNano);
         // Create the measurement
         final MAltitude myAltitude = new MAltitude(lastFixMillis, lastFixNano, altitude, climb, pressure);
-        history.append(myAltitude);
         // Notify listeners (using AsyncTask so the altimeter never blocks!)
         new AsyncTask<MAltitude,Void,Void>() {
             @Override
