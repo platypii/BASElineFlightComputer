@@ -9,7 +9,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
-import com.platypii.baseline.data.Convert;
+import com.platypii.baseline.util.Convert;
 
 public class AnalogAltimeter extends View {
 

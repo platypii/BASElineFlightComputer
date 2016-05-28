@@ -4,12 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
 import com.platypii.baseline.Services;
+import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.util.Util;
-import com.platypii.baseline.data.Convert;
-import com.platypii.baseline.data.MyAltimeter;
 
 /**
  * Periodically gives audio feedback

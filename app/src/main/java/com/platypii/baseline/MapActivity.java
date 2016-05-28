@@ -26,13 +26,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.platypii.baseline.data.Convert;
-import com.platypii.baseline.data.MyAltimeter;
-import com.platypii.baseline.data.MyAltitudeListener;
+import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.altimeter.MyAltitudeListener;
 import com.platypii.baseline.data.MyFlightManager;
-import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
+import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.util.Convert;
 import java.util.ArrayList;
 import java.util.List;
 

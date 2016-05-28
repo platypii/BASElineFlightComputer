@@ -11,12 +11,11 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.platypii.baseline.data.Convert;
-import com.platypii.baseline.data.MyAltimeter;
-import com.platypii.baseline.data.MyAltitudeListener;
+import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.altimeter.MyAltitudeListener;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
+import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
 
 public class AltimeterActivity extends Activity implements MyAltitudeListener {

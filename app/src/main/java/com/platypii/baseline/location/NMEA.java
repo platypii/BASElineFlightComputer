@@ -96,10 +96,7 @@ class NMEA {
             checksum1 ^= nmea.charAt(i);
         }
         final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1, starIndex + 3), 16);
-        if(checksum1 != checksum2) {
-            return false;
-        }
-        return true;
+        return checksum1 == checksum2;
     }
 
 }

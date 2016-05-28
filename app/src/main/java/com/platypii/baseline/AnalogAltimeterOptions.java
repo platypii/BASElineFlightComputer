@@ -1,6 +1,6 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.data.Convert;
+import com.platypii.baseline.util.Convert;
 
 public class AnalogAltimeterOptions {
 

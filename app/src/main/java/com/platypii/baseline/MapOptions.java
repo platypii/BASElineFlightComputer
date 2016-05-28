@@ -1,7 +1,7 @@
 package com.platypii.baseline;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.platypii.baseline.data.MyAltimeter;
+import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.util.Util;
 
 /**

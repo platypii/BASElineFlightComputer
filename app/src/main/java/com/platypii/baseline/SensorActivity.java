@@ -1,16 +1,5 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.data.Convert;
-import com.platypii.baseline.data.MyAltimeter;
-import com.platypii.baseline.data.SyncedList;
-import com.platypii.baseline.data.measurements.MAltitude;
-import com.platypii.baseline.data.MyAltitudeListener;
-import com.platypii.baseline.data.measurements.MLocation;
-import com.platypii.baseline.location.MyLocationListener;
-import com.platypii.baseline.data.MySensorManager;
-import com.platypii.baseline.data.measurements.MSensor;
-import com.platypii.baseline.util.Util;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -19,6 +8,16 @@ import android.os.Handler;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.altimeter.MyAltitudeListener;
+import com.platypii.baseline.data.MySensorManager;
+import com.platypii.baseline.data.measurements.MAltitude;
+import com.platypii.baseline.data.measurements.MLocation;
+import com.platypii.baseline.data.measurements.MSensor;
+import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.SyncedList;
+import com.platypii.baseline.util.Util;
 import java.util.Locale;
 
 @SuppressLint("SetTextI18n")

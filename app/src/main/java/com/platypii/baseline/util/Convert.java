@@ -1,11 +1,11 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline.util;
 
 import java.util.Locale;
 
 /**
  * General conversion utility class
- * Internally we always use metric units (meters, m/s, 
- * Technically the metric unit for angles is radians. We use degrees.
+ * Internally we always use metric units (meters, m/s, etc)
+ * Technically the metric unit for angles should be radians. We use degrees.
  */
 public class Convert {
 
@@ -194,27 +194,27 @@ public class Convert {
             return String.format(Locale.US, "%.2fhPa", hPa);
     }
 
-    /**
-     * Convert milliseconds to m:ss or h:mm:ss
-     * @param ms milliseconds
-     * @return "m:ss"
-     */
-    public static String time1(long ms) {
-        final long hour = ms / 3600000;
-        final long min = (ms / 60000) % 60;
-        final long sec = (ms / 1000) % 60;
-        String str;
-        // m:ss
-        if(sec < 10) str = min + ":0" + sec;
-        else str = min + ":" + sec;
-        // h:mm:ss
-        if(hour > 0) {
-            if(min < 10) str = hour + ":0" + str;
-            else str = hour + ":" + str;
-        }
-        return str;
-    }
-    
+//    /**
+//     * Convert milliseconds to m:ss or h:mm:ss
+//     * @param ms milliseconds
+//     * @return "m:ss"
+//     */
+//    public static String time1(long ms) {
+//        final long hour = ms / 3600000;
+//        final long min = (ms / 60000) % 60;
+//        final long sec = (ms / 1000) % 60;
+//        String str;
+//        // m:ss
+//        if(sec < 10) str = min + ":0" + sec;
+//        else str = min + ":" + sec;
+//        // h:mm:ss
+//        if(hour > 0) {
+//            if(min < 10) str = hour + ":0" + str;
+//            else str = hour + ":" + str;
+//        }
+//        return str;
+//    }
+
     /**
      * Convert degrees to local units
      * @param degrees angle in degrees

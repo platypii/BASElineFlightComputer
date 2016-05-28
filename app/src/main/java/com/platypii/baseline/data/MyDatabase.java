@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.platypii.baseline.Services;
+import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.altimeter.MyAltitudeListener;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.data.measurements.Measurement;

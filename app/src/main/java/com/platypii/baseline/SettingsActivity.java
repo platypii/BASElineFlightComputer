@@ -10,10 +10,9 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.util.Log;
-
 import com.platypii.baseline.bluetooth.BluetoothDevicePreference;
 import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.data.Convert;
+import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
 
 /**

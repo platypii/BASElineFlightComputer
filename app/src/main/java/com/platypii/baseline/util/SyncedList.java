@@ -1,7 +1,6 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline.util;
 
 import android.text.TextUtils;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -10,7 +9,6 @@ import java.util.LinkedList;
  * Asynchronously copies elements when an iterator is required.
  * The caller should block on the SyncedList object while iterating.
  * This ensures that the sensor manager can never block during a sensor reading.
- * @author platypii
  */
 public class SyncedList<T> implements Iterable<T> {
 

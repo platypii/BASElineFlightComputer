@@ -14,6 +14,7 @@ import com.platypii.baseline.data.measurements.MAccel;
 import com.platypii.baseline.data.measurements.MGravity;
 import com.platypii.baseline.data.measurements.MRotation;
 import com.platypii.baseline.data.measurements.MSensor;
+import com.platypii.baseline.util.SyncedList;
 
 public class MySensorManager {
 

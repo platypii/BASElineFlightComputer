@@ -12,17 +12,16 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLng;
+import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.data.Convert;
 import com.platypii.baseline.data.KVStore;
-import com.platypii.baseline.data.MyAltimeter;
 import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.data.MyFlightManager;
-import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.data.MySensorManager;
+import com.platypii.baseline.location.LocationService;
+import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
 
 /**

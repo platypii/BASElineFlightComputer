@@ -1,10 +1,9 @@
 package com.platypii.baseline.data.measurements;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.platypii.baseline.util.Util;
-import com.platypii.baseline.data.MyAltimeter;
-
 import android.util.Log;
+import com.google.android.gms.maps.model.LatLng;
+import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.util.Util;
 import java.util.Locale;
 
 public class MLocation extends Measurement {

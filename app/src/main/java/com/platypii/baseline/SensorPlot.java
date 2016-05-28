@@ -1,14 +1,13 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.data.Bounds;
-import com.platypii.baseline.data.DataSeries;
-import com.platypii.baseline.data.SyncedList;
-import com.platypii.baseline.data.measurements.MSensor;
-
-import java.util.Iterator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import com.platypii.baseline.data.Bounds;
+import com.platypii.baseline.data.DataSeries;
+import com.platypii.baseline.data.measurements.MSensor;
+import com.platypii.baseline.util.SyncedList;
+import java.util.Iterator;
 
 public class SensorPlot extends PlotView {
 

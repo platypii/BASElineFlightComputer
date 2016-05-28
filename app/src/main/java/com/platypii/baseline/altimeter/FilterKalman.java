@@ -1,10 +1,9 @@
-package com.platypii.baseline.data.filter;
+package com.platypii.baseline.altimeter;
 
 import android.util.Log;
 
 /**
  * Implements a Kalman Filter
- * @author platypii
  */
 public class FilterKalman extends Filter {
     private static final String TAG = "Kalman";

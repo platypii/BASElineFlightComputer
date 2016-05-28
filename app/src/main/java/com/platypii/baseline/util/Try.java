@@ -1,6 +1,10 @@
 package com.platypii.baseline.util;
 
-public class Try<T> {
+/**
+ * A Try<T> is either a Success<T>(T result) or Failure<T>(String error)
+ * @param <T> the type of the result if successful
+ */
+public abstract class Try<T> {
 
     public static class Success<T2> extends Try<T2> {
         public final T2 result;

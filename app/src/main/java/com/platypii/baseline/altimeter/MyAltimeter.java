@@ -1,4 +1,4 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline.altimeter;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -11,8 +11,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import com.platypii.baseline.Services;
-import com.platypii.baseline.data.filter.Filter;
-import com.platypii.baseline.data.filter.FilterKalman;
+import com.platypii.baseline.util.Stat;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.location.MyLocationListener;
@@ -146,7 +145,7 @@ public class MyAltimeter {
         pressure_altitude_raw = pressureToAltitude(pressure);
 
         // altitude_raw = pressure_altitude_raw - altitude_offset; // the current pressure converted to altitude AMSL. noisy.
-        
+
         // Update the official altitude
         final double dt = Double.isNaN(prevAltitude)? 0 : (lastFixNano - prevLastFixNano) * 1E-9;
         // Log.d(TAG, "Raw Altitude AGL: " + Convert.distance(altitude_raw) + ", dt = " + dt);
