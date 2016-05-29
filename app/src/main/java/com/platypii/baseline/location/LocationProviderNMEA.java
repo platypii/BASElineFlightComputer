@@ -5,6 +5,7 @@ import android.location.GpsStatus;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
@@ -12,6 +13,12 @@ import com.platypii.baseline.util.Util;
 class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
     private static final String TAG = "LocationServiceNMEA";
     private static final String NMEA_TAG = "NMEA";
+
+    // SkyPro GPS sends the following bytes when connection is initialized
+    private static final byte[] skyproPrefixBytes = {
+            85,4,0,56,0,0,-17,-65,-67,85,4,0,56,0,0,-17,-65,-67,85,4,0,56,0,0,-17,-65,-67
+    };
+    private static final String skyproPrefix = new String(skyproPrefixBytes);
 
     public boolean nmeaReceived = false;
 
@@ -49,18 +56,29 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
     private void updateLocation() {
         final float hAcc = Float.NaN;
-        super.updateLocation(new MLocation(lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
-                hAcc, pdop, hdop, vdop, satellitesUsed, groundDistance));
+        super.updateLocation(new MLocation(
+                lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
+                hAcc, pdop, hdop, vdop, satellitesUsed, groundDistance
+        ));
     }
 
     /**
-     * NMEA listener
+     * This is the main NMEA parsing function.
+     * NMEA strings are trimmed, validated, and then parsed into NMEA commands.
+     * Location and velocity data is set as NMEA commands arrive.
+     * Location is officially updated when we receive the RMC "recommended minimum data" command.
      * @param timestamp milliseconds
+     * @param nmea the NMEA string
      */
      public void onNmeaReceived(long timestamp, String nmea) {
          nmea = nmea.trim();
 
          // Log.v(NMEA_TAG, "[" + timestamp + "] " + nmea);
+
+         // Remove skypro welcome message
+         if(BluetoothService.preferenceEnabled && nmea.startsWith(skyproPrefix)) {
+             nmea = nmea.substring(skyproPrefix.length());
+         }
 
          if (!nmeaReceived) {
              Log.d(NMEA_TAG, "First NMEA string received");
@@ -119,8 +137,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                  // else
                  //   lastFixMillis = dateTime + parseTime(split[1]);
 
-                 // Update the official location!
-                 // MyLocationManager.updateLocation();
                  break;
              case "RMC":
                  // Recommended minimum data for gps
@@ -149,13 +165,14 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
                  // Log.i(NMEA_TAG, "["+time+"] " + Convert.latlong(latitude, longitude) + ", groundSpeed = " + Convert.speed(groundSpeed) + ", bearing = " + Convert.bearing2(bearing));
 
-                 if(!Util.isReal(latitude) || !Util.isReal(longitude)) {
-                    Log.e(NMEA_TAG, "invalid lat/long: " + latitude + ", " + longitude);
-                 }
-                 if(Math.abs(latitude) < 0.1 && Math.abs(longitude) < 0.1) {
-                     Log.e(NMEA_TAG, "unlikely lat/long: " + latitude + ", " + longitude);
-                 }
                  if(Util.isReal(latitude) || Util.isReal(longitude) || Util.isReal(vN) || Util.isReal(vE)) {
+                     if(!Util.isReal(latitude) || !Util.isReal(longitude)) {
+                         Log.e(NMEA_TAG, "RMC invalid lat/long: " + nmea);
+                     }
+                     if(Math.abs(latitude) < 0.1 && Math.abs(longitude) < 0.1) {
+                         Log.e(NMEA_TAG, "RMC unlikely lat/long: " + nmea);
+                     }
+
                      // Update the official location!
                      updateLocation();
                  }
@@ -186,7 +203,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
              //     break;
              case "PWR":
                  // I don't know what PWR does, but we get a lot of them via bluetooth
-                 // Log.w(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
+                 // Log.v(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
                  break;
              default:
                  Log.w(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
