@@ -20,6 +20,7 @@ import android.view.SurfaceView;
  * @author platypii
  */
 public abstract class PlotView extends SurfaceView implements SurfaceHolder.Callback {
+    private static final String TAG = "Plot";
 
     // Drawing stuff
     int padding_top = 0;
@@ -277,7 +278,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
             }
         }
         if(!empty) {
-            // Log.w("Render Area Plot", "x=" + getX(x) + ", y_zero=" + getY(y_zero));
+            // Log.w(TAG, "x=" + getX(x) + ", y_zero=" + getY(y_zero));
             path.lineTo(getX(x), getY(y_zero));
             path.close();
             return path;
@@ -307,7 +308,9 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         double start_x = Math.floor(realBounds.left / step_x) * step_x;
         double end_x = Math.ceil(realBounds.right / step_x) * step_x;
         int steps_x = (int)Math.ceil((end_x - start_x) / step_x);
-        assert start_x < end_x && 0 < step_x;
+        if (!(start_x < end_x && 0 < step_x)) {
+            Log.e(TAG, "Invalid plot bounds " + start_x + " " + end_x + " " + step_x);
+        }
         for(int n = 0; n < steps_x; n++) {
             double x = start_x + n * step_x;
             if(Math.abs(x) < EPSILON) {
@@ -317,7 +320,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
             }
 
             if(n > MAX_LINES) {
-                Log.e("PlotView", "Too many X grid lines!");
+                Log.e(TAG, "Too many X grid lines!");
                 break;
             }
         }
@@ -328,9 +331,11 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         double start_y = Math.floor(realBounds.bottom / step_y) * step_y;
         double end_y = Math.ceil(realBounds.top / step_y) * step_y;
         int steps_y = (int)Math.ceil((end_y - start_y) / step_y);
-        // Log.i("PlotView", "bounds = " + bounds + ", realBounds = " + realBounds);
-        // Log.i("PlotView", "start_y = " + start_y + ", end_y = " + end_y + ", magnitude_y = " + magnitude_y + ", step_y = " + step_y);
-        assert start_y <= end_y && 0 < step_y;
+        // Log.i(TAG, "bounds = " + bounds + ", realBounds = " + realBounds);
+        // Log.i(TAG, "start_y = " + start_y + ", end_y = " + end_y + ", magnitude_y = " + magnitude_y + ", step_y = " + step_y);
+        if (!(start_y <= end_y && 0 < step_y)) {
+            Log.e(TAG, "Invalid plot bounds " + start_y + " " + end_y + " " + step_y);
+        }
         for(int n = 0; n < steps_y; n++) {
             double y = start_y + n * step_y;
             if(Math.abs(y) < EPSILON) {
@@ -340,7 +345,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
             }
 
             if(n > MAX_LINES) {
-                Log.e("PlotView", "Too many Y grid lines!");
+                Log.e(TAG, "Too many Y grid lines!");
                 break;
             }
         }

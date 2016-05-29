@@ -149,6 +149,12 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
                  // Log.i(NMEA_TAG, "["+time+"] " + Convert.latlong(latitude, longitude) + ", groundSpeed = " + Convert.speed(groundSpeed) + ", bearing = " + Convert.bearing2(bearing));
 
+                 if(!Util.isReal(latitude) || !Util.isReal(longitude)) {
+                    Log.e(NMEA_TAG, "invalid lat/long: " + latitude + ", " + longitude);
+                 }
+                 if(Math.abs(latitude) < 0.1 && Math.abs(longitude) < 0.1) {
+                     Log.e(NMEA_TAG, "unlikely lat/long: " + latitude + ", " + longitude);
+                 }
                  if(Util.isReal(latitude) || Util.isReal(longitude) || Util.isReal(vN) || Util.isReal(vE)) {
                      // Update the official location!
                      updateLocation();

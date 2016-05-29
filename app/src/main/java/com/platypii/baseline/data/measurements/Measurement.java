@@ -2,7 +2,6 @@ package com.platypii.baseline.data.measurements;
 
 /**
  * A generic measurement (alti, gps, gyro, etc)
- * @author platypii
  */
 public abstract class Measurement {
 
@@ -17,4 +16,3 @@ public abstract class Measurement {
     public static final String header = "millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc";
 
 }
-

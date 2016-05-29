@@ -1,9 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/activity_horizontal_margin"
-    android:orientation="horizontal" >
+              xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="@dimen/activity_horizontal_margin"
+              android:orientation="horizontal"
+              android:baselineAligned="false">
 
     <LinearLayout
         android:layout_width="1dp"

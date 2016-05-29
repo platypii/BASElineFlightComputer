@@ -122,7 +122,9 @@ public class MyAltimeter {
         // double prevClimb = climb;
         long prevLastFixNano = lastFixNano;
 
-        assert event.accuracy == 0;
+        if(event.accuracy != 0) {
+            Log.w(TAG, "Accuracy not zero: " + event.accuracy);
+        }
         pressure = event.values[0];
         if(firstFixNano == -1) {
             firstFixNano = event.timestamp;
