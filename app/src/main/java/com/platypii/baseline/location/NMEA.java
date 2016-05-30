@@ -87,6 +87,7 @@ class NMEA {
     static boolean validate(@NonNull String nmea) {
         int starIndex = nmea.indexOf('*');
         if(nmea.length() < 8 || nmea.charAt(0) != '$' || nmea.charAt(6) != ',' || starIndex == -1) {
+            Log.e(TAG, "Invalid NMEA sentence: " + nmea);
             return false;
         }
 
@@ -96,7 +97,11 @@ class NMEA {
             checksum1 ^= nmea.charAt(i);
         }
         final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1, starIndex + 3), 16);
-        return checksum1 == checksum2;
+        if(checksum1 != checksum2) {
+            Log.e(TAG, "Invalid NMEA checksum: " + nmea);
+            return false;
+        }
+        return true;
     }
 
 }

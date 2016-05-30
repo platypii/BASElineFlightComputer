@@ -15,10 +15,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     private static final String NMEA_TAG = "NMEA";
 
     // SkyPro GPS sends the following bytes when connection is initialized
-    private static final byte[] skyproPrefixBytes = {
+    private static final String skyproPrefix = new String(new byte[] {
             85,4,0,56,0,0,-17,-65,-67,85,4,0,56,0,0,-17,-65,-67,85,4,0,56,0,0,-17,-65,-67
-    };
-    private static final String skyproPrefix = new String(skyproPrefixBytes);
+    });
 
     public boolean nmeaReceived = false;
 
@@ -88,10 +87,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
          final String split[] = nmea.split("[,*]");
          final String command = split[0].substring(3, 6);
 
-         // Sanity checks
-         if (!NMEA.validate(nmea)) {
-             Log.e(NMEA_TAG, "Invalid NMEA sentence: " + nmea);
-         }
+         // Validate NMEA sentence and print errors, but still try to parse
+         NMEA.validate(nmea);
 
          // Parse command
          switch (command) {
