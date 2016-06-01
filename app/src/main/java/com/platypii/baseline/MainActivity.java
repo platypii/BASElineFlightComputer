@@ -325,11 +325,8 @@ public class MainActivity extends BaseActivity {
             case R.id.menu_item_sign_out:
                 clickSignOut();
 
-                // Update menu. Can't use updateMenu() because signout is async.
-                if(menu != null) {
-                    menu.findItem(R.id.menu_item_sign_in).setVisible(true);
-                    menu.findItem(R.id.menu_item_sign_out).setVisible(false);
-                }
+                // Update menu
+                updateMenu(false);
 
                 return true;
             default:
@@ -347,18 +344,23 @@ public class MainActivity extends BaseActivity {
      * Update menu based on signed in state
      */
     private void updateMenu() {
-        if(isSignedIn()) {
-            // Update menu
-            if(menu != null) {
-                menu.findItem(R.id.menu_item_sign_in).setVisible(false);
-                menu.findItem(R.id.menu_item_sign_out).setVisible(true);
+        updateMenu(isSignedIn());
+    }
+    /**
+     * Update menu based on signed in state
+     */
+    private void updateMenu(boolean signedIn) {
+        // Menu can be null if it hasn't been opened yet
+        if(menu != null) {
+            final MenuItem menuSignIn = menu.findItem(R.id.menu_item_sign_in);
+            final MenuItem menuSignOut = menu.findItem(R.id.menu_item_sign_out);
+            if(menuSignIn != null) {
+                menuSignIn.setVisible(!signedIn);
             }
-        } else {
-            // Update menu
-            if(menu != null) {
-                menu.findItem(R.id.menu_item_sign_in).setVisible(true);
-                menu.findItem(R.id.menu_item_sign_out).setVisible(false);
+            if(menuSignOut != null) {
+                menuSignOut.setVisible(signedIn);
             }
+            invalidateOptionsMenu();
         }
     }
 
