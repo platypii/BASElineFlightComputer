@@ -3,183 +3,84 @@ package com.platypii.baseline.bluetooth;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.location.GpsStatus;
-import android.os.AsyncTask;
-import android.os.ParcelUuid;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.google.firebase.crash.FirebaseCrash;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.platypii.baseline.events.BluetoothEvent;
+import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Class to manage a bluetooth GPS receiver
  */
 public class BluetoothService {
     private static final String TAG = "Bluetooth";
+
     private static final int ENABLE_BLUETOOTH_CODE = 13;
-    private static final UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    private static final int reconnectDelay = 5 * 1000; // 5 seconds
+    static final List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
 
-    private static final List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
-
+    // Android stored references for bluetooth
     public static boolean preferenceEnabled = false;
     public static String preferenceDeviceId = null;
     public static String preferenceDeviceName = null;
 
-    // TODO: State machine
-    private static boolean isEnabled = false;
-    public static boolean isConnecting = false;
-    public static boolean isConnected = false;
+    // Bluetooth finite state machine
+    public static final int BT_STOPPED = 0;
+    public static final int BT_CONNECTING = 1;
+    public static final int BT_CONNECTED = 2;
+    public static final int BT_DISCONNECTED = 3;
+    public static final int BT_STOPPING = 4;
+    public static final String[] BT_STATES = {"BT_STOPPED", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
+    private static int bluetoothState = BT_STOPPED;
 
     private static BluetoothAdapter bluetoothAdapter;
-    private static BluetoothSocket bluetoothSocket;
     private static BluetoothRunnable bluetoothRunnable;
+    private static Thread bluetoothThread;
 
     public static void startAsync(final Activity activity) {
-        if(isEnabled || isConnecting || isConnected) {
-            Log.e(TAG, "Bluetooth already enabled, or in the process of connecting");
-            FirebaseCrash.report(new Exception("Bluetooth already enabled, or in the process of connecting"));
+        if (bluetoothState != BT_STOPPED) {
+            Log.e(TAG, "Bluetooth already started: " + BT_STATES[bluetoothState]);
+            FirebaseCrash.report(new Exception("Bluetooth already started: " + BT_STATES[bluetoothState]));
+        } else {
+            BluetoothService.setState(BluetoothService.BT_CONNECTING);
+            // Start bluetooth and
+            // Start bluetooth thread
+            if(bluetoothRunnable != null) {
+                Log.e(TAG, "Bluetooth listener thread already started");
+            }
+            bluetoothAdapter = getAdapter(activity);
+            bluetoothRunnable = new BluetoothRunnable(bluetoothAdapter);
+            bluetoothThread = new Thread(bluetoothRunnable);
+            bluetoothThread.start();
         }
-        isEnabled = true;
-        isConnecting = true;
-        new AsyncTask<Void,Void,Void>() {
-            @Override
-            protected Void doInBackground(Void...params) {
-                Log.i(TAG, "Starting bluetooth service");
-                if (BluetoothService.preferenceEnabled) {
-                    isConnected = BluetoothService.start(activity);
-                    isConnecting = false;
-                }
-                return null;
-            }
-            @Override
-            protected void onPostExecute(Void param) {
-                if(BluetoothService.preferenceEnabled) {
-                    if(!isConnected) {
-                        Toast.makeText(activity, "Bluetooth failed to connect", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        }.execute();
     }
 
     /**
      * Start the bluetooth service, and connect to gps receiver if selected
      * @return true iff bluetooth service started successfully
      */
-    private static boolean start(Activity activity) {
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private static BluetoothAdapter getAdapter(Activity activity) {
+        // TODO: Make sure this doesn't take too long
+        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter == null) {
             // Device not supported
             Log.e(TAG, "Bluetooth not supported");
-            return false;
         } else if(!bluetoothAdapter.isEnabled()) {
             // Turn on bluetooth
+            // TODO: Handle result?
             final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             activity.startActivityForResult(enableBluetoothIntent, ENABLE_BLUETOOTH_CODE);
-            return false;
-        } else if(preferenceDeviceId == null) {
-            Log.e(TAG, "Cannot connect: bluetooth device not selected");
-            return false;
-        } else {
-            Log.i(TAG, "Bluetooth is enabled, connecting...");
-            return connect();
         }
-    }
-
-    /**
-     * Connect to gps receiver.
-     * Precondition: bluetooth enabled and preferenceDeviceId != null
-     * @return true iff bluetooth socket was created successfully
-     */
-    private static boolean connect() {
-        final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(preferenceDeviceId);
-        UUID uuid = DEFAULT_UUID;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            final ParcelUuid[] uuids = bluetoothDevice.getUuids();
-            if(uuids != null && uuids.length > 0) {
-                uuid = uuids[0].getUuid();
-            }
-        }
-        Log.i(TAG, "Connecting to bluetooth device: " + bluetoothDevice.getName());
-        try {
-            bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
-            bluetoothSocket.connect();
-            // Start listener thread to convert input stream to nmea
-            if(bluetoothRunnable != null) {
-                Log.w(TAG, "Bluetooth listener thread already started");
-            }
-            bluetoothRunnable = new BluetoothRunnable();
-            new Thread(bluetoothRunnable).start();
-            return true;
-        } catch(IOException e) {
-            Log.e(TAG, "Failed to connect to bluetooth device: " + e.getMessage());
-            // FirebaseCrash.report(e);
-            return false;
-        }
-    }
-
-    /**
-     * Thread that reads from bluetooth input stream, and turns into NMEA sentences
-     */
-    private static class BluetoothRunnable implements Runnable {
-        private boolean stop = false;
-        @Override
-        public void run() {
-            Log.i(TAG, "Bluetooth thread starting");
-            try {
-                final InputStream is = bluetoothSocket.getInputStream();
-                final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                String line;
-                while(!stop && (line = reader.readLine()) != null) {
-                    final String nmea = line.trim();
-                    // Log.v(TAG, "Got line: " + nmea);
-                    // Update listeners
-                    for(GpsStatus.NmeaListener listener : listeners) {
-                        listener.onNmeaReceived(System.currentTimeMillis(), nmea);
-                    }
-                }
-            } catch (IOException e) {
-                if(!stop) {
-                    Log.e(TAG, "Error reading from bluetooth socket", e);
-                    isConnected = false;
-
-                    // Reconnect
-                    while(!stop && !isConnected && !isConnecting) {
-                        try {
-                            Thread.sleep(reconnectDelay);
-                            Log.i(TAG, "Attempting to reconnect to bluetooth device");
-                            isConnecting = true;
-                            isConnected = connect();
-                            isConnecting = false;
-                        } catch (InterruptedException ie) {
-                            Log.e(TAG, "Bluetooth thread interrupted");
-                        }
-                    }
-                }
-            } finally {
-                bluetoothRunnable = null;
-                Log.v(TAG, "Bluetooth thread shutting down");
-            }
-        }
-        public void stop() {
-            stop = true;
-        }
+        return bluetoothAdapter;
     }
 
     public static Set<BluetoothDevice> getDevices() {
-        if(isEnabled && bluetoothAdapter != null) {
+        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(bluetoothAdapter != null) {
             return bluetoothAdapter.getBondedDevices();
         } else {
             Log.w(TAG, "Tried to get devices, but bluetooth is not enabled");
@@ -187,22 +88,53 @@ public class BluetoothService {
         }
     }
 
-    public static void stop() {
-        Log.i(TAG, "Stopping bluetooth service");
-        // Stop thread
-        if(bluetoothRunnable != null) {
-            bluetoothRunnable.stop();
+    public static int getState() {
+        return bluetoothState;
+    }
+
+    static void setState(int state) {
+        if(bluetoothState == BT_STOPPING && state == BT_CONNECTING) {
+            Log.e(TAG, "Invalid bluetooth state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         }
-        // Close bluetooth socket
-        if(bluetoothSocket != null) {
-            try {
-                bluetoothSocket.close();
-            } catch (IOException e) {
-                Log.w(TAG, "Exception closing bluetooth socket", e);
+        Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
+        bluetoothState = state;
+        EventBus.getDefault().post(new BluetoothEvent(bluetoothState));
+    }
+
+    public static boolean isHardwareEnabled() {
+        return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
+    }
+
+    public static synchronized void stop() {
+        if(bluetoothState != BT_STOPPED) {
+            Log.i(TAG, "Stopping bluetooth service");
+            BluetoothService.setState(BluetoothService.BT_STOPPING);
+            // Stop thread
+            if (bluetoothRunnable != null) {
+                bluetoothRunnable.stop();
+                try {
+                    bluetoothThread.join(1000);
+
+                    // Thread is dead, clean up
+                    bluetoothRunnable = null;
+                    bluetoothThread = null;
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "Bluetooth thread interrupted while waiting for it to die", e);
+                }
+                Log.i(TAG, "Bluetooth service stopped");
+            } else {
+                Log.e(TAG, "Cannot stop bluetooth: runnable is null: " + BT_STATES[bluetoothState]);
             }
         }
-        isConnected = false;
-        isEnabled = false;
+    }
+
+    public static synchronized void restart(Activity activity) {
+        Log.i(TAG, "Restarting bluetooth service");
+        BluetoothService.stop();
+        if(bluetoothState != BT_STOPPED) {
+            Log.e(TAG, "Error restarting bluetooth: not stopped: " + BT_STATES[bluetoothState]);
+        }
+        BluetoothService.startAsync(activity);
     }
 
     public static void addNmeaListener(GpsStatus.NmeaListener nmeaListener) {

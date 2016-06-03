@@ -276,32 +276,44 @@ public class MainActivity extends BaseActivity {
         int statusIcon;
 
         // GPS signal status
-        if(BluetoothService.preferenceEnabled && BluetoothService.isConnecting) {
-            status = "GPS bluetooth connecting...";
+        if(BluetoothService.preferenceEnabled && BluetoothService.getState() != BluetoothService.BT_CONNECTED) {
+            // Bluetooth enabled, but not connected
             statusIcon = R.drawable.warning;
-        } else if(BluetoothService.preferenceEnabled && !BluetoothService.isConnected) {
-            status = "GPS bluetooth not connected";
-            statusIcon = R.drawable.warning;
-        } else if(Services.location.lastFixDuration() < 0) {
-            status = "GPS searching...";
-            statusIcon = R.drawable.status_red;
+            switch(BluetoothService.getState()) {
+                case BluetoothService.BT_CONNECTING:
+                    status = "GPS bluetooth connecting...";
+                    break;
+                case BluetoothService.BT_DISCONNECTED:
+                    status = "GPS bluetooth not connected";
+                    break;
+                default:
+                    status = "GPS bluetooth not connected";
+                    Log.e(TAG, "Bluetooth inconsistent state: preference enabled, state = " + BluetoothService.getState());
+            }
         } else {
-            final long lastFixDuration = Services.location.lastFixDuration();
-            // TODO: Use better method to determine signal.
-            // Take into account acc and dop
-            // How many of the last X expected fixes have we missed?
-            if(lastFixDuration > 10000) {
-                status = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
+            // Internal GPS, or bluetooth connected:
+            if(Services.location.lastFixDuration() < 0) {
+                // No fix yet
+                status = "GPS searching...";
                 statusIcon = R.drawable.status_red;
-            } else if(lastFixDuration > 2000) {
-                status = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
-                statusIcon = R.drawable.status_yellow;
-            } else if(BluetoothService.preferenceEnabled && BluetoothService.isConnected) {
-                status = String.format(Locale.getDefault(), "GPS bluetooth %.2fHz", Services.location.refreshRate);
-                statusIcon = R.drawable.status_blue;
             } else {
-                status = String.format(Locale.getDefault(), "GPS %.2fHz", Services.location.refreshRate);
-                statusIcon = R.drawable.status_green;
+                final long lastFixDuration = Services.location.lastFixDuration();
+                // TODO: Use better method to determine signal.
+                // Take into account acc and dop
+                // How many of the last X expected fixes have we missed?
+                if (lastFixDuration > 10000) {
+                    status = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
+                    statusIcon = R.drawable.status_red;
+                } else if (lastFixDuration > 2000) {
+                    status = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
+                    statusIcon = R.drawable.status_yellow;
+                } else if (BluetoothService.preferenceEnabled && BluetoothService.getState() == BluetoothService.BT_CONNECTED) {
+                    status = String.format(Locale.getDefault(), "GPS bluetooth %.2fHz", Services.location.refreshRate);
+                    statusIcon = R.drawable.status_blue;
+                } else {
+                    status = String.format(Locale.getDefault(), "GPS %.2fHz", Services.location.refreshRate);
+                    statusIcon = R.drawable.status_green;
+                }
             }
         }
 

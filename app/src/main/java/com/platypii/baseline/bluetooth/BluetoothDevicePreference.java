@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Custom list preference to select from available bluetooth devices
+ */
 public class BluetoothDevicePreference extends ListPreference {
 
     private final Map<String,String> deviceNames = new HashMap<>();

@@ -11,8 +11,6 @@
     <string name="action_tracks">Tracks</string>
     <string name="action_settings">Settings</string>
 
-    <string name="action_sensor_info">Sensor Info</string>
-
     <!-- Track Activity -->
     <string name="action_open">View</string>
     <string name="action_sync">Sync</string>

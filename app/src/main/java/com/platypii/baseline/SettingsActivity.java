@@ -13,8 +13,12 @@ import android.preference.SwitchPreference;
 import android.util.Log;
 import com.platypii.baseline.bluetooth.BluetoothDevicePreference;
 import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Settings activity for things like metric / imperial
@@ -100,8 +104,7 @@ public class SettingsActivity extends PreferenceActivity {
                     BluetoothService.preferenceDeviceId = (String) value;
                     BluetoothService.preferenceDeviceName = bluetoothDevicePreference.getName(BluetoothService.preferenceDeviceId);
                     Log.i(TAG, "Bluetooth device selected: " + BluetoothService.preferenceDeviceId);
-                    BluetoothService.stop();
-                    BluetoothService.startAsync(this.getActivity());
+                    BluetoothService.restart(this.getActivity());
                     // Save name preference
                     final SharedPreferences prefs2 = preference.getSharedPreferences();
                     final SharedPreferences.Editor edit2 = prefs2.edit();
@@ -120,11 +123,26 @@ public class SettingsActivity extends PreferenceActivity {
                 metricPreference.setSummary("Current units: imperial");
             }
             if(BluetoothService.preferenceEnabled) {
-                bluetoothPreference.setSummary(R.string.pref_bluetooth_enabled);
+                final String bluetoothStatus;
+                if(BluetoothService.isHardwareEnabled()) {
+                    final String[] bluetoothStatusMessage = {
+                            "Bluetooth stopped",
+                            "Bluetooth connecting",
+                            "Bluetooth connected",
+                            "Bluetooth disconnected",
+                            "Bluetooth shutting down"
+                    };
+                    bluetoothStatus = bluetoothStatusMessage[BluetoothService.getState()];
+                    bluetoothDevicePreference.setEnabled(true);
+                } else {
+                    bluetoothStatus = "Bluetooth hardware disabled";
+                    bluetoothDevicePreference.setEnabled(false);
+                }
+                bluetoothPreference.setSummary(bluetoothStatus);
             } else {
                 bluetoothPreference.setSummary(R.string.pref_bluetooth_disabled);
+                bluetoothDevicePreference.setEnabled(false);
             }
-            bluetoothDevicePreference.setEnabled(BluetoothService.preferenceEnabled);
             if(BluetoothService.preferenceDeviceName != null) {
                 bluetoothDevicePreference.setSummary(BluetoothService.preferenceDeviceName);
             } else if(BluetoothService.preferenceDeviceId != null) {
@@ -142,6 +160,23 @@ public class SettingsActivity extends PreferenceActivity {
             }
             return false;
         }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            // Listen for bluetooth updates
+            EventBus.getDefault().register(this);
+        }
+        @Override
+        public void onPause() {
+            super.onPause();
+            EventBus.getDefault().unregister(this);
+        }
+        @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onBluetoothEvent(BluetoothEvent event) {
+            updateViews();
+        }
+
     }
 
     @Override
