@@ -37,6 +37,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     private TextView latitudeLabel;
     private TextView longitudeLabel;
     private TextView gpsAltitudeLabel;
+    private TextView gpsFallrateLabel;
     private TextView hAccLabel;
     private TextView pdopLabel;
     private TextView hdopLabel;
@@ -78,6 +79,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         latitudeLabel = (TextView)findViewById(R.id.latitudeLabel);
         longitudeLabel = (TextView)findViewById(R.id.longitudeLabel);
         gpsAltitudeLabel = (TextView)findViewById(R.id.gpsAltitudeLabel);
+        gpsFallrateLabel = (TextView)findViewById(R.id.gpsFallrateLabel);
         hAccLabel = (TextView)findViewById(R.id.hAccLabel);
         pdopLabel = (TextView)findViewById(R.id.pdopLabel);
         hdopLabel = (TextView)findViewById(R.id.hdopLabel);
@@ -184,7 +186,8 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
             } else {
                 longitudeLabel.setText("Long: ");
             }
-            gpsAltitudeLabel.setText("GPS Altitude: " + Convert.distance(loc.altitude_gps, 2, true));
+            gpsAltitudeLabel.setText("GPS altitude: " + Convert.distance(loc.altitude_gps, 2, true));
+            gpsFallrateLabel.setText("GPS fallrate: " + Convert.speed(Services.location.vD, 2, true));
             hAccLabel.setText("hAcc: " + Convert.distance(loc.hAcc));
             pdopLabel.setText(String.format(Locale.getDefault(), "pdop: %.1f", loc.pdop));
             hdopLabel.setText(String.format(Locale.getDefault(), "hdop: %.1f", loc.hdop));

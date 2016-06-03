@@ -101,6 +101,12 @@
             android:layout_height="wrap_content"
             android:text="GPS altitude: " />
 
+        <TextView
+            android:id="@+id/gpsFallrateLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GPS fallrate: " />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >

@@ -1,13 +1,10 @@
 package com.platypii.baseline.location;
 
 import android.content.Context;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import com.platypii.baseline.data.measurements.MLocation;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +25,11 @@ abstract class LocationProvider {
     private long phoneOffsetMillis = 0;
 
     // Computed parameters
-    float groundDistance = 0;
+    public double vD = 0;
 
     // History
     public MLocation lastLoc; // last location received
-    private MLocation prevLoc; // 2nd to last
+    // private MLocation prevLoc; // 2nd to last
 
     /**
      * Start location updates
@@ -73,28 +70,20 @@ abstract class LocationProvider {
         }
     }
 
-    // This is where we package up all the location data, build a MyLocation, and notify our friends.
-    private static final Location tempLoc1 = new Location("gps"); // Temporary android location
-    private static final Location tempLoc2 = new Location("gps");
-
     /**
      * Children should call updateLocation() when they have new location information
      */
     void updateLocation(MLocation loc) {
 
         // Store location
-        prevLoc = lastLoc;
+        final MLocation prevLoc = lastLoc;
         lastLoc = loc;
 
         // Log.v(TAG, "MyLocationManager.updateLocation(" + lastLoc + ")");
 
         if (prevLoc != null) {
-            // Compute distance
-            tempLoc1.setLatitude(prevLoc.latitude);
-            tempLoc1.setLongitude(prevLoc.longitude);
-            tempLoc2.setLatitude(lastLoc.latitude);
-            tempLoc2.setLongitude(lastLoc.longitude);
-            groundDistance += tempLoc1.distanceTo(tempLoc2);
+            // Compute vertical speed
+            vD = -1000.0 * (lastLoc.altitude_gps - prevLoc.altitude_gps) / (lastLoc.millis - prevLoc.millis);
 
             // GPS sample refresh rate
             // TODO: Include time from last sample until now

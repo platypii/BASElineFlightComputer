@@ -77,7 +77,7 @@ class LocationProviderAndroid extends LocationProvider {
 
                 // Update official location
                 updateLocation(new MLocation(lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
-                        hAcc, pdop, hdop, vdop, satellitesUsed, groundDistance));
+                        hAcc, pdop, hdop, vdop, satellitesUsed));
             }
         }
 

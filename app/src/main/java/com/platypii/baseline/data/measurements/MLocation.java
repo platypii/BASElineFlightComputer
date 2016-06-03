@@ -22,7 +22,6 @@ public class MLocation extends Measurement {
     public final float hdop; // Horizontal dilution of precision
     public final float vdop; // Vertical dilution of precision
     public final int numSat; // Number of satellites
-    public final float groundDistance; // Ground distance since app started
 
     public final double altitude;  // Altitude (m)
     public final double climb;  // Rate of climb (m/s)
@@ -30,7 +29,7 @@ public class MLocation extends Measurement {
     public MLocation(long millis, double latitude, double longitude, double altitude_gps,
                      double vN, double vE,
                      float hAcc, float pdop, float hdop, float vdop,
-                     int numSat, float groundDistance) {
+                     int numSat) {
 
         // Load state data (altimeter, flightMode, orientation, etc)
         this.altitude = MyAltimeter.altitude;
@@ -60,7 +59,6 @@ public class MLocation extends Measurement {
         this.hdop = hdop;
         this.vdop = vdop;
         this.numSat = numSat;
-        this.groundDistance = groundDistance;
     }
 
     @Override
@@ -114,6 +112,7 @@ public class MLocation extends Measurement {
         double x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
         return Math.toDegrees(Math.atan2(y, x));
     }
+
     private static final double R = 6371000; // meters
     public double distanceTo(LatLng dest) {
         double φ1 = Math.toRadians(latitude);
