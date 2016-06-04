@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.InflateException;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -14,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -76,14 +74,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        try {
-            setContentView(R.layout.activity_map);
-        } catch(InflateException e) {
-            Log.e(TAG, "Google maps error #9021", e);
-            Toast.makeText(this, "Google maps error #9021", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
+        setContentView(R.layout.activity_map);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
@@ -378,11 +369,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
 
     @Override
     public void onDestroy() {
-        try {
-            super.onDestroy();
-            mapFragment.removeOnTouchListeners();
-        } catch(Exception e) {
-            Log.e(TAG, "Exception in onDestroy", e);
-        }
+        super.onDestroy();
+        mapFragment.removeOnTouchListeners();
     }
 }
