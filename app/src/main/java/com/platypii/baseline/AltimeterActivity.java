@@ -88,7 +88,7 @@ public class AltimeterActivity extends Activity implements MyAltitudeListener {
                 final double altitude = inputText.isEmpty()? 0.0 : Util.parseDouble(inputText) * Convert.FT;
                 if(Util.isReal(altitude)) {
                     Log.w(TAG, "Setting altitude above ground level to " + altitude + "m");
-                    MyAltimeter.ground_level = MyAltimeter.pressure_altitude_filtered - altitude;
+                    MyAltimeter.setGroundLevel(MyAltimeter.pressure_altitude_filtered - altitude);
                 } else {
                     Log.e(TAG, "Invalid altitude above ground level: " + altitude);
                     Toast.makeText(activity, "Invalid altitude", Toast.LENGTH_SHORT).show();

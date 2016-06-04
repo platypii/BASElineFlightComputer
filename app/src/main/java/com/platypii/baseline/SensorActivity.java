@@ -168,7 +168,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(MyAltimeter.pressure_altitude_raw, 2, true));
         pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(MyAltimeter.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(MyAltimeter.model_error.var()), 2, true));
         altitudeLabel.setText("Altitude (gps corrected): " + Convert.distance(MyAltimeter.altitude, 2, true));
-        groundLevelLabel.setText("Ground level: " + Convert.distance(MyAltimeter.ground_level, 2, true) + " pressure alt");
+        groundLevelLabel.setText("Ground level: " + Convert.distance(MyAltimeter.groundLevel(), 2, true) + " pressure alt");
         altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(MyAltimeter.altitudeAGL(), 2, true) + " AGL");
         fallrateLabel.setText("Fallrate: " + Convert.speed(-MyAltimeter.climb, 2, true));
     }

@@ -1,16 +1,19 @@
 package com.platypii.baseline.altimeter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import java.util.ArrayList;
 
 import com.platypii.baseline.Services;
+import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Stat;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
@@ -24,7 +27,11 @@ import com.platypii.baseline.location.MyLocationListener;
 public class MyAltimeter {
     private static final String TAG = "MyAltimeter";
 
+    // Save ground level for 12 hours (in milliseconds)
+    public static final double GROUND_LEVEL_TTL = 12 * 60 * 60 * 1000;
+
     private static SensorManager sensorManager;
+    private static SharedPreferences prefs;
 
     // Listeners
     private static final ArrayList<MyAltitudeListener> listeners = new ArrayList<>();
@@ -48,7 +55,8 @@ public class MyAltimeter {
     // public static double verticalAcceleration = Double.NaN;
 
     // Ground level
-    public static double ground_level = Double.NaN;
+    private static boolean ground_level_initialized = false;
+    private static double ground_level = Double.NaN;
 
     private static long lastFixNano; // nanoseconds
     private static long lastFixMillis; // milliseconds
@@ -57,15 +65,21 @@ public class MyAltimeter {
     // Model error is the difference between our filtered output and the raw pressure altitude
     // Model error should approximate the sensor variance, even when in motion
     public static final Stat model_error = new Stat();
-    private static long n = 0; // number of samples
     public static float refreshRate = 0; // Moving average of refresh rate in Hz
+    private static long n = 0; // number of samples
 
     /**
      * Initializes altimeter services, if not already running
      * @param appContext The Application context
      */
     public static synchronized void start(@NonNull Context appContext) {
+        // Get a new preference manager
+        prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+
         if(sensorManager == null) {
+            // Load ground level from preferences
+            loadGroundLevel();
+
             // Add sensor listener
             sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
             final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
@@ -87,6 +101,30 @@ public class MyAltimeter {
 
     public static double altitudeAGL() {
         return pressure_altitude_filtered - ground_level;
+    }
+
+    public static double groundLevel() {
+        return ground_level;
+    }
+
+    private static void loadGroundLevel() {
+        final long groundLevelTime = prefs.getLong("altimeter_ground_level_time", -1L);
+        if(groundLevelTime != -1 && System.currentTimeMillis() - groundLevelTime < GROUND_LEVEL_TTL) {
+            ground_level = prefs.getFloat("altimeter_ground_level", 0);
+            ground_level_initialized = true;
+            Log.i(TAG, "Restoring ground level from preferences: " + Convert.distance(ground_level, 2, true));
+        }
+
+    }
+
+    public static void setGroundLevel(double groundLevel) {
+        MyAltimeter.ground_level = groundLevel;
+        MyAltimeter.ground_level_initialized = true;
+        // Save to preferences
+        final SharedPreferences.Editor edit = prefs.edit();
+        edit.putFloat("altimeter_ground_level", (float) ground_level);
+        edit.putLong("altimeter_ground_level_time", System.currentTimeMillis());
+        edit.apply();
     }
 
     // Sensor Event Listener
@@ -161,12 +199,16 @@ public class MyAltimeter {
         }
 
         // Adjust for ground level
-        if(n == 0) {
-            // First pressure reading. Calibrate ground level.
-            ground_level = pressure_altitude_raw;
-        } else if(n < 16) {
-            // Average the first N raw samples
-            ground_level += (pressure_altitude_raw - ground_level) / (n + 1);
+        if(!ground_level_initialized) {
+            if (n == 0) {
+                // First pressure reading. Calibrate ground level.
+                ground_level = pressure_altitude_raw;
+            } else if (n < 16) {
+                // Average the first N raw samples
+                ground_level += (pressure_altitude_raw - ground_level) / (n + 1);
+            } else {
+                setGroundLevel(ground_level);
+            }
         }
 
         n++;
@@ -279,6 +321,7 @@ public class MyAltimeter {
         Services.location.removeListener(locationListener);
         sensorManager.unregisterListener(sensorEventListener);
         sensorManager = null;
+        prefs = null;
 
         if(listeners.size() > 0) {
             Log.e(TAG, "Stopping altimeter service, but listeners are still listening");
