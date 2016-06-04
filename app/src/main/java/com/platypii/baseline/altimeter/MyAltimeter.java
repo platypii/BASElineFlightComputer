@@ -50,9 +50,8 @@ public class MyAltimeter {
     // Ground level
     public static double ground_level = Double.NaN;
 
-    public static long firstFixNano = -1; // nanoseconds
     private static long lastFixNano; // nanoseconds
-    private static long lastFixMillis; // milliseconds uptime
+    private static long lastFixMillis; // milliseconds
 
     // Stats
     // Model error is the difference between our filtered output and the raw pressure altitude
@@ -123,11 +122,8 @@ public class MyAltimeter {
         long prevLastFixNano = lastFixNano;
 
         pressure = event.values[0];
-        if(firstFixNano == -1) {
-            firstFixNano = event.timestamp;
-        }
         lastFixNano = event.timestamp;
-        lastFixMillis = millis;
+        lastFixMillis = millis - Services.location.phoneOffsetMillis; // Convert to GPS time
 
         // Barometer refresh rate
         final long deltaTime = lastFixNano - prevLastFixNano; // time since last refresh

@@ -11,7 +11,7 @@ import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
 
 class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
-    private static final String TAG = "LocationServiceNMEA";
+    protected final String TAG = "LocationServiceNMEA";
     private static final String NMEA_TAG = "NMEA";
 
     // SkyPro GPS sends the following bytes when connection is initialized
@@ -38,6 +38,11 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
     // Android Location manager
     private static LocationManager manager;
+
+    @Override
+    protected String providerName() {
+        return TAG;
+    }
 
     /**
      * Start location updates
@@ -95,7 +100,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
              case "GSA":
                  // Overall satellite data (DOP and active satellites)
                  // boolean autoDim = split[1].equals("A"); // A = Auto 2D/3D, M = Forced 2D/3D
-                 // gpsFix = split[2].equals("")? 0 : Integer.parseInt(split[2]); // 0 = null, 1 = No fix, 2 = 2D, 3 = 3D
+                 // gpsFix = split[2].isEmpty() ? 0 : Integer.parseInt(split[2]); // 0 = null, 1 = No fix, 2 = 2D, 3 = 3D
                  pdop = Util.parseFloat(split[split.length - 4]);
                  hdop = Util.parseFloat(split[split.length - 3]);
                  vdop = Util.parseFloat(split[split.length - 2]);
@@ -111,7 +116,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                  gpsFix = parseInt(split[6]); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
                  satellitesUsed = parseInt(split[7]);
                  hdop = Util.parseFloat(split[8]);
-                 if (!split[9].equals("")) {
+                 if (!split[9].isEmpty()) {
                      if(!split[10].equals("M")) {
                          Log.e(NMEA_TAG, "Expected meters, was " + split[10] + " in nmea: " + nmea);
                      }
@@ -129,7 +134,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                  // 2) System.currentTime(), depends on how long execution takes to this point
                  // 3) GPS time, most accurate, but must be parsed carefully, since we only get milliseconds since midnight GMT
                  // split[1]: Time: 123456 = 12:34:56 UTC
-                 // if(dateTime == 0 || split[1].equals(""))
+                 // if(dateTime == 0 || split[1].isEmpty())
                  //   lastFixMillis = timestamp; // Alt: System.currentTimeMillis();
                  // else
                  //   lastFixMillis = dateTime + parseTime(split[1]);
@@ -152,8 +157,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                      // Log.v(NMEA_TAG, "Invalid fix, nmea: " + nmea);
                  } else if(lastFixMillis <= 0) {
                      Log.w(NMEA_TAG, "Invalid timestamp " + lastFixMillis + ", nmea: " + nmea);
-                 } else if(Math.abs(System.currentTimeMillis() - lastFixMillis) > 60000) {
-                     Log.w(NMEA_TAG, String.format("System clock off by %ds", System.currentTimeMillis() - lastFixMillis));
                  }
 
                  // Computed parameters
@@ -179,11 +182,11 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                  lastFixMillis = dateTime + NMEA.parseTime(split[1]);
                  latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
                  longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
-                 if (!split[9].equals("")) {
+                 if (!split[9].isEmpty()) {
                      altitude_gps = Util.parseDouble(split[9]);
                      // double geoidSeparation = parseDouble(split[10]]);
                  }
-                 if (!split[7].equals("")) {
+                 if (!split[7].isEmpty()) {
                      satellitesUsed = Integer.parseInt(split[7]);
                  }
                  break;
@@ -208,7 +211,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     }
 
     private static int parseInt(String str) {
-        return str.equals("") ? -1 : Integer.parseInt(str);
+        return str.isEmpty() ? -1 : Integer.parseInt(str);
     }
 
     @Override

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 abstract class LocationProvider {
-    private static final String TAG = "LocationService";
 
     // Listeners
     private final List<MyLocationListener> listeners = new ArrayList<>();
@@ -22,7 +21,7 @@ abstract class LocationProvider {
     public int satellitesUsed = -1; // Satellites used in last fix
 
     // phone time = GPS time + offset
-    private long phoneOffsetMillis = 0;
+    public long phoneOffsetMillis = 0;
 
     // Computed parameters
     public double vD = 0;
@@ -30,6 +29,11 @@ abstract class LocationProvider {
     // History
     public MLocation lastLoc; // last location received
     // private MLocation prevLoc; // 2nd to last
+
+    /**
+     * Give a useful name to the inherited provider
+     */
+    protected abstract String providerName();
 
     /**
      * Start location updates
@@ -44,7 +48,7 @@ abstract class LocationProvider {
         if(lastLoc != null && lastLoc.millis > 0) {
             final long duration = System.currentTimeMillis() - (lastLoc.millis + phoneOffsetMillis);
             if(duration < 0) {
-                Log.w(TAG, "Time since last fix should never be negative");
+                Log.w(providerName(), "Time since last fix should never be negative");
             }
             return duration;
         } else {
@@ -74,12 +78,22 @@ abstract class LocationProvider {
      * Children should call updateLocation() when they have new location information
      */
     void updateLocation(MLocation loc) {
+        // Log.v(providerName(), "MyLocationManager.updateLocation(" + loc + ")");
 
         // Store location
         final MLocation prevLoc = lastLoc;
         lastLoc = loc;
 
-        // Log.v(TAG, "MyLocationManager.updateLocation(" + lastLoc + ")");
+        // Update gps time offset
+        final long clockOffset = System.currentTimeMillis() - lastLoc.millis;
+        if(Math.abs(phoneOffsetMillis - clockOffset) > 1000) {
+            if(clockOffset < 0) {
+                Log.w(providerName(), "Adjusting clock: phone behind gps by " + (-clockOffset) + "ms");
+            } else {
+                Log.w(providerName(), "Adjusting clock: phone ahead of gps by " + clockOffset + "ms");
+            }
+        }
+        phoneOffsetMillis = clockOffset;
 
         if (prevLoc != null) {
             // Compute vertical speed
@@ -92,14 +106,11 @@ abstract class LocationProvider {
                 final float refreshTime = 1000.0f / (float) (deltaTime);
                 refreshRate += (refreshTime - refreshRate) * 0.5f; // Moving average
                 if (Double.isNaN(refreshRate)) {
-                    Log.e(TAG, "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime);
+                    Log.e(providerName(), "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime);
                     refreshRate = 0;
                 }
             }
         }
-
-        // Update gps time offset
-        phoneOffsetMillis = System.currentTimeMillis() - lastLoc.millis;
 
         // Notify listeners (using AsyncTask so the manager never blocks!)
         new AsyncTask<MLocation, Void, Void>() {
@@ -123,7 +134,7 @@ abstract class LocationProvider {
 
     public void stop() {
         if(listeners.size() > 0) {
-            Log.e(TAG, "Stopping location service, but listeners are still listening");
+            Log.e(providerName(), "Stopping location service, but listeners are still listening");
         }
     }
 }

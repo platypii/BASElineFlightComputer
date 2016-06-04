@@ -61,6 +61,11 @@ public class LocationService extends LocationProvider {
     };
 
     @Override
+    protected String providerName() {
+        return TAG;
+    }
+
+    @Override
     public void start(@NonNull Context context) {
         locationProviderNMEA.start(context);
         locationProviderNMEA.addListener(nmeaListener);

@@ -19,6 +19,11 @@ class LocationProviderAndroid extends LocationProvider {
     // Android Location manager
     private LocationManager manager;
 
+    @Override
+    protected String providerName() {
+        return TAG;
+    }
+
     /**
      * Start location updates
      * @param context The Application context

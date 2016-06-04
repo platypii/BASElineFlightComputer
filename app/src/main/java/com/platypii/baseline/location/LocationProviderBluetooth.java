@@ -6,6 +6,10 @@ import android.support.annotation.NonNull;
 import com.platypii.baseline.bluetooth.BluetoothService;
 
 class LocationProviderBluetooth extends LocationProviderNMEA {
+    @Override
+    protected String providerName() {
+        return "LocationServiceBluetooth";
+    }
 
     /**
      * Start location updates

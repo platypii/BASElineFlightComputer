@@ -22,7 +22,7 @@ class NMEA {
      * @return The latitude or longitude in decimal degrees
      */
     static double parseDegreesMinutes(String dm, String nsew) {
-        if(dm.equals("")) {
+        if(dm.isEmpty()) {
             return Double.NaN;
         } else {
             final int index = dm.indexOf('.') - 2;
@@ -44,7 +44,7 @@ class NMEA {
      * Parse DDMMYY into milliseconds since epoch
      */
     static long parseDate(String date) {
-        if(date == null || date.equals("")) {
+        if(date == null || date.isEmpty()) {
             return 0;
         } else {
             if(date.length() != 6) {
@@ -64,7 +64,7 @@ class NMEA {
      * Parse HHMMSS.SS UTC time into milliseconds since midnight
      */
     static long parseTime(String time) {
-        if(time == null || time.equals("")) {
+        if(time == null || time.isEmpty()) {
             return 0;
         } else {
             try {
