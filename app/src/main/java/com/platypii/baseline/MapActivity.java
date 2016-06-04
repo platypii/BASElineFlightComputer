@@ -94,9 +94,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         homeButton = (ImageButton) findViewById(R.id.homeButton);
         crosshair = (ImageView) findViewById(R.id.crosshair);
 
-        myposition1 = BitmapDescriptorFactory.fromResource(R.drawable.myposition1);
-        myposition2 = BitmapDescriptorFactory.fromResource(R.drawable.myposition2);
-
         analogAltimeter.setOverlay(true);
         analogAltimeter.setLongClickable(true);
         analogAltimeter.setOnLongClickListener(new View.OnLongClickListener() {
@@ -158,6 +155,9 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, MapOptions.defaultZoom));
             Log.w(TAG, "Centering map on default " + MapOptions.defaultLatLng);
         }
+
+        myposition1 = BitmapDescriptorFactory.fromResource(R.drawable.myposition1);
+        myposition2 = BitmapDescriptorFactory.fromResource(R.drawable.myposition2);
 
         // Add ui elements
         addMarkers();
