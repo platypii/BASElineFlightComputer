@@ -24,7 +24,7 @@
         android:key="audible_min"
         android:title="@string/pref_audible_min"
         android:defaultValue="0.0"
-        android:inputType="numberSigned"
+        android:inputType="numberDecimal|numberSigned"
         android:numeric="decimal"
         android:selectAllOnFocus="true" />
 
@@ -32,7 +32,7 @@
         android:key="audible_max"
         android:title="@string/pref_audible_max"
         android:defaultValue="140.0"
-        android:inputType="numberSigned"
+        android:inputType="numberDecimal|numberSigned"
         android:numeric="decimal"
         android:selectAllOnFocus="true" />
 

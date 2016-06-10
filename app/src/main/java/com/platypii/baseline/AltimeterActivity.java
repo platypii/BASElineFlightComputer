@@ -79,7 +79,7 @@ public class AltimeterActivity extends Activity implements MyAltitudeListener {
         builder.setTitle("Set Altitude AGL");
         builder.setMessage("Altitude above ground level in feet");
         final EditText input = new EditText(activity);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
         input.setHint("0");
         builder.setView(input);
         builder.setPositiveButton(R.string.set_altitude, new DialogInterface.OnClickListener() {
