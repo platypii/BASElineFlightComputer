@@ -41,7 +41,7 @@ public class MLocation extends Measurement {
             Log.e(TAG, "Invalid lat/long: " + this);
             FirebaseCrash.report(new Exception("Invalid lat/long: " + this));
         }
-        if(Math.abs(latitude) < 0.1 && Math.abs(longitude) < 0.1) {
+        if(Math.abs(latitude) < 0.1 || Math.abs(longitude) < 0.1) {
             Log.e(TAG, "Unlikely lat/long: " + latitude + ", " + longitude);
             FirebaseCrash.report(new Exception("Unlikely lat/long: " + this));
         }

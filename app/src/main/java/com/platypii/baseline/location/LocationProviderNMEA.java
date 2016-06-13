@@ -167,16 +167,29 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
                  // Log.i(NMEA_TAG, "["+time+"] " + Convert.latlong(latitude, longitude) + ", groundSpeed = " + Convert.speed(groundSpeed) + ", bearing = " + Convert.bearing2(bearing));
 
-                 if(Util.isReal(latitude) || Util.isReal(longitude) || Util.isReal(vN) || Util.isReal(vE)) {
-                     if(!Util.isReal(latitude) || !Util.isReal(longitude)) {
-                         Log.e(NMEA_TAG, "RMC invalid lat/long: " + nmea);
-                     }
-                     if(Math.abs(latitude) < 0.1 && Math.abs(longitude) < 0.1) {
+                 if(Util.isReal(latitude) && Util.isReal(longitude)) {
+                     final double latitude_abs = Math.abs(latitude);
+                     final double longitude_abs = Math.abs(longitude);
+                     if(latitude_abs < 0.1 && longitude_abs < 0.1) {
+                         // If lat,lon == 0,0 assume bad data (there's no BASE off the coast of Africa)
                          Log.e(NMEA_TAG, "RMC unlikely lat/long: " + nmea);
+                         FirebaseCrash.report(new Exception("RMC unlikely lat/long: " + nmea));
+                     } else if(latitude_abs > 180.0 || longitude_abs > 180.0) {
+                         // Lat/lon out of bounds. Likely parsing error.
+                         Log.e(NMEA_TAG, "RMC lat/long out of bounds: " + nmea);
+                         FirebaseCrash.report(new Exception("RMC lat/long out of bounds: " + nmea));
+                     } else {
+                         // If lat or lon == 0, give a warning, but still update location
+                         if(latitude_abs < 0.1) {
+                             Log.w(NMEA_TAG, "RMC unlikely latitude: " + nmea);
+                             FirebaseCrash.report(new Exception("RMC unlikely latitude: " + nmea));
+                         } else if(longitude_abs < 0.1) {
+                             Log.w(NMEA_TAG, "RMC unlikely longitude: " + nmea);
+                             FirebaseCrash.report(new Exception("RMC unlikely longitude: " + nmea));
+                         }
+                         // Update the official location!
+                         updateLocation();
                      }
-
-                     // Update the official location!
-                     updateLocation();
                  }
                  break;
              case "GNS":
@@ -203,6 +216,10 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
              //     long time = parseUTC(split[5]); // 123456 = 12:34:56 UTC
              //     boolean status = split[6].equals("A"); // A = active, V = void
              //     break;
+             case "ATT":
+                 // $GPATT,45.781233,10.862333,1796.3,45.0,2.6,2.6,*72
+                 // $GPATT,lat,lon,alt,bear,???,???
+                 break;
              case "PWR":
                  // I don't know what PWR does, but we get a lot of them via bluetooth
                  // Log.v(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);

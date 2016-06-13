@@ -28,7 +28,8 @@ class NMEA {
         } else {
             final int index = dm.indexOf('.') - 2;
             if(index < 0) {
-                Log.e(TAG, "Lat/Long format error " + dm + " " + nsew);
+                Log.e(TAG, "Lat/Long parse error: " + dm + " " + nsew);
+                FirebaseCrash.report(new Exception("NMEA lat/Long parse error: " + dm + " " + nsew));
             }
             final double m = Double.parseDouble(dm.substring(index));
             final int d = (index == 0)? 0 : Integer.parseInt(dm.substring(0, index));
