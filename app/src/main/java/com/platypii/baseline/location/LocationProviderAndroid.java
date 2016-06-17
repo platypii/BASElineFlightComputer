@@ -127,12 +127,14 @@ class LocationProviderAndroid extends LocationProvider {
     @Override
     public void stop() {
         super.stop();
-        manager.removeGpsStatusListener(statusListener);
-        try {
-            manager.removeUpdates(androidLocationListener);
-        } catch(SecurityException e) {
-            Log.w(TAG, "Exception while stopping android location updates", e);
+        if(manager != null) {
+            manager.removeGpsStatusListener(statusListener);
+            try {
+                manager.removeUpdates(androidLocationListener);
+            } catch(SecurityException e) {
+                Log.w(TAG, "Exception while stopping android location updates", e);
+            }
+            manager = null;
         }
-        manager = null;
     }
 }
