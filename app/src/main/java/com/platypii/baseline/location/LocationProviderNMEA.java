@@ -209,20 +209,35 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                  // final double bearingVTG = Util.parseDouble(split[1]); // Course over ground
                  // final double groundSpeedVTG = Convert.kts2mps(Util.parseDouble(split[5])); // Speed over ground
                  break;
-             // case "GLL":
-             //     // Lat/Long data
-             //     latitude = parseDegreesMinutes(split[1], split[2]);
-             //     longitude = parseDegreesMinutes(split[3], split[4]);
-             //     long time = parseUTC(split[5]); // 123456 = 12:34:56 UTC
-             //     boolean status = split[6].equals("A"); // A = active, V = void
-             //     break;
+             case "GLL":
+                  // latitude = parseDegreesMinutes(split[1], split[2]);
+                  // longitude = parseDegreesMinutes(split[3], split[4]);
+                  // long time = parseUTC(split[5]); // 123456 = 12:34:56 UTC
+                  // boolean status = split[6].equals("A"); // A = active, V = void
+                  break;
              case "ATT":
                  // $GPATT,45.781233,10.862333,1796.3,45.0,2.6,2.6,*72
-                 // $GPATT,lat,lon,alt,bear,???,???
+                 // $GPATT,lat,lon,alt,bear?,???,???
+                 break;
+             case "GLG":
+                 // $GPGLG,VER2,GNSS,130616,171913.0,85,4737.550964,N,12219.566617,W,96.0,38.5,2.0,0.0,13.0,TP,Seoul,,,15,3,,*5C
+                 // $GPGLG,version,provider,???,???,???,lat,lat,lon,lon,...
+                 break;
+             case "LOR":
+                 // Samsung Galaxy S6 SM-G920F
+                 // $PGLOR,0,HLA,123444.00,L,,Al,,A,,H,,,M,1,Ac,0,Gr,0,S,,,Sx,,,T,0,Tr,,Mn,0*33
+                 // $PGLOR,1,FIX,1.0,1.0*20
+                 // $PGLOR,2,SIO,TxERR,0,RxERR,0,TxCNT,461,RxCNT,4416,MLFRMPKT,0,DTMS,997,DTIN,5,11,DTOUT,100,987,HATMD,26*20
+                 // $PGLOR,2,SAT,3,3,G17,033,1F,R24,020,17,G29,026,1F*2F
+                 // $PGLOR,3,PWR,mA,36.4,RFTm,1000,OscTm,1000,MeasTm,1000,UTC,123444.00*32
+                 // $PGLOR,6,STA,122301.03,0.000,0.000,-270,236,9999,0,P,F,L,1,C,0,S,0000,0,2,R,0000,TPeF,19,2122,LC,,*13
+                 // $PGLOR,SPL,20160704142257.8,STATUS,2*38
+                 break;
+             case "ZDA":
+                 // $GPZDA,115729.61,18,06,2016,,*62
                  break;
              case "PWR":
                  // I don't know what PWR does, but we get a lot of them via bluetooth
-                 // Log.v(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
                  break;
              default:
                  Log.w(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
