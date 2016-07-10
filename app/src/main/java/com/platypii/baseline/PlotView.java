@@ -360,8 +360,10 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         paint.setColor(color);
         paint.setStrokeWidth(width);
         canvas.drawLine(sx, top, sx, bottom, paint);
-        text.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText(label, sx + 2 * density, top + 10 * density, text);
+        if(label != null) {
+            text.setTextAlign(Paint.Align.LEFT);
+            canvas.drawText(label, sx + 2 * density, top + 10 * density, text);
+        }
     }
     /**
      * Draws a Y grid line (horizontal)
@@ -371,16 +373,22 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         paint.setColor(color);
         paint.setStrokeWidth(width);
         canvas.drawLine(left, sy, right, sy, paint);
-        // Left align
-        canvas.drawText(label, left + 2 * density, sy - 2 * density, text);
-        // Right align
-        // text.setTextAlign(Paint.Align.RIGHT);
-        // canvas.drawText(label, right - 2 * density, sy - 2 * density, text);
+        if(label != null) {
+            // Left align
+            canvas.drawText(label, left + 2 * density, sy - 2 * density, text);
+            // Right align
+            // text.setTextAlign(Paint.Align.RIGHT);
+            // canvas.drawText(label, right - 2 * density, sy - 2 * density, text);
+        }
     }
 
     // Override this to change how labels are displayed
-    abstract public String formatX(double x);
-    abstract public String formatY(double y);
+    public String formatX(double x) {
+        return null;
+    }
+    public String formatY(double y) {
+        return null;
+    }
 
     // Returns the bounds in plot-space, including padding
     private final Bounds realBounds = new Bounds();

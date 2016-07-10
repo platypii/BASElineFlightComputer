@@ -6,12 +6,12 @@ public class AnalogAltimeterOptions {
 
     // Fixed altitudes
     public final double max_altitude;
-    public final double breakoff_altitude;
-    public final double deploy_altitude;
-    public final double harddeck_altitude;
+    // public final double breakoff_altitude;
+    // public final double deploy_altitude;
+    // public final double harddeck_altitude;
 
     // Units
-    public final double major_units;
+    // public final double major_units;
     public final String units_label;
 
     // Precomputed angles for drawing
@@ -20,7 +20,7 @@ public class AnalogAltimeterOptions {
     public final float harddeck_angle;
     public final float major_angle;
 
-    public AnalogAltimeterOptions(
+    private AnalogAltimeterOptions(
             double max_altitude,
             double breakoff_altitude,
             double deploy_altitude,
@@ -29,10 +29,10 @@ public class AnalogAltimeterOptions {
             String units_label
     ) {
         this.max_altitude = max_altitude;
-        this.breakoff_altitude = breakoff_altitude;
-        this.deploy_altitude = deploy_altitude;
-        this.harddeck_altitude = harddeck_altitude;
-        this.major_units = major_units;
+        // this.breakoff_altitude = breakoff_altitude;
+        // this.deploy_altitude = deploy_altitude;
+        // this.harddeck_altitude = harddeck_altitude;
+        // this.major_units = major_units;
         this.units_label = units_label;
         // Precompute angle for drawing
         breakoff_angle = (float) (360 * breakoff_altitude / max_altitude);

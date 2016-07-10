@@ -97,14 +97,5 @@ public class SensorPlot extends PlotView {
         return bounds;
     }
 
-    @Override
-    public String formatX(double x) {
-        return "";
-    }
-    @Override
-    public String formatY(double y) {
-        return "";
-    }
-
 }
 
