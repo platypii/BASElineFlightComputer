@@ -125,7 +125,7 @@ public class BluetoothService {
             return true;
         } catch(IOException e) {
             Log.e(TAG, "Failed to connect to bluetooth device: " + e.getMessage());
-            FirebaseCrash.report(e);
+            // FirebaseCrash.report(e);
             return false;
         }
     }
