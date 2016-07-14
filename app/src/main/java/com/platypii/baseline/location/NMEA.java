@@ -87,8 +87,14 @@ class NMEA {
 
     /** Returns true if the checksum is valid */
     static boolean validate(@NonNull String nmea) {
-        int starIndex = nmea.indexOf('*');
-        if(nmea.length() < 8 || nmea.charAt(0) != '$' || nmea.charAt(6) != ',' || starIndex == -1) {
+        final int starIndex = nmea.indexOf('*');
+        final int length = nmea.length();
+        // Ensure that:
+        // - string is long enough
+        // - starts with $
+        // - ends with checksum
+        // Could use regex ^\\$.*\\*[0-9a-fA-F]{1,2} but this is faster:
+        if(length < 8 || nmea.charAt(0) != '$' || starIndex < length - 3 || starIndex == length - 1) {
             Log.e(TAG, "Invalid NMEA sentence: " + nmea);
             FirebaseCrash.report(new Exception("Invalid NMEA sentence: " + nmea));
             return false;
@@ -99,7 +105,7 @@ class NMEA {
         for(int i = 1; i < starIndex; i++) {
             checksum1 ^= nmea.charAt(i);
         }
-        final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1, starIndex + 3), 16);
+        final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1), 16);
         if(checksum1 != checksum2) {
             Log.e(TAG, "Invalid NMEA checksum: " + nmea);
             FirebaseCrash.report(new Exception("Invalid NMEA checksum: " + nmea));

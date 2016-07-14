@@ -90,11 +90,11 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
              nmeaReceived = true;
          }
 
-         final String split[] = nmea.split("[,*]");
-         final String command = split[0].substring(3, 6);
-
          // Validate NMEA sentence and print errors, but still try to parse
          NMEA.validate(nmea);
+
+         final String split[] = nmea.split(",");
+         final String command = split[0].substring(3);
 
          // Parse command
          switch (command) {
