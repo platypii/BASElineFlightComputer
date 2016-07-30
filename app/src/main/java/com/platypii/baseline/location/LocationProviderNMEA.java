@@ -129,7 +129,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 if (!split[9].isEmpty()) {
                     if(!split[10].equals("M")) {
                         Log.e(NMEA_TAG, "Expected meters, was " + split[10] + " in nmea: " + nmea);
-                        FirebaseCrash.report(new Exception("Expected meters, was " + split[10] + " in nmea: " + nmea));
+                        FirebaseCrash.report(new NMEAException("Expected meters, was " + split[10] + " in nmea: " + nmea));
                     }
                     altitude_gps = Util.parseDouble(split[9]);
                 }
@@ -183,19 +183,19 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                     if(latitude_abs < 0.1 && longitude_abs < 0.1) {
                         // If lat,lon == 0,0 assume bad data (there's no BASE off the coast of Africa)
                         Log.e(NMEA_TAG, "RMC unlikely lat/long: " + nmea);
-                        FirebaseCrash.report(new Exception("RMC unlikely lat/long: " + nmea));
+                        FirebaseCrash.report(new NMEAException("RMC unlikely lat/long: " + nmea));
                     } else if(latitude_abs > 180.0 || longitude_abs > 180.0) {
                         // Lat/lon out of bounds. Likely parsing error.
                         Log.e(NMEA_TAG, "RMC lat/long out of bounds: " + nmea);
-                        FirebaseCrash.report(new Exception("RMC lat/long out of bounds: " + nmea));
+                        FirebaseCrash.report(new NMEAException("RMC lat/long out of bounds: " + nmea));
                     } else {
                         // If lat or lon == 0, give a warning, but still update location
                         if(latitude_abs < 0.1) {
                             Log.w(NMEA_TAG, "RMC unlikely latitude: " + nmea);
-                            FirebaseCrash.report(new Exception("RMC unlikely latitude: " + nmea));
+                            FirebaseCrash.report(new NMEAException("RMC unlikely latitude: " + nmea));
                         } else if(longitude_abs < 0.1) {
                             Log.w(NMEA_TAG, "RMC unlikely longitude: " + nmea);
-                            FirebaseCrash.report(new Exception("RMC unlikely longitude: " + nmea));
+                            FirebaseCrash.report(new NMEAException("RMC unlikely longitude: " + nmea));
                         }
                         // Update the official location!
                         updateLocation();
@@ -251,7 +251,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 break;
             default:
                 Log.w(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
-                FirebaseCrash.report(new Exception("Unknown NMEA command " + command + ": " + nmea));
+                FirebaseCrash.report(new NMEAException("Unknown NMEA command " + command + ": " + nmea));
         }
     }
 

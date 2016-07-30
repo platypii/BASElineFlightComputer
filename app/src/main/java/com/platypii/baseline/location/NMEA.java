@@ -29,7 +29,7 @@ class NMEA {
             final int index = dm.indexOf('.') - 2;
             if(index < 0) {
                 Log.e(TAG, "Lat/Long parse error: " + dm + " " + nsew);
-                FirebaseCrash.report(new Exception("NMEA lat/Long parse error: " + dm + " " + nsew));
+                FirebaseCrash.report(new NMEAException("NMEA lat/Long parse error: " + dm + " " + nsew));
             }
             final double m = Double.parseDouble(dm.substring(index));
             final int d = (index == 0)? 0 : Integer.parseInt(dm.substring(0, index));
@@ -96,7 +96,7 @@ class NMEA {
         // Could use regex ^\\$.*\\*[0-9a-fA-F]{1,2} but this is faster:
         if(length < 8 || nmea.charAt(0) != '$' || starIndex < length - 3 || starIndex == length - 1) {
             Log.e(TAG, "Invalid NMEA sentence: " + nmea);
-            FirebaseCrash.report(new Exception("Invalid NMEA sentence: " + nmea));
+            FirebaseCrash.report(new NMEAException("Invalid NMEA sentence: " + nmea));
             return false;
         }
 
@@ -108,7 +108,7 @@ class NMEA {
         final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1), 16);
         if(checksum1 != checksum2) {
             Log.e(TAG, "Invalid NMEA checksum: " + nmea);
-            FirebaseCrash.report(new Exception("Invalid NMEA checksum: " + nmea));
+            FirebaseCrash.report(new NMEAException("Invalid NMEA checksum: " + nmea));
             return false;
         }
         return true;
