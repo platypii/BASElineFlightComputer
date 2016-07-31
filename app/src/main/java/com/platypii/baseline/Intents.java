@@ -1,15 +1,18 @@
 package com.platypii.baseline;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 
 class Intents {
+    private static final String TAG = "Intents";
 
     /** Open jump activity */
     public static void openJumpActivity(@NonNull Context context, Jump jump) {
@@ -21,20 +24,28 @@ class Intents {
     /** Open track url in browser */
     public static void openTrackUrl(@NonNull Context context, CloudData cloudData) {
         final String url = cloudData.trackUrl;
-        Log.i("Jumps", "Track already synced, opening " + url);
         final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(browserIntent);
     }
 
-    /** Open track as KML */
+    /** Open track as KML in google earth */
     public static void openTrackKml(@NonNull Context context, CloudData cloudData) {
-        Intent earthIntent = new Intent(android.content.Intent.ACTION_VIEW);
+        try {
+            openTrackGoogleEarth(context, cloudData);
+        } catch(ActivityNotFoundException e) {
+            Log.e(TAG, "Failed to open KML file in google maps", e);
+            Toast.makeText(context, R.string.error_map_intent, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static void openTrackGoogleEarth(@NonNull Context context, CloudData cloudData) {
+        final Intent earthIntent = new Intent(android.content.Intent.ACTION_VIEW);
         earthIntent.setDataAndType(Uri.parse(cloudData.trackKml), "application/vnd.google-earth.kml+xml");
         earthIntent.setClassName("com.google.earth", "com.google.earth.EarthActivity");
         context.startActivity(earthIntent);
     }
 
-    /** Share jump log using android share options */
+//    /** Share link to base-line.ws */
 //    public static void shareTrack(@NonNull Context context, Jump jump) {
 //        final CloudData cloudData = jump.getCloudData();
 //        if(cloudData != null) {
@@ -52,6 +63,7 @@ class Intents {
 //        }
 //    }
 
+    /** Share track data file */
     public static void shareTrackFile(@NonNull Context context, Jump jump) {
         final Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
