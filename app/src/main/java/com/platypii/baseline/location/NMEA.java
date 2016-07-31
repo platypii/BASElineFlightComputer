@@ -95,8 +95,11 @@ class NMEA {
         // - ends with checksum
         // Could use regex ^\\$.*\\*[0-9a-fA-F]{1,2} but this is faster:
         if(length < 8 || nmea.charAt(0) != '$' || starIndex < length - 3 || starIndex == length - 1) {
-            Log.e(TAG, "Invalid NMEA sentence: " + nmea);
-            FirebaseCrash.report(new NMEAException("Invalid NMEA sentence: " + nmea));
+            // PGLOR commands often omit checksum, no need to report it
+            if(!nmea.startsWith("$PGLOR,")) {
+                Log.e(TAG, "Invalid NMEA sentence: " + nmea);
+                FirebaseCrash.report(new NMEAException("Invalid NMEA sentence: " + nmea));
+            }
             return false;
         }
 
