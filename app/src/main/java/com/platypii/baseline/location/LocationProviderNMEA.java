@@ -225,6 +225,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // long time = parseUTC(split[5]); // 123456 = 12:34:56 UTC
                 // boolean status = split[6].equals("A"); // A = active, V = void
                 break;
+            case "ACC":
+                // $GNACCURACY,0.8*1E
+                break;
             case "ATT":
                 // $GPATT,45.781233,10.862333,1796.3,45.0,2.6,2.6,*72
                 // $GPATT,lat,lon,alt,bear?,???,???
