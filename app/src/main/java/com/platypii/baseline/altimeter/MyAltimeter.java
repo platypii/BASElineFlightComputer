@@ -156,6 +156,10 @@ public class MyAltimeter {
         if(event == null || event.values.length == 0 || Double.isNaN(event.values[0]))
             return;
 
+        if(lastFixNano == event.timestamp) {
+            Log.e(TAG, "Double update: " + lastFixNano);
+        }
+
         double prevAltitude = altitude;
         // double prevClimb = climb;
         long prevLastFixNano = lastFixNano;
@@ -250,9 +254,10 @@ public class MyAltimeter {
                     final double dt = (lastFixMillis - prevLastFix) * 1E-3;
                     climb = (altitude - prevAltitude) / dt; // m/s
                 }
+                // Only update official altitude if we are relying solely on GPS for altitude
+                updateAltitude();
             }
             gps_sample_count++;
-            updateAltitude();
         }
     }
 
