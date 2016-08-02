@@ -39,7 +39,15 @@
     <EditTextPreference
         android:key="audible_interval"
         android:title="@string/pref_audible_interval"
-        android:defaultValue="3.0"
+        android:defaultValue="2.5"
+        android:inputType="numberDecimal"
+        android:numeric="decimal"
+        android:selectAllOnFocus="true" />
+
+    <EditTextPreference
+        android:key="audible_rate"
+        android:title="@string/pref_audible_rate"
+        android:defaultValue="1.0"
         android:inputType="numberDecimal"
         android:numeric="decimal"
         android:selectAllOnFocus="true" />

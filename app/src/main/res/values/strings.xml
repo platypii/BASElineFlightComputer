@@ -65,6 +65,7 @@
     <string name="pref_audible_max">Maximum value</string>
 
     <string name="pref_audible_interval">Speech interval</string>
+    <string name="pref_audible_rate">Speech rate</string>
 
     <!-- Map -->
     <string name="title_activity_map">Navigation</string>

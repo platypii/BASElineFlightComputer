@@ -12,6 +12,7 @@ import android.util.Log;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
+import java.util.Locale;
 
 /**
  * Settings activity for audible configuration
@@ -39,6 +40,7 @@ public class AudibleSettingsActivity extends PreferenceActivity {
         private EditTextPreference minPreference;
         private EditTextPreference maxPreference;
         private EditTextPreference intervalPreference;
+        private EditTextPreference ratePreference;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -51,12 +53,14 @@ public class AudibleSettingsActivity extends PreferenceActivity {
             minPreference = (EditTextPreference) findPreference("audible_min");
             maxPreference = (EditTextPreference) findPreference("audible_max");
             intervalPreference = (EditTextPreference) findPreference("audible_interval");
+            ratePreference = (EditTextPreference) findPreference("audible_rate");
 
             enabledPreference.setOnPreferenceChangeListener(this);
             modePreference.setOnPreferenceChangeListener(this);
             minPreference.setOnPreferenceChangeListener(this);
             maxPreference.setOnPreferenceChangeListener(this);
             intervalPreference.setOnPreferenceChangeListener(this);
+            ratePreference.setOnPreferenceChangeListener(this);
 
             updateViews();
         }
@@ -70,9 +74,11 @@ public class AudibleSettingsActivity extends PreferenceActivity {
             final double min = Util.parseDouble(minPreference.getText());
             final double max = Util.parseDouble(maxPreference.getText());
             final double speechInterval = Util.parseDouble(intervalPreference.getText());
+            final double speechRate = Util.parseDouble(ratePreference.getText());
             // Update views
             updateAudibleMode(audibleMode, min, max);
             updateSpeechInterval(speechInterval);
+            updateSpeechRate(speechRate);
         }
 
         private void updateAudibleMode(String audibleMode, double min, double max) {
@@ -107,6 +113,10 @@ public class AudibleSettingsActivity extends PreferenceActivity {
 
         private void updateSpeechInterval(double speechInterval) {
             intervalPreference.setSummary("Every " + speechInterval + " sec");
+        }
+
+        private void updateSpeechRate(double speechRate) {
+            ratePreference.setSummary(String.format(Locale.getDefault(), "%.2fx", speechRate));
         }
 
         /**
@@ -184,6 +194,11 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                     final double speechInterval = Util.parseDouble((String) value);
                     if(!Util.isReal(speechInterval)) return false;
                     updateSpeechInterval(speechInterval);
+                    break;
+                case "audible_rate":
+                    final double speechRate = Util.parseDouble((String) value);
+                    if(!Util.isReal(speechRate)) return false;
+                    updateSpeechRate(speechRate);
                     break;
             }
             return true;

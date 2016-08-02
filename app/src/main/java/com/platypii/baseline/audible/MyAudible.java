@@ -89,12 +89,20 @@ public class MyAudible {
     }
 
     /**
-     * Gets the speech rate from preferences
+     * Gets the speech interval from preferences
      * @return the delay between speech in milliseconds
      */
-    static int getDelay() {
-        final float speechInterval = Float.parseFloat(prefs.getString("audible_interval", "2.0"));
+    static int getInterval() {
+        final float speechInterval = Float.parseFloat(prefs.getString("audible_interval", "2.5"));
         return (int) (speechInterval * 1000f);
+    }
+
+    /**
+     * Gets the speech rate from preferences
+     * @return the speech rate multiplier
+     */
+    static float getRate() {
+        return Float.parseFloat(prefs.getString("audible_rate", "1.0"));
     }
 
     private static String getMeasurement() {
