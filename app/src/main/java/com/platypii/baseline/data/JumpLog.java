@@ -7,6 +7,9 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class JumpLog {
@@ -21,6 +24,13 @@ public class JumpLog {
             for (File file : files) {
                 jumps.add(new Jump(file));
             }
+            // Sort by date descending
+            Collections.sort(jumps, new Comparator<Jump>() {
+                @Override
+                public int compare(Jump track1, Jump track2) {
+                    return -track1.getDate().compareTo(track2.getDate());
+                }
+            });
             return jumps;
         } else {
             Log.e(TAG, "Track storage directory not available");
