@@ -88,5 +88,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="pref_metric">Metric</string>
     <string name="pref_metric_description">Use metric units</string>
+    <string name="pref_sensor_info">Sensor info</string>
+    <string name="pref_sensor_info_description">Display raw sensor data</string>
 
 </resources>

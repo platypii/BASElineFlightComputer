@@ -1,6 +1,7 @@
 package com.platypii.baseline;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,11 +36,12 @@ public class SettingsActivity extends PreferenceActivity {
      * This fragment shows the preferences
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
+    public static class GeneralPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
         private CheckBoxPreference metricPreference;
         private SwitchPreference bluetoothPreference;
         private BluetoothDevicePreference bluetoothDevicePreference;
+        private Preference sensorInfoPreference;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,9 @@ public class SettingsActivity extends PreferenceActivity {
             bluetoothPreference.setOnPreferenceChangeListener(this);
             bluetoothDevicePreference = (BluetoothDevicePreference) findPreference("bluetooth_device_id");
             bluetoothDevicePreference.setOnPreferenceChangeListener(this);
+
+            sensorInfoPreference = findPreference("sensor_info");
+            sensorInfoPreference.setOnPreferenceClickListener(this);
 
             updateViews();
         }
@@ -127,6 +132,15 @@ public class SettingsActivity extends PreferenceActivity {
             } else {
                 bluetoothDevicePreference.setSummary(R.string.pref_bluetooth_device_description);
             }
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            if(preference.getKey().equals("sensor_info")) {
+                // Open sensor activity
+                startActivity(new Intent(getActivity(), SensorActivity.class));
+            }
+            return false;
         }
     }
 

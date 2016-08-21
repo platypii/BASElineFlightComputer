@@ -17,4 +17,9 @@
         android:summary="@string/pref_bluetooth_device_description"
         android:title="@string/pref_bluetooth_device"/>
 
+    <Preference
+        android:key="sensor_info"
+        android:title="@string/pref_sensor_info"
+        android:summary="@string/pref_sensor_info_description"/>
+
 </PreferenceScreen>
