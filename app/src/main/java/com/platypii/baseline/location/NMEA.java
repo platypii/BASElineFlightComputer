@@ -27,18 +27,26 @@ class NMEA {
             return Double.NaN;
         } else {
             final int index = dm.indexOf('.') - 2;
-            if(index < 0) {
-                Log.e(TAG, "Lat/Long parse error: " + dm + " " + nsew);
-                FirebaseCrash.report(new NMEAException("NMEA lat/Long parse error: " + dm + " " + nsew));
-            }
-            final double m = Double.parseDouble(dm.substring(index));
-            final int d = (index == 0)? 0 : Integer.parseInt(dm.substring(0, index));
-            final double degrees = d + m / 60.0;
+            if (index < 0) {
+                Log.e(TAG, "Lat/Long parse error missing decimal: " + dm + " " + nsew);
+                FirebaseCrash.report(new NMEAException("NMEA lat/Long parse error missing decimal: " + dm + " " + nsew));
+                return Double.NaN;
+            } else {
+                try {
+                    final double m = Double.parseDouble(dm.substring(index));
+                    final int d = (index == 0) ? 0 : Integer.parseInt(dm.substring(0, index));
+                    final double degrees = d + m / 60.0;
 
-            if(nsew.equalsIgnoreCase("S") || nsew.equalsIgnoreCase("W"))
-                return -degrees;
-            else
-                return degrees;
+                    if (nsew.equalsIgnoreCase("S") || nsew.equalsIgnoreCase("W"))
+                        return -degrees;
+                    else
+                        return degrees;
+                } catch(Exception e) {
+                    Log.e(TAG, "Lat/Long parse error: " + dm + " " + nsew);
+                    FirebaseCrash.report(new NMEAException("NMEA lat/Long parse error: " + dm + " " + nsew));
+                    return Double.NaN;
+                }
+            }
         }
     }
 

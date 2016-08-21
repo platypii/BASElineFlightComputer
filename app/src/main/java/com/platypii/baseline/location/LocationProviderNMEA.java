@@ -246,6 +246,10 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // $PGLOR,6,STA,122301.03,0.000,0.000,-270,236,9999,0,P,F,L,1,C,0,S,0000,0,2,R,0000,TPeF,19,2122,LC,,*13
                 // $PGLOR,SPL,20160704142257.8,STATUS,2*38
                 break;
+            case "TIS":
+                // Samsung Note7
+                // $PSTIS,*61
+                break;
             case "ZDA":
                 // $GPZDA,115729.61,18,06,2016,,*62
                 break;
