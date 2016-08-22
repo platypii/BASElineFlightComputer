@@ -9,7 +9,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.platypii.baseline.altimeter.MyAltimeter;
-import com.platypii.baseline.altimeter.MyAltitudeListener;
 import com.platypii.baseline.data.MySensorManager;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
@@ -18,10 +17,13 @@ import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.SyncedList;
 import com.platypii.baseline.util.Util;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import java.util.Locale;
 
 @SuppressLint("SetTextI18n")
-public class SensorActivity extends Activity implements MyAltitudeListener, MyLocationListener {
+public class SensorActivity extends Activity implements MyLocationListener {
 
     // Barometer
     private TextView pressureLabel;
@@ -125,7 +127,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         updateGPS(Services.location.lastLoc);
 
         // Start altitude updates
-        MyAltimeter.addListener(this);
+        EventBus.getDefault().register(this);
         updateAltimeter();
 
         // Periodic UI updates
@@ -144,7 +146,7 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
         super.onPause();
         handler.removeCallbacks(updateRunnable);
         updateRunnable = null;
-        MyAltimeter.removeListener(this);
+        EventBus.getDefault().unregister(this);
         Services.location.removeListener(this);
     }
 
@@ -242,10 +244,12 @@ public class SensorActivity extends Activity implements MyAltitudeListener, MyLo
     public void onLocationChangedPostExecute() {
         updateGPS(Services.location.lastLoc);
     }
-    @Override
-    public void altitudeDoInBackground(MAltitude alt) {}
-    @Override
-    public void altitudeOnPostExecute() {
+
+    /**
+     * Listen for altitude updates
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAltitudeEvent(MAltitude alt) {
         updateAltimeter();
     }
 

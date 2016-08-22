@@ -28,6 +28,7 @@ import com.platypii.baseline.data.MySensorManager;
 import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Start and stop essential services
@@ -56,6 +57,9 @@ public class Services {
             handler.removeCallbacks(stopRunnable);
 
             // Start the various services
+
+            // Configure EventBus
+            EventBus.builder().logNoSubscriberMessages(false).installDefaultEventBus();
 
             Log.i(TAG, "Loading app settings");
             loadPreferences(appContext);

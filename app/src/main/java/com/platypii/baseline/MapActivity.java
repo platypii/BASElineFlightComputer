@@ -25,16 +25,18 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.platypii.baseline.altimeter.MyAltimeter;
-import com.platypii.baseline.altimeter.MyAltitudeListener;
 import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.util.Convert;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends FragmentActivity implements MyLocationListener, MyAltitudeListener, GoogleMap.OnCameraChangeListener, OnMapReadyCallback {
+public class MapActivity extends FragmentActivity implements MyLocationListener, GoogleMap.OnCameraChangeListener, OnMapReadyCallback {
     private static final String TAG = "Map";
 
     private AnalogAltimeter analogAltimeter;
@@ -123,7 +125,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         Services.start(this);
         // Start sensor updates
         Services.location.addListener(this);
-        MyAltimeter.addListener(this);
+        EventBus.getDefault().register(this);
     }
 
     /**
@@ -266,11 +268,11 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         }
     }
 
-    // Altitude updates
-    @Override
-    public void altitudeDoInBackground(MAltitude alt) {}
-    @Override
-    public void altitudeOnPostExecute() {
+    /**
+     * Listen for altitude updates
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAltitudeEvent(MAltitude alt) {
         if(!paused) {
             updateFlightStats();
         }
@@ -348,7 +350,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         if(Services.location.lastLoc != null) {
             onLocationChangedPostExecute();
         }
-        altitudeOnPostExecute();
+        updateFlightStats();
     }
     @Override
     public void onPause() {
@@ -362,7 +364,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
 
         // Stop sensor updates
         Services.location.removeListener(this);
-        MyAltimeter.removeListener(this);
+        EventBus.getDefault().unregister(this);
         // Stop flight services
         Services.stop();
     }

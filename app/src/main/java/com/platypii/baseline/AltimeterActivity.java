@@ -12,13 +12,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.platypii.baseline.altimeter.MyAltimeter;
-import com.platypii.baseline.altimeter.MyAltitudeListener;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
-public class AltimeterActivity extends Activity implements MyAltitudeListener {
+public class AltimeterActivity extends Activity {
     private static final String TAG = "Altimeter";
 
     private AnalogAltimeter analogAltimeter;
@@ -105,11 +107,11 @@ public class AltimeterActivity extends Activity implements MyAltitudeListener {
         dialog.show();
     }
 
-    // Altitude updates
-    @Override
-    public void altitudeDoInBackground(MAltitude alt) {}
-    @Override
-    public void altitudeOnPostExecute() {
+    /**
+     * Listen for altitude updates
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAltitudeEvent(MAltitude alt) {
         if(!paused) {
             updateFlightStats();
         }
@@ -119,7 +121,7 @@ public class AltimeterActivity extends Activity implements MyAltitudeListener {
     public void onResume() {
         super.onResume();
         paused = false;
-        altitudeOnPostExecute();
+        updateFlightStats();
     }
     @Override
     public void onPause() {
@@ -133,13 +135,13 @@ public class AltimeterActivity extends Activity implements MyAltitudeListener {
         // Start flight services
         Services.start(this);
         // Start sensor updates
-        MyAltimeter.addListener(this);
+        EventBus.getDefault().register(this);
     }
     @Override
     public void onStop() {
         super.onStop();
         // Stop sensor updates
-        MyAltimeter.removeListener(this);
+        EventBus.getDefault().unregister(this);
         // Stop flight services
         Services.stop();
     }

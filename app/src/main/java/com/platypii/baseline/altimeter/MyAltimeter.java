@@ -6,11 +6,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import java.util.ArrayList;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
@@ -19,6 +17,7 @@ import com.platypii.baseline.util.Stat;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.location.MyLocationListener;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Altimeter manager
@@ -33,9 +32,6 @@ public class MyAltimeter {
 
     private static SensorManager sensorManager;
     private static SharedPreferences prefs;
-
-    // Listeners
-    private static final ArrayList<MyAltitudeListener> listeners = new ArrayList<>();
 
     // Pressure data
     public static float pressure = Float.NaN; // hPa (millibars)
@@ -268,24 +264,7 @@ public class MyAltimeter {
         // Log.d(TAG, "Altimeter Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + lastFixMillis + " " + lastFixNano);
         // Create the measurement
         final MAltitude myAltitude = new MAltitude(lastFixMillis, lastFixNano, altitude, climb, pressure);
-        // Notify listeners (using AsyncTask so the altimeter never blocks!)
-        new AsyncTask<MAltitude,Void,Void>() {
-            @Override
-            protected Void doInBackground(MAltitude... params) {
-                synchronized(listeners) {
-                    for(MyAltitudeListener listener : listeners) {
-                        listener.altitudeDoInBackground(params[0]);
-                    }
-                }
-                return null;
-            }
-            @Override
-            protected void onPostExecute(Void result) {
-                for(MyAltitudeListener listener : listeners) {
-                    listener.altitudeOnPostExecute();
-                }
-            }
-        }.execute(myAltitude);
+        EventBus.getDefault().post(myAltitude);
     }
 
     // ISA pressure and temperature
@@ -310,29 +289,11 @@ public class MyAltimeter {
         return altitude0 - temp0 * (1 - Math.pow(pressure / pressure0, EXP)) / L;
     }
 
-    /**
-     * Add a new listener for us to notify
-     */
-    public static void addListener(MyAltitudeListener listener) {
-        synchronized(listeners) {
-            listeners.add(listener);
-        }
-    }
-    public static void removeListener(MyAltitudeListener listener) {
-        synchronized(listeners) {
-            listeners.remove(listener);
-        }
-    }
-
     public static void stop() {
         Services.location.removeListener(locationListener);
         sensorManager.unregisterListener(sensorEventListener);
         sensorManager = null;
         prefs = null;
-
-        if(listeners.size() > 0) {
-            Log.e(TAG, "Stopping altimeter service, but listeners are still listening");
-        }
     }
 
 }

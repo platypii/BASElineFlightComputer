@@ -6,13 +6,14 @@ import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.altimeter.MyAltimeter;
-import com.platypii.baseline.altimeter.MyAltitudeListener;
 import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.data.measurements.Measurement;
 import com.platypii.baseline.location.MyLocationListener;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,7 +28,7 @@ import java.util.zip.GZIPOutputStream;
  * Logs altitude and location data to the database. Also contains event and jump databases
  * AKA- The Black Box flight recorder
  */
-public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySensorListener {
+public class MyDatabase implements MyLocationListener, MySensorListener {
 
     // Singleton database when logging
     private static MyDatabase db = null;
@@ -102,7 +103,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
         log.write(Measurement.header + "\n");
 
         // Start sensor updates
-        MyAltimeter.addListener(this);
+        EventBus.getDefault().register(this);
         Services.location.addListener(this);
         MySensorManager.addListener(this);
 
@@ -114,7 +115,7 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
             stopTime = System.nanoTime();
 
             // Stop sensor updates
-            MyAltimeter.removeListener(this);
+            EventBus.getDefault().unregister(this);
             Services.location.removeListener(this);
             MySensorManager.removeListener(this);
 
@@ -134,13 +135,13 @@ public class MyDatabase implements MyAltitudeListener, MyLocationListener, MySen
         }
     }
 
-    // Altitude listener
-    @Override
-    public void altitudeDoInBackground(MAltitude measure) {
-        logLine(measure.toRow());
+    /**
+     * Listen for altitude updates
+     */
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onAltitudeEvent(MAltitude alt) {
+        logLine(alt.toRow());
     }
-    @Override
-    public void altitudeOnPostExecute() {}
 
     // Location listener
     @Override
