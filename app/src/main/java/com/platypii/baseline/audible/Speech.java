@@ -4,10 +4,8 @@ import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-import com.google.firebase.crash.FirebaseCrash;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 class Speech implements TextToSpeech.OnInitListener {
     private static final String TAG = "Speech";
@@ -19,13 +17,6 @@ class Speech implements TextToSpeech.OnInitListener {
 
     public Speech(Context context) {
         tts = new TextToSpeech(context, this);
-        // Set text-to-speech local to default locale
-        if(tts.isLanguageAvailable(Locale.getDefault()) == TextToSpeech.LANG_AVAILABLE) {
-            tts.setLanguage(Locale.getDefault());
-        } else {
-            Log.e(TAG, "Locale not available: " + Locale.getDefault());
-            FirebaseCrash.report(new Exception("TextToSpeech locale not available: " + Locale.getDefault()));
-        }
     }
 
     void speakNow(String text) {
