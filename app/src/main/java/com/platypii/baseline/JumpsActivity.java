@@ -10,13 +10,16 @@ import android.widget.ListView;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
-import com.platypii.baseline.data.SyncStatus;
 import com.platypii.baseline.data.TrackAdapter;
+import com.platypii.baseline.events.SyncEvent;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JumpsActivity extends ListActivity implements AdapterView.OnItemLongClickListener, SyncStatus.SyncListener {
+public class JumpsActivity extends ListActivity implements AdapterView.OnItemLongClickListener {
 
     private List<Jump> jumpList;
     private ArrayAdapter<Jump> listAdapter;
@@ -57,7 +60,7 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
         }
 
         // Listen for sync updates
-        SyncStatus.addListener(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -83,12 +86,12 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
     @Override
     protected void onPause() {
         super.onPause();
-        // Listen for sync updates
-        SyncStatus.removeListener(this);
+        EventBus.getDefault().unregister(this);
     }
-    @Override
-    public void syncUpdate() {
-        // Refresh sync status
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSyncEvent(SyncEvent event) {
+        // Update sync status in the list
         listAdapter.notifyDataSetChanged();
     }
 

@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Try;
 import com.platypii.baseline.util.Callback;
 
@@ -16,6 +17,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
 public class TheCloud {
@@ -52,7 +54,7 @@ public class TheCloud {
             }
             @Override
             protected void onPostExecute(Try<CloudData> result) {
-                SyncStatus.update();
+                EventBus.getDefault().post(new SyncEvent());
                 if(cb != null) {
                     if(result instanceof Try.Success) {
                         final CloudData cloudData = ((Try.Success<CloudData>) result).result;

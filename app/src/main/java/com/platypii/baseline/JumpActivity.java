@@ -13,13 +13,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
-import com.platypii.baseline.data.SyncStatus;
 import com.platypii.baseline.data.TheCloud;
+import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Callback;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
-public class JumpActivity extends BaseActivity implements SyncStatus.SyncListener {
+public class JumpActivity extends BaseActivity {
     private static final String TAG = "Jump";
 
     private Jump jump;
@@ -164,18 +167,17 @@ public class JumpActivity extends BaseActivity implements SyncStatus.SyncListene
     protected void onResume() {
         super.onResume();
         // Listen for sync updates
-        SyncStatus.addListener(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Listen for sync updates
-        SyncStatus.removeListener(this);
+        EventBus.getDefault().unregister(this);
     }
 
-    @Override
-    public void syncUpdate() {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSyncEvent(SyncEvent event) {
         updateViews();
     }
 }
