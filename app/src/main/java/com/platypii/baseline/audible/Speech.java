@@ -19,8 +19,10 @@ class Speech implements TextToSpeech.OnInitListener {
 
     public Speech(Context context) {
         tts = new TextToSpeech(context, this);
-        final int result = tts.setLanguage(Locale.getDefault());
-        if(result != TextToSpeech.LANG_AVAILABLE) {
+        // Set text-to-speech local to default locale
+        if(tts.isLanguageAvailable(Locale.getDefault()) == TextToSpeech.LANG_AVAILABLE) {
+            tts.setLanguage(Locale.getDefault());
+        } else {
             Log.e(TAG, "Locale not available: " + Locale.getDefault());
             FirebaseCrash.report(new Exception("TextToSpeech locale not available: " + Locale.getDefault()));
         }
@@ -52,6 +54,13 @@ class Speech implements TextToSpeech.OnInitListener {
                 queue.add(text);
             }
         }
+    }
+
+    public void stopAll() {
+        if(queue != null) {
+            queue.clear();
+        }
+        tts.stop();
     }
 
     @Override

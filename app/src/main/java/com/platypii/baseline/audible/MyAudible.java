@@ -66,6 +66,7 @@ public class MyAudible {
 
     public static void stopAudible() {
         if(isInitialized) {
+            speech.stopAll();
             audibleThread.stop();
             speech.speakWhenReady("Goodbye");
         } else {
