@@ -100,13 +100,17 @@ abstract class LocationProvider {
             vD = -1000.0 * (lastLoc.altitude_gps - prevLoc.altitude_gps) / (lastLoc.millis - prevLoc.millis);
 
             // GPS sample refresh rate
-            // TODO: Include time from last sample until now
+            // TODO: Include time from last sample until now if > refreshTime
             final long deltaTime = lastLoc.millis - prevLoc.millis; // time since last refresh
             if (deltaTime > 0) {
-                final float refreshTime = 1000.0f / (float) (deltaTime);
-                refreshRate += (refreshTime - refreshRate) * 0.5f; // Moving average
+                final float newRefreshRate = 1000.0f / (float) (deltaTime); // Refresh rate based on last 2 samples
+                if(refreshRate == 0) {
+                    refreshRate = newRefreshRate;
+                } else {
+                    refreshRate += (newRefreshRate - refreshRate) * 0.5f; // Moving average
+                }
                 if (Double.isNaN(refreshRate)) {
-                    Log.e(providerName(), "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime);
+                    Log.e(providerName(), "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + newRefreshRate);
                     refreshRate = 0;
                 }
             }

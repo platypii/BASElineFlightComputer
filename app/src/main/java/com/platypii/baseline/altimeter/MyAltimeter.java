@@ -166,12 +166,16 @@ public class MyAltimeter {
 
         // Barometer refresh rate
         final long deltaTime = lastFixNano - prevLastFixNano; // time since last refresh
-        if(deltaTime > 0) {
-            final float refreshTime = 1E9f / (float) (deltaTime);
-            refreshRate += (refreshTime - refreshRate) * 0.5f; // Moving average
+        if(deltaTime > 0 && prevLastFixNano > 0) {
+            final float newRefreshRate = 1E9f / (float) (deltaTime); // Refresh rate based on last 2 samples
+            if(refreshRate == 0) {
+                refreshRate = newRefreshRate;
+            } else {
+                refreshRate += (newRefreshRate - refreshRate) * 0.5f; // Moving average
+            }
             if (Double.isNaN(refreshRate)) {
-                Log.e(TAG, "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime);
-                FirebaseCrash.report(new Exception("Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + refreshTime));
+                Log.e(TAG, "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + newRefreshRate);
+                FirebaseCrash.report(new Exception("Refresh rate is NaN, deltaTime = " + deltaTime + " newRefreshRate = " + newRefreshRate));
                 refreshRate = 0;
             }
         }
