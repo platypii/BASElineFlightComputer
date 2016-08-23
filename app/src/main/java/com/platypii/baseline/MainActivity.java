@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
@@ -28,6 +29,8 @@ import java.util.Locale;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "Main";
+
+    private FirebaseAnalytics firebaseAnalytics;
 
     // app start time
     // public static final long startTimeMillis = System.currentTimeMillis();
@@ -54,6 +57,8 @@ public class MainActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         // Find views
         recordButton = (Button) findViewById(R.id.recordButton);
@@ -105,12 +110,14 @@ public class MainActivity extends BaseActivity {
     public void clickRecord(View v) {
         if(!MyDatabase.isLogging()) {
             Log.i(TAG, "Starting logging");
+            firebaseAnalytics.logEvent("click_logging_start", null);
 
             // Start logging
             MyDatabase.startLogging(getApplicationContext());
             updateUIState();
         } else {
             Log.i(TAG, "Stopping logging");
+            firebaseAnalytics.logEvent("click_logging_stop", null);
 
             // Stop logging
             final Jump jump = MyDatabase.stopLogging();
@@ -199,23 +206,27 @@ public class MainActivity extends BaseActivity {
     }
 
     public void clickNav(View v) {
+        firebaseAnalytics.logEvent("click_nav", null);
         // Open nav activity
         startActivity(new Intent(this, MapActivity.class));
     }
 
     public void clickJumps(View v) {
+        firebaseAnalytics.logEvent("click_tracks", null);
         // Open jumps activity
         final Intent intent = new Intent(this, JumpsActivity.class);
         startActivity(intent);
     }
 
     public void clickAudible(View v) {
+        firebaseAnalytics.logEvent("click_audible", null);
         // Open audible activity
         final Intent intent = new Intent(this, AudibleSettingsActivity.class);
         startActivity(intent);
     }
 
     public void clickSettings(View v) {
+        firebaseAnalytics.logEvent("click_settings", null);
         // Open settings activity
         final Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);

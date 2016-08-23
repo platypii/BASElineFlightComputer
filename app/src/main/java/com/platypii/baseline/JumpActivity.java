@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
@@ -25,12 +26,16 @@ import java.io.File;
 public class JumpActivity extends BaseActivity {
     private static final String TAG = "Jump";
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     private Jump jump;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jump);
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         // Load jump from extras
         final Bundle extras = getIntent().getExtras();
@@ -39,9 +44,6 @@ public class JumpActivity extends BaseActivity {
             final File logDir = JumpLog.getLogDirectory(getApplicationContext());
             jump = new Jump(new File(logDir, logFilename));
         }
-
-        // Update views
-        updateViews();
     }
 
     @Override
@@ -91,9 +93,11 @@ public class JumpActivity extends BaseActivity {
         final CloudData cloudData = jump.getCloudData();
         if(cloudData != null) {
             // Open web app
+            firebaseAnalytics.logEvent("click_track_open", null);
             Intents.openTrackUrl(this, cloudData);
         } else {
             // Start upload
+            firebaseAnalytics.logEvent("click_track_sync", null);
             getAuthToken(new Callback<String>() {
                 @Override
                 public void apply(String authToken) {
@@ -120,6 +124,7 @@ public class JumpActivity extends BaseActivity {
     }
 
     public void clickKml(View v) {
+        firebaseAnalytics.logEvent("click_track_kml", null);
         final CloudData cloudData = jump.getCloudData();
         if(cloudData != null) {
             // Open web app
@@ -130,6 +135,7 @@ public class JumpActivity extends BaseActivity {
     }
 
     public void clickDelete(View v) {
+        firebaseAnalytics.logEvent("click_track_delete_1", null);
         final int deleteConfirmMessage = (jump.getCloudData() == null)? R.string.delete_local : R.string.delete_remote;
         new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -139,6 +145,7 @@ public class JumpActivity extends BaseActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // Delete jump
+                    firebaseAnalytics.logEvent("click_track_delete_2", null);
                     deleteLocal();
                 }
 
@@ -160,14 +167,19 @@ public class JumpActivity extends BaseActivity {
     }
 
     public void clickExport(View v) {
+        firebaseAnalytics.logEvent("click_track_export", null);
         Intents.shareTrackFile(this, jump);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         // Listen for sync updates
         EventBus.getDefault().register(this);
+
+        // Update views
+        updateViews();
     }
 
     @Override
