@@ -162,25 +162,18 @@ public class MyAudible {
                     final MLocation loc = Services.location.lastLoc;
                     final double glideRatio = loc.glideRatio();
                     if(Util.isReal(glideRatio) && min <= glideRatio && glideRatio <= max) {
-                        // If horizontal or vertical speed less than .2mph:
-                        if (loc.groundSpeed() < 0.1) {
-                            if (Math.abs(loc.climb) < 0.1) {
-                                if (!stationary) {
-                                    stationary = true;
-                                    measurement = "Stationary";
-                                } else {
-                                    measurement = "";
-                                }
-                            } else {
-                                stationary = false;
-                                measurement = "Vertical";
+                        measurement = loc.glideRatioString();
+                        if(measurement.equals(Convert.GLIDE_STATIONARY)) {
+                            if(stationary) {
+                                // Only say stationary once
+                                measurement = "";
                             }
+                            stationary = true;
                         } else {
                             stationary = false;
-                            measurement = Convert.glide(glideRatio, 1, false);
                         }
                     } else {
-                        Log.w(TAG, "Not speaking: glide ratio = " + Convert.glide(glideRatio, 1, true));
+                        Log.w(TAG, "Not speaking: glide ratio = " + loc.glideRatioString());
                     }
                 }
                 break;

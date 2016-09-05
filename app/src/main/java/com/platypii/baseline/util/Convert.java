@@ -16,6 +16,11 @@ public class Convert {
     public static final double MPH = 0.44704;
     public static final double KPH = 0.277778;
 
+    // Special glide ratio strings
+    public static final String GLIDE_STATIONARY = "Stationary";
+    public static final String GLIDE_LEVEL = "Level";
+    public static final String GLIDE_VERTICAL = "Vertical";
+
     /**
      * Convert knots to meters/second
      */
@@ -164,14 +169,14 @@ public class Convert {
         }
     }
 
-    public static String glide(double glideRatio) {
-        return glide(glideRatio, 1, true);
-    }
+//    public static String glide(double glideRatio) {
+//        return glide(glideRatio, 1, true);
+//    }
     public static String glide(double glideRatio, int precision, boolean units) {
         if(Double.isNaN(glideRatio)) {
             return "";
         } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 40) {
-            return "Level";
+            return GLIDE_LEVEL;
         } else {
             final String value;
             if(glideRatio < 0) {

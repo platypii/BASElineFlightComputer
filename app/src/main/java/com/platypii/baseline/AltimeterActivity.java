@@ -71,7 +71,7 @@ public class AltimeterActivity extends Activity {
         }
         if(loc != null) {
             flightStatsSpeed.setText(Convert.speed(loc.groundSpeed()));
-            flightStatsGlide.setText(Convert.glide(loc.glideRatio()));
+            flightStatsGlide.setText(loc.glideRatioString());
         }
     }
 
