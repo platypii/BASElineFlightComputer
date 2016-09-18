@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 
@@ -64,11 +66,20 @@ class Intents {
 //    }
 
     /** Share track data file */
-    public static void shareTrackFile(@NonNull Context context, Jump jump) {
-        final Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(jump.logFile));
-        intent.setType("text/plain");
-        context.startActivity(intent);
+    public static void exportTrackFile(@NonNull Context context, Jump jump) {
+        try {
+            final Uri trackFileUri = FileProvider.getUriForFile(context, "com.platypii.baseline.provider", jump.logFile);
+            Log.d(TAG, "Exporting track file " + trackFileUri);
+            final Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_SUBJECT, jump.getName());
+            intent.putExtra(Intent.EXTRA_STREAM, trackFileUri);
+            intent.setType("application/csv");
+            context.startActivity(intent);
+        } catch(Exception e) {
+            Log.e(TAG, "Failed to export track file", e);
+            Toast.makeText(context, R.string.error_export_intent, Toast.LENGTH_SHORT).show();
+            FirebaseCrash.report(e);
+        }
     }
 }

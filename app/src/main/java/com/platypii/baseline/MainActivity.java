@@ -94,14 +94,14 @@ public class MainActivity extends BaseActivity {
 
     private void enableStrictMode() {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                // .detectAll()
                 // .detectDiskReads()
-                // .detectDiskWrites()
-                .detectNetwork()  // or .detectAll() for all detectable problems
+                .detectDiskWrites()
+                .detectNetwork()
                 .penaltyLog()
                 .build());
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectLeakedSqlLiteObjects()
-                .detectLeakedClosableObjects()
+                .detectAll()
                 .penaltyLog()
                 .penaltyDeath()
                 .build());
@@ -200,36 +200,28 @@ public class MainActivity extends BaseActivity {
     }
 
     public void clickAltimeter(View v) {
-        // Open altimeter activity
-        final Intent intent = new Intent(this, AltimeterActivity.class);
-        startActivity(intent);
+        firebaseAnalytics.logEvent("click_alti", null);
+        startActivity(new Intent(this, AltimeterActivity.class));
     }
 
     public void clickNav(View v) {
         firebaseAnalytics.logEvent("click_nav", null);
-        // Open nav activity
         startActivity(new Intent(this, MapActivity.class));
     }
 
     public void clickJumps(View v) {
         firebaseAnalytics.logEvent("click_tracks", null);
-        // Open jumps activity
-        final Intent intent = new Intent(this, JumpsActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, JumpsActivity.class));
     }
 
     public void clickAudible(View v) {
         firebaseAnalytics.logEvent("click_audible", null);
-        // Open audible activity
-        final Intent intent = new Intent(this, AudibleSettingsActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, AudibleSettingsActivity.class));
     }
 
     public void clickSettings(View v) {
         firebaseAnalytics.logEvent("click_settings", null);
-        // Open settings activity
-        final Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     private final View.OnLongClickListener audibleLongClickListener = new View.OnLongClickListener() {

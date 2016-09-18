@@ -168,7 +168,7 @@ public class JumpActivity extends BaseActivity {
 
     public void clickExport(View v) {
         firebaseAnalytics.logEvent("click_track_export", null);
-        Intents.shareTrackFile(this, jump);
+        Intents.exportTrackFile(this, jump);
     }
 
     @Override
