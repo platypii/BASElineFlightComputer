@@ -8,8 +8,11 @@ public abstract class AudibleMode {
     public String id;
     public String name;
     private String unitsName;
+
+    // Default mode parameters
     public float defaultMin;
     public float defaultMax;
+    public int defaultPrecision;
 
     /**
      * @param id computer readable name of the mode (total_speed)
@@ -18,12 +21,13 @@ public abstract class AudibleMode {
      * @param defaultMin the default minimum value, in metric
      * @param defaultMax the default maximum value, in metric
      */
-    public AudibleMode(String id, String name, String unitsName, float defaultMin, float defaultMax) {
+    public AudibleMode(String id, String name, String unitsName, float defaultMin, float defaultMax, int defaultPrecision) {
         this.id = id;
         this.name = name;
         this.unitsName = unitsName;
         this.defaultMin = defaultMin;
         this.defaultMax = defaultMax;
+        this.defaultPrecision = defaultPrecision;
     }
 
     public String minimumTitle() {
@@ -42,6 +46,6 @@ public abstract class AudibleMode {
     /**
      * Convert from local units to internal metric units
      */
-    abstract public String convertOutput(double output);
+    abstract public String convertOutput(double output, int precision);
 
 }

@@ -27,6 +27,14 @@
         android:title="@string/pref_audible_max" />
 
     <EditTextPreference
+        android:key="audible_precision"
+        android:title="@string/pref_audible_precision"
+        android:defaultValue="1"
+        android:inputType="number"
+        android:numeric="integer"
+        android:selectAllOnFocus="true" />
+
+    <EditTextPreference
         android:key="audible_interval"
         android:title="@string/pref_audible_interval"
         android:defaultValue="2.5"

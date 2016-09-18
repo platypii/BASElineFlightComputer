@@ -63,6 +63,7 @@
     <string name="pref_audible_min">Minimum value</string>
     <string name="pref_audible_max">Maximum value</string>
 
+    <string name="pref_audible_precision">Precision</string>
     <string name="pref_audible_interval">Speech interval</string>
     <string name="pref_audible_rate">Speech rate</string>
 

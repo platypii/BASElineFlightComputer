@@ -20,6 +20,7 @@ public class Util {
             }
         }
     }
+
     public static float parseFloat(String str) {
         if(str == null || str.isEmpty()) {
             return Float.NaN;
@@ -30,6 +31,14 @@ public class Util {
                 FirebaseCrash.report(e);
                 return Float.NaN;
             }
+        }
+    }
+
+    public static int parseInt(String str, int defaultValue) {
+        try {
+            return Integer.parseInt(str);
+        } catch(NumberFormatException e) {
+            return defaultValue;
         }
     }
 }

@@ -52,8 +52,7 @@ public class MyAudible {
                 audibleThread.start();
 
                 // Say audible mode
-                final String audibleMode = prefs.getString("audible_mode", "");
-                speech.speakWhenReady(audibleMode.replace('_', ' '));
+                speakModeWhenReady();
 
                 // Play first measurement
                 MyAudible.speakWhenReady();
@@ -75,6 +74,25 @@ public class MyAudible {
             Log.e(TAG, "Failed to stop audible: audible not initialized");
         }
         isEnabled = false;
+    }
+
+    /**
+     * Announce the current audible mode
+     */
+    private static void speakModeWhenReady() {
+        final String audibleMode = prefs.getString("audible_mode", "");
+        final AudibleMode mode = AudibleModes.get(audibleMode);
+        speech.speakWhenReady(mode.name);
+    }
+
+    /**
+     * Make a special announcement
+     */
+    public static void speakNow(String text) {
+        if(!isEnabled) {
+            Log.e(TAG, "Should never speak when audible is disabled");
+        }
+        speech.speakNow(text);
     }
 
     static void speak() {
@@ -116,9 +134,9 @@ public class MyAudible {
         final double units = Convert.metric? Convert.KPH : Convert.MPH;
         final double min = Util.parseDouble(prefs.getString("audible_min", "-1000"));
         final double max = Util.parseDouble(prefs.getString("audible_max", "1000"));
+        final int precision = Util.parseInt(prefs.getString("audible_precision", "1"), 1);
         String measurement = "";
         switch(audibleMode) {
-            // TODO: True Air Speed
             case "total_speed":
                 // Compute total speed
                 if(goodGpsFix()) {
@@ -126,9 +144,9 @@ public class MyAudible {
                     final double horizontalSpeed = Services.location.lastLoc.groundSpeed();
                     final double totalSpeed = Math.sqrt(verticalSpeed * verticalSpeed + horizontalSpeed * horizontalSpeed);
                     if (Util.isReal(totalSpeed) && min * units <= totalSpeed && totalSpeed <= max * units) {
-                        measurement = Convert.speed(totalSpeed, 0, false);
+                        measurement = shortSpeed(totalSpeed, precision);
                     } else {
-                        Log.w(TAG, "Not speaking: total speed = " + Convert.speed(totalSpeed, 0, true));
+                        Log.w(TAG, "Not speaking: total speed = " + Convert.speed(totalSpeed, precision, true));
                     }
                 }
                 break;
@@ -137,9 +155,9 @@ public class MyAudible {
                 if(goodGpsFix()) {
                     final double horizontalSpeed = Services.location.lastLoc.groundSpeed();
                     if (Util.isReal(horizontalSpeed) && min * units <= horizontalSpeed && horizontalSpeed <= max * units) {
-                        measurement = Convert.speed(horizontalSpeed, 0, false);
+                        measurement = shortSpeed(horizontalSpeed, precision);
                     } else {
-                        Log.w(TAG, "Not speaking: horizontal speed = " + Convert.speed(horizontalSpeed, 0, true));
+                        Log.w(TAG, "Not speaking: horizontal speed = " + Convert.speed(horizontalSpeed, precision, true));
                     }
                 }
                 break;
@@ -148,9 +166,9 @@ public class MyAudible {
                 final double verticalSpeed = MyAltimeter.climb;
                 if (Util.isReal(verticalSpeed) && min * units <= verticalSpeed && verticalSpeed <= max * units) {
                     if(verticalSpeed > 0) {
-                        measurement = "+" + Convert.speed(verticalSpeed, 0, false);
+                        measurement = "+ " + shortSpeed(verticalSpeed, precision);
                     } else {
-                        measurement = Convert.speed(-verticalSpeed, 0, false);
+                        measurement = shortSpeed(-verticalSpeed, precision);
                     }
                 } else {
                     Log.w(TAG, "Not speaking: vertical speed = " + Convert.speed(verticalSpeed, 0, true));
@@ -207,7 +225,11 @@ public class MyAudible {
         if(Services.location.lastLoc != null && Services.location.lastFixDuration() < 3500) {
             gpsFix = true;
         } else {
-            Log.w(TAG, "Stale GPS signal");
+            if(Services.location.lastLoc == null) {
+                Log.w(TAG, "No GPS signal");
+            } else {
+                Log.w(TAG, "Stale GPS signal");
+            }
             if(gpsFix) {
                 speech.speakNow("Signal lost");
             }
@@ -217,6 +239,18 @@ public class MyAudible {
     }
     /** True iff the last measurement was a good fix */
     private static boolean gpsFix = false;
+
+    /**
+     * Generate the text to be spoken for speed.
+     * Shortens 0.00 to 0
+     */
+    private static String shortSpeed(double speed, int precision) {
+        if(Math.abs(speed) < Math.pow(.1, precision) / 2) {
+            return "0";
+        } else {
+            return Convert.speed(speed, precision, false);
+        }
+    }
 
     /**
      * Stop audible service
