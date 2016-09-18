@@ -11,11 +11,12 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.util.Log;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.platypii.baseline.bluetooth.BluetoothDevicePreference;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Util;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -42,6 +43,8 @@ public class SettingsActivity extends PreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
+        private FirebaseAnalytics firebaseAnalytics;
+
         private CheckBoxPreference metricPreference;
         private SwitchPreference bluetoothPreference;
         private BluetoothDevicePreference bluetoothDevicePreference;
@@ -52,6 +55,8 @@ public class SettingsActivity extends PreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
+
+            firebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
 
             metricPreference = (CheckBoxPreference) findPreference("metric_enabled");
             metricPreference.setOnPreferenceChangeListener(this);
@@ -73,30 +78,14 @@ public class SettingsActivity extends PreferenceActivity {
                 case "metric_enabled":
                     Convert.metric = (Boolean) value;
                     Log.i(TAG, "Setting metric mode: " + Convert.metric);
-
-                    // Convert audible min and max
-                    final SharedPreferences prefs = preference.getSharedPreferences();
-                    double audible_min = Util.parseDouble(prefs.getString("audible_min", null));
-                    double audible_max = Util.parseDouble(prefs.getString("audible_max", null));
-                    final SharedPreferences.Editor edit = prefs.edit();
-                    if(Convert.metric) {
-                        // Convert mph -> km/h
-                        audible_min = Convert.mph2kph(audible_min);
-                        audible_max = Convert.mph2kph(audible_max);
-                    } else {
-                        audible_min = Convert.kph2mph(audible_min);
-                        audible_max = Convert.kph2mph(audible_max);
-                    }
-                    edit.putString("audible_min", Double.toString(audible_min));
-                    edit.putString("audible_max", Double.toString(audible_max));
-                    edit.apply();
-
                     break;
                 case "bluetooth_enabled":
                     BluetoothService.preferenceEnabled = (Boolean) value;
                     if(BluetoothService.preferenceEnabled) {
+                        firebaseAnalytics.logEvent("bluetooth_enabled", null);
                         BluetoothService.startAsync(this.getActivity());
                     } else {
+                        firebaseAnalytics.logEvent("bluetooth_disabled", null);
                         BluetoothService.stop();
                     }
                     break;
@@ -156,6 +145,7 @@ public class SettingsActivity extends PreferenceActivity {
         public boolean onPreferenceClick(Preference preference) {
             if(preference.getKey().equals("sensor_info")) {
                 // Open sensor activity
+                firebaseAnalytics.logEvent("click_sensors", null);
                 startActivity(new Intent(getActivity(), SensorActivity.class));
             }
             return false;

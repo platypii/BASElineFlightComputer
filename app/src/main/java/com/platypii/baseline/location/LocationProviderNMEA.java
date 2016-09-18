@@ -226,6 +226,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // boolean status = split[6].equals("A"); // A = active, V = void
                 break;
             case "ACC":
+            case "ACCURACY":
                 // $GNACCURACY,0.8*1E
                 break;
             case "ATT":

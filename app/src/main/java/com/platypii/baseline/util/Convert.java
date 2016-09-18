@@ -16,6 +16,10 @@ public class Convert {
     public static final double MPH = 0.44704;
     public static final double KPH = 0.277778;
 
+    // Float equivalents
+    public static final float MPHf = 0.44704f;
+    public static final float KPHf = 0.277778f;
+
     // Special glide ratio strings
     public static final String GLIDE_STATIONARY = "Stationary";
     public static final String GLIDE_LEVEL = "Level";
