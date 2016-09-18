@@ -1,16 +1,13 @@
 package com.platypii.baseline;
 
-import android.support.test.runner.AndroidJUnit4;
 import com.platypii.baseline.data.measurements.MLocation;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * Ensure that we are converting bearing correctly
  */
-@RunWith(AndroidJUnit4.class)
 public class BearingTest {
 
     @Test
