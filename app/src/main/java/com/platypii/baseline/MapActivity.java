@@ -167,21 +167,33 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private final View.OnClickListener homeButtonListener = new View.OnClickListener() {
         public void onClick(View arg0) {
             if(map != null) {
-                // Set home location to map center
                 final LatLng center = map.getCameraPosition().target;
-                Log.i(TAG, "Setting home location: " + center);
-                MyFlightManager.homeLoc = center;
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MapActivity.this);
-                final SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("home_latitude", Double.toString(center.latitude));
-                editor.putString("home_longitude", Double.toString(center.longitude));
-                editor.apply();
-
-                // Update map overlay
-                updateHome();
+                if(center.equals(MyFlightManager.homeLoc)) {
+                    // Dropped pin on exact same location, delete home
+                    setHome(null);
+                } else {
+                    // Set home location to map center
+                    setHome(center);
+                }
             }
         }
     };
+
+    private void setHome(LatLng home) {
+        Log.i(TAG, "Setting home location: " + home);
+        MyFlightManager.homeLoc = home;
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MapActivity.this);
+        final SharedPreferences.Editor editor = prefs.edit();
+        if(home != null) {
+            editor.putString("home_latitude", Double.toString(home.latitude));
+            editor.putString("home_longitude", Double.toString(home.longitude));
+        } else {
+            editor.putString("home_latitude", null);
+            editor.putString("home_longitude", null);
+        }
+        editor.apply();
+        updateHome();
+    }
 
     private void addMarkers() {
         final LatLng home = new LatLng(47.239, -123.143);
@@ -290,6 +302,9 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                 homePath.setPoints(homePoints);
                 homePath.setVisible(true);
             }
+        } else {
+            homeMarker.setVisible(false);
+            homePath.setVisible(false);
         }
     }
 
