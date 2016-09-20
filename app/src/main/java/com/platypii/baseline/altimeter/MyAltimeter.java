@@ -209,7 +209,7 @@ public class MyAltimeter {
             if (n == 0) {
                 // First pressure reading. Calibrate ground level.
                 ground_level = pressure_altitude_raw;
-            } else if (n < 16) {
+            } else if (n < 30) {
                 // Average the first N raw samples
                 ground_level += (pressure_altitude_raw - ground_level) / (n + 1);
             } else {
