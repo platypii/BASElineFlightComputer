@@ -3,30 +3,26 @@ package com.platypii.baseline;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.data.measurements.MAltitude;
-import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class AltimeterActivity extends Activity {
+public class AltimeterActivity extends FragmentActivity {
     private static final String TAG = "Altimeter";
 
     private AnalogAltimeter analogAltimeter;
-    private TextView flightStatsVario;
-    private TextView flightStatsSpeed;
-    private TextView flightStatsGlide;
 
     // Activity state
     private boolean paused = false;
@@ -38,10 +34,6 @@ public class AltimeterActivity extends Activity {
         setContentView(R.layout.activity_altimeter);
 
         analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
-        flightStatsVario = (TextView) findViewById(R.id.flightStatsVario);
-        flightStatsSpeed = (TextView) findViewById(R.id.flightStatsSpeed);
-        flightStatsGlide = (TextView) findViewById(R.id.flightStatsGlide);
-
         analogAltimeter.setOverlay(false);
         analogAltimeter.setLongClickable(true);
         analogAltimeter.setOnLongClickListener(new View.OnLongClickListener() {
@@ -55,18 +47,6 @@ public class AltimeterActivity extends Activity {
 
     private void updateFlightStats() {
         analogAltimeter.setAltitude(MyAltimeter.altitudeAGL());
-        final MLocation loc = Services.location.lastLoc;
-        if(MyAltimeter.climb < 0) {
-            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp,0,0,0);
-            flightStatsVario.setText(Convert.speed(-MyAltimeter.climb));
-        } else {
-            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward_white_24dp,0,0,0);
-            flightStatsVario.setText(Convert.speed(MyAltimeter.climb));
-        }
-        if(loc != null) {
-            flightStatsSpeed.setText(Convert.speed(loc.groundSpeed()));
-            flightStatsGlide.setText(loc.glideRatioString());
-        }
     }
 
     public static void promptForAltitude(final Activity activity) {

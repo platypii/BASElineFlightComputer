@@ -16,16 +16,15 @@ public class SensorPlot extends PlotView {
     private final DataSeries xSeries = new DataSeries();
     private final DataSeries ySeries = new DataSeries();
     private final DataSeries zSeries = new DataSeries();
-    private final PlotMode mode = PlotMode.LINE;
 
     public SensorPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        float density = getResources().getDisplayMetrics().density;
-        padding_top = (int)(6 * density);
-        padding_bottom = (int) (6 * density);
-        padding_left = (int) (2 * density);
-        padding_right = (int) (6 * density);
+        final float density = getResources().getDisplayMetrics().density;
+        padding.top = (int)(6 * density);
+        padding.bottom = (int) (6 * density);
+        padding.left = (int) (2 * density);
+        padding.right = (int) (6 * density);
 
         min.left = 0;
         min.right = 100;
@@ -52,7 +51,7 @@ public class SensorPlot extends PlotView {
             zSeries.reset();
             // Copy values to data series (so that we don't block while drawing circles)
             synchronized(history) {
-                Iterator<MSensor> it = history.iterator();
+                final Iterator<MSensor> it = history.iterator();
                 for(int i = 0; it.hasNext(); i++) {
                     MSensor event = it.next();
                     xSeries.addPoint(i, event.x());
@@ -60,27 +59,28 @@ public class SensorPlot extends PlotView {
                     zSeries.addPoint(i, event.z());
                 }
             }
-            // Draw data
-            if(mode == PlotMode.DOT) {
-                drawPoints(canvas, xSeries, 1.5f, 0xffee0000);
-                drawPoints(canvas, ySeries, 1.5f, 0xff00ee00);
-                drawPoints(canvas, zSeries, 1.5f, 0xffee00ee);
-            } else if(mode == PlotMode.LINE) {
-                paint.setStrokeMiter(2);
-                paint.setColor(0xffee0000);
-                drawLine(canvas, xSeries, 1.5f);
-                paint.setColor(0xff00ee00);
-                drawLine(canvas, ySeries, 1.5f);
-                paint.setColor(0xffee00ee);
-                drawLine(canvas, zSeries, 1.5f);
-            } else if(mode == PlotMode.AREA) {
-                paint.setColor(0xffee0000);
-                drawArea(canvas, xSeries, 0, 1);
-                paint.setColor(0xff00ee00);
-                drawArea(canvas, ySeries, 0, 1);
-                paint.setColor(0xffee00ee);
-                drawArea(canvas, zSeries, 0, 1);
-            }
+
+            // Point plot:
+            // drawPoints(canvas, xSeries, 1.5f, 0xffee0000);
+            // drawPoints(canvas, ySeries, 1.5f, 0xff00ee00);
+            // drawPoints(canvas, zSeries, 1.5f, 0xffee00ee);
+
+            // Area plot:
+            // paint.setColor(0xffee0000);
+            // drawArea(canvas, xSeries, 0, 1);
+            // paint.setColor(0xff00ee00);
+            // drawArea(canvas, ySeries, 0, 1);
+            // paint.setColor(0xffee00ee);
+            // drawArea(canvas, zSeries, 0, 1);
+
+            // Line plot:
+            paint.setStrokeMiter(2);
+            paint.setColor(0xffee0000);
+            drawLine(canvas, xSeries, 1.5f);
+            paint.setColor(0xff00ee00);
+            drawLine(canvas, ySeries, 1.5f);
+            paint.setColor(0xffee00ee);
+            drawLine(canvas, zSeries, 1.5f);
         }
     }
 
@@ -91,7 +91,7 @@ public class SensorPlot extends PlotView {
         bounds.set(dataBounds);
         bounds.clean(min, max);
         // Symmetric Y axis
-        double topBottom = Math.max(Math.abs(bounds.top), Math.abs(bounds.bottom));
+        final double topBottom = Math.max(Math.abs(bounds.top), Math.abs(bounds.bottom));
         bounds.set(bounds.left, topBottom, bounds.right, -topBottom);
         // bounds.set(bounds.right - N, topBottom, bounds.right, -topBottom);
         return bounds;
