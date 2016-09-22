@@ -33,17 +33,23 @@ public class Convert {
     }
 
     /**
-     * Convert km/h to mph
+     * Like distance() but converts altitude to a quickly-readable string
+     * 12.4kft, 486ft, 3.2km
      */
-    public static double kph2mph(double kph) {
-        return 0.621371 * kph;
-    }
-
-    /**
-     * Convert km/h to mph
-     */
-    public static double mph2kph(double kph) {
-        return 1.60934 * kph;
+    public static String altitude(double m) {
+        if(Double.isNaN(m)) {
+            return "";
+        } else if(Double.isInfinite(m)) {
+            return Double.toString(m);
+        } else {
+            final String localUnits = metric? "m" : "ft";
+            final double localValue = metric? m : m * 3.2808399;
+            if(localValue < 999.5) {
+                return Math.round(localValue) + " " + localUnits;
+            } else {
+                return String.format("%.1f k%s", localValue / 1000.0, localUnits);
+            }
+        }
     }
 
     /**

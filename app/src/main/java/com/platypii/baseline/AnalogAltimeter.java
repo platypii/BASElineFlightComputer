@@ -22,6 +22,7 @@ public class AnalogAltimeter extends View {
     private final Paint paint = new Paint();
     private final RectF circ = new RectF();
     private final BlurMaskFilter blurMask;
+    private final RectF digitalAltiBox = new RectF();
     private final static Path hand = new Path();
     static {
         final float w1 = 0.025f; // The radius of the dot
@@ -74,7 +75,7 @@ public class AnalogAltimeter extends View {
 
         // Draw face
         if(overlay) {
-            paint.setColor(0xbbeeeeee);
+            paint.setColor(0xccdddddd);
             paint.setStyle(Paint.Style.FILL);
             canvas.drawCircle(center_x, center_y, radius, paint);
         } else {
@@ -103,9 +104,9 @@ public class AnalogAltimeter extends View {
         canvas.drawArc(circ, -90, options.harddeck_angle, true, paint); // 0..2500
  
         // Labels
-        paint.setColor(0xff000000);
+        paint.setColor(0xff111111);
         paint.setStyle(Paint.Style.FILL);
-        paint.setTextSize(30 * scale_factor);
+        paint.setTextSize(32 * scale_factor);
         paint.setTextAlign(Paint.Align.CENTER);
         int major_i = 0;
         for(double theta = 0; theta < 2 * Math.PI; theta += options.major_angle) {
@@ -115,9 +116,6 @@ public class AnalogAltimeter extends View {
             canvas.drawText(Integer.toString(major_i), x, y, paint);
             major_i++;
         }
-        paint.setColor(0xff444444);
-        paint.setTextSize(12 * scale_factor + 4);
-        canvas.drawText(options.units_label, center_x, center_y + radius * 0.3f, paint);
 
         // Draw lines
         paint.setColor(0xff111111);
@@ -178,6 +176,18 @@ public class AnalogAltimeter extends View {
             // Center dot
             canvas.drawCircle(center_x, center_y, 4 * scale_factor, paint);
         }
+
+        // Draw digital alti background
+        digitalAltiBox.set(
+                center_x - 60 * scale_factor - 16, center_y - 20 * scale_factor - 12,
+                center_x + 60 * scale_factor + 16, center_y + 20 * scale_factor + 12);
+        paint.setColor(0xff333333);
+        canvas.drawRoundRect(digitalAltiBox, 4 * scale_factor, 4 * scale_factor, paint);
+        // Draw digital alti
+        final String alt_label = Convert.altitude(altitude);
+        paint.setColor(0xffeeeeee);
+        paint.setTextSize(28 * scale_factor + 24);
+        canvas.drawText(alt_label, center_x, center_y + 12 * scale_factor + 4, paint);
     }
 
     @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

@@ -40,7 +40,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private static final String TAG = "Map";
 
     private AnalogAltimeter analogAltimeter;
-    private TextView flightStatsAltimeter;
     private TextView flightStatsVario;
     private TextView flightStatsSpeed;
     private TextView flightStatsGlide;
@@ -80,7 +79,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
-        flightStatsAltimeter = (TextView) findViewById(R.id.flightStatsAltimeter);
         flightStatsVario = (TextView) findViewById(R.id.flightStatsVario);
         flightStatsSpeed = (TextView) findViewById(R.id.flightStatsSpeed);
         flightStatsGlide = (TextView) findViewById(R.id.flightStatsGlide);
@@ -328,7 +326,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private void updateFlightStats() {
         analogAltimeter.setAltitude(MyAltimeter.altitudeAGL());
         final MLocation loc = Services.location.lastLoc;
-        flightStatsAltimeter.setText(Convert.distance(MyAltimeter.altitudeAGL()));
         if(MyAltimeter.climb < 0) {
             flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp,0,0,0);
             flightStatsVario.setText(Convert.speed(-MyAltimeter.climb));

@@ -6,16 +6,6 @@
              android:background="#ff111111"
              tools:context="com.platypii.baseline.AltimeterActivity">
 
-    <TextView
-        android:id="@+id/digitalAltimeter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/activity_horizontal_margin"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceLargeInverse"
-        android:textColor="#ffffffff"
-        android:textSize="56sp" />
-
     <include
         layout="@layout/flight_stats"
         android:layout_width="160dp"

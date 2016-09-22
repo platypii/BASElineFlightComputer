@@ -24,7 +24,6 @@ public class AltimeterActivity extends Activity {
     private static final String TAG = "Altimeter";
 
     private AnalogAltimeter analogAltimeter;
-    private TextView digitalAltimeter;
     private TextView flightStatsVario;
     private TextView flightStatsSpeed;
     private TextView flightStatsGlide;
@@ -38,11 +37,7 @@ public class AltimeterActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_altimeter);
 
-        // Hide small altimeter display
-        findViewById(R.id.flightStatsAltimeter).setVisibility(View.GONE);
-
         analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
-        digitalAltimeter = (TextView) findViewById(R.id.digitalAltimeter);
         flightStatsVario = (TextView) findViewById(R.id.flightStatsVario);
         flightStatsSpeed = (TextView) findViewById(R.id.flightStatsSpeed);
         flightStatsGlide = (TextView) findViewById(R.id.flightStatsGlide);
@@ -61,7 +56,6 @@ public class AltimeterActivity extends Activity {
     private void updateFlightStats() {
         analogAltimeter.setAltitude(MyAltimeter.altitudeAGL());
         final MLocation loc = Services.location.lastLoc;
-        digitalAltimeter.setText(Convert.distance(MyAltimeter.altitudeAGL()));
         if(MyAltimeter.climb < 0) {
             flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp,0,0,0);
             flightStatsVario.setText(Convert.speed(-MyAltimeter.climb));
