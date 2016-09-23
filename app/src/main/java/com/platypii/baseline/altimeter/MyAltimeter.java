@@ -20,15 +20,13 @@ import com.platypii.baseline.location.MyLocationListener;
 import org.greenrobot.eventbus.EventBus;
 
 /**
- * Altimeter manager
- * TODO: Get corrections via barometer, GPS, DEM
- * TODO: Model acceleration
+ * The main Altimeter class.
+ * This class integrates sensor readings from barometer and GPS to model the altitude of the phone.
+ * Altitude is measured both AGL and AMSL. Ground level is set to zero on initialization.
+ * Kalman filter is used to smooth barometer data.
  */
 public class MyAltimeter {
     private static final String TAG = "MyAltimeter";
-
-    // Save ground level for 12 hours (in milliseconds)
-    public static final double GROUND_LEVEL_TTL = 12 * 60 * 60 * 1000;
 
     private static SensorManager sensorManager;
     private static SharedPreferences prefs;
@@ -37,13 +35,12 @@ public class MyAltimeter {
     public static float pressure = Float.NaN; // hPa (millibars)
     public static double pressure_altitude_raw = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
     public static double pressure_altitude_filtered = Double.NaN; // kalman filtered pressure altitude
-    // public static double altitude_raw = Double.NaN; // pressure altitude adjusted for altitude offset (unfiltered)
 
-    // official altitude = pressure_altitude - altitude_offset
+    // official altitude AMSL = pressure_altitude - altitude_offset
     // altitude_offset uses GPS to get absolute altitude right
-    public static double altitude_offset = 0.0;
+    private static double altitude_offset = 0.0;
 
-    // Data filter
+    // Pressure altitude kalman filter
     private static final Filter filter = new FilterKalman(); // Unfiltered(), AlphaBeta(), MovingAverage(), etc
 
     // Official altitude data
@@ -52,6 +49,8 @@ public class MyAltimeter {
     // public static double verticalAcceleration = Double.NaN;
 
     // Ground level
+    // Save ground level for 12 hours (in milliseconds)
+    private static final double GROUND_LEVEL_TTL = 12 * 60 * 60 * 1000;
     private static boolean ground_level_initialized = false;
     private static double ground_level = Double.NaN;
 
@@ -104,6 +103,9 @@ public class MyAltimeter {
         return ground_level;
     }
 
+    /**
+     * Load ground level from preferences
+     */
     private static void loadGroundLevel() {
         final long groundLevelTime = prefs.getLong("altimeter_ground_level_time", -1L);
         if(groundLevelTime != -1 && System.currentTimeMillis() - groundLevelTime < GROUND_LEVEL_TTL) {
@@ -114,9 +116,13 @@ public class MyAltimeter {
 
     }
 
+    /**
+     * Set ground level, based on pressure altitude.
+     * @param groundLevel the pressure altitude at ground level (0m AGL)
+     */
     public static void setGroundLevel(double groundLevel) {
-        MyAltimeter.ground_level = groundLevel;
-        MyAltimeter.ground_level_initialized = true;
+        ground_level = groundLevel;
+        ground_level_initialized = true;
         // Save to preferences
         final SharedPreferences.Editor edit = prefs.edit();
         edit.putFloat("altimeter_ground_level", (float) ground_level);
@@ -183,23 +189,17 @@ public class MyAltimeter {
         // Convert pressure to altitude
         pressure_altitude_raw = pressureToAltitude(pressure);
 
-        // altitude_raw = pressure_altitude_raw - altitude_offset; // the current pressure converted to altitude AMSL. noisy.
-
-        // Update the official altitude
+        // Apply kalman filter to pressure altitude, to produce smooth barometric pressure altitude.
         final double dt = Double.isNaN(prevAltitude)? 0 : (lastFixNano - prevLastFixNano) * 1E-9;
-        // Log.d(TAG, "Raw Altitude AGL: " + Convert.distance(altitude_raw) + ", dt = " + dt);
-
         filter.update(pressure_altitude_raw, dt);
-
         pressure_altitude_filtered = filter.x;
-        altitude = pressure_altitude_filtered - altitude_offset;
         climb = filter.v;
 
         // Compute model error
         model_error.addSample(pressure_altitude_filtered - pressure_altitude_raw);
 
-        // Log.d("Altimeter", "alt = " + altitude + ", climb = " + climb);
-
+        // Compute GPS corrected altitude AMSL
+        altitude = pressure_altitude_filtered - altitude_offset;
         if(Double.isNaN(altitude)) {
             Log.w(TAG, "Altitude should not be NaN: altitude = " + altitude);
         }
@@ -281,7 +281,7 @@ public class MyAltimeter {
 //    private static final double R = 8.31432; // Universal Gas Constant ((N m)/(mol K))
 //    private static final double M = 0.0289644; // Molar Mass of air (kg/mol)
     private static final double L = -0.0065; // Temperature Lapse Rate (K/m)
-    private static final double EXP = 0.190263237;// - L * R / (G * M);
+    private static final double EXP = 0.190263237; // -L * R / (G * M);
 
     /**
      * Convert air pressure to altitude
