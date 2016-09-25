@@ -1,5 +1,8 @@
 package com.platypii.baseline.data;
 
+/**
+ * Mutable integer bounds
+ */
 public class IntBounds {
 
     public int left;

@@ -9,9 +9,11 @@ import android.view.ViewGroup;
 /**
  * Displays a polar plot
  */
-public class PolarFragment extends Fragment {
+public class PolarFragment2 extends Fragment {
 
-    public PolarFragment() {}
+    private PolarPlot2 polar;
+
+    public PolarFragment2() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -20,7 +22,20 @@ public class PolarFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return new PolarPlot(getActivity(), null);
+        polar = new PolarPlot2(getActivity(), null);
+        return polar;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        polar.start();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        polar.stop();
     }
 
 }

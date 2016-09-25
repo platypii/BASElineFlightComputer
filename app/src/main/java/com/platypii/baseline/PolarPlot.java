@@ -25,12 +25,12 @@ public class PolarPlot extends PlotView {
         padding.right = (int) (30 * density);
         
         min.left = max.left = 0;
-        min.right = 20 * Convert.MPH;
-        max.bottom = -8 * Convert.MPH;
-        min.top = 8 * Convert.MPH;
+        min.right = 5 * Convert.MPH;
+        max.bottom = -2 * Convert.MPH;
+        min.top = 2 * Convert.MPH;
         
-        x_major_units = 10 * Convert.MPH;
-        y_major_units = 10 * Convert.MPH;
+        x_major_units = 1 * Convert.MPH;
+        y_major_units = 1 * Convert.MPH;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class PolarPlot extends PlotView {
             final int rgb = 0x5500ff;
             int alpha = 0xff * (30000 - t) / (30000 - 10000);
             alpha = Math.max(0, Math.min(alpha, 0xff));
-            final int color = 0x01000000 * alpha + rgb; // 0xff5500ff
+            final int color = (alpha << 24) + rgb; // 0xff5500ff
             paint.setColor(color);
 
             // Draw line
