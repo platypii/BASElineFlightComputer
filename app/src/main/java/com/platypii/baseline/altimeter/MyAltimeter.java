@@ -24,6 +24,8 @@ import org.greenrobot.eventbus.EventBus;
  * This class integrates sensor readings from barometer and GPS to model the altitude of the phone.
  * Altitude is measured both AGL and AMSL. Ground level is set to zero on initialization.
  * Kalman filter is used to smooth barometer data.
+ *
+ * TODO: Correct barometer drift with GPS
  */
 public class MyAltimeter {
     private static final String TAG = "MyAltimeter";
