@@ -20,7 +20,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             85,4,0,56,0,0,-17,-65,-67,85,4,0,56,0,0,-17,-65,-67,85,4,0,56,0,0,-17,-65,-67
     });
 
-    public boolean nmeaReceived = false;
+    boolean nmeaReceived = false;
 
     // Most recent data
     private long lastFixMillis = -1;
@@ -233,6 +233,12 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // $GPATT,45.781233,10.862333,1796.3,45.0,2.6,2.6,*72
                 // $GPATT,lat,lon,alt,bear?,???,???
                 break;
+            case "GDS":
+                // Fly FS451
+                // $PCGDS,EPH sow 407586: 1 3 6 9 11 12 14 17 19 22 23 25 31 32--AS:,1995387692*6A
+            case "GDV":
+                // Fly FS451
+                // $PCGDV,Version 0.0 Build 3 Date 13/05/2013 *48
             case "GLG":
                 // $GPGLG,VER2,GNSS,130616,171913.0,85,4737.550964,N,12219.566617,W,96.0,38.5,2.0,0.0,13.0,TP,Seoul,,,15,3,,*5C
                 // $GPGLG,version,provider,???,???,???,lat,lat,lon,lon,...
