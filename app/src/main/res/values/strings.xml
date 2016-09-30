@@ -78,7 +78,6 @@
 
     <!-- Bluetooth -->
     <string name="pref_bluetooth">Bluetooth GPS</string>
-    <string name="pref_bluetooth_enabled">Bluetooth GPS is enabled</string>
     <string name="pref_bluetooth_disabled">Bluetooth GPS is disabled</string>
     <string name="pref_bluetooth_description">Use bluetooth GPS receiver</string>
     <string name="pref_bluetooth_device">Bluetooth device</string>

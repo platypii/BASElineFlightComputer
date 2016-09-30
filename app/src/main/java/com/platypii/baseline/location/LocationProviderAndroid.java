@@ -35,7 +35,7 @@ class LocationProviderAndroid extends LocationProvider {
         manager.addGpsStatusListener(statusListener);
     }
 
-    /** Null listener does nothing. all data comes from NMEA */
+    /** Android location listener */
     private final LocationListener androidLocationListener = new LocationListener() {
         public void onLocationChanged(Location loc) {
             // Log.v(TAG, "onLocationChanged(" + loc + ")");
