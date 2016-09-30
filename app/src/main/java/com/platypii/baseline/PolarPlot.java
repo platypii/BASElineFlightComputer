@@ -57,10 +57,23 @@ public class PolarPlot extends PlotView {
             drawLine(canvas, series, 1);
 
             // Draw total speed circle
+            // final float r = Math.abs(getX(Math.sqrt(x*x+y*y)) - getX(0));
             final float r = Math.abs(getX(loc.totalSpeed()) - getX(0));
             paint.setStrokeWidth(1.5f);
-            paint.setColor(0xffdddddd);
+            paint.setColor(0xdddddddd);
             canvas.drawCircle(getX(0), getY(0), r, paint);
+
+            // Draw total speed label
+            paint.setColor(0xffdddddd);
+            paint.setStrokeWidth(2f);
+            final String totalSpeed = Convert.speed(loc.totalSpeed());
+            canvas.drawText(totalSpeed, getX(x) + 12 * density, getY(y) + 12 * density, text);
+            final String glideRatio = loc.glideRatioString();
+            canvas.drawText(glideRatio, getX(x) + 12 * density, getY(y) + 22 * density, text);
+
+            // Draw axis ticks
+            drawXtick(canvas, x, Convert.speed(loc.groundSpeed()));
+            drawYtick(canvas, y, Convert.speed(Math.abs(loc.climb)));
 
             // Draw point
             float radius = 16f * (6000 - t) / 8000;
@@ -97,20 +110,20 @@ public class PolarPlot extends PlotView {
         return bounds;
     }
 
-    @Override
-    public String formatX(double x) {
-        if(Math.abs(x) < EPSILON)
-            return "";
-        else
-            return Convert.speed(x, 0, true);
-    }
-    @Override
-    public String formatY(double y) {
-        final double y_abs = Math.abs(y);
-        if(y_abs < EPSILON)
-            return "";
-        else
-            return Convert.speed(y_abs, 0, true);
-    }
+//    @Override
+//    public String formatX(double x) {
+//        if(Math.abs(x) < EPSILON)
+//            return "";
+//        else
+//            return Convert.speed(x, 0, true);
+//    }
+//    @Override
+//    public String formatY(double y) {
+//        final double y_abs = Math.abs(y);
+//        if(y_abs < EPSILON)
+//            return "";
+//        else
+//            return Convert.speed(y_abs, 0, true);
+//    }
 
 }

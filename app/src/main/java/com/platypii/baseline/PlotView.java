@@ -39,10 +39,10 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
 
     // Avoid creating new objects unnecessarily
     final Paint paint = new Paint();
-    private final Paint text = new Paint();
+    final Paint text = new Paint();
     private final Path path = new Path();
 
-    private final float density = getResources().getDisplayMetrics().density;
+    final float density = getResources().getDisplayMetrics().density;
     final double EPSILON = 0.001;
 
     // THE FOLLOWING FIELDS ARE ONLY VALID IN THE PLOTVIEW.DRAWPLOT() CONTEXT:
@@ -51,10 +51,10 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     private final Bounds dataBounds = new Bounds(); // the data bounds from the last draw
 
     // The current view bounds (in screen space)
-    public int bottom = 100;
-    public int top = 0;
-    public int left = 0;
-    public int right = 200;
+    int bottom = 100;
+    int top = 0;
+    int left = 0;
+    int right = 200;
 
     public PlotView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -382,6 +382,21 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
             // text.setTextAlign(Paint.Align.RIGHT);
             // canvas.drawText(label, right - 2 * density, sy - 2 * density, text);
         }
+    }
+
+    public void drawXtick(Canvas canvas, double x, String label) {
+        final int sx = (int) getX(x);
+        final int sy = (int) getY(0);
+        canvas.drawLine(sx, sy - 4 * density, sx, sy + 4 * density, paint);
+        text.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(label, sx, sy + 14 * density, text);
+    }
+    public void drawYtick(Canvas canvas, double y, String label) {
+        final int sx = (int) getX(0);
+        final int sy = (int) getY(y);
+        canvas.drawLine(sx - 4 * density, sy, sx + 4 * density, sy, paint);
+        text.setTextAlign(Paint.Align.LEFT);
+        canvas.drawText(label, sx + 8 * density, sy + 4 * density, text);
     }
 
     // Override this to change how labels are displayed
