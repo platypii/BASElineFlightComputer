@@ -17,7 +17,7 @@ class AudibleThread {
         @Override
         public void run() {
             MyAudible.speak();
-            final int delay = MyAudible.getInterval();
+            final int delay = (int) (AudibleSettings.speechInterval * 1000);
             handler.postDelayed(this, delay);
         }
     };
@@ -25,7 +25,7 @@ class AudibleThread {
     public void start() {
         if(!isRunning) {
             Log.i(TAG, "Starting audible");
-            final int delay = MyAudible.getInterval();
+            final int delay = (int) (AudibleSettings.speechInterval * 1000);
             handler.postDelayed(audibleThread, delay);
             // handler.post(audibleThread);
             isRunning = true;

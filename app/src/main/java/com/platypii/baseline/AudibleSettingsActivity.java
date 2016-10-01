@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.platypii.baseline.audible.AudibleMinMaxPreference;
 import com.platypii.baseline.audible.AudibleMode;
-import com.platypii.baseline.audible.AudibleModes;
+import com.platypii.baseline.audible.AudibleSettings;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.util.Util;
 import java.util.Locale;
@@ -21,7 +21,6 @@ import java.util.Locale;
  * Settings activity for audible configuration
  */
 public class AudibleSettingsActivity extends PreferenceActivity {
-    private static final String TAG = "AudibleSettings";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,50 +74,25 @@ public class AudibleSettingsActivity extends PreferenceActivity {
          * Set summaries and adjust defaults
          */
         private void updateViews() {
-            // Read preferences
-            final String audibleMode = modePreference.getValue();
-            final float min = minPreference.getValue();
-            final float max = maxPreference.getValue();
-            final int precision = Util.parseInt(precisionPreference.getText(), 1);
-            final double speechInterval = Util.parseDouble(intervalPreference.getText());
-            final double speechRate = Util.parseDouble(ratePreference.getText());
-            // Update views
-            updateAudibleMode(audibleMode, min, max, precision);
-            updateSpeechInterval(speechInterval);
-            updateSpeechRate(speechRate);
-        }
-
-        private void updateAudibleMode(String audibleMode, float min, float max, int precision) {
-            // Audible mode
-            final AudibleMode mode = AudibleModes.get(audibleMode);
-
+            final AudibleMode mode = AudibleSettings.mode;
+            final int precision = AudibleSettings.precision;
             modePreference.setSummary(mode.name);
             minPreference.setTitle(mode.minimumTitle());
             maxPreference.setTitle(mode.maximumTitle());
-            minPreference.setSummary(mode.convertOutput(min, precision));
-            maxPreference.setSummary(mode.convertOutput(max, precision));
-            if(precision < 0) {
-                precisionPreference.setSummary(String.format("%d decimal places", precision));
+            minPreference.setSummary(mode.convertOutput(AudibleSettings.min, precision));
+            maxPreference.setSummary(mode.convertOutput(AudibleSettings.max, precision));
+            if(precision <= 0) {
+                precisionPreference.setSummary(String.format(Locale.getDefault(), "%d decimal places", precision));
             } else {
-                precisionPreference.setSummary(String.format("%."+precision+"f decimal places", (float) precision));
+                precisionPreference.setSummary(String.format(Locale.getDefault(), "%."+precision+"f decimal places", (float) precision));
             }
-        }
-
-        private void updateSpeechInterval(double speechInterval) {
-            intervalPreference.setSummary("Every " + speechInterval + " sec");
-        }
-
-        private void updateSpeechRate(double speechRate) {
-            ratePreference.setSummary(String.format(Locale.getDefault(), "%.2fx", speechRate));
+            intervalPreference.setSummary("Every " + AudibleSettings.speechInterval + " sec");
+            ratePreference.setSummary(String.format(Locale.getDefault(), "%.2fx", AudibleSettings.speechRate));
         }
 
         @Override
         public boolean onPreferenceChange(@NonNull Preference preference, Object value) {
             final String key = preference.getKey();
-            final String previousAudibleMode = modePreference.getValue();
-            final float previousMin = minPreference.getValue();
-            final float previousMax = maxPreference.getValue();
-            final int previousPrecision = Util.parseInt(precisionPreference.getText(), 1);
             switch(key) {
                 case "audible_enabled":
                     final boolean audibleEnabled = (Boolean) value;
@@ -130,26 +104,29 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                     break;
                 case "audible_mode":
                     final String audibleMode = (String) value;
+                    final String previousAudibleMode = modePreference.getValue();
                     if(!audibleMode.equals(previousAudibleMode)) {
-                        final AudibleMode mode = AudibleModes.get(audibleMode);
-                        minPreference.setValue(mode.defaultMin);
-                        maxPreference.setValue(mode.defaultMax);
-                        precisionPreference.setDefaultValue(mode.defaultPrecision);
-                        updateAudibleMode(audibleMode, mode.defaultMin, mode.defaultMax, mode.defaultPrecision);
+                        AudibleSettings.setAudibleMode(audibleMode);
+                        minPreference.setValue(AudibleSettings.mode.defaultMin);
+                        maxPreference.setValue(AudibleSettings.mode.defaultMax);
+                        precisionPreference.setDefaultValue(AudibleSettings.mode.defaultPrecision);
+                        updateViews();
                         if(MyAudible.isEnabled()) {
-                            MyAudible.speakNow(mode.name);
+                            MyAudible.speakNow(AudibleSettings.mode.name);
                         }
                     }
                     break;
                 case "audible_min":
                     final float min = (Float) value;
                     if(!Util.isReal(min)) return false;
-                    updateAudibleMode(previousAudibleMode, min, previousMax, previousPrecision);
+                    AudibleSettings.min = min;
+                    updateViews();
                     break;
                 case "audible_max":
                     final float max = (Float) value;
                     if(!Util.isReal(max)) return false;
-                    updateAudibleMode(previousAudibleMode, previousMin, max, previousPrecision);
+                    AudibleSettings.max = max;
+                    updateViews();
                     break;
                 case "audible_precision":
                     final int precision = Util.parseInt((String) value, 1);
@@ -160,17 +137,20 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                         Toast.makeText(getActivity(), "Precision cannot be greater than 8", Toast.LENGTH_SHORT).show();
                         return false;
                     }
-                    updateAudibleMode(previousAudibleMode, previousMin, previousMax, precision);
+                    AudibleSettings.precision = precision;
+                    updateViews();
                     break;
                 case "audible_interval":
-                    final double speechInterval = Util.parseDouble((String) value);
+                    final float speechInterval = Util.parseFloat((String) value);
                     if(!Util.isReal(speechInterval)) return false;
-                    updateSpeechInterval(speechInterval);
+                    AudibleSettings.speechInterval = speechInterval;
+                    updateViews();
                     break;
                 case "audible_rate":
-                    final double speechRate = Util.parseDouble((String) value);
+                    final float speechRate = Util.parseFloat((String) value);
                     if(!Util.isReal(speechRate)) return false;
-                    updateSpeechRate(speechRate);
+                    AudibleSettings.speechRate = speechRate;
+                    updateViews();
                     break;
             }
             return true;

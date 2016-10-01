@@ -19,7 +19,6 @@ public class MyAudible {
 
     private static Speech speech;
     private static AudibleThread audibleThread;
-    private static SharedPreferences prefs;
 
     private static boolean isInitialized = false;
     private static boolean isEnabled = false;
@@ -35,7 +34,8 @@ public class MyAudible {
             isInitialized = true;
             audibleThread = new AudibleThread();
 
-            prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+            AudibleSettings.init(prefs);
             isEnabled = prefs.getBoolean("audible_enabled", false);
             if(isEnabled) {
                 startAudible();
@@ -80,9 +80,7 @@ public class MyAudible {
      * Announce the current audible mode
      */
     private static void speakModeWhenReady() {
-        final String audibleMode = prefs.getString("audible_mode", AudibleModes.horizontal_speed.id);
-        final AudibleMode mode = AudibleModes.get(audibleMode);
-        speech.speakWhenReady(mode.name);
+        speech.speakWhenReady(AudibleSettings.mode.name);
     }
 
     /**
@@ -110,43 +108,21 @@ public class MyAudible {
     }
 
     /**
-     * Gets the speech interval from preferences
-     * @return the delay between speech in milliseconds
-     */
-    static int getInterval() {
-        final float speechInterval = Float.parseFloat(prefs.getString("audible_interval", "2.5"));
-        return (int) (speechInterval * 1000f);
-    }
-
-    /**
-     * Gets the speech rate from preferences
-     * @return the speech rate multiplier
-     */
-    static float getRate() {
-        return Float.parseFloat(prefs.getString("audible_rate", "1.0"));
-    }
-
-    /**
      * Returns the text of what to say for the current measurement mode
      */
     private static String getMeasurement() {
-        final String audibleMode = prefs.getString("audible_mode", "horizontal_speed");
-        final double units = Convert.metric? Convert.KPH : Convert.MPH;
-        final double min = Util.parseDouble(prefs.getString("audible_min", "-1000"));
-        final double max = Util.parseDouble(prefs.getString("audible_max", "1000"));
-        final int precision = Util.parseInt(prefs.getString("audible_precision", "1"), 1);
         String measurement = "";
-        switch(audibleMode) {
+        switch(AudibleSettings.audibleMode) {
             case "total_speed":
                 // Compute total speed
                 if(goodGpsFix()) {
                     final double verticalSpeed = MyAltimeter.climb;
                     final double horizontalSpeed = Services.location.lastLoc.groundSpeed();
                     final double totalSpeed = Math.sqrt(verticalSpeed * verticalSpeed + horizontalSpeed * horizontalSpeed);
-                    if (Util.isReal(totalSpeed) && min * units <= totalSpeed && totalSpeed <= max * units) {
-                        measurement = shortSpeed(totalSpeed, precision);
+                    if (Util.isReal(totalSpeed) && AudibleSettings.min <= totalSpeed && totalSpeed <= AudibleSettings.max) {
+                        measurement = shortSpeed(totalSpeed, AudibleSettings.precision);
                     } else {
-                        Log.w(TAG, "Not speaking: total speed = " + Convert.speed(totalSpeed, precision, true));
+                        Log.w(TAG, "Not speaking: total speed = " + Convert.speed(totalSpeed, AudibleSettings.precision, true));
                     }
                 }
                 break;
@@ -154,21 +130,21 @@ public class MyAudible {
                 // Read horizontal speed
                 if(goodGpsFix()) {
                     final double horizontalSpeed = Services.location.lastLoc.groundSpeed();
-                    if (Util.isReal(horizontalSpeed) && min * units <= horizontalSpeed && horizontalSpeed <= max * units) {
-                        measurement = shortSpeed(horizontalSpeed, precision);
+                    if (Util.isReal(horizontalSpeed) && AudibleSettings.min <= horizontalSpeed && horizontalSpeed <= AudibleSettings.max) {
+                        measurement = shortSpeed(horizontalSpeed, AudibleSettings.precision);
                     } else {
-                        Log.w(TAG, "Not speaking: horizontal speed = " + Convert.speed(horizontalSpeed, precision, true));
+                        Log.w(TAG, "Not speaking: horizontal speed = " + Convert.speed(horizontalSpeed, AudibleSettings.precision, true));
                     }
                 }
                 break;
             case "vertical_speed":
                 // Read vertical speed
                 final double verticalSpeed = MyAltimeter.climb;
-                if (Util.isReal(verticalSpeed) && min * units <= verticalSpeed && verticalSpeed <= max * units) {
+                if (Util.isReal(verticalSpeed) && AudibleSettings.min <= verticalSpeed && verticalSpeed <= AudibleSettings.max) {
                     if(verticalSpeed > 0) {
-                        measurement = "+ " + shortSpeed(verticalSpeed, precision);
+                        measurement = "+ " + shortSpeed(verticalSpeed, AudibleSettings.precision);
                     } else {
-                        measurement = shortSpeed(-verticalSpeed, precision);
+                        measurement = shortSpeed(-verticalSpeed, AudibleSettings.precision);
                     }
                 } else {
                     Log.w(TAG, "Not speaking: vertical speed = " + Convert.speed(verticalSpeed, 0, true));
@@ -179,8 +155,8 @@ public class MyAudible {
                 if(goodGpsFix()) {
                     final MLocation loc = Services.location.lastLoc;
                     final double glideRatio = loc.glideRatio();
-                    final String glideRatioString = Convert.glide(loc.groundSpeed(), loc.climb, precision, false);
-                    if(Util.isReal(glideRatio) && min <= glideRatio && glideRatio <= max) {
+                    final String glideRatioString = Convert.glide(loc.groundSpeed(), loc.climb, AudibleSettings.precision, false);
+                    if(Util.isReal(glideRatio) && AudibleSettings.min <= glideRatio && glideRatio <= AudibleSettings.max) {
                         measurement = glideRatioString;
                         if(measurement.equals(Convert.GLIDE_STATIONARY)) {
                             if(stationary) {
@@ -199,7 +175,7 @@ public class MyAudible {
             case "direction":
                 if(goodGpsFix() && MyFlightManager.homeLoc != null) {
                     final double distance = Services.location.lastLoc.distanceTo(MyFlightManager.homeLoc);
-                    if(min <= distance && distance <= max) {
+                    if(AudibleSettings.min <= distance && distance <= AudibleSettings.max) {
                         final double bearing = Services.location.lastLoc.bearingTo(MyFlightManager.homeLoc);
                         if (Math.abs(distance) > 0.3) {
                             measurement = Convert.distance(distance) + " " + Convert.bearing(bearing);
@@ -210,7 +186,7 @@ public class MyAudible {
                 }
                 break;
             default:
-                Log.e(TAG, "Invalid audible mode " + audibleMode);
+                Log.e(TAG, "Invalid audible mode " + AudibleSettings.audibleMode);
         }
         return measurement;
     }
@@ -264,7 +240,6 @@ public class MyAudible {
             audibleThread = null;
             isInitialized = false;
             speech = null;
-            prefs = null;
         }
     }
 

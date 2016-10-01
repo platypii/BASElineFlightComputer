@@ -15,7 +15,7 @@ class Speech implements TextToSpeech.OnInitListener {
 
     private List<String> queue;
 
-    public Speech(Context context) {
+    Speech(Context context) {
         tts = new TextToSpeech(context, this);
     }
 
@@ -23,7 +23,7 @@ class Speech implements TextToSpeech.OnInitListener {
         if(text != null && text.length() > 0) {
             if(isReady) {
                 Log.i(TAG, "Saying: " + text);
-                tts.setSpeechRate(MyAudible.getRate());
+                tts.setSpeechRate(AudibleSettings.speechRate);
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
             } else {
                 Log.e(TAG, "Speech not ready. Discarding message: " + text);
@@ -35,7 +35,7 @@ class Speech implements TextToSpeech.OnInitListener {
         if(text != null && text.length() > 0) {
             if(isReady) {
                 Log.i(TAG, "Saying when ready: " + text);
-                tts.setSpeechRate(MyAudible.getRate());
+                tts.setSpeechRate(AudibleSettings.speechRate);
                 tts.speak(text, TextToSpeech.QUEUE_ADD, null);
             } else {
                 Log.i(TAG, "Speech not ready. Queueing message: " + text);
@@ -47,7 +47,7 @@ class Speech implements TextToSpeech.OnInitListener {
         }
     }
 
-    public void stopAll() {
+    void stopAll() {
         if(queue != null) {
             queue.clear();
         }
