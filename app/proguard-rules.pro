@@ -27,3 +27,6 @@
 -keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
     <init>(java.lang.Throwable);
 }
+
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
