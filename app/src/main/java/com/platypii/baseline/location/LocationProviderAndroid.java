@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Util;
 
@@ -104,21 +105,25 @@ class LocationProviderAndroid extends LocationProvider {
                     break;
                 case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
                     if(manager != null) {
-                        gpsStatus = manager.getGpsStatus(gpsStatus);
-                        final Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
-                        int count = 0;
-                        int used = 0;
-                        for (GpsSatellite sat : satellites) {
-                            count++;
-                            if (sat.usedInFix()) {
-                                used++;
+                        try {
+                            gpsStatus = manager.getGpsStatus(gpsStatus);
+                            final Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
+                            int count = 0;
+                            int used = 0;
+                            for (GpsSatellite sat : satellites) {
+                                count++;
+                                if (sat.usedInFix()) {
+                                    used++;
+                                }
                             }
+                            // if(satellitesInView != count || satellitesUsed != used) {
+                            //     Log.v(TAG, "Satellite Status: " + satellitesUsed + "/" + satellitesInView);
+                            // }
+                            satellitesInView = count;
+                            satellitesUsed = used;
+                        } catch(SecurityException e) {
+                            FirebaseCrash.report(e);
                         }
-                        // if(satellitesInView != count || satellitesUsed != used) {
-                        //     Log.v(TAG, "Satellite Status: " + satellitesUsed + "/" + satellitesInView);
-                        // }
-                        satellitesInView = count;
-                        satellitesUsed = used;
                     }
             }
         }

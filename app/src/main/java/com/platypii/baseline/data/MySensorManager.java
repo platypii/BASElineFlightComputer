@@ -112,7 +112,7 @@ public class MySensorManager {
     /**
      * Add a new listener to be notified of location updates
      */
-    public static void addListener(MySensorListener listener) {
+    static void addListener(MySensorListener listener) {
         synchronized(listeners) {
             listeners.add(listener);
         }
@@ -121,7 +121,7 @@ public class MySensorManager {
     /**
      * Remove a listener from location updates
      */
-    public static void removeListener(MySensorListener listener) {
+    static void removeListener(MySensorListener listener) {
         synchronized(listeners) {
             listeners.remove(listener);
         }

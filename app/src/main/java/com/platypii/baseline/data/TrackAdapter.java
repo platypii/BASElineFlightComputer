@@ -1,6 +1,7 @@
 package com.platypii.baseline.data;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ public class TrackAdapter extends ArrayAdapter<Jump> {
         this.jumpList = jumpList;
     }
 
+    @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final Jump jump = jumpList.get(position);
