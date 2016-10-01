@@ -6,7 +6,7 @@
              android:background="#ff111111"
              tools:context="com.platypii.baseline.AltimeterActivity">
 
-    <fragment android:name="com.platypii.baseline.PolarFragment2"
+    <fragment android:name="com.platypii.baseline.PolarFragment"
         android:id="@+id/polar"
         android:layout_width="180dp"
         android:layout_height="180dp"

@@ -335,7 +335,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         }
         if(loc != null) {
             flightStatsSpeed.setText(Convert.speed(loc.groundSpeed()));
-            flightStatsGlide.setText(loc.glideRatioString());
+            flightStatsGlide.setText(Convert.glide(loc.groundSpeed(), loc.climb, 2, true));
         }
     }
 

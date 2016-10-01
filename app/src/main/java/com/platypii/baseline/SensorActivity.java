@@ -196,7 +196,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
             vdopLabel.setText(String.format(Locale.getDefault(), "vdop: %.1f", loc.vdop));
             groundSpeedLabel.setText("Ground speed: " + Convert.speed(loc.groundSpeed(), 2, true));
             totalSpeedLabel.setText("Total speed: " + Convert.speed(loc.totalSpeed(), 2, true));
-            glideRatioLabel.setText("Glide ratio: " + loc.glideRatioString());
+            glideRatioLabel.setText("Glide ratio: " + Convert.glide(loc.groundSpeed(), loc.climb, 2, true));
             glideAngleLabel.setText("Glide angle: " + Convert.angle(loc.glideAngle()));
             bearingLabel.setText("Bearing: " + Convert.bearing2(loc.bearing()));
         }

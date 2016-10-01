@@ -179,8 +179,9 @@ public class MyAudible {
                 if(goodGpsFix()) {
                     final MLocation loc = Services.location.lastLoc;
                     final double glideRatio = loc.glideRatio();
+                    final String glideRatioString = Convert.glide(loc.groundSpeed(), loc.climb, precision, false);
                     if(Util.isReal(glideRatio) && min <= glideRatio && glideRatio <= max) {
-                        measurement = loc.glideRatioString();
+                        measurement = glideRatioString;
                         if(measurement.equals(Convert.GLIDE_STATIONARY)) {
                             if(stationary) {
                                 // Only say stationary once
@@ -191,7 +192,7 @@ public class MyAudible {
                             stationary = false;
                         }
                     } else {
-                        Log.w(TAG, "Not speaking: glide ratio = " + loc.glideRatioString());
+                        Log.w(TAG, "Not speaking: glide ratio = " + glideRatioString);
                     }
                 }
                 break;

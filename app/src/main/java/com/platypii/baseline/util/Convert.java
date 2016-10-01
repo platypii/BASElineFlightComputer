@@ -179,14 +179,36 @@ public class Convert {
         }
     }
 
-//    public static String glide(double glideRatio) {
-//        return glide(glideRatio, 1, true);
-//    }
     public static String glide(double glideRatio, int precision, boolean units) {
         if(Double.isNaN(glideRatio)) {
             return "";
         } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 40) {
             return GLIDE_LEVEL;
+        } else {
+            final String value;
+            if(glideRatio < 0) {
+                value = String.format("+%." + precision + "f", -glideRatio);
+            } else {
+                value = String.format("%." + precision + "f", glideRatio);
+            }
+            if(units) {
+                return value + " : 1";
+            } else {
+                return value;
+            }
+        }
+    }
+
+    public static String glide(double groundSpeed, double climb, int precision, boolean units) {
+        final double glideRatio = -groundSpeed / climb;
+        if(Double.isNaN(glideRatio)) {
+            return "";
+        } else if(groundSpeed + Math.abs(climb) < 0.5) { // ~1 mph
+            return Convert.GLIDE_STATIONARY;
+        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 40) {
+            return Convert.GLIDE_LEVEL;
+        } else if(groundSpeed < 0.5 && Math.abs(climb) > 0.5) {
+            return Convert.GLIDE_VERTICAL;
         } else {
             final String value;
             if(glideRatio < 0) {

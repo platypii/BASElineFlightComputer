@@ -1,8 +1,9 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.platypii.baseline.MapActivity" >
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:tools="http://schemas.android.com/tools"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       tools:context="com.platypii.baseline.MapActivity"
+       tools:parentTag="FrameLayout">
 
     <fragment
         android:id="@+id/map"
@@ -39,4 +40,4 @@
         android:contentDescription="@string/map_crosshair"
         android:visibility="gone" />
 
-</FrameLayout>
+</merge>

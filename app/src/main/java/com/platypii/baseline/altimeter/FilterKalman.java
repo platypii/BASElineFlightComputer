@@ -9,10 +9,11 @@ class FilterKalman extends Filter {
     private static final String TAG = "Kalman";
 
     // TODO: Acceleration
+    // TODO: Determine sensor variance from model error
 
     // Kalman filter to update altitude and climb
-    private static final double sensorVar = 1200; // measurement variance (found experimentally)
-    private static final double accelVar = 4; // acceleration variance (pulled from my ass)
+    private static final double sensorVar = 600; // measurement variance
+    private static final double accelVar = 8; // acceleration variance
 
     private static final double r = sensorVar;
     private double p11 = 1;

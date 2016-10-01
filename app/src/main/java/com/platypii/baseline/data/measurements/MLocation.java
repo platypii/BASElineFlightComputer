@@ -96,39 +96,6 @@ public class MLocation extends Measurement {
     public double glideRatio() {
         return - groundSpeed() / climb;
     }
-    public String glideRatioString() {
-        return glideRatioString(1, true);
-    }
-    public String glideRatioString(int precision, boolean units) {
-        final double glideRatio = -groundSpeed() / climb;
-        if(Double.isNaN(glideRatio)) {
-            return "";
-        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 40) {
-            return Convert.GLIDE_LEVEL;
-        } else {
-            // Glide ratio is a real number, check for minimum velocities
-            if(groundSpeed() + Math.abs(climb) < 0.5) { // ~1 mph
-                return Convert.GLIDE_STATIONARY;
-            } else if(groundSpeed() < 0.5 && Math.abs(climb) > 0.5) {
-                return Convert.GLIDE_VERTICAL;
-            } else {
-                final String value;
-                if(glideRatio == 0) {
-                    // Special case to handle +/- 0.0
-                    value = String.format("%." + precision + "f", 0);
-                } else if(glideRatio < 0) {
-                    value = String.format("+%." + precision + "f", -glideRatio);
-                } else {
-                    value = String.format("%." + precision + "f", glideRatio);
-                }
-                if(units) {
-                    return value + " : 1";
-                } else {
-                    return value;
-                }
-            }
-        }
-    }
 
     public double glideAngle() {
         return Math.toDegrees(Math.atan2(MyAltimeter.climb, groundSpeed()));

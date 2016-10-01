@@ -26,6 +26,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     // Drawing stuff
     private final static int axis_color = 0xffee0000;
     private final static int grid_color = 0xff777777;
+    private final static float font_size = 16;
 
     // Padding
     IntBounds padding = new IntBounds(0,0,0,0);
@@ -64,6 +65,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         paint.setAntiAlias(true);
         paint.setDither(true);
         text.setAntiAlias(true);
+        text.setTextSize(font_size * density);
     }
 
     // SurfaceView stuff:
@@ -77,9 +79,8 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         }
         @Override
         public void run() {
-            Canvas canvas;
             while(running) {
-                canvas = null;
+                Canvas canvas = null;
                 try {
                     canvas = _surfaceHolder.lockCanvas();
                     if(canvas != null) {
@@ -136,7 +137,6 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
 
         // Draw grid lines
         text.setColor(0xffcccccc);
-        text.setTextSize(10 * density); // 10dp
         drawGridlines(canvas);
 
         // Plot the data
@@ -389,14 +389,14 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         final int sy = (int) getY(0);
         canvas.drawLine(sx, sy - 4 * density, sx, sy + 4 * density, paint);
         text.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(label, sx, sy + 14 * density, text);
+        canvas.drawText(label, sx, sy + 19 * density, text);
     }
     public void drawYtick(Canvas canvas, double y, String label) {
         final int sx = (int) getX(0);
         final int sy = (int) getY(y);
         canvas.drawLine(sx - 4 * density, sy, sx + 4 * density, sy, paint);
         text.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText(label, sx + 8 * density, sy + 4 * density, text);
+        canvas.drawText(label, sx + 7 * density, sy + 6 * density, text);
     }
 
     // Override this to change how labels are displayed
