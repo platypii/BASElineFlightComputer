@@ -24,7 +24,7 @@ public class AudibleModes {
             default:
                 Log.e(TAG, "Invalid audible mode " + audibleMode);
                 FirebaseCrash.report(new IllegalStateException("Invalid audible mode " + audibleMode));
-                return null;
+                return horizontal_speed;
         }
     }
 

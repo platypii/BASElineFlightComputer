@@ -80,7 +80,7 @@ public class MyAudible {
      * Announce the current audible mode
      */
     private static void speakModeWhenReady() {
-        final String audibleMode = prefs.getString("audible_mode", "");
+        final String audibleMode = prefs.getString("audible_mode", AudibleModes.horizontal_speed.id);
         final AudibleMode mode = AudibleModes.get(audibleMode);
         speech.speakWhenReady(mode.name);
     }
