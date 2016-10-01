@@ -8,16 +8,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
 import com.platypii.baseline.data.TheCloud;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Callback;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -26,16 +23,12 @@ import java.io.File;
 public class JumpActivity extends BaseActivity {
     private static final String TAG = "Jump";
 
-    private FirebaseAnalytics firebaseAnalytics;
-
     private Jump jump;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jump);
-
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         // Load jump from extras
         final Bundle extras = getIntent().getExtras();

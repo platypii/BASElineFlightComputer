@@ -19,10 +19,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.platypii.baseline.util.Callback;
 
 abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "BaseActivity";
+
+    FirebaseAnalytics firebaseAnalytics;
 
     /* Client used to interact with Google APIs */
     private GoogleApiClient mGoogleApiClient;
@@ -42,6 +45,8 @@ abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         // Initialize Google sign in
         final String serverClientId = getString(R.string.server_client_id);
@@ -103,6 +108,7 @@ abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient
      */
     protected void clickSignIn() {
         Log.i(TAG, "User clicked sign in");
+        firebaseAnalytics.logEvent("click_sign_in", null);
         userClickedSignIn = true;
 
         // Update sign in panel
