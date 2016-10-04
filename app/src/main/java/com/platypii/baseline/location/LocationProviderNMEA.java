@@ -102,7 +102,13 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         // Validate NMEA sentence and print errors, but still try to parse
         NMEA.validate(nmea);
 
-        final String split[] = nmea.split(",");
+        // Strip checksum
+        final int starIndex = nmea.lastIndexOf('*');
+        if(starIndex > 0) {
+            nmea = nmea.substring(0, starIndex);
+        }
+
+        final String split[] = nmea.split(",", -1); // -1 is necessary to preserve trailing columns
         final String command = split[0].substring(3);
 
         // Parse command
@@ -117,14 +123,14 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 break;
             case "GSV":
                 // Detailed satellite data (satellites in view)
-                satellitesInView = parseInt(split[3]);
+                satellitesInView = Util.parseInt(split[3], -1);
                 break;
             case "GGA":
                 // Fix data
                 latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
                 longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
-                gpsFix = parseInt(split[6]); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
-                satellitesUsed = parseInt(split[7]);
+                gpsFix = Util.parseInt(split[6], -1); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
+                satellitesUsed = Util.parseInt(split[7], -1);
                 hdop = Util.parseFloat(split[8]);
                 if (!split[9].isEmpty()) {
                     if(!split[10].equals("M")) {
@@ -267,10 +273,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 Log.w(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
                 FirebaseCrash.report(new NMEAException("Unknown NMEA command " + command + ": " + nmea));
         }
-    }
-
-    private static int parseInt(String str) {
-        return str.isEmpty() ? -1 : Integer.parseInt(str);
     }
 
     @Override

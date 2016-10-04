@@ -95,7 +95,7 @@ class NMEA {
 
     /** Returns true if the checksum is valid */
     static boolean validate(@NonNull String nmea) {
-        final int starIndex = nmea.indexOf('*');
+        final int starIndex = nmea.lastIndexOf('*');
         final int length = nmea.length();
         // Ensure that:
         // - string is long enough
