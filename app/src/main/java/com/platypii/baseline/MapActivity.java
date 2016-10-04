@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,7 +17,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -36,7 +34,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends FragmentActivity implements MyLocationListener, GoogleMap.OnCameraChangeListener, OnMapReadyCallback {
+public class MapActivity extends FragmentActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
     private static final String TAG = "Map";
 
     private AnalogAltimeter analogAltimeter;
@@ -102,18 +100,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         // Initialize map
         mapFragment = (TouchableMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        mapFragment.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                    case MotionEvent.ACTION_UP:
-                        lastDrag = System.currentTimeMillis();
-                        break;
-                }
-                return false;
-            }
-        });
     }
 
     @Override
@@ -156,7 +142,8 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         updateMyPosition();
 
         // Drag listener
-        map.setOnCameraChangeListener(this);
+        map.setOnCameraMoveStartedListener(this);
+        map.setOnCameraIdleListener(this);
 
         ready = true;
         Log.w(TAG, "Map ready");
@@ -229,15 +216,24 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
                 .visible(false)
                 .icon(myposition2)
                 .anchor(0.5f, 0.5f)
+                .flat(true)
         );
     }
 
     @Override
-    public void onCameraChange(CameraPosition position) {
-        if(System.currentTimeMillis() - lastDrag < MapOptions.SNAP_BACK_TIME) {
+    public void onCameraMoveStarted(int reason) {
+        if(reason == REASON_GESTURE) {
             dragged = true;
             crosshair.setVisibility(View.VISIBLE);
             homeButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onCameraIdle() {
+        if(dragged) {
+            Log.d(TAG, "Camera idle after drag");
+            lastDrag = System.currentTimeMillis();
         }
     }
 
@@ -257,10 +253,11 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
             updateLanding();
 
             // Center map on user's location
-            if(dragged && System.currentTimeMillis() - lastDrag > MapOptions.SNAP_BACK_TIME) {
+            if(dragged && lastDrag > 0 && System.currentTimeMillis() - lastDrag > MapOptions.SNAP_BACK_TIME) {
                 Log.i(TAG, "Snapping back to current location");
                 // Snap back to point
                 dragged = false;
+                lastDrag = 0;
                 // Hide crosshair
                 crosshair.setVisibility(View.GONE);
                 homeButton.setVisibility(View.GONE);
@@ -386,4 +383,5 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         super.onDestroy();
         mapFragment.removeOnTouchListeners();
     }
+
 }

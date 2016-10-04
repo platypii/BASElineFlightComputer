@@ -15,7 +15,7 @@ class MapOptions {
     static final float defaultZoom = 6;
 
     // Time from last drag to snap back to user location
-    static final long SNAP_BACK_TIME = 4000; // millis
+    static final long SNAP_BACK_TIME = 3500; // millis
 
     // Maximum camera animation duration
     private static final int MAX_ANIMATION_DURATION = 900; // millis
