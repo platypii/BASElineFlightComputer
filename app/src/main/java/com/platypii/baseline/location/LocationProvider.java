@@ -5,10 +5,13 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.platypii.baseline.data.measurements.MLocation;
+import com.platypii.baseline.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
 abstract class LocationProvider {
+    // Duration until location considered stale, in milliseconds
+    private static final long LOCATION_TTL = 10000;
 
     // Listeners
     private final List<MyLocationListener> listeners = new ArrayList<>();
@@ -28,7 +31,7 @@ abstract class LocationProvider {
 
     // History
     public MLocation lastLoc; // last location received
-    // private MLocation prevLoc; // 2nd to last
+    private MLocation prevLoc; // 2nd to last
 
     /**
      * Give a useful name to the inherited provider
@@ -57,6 +60,13 @@ abstract class LocationProvider {
     }
 
     /**
+     * Returns whether the last location fix is recent
+     */
+    public boolean isFresh() {
+        return lastLoc != null && lastFixDuration() < LOCATION_TTL;
+    }
+
+    /**
      * Add a new listener to be notified of location updates
      */
     public void addListener(MyLocationListener listener) {
@@ -81,7 +91,7 @@ abstract class LocationProvider {
         // Log.v(providerName(), "MyLocationManager.updateLocation(" + loc + ")");
 
         // Store location
-        final MLocation prevLoc = lastLoc;
+        prevLoc = lastLoc;
         lastLoc = loc;
 
         // Update gps time offset
@@ -134,6 +144,50 @@ abstract class LocationProvider {
                 }
             }
         }.execute(lastLoc);
+    }
+
+    /**
+     * Helper method for getting latest speed
+     * If GPS is not giving us speed natively, fallback to computing from v = dist/time.
+     * This should be used for display of the latest groundspeed, but not for logging.
+     */
+    public double groundSpeed() {
+        if(isFresh()) {
+            final double lastGroundSpeed = lastLoc.groundSpeed();
+            if(Util.isReal(lastGroundSpeed)) {
+                return lastGroundSpeed;
+            } else {
+                // Compute ground speed from previous location
+                if(prevLoc != null) {
+                    final double dist = prevLoc.distanceTo(lastLoc);
+                    final double dt = (lastLoc.millis - prevLoc.millis) * 0.001;
+                    if(dt > 0) {
+                        return dist / dt;
+                    }
+                }
+            }
+        }
+        return Double.NaN;
+    }
+
+    /**
+     * Helper method for getting latest speed
+     * If GPS is not giving us speed natively, fallback to computing from v = dist/time.
+     * This should be used for display of the latest groundspeed, but not for logging.
+     */
+    public double bearing() {
+        if(isFresh()) {
+            final double lastBearing = lastLoc.bearing();
+            if(Util.isReal(lastBearing)) {
+                return lastBearing;
+            } else {
+                // Compute ground speed from previous location
+                if(prevLoc != null) {
+                    return prevLoc.bearingTo(lastLoc);
+                }
+            }
+        }
+        return Double.NaN;
     }
 
     public void stop() {

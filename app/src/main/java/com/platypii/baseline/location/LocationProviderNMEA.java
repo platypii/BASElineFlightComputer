@@ -80,6 +80,10 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         nmea = nmea.trim();
         // Log.v(NMEA_TAG, "[" + timestamp + "] " + nmea);
 
+        if(nmea.isEmpty()) {
+            return;
+        }
+
         if (!nmeaReceived) {
             Log.d(NMEA_TAG, "First NMEA string received");
             nmeaReceived = true;
@@ -117,9 +121,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // Overall satellite data (DOP and active satellites)
                 // boolean autoDim = split[1].equals("A"); // A = Auto 2D/3D, M = Forced 2D/3D
                 // gpsFix = split[2].isEmpty() ? 0 : Integer.parseInt(split[2]); // 0 = null, 1 = No fix, 2 = 2D, 3 = 3D
-                pdop = Util.parseFloat(split[split.length - 4]);
-                hdop = Util.parseFloat(split[split.length - 3]);
-                vdop = Util.parseFloat(split[split.length - 2]);
+                pdop = Util.parseFloat(split[15]);
+                hdop = Util.parseFloat(split[16]);
+                vdop = Util.parseFloat(split[17]);
                 break;
             case "GSV":
                 // Detailed satellite data (satellites in view)

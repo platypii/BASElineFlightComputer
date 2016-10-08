@@ -28,6 +28,7 @@ import com.platypii.baseline.data.measurements.MAltitude;
 import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Util;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -322,7 +323,6 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
 
     private void updateFlightStats() {
         analogAltimeter.setAltitude(MyAltimeter.altitudeAGL());
-        final MLocation loc = Services.location.lastLoc;
         if(MyAltimeter.climb < 0) {
             flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp,0,0,0);
             flightStatsVario.setText(Convert.speed(-MyAltimeter.climb));
@@ -330,22 +330,26 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
             flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward_white_24dp,0,0,0);
             flightStatsVario.setText(Convert.speed(MyAltimeter.climb));
         }
-        if(loc != null) {
-            flightStatsSpeed.setText(Convert.speed(loc.groundSpeed()));
-            flightStatsGlide.setText(Convert.glide(loc.groundSpeed(), loc.climb, 2, true));
+        final double groundSpeed = Services.location.groundSpeed();
+        if(Util.isReal(groundSpeed)) {
+            flightStatsSpeed.setText(Convert.speed(groundSpeed));
+            flightStatsGlide.setText(Convert.glide(groundSpeed, MyAltimeter.climb, 2, true));
+        } else {
+            flightStatsSpeed.setText("");
+            flightStatsGlide.setText("");
         }
     }
 
     private void updateMyPosition() {
-        final MLocation loc = Services.location.lastLoc;
-        if(loc != null) {
+        if(Services.location.isFresh()) {
             myPositionMarker.setVisible(true);
-            myPositionMarker.setPosition(loc.latLng());
-            myPositionMarker.setRotation((float) loc.bearing());
-            final double groundSpeed = loc.groundSpeed();
-            if(groundSpeed > 0.1) {
+            myPositionMarker.setPosition(Services.location.lastLoc.latLng());
+            final double groundSpeed = Services.location.groundSpeed();
+            final double bearing = Services.location.bearing();
+            if(Util.isReal(bearing) && groundSpeed > 0.1) {
                 // Speed > 0.2mph
                 myPositionMarker.setIcon(myposition1);
+                myPositionMarker.setRotation((float) bearing);
             } else {
                 myPositionMarker.setIcon(myposition2);
             }

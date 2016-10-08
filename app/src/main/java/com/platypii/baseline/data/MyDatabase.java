@@ -140,7 +140,9 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
      */
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onAltitudeEvent(MAltitude alt) {
-        logLine(alt.toRow());
+        if(!Double.isNaN(alt.pressure)) {
+            logLine(alt.toRow());
+        }
     }
 
     // Location listener

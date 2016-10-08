@@ -17,7 +17,7 @@ public class MyFlightManager {
      * Computes the estimated time to ground based on current altitude and climb
      */
     private static double timeToGround() {
-        double timeToGround = -MyAltimeter.altitudeAGL() / MyAltimeter.climb;
+        final double timeToGround = -MyAltimeter.altitudeAGL() / MyAltimeter.climb;
         if(!Util.isReal(timeToGround) || timeToGround < 0.01 || Math.abs(MyAltimeter.climb) < 0.05 || 24 * 60 * 60 < timeToGround) {
             // return NaN if we don't have an accurate landing location (climbing, very close to ground, very long estimate, etc)
             return Double.NaN;
@@ -32,14 +32,14 @@ public class MyFlightManager {
     public static LatLng getLandingLocation() {
         // Compute time to ground
         final double timeToGround = timeToGround();
-        if(Util.isReal(timeToGround) && Services.location.lastLoc != null) {
-            final MLocation currentLocation = Services.location.lastLoc;
+        if(Util.isReal(timeToGround) && Services.location.isFresh()) {
 
             // Compute horizontal distance traveled at current velocity for timeToGround seconds
-            double groundDistance = timeToGround * currentLocation.groundSpeed();
-            double bearing = currentLocation.bearing();
+            final double groundDistance = timeToGround * Services.location.groundSpeed();
+            final double bearing = Services.location.bearing();
 
             // Compute estimated landing location
+            final MLocation currentLocation = Services.location.lastLoc;
             return currentLocation.moveDirection(bearing, groundDistance);
         } else {
             return null;

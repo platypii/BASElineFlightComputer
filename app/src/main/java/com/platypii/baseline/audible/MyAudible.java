@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.altimeter.MyAltimeter;
-import com.platypii.baseline.data.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.util.Util;
@@ -117,7 +116,7 @@ public class MyAudible {
                 // Compute total speed
                 if(goodGpsFix()) {
                     final double verticalSpeed = MyAltimeter.climb;
-                    final double horizontalSpeed = Services.location.lastLoc.groundSpeed();
+                    final double horizontalSpeed = Services.location.groundSpeed();
                     final double totalSpeed = Math.sqrt(verticalSpeed * verticalSpeed + horizontalSpeed * horizontalSpeed);
                     if (Util.isReal(totalSpeed) && AudibleSettings.min <= totalSpeed && totalSpeed <= AudibleSettings.max) {
                         measurement = shortSpeed(totalSpeed, AudibleSettings.precision);
@@ -129,7 +128,7 @@ public class MyAudible {
             case "horizontal_speed":
                 // Read horizontal speed
                 if(goodGpsFix()) {
-                    final double horizontalSpeed = Services.location.lastLoc.groundSpeed();
+                    final double horizontalSpeed = Services.location.groundSpeed();
                     if (Util.isReal(horizontalSpeed) && AudibleSettings.min <= horizontalSpeed && horizontalSpeed <= AudibleSettings.max) {
                         measurement = shortSpeed(horizontalSpeed, AudibleSettings.precision);
                     } else {
@@ -153,9 +152,8 @@ public class MyAudible {
             case "glide_ratio":
                 // Read glide ratio
                 if(goodGpsFix()) {
-                    final MLocation loc = Services.location.lastLoc;
-                    final double glideRatio = loc.glideRatio();
-                    final String glideRatioString = Convert.glide(loc.groundSpeed(), loc.climb, AudibleSettings.precision, false);
+                    final double glideRatio = Services.location.lastLoc.glideRatio();
+                    final String glideRatioString = Convert.glide(Services.location.groundSpeed(), MyAltimeter.climb, AudibleSettings.precision, false);
                     if(Util.isReal(glideRatio) && AudibleSettings.min <= glideRatio && glideRatio <= AudibleSettings.max) {
                         measurement = glideRatioString;
                         if(measurement.equals(Convert.GLIDE_STATIONARY)) {

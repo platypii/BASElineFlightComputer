@@ -97,7 +97,7 @@ public class MLocation extends Measurement {
     }
 
     public double glideAngle() {
-        return Math.toDegrees(Math.atan2(MyAltimeter.climb, groundSpeed()));
+        return Math.toDegrees(Math.atan2(climb, groundSpeed()));
     }
 
     public double bearing() {
@@ -109,29 +109,43 @@ public class MLocation extends Measurement {
     }
 
     public double bearingTo(LatLng dest) {
-        double φ1 = Math.toRadians(latitude);
-        double φ2 = Math.toRadians(dest.latitude);
-        double Δλ = Math.toRadians(dest.longitude - longitude);
-        double y = Math.sin(Δλ) * Math.cos(φ2);
-        double x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+        return bearingTo(latitude, longitude, dest.latitude, dest.longitude);
+    }
+    public double bearingTo(MLocation dest) {
+        return bearingTo(latitude, longitude, dest.latitude, dest.longitude);
+    }
+
+    private static double bearingTo(double lat1, double lon1, double lat2, double lon2) {
+        final double φ1 = Math.toRadians(lat1);
+        final double φ2 = Math.toRadians(lat2);
+        final double Δλ = Math.toRadians(lon2 - lon1);
+        final double y = Math.sin(Δλ) * Math.cos(φ2);
+        final double x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
         return Math.toDegrees(Math.atan2(y, x));
     }
 
-    private static final double R = 6371000; // meters
     public double distanceTo(LatLng dest) {
-        double φ1 = Math.toRadians(latitude);
-        double φ2 = Math.toRadians(dest.latitude);
-        double Δφ = Math.toRadians(dest.latitude - latitude);
-        double Δλ = Math.toRadians(dest.longitude - longitude);
+        return distanceTo(latitude, longitude, dest.latitude, dest.longitude);
+    }
+    public double distanceTo(MLocation dest) {
+        return distanceTo(latitude, longitude, dest.latitude, dest.longitude);
+    }
 
-        double sin_φ = Math.sin(Δφ/2);
-        double sin_λ = Math.sin(Δλ/2);
+    private static final double R = 6371000; // meters
+    private static double distanceTo(double lat1, double lon1, double lat2, double lon2) {
+        final double φ1 = Math.toRadians(lat1);
+        final double φ2 = Math.toRadians(lat2);
+        final double Δφ = Math.toRadians(lat2 - lat1);
+        final double Δλ = Math.toRadians(lon2 - lon1);
+
+        final double sin_φ = Math.sin(Δφ/2);
+        final double sin_λ = Math.sin(Δλ/2);
 
         // Haversine formula
-        double a = sin_φ * sin_φ +
+        final double a = sin_φ * sin_φ +
                    Math.cos(φ1) * Math.cos(φ2) *
                    sin_λ * sin_λ;
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        final double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
         return R * c;
     }
@@ -139,12 +153,11 @@ public class MLocation extends Measurement {
      * Moves the location along a bearing (degrees) by a given distance (meters)
      */
     public LatLng moveDirection(double bearing, double distance) {
-        final double R = 6371000;
         final double d = distance / R;
 
-        double lat = radians(latitude);
-        double lon = radians(longitude);
-        double bear = radians(bearing);
+        final double lat = radians(latitude);
+        final double lon = radians(longitude);
+        final double bear = radians(bearing);
 
         // Precompute trig
         final double sin_d = Math.sin(d);
