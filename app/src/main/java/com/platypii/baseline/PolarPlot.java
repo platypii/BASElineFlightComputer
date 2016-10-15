@@ -117,7 +117,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         final String totalSpeed = Convert.speed(z);
         canvas.drawText(totalSpeed, sx + 6 * density, sy + 22 * density, text);
         final String glideRatio = Convert.glide(x, y, 2, true);
-        canvas.drawText(glideRatio, sx + 6 * density, sy + 38 * density, text);
+        canvas.drawText(glideRatio, sx + 6 * density, sy + 40 * density, text);
 
         // Draw axis ticks
         paint.setColor(0xffdddddd);

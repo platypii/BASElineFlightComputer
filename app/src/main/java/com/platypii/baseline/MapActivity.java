@@ -182,7 +182,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     }
 
     private void addMarkers() {
-        final LatLng home = new LatLng(47.239, -123.143);
+        final LatLng home = new LatLng(47.239, -123.143); // Kpow
 
         // Add home location pin
         homeMarker = map.addMarker(new MarkerOptions()

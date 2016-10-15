@@ -22,10 +22,8 @@ import org.greenrobot.eventbus.ThreadMode;
 public class AltimeterActivity extends FragmentActivity {
     private static final String TAG = "Altimeter";
 
+    private PolarPlot polar;
     private AnalogAltimeter analogAltimeter;
-
-    // Activity state
-    private boolean paused = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +31,7 @@ public class AltimeterActivity extends FragmentActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_altimeter);
 
+        polar = (PolarPlot) findViewById(R.id.polar);
         analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
         analogAltimeter.setOverlay(false);
         analogAltimeter.setLongClickable(true);
@@ -86,21 +85,23 @@ public class AltimeterActivity extends FragmentActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAltitudeEvent(MAltitude alt) {
-        if(!paused) {
-            updateFlightStats();
-        }
+        updateFlightStats();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        paused = false;
+        // Start sensor updates
+        EventBus.getDefault().register(this);
+        polar.start();
         updateFlightStats();
     }
     @Override
     public void onPause() {
         super.onPause();
-        paused = true;
+        // Stop sensor updates
+        EventBus.getDefault().unregister(this);
+        polar.stop();
     }
 
     @Override
@@ -108,14 +109,10 @@ public class AltimeterActivity extends FragmentActivity {
         super.onStart();
         // Start flight services
         Services.start(this);
-        // Start sensor updates
-        EventBus.getDefault().register(this);
     }
     @Override
     public void onStop() {
         super.onStop();
-        // Stop sensor updates
-        EventBus.getDefault().unregister(this);
         // Stop flight services
         Services.stop();
     }
