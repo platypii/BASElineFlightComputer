@@ -8,7 +8,7 @@ import com.platypii.baseline.util.Convert;
 /**
  * Contains the default audible modes
  */
-public class AudibleModes {
+class AudibleModes {
     private static final String TAG = "AudibleMode";
 
     public static AudibleMode get(String audibleMode) {
@@ -28,7 +28,7 @@ public class AudibleModes {
         }
     }
 
-    public static AudibleMode horizontal_speed = new AudibleMode("horizontal_speed", "Horizontal Speed", "speed", 0, 180 * Convert.MPHf, 0) {
+    private static final AudibleMode horizontal_speed = new AudibleMode("horizontal_speed", "Horizontal Speed", "speed", 0, 180 * Convert.MPHf, 0) {
         @Override
         public float units() {
             return Convert.metric? Convert.KPHf : Convert.MPHf;
@@ -39,7 +39,7 @@ public class AudibleModes {
         }
     };
 
-    public static AudibleMode vertical_speed = new AudibleMode("vertical_speed", "Vertical Speed", "speed", -140 * Convert.MPHf, 0, 0) {
+    private static final AudibleMode vertical_speed = new AudibleMode("vertical_speed", "Vertical Speed", "speed", -140 * Convert.MPHf, 0, 0) {
         @Override
         public float units() {
             return Convert.metric? Convert.KPHf : Convert.MPHf;
@@ -50,7 +50,7 @@ public class AudibleModes {
         }
     };
 
-    public static AudibleMode total_speed = new AudibleMode("total_speed", "Total Speed", "speed", 0, 200 * Convert.MPHf, 0) {
+    private static final AudibleMode total_speed = new AudibleMode("total_speed", "Total Speed", "speed", 0, 200 * Convert.MPHf, 0) {
         @Override
         public float units() {
             return Convert.metric? Convert.KPHf : Convert.MPHf;
@@ -61,7 +61,7 @@ public class AudibleModes {
         }
     };
 
-    public static AudibleMode glide_ratio = new AudibleMode("glide_ratio", "Glide Ratio", "glide ratio", 0, 4, 1) {
+    private static final AudibleMode glide_ratio = new AudibleMode("glide_ratio", "Glide Ratio", "glide ratio", 0, 4, 1) {
         @Override
         public float units() {
             return 1;

@@ -9,19 +9,19 @@ import com.platypii.baseline.util.Util;
  */
 public class AudibleSettings {
 
-    static String audibleMode;
-    public static AudibleMode mode;
-    public static double min;
-    public static double max;
-    public static int precision;
-    public static float speechInterval;
-    public static float speechRate;
+    // Defaults
+    public static AudibleMode mode = AudibleModes.get("horizontal_speed");
+    public static double min = mode.defaultMin;
+    public static double max = mode.defaultMax;
+    public static int precision = mode.defaultPrecision;
+    public static float speechInterval = 2.5f;
+    public static float speechRate = 1.0f;
 
     /**
      * Load audible settings from android preferences
      */
     static void init(SharedPreferences prefs) {
-        audibleMode = prefs.getString("audible_mode", "horizontal_speed");
+        final String audibleMode = prefs.getString("audible_mode", "horizontal_speed");
         mode = AudibleModes.get(audibleMode);
         min = Util.parseDouble(prefs.getString("audible_min", Float.toString(mode.defaultMin)));
         max = Util.parseDouble(prefs.getString("audible_max", Float.toString(mode.defaultMax)));
@@ -33,8 +33,7 @@ public class AudibleSettings {
     /**
      * Change audible mode and set default min,max,precision values
      */
-    public static void setAudibleMode(String newMode) {
-        audibleMode = newMode;
+    public static void setAudibleMode(String audibleMode) {
         mode = AudibleModes.get(audibleMode);
         min = mode.defaultMin;
         max = mode.defaultMax;

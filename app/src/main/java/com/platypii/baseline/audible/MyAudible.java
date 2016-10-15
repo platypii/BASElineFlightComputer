@@ -111,7 +111,7 @@ public class MyAudible {
      */
     private static String getMeasurement() {
         String measurement = "";
-        switch(AudibleSettings.audibleMode) {
+        switch(AudibleSettings.mode.id) {
             case "total_speed":
                 // Compute total speed
                 if(goodGpsFix()) {
@@ -184,7 +184,7 @@ public class MyAudible {
                 }
                 break;
             default:
-                Log.e(TAG, "Invalid audible mode " + AudibleSettings.audibleMode);
+                Log.e(TAG, "Invalid audible mode " + AudibleSettings.mode.id);
         }
         return measurement;
     }
