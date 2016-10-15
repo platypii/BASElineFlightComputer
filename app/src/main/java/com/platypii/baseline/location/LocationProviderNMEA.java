@@ -104,7 +104,12 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         }
 
         // Validate NMEA sentence and print errors, but still try to parse
-        NMEA.validate(nmea);
+        try {
+            NMEA.validate(nmea);
+        } catch(NMEAException e) {
+            Log.e(TAG, "Invalid NMEA sentence", e);
+            FirebaseCrash.report(e);
+        }
 
         // Strip checksum
         final int starIndex = nmea.lastIndexOf('*');

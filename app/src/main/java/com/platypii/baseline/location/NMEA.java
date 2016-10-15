@@ -94,21 +94,21 @@ class NMEA {
     }
 
     /** Returns true if the checksum is valid */
-    static boolean validate(@NonNull String nmea) {
+    static void validate(@NonNull String nmea) throws NMEAException {
         final int starIndex = nmea.lastIndexOf('*');
         final int length = nmea.length();
         // Ensure that:
         // - string is long enough
         // - starts with $
         // - ends with checksum
-        // Could use regex ^\\$.*\\*[0-9a-fA-F]{1,2} but this is faster:
-        if(length < 8 || nmea.charAt(0) != '$' || starIndex < length - 3 || starIndex == length - 1) {
-            // PGLOR commands often omit checksum, no need to report it
-            if(!nmea.startsWith("$PGLOR,")) {
-                Log.e(TAG, "Invalid NMEA sentence: " + nmea);
-                FirebaseCrash.report(new NMEAException("Invalid NMEA sentence: " + nmea));
+        // Could use regex ^\\$.*\\*[0-9a-fA-F]{2} but this is faster:
+        if(length < 8 || nmea.charAt(0) != '$' || starIndex != length - 3) {
+            if(nmea.startsWith("$PGLOR,")) {
+                // PGLOR commands often omit checksum or truncate to 1 char, no need to report it
+                return;
+            } else {
+                throw new NMEAException("Invalid NMEA sentence: " + nmea);
             }
-            return false;
         }
 
         // Compute checksum
@@ -118,11 +118,8 @@ class NMEA {
         }
         final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1), 16);
         if(checksum1 != checksum2) {
-            Log.e(TAG, "Invalid NMEA checksum: " + nmea);
-            FirebaseCrash.report(new NMEAException("Invalid NMEA checksum: " + nmea));
-            return false;
+            throw new NMEAException("Invalid NMEA checksum: " + checksum1 + " != " + checksum2 + " for sentence: " + nmea);
         }
-        return true;
     }
 
 }
