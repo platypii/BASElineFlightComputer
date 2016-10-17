@@ -39,14 +39,16 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 
     @Override
     public void drawData(Canvas canvas) {
-        final long currentTime = System.currentTimeMillis() - Services.location.phoneOffsetMillis;
-        final MLocation loc = Services.location.lastLoc;
-        if(loc != null && currentTime - loc.millis <= window) {
-            // Draw history
-            drawHistory(canvas);
+        if(Services.location != null) {
+            final long currentTime = System.currentTimeMillis() - Services.location.phoneOffsetMillis;
+            final MLocation loc = Services.location.lastLoc;
+            if(loc != null && currentTime - loc.millis <= window) {
+                // Draw history
+                drawHistory(canvas);
 
-            // Draw current location
-            drawLocation(canvas, loc);
+                // Draw current location
+                drawLocation(canvas, loc);
+            }
         }
     }
 
