@@ -3,11 +3,8 @@ package com.platypii.baseline;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
 import com.platypii.baseline.data.TrackAdapter;
@@ -19,10 +16,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JumpsActivity extends ListActivity implements AdapterView.OnItemLongClickListener {
+public class JumpsActivity extends ListActivity {
 
     private List<Jump> jumpList;
-    private ArrayAdapter<Jump> listAdapter;
+    private TrackAdapter listAdapter;
 
     private View tracksEmptyLabel;
 
@@ -35,12 +32,8 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
 
         // Initialize the ListAdapter
         jumpList = new ArrayList<>();
-        listAdapter = new TrackAdapter(this, R.layout.jump_list_item, jumpList);
+        listAdapter = new TrackAdapter(this, jumpList);
         setListAdapter(listAdapter);
-
-        // Listen for long-clicks
-        final ListView listView = getListView();
-        listView.setOnItemLongClickListener(this);
     }
 
     @Override
@@ -65,22 +58,10 @@ public class JumpsActivity extends ListActivity implements AdapterView.OnItemLon
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        final Jump jump = jumpList.get(position);
-        Intents.openJumpActivity(this, jump);
-    }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
-        final Jump jump = jumpList.get(position);
-        final CloudData cloudData = jump.getCloudData();
-        if(cloudData != null) {
-            // Open KML directly
-            Intents.openTrackKml(this, cloudData);
-        } else {
-            // Open track view
-            Intents.openJumpActivity(this, jump);
+        final Jump track = listAdapter.getTrack(position);
+        if(track != null) {
+            Intents.openJumpActivity(this, track);
         }
-        return true;
     }
 
     @Override
