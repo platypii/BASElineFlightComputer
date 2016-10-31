@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.util.IOUtil;
 import com.platypii.baseline.util.Try;
 import com.platypii.baseline.util.Callback;
 
@@ -85,14 +86,14 @@ public class TheCloud {
             }
             final InputStream is = new FileInputStream(file);
             final OutputStream os = new BufferedOutputStream(conn.getOutputStream());
-            copy(is, os);
+            IOUtil.copy(is, os);
             is.close();
             os.close();
             // Read response
             final int status = conn.getResponseCode();
             if(status == 200) {
                 // Read body
-                final String body = toString(conn.getInputStream());
+                final String body = IOUtil.toString(conn.getInputStream());
                 return CloudData.fromJson(body);
             } else if(status == 401) {
                 throw new IOException("authorization required");
@@ -102,25 +103,6 @@ public class TheCloud {
         } finally {
             conn.disconnect();
         }
-    }
-
-    private static void copy(InputStream input, OutputStream output) throws IOException {
-        final byte buffer[] = new byte[1024];
-        int bytesRead;
-        while((bytesRead = input.read(buffer)) != -1) {
-            output.write(buffer, 0, bytesRead);
-        }
-        output.flush();
-    }
-
-    private static String toString(InputStream input) throws IOException {
-        final StringBuilder builder = new StringBuilder();
-        final byte buffer[] = new byte[1024];
-        int bytesRead;
-        while((bytesRead = input.read(buffer)) != -1) {
-            builder.append(new String(buffer, 0, bytesRead));
-        }
-        return builder.toString();
     }
 
 }
