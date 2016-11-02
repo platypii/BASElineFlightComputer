@@ -26,8 +26,8 @@ public class AudibleSettings {
         min = Util.parseDouble(prefs.getString("audible_min", Float.toString(mode.defaultMin)));
         max = Util.parseDouble(prefs.getString("audible_max", Float.toString(mode.defaultMax)));
         precision = Util.parseInt(prefs.getString("audible_precision", Integer.toString(mode.defaultPrecision)), mode.defaultPrecision);
-        speechInterval = Float.parseFloat(prefs.getString("audible_interval", "2.5"));
-        speechRate = Float.parseFloat(prefs.getString("audible_rate", "1.0"));
+        speechInterval = Util.parseFloat(prefs.getString("audible_interval", "2.5"));
+        speechRate = Util.parseFloat(prefs.getString("audible_rate", "1.0"));
     }
 
     /**
