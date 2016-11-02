@@ -1,0 +1,86 @@
+<resources>
+
+    <!-- Home Screen -->
+    <string name="action_record">Rekord</string>
+    <string name="action_audible">Audible</string>
+    <string name="action_altimeter">Alti</string>
+    <string name="action_nav">Nav</string>
+    <string name="action_tracks">Spuren</string>
+    <string name="action_settings">Einstellungen</string>
+
+    <!-- Track Activity -->
+    <string name="action_open">Öffnen</string>
+    <string name="action_sync">Sync</string>
+    <string name="action_map">Karte</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_export">Export</string>
+
+    <string name="error_export_intent">Export der Spurdatei fehlgeschlagen</string>
+    <string name="error_map_intent">Fehlgeschlagen Google Earth öffnen</string>
+
+    <!-- Auth -->
+    <string name="signin_prompt">Melden Sie sich mit Ihrem Google-Konto zu synchronisieren spuren mit https://base-line.ws/</string>
+    <string name="action_sign_in">Anmelden</string>
+    <string name="action_sign_out">Ausloggen</string>
+    <string name="signin_success">Angemeldet</string>
+    <string name="signin_failed">Anmeldung fehlgeschlagen</string>
+    <string name="signout_success">Abgemeldet</string>
+
+    <string name="no_tracks">keine spuren</string>
+    <string name="error_not_uploaded">spuren nicht synchronisiert</string>
+
+    <string-array name="audible_modes">
+        <item>Horizontal Speed</item>
+        <item>Vertical Speed</item>
+        <item>Total Speed</item>
+        <item>Glide Ratio</item>
+    </string-array>
+    <string-array name="audible_modes_values">
+        <item>horizontal_speed</item>
+        <item>vertical_speed</item>
+        <item>total_speed</item>
+        <item>glide_ratio</item>
+    </string-array>
+
+    <!-- Audible settings -->
+    <string name="title_activity_audible_settings">Akustische Einstellungen</string>
+
+    <string name="pref_audible_enabled_description">Aktivieren Sie eine akustische Rückmeldung</string>
+
+    <string name="pref_audible_mode">Messmodus</string>
+
+    <string name="pref_audible_min">Minimalwert</string>
+    <string name="pref_audible_max">Maximalwert</string>
+
+    <string name="pref_audible_precision">Präzision</string>
+    <string name="pref_audible_interval">Sprachintervall</string>
+    <string name="pref_audible_rate">Sprechgeschwindigkeit</string>
+
+    <!-- Map -->
+    <string name="title_activity_map">Navigation</string>
+
+    <string name="set_altitude">Höhe Einstellen</string>
+    <string name="cancel">Abbrechen</string>
+
+    <string name="map_crosshair">fadenkreuz</string>
+
+    <!-- Bluetooth -->
+    <string name="pref_bluetooth">Bluetooth GPS</string>
+    <string name="pref_bluetooth_disabled">Bluetooth GPS ist deaktiviert</string>
+    <string name="pref_bluetooth_description">Verwenden Sie Bluetooth GPS-Empfänger</string>
+    <string name="pref_bluetooth_device">Bluetooth-gerät</string>
+    <string name="pref_bluetooth_device_description">Wählen sie bluetooth-gerät</string>
+
+    <!-- Settings -->
+    <string name="title_activity_settings">Einstellungen</string>
+    <string name="pref_metric">Metrische</string>
+    <string name="pref_metric_description">Verwenden sie metrische einheiten</string>
+    <string name="pref_sensor_info">Sensorinformationen</string>
+    <string name="pref_sensor_info_description">Anzeige von sensordaten</string>
+    <string name="action_stop">Stop</string>
+    <string name="delete_local">Möchten sie diese spuren wirklich löschen?</string>
+    <string name="delete_remote">Möchten sie diese spuren wirklich löschen?</string>
+    <string name="pref_audible_enabled">Aktivieren sie akustisch</string>
+    <string name="map_pin">stift</string>
+
+</resources>

@@ -52,9 +52,7 @@
     <string name="title_activity_audible_settings">Audible Settings</string>
 
     <string name="pref_audible_enabled">Enable audible</string>
-    <string name="pref_audible_enabled_description">
-        Enable audible feedback
-    </string>
+    <string name="pref_audible_enabled_description">Enable audible feedback</string>
 
     <string name="pref_audible_mode">Measurement mode</string>
 
