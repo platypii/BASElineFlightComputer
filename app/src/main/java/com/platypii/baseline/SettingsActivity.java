@@ -1,12 +1,11 @@
 package com.platypii.baseline;
 
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 
 /**
  * Settings activity for things like metric / imperial
  */
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

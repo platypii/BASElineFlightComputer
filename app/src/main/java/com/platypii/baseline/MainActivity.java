@@ -6,16 +6,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
@@ -32,8 +27,6 @@ public class MainActivity extends BaseActivity {
     // app start time
     // public static final long startTimeMillis = System.currentTimeMillis();
     // public static final long startTimeNano = System.nanoTime();
-
-    private Menu menu;
 
     private Button recordButton;
     private Button audibleButton;
@@ -311,63 +304,6 @@ public class MainActivity extends BaseActivity {
 
         signalStatus.setCompoundDrawablesWithIntrinsicBounds(statusIcon, 0, 0, 0);
         signalStatus.setText(status);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        this.menu = menu;
-        final MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        updateMenu();
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.menu_item_sign_in:
-                clickSignIn();
-                return true;
-            case R.id.menu_item_sign_out:
-                clickSignOut();
-
-                // Update menu
-                updateMenu(false);
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    protected void handleSignInResult(GoogleSignInResult result) {
-        super.handleSignInResult(result);
-        updateMenu();
-    }
-
-    /**
-     * Update menu based on signed in state
-     */
-    private void updateMenu() {
-        updateMenu(isSignedIn());
-    }
-    /**
-     * Update menu based on signed in state
-     */
-    private void updateMenu(boolean signedIn) {
-        // Menu can be null if it hasn't been opened yet
-        if(menu != null) {
-            final MenuItem menuSignIn = menu.findItem(R.id.menu_item_sign_in);
-            final MenuItem menuSignOut = menu.findItem(R.id.menu_item_sign_out);
-            if(menuSignIn != null) {
-                menuSignIn.setVisible(!signedIn);
-            }
-            if(menuSignOut != null) {
-                menuSignOut.setVisible(signedIn);
-            }
-            invalidateOptionsMenu();
-        }
     }
 
     @Override

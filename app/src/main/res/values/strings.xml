@@ -26,8 +26,6 @@
 
     <!-- Auth -->
     <string name="signin_prompt">Sign in using your google account to sync tracks with https://base-line.ws/</string>
-    <string name="action_sign_in">Sign In</string>
-    <string name="action_sign_out">Sign Out</string>
     <string name="signin_success">Signed in</string>
     <string name="signin_failed">Sign in failed</string>
     <string name="signout_success">Signed out</string>
@@ -89,5 +87,9 @@
     <string name="pref_metric_description">Use metric units</string>
     <string name="pref_sensor_info">Sensor info</string>
     <string name="pref_sensor_info_description">Display raw sensor data</string>
+    <string name="pref_sign_in">Sign in</string>
+    <string name="pref_sign_in_description">Sign in with your google account</string>
+    <string name="pref_sign_out">Sign out</string>
+    <string name="pref_sign_out_description">Signed in as</string>
 
 </resources>

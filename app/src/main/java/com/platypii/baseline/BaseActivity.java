@@ -20,7 +20,9 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.util.Callback;
+import org.greenrobot.eventbus.EventBus;
 
 abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "BaseActivity";
@@ -40,6 +42,14 @@ abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient
 
     protected boolean isSignedIn() {
         return account != null;
+    }
+
+    protected String getDisplayName() {
+        if(account != null) {
+            return account.getDisplayName();
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -111,18 +121,14 @@ abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient
         firebaseAnalytics.logEvent("click_sign_in", null);
         userClickedSignIn = true;
 
-        // Update sign in panel
-        final View signInPanel = findViewById(R.id.sign_in_panel);
-        if(signInPanel != null) {
-            findViewById(R.id.sign_in_button).setEnabled(false);
-            findViewById(R.id.sign_in_spinner).setVisibility(View.VISIBLE);
-        }
+        // Notify sign in listeners
+        EventBus.getDefault().post(AuthEvent.SIGNING_IN);
 
         final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    public void clickSignOut() {
+    protected void clickSignOut() {
         Log.i(TAG, "clickSignOut");
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
@@ -133,11 +139,8 @@ abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient
 
                         account = null;
 
-                        // Show sign in panel
-                        final View signInPanel = findViewById(R.id.sign_in_panel);
-                        if (signInPanel != null) {
-                            signInPanel.setVisibility(View.VISIBLE);
-                        }
+                        // Notify listeners
+                        EventBus.getDefault().post(AuthEvent.SIGNED_OUT);
                     }
                 }
         );
@@ -146,7 +149,7 @@ abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
+        // Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
@@ -167,15 +170,12 @@ abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient
     }
 
     protected void handleSignInResult(GoogleSignInResult result) {
-        final View signInPanel = findViewById(R.id.sign_in_panel);
-        if(signInPanel != null) {
-            findViewById(R.id.sign_in_button).setEnabled(true);
-            findViewById(R.id.sign_in_spinner).setVisibility(View.GONE);
-        }
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             account = result.getSignInAccount();
-            Log.i(TAG, "Signed in successfully with user " + account.getDisplayName());
+            if(account != null) {
+                Log.i(TAG, "Sign in successful for user " + account.getDisplayName());
+            }
 
             // final String authCode = account.getServerAuthCode();
             // Log.d(TAG, "Got auth code " + authCode);
@@ -183,19 +183,15 @@ abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient
             // final String idToken = account.getIdToken();
             // Log.d(TAG, "Got id token " + idToken);
 
-            // Hide sign in panel
-            if(signInPanel != null) {
-                signInPanel.setVisibility(View.GONE);
-            }
+            // Notify listeners
+            EventBus.getDefault().post(AuthEvent.SIGNED_IN);
             if(userClickedSignIn) {
                 Toast.makeText(this, R.string.signin_success, Toast.LENGTH_LONG).show();
             }
         } else {
             Log.w(TAG, "Sign in failed");
-            // Show sign in panel
-            if(signInPanel != null) {
-                signInPanel.setVisibility(View.VISIBLE);
-            }
+            // Notify listeners
+            EventBus.getDefault().post(AuthEvent.SIGNED_OUT);
             if(userClickedSignIn) {
                 Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
             }
@@ -205,7 +201,7 @@ abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        // Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Log.i(TAG, "Not signed in");
     }
 
@@ -247,7 +243,7 @@ abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient
     public void onStop() {
         super.onStop();
 
-        // If track is still recording, services will take care of it
+        // If track is still recording, services will wait
         Services.stop();
     }
 

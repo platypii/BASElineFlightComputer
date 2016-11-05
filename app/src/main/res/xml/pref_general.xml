@@ -22,4 +22,9 @@
         android:title="@string/pref_sensor_info"
         android:summary="@string/pref_sensor_info_description"/>
 
+    <Preference
+        android:key="sign_in"
+        android:title="@string/pref_sign_in"
+        android:summary="@string/pref_sign_in_description"/>
+
 </PreferenceScreen>

@@ -8,11 +8,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.platypii.baseline.data.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.JumpLog;
 import com.platypii.baseline.data.TheCloud;
+import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Callback;
 import org.greenrobot.eventbus.EventBus;
@@ -23,12 +25,20 @@ import java.io.File;
 public class JumpActivity extends BaseActivity {
     private static final String TAG = "Jump";
 
+    private View signInPanel;
+    private View signInButton;
+    private View signInSpinner;
+
     private Jump jump;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jump);
+
+        signInPanel = findViewById(R.id.sign_in_panel);
+        signInButton = findViewById(R.id.sign_in_button);
+        signInSpinner = findViewById(R.id.sign_in_spinner);
 
         // Load jump from extras
         final Bundle extras = getIntent().getExtras();
@@ -76,8 +86,10 @@ public class JumpActivity extends BaseActivity {
             // Update view based on sign-in state
             if(isSignedIn() || cloudData != null) {
                 openButton.setEnabled(true);
+                onAuthEvent(AuthEvent.SIGNED_IN);
             } else {
                 openButton.setEnabled(false);
+                onAuthEvent(AuthEvent.SIGNED_OUT);
             }
         }
     }
@@ -168,10 +180,8 @@ public class JumpActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        // Listen for sync updates
+        // Listen for sync and auth updates
         EventBus.getDefault().register(this);
-
-        // Update views
         updateViews();
     }
 
@@ -184,5 +194,20 @@ public class JumpActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(SyncEvent event) {
         updateViews();
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAuthEvent(AuthEvent event) {
+        // Update sign in panel state
+        if(event == AuthEvent.SIGNED_OUT) {
+            signInButton.setEnabled(true);
+            signInSpinner.setVisibility(View.GONE);
+            signInPanel.setVisibility(View.VISIBLE);
+        } else if(event == AuthEvent.SIGNING_IN) {
+            signInButton.setEnabled(false);
+            signInSpinner.setVisibility(View.VISIBLE);
+            signInPanel.setVisibility(View.VISIBLE);
+        } else if(event == AuthEvent.SIGNED_IN) {
+            signInPanel.setVisibility(View.GONE);
+        }
     }
 }

@@ -89,6 +89,11 @@
         android:gravity="center"
         android:visibility="gone" />
 
+    <View
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_weight="1"/>
+
     <include layout="@layout/sign_in_panel"/>
 
 </LinearLayout>

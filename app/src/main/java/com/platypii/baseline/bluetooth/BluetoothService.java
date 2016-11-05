@@ -78,7 +78,7 @@ public class BluetoothService {
         return bluetoothAdapter;
     }
 
-    public static Set<BluetoothDevice> getDevices() {
+    static Set<BluetoothDevice> getDevices() {
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter != null) {
             return bluetoothAdapter.getBondedDevices();
@@ -99,6 +99,31 @@ public class BluetoothService {
         Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         bluetoothState = state;
         EventBus.getDefault().post(new BluetoothEvent(bluetoothState));
+    }
+
+    /**
+     * Return a human-readable string for the bluetooth state
+     * TODO: use string resources
+     */
+    public static String getStatusMessage() {
+        if(isHardwareEnabled()) {
+            switch(bluetoothState) {
+                case BT_STOPPED:
+                    return "Bluetooth stopped";
+                case BT_CONNECTING:
+                    return "Bluetooth connecting";
+                case BT_CONNECTED:
+                    return "Bluetooth connected";
+                case BT_DISCONNECTED:
+                    return "Bluetooth disconnected";
+                case BT_STOPPING:
+                    return "Bluetooth shutting down";
+                default:
+                    return "";
+            }
+        } else {
+            return "Bluetooth hardware disabled";
+        }
     }
 
     public static boolean isHardwareEnabled() {
