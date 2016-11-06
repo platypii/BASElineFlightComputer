@@ -208,7 +208,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                         if(latitude_abs < 0.1) {
                             Log.w(NMEA_TAG, "RMC unlikely latitude: " + nmea);
                             FirebaseCrash.report(new NMEAException("RMC unlikely latitude: " + nmea));
-                        } else if(longitude_abs < 0.1) {
+                        } else if(longitude_abs < 0.1 && latitude < 4) {
+                            // There is no landmass south of 4 degrees latitude
                             Log.w(NMEA_TAG, "RMC unlikely longitude: " + nmea);
                             FirebaseCrash.report(new NMEAException("RMC unlikely longitude: " + nmea));
                         }
@@ -267,6 +268,10 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // $PGLOR,3,PWR,mA,36.4,RFTm,1000,OscTm,1000,MeasTm,1000,UTC,123444.00*32
                 // $PGLOR,6,STA,122301.03,0.000,0.000,-270,236,9999,0,P,F,L,1,C,0,S,0000,0,2,R,0000,TPeF,19,2122,LC,,*13
                 // $PGLOR,SPL,20160704142257.8,STATUS,2*38
+                break;
+            case "TKTSX1":
+                // ZVI
+                // $PMTKTSX1,181512,0.000,0.293,44.717,4af30000,-3.324382,0.000099,-0.000850,-0.207713,0.386944*40
                 break;
             case "TIS":
                 // Samsung Note7

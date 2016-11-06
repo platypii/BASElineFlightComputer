@@ -35,15 +35,15 @@ public class Util {
     }
 
     public static int parseInt(String str, int defaultValue) {
-        try {
-            if(str.isEmpty()) {
-                return defaultValue;
-            } else {
-                return Integer.parseInt(str);
-            }
-        } catch(NumberFormatException e) {
-            FirebaseCrash.report(e);
+        if(str == null || str.isEmpty()) {
             return defaultValue;
+        } else {
+            try {
+                return Integer.parseInt(str);
+            } catch(NumberFormatException e) {
+                FirebaseCrash.report(e);
+                return defaultValue;
+            }
         }
     }
 }

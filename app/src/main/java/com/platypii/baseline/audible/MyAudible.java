@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.util.Convert;
@@ -41,6 +43,7 @@ public class MyAudible {
             }
         } else {
             Log.w(TAG, "Audible initialized twice");
+            FirebaseCrash.report(new IllegalStateException("Audible initialized twice"));
         }
     }
 
@@ -88,20 +91,23 @@ public class MyAudible {
     public static void speakNow(String text) {
         if(!isEnabled) {
             Log.e(TAG, "Should never speak when audible is disabled");
+            FirebaseCrash.report(new IllegalStateException("MyAudible.speakNow should never speak when audible is disabled"));
         }
-        speech.speakNow(text);
+        if(speech != null) {
+            speech.speakNow(text);
+        }
     }
 
     static void speak() {
         final String measurement = getMeasurement();
-        if(measurement != null && measurement.length() > 0) {
+        if(speech != null && measurement != null && measurement.length() > 0) {
             speech.speakNow(measurement);
         }
     }
 
     private static void speakWhenReady() {
         final String measurement = getMeasurement();
-        if(measurement != null && measurement.length() > 0) {
+        if(speech != null && measurement != null && measurement.length() > 0) {
             speech.speakWhenReady(measurement);
         }
     }

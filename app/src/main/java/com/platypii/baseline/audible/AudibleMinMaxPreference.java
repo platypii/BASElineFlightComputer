@@ -59,11 +59,13 @@ public class AudibleMinMaxPreference extends DialogPreference {
         if(positiveResult) {
             // Convert mEditText into value
             final String valueString = mEditText.getText().toString();
-            final float valueLocalUnits = Util.parseFloat(valueString);
-            final float value = valueLocalUnits * getMode().units();
-            if(Util.isReal(value)) {
-                persistString(Float.toString(value));
-                callChangeListener(value);
+            if(!valueString.isEmpty()) {
+                final float valueLocalUnits = Util.parseFloat(valueString);
+                final float value = valueLocalUnits * getMode().units();
+                if(Util.isReal(value)) {
+                    persistString(Float.toString(value));
+                    callChangeListener(value);
+                }
             }
         }
     }
