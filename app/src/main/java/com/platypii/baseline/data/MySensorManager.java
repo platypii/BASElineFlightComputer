@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -16,13 +17,15 @@ import com.platypii.baseline.data.measurements.MRotation;
 import com.platypii.baseline.data.measurements.MSensor;
 import com.platypii.baseline.util.SyncedList;
 
+/**
+ * Service to manage orientation sensors, and listeners
+ * accelerometer, gravity, gyro, linear accel, magnetic, pressure, humidity, rotation, temp
+ */
 public class MySensorManager {
+    private static final String TAG = "MySensorManager";
 
     // Singleton MySensorManager
-    private static MySensorManager _instance;
-
-    // Android sensor manager (accelerometer, gravity, gyro, linear accel, magnetic, pressure, humidity, rotation, temp)
-    private static SensorManager sensorManager;
+    private static boolean started = false;
 
     // History
     public static final SyncedList<MSensor> accel = new SyncedList<>();
@@ -30,6 +33,35 @@ public class MySensorManager {
     public static final SyncedList<MSensor> rotation = new SyncedList<>();
 
     private static final List<MySensorListener> listeners = new ArrayList<>();
+
+    /**
+     * Initialize orientation sensor services
+     *
+     * @param appContext The Application context
+     */
+    public static synchronized void startAsync(@NonNull final Context appContext) {
+        if(!started) {
+            started = true;
+            Log.i(TAG, "Starting sensor manager");
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    // Get android sensor manager
+                    final SensorManager sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
+                    // Find sensors
+                    final Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                    final Sensor gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+                    final Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+                    // Register listeners
+                    sensorManager.registerListener(androidSensorListener, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                    sensorManager.registerListener(androidSensorListener, gravitySensor, SensorManager.SENSOR_DELAY_FASTEST);
+                    sensorManager.registerListener(androidSensorListener, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                }
+            });
+        } else {
+            Log.e(TAG, "Sensor manager initialized twice");
+        }
+    }
 
     private static final SensorEventListener androidSensorListener = new SensorEventListener() {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
@@ -66,37 +98,9 @@ public class MySensorManager {
         }
     };
 
-    /**
-     * Initializes location services
-     *
-     * @param appContext The Application context
-     */
-    public static synchronized void start(@NonNull Context appContext) {
-        if(_instance == null) {
-            _instance = new MySensorManager();
-
-            sensorManager = (SensorManager)appContext.getSystemService(Context.SENSOR_SERVICE);
-
-            // Sensors
-            final Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            final Sensor gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-            final Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-
-            sensorManager.registerListener(androidSensorListener, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
-            sensorManager.registerListener(androidSensorListener, gravitySensor, SensorManager.SENSOR_DELAY_FASTEST);
-            sensorManager.registerListener(androidSensorListener, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
-
-//          startSensor(Sensor.TYPE_MAGNETIC_FIELD);
-//          startSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-//          startSensor(Sensor.TYPE_GYROSCOPE);
-//          startSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-//          startSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-        }
-    }
-
-    /**
-     * Returns a string representation of all available sensors
-     */
+//    /**
+//     * Returns a string representation of all available sensors
+//     */
 //    public static CharSequence getSensorsString() {
 //        StringBuffer buffer = new StringBuffer();
 //        List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);

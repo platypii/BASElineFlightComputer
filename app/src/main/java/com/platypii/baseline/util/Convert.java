@@ -14,7 +14,7 @@ public class Convert {
     // Convert to standard metric (1000 * FT = 304.8 * M)
     public static final double FT = 0.3048;
     public static final double MPH = 0.44704;
-    public static final double KPH = 0.277778;
+    // public static final double KPH = 0.277778;
 
     // Float equivalents
     public static final float MPHf = 0.44704f;
@@ -33,8 +33,10 @@ public class Convert {
     }
 
     /**
-     * Like distance() but converts altitude to a quickly-readable string
-     * 12.4kft, 486ft, 3.2km
+     * Like distance() but converts altitude to a quickly-readable string.
+     * For numbers greater than 1000, use kilo-units.
+     * Uses default locale. Do NOT use this function to write data to a file.
+     * 12.4 kft, 486 ft, 3.2 km
      */
     public static String altitude(double m) {
         if(Double.isNaN(m)) {
@@ -47,7 +49,7 @@ public class Convert {
             if(localValue < 999.5) {
                 return Math.round(localValue) + " " + localUnits;
             } else {
-                return String.format("%.1f k%s", localValue / 1000.0, localUnits);
+                return String.format(Locale.getDefault(), "%.1f k%s", localValue * 0.001, localUnits);
             }
         }
     }

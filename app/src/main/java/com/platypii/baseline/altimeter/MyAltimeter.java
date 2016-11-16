@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -70,31 +71,35 @@ public class MyAltimeter {
      * Initializes altimeter services, if not already running
      * @param appContext The Application context
      */
-    public static synchronized void start(@NonNull Context appContext) {
-        // Get a new preference manager
-        prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+    public static synchronized void startAsync(@NonNull final Context appContext) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                // Get a new preference manager
+                prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+                if(sensorManager == null) {
+                    // Load ground level from preferences
+                    loadGroundLevel();
 
-        if(sensorManager == null) {
-            // Load ground level from preferences
-            loadGroundLevel();
+                    // Add sensor listener
+                    sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
+                    final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+                    if (sensor != null) {
+                        // Start sensor updates
+                        sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+                    }
 
-            // Add sensor listener
-            sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
-            final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-            if (sensor != null) {
-                // Start sensor updates
-                sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+                    // Start GPS updates
+                    if(Services.location != null) {
+                        Services.location.addListener(locationListener);
+                    } else {
+                        Log.e(TAG, "Location services should be initialized before altimeter");
+                    }
+                } else {
+                    Log.e(TAG, "MyAltimeter already started");
+                }
             }
-
-            // Start GPS updates
-            if(Services.location != null) {
-                Services.location.addListener(locationListener);
-            } else {
-                Log.e(TAG, "Location services should be initialized before altimeter");
-            }
-        } else {
-            Log.w(TAG, "MyAltimeter already started");
-        }
+        });
     }
 
     public static double altitudeAGL() {
@@ -115,11 +120,11 @@ public class MyAltimeter {
             ground_level_initialized = true;
             Log.i(TAG, "Restoring ground level from preferences: " + Convert.distance(ground_level, 2, true));
         }
-
     }
 
     /**
      * Set ground level, based on pressure altitude.
+     * Should not be called until altimeter is initialized.
      * @param groundLevel the pressure altitude at ground level (0m AGL)
      */
     public static void setGroundLevel(double groundLevel) {

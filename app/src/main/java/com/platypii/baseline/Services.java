@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
@@ -40,7 +41,7 @@ public class Services {
     private static int startCount = 0;
     private static boolean initialized = false;
 
-    // How long to wait after the last activity shutdown to restart services
+    // How long to wait after the last activity shutdown to terminate services
     private final static Handler handler = new Handler();
     private static final int shutdownDelay = 10000;
 
@@ -52,7 +53,6 @@ public class Services {
             initialized = true;
             Log.i(TAG, "Starting services");
             final Context appContext = activity.getApplicationContext();
-
             handler.removeCallbacks(stopRunnable);
 
             // Start the various services
@@ -84,13 +84,15 @@ public class Services {
             }
 
             Log.i(TAG, "Initializing sensors");
-            MySensorManager.start(appContext);
+            MySensorManager.startAsync(appContext);
 
             Log.i(TAG, "Initializing altimeter");
-            MyAltimeter.start(appContext);
+            MyAltimeter.startAsync(appContext);
 
             Log.i(TAG, "Checking for text-to-speech data");
             checkTextToSpeech(activity);
+
+            Log.i(TAG, "Services started");
         } else {
             Log.v(TAG, "Services already started");
         }
@@ -102,7 +104,7 @@ public class Services {
     /**
      * Call this function once text-to-speech data is ready
      */
-    public static void onTtsLoaded(Context appContext) {
+    static void onTtsLoaded(Context appContext) {
         // TTS loaded, start the audible
         MyAudible.init(appContext);
     }
@@ -163,25 +165,31 @@ public class Services {
         }
     }
 
-    private static void checkTextToSpeech(Activity activity) {
-        final Intent checkIntent = new Intent();
-        checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+    private static void checkTextToSpeech(final Activity activity) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("TextToSpeech", "Checking for text-to-speech");
+                final Intent checkIntent = new Intent();
+                checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
 
-        // Check if intent is supported
-        final PackageManager pm = activity.getPackageManager();
-        final ResolveInfo resolveInfo = pm.resolveActivity(checkIntent, PackageManager.MATCH_DEFAULT_ONLY);
-        if(resolveInfo != null) {
-            try {
-                activity.startActivityForResult(checkIntent, BaseActivity.MY_TTS_DATA_CHECK_CODE);
-            } catch(ActivityNotFoundException e) {
-                Log.e("TextToSpeech", "Failed to check for TTS package", e);
-                FirebaseCrash.report(e);
+                // Check if intent is supported
+                final PackageManager pm = activity.getPackageManager();
+                final ResolveInfo resolveInfo = pm.resolveActivity(checkIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                if(resolveInfo != null) {
+                    try {
+                        activity.startActivityForResult(checkIntent, BaseActivity.MY_TTS_DATA_CHECK_CODE);
+                    } catch(ActivityNotFoundException e) {
+                        Log.e("TextToSpeech", "Failed to check for TTS package", e);
+                        FirebaseCrash.report(e);
+                    }
+                } else {
+                    Log.e("TextToSpeech", "TTS package not supported");
+                    // Let the user know the audible won't be working
+                    Toast.makeText(activity, "Audible error: text-to-speech not available", Toast.LENGTH_LONG).show();
+                }
             }
-        } else {
-            Log.e("TextToSpeech", "TTS package not supported");
-            // Let the user know the audible won't be working
-            Toast.makeText(activity, "Audible error: text-to-speech not available", Toast.LENGTH_LONG).show();
-        }
+        });
     }
 
 }
