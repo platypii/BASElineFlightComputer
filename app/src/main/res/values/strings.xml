@@ -33,8 +33,6 @@
     <string name="no_tracks">no tracks</string>
     <string name="error_not_uploaded">track not synced</string>
 
-    <string name="server_client_id">1025187389465-71cuhba0pqbuq2im4ldm1kj710q4oefb.apps.googleusercontent.com</string>
-
     <string-array name="audible_modes">
         <item>Horizontal Speed</item>
         <item>Vertical Speed</item>
