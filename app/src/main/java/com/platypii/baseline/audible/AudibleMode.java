@@ -5,14 +5,14 @@ package com.platypii.baseline.audible;
  */
 public abstract class AudibleMode {
 
-    public String id;
-    public String name;
-    private String unitsName;
+    public final String id;
+    public final String name;
+    private final String unitsName;
 
     // Default mode parameters
-    public float defaultMin;
-    public float defaultMax;
-    public int defaultPrecision;
+    public final float defaultMin;
+    public final float defaultMax;
+    public final int defaultPrecision;
 
     /**
      * @param id computer readable name of the mode (total_speed)

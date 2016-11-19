@@ -97,6 +97,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         // Update bluetooth views
         if(BluetoothService.preferenceEnabled) {
             bluetoothPreference.setSummary(BluetoothService.getStatusMessage());
+            bluetoothDevicePreference.setEnabled(true);
         } else {
             bluetoothPreference.setSummary(R.string.pref_bluetooth_disabled);
             bluetoothDevicePreference.setEnabled(false);

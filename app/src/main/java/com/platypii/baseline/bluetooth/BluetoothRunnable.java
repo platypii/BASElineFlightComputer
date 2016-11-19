@@ -23,10 +23,10 @@ class BluetoothRunnable implements Runnable {
 
     private static final int reconnectDelay = 1000; // 1 second
 
-    private BluetoothAdapter bluetoothAdapter;
+    private final BluetoothAdapter bluetoothAdapter;
     private BluetoothSocket bluetoothSocket;
 
-    public BluetoothRunnable(@NonNull BluetoothAdapter bluetoothAdapter) {
+    BluetoothRunnable(@NonNull BluetoothAdapter bluetoothAdapter) {
         this.bluetoothAdapter = bluetoothAdapter;
     }
 

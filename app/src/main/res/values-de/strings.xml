@@ -84,6 +84,7 @@
     <string name="pref_sensor_info">Sensorinformationen</string>
     <string name="pref_sensor_info_description">Anzeige von sensordaten</string>
     <string name="pref_sign_in">Anmelden</string>
+    <string name="pref_sign_in_description">Melden Sie sich mit Ihrem Google-Konto ann</string>
     <string name="pref_sign_out">Abmelden</string>
     <string name="pref_sign_out_description">Angemeldet als</string>
 

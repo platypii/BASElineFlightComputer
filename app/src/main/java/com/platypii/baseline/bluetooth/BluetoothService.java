@@ -34,7 +34,7 @@ public class BluetoothService {
     public static final int BT_CONNECTED = 2;
     public static final int BT_DISCONNECTED = 3;
     public static final int BT_STOPPING = 4;
-    public static final String[] BT_STATES = {"BT_STOPPED", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
+    private static final String[] BT_STATES = {"BT_STOPPED", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
     private static int bluetoothState = BT_STOPPED;
 
     private static BluetoothAdapter bluetoothAdapter;

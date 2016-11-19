@@ -5,7 +5,7 @@ package com.platypii.baseline.events;
  */
 public class BluetoothEvent {
 
-    public int bluetoothState;
+    public final int bluetoothState;
 
     public BluetoothEvent(int bluetoothState) {
         this.bluetoothState = bluetoothState;

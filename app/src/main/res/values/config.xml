@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="server_client_id">1025187389465-71cuhba0pqbuq2im4ldm1kj710q4oefb.apps.googleusercontent.com</string>
+    <string name="server_client_id" translatable="false">1025187389465-71cuhba0pqbuq2im4ldm1kj710q4oefb.apps.googleusercontent.com</string>
 
-    <string name="google_maps_key" templateMergeStrategy="preserve">AIzaSyASAhPQ6gptncF-aITU6-hAdBqMX4pMlr0</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyASAhPQ6gptncF-aITU6-hAdBqMX4pMlr0</string>
 
 </resources>

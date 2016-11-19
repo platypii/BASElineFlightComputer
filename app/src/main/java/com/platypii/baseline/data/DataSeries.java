@@ -1,11 +1,14 @@
 package com.platypii.baseline.data;
 
+import android.util.Log;
+import com.platypii.baseline.util.Util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
 public class DataSeries implements Iterable<DataSeries.Point> {
+    private static final String TAG = "DataSeries";
 
     private final ArrayList<Point> points = new ArrayList<>();
     private int n = 0;
@@ -24,8 +27,9 @@ public class DataSeries implements Iterable<DataSeries.Point> {
     }
 
     public void addPoint(double x, double y) {
-        assert !Double.isNaN(x) && !Double.isInfinite(x);
-        assert !Double.isNaN(y) && !Double.isInfinite(y);
+        if(!Util.isReal(x) || !Util.isReal(y)) {
+            Log.w(TAG, "Invalid point added to data series " + x + " " + y);
+        }
         if(n < points.size()) {
             Point point = points.get(n);
             point.x = x;

@@ -29,7 +29,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     private final static float font_size = 16;
 
     // Padding
-    IntBounds padding = new IntBounds(0,0,0,0);
+    final IntBounds padding = new IntBounds(0,0,0,0);
 
     double x_major_units = 1;
     double y_major_units = 1;

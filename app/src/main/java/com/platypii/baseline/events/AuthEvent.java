@@ -9,7 +9,7 @@ public class AuthEvent {
     public static final AuthEvent SIGNING_IN = new AuthEvent("SigningIn");
     public static final AuthEvent SIGNED_IN = new AuthEvent("SignedIn");
 
-    private String state;
+    private final String state;
     private AuthEvent(String state) {
         this.state = state;
     }

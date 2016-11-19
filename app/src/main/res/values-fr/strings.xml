@@ -85,6 +85,7 @@
     <string name="signin_prompt">Connectez-vous avec votre compte Google pour synchroniser les pistes avec https://base-line.ws/</string>
 
     <string name="pref_sign_in">Connecter</string>
+    <string name="pref_sign_in_description">Connectez-vous avec votre compte Google</string>
     <string name="pref_sign_out">Déconnecter</string>
     <string name="pref_sign_out_description">Se connecter en tant que</string>
 

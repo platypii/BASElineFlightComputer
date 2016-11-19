@@ -146,17 +146,17 @@ public class TrackAdapter extends BaseAdapter {
     }
 
     // Create two types of list item so we can have headers
-    public interface ListItem {}
+    interface ListItem {}
 
     private static class TrackHeader implements ListItem {
-        public String name;
+        public final String name;
         TrackHeader(String name) {
             this.name = name;
         }
     }
 
     private static class TrackItem implements ListItem {
-        public Jump track;
+        public final Jump track;
         TrackItem(Jump track) {
             this.track = track;
         }

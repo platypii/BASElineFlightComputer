@@ -135,7 +135,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     }
 
     // Always keep square aspect ratio
-    private Bounds bounds = new Bounds();
+    private final Bounds bounds = new Bounds();
     @Override
     public Bounds getBounds(Bounds dataBounds) {
 //        final long currentTime = System.currentTimeMillis();
