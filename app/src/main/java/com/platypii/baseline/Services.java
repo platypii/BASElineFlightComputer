@@ -166,9 +166,9 @@ public class Services {
     }
 
     private static void checkTextToSpeech(final Activity activity) {
-        AsyncTask.execute(new Runnable() {
+        new AsyncTask<Void,Void,Boolean>() {
             @Override
-            public void run() {
+            protected Boolean doInBackground(Void... voids) {
                 Log.i("TextToSpeech", "Checking for text-to-speech");
                 final Intent checkIntent = new Intent();
                 checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -179,17 +179,25 @@ public class Services {
                 if(resolveInfo != null) {
                     try {
                         activity.startActivityForResult(checkIntent, BaseActivity.MY_TTS_DATA_CHECK_CODE);
+                        return true;
                     } catch(ActivityNotFoundException e) {
                         Log.e("TextToSpeech", "Failed to check for TTS package", e);
                         FirebaseCrash.report(e);
+                        return false;
                     }
                 } else {
                     Log.e("TextToSpeech", "TTS package not supported");
-                    // Let the user know the audible won't be working
-                    Toast.makeText(activity, "Audible error: text-to-speech not available", Toast.LENGTH_LONG).show();
+                    return false;
                 }
             }
-        });
+            @Override
+            protected void onPostExecute(Boolean success) {
+                if(!success) {
+                    // Let the user know the audible won't be working
+                    Toast.makeText(activity, R.string.error_audible_not_available, Toast.LENGTH_LONG).show();
+                }
+            }
+        }.execute();
     }
 
 }

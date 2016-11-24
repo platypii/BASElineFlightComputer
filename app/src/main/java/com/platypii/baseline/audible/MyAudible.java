@@ -95,6 +95,8 @@ public class MyAudible {
         }
         if(speech != null) {
             speech.speakNow(text);
+        } else {
+            Log.e(TAG, "speakNow called but speech is null");
         }
     }
 

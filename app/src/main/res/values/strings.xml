@@ -49,6 +49,8 @@
     <!-- Audible settings -->
     <string name="title_activity_audible_settings">Audible Settings</string>
 
+    <string name="error_audible_not_available">Audible error: text-to-speech not available</string>
+
     <string name="pref_audible_enabled">Enable audible</string>
     <string name="pref_audible_enabled_description">Enable audible feedback</string>
 
