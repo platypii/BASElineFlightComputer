@@ -192,26 +192,19 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
                 // Log.i(NMEA_TAG, "["+time+"] " + Convert.latlong(latitude, longitude) + ", groundSpeed = " + Convert.speed(groundSpeed) + ", bearing = " + Convert.bearing2(bearing));
 
-                if(Util.isReal(latitude) && Util.isReal(longitude)) {
-                    final double latitude_abs = Math.abs(latitude);
-                    final double longitude_abs = Math.abs(longitude);
-                    if(latitude_abs < 0.1 && longitude_abs < 0.1) {
-                        // If lat,lon == 0,0 assume bad data (there's no BASE off the coast of Africa)
-                        Log.e(NMEA_TAG, "RMC unlikely lat/long: " + nmea);
-                        FirebaseCrash.report(new NMEAException("RMC unlikely lat/long: " + nmea));
-                    } else if(latitude_abs > 180.0 || longitude_abs > 180.0) {
-                        // Lat/lon out of bounds. Likely parsing error.
-                        Log.e(NMEA_TAG, "RMC lat/long out of bounds: " + nmea);
-                        FirebaseCrash.report(new NMEAException("RMC lat/long out of bounds: " + nmea));
+                // Sanity checks
+                final int locationError = LocationCheck.validate(latitude, longitude);
+                if(locationError != LocationCheck.INVALID_NAN) {
+                    if (locationError == LocationCheck.INVALID_ZERO || locationError == LocationCheck.INVALID_RANGE) {
+                        final String locationErrorMessage = LocationCheck.message[locationError] + ": " + latitude + "," + longitude;
+                        Log.e(NMEA_TAG, locationErrorMessage);
+                        FirebaseCrash.report(new NMEAException(locationErrorMessage));
                     } else {
-                        // If lat or lon == 0, give a warning, but still update location
-                        if(latitude_abs < 0.1) {
-                            Log.w(NMEA_TAG, "RMC unlikely latitude: " + nmea);
-                            FirebaseCrash.report(new NMEAException("RMC unlikely latitude: " + nmea));
-                        } else if(longitude_abs < 0.1 && latitude < 4) {
-                            // There is no landmass south of 4 degrees latitude
-                            Log.w(NMEA_TAG, "RMC unlikely longitude: " + nmea);
-                            FirebaseCrash.report(new NMEAException("RMC unlikely longitude: " + nmea));
+                        if (locationError == LocationCheck.UNLIKELY_LAT || locationError == LocationCheck.UNLIKELY_LON) {
+                            // Unlikely location, but still update
+                            final String locationErrorMessage = LocationCheck.message[locationError] + ": " + latitude + "," + longitude;
+                            Log.e(NMEA_TAG, locationErrorMessage);
+                            FirebaseCrash.report(new NMEAException(locationErrorMessage));
                         }
                         // Update the official location!
                         updateLocation();

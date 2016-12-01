@@ -4,6 +4,8 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.location.LocationCheck;
+import com.platypii.baseline.location.NMEAException;
 import com.platypii.baseline.util.Util;
 import java.util.Locale;
 
@@ -37,17 +39,11 @@ public class MLocation extends Measurement {
         this.climb = MyAltimeter.climb;
 
         // Sanity checks
-        if(!Util.isReal(latitude) || !Util.isReal(longitude)) {
-            Log.e(TAG, "Invalid lat/long: " + this);
-            FirebaseCrash.report(new Exception("Invalid lat/long: " + this));
-        }
-        if(Math.abs(latitude) < 0.1 || Math.abs(longitude) < 0.1) {
-            Log.e(TAG, "Unlikely lat/long: " + latitude + ", " + longitude);
-            FirebaseCrash.report(new Exception("Unlikely lat/long: " + this));
-        }
-        if(Double.isInfinite(vN) || Double.isInfinite(vE)) {
-            Log.e(TAG, "Infinite velocity: vN = " + vN + ", vE = " + vE);
-            FirebaseCrash.report(new Exception("Infinite velocity: vN = " + vN + ", vE = " + vE));
+        final int locationError = LocationCheck.validate(latitude, longitude);
+        if(locationError != LocationCheck.VALID) {
+            final String locationErrorMessage = LocationCheck.message[locationError] + ": " + latitude + "," + longitude;
+            Log.e(TAG, locationErrorMessage);
+            FirebaseCrash.report(new NMEAException(locationErrorMessage));
         }
 
         // Store location data
@@ -184,5 +180,4 @@ public class MLocation extends Measurement {
     private static double mod360(double degrees) {
         return ((degrees + 540) % 360) - 180;
     }
-
 }
