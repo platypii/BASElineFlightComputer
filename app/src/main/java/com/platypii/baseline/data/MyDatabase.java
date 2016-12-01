@@ -105,7 +105,7 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
         // Start sensor updates
         EventBus.getDefault().register(this);
         Services.location.addListener(this);
-        MySensorManager.addListener(this);
+        Services.sensors.addListener(this);
 
         Log.i("DB", "Logging to " + logFile);
     }
@@ -117,7 +117,7 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
             // Stop sensor updates
             EventBus.getDefault().unregister(this);
             Services.location.removeListener(this);
-            MySensorManager.removeListener(this);
+            Services.sensors.removeListener(this);
 
             // Close file writer
             try {

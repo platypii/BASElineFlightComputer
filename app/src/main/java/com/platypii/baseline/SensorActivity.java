@@ -97,11 +97,11 @@ public class SensorActivity extends Activity implements MyLocationListener {
         // TextView sensorsLabel = (TextView)findViewById(R.id.sensorsLabel);
         // sensorsLabel.setText("Sensors: \n" + MySensorManager.getSensorsString());
         
-        if(MySensorManager.gravity != null) {
-            addPlot("Gravity", MySensorManager.gravity);
+        if(Services.sensors.gravity != null) {
+            addPlot("Gravity", Services.sensors.gravity);
         }
-        if(MySensorManager.rotation != null) {
-            addPlot("Rotation", MySensorManager.rotation);
+        if(Services.sensors.rotation != null) {
+            addPlot("Rotation", Services.sensors.rotation);
         }
 
         // addPlot("Magnetic", MySensorManager.getHistory(Sensor.TYPE_MAGNETIC_FIELD));
@@ -113,9 +113,9 @@ public class SensorActivity extends Activity implements MyLocationListener {
         // addPlot("Linear Position", MySensorManager.linearAccelHistory, 2, 90, 120);
 
         // Set up sensor logging
-        MySensorManager.accel.setMaxSize(300);
-        MySensorManager.gravity.setMaxSize(300);
-        MySensorManager.rotation.setMaxSize(300);
+        Services.sensors.accel.setMaxSize(300);
+        Services.sensors.gravity.setMaxSize(300);
+        Services.sensors.rotation.setMaxSize(300);
     }
 
     @Override
@@ -234,7 +234,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        MySensorManager.accel.setMaxSize(0);
+        Services.sensors.accel.setMaxSize(0);
     }
 
     // Listeners

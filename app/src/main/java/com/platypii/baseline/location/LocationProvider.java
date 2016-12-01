@@ -191,7 +191,7 @@ abstract class LocationProvider {
     }
 
     public void stop() {
-        if(listeners.size() > 0) {
+        if(!listeners.isEmpty()) {
             Log.e(providerName(), "Stopping location service, but listeners are still listening");
         }
     }

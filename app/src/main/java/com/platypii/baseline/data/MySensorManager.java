@@ -21,89 +21,81 @@ import com.platypii.baseline.util.SyncedList;
  * Service to manage orientation sensors, and listeners
  * accelerometer, gravity, gyro, linear accel, magnetic, pressure, humidity, rotation, temp
  */
-public class MySensorManager {
+public class MySensorManager implements SensorEventListener {
     private static final String TAG = "MySensorManager";
 
-    private static SensorManager sensorManager;
-
-    // Note: "started" does not mean "ready"
-    private static boolean started = false;
+    private SensorManager sensorManager;
 
     // History
-    public static final SyncedList<MSensor> accel = new SyncedList<>();
-    public static final SyncedList<MSensor> gravity = new SyncedList<>();
-    public static final SyncedList<MSensor> rotation = new SyncedList<>();
+    public final SyncedList<MSensor> accel = new SyncedList<>();
+    public final SyncedList<MSensor> gravity = new SyncedList<>();
+    public final SyncedList<MSensor> rotation = new SyncedList<>();
 
-    private static final List<MySensorListener> listeners = new ArrayList<>();
+    private final List<MySensorListener> listeners = new ArrayList<>();
 
     /**
      * Initialize orientation sensor services
      *
      * @param appContext The Application context
      */
-    public static synchronized void startAsync(@NonNull final Context appContext) {
-        if(!started) {
-            started = true;
-            Log.i(TAG, "Starting sensor manager");
-            AsyncTask.execute(new Runnable() {
-                @Override
-                public void run() {
-                    // Get android sensor manager
-                    sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
-                    // Find sensors
-                    final Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                    final Sensor gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-                    final Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-                    // Register listeners
-                    sensorManager.registerListener(androidSensorListener, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
-                    sensorManager.registerListener(androidSensorListener, gravitySensor, SensorManager.SENSOR_DELAY_FASTEST);
-                    sensorManager.registerListener(androidSensorListener, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
-                }
-            });
-        } else {
-            Log.e(TAG, "Sensor manager initialized twice");
-        }
+    public MySensorManager(@NonNull final Context appContext) {
+        Log.i(TAG, "Starting sensor manager");
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                // Get android sensor manager
+                sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
+                // Find sensors
+                final Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                final Sensor gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+                final Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+                // Register listeners
+                sensorManager.registerListener(MySensorManager.this, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                sensorManager.registerListener(MySensorManager.this, gravitySensor, SensorManager.SENSOR_DELAY_FASTEST);
+                sensorManager.registerListener(MySensorManager.this, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
+            }
+        });
     }
 
-    private static final SensorEventListener androidSensorListener = new SensorEventListener() {
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-        public void onSensorChanged(@NonNull SensorEvent event) {
-            final long t = event.timestamp; // nano
-            final float x = event.values[0];
-            final float y = event.values[1];
-            final float z = event.values[2];
-            MSensor measurement = null;
-            // Update sensor histories
-            switch(event.sensor.getType()) {
-                case Sensor.TYPE_ACCELEROMETER:
-                    measurement = new MAccel(t, (float)Math.sqrt(x*x + y*y + z*z));
-                    accel.append(measurement);
-                    break;
-                case Sensor.TYPE_GRAVITY:
-                    measurement = new MRotation(t,x,y,z);
-                    gravity.append(measurement);
-                    break;
-                case Sensor.TYPE_ROTATION_VECTOR:
-                case Sensor.TYPE_MAGNETIC_FIELD:
-                    measurement = new MGravity(t,x,y,z);
-                    rotation.append(measurement);
-                    break;
-                default:
-                    Log.e("MySensorManager", "Received unexpected sensor event");
-            }
-            // Notify listeners
-            if(measurement != null) {
-                for(MySensorListener listener : listeners) {
-                    listener.onSensorChanged(measurement);
-                }
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    @Override
+    public void onSensorChanged(@NonNull SensorEvent event) {
+        final long t = event.timestamp; // nano
+        final float x = event.values[0];
+        final float y = event.values[1];
+        final float z = event.values[2];
+        MSensor measurement = null;
+        // Update sensor histories
+        switch(event.sensor.getType()) {
+            case Sensor.TYPE_ACCELEROMETER:
+                measurement = new MAccel(t, (float)Math.sqrt(x*x + y*y + z*z));
+                accel.append(measurement);
+                break;
+            case Sensor.TYPE_GRAVITY:
+                measurement = new MRotation(t,x,y,z);
+                gravity.append(measurement);
+                break;
+            case Sensor.TYPE_ROTATION_VECTOR:
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                measurement = new MGravity(t,x,y,z);
+                rotation.append(measurement);
+                break;
+            default:
+                Log.e("MySensorManager", "Received unexpected sensor event");
+        }
+        // Notify listeners
+        if(measurement != null) {
+            for(MySensorListener listener : listeners) {
+                listener.onSensorChanged(measurement);
             }
         }
-    };
+    }
 
 //    /**
 //     * Returns a string representation of all available sensors
 //     */
-//    public static CharSequence getSensorsString() {
+//    public CharSequence getSensorsString() {
 //        final StringBuffer buffer = new StringBuffer();
 //        final List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
 //        for(Sensor sensor : sensors) {
@@ -115,16 +107,18 @@ public class MySensorManager {
 //        return buffer;
 //    }
 
-    public static void stop() {
-        sensorManager.unregisterListener(androidSensorListener);
+    public void stop() {
+        sensorManager.unregisterListener(this);
         sensorManager = null;
-        started = false;
+        if(!listeners.isEmpty()) {
+            Log.e(TAG, "Stopping sensor service, but listeners are still listening");
+        }
     }
 
     /**
      * Add a new listener to be notified of location updates
      */
-    static void addListener(MySensorListener listener) {
+    void addListener(MySensorListener listener) {
         synchronized(listeners) {
             listeners.add(listener);
         }
@@ -133,7 +127,7 @@ public class MySensorManager {
     /**
      * Remove a listener from location updates
      */
-    static void removeListener(MySensorListener listener) {
+    void removeListener(MySensorListener listener) {
         synchronized(listeners) {
             listeners.remove(listener);
         }

@@ -46,6 +46,7 @@ public class Services {
     private static final int shutdownDelay = 10000;
 
     public static LocationService location;
+    public static MySensorManager sensors;
 
     public static void start(@NonNull Activity activity) {
         startCount++;
@@ -84,7 +85,7 @@ public class Services {
             }
 
             Log.i(TAG, "Initializing sensors");
-            MySensorManager.startAsync(appContext);
+            sensors = new MySensorManager(appContext);
 
             Log.i(TAG, "Initializing altimeter");
             MyAltimeter.startAsync(appContext);
@@ -128,7 +129,8 @@ public class Services {
                     // Stop services
                     MyAudible.terminate();
                     MyAltimeter.stop();
-                    MySensorManager.stop();
+                    sensors.stop();
+                    sensors = null;
                     location.stop();
                     location = null;
                     BluetoothService.stop();
