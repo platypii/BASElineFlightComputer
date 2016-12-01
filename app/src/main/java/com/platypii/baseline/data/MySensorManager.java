@@ -24,7 +24,9 @@ import com.platypii.baseline.util.SyncedList;
 public class MySensorManager {
     private static final String TAG = "MySensorManager";
 
-    // Singleton MySensorManager
+    private static SensorManager sensorManager;
+
+    // Note: "started" does not mean "ready"
     private static boolean started = false;
 
     // History
@@ -47,7 +49,7 @@ public class MySensorManager {
                 @Override
                 public void run() {
                     // Get android sensor manager
-                    final SensorManager sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
+                    sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
                     // Find sensors
                     final Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
                     final Sensor gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
@@ -102,8 +104,8 @@ public class MySensorManager {
 //     * Returns a string representation of all available sensors
 //     */
 //    public static CharSequence getSensorsString() {
-//        StringBuffer buffer = new StringBuffer();
-//        List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
+//        final StringBuffer buffer = new StringBuffer();
+//        final List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
 //        for(Sensor sensor : sensors) {
 //            buffer.append(sensor.getVendor());
 //            buffer.append(" - ");
@@ -112,6 +114,12 @@ public class MySensorManager {
 //        }
 //        return buffer;
 //    }
+
+    public static void stop() {
+        sensorManager.unregisterListener(androidSensorListener);
+        sensorManager = null;
+        started = false;
+    }
 
     /**
      * Add a new listener to be notified of location updates

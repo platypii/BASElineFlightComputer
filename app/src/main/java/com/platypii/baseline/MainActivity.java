@@ -298,7 +298,7 @@ public class MainActivity extends BaseActivity {
         }
 
         // Barometer status
-        if(Double.isNaN(MyAltimeter.altitude)) {
+        if(MyAltimeter.n == 0) {
             status += " (no barometer)";
         }
 

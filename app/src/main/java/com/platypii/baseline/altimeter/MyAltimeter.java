@@ -65,7 +65,7 @@ public class MyAltimeter {
     // Model error should approximate the sensor variance, even when in motion
     public static final Stat model_error = new Stat();
     public static float refreshRate = 0; // Moving average of refresh rate in Hz
-    private static long n = 0; // number of samples
+    public static long n = 0; // number of samples
 
     /**
      * Initializes altimeter services, if not already running
@@ -255,6 +255,7 @@ public class MyAltimeter {
                 lastFixMillis = loc.millis;
                 // Update the official altitude
                 altitude = loc.altitude_gps;
+                // TODO: Use kalman filter to compute climb rate
                 if(Double.isNaN(prevAltitude)) {
                     climb = 0;
                 } else {

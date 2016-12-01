@@ -128,6 +128,7 @@ public class Services {
                     // Stop services
                     MyAudible.terminate();
                     MyAltimeter.stop();
+                    MySensorManager.stop();
                     location.stop();
                     location = null;
                     BluetoothService.stop();
