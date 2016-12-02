@@ -14,16 +14,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Class to manage a bluetooth GPS receiver
+ * Class to manage a bluetooth GPS receiver.
+ * Note: instantiating this class will not automatically start bluetooth. Call startAsync to connect.
  */
 public class BluetoothService {
     private static final String TAG = "Bluetooth";
 
     private static final int ENABLE_BLUETOOTH_CODE = 13;
 
-    static final List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
-
-    // Android stored references for bluetooth
+    // Android shared preferences for bluetooth
     public static boolean preferenceEnabled = false;
     public static String preferenceDeviceId = null;
     public static String preferenceDeviceName = null;
@@ -35,25 +34,26 @@ public class BluetoothService {
     public static final int BT_DISCONNECTED = 3;
     public static final int BT_STOPPING = 4;
     private static final String[] BT_STATES = {"BT_STOPPED", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
-    private static int bluetoothState = BT_STOPPED;
+    private int bluetoothState = BT_STOPPED;
 
-    private static BluetoothAdapter bluetoothAdapter;
-    private static BluetoothRunnable bluetoothRunnable;
-    private static Thread bluetoothThread;
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothRunnable bluetoothRunnable;
+    private Thread bluetoothThread;
 
-    public static void startAsync(final Activity activity) {
+    final List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
+
+    public void startAsync(final Activity activity) {
         if (bluetoothState != BT_STOPPED) {
             Log.e(TAG, "Bluetooth already started: " + BT_STATES[bluetoothState]);
             FirebaseCrash.report(new Exception("Bluetooth already started: " + BT_STATES[bluetoothState]));
         } else {
-            BluetoothService.setState(BluetoothService.BT_CONNECTING);
-            // Start bluetooth and
+            setState(BluetoothService.BT_CONNECTING);
             // Start bluetooth thread
             if(bluetoothRunnable != null) {
                 Log.e(TAG, "Bluetooth listener thread already started");
             }
             bluetoothAdapter = getAdapter(activity);
-            bluetoothRunnable = new BluetoothRunnable(bluetoothAdapter);
+            bluetoothRunnable = new BluetoothRunnable(this, bluetoothAdapter);
             bluetoothThread = new Thread(bluetoothRunnable);
             bluetoothThread.start();
         }
@@ -63,7 +63,7 @@ public class BluetoothService {
      * Start the bluetooth service, and connect to gps receiver if selected
      * @return true iff bluetooth service started successfully
      */
-    private static BluetoothAdapter getAdapter(Activity activity) {
+    private BluetoothAdapter getAdapter(Activity activity) {
         // TODO: Make sure this doesn't take too long
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter == null) {
@@ -78,7 +78,7 @@ public class BluetoothService {
         return bluetoothAdapter;
     }
 
-    static Set<BluetoothDevice> getDevices() {
+    Set<BluetoothDevice> getDevices() {
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter != null) {
             return bluetoothAdapter.getBondedDevices();
@@ -88,11 +88,11 @@ public class BluetoothService {
         }
     }
 
-    public static int getState() {
+    public int getState() {
         return bluetoothState;
     }
 
-    static void setState(int state) {
+    void setState(int state) {
         if(bluetoothState == BT_STOPPING && state == BT_CONNECTING) {
             Log.e(TAG, "Invalid bluetooth state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         }
@@ -105,7 +105,7 @@ public class BluetoothService {
      * Return a human-readable string for the bluetooth state
      * TODO: use string resources
      */
-    public static String getStatusMessage() {
+    public String getStatusMessage() {
         if(isHardwareEnabled()) {
             switch(bluetoothState) {
                 case BT_STOPPED:
@@ -126,14 +126,14 @@ public class BluetoothService {
         }
     }
 
-    public static boolean isHardwareEnabled() {
+    private boolean isHardwareEnabled() {
         return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
     }
 
-    public static synchronized void stop() {
+    public synchronized void stop() {
         if(bluetoothState != BT_STOPPED) {
             Log.i(TAG, "Stopping bluetooth service");
-            BluetoothService.setState(BluetoothService.BT_STOPPING);
+            setState(BluetoothService.BT_STOPPING);
             // Stop thread
             if (bluetoothRunnable != null) {
                 bluetoothRunnable.stop();
@@ -153,19 +153,19 @@ public class BluetoothService {
         }
     }
 
-    public static synchronized void restart(Activity activity) {
+    public synchronized void restart(Activity activity) {
         Log.i(TAG, "Restarting bluetooth service");
-        BluetoothService.stop();
+        stop();
         if(bluetoothState != BT_STOPPED) {
             Log.e(TAG, "Error restarting bluetooth: not stopped: " + BT_STATES[bluetoothState]);
         }
-        BluetoothService.startAsync(activity);
+        startAsync(activity);
     }
 
-    public static void addNmeaListener(GpsStatus.NmeaListener nmeaListener) {
+    public void addNmeaListener(GpsStatus.NmeaListener nmeaListener) {
         listeners.add(nmeaListener);
     }
-    public static void removeNmeaListener(GpsStatus.NmeaListener nmeaListener) {
+    public void removeNmeaListener(GpsStatus.NmeaListener nmeaListener) {
         listeners.remove(nmeaListener);
     }
 

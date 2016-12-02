@@ -45,8 +45,10 @@ public class Services {
     private final static Handler handler = new Handler();
     private static final int shutdownDelay = 10000;
 
+    // Services
     public static LocationService location;
     public static MySensorManager sensors;
+    public static BluetoothService bluetooth;
 
     public static void start(@NonNull Activity activity) {
         startCount++;
@@ -65,8 +67,11 @@ public class Services {
             KVStore.start(appContext);
 
             Log.i(TAG, "Starting bluetooth service");
+            if(bluetooth == null) {
+                bluetooth = new BluetoothService();
+            }
             if(BluetoothService.preferenceEnabled) {
-                BluetoothService.startAsync(activity);
+                bluetooth.startAsync(activity);
             }
 
             Log.i(TAG, "Starting location service");
@@ -84,10 +89,10 @@ public class Services {
                 ActivityCompat.requestPermissions(activity, permissions, BaseActivity.MY_PERMISSIONS_REQUEST_LOCATION);
             }
 
-            Log.i(TAG, "Initializing sensors");
+            Log.i(TAG, "Starting sensors");
             sensors = new MySensorManager(appContext);
 
-            Log.i(TAG, "Initializing altimeter");
+            Log.i(TAG, "Starting altimeter");
             MyAltimeter.startAsync(appContext);
 
             Log.i(TAG, "Checking for text-to-speech data");
@@ -133,7 +138,8 @@ public class Services {
                     sensors = null;
                     location.stop();
                     location = null;
-                    BluetoothService.stop();
+                    bluetooth.stop();
+                    bluetooth = null;
                     KVStore.stop();
                     initialized = false;
                 } else {

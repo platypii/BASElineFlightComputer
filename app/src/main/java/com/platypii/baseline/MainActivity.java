@@ -256,10 +256,10 @@ public class MainActivity extends BaseActivity {
         int statusIcon;
 
         // GPS signal status
-        if(BluetoothService.preferenceEnabled && BluetoothService.getState() != BluetoothService.BT_CONNECTED) {
+        if(BluetoothService.preferenceEnabled && Services.bluetooth.getState() != BluetoothService.BT_CONNECTED) {
             // Bluetooth enabled, but not connected
             statusIcon = R.drawable.warning;
-            switch(BluetoothService.getState()) {
+            switch(Services.bluetooth.getState()) {
                 case BluetoothService.BT_CONNECTING:
                     status = "GPS bluetooth connecting...";
                     break;
@@ -268,7 +268,7 @@ public class MainActivity extends BaseActivity {
                     break;
                 default:
                     status = "GPS bluetooth not connected";
-                    Log.e(TAG, "Bluetooth inconsistent state: preference enabled, state = " + BluetoothService.getState());
+                    Log.e(TAG, "Bluetooth inconsistent state: preference enabled, state = " + Services.bluetooth.getState());
             }
         } else {
             // Internal GPS, or bluetooth connected:
@@ -287,7 +287,7 @@ public class MainActivity extends BaseActivity {
                 } else if (lastFixDuration > 2000) {
                     status = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
                     statusIcon = R.drawable.status_yellow;
-                } else if (BluetoothService.preferenceEnabled && BluetoothService.getState() == BluetoothService.BT_CONNECTED) {
+                } else if (BluetoothService.preferenceEnabled && Services.bluetooth.getState() == BluetoothService.BT_CONNECTED) {
                     status = String.format(Locale.getDefault(), "GPS bluetooth %.2fHz", Services.location.refreshRate);
                     statusIcon = R.drawable.status_blue;
                 } else {

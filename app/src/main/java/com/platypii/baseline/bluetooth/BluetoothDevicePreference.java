@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import com.platypii.baseline.Services;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +38,7 @@ public class BluetoothDevicePreference extends ListPreference {
     }
 
     private void updateEntries() {
-        final Set<BluetoothDevice> devices = BluetoothService.getDevices();
+        final Set<BluetoothDevice> devices = Services.bluetooth.getDevices();
         if(devices != null) {
             final CharSequence[] entries = new CharSequence[devices.size()];
             final CharSequence[] entryValues = new CharSequence[devices.size()];

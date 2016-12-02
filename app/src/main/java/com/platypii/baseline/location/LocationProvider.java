@@ -147,7 +147,7 @@ abstract class LocationProvider {
     }
 
     /**
-     * Helper method for getting latest speed
+     * Helper method for getting latest speed in m/s
      * If GPS is not giving us speed natively, fallback to computing from v = dist/time.
      * This should be used for display of the latest groundspeed, but not for logging.
      */
@@ -171,7 +171,7 @@ abstract class LocationProvider {
     }
 
     /**
-     * Helper method for getting latest speed
+     * Helper method for getting latest bearing in degrees
      * If GPS is not giving us speed natively, fallback to computing from v = dist/time.
      * This should be used for display of the latest groundspeed, but not for logging.
      */

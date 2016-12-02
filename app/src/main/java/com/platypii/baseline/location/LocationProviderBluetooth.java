@@ -3,6 +3,7 @@ package com.platypii.baseline.location;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothService;
 
 class LocationProviderBluetooth extends LocationProviderNMEA {
@@ -18,12 +19,12 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
     @Override
     public synchronized void start(@NonNull Context context) throws SecurityException {
         // Start NMEA updates
-        BluetoothService.addNmeaListener(this);
+        Services.bluetooth.addNmeaListener(this);
     }
 
     @Override
     public void stop() {
         super.stop();
-        BluetoothService.removeNmeaListener(this);
+        Services.bluetooth.removeNmeaListener(this);
     }
 }

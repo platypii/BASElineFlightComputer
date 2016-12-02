@@ -65,17 +65,17 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 BluetoothService.preferenceEnabled = (Boolean) value;
                 if(BluetoothService.preferenceEnabled) {
                     firebaseAnalytics.logEvent("bluetooth_enabled", null);
-                    BluetoothService.startAsync(getActivity());
+                    Services.bluetooth.startAsync(getActivity());
                 } else {
                     firebaseAnalytics.logEvent("bluetooth_disabled", null);
-                    BluetoothService.stop();
+                    Services.bluetooth.stop();
                 }
                 break;
             case "bluetooth_device_id":
                 BluetoothService.preferenceDeviceId = (String) value;
                 BluetoothService.preferenceDeviceName = bluetoothDevicePreference.getName(BluetoothService.preferenceDeviceId);
                 Log.i(TAG, "Bluetooth device selected: " + BluetoothService.preferenceDeviceId);
-                BluetoothService.restart(getActivity());
+                Services.bluetooth.restart(getActivity());
                 // Save name preference
                 final SharedPreferences prefs2 = preference.getSharedPreferences();
                 final SharedPreferences.Editor edit2 = prefs2.edit();
@@ -96,7 +96,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         }
         // Update bluetooth views
         if(BluetoothService.preferenceEnabled) {
-            bluetoothPreference.setSummary(BluetoothService.getStatusMessage());
+            bluetoothPreference.setSummary(Services.bluetooth.getStatusMessage());
             bluetoothDevicePreference.setEnabled(true);
         } else {
             bluetoothPreference.setSummary(R.string.pref_bluetooth_disabled);
