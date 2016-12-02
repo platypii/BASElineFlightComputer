@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.platypii.baseline.data.measurements.MLocation;
+import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Util;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.platypii.baseline.data.measurements;
+package com.platypii.baseline.measurements;
 
 /**
  * A generic measurement (alti, gps, gyro, etc)

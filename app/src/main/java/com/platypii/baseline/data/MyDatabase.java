@@ -6,9 +6,9 @@ import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.data.measurements.MAltitude;
-import com.platypii.baseline.data.measurements.MLocation;
-import com.platypii.baseline.data.measurements.Measurement;
+import com.platypii.baseline.measurements.MAltitude;
+import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.measurements.Measurement;
 import com.platypii.baseline.location.MyLocationListener;
 
 import org.greenrobot.eventbus.EventBus;

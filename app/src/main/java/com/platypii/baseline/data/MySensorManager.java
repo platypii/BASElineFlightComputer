@@ -11,10 +11,10 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.platypii.baseline.data.measurements.MAccel;
-import com.platypii.baseline.data.measurements.MGravity;
-import com.platypii.baseline.data.measurements.MRotation;
-import com.platypii.baseline.data.measurements.MSensor;
+import com.platypii.baseline.measurements.MAccel;
+import com.platypii.baseline.measurements.MGravity;
+import com.platypii.baseline.measurements.MRotation;
+import com.platypii.baseline.measurements.MSensor;
 import com.platypii.baseline.util.SyncedList;
 
 /**

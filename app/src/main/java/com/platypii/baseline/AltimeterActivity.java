@@ -12,7 +12,7 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.platypii.baseline.altimeter.MyAltimeter;
-import com.platypii.baseline.data.measurements.MAltitude;
+import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
 import org.greenrobot.eventbus.EventBus;

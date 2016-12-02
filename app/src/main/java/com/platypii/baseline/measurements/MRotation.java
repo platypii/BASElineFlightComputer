@@ -1,32 +1,32 @@
-package com.platypii.baseline.data.measurements;
+package com.platypii.baseline.measurements;
 
 import java.util.Locale;
 
 /** Copies an android SensorEvent */
-public class MGravity extends MSensor {
+public class MRotation extends MSensor {
 
-    public MGravity(long nano, float x, float y, float z) {
+    public MRotation(long nano, float x, float y, float z) {
         this.nano = nano;
         // this.accuracy = event.accuracy;
-        this.gX = x;
-        this.gY = y;
-        this.gZ = z;
+        this.rotX = x;
+        this.rotY = y;
+        this.rotZ = z;
     }
 
     public float x() {
-        return gX;
+        return rotX;
     }
     public float y() {
-        return gY;
+        return rotY;
     }
     public float z() {
-        return gZ;
+        return rotZ;
     }
 
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return String.format(Locale.US, ",%d,grv,,,,,,,,%f,%f,%f", nano, gX, gY, gZ);
+        return String.format(Locale.US, ",%d,rot,,,,,,,,,,,%f,%f,%f,", nano, rotX, rotY, rotZ);
     }
 
 }

@@ -17,21 +17,21 @@ class Intents {
     private static final String TAG = "Intents";
 
     /** Open jump activity */
-    public static void openJumpActivity(@NonNull Context context, Jump jump) {
+    static void openJumpActivity(@NonNull Context context, Jump jump) {
         final Intent intent = new Intent(context, JumpActivity.class);
         intent.putExtra("JUMP_FILE", jump.logFile.getName());
         context.startActivity(intent);
     }
 
     /** Open track url in browser */
-    public static void openTrackUrl(@NonNull Context context, CloudData cloudData) {
+    static void openTrackUrl(@NonNull Context context, CloudData cloudData) {
         final String url = cloudData.trackUrl;
         final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(browserIntent);
     }
 
     /** Open track as KML in google earth */
-    public static void openTrackKml(@NonNull Context context, CloudData cloudData) {
+    static void openTrackKml(@NonNull Context context, CloudData cloudData) {
         try {
             openTrackGoogleEarth(context, cloudData);
         } catch(ActivityNotFoundException e) {
@@ -40,7 +40,7 @@ class Intents {
         }
     }
 
-    public static void openTrackGoogleEarth(@NonNull Context context, CloudData cloudData) {
+    private static void openTrackGoogleEarth(@NonNull Context context, CloudData cloudData) {
         final Intent earthIntent = new Intent(android.content.Intent.ACTION_VIEW);
         earthIntent.setDataAndType(Uri.parse(cloudData.trackKml), "application/vnd.google-earth.kml+xml");
         earthIntent.setClassName("com.google.earth", "com.google.earth.EarthActivity");
@@ -66,7 +66,7 @@ class Intents {
 //    }
 
     /** Share track data file */
-    public static void exportTrackFile(@NonNull Context context, Jump jump) {
+    static void exportTrackFile(@NonNull Context context, Jump jump) {
         try {
             final Uri trackFileUri = FileProvider.getUriForFile(context, "com.platypii.baseline.provider", jump.logFile);
             Log.d(TAG, "Exporting track file " + trackFileUri);

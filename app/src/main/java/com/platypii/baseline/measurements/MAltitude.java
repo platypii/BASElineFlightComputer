@@ -1,4 +1,4 @@
-package com.platypii.baseline.data.measurements;
+package com.platypii.baseline.measurements;
 
 
 import java.util.Locale;

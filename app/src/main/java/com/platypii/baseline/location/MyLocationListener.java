@@ -1,6 +1,6 @@
 package com.platypii.baseline.location;
 
-import com.platypii.baseline.data.measurements.MLocation;
+import com.platypii.baseline.measurements.MLocation;
 
 /**
  * Used by MyLocationManager to notify activities of updated location

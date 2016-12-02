@@ -5,7 +5,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import com.platypii.baseline.data.Bounds;
 import com.platypii.baseline.data.DataSeries;
-import com.platypii.baseline.data.measurements.MSensor;
+import com.platypii.baseline.measurements.MSensor;
 import com.platypii.baseline.util.SyncedList;
 import java.util.Iterator;
 

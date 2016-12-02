@@ -1,4 +1,4 @@
-package com.platypii.baseline.data.measurements;
+package com.platypii.baseline.measurements;
 
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
