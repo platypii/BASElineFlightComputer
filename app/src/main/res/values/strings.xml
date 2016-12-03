@@ -79,6 +79,13 @@
     <string name="pref_bluetooth_device">Bluetooth device</string>
     <string name="pref_bluetooth_device_description">Select bluetooth device</string>
 
+    <string name="bluetooth_status_disabled">Bluetooth hardware disabled</string>
+    <string name="bluetooth_status_stopped">Bluetooth stopped</string>
+    <string name="bluetooth_status_connecting">Bluetooth connecting</string>
+    <string name="bluetooth_status_connected">Bluetooth connected</string>
+    <string name="bluetooth_status_disconnected">Bluetooth not connected</string>
+    <string name="bluetooth_status_stopping">Bluetooth shutting down</string>
+
     <!-- Settings -->
     <string name="title_activity_settings">Settings</string>
     <string name="pref_metric">Metric</string>

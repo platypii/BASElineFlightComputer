@@ -49,6 +49,8 @@
     <!-- Audible settings -->
     <string name="title_activity_audible_settings">Akustische Einstellungen</string>
 
+    <string name="error_audible_not_available">Audible Fehler: Text-to-Speech nicht verfügbar</string>
+
     <string name="pref_audible_enabled">Akutisches feedback aktivieren</string>
     <string name="pref_audible_enabled_description">Aktivieren Sie eine akustische Rückmeldung</string>
 
@@ -76,6 +78,13 @@
     <string name="pref_bluetooth_description">Verwenden Sie Bluetooth GPS-Empfänger</string>
     <string name="pref_bluetooth_device">Bluetooth-gerät</string>
     <string name="pref_bluetooth_device_description">Wählen sie das Bluetooth-gerät</string>
+
+    <string name="bluetooth_status_disabled">Bluetooth-Gerät deaktiviertabled</string>
+    <string name="bluetooth_status_stopped">Bluetooth gestoppt</string>
+    <string name="bluetooth_status_connecting">Bluetooth verbindet</string>
+    <string name="bluetooth_status_connected">Bluetooth angeschlossen</string>
+    <string name="bluetooth_status_disconnected">Bluetooth nicht angeschlossen</string>
+    <string name="bluetooth_status_stopping">Bluetooth stoppt</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Einstellungen</string>

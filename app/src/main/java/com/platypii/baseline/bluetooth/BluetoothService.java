@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.location.GpsStatus;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
+import com.platypii.baseline.R;
 import com.platypii.baseline.events.BluetoothEvent;
 import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
@@ -33,9 +34,12 @@ public class BluetoothService {
     public static final int BT_CONNECTED = 2;
     public static final int BT_DISCONNECTED = 3;
     public static final int BT_STOPPING = 4;
-    private static final String[] BT_STATES = {"BT_STOPPED", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
-    private int bluetoothState = BT_STOPPED;
 
+    private static final String[] BT_STATES = {"BT_STOPPED", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
+    private static String[] BT_MESSAGE;
+
+    // Bluetooth state
+    private int bluetoothState = BT_STOPPED;
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothRunnable bluetoothRunnable;
     private Thread bluetoothThread;
@@ -48,6 +52,15 @@ public class BluetoothService {
             FirebaseCrash.report(new Exception("Bluetooth already started: " + BT_STATES[bluetoothState]));
         } else {
             setState(BluetoothService.BT_CONNECTING);
+            // Load bluetooth messages
+            BT_MESSAGE = new String[] {
+                    activity.getString(R.string.bluetooth_status_stopped),
+                    activity.getString(R.string.bluetooth_status_connecting),
+                    activity.getString(R.string.bluetooth_status_connected),
+                    activity.getString(R.string.bluetooth_status_disconnected),
+                    activity.getString(R.string.bluetooth_status_stopping),
+                    activity.getString(R.string.bluetooth_status_disabled)
+            };
             // Start bluetooth thread
             if(bluetoothRunnable != null) {
                 Log.e(TAG, "Bluetooth listener thread already started");
@@ -103,31 +116,15 @@ public class BluetoothService {
 
     /**
      * Return a human-readable string for the bluetooth state
-     * TODO: use string resources
      */
     public String getStatusMessage() {
-        if(isHardwareEnabled()) {
-            switch(bluetoothState) {
-                case BT_STOPPED:
-                    return "Bluetooth stopped";
-                case BT_CONNECTING:
-                    return "Bluetooth connecting";
-                case BT_CONNECTED:
-                    return "Bluetooth connected";
-                case BT_DISCONNECTED:
-                    return "Bluetooth disconnected";
-                case BT_STOPPING:
-                    return "Bluetooth shutting down";
-                default:
-                    return "";
-            }
+        if(bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
+            // Hardware enabled, return state
+            return BT_MESSAGE[bluetoothState];
         } else {
-            return "Bluetooth hardware disabled";
+            // Hardware disabled
+            return BT_MESSAGE[5];
         }
-    }
-
-    private boolean isHardwareEnabled() {
-        return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
     }
 
     public synchronized void stop() {
