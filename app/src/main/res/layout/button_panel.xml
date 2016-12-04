@@ -18,7 +18,8 @@
             android:layout_weight="1"
             android:onClick="clickRecord"
             android:drawableTop="@drawable/circle"
-            android:text="@string/action_record" />
+            android:text="@string/action_record"
+            style="@style/Widget.AppCompat.Button.Borderless" />
 
         <Button
             android:id="@+id/audibleButton"
@@ -27,14 +28,16 @@
             android:layout_weight="1"
             android:onClick="clickAudible"
             android:drawableTop="@drawable/audio_on"
-            android:text="@string/action_audible" />
+            android:text="@string/action_audible"
+            style="@style/Widget.AppCompat.Button.Borderless" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        style="?android:attr/buttonBarStyle">
 
         <Button
             android:id="@+id/altiButton"
@@ -43,7 +46,8 @@
             android:layout_weight="1"
             android:onClick="clickAltimeter"
             android:drawableTop="@drawable/alti"
-            android:text="@string/action_altimeter" />
+            android:text="@string/action_altimeter"
+            style="@style/Widget.AppCompat.Button.Borderless" />
 
         <Button
             android:id="@+id/navButton"
@@ -52,7 +56,8 @@
             android:layout_weight="1"
             android:onClick="clickNav"
             android:drawableTop="@drawable/nav"
-            android:text="@string/action_nav" />
+            android:text="@string/action_nav"
+            style="@style/Widget.AppCompat.Button.Borderless" />
 
     </LinearLayout>
 
@@ -68,7 +73,8 @@
             android:layout_weight="1"
             android:onClick="clickJumps"
             android:drawableTop="@drawable/list"
-            android:text="@string/action_tracks" />
+            android:text="@string/action_tracks"
+            style="@style/Widget.AppCompat.Button.Borderless" />
 
         <Button
             android:id="@+id/settingsButton"
@@ -77,7 +83,8 @@
             android:layout_weight="1"
             android:onClick="clickSettings"
             android:drawableTop="@drawable/gears"
-            android:text="@string/action_settings" />
+            android:text="@string/action_settings"
+            style="@style/Widget.AppCompat.Button.Borderless" />
 
     </LinearLayout>
 
