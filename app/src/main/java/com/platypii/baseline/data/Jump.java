@@ -3,6 +3,7 @@ package com.platypii.baseline.data;
 import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.platypii.baseline.cloud.CloudData;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

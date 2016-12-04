@@ -14,10 +14,10 @@ import android.widget.Toast;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.data.CloudData;
+import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.MyDatabase;
-import com.platypii.baseline.data.TheCloud;
+import com.platypii.baseline.cloud.TheCloud;
 import com.platypii.baseline.util.Callback;
 import java.util.Locale;
 

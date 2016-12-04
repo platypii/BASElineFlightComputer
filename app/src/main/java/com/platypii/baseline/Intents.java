@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.data.CloudData;
+import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.data.Jump;
 
 class Intents {
