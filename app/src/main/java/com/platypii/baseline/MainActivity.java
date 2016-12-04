@@ -131,7 +131,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    // Enables buttons and clock
+    /**
+     * Update button states and clock
+     */
     private void updateUIState() {
         if(Services.logger.isLogging()) {
             recordButton.setText(R.string.action_stop);
@@ -166,7 +168,6 @@ public class MainActivity extends BaseActivity {
         } else {
             audibleButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio, 0, 0);
         }
-        invalidateOptionsMenu();
     }
 
     public void clickAltimeter(View v) {
