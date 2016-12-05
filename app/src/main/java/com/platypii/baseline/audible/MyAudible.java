@@ -3,13 +3,11 @@ package com.platypii.baseline.audible;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.altimeter.MyAltimeter;
-import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.util.Util;
 
 /**
@@ -24,8 +22,11 @@ public class MyAudible {
     private boolean isInitialized = false;
     private boolean isEnabled = false;
 
-    // Have we spoken "stationary" yet in glide ratio mode?
-    private static boolean stationary = false;
+    // Was the last sample below/inside/above the boundary?
+    private static final int STATE_MIN = -1;
+    private static final int STATE_INSIDE = 0;
+    private static final int STATE_MAX = 1;
+    private int boundaryState = STATE_INSIDE;
 
     public void start(Context appContext) {
         Log.i(TAG, "Initializing audible");
@@ -102,14 +103,14 @@ public class MyAudible {
 
     void speak() {
         final String measurement = getMeasurement();
-        if(speech != null && measurement != null && measurement.length() > 0) {
+        if(speech != null && !measurement.isEmpty()) {
             speech.speakNow(measurement);
         }
     }
 
     private void speakWhenReady() {
         final String measurement = getMeasurement();
-        if(speech != null && measurement != null && measurement.length() > 0) {
+        if(speech != null && !measurement.isEmpty()) {
             speech.speakWhenReady(measurement);
         }
     }
@@ -117,84 +118,40 @@ public class MyAudible {
     /**
      * Returns the text of what to say for the current measurement mode
      */
-    private String getMeasurement() {
-        String measurement = "";
-        switch(AudibleSettings.mode.id) {
-            case "total_speed":
-                // Compute total speed
-                if(goodGpsFix()) {
-                    final double verticalSpeed = MyAltimeter.climb;
-                    final double horizontalSpeed = Services.location.groundSpeed();
-                    final double totalSpeed = Math.sqrt(verticalSpeed * verticalSpeed + horizontalSpeed * horizontalSpeed);
-                    if (Util.isReal(totalSpeed) && AudibleSettings.min <= totalSpeed && totalSpeed <= AudibleSettings.max) {
-                        measurement = shortSpeed(totalSpeed, AudibleSettings.precision);
+    private @NonNull String getMeasurement() {
+        final AudibleSample sample = AudibleSettings.mode.currentSample(AudibleSettings.precision);
+        // Check for fresh signal (not applicable to vertical speed)
+        if(AudibleSettings.mode.id.equals("vertical_speed") || goodGpsFix()) {
+            // Check for real valued sample
+            if (Util.isReal(sample.value)) {
+                if(sample.value < AudibleSettings.min) {
+                    if(boundaryState != STATE_MIN) {
+                        boundaryState = STATE_MIN;
+                        return "min";
                     } else {
-                        Log.w(TAG, "Not speaking: total speed = " + Convert.speed(totalSpeed, AudibleSettings.precision, true));
+                        Log.i(TAG, "Not speaking: min, mode = " + AudibleSettings.mode.id + " sample = " + sample);
+                        return "";
                     }
-                }
-                break;
-            case "horizontal_speed":
-                // Read horizontal speed
-                if(goodGpsFix()) {
-                    final double horizontalSpeed = Services.location.groundSpeed();
-                    if (Util.isReal(horizontalSpeed) && AudibleSettings.min <= horizontalSpeed && horizontalSpeed <= AudibleSettings.max) {
-                        measurement = shortSpeed(horizontalSpeed, AudibleSettings.precision);
+                } else if(AudibleSettings.max < sample.value) {
+                    if(boundaryState != STATE_MAX) {
+                        boundaryState = STATE_MAX;
+                        return "max";
                     } else {
-                        Log.w(TAG, "Not speaking: horizontal speed = " + Convert.speed(horizontalSpeed, AudibleSettings.precision, true));
-                    }
-                }
-                break;
-            case "vertical_speed":
-                // Read vertical speed
-                final double verticalSpeed = MyAltimeter.climb;
-                if (Util.isReal(verticalSpeed) && AudibleSettings.min <= verticalSpeed && verticalSpeed <= AudibleSettings.max) {
-                    if(verticalSpeed > 0) {
-                        measurement = "+ " + shortSpeed(verticalSpeed, AudibleSettings.precision);
-                    } else {
-                        measurement = shortSpeed(-verticalSpeed, AudibleSettings.precision);
+                        Log.i(TAG, "Not speaking: max, mode = " + AudibleSettings.mode.id + " sample = " + sample);
+                        return "";
                     }
                 } else {
-                    Log.w(TAG, "Not speaking: vertical speed = " + Convert.speed(verticalSpeed, 0, true));
+                    boundaryState = STATE_INSIDE;
+                    return sample.phrase;
                 }
-                break;
-            case "glide_ratio":
-                // Read glide ratio
-                if(goodGpsFix()) {
-                    final double glideRatio = Services.location.lastLoc.glideRatio();
-                    final String glideRatioString = Convert.glide(Services.location.groundSpeed(), MyAltimeter.climb, AudibleSettings.precision, false);
-                    if(Util.isReal(glideRatio) && AudibleSettings.min <= glideRatio && glideRatio <= AudibleSettings.max) {
-                        measurement = glideRatioString;
-                        if(measurement.equals(Convert.GLIDE_STATIONARY)) {
-                            if(stationary) {
-                                // Only say stationary once
-                                measurement = "";
-                            }
-                            stationary = true;
-                        } else {
-                            stationary = false;
-                        }
-                    } else {
-                        Log.w(TAG, "Not speaking: glide ratio = " + glideRatioString);
-                    }
-                }
-                break;
-            case "direction":
-                if(goodGpsFix() && MyFlightManager.homeLoc != null) {
-                    final double distance = Services.location.lastLoc.distanceTo(MyFlightManager.homeLoc);
-                    if(AudibleSettings.min <= distance && distance <= AudibleSettings.max) {
-                        final double bearing = Services.location.lastLoc.bearingTo(MyFlightManager.homeLoc);
-                        if (Math.abs(distance) > 0.3) {
-                            measurement = Convert.distance(distance) + " " + Convert.bearing(bearing);
-                        } else {
-                            measurement = "0";
-                        }
-                    }
-                }
-                break;
-            default:
-                Log.e(TAG, "Invalid audible mode " + AudibleSettings.mode.id);
+            } else {
+                Log.w(TAG, "Not speaking: no signal, mode = " + AudibleSettings.mode.id + " sample = " + sample);
+                return "";
+            }
+        } else {
+            Log.w(TAG, "Not speaking: stale signal, mode = " + AudibleSettings.mode.id + " sample = " + sample);
+            return "";
         }
-        return measurement;
     }
 
     public boolean isEnabled() {
@@ -222,18 +179,6 @@ public class MyAudible {
     }
     /** True iff the last measurement was a good fix */
     private boolean gpsFix = false;
-
-    /**
-     * Generate the text to be spoken for speed.
-     * Shortens 0.00 to 0
-     */
-    private String shortSpeed(double speed, int precision) {
-        if(Math.abs(speed) < Math.pow(.1, precision) / 2) {
-            return "0";
-        } else {
-            return Convert.speed(speed, precision, false);
-        }
-    }
 
     /**
      * Stop audible service

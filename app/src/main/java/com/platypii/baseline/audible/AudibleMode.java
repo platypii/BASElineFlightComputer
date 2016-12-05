@@ -1,5 +1,7 @@
 package com.platypii.baseline.audible;
 
+import android.support.annotation.NonNull;
+
 /**
  * Describes an audible mode such as horizontal speed, total speed, glide, etc.
  */
@@ -21,7 +23,7 @@ public abstract class AudibleMode {
      * @param defaultMin the default minimum value, in metric
      * @param defaultMax the default maximum value, in metric
      */
-    public AudibleMode(String id, String name, String unitsName, float defaultMin, float defaultMax, int defaultPrecision) {
+    AudibleMode(String id, String name, String unitsName, float defaultMin, float defaultMax, int defaultPrecision) {
         this.id = id;
         this.name = name;
         this.unitsName = unitsName;
@@ -38,14 +40,19 @@ public abstract class AudibleMode {
     }
 
     /**
+     * Return the latest measurement data (speed, glide, etc)
+     */
+    abstract public @NonNull AudibleSample currentSample(int precision);
+
+    /**
      * Convert from local units to internal metric units
      * (local value) * units() = (internal metric value)
      */
     abstract public float units();
 
     /**
-     * Convert from local units to internal metric units
+     * Convert from internal units to local display units
      */
-    abstract public String convertOutput(double output, int precision);
+    abstract public String renderDisplay(double output, int precision);
 
 }

@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.platypii.baseline.audible.AudibleMinMaxPreference;
 import com.platypii.baseline.audible.AudibleMode;
 import com.platypii.baseline.audible.AudibleSettings;
-import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.util.Util;
 import java.util.Locale;
 
@@ -79,8 +78,8 @@ public class AudibleSettingsActivity extends PreferenceActivity {
             modePreference.setSummary(mode.name);
             minPreference.setTitle(mode.minimumTitle());
             maxPreference.setTitle(mode.maximumTitle());
-            minPreference.setSummary(mode.convertOutput(AudibleSettings.min, precision));
-            maxPreference.setSummary(mode.convertOutput(AudibleSettings.max, precision));
+            minPreference.setSummary(mode.renderDisplay(AudibleSettings.min, precision));
+            maxPreference.setSummary(mode.renderDisplay(AudibleSettings.max, precision));
             if(precision <= 0) {
                 precisionPreference.setSummary(String.format(Locale.getDefault(), "%d decimal places", precision));
             } else {

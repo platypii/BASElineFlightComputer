@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import com.platypii.baseline.Services;
+import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Util;
 import java.util.ArrayList;
@@ -171,6 +173,20 @@ abstract class LocationProvider {
     }
 
     /**
+     * Helper method for getting latest speed in m/s
+     * If GPS is not giving us speed natively, fallback to computing from v = dist/time.
+     * This should be used for display of the latest total speed, but not for logging.
+     */
+    public double totalSpeed() {
+        if(isFresh()) {
+            final double verticalSpeed = MyAltimeter.climb;
+            final double horizontalSpeed = Services.location.groundSpeed();
+            return Math.sqrt(verticalSpeed * verticalSpeed + horizontalSpeed * horizontalSpeed);
+        }
+        return Double.NaN;
+    }
+
+    /**
      * Helper method for getting latest bearing in degrees
      * If GPS is not giving us speed natively, fallback to computing from v = dist/time.
      * This should be used for display of the latest groundspeed, but not for logging.
@@ -186,6 +202,18 @@ abstract class LocationProvider {
                     return prevLoc.bearingTo(lastLoc);
                 }
             }
+        }
+        return Double.NaN;
+    }
+
+    /**
+     * Helper method for getting latest speed in m/s
+     * If GPS is not giving us speed natively, fallback to computing from v = dist/time.
+     * This should be used for display of the latest total speed, but not for logging.
+     */
+    public double glideRatio() {
+        if(isFresh()) {
+            return lastLoc.glideRatio();
         }
         return Double.NaN;
     }
