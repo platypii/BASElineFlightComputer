@@ -97,9 +97,9 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                 case "audible_enabled":
                     final boolean audibleEnabled = (Boolean) value;
                     if(audibleEnabled) {
-                        MyAudible.startAudible();
+                        Services.audible.enableAudible();
                     } else {
-                        MyAudible.stopAudible();
+                        Services.audible.disableAudible();
                     }
                     break;
                 case "audible_mode":
@@ -111,8 +111,8 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                         maxPreference.setValue(AudibleSettings.mode.defaultMax);
                         precisionPreference.setDefaultValue(AudibleSettings.mode.defaultPrecision);
                         updateViews();
-                        if(MyAudible.isEnabled()) {
-                            MyAudible.speakNow(AudibleSettings.mode.name);
+                        if(Services.audible.isEnabled()) {
+                            Services.audible.speakNow(AudibleSettings.mode.name);
                         }
                     }
                     break;

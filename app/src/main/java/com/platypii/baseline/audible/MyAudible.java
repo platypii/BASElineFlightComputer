@@ -18,28 +18,28 @@ import com.platypii.baseline.util.Util;
 public class MyAudible {
     private static final String TAG = "Audible";
 
-    private static Speech speech;
-    private static AudibleThread audibleThread;
+    private Speech speech;
+    private AudibleThread audibleThread;
 
-    private static boolean isInitialized = false;
-    private static boolean isEnabled = false;
+    private boolean isInitialized = false;
+    private boolean isEnabled = false;
 
     // Have we spoken "stationary" yet in glide ratio mode?
     private static boolean stationary = false;
 
-    public static void init(Context appContext) {
+    public void start(Context appContext) {
         Log.i(TAG, "Initializing audible");
         speech = new Speech(appContext);
 
         if(!isInitialized) {
             isInitialized = true;
-            audibleThread = new AudibleThread();
+            audibleThread = new AudibleThread(this);
 
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
             AudibleSettings.init(prefs);
             isEnabled = prefs.getBoolean("audible_enabled", false);
             if(isEnabled) {
-                startAudible();
+                enableAudible();
             }
         } else {
             Log.w(TAG, "Audible initialized twice");
@@ -47,7 +47,7 @@ public class MyAudible {
         }
     }
 
-    public static void startAudible() {
+    public void enableAudible() {
         Log.i(TAG, "Starting audible");
         if(isInitialized) {
             if(!audibleThread.isRunning()) {
@@ -57,7 +57,7 @@ public class MyAudible {
                 speakModeWhenReady();
 
                 // Play first measurement
-                MyAudible.speakWhenReady();
+                speakWhenReady();
             } else {
                 Log.w(TAG, "Audible thread already started");
             }
@@ -67,7 +67,7 @@ public class MyAudible {
         isEnabled = true;
     }
 
-    public static void stopAudible() {
+    public void disableAudible() {
         if(isInitialized) {
             speech.stopAll();
             audibleThread.stop();
@@ -81,14 +81,14 @@ public class MyAudible {
     /**
      * Announce the current audible mode
      */
-    private static void speakModeWhenReady() {
+    private void speakModeWhenReady() {
         speech.speakWhenReady(AudibleSettings.mode.name);
     }
 
     /**
      * Make a special announcement
      */
-    public static void speakNow(String text) {
+    public void speakNow(String text) {
         if(!isEnabled) {
             Log.e(TAG, "Should never speak when audible is disabled");
             FirebaseCrash.report(new IllegalStateException("MyAudible.speakNow should never speak when audible is disabled"));
@@ -100,14 +100,14 @@ public class MyAudible {
         }
     }
 
-    static void speak() {
+    void speak() {
         final String measurement = getMeasurement();
         if(speech != null && measurement != null && measurement.length() > 0) {
             speech.speakNow(measurement);
         }
     }
 
-    private static void speakWhenReady() {
+    private void speakWhenReady() {
         final String measurement = getMeasurement();
         if(speech != null && measurement != null && measurement.length() > 0) {
             speech.speakWhenReady(measurement);
@@ -117,7 +117,7 @@ public class MyAudible {
     /**
      * Returns the text of what to say for the current measurement mode
      */
-    private static String getMeasurement() {
+    private String getMeasurement() {
         String measurement = "";
         switch(AudibleSettings.mode.id) {
             case "total_speed":
@@ -197,14 +197,14 @@ public class MyAudible {
         return measurement;
     }
 
-    public static boolean isEnabled() {
+    public boolean isEnabled() {
         return isEnabled;
     }
 
     /**
      * Return true if GPS signal is fresh
      */
-    private static boolean goodGpsFix() {
+    private boolean goodGpsFix() {
         if(Services.location.lastLoc != null && Services.location.lastFixDuration() < 3500) {
             gpsFix = true;
         } else {
@@ -221,13 +221,13 @@ public class MyAudible {
         return gpsFix;
     }
     /** True iff the last measurement was a good fix */
-    private static boolean gpsFix = false;
+    private boolean gpsFix = false;
 
     /**
      * Generate the text to be spoken for speed.
      * Shortens 0.00 to 0
      */
-    private static String shortSpeed(double speed, int precision) {
+    private String shortSpeed(double speed, int precision) {
         if(Math.abs(speed) < Math.pow(.1, precision) / 2) {
             return "0";
         } else {
@@ -238,10 +238,10 @@ public class MyAudible {
     /**
      * Stop audible service
      */
-    public static void terminate() {
+    public void stop() {
         if(isInitialized) {
             if(audibleThread.isRunning()) {
-                stopAudible();
+                disableAudible();
             }
             audibleThread = null;
             isInitialized = false;

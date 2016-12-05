@@ -8,7 +8,7 @@ public class CloudData {
     public final String trackUrl;
     public final String trackKml;
 
-    CloudData(String trackUrl, String trackKml) {
+    public CloudData(String trackUrl, String trackKml) {
         this.trackUrl = trackUrl;
         this.trackKml = trackKml;
     }

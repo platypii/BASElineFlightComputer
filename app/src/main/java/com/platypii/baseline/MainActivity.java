@@ -217,20 +217,20 @@ public class MainActivity extends BaseActivity {
         public boolean onLongClick(View v) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
             final SharedPreferences.Editor editor = prefs.edit();
-            if (MyAudible.isEnabled()) {
+            if (Services.audible.isEnabled()) {
                 // Stop audible
                 Toast.makeText(MainActivity.this, "Stopping audible", Toast.LENGTH_SHORT).show();
                 editor.putBoolean("audible_enabled", false);
                 editor.apply();
 
-                MyAudible.stopAudible();
+                Services.audible.disableAudible();
             } else {
                 // Start audible
                 Toast.makeText(MainActivity.this, "Starting audible", Toast.LENGTH_SHORT).show();
                 editor.putBoolean("audible_enabled", true);
                 editor.apply();
 
-                MyAudible.startAudible();
+                Services.audible.enableAudible();
             }
             updateUIState();
             return true;

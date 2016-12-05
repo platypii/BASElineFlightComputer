@@ -49,6 +49,7 @@ public class Services {
     public static LocationService location;
     public static MySensorManager sensors;
     public static BluetoothService bluetooth;
+    public static MyAudible audible;
 
     public static void start(@NonNull Activity activity) {
         startCount++;
@@ -65,6 +66,9 @@ public class Services {
 
             Log.i(TAG, "Starting key value store");
             KVStore.start(appContext);
+
+            // Create audible class, but wait for text-to-speech to start
+            audible = new MyAudible();
 
             Log.i(TAG, "Starting bluetooth service");
             if(bluetooth == null) {
@@ -112,7 +116,7 @@ public class Services {
      */
     static void onTtsLoaded(Context appContext) {
         // TTS loaded, start the audible
-        MyAudible.init(appContext);
+        audible.start(appContext);
     }
 
     public static void stop() {
@@ -129,10 +133,11 @@ public class Services {
         @Override
         public void run() {
             if(initialized && startCount == 0) {
-                if(!MyDatabase.isLogging() && !MyAudible.isEnabled()) {
+                if(!MyDatabase.isLogging() && !audible.isEnabled()) {
                     Log.i(TAG, "All activities have stopped. Stopping services.");
                     // Stop services
-                    MyAudible.terminate();
+                    audible.stop();
+                    audible = null;
                     MyAltimeter.stop();
                     sensors.stop();
                     sensors = null;
@@ -146,7 +151,7 @@ public class Services {
                     if(MyDatabase.isLogging()) {
                         Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
                     }
-                    if(MyAudible.isEnabled()) {
+                    if(audible.isEnabled()) {
                         Log.w(TAG, "All activities have stopped, but audible still active. Leaving services running.");
                     }
                 }
