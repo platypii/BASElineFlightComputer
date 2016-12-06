@@ -97,4 +97,9 @@
     <string name="pref_sign_out">Sign out</string>
     <string name="pref_sign_out_description">Signed in as</string>
 
+    <!-- Notifications -->
+    <string name="notify_audible">Audible enabled</string>
+    <string name="notify_audible_logging">Audible enabled, logging data</string>
+    <string name="notify_logging">Logging data</string>
+
 </resources>

@@ -29,12 +29,14 @@ import java.util.zip.GZIPOutputStream;
  * AKA- The Black Box flight recorder
  */
 public class MyDatabase implements MyLocationListener, MySensorListener {
+    private static final String TAG = "DB";
 
     // Singleton database when logging
     private static MyDatabase db = null;
 
-    private final long startTime = System.nanoTime();
-    private long stopTime = -1;
+    private final long startTimeMillis = System.currentTimeMillis();
+    private final long startTimeNano = System.nanoTime();
+    private long stopTimeNano = -1;
 
     // Log file
     private final File logFile;
@@ -45,10 +47,10 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
             try {
                 db = new MyDatabase(appContext);
             } catch(IOException e) {
-                Log.e("DB", "Error starting logging", e);
+                Log.e(TAG, "Error starting logging", e);
             }
         } else {
-            Log.e("DB", "startLogging() called when database already logging");
+            Log.e(TAG, "startLogging() called when database already logging");
         }
     }
     public static synchronized Jump stopLogging() {
@@ -62,7 +64,7 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
                 return null;
             }
         } else {
-            Log.e("DB", "stopLogging() called when database isn't logging");
+            Log.e(TAG, "stopLogging() called when database isn't logging");
             return null;
         }
     }
@@ -71,13 +73,20 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
         return db != null;
     }
 
+    public static long getStartTime() {
+        if(db != null) {
+            return db.startTimeMillis;
+        } else {
+            return 0;
+        }
+    }
     public static String getLogTime() {
         if(db != null) {
             long nanoTime;
-            if (db.stopTime == -1) {
-                nanoTime = System.nanoTime() - db.startTime;
+            if (db.stopTimeNano == -1) {
+                nanoTime = System.nanoTime() - db.startTimeNano;
             } else {
-                nanoTime = db.stopTime - db.startTime;
+                nanoTime = db.stopTimeNano - db.startTimeNano;
             }
             final long millis = (nanoTime / 1000000L) % 1000;
             final long seconds = (nanoTime / 1000000000L) % 60;
@@ -107,12 +116,12 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
         Services.location.addListener(this);
         Services.sensors.addListener(this);
 
-        Log.i("DB", "Logging to " + logFile);
+        Log.i(TAG, "Logging to " + logFile);
     }
 
     private File stop() {
-        if(stopTime == -1) {
-            stopTime = System.nanoTime();
+        if(stopTimeNano == -1) {
+            stopTimeNano = System.nanoTime();
 
             // Stop sensor updates
             EventBus.getDefault().unregister(this);
@@ -122,15 +131,15 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
             // Close file writer
             try {
                 log.close();
-                Log.i("DB", "Logging stopped for " + logFile.getName());
+                Log.i(TAG, "Logging stopped for " + logFile.getName());
                 return logFile;
             } catch (IOException e) {
-                Log.e("DB", "Failed to close log file " + logFile, e);
+                Log.e(TAG, "Failed to close log file " + logFile, e);
                 FirebaseCrash.report(e);
                 return null;
             }
         } else {
-            Log.e("DB", "Logging stopped twice");
+            Log.e(TAG, "Logging stopped twice");
             return null;
         }
     }
@@ -165,16 +174,16 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
      * @param line the measurement to store
      */
     private synchronized void logLine(String line) {
-        if(stopTime == -1) {
+        if(stopTimeNano == -1) {
             try {
                 log.write(line);
                 log.write('\n');
             } catch (IOException e) {
-                Log.e("DB", "Failed to write to log file " + logFile, e);
+                Log.e(TAG, "Failed to write to log file " + logFile, e);
                 FirebaseCrash.report(e);
             }
         } else {
-            Log.e("DB", "Attempted to log after closing file");
+            Log.e(TAG, "Attempted to log after closing file");
         }
     }
 

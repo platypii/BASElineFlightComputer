@@ -5,8 +5,8 @@ package com.platypii.baseline.audible;
  */
 class AudibleSample {
 
-    double value;
-    String phrase;
+    final double value;
+    final String phrase;
 
     AudibleSample(double value, String phrase) {
         this.value = value;

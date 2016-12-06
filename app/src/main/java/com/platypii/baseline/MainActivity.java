@@ -103,6 +103,7 @@ public class MainActivity extends BaseActivity {
             // Start logging
             MyDatabase.startLogging(getApplicationContext());
             updateUIState();
+            Notifications.updateNotification(this);
         } else {
             Log.i(TAG, "Stopping logging");
             firebaseAnalytics.logEvent("click_logging_stop", null);
@@ -110,6 +111,7 @@ public class MainActivity extends BaseActivity {
             // Stop logging
             final Jump jump = MyDatabase.stopLogging();
             updateUIState();
+            Notifications.updateNotification(this);
 
             // Upload to the cloud
             if(jump != null) {
@@ -224,6 +226,7 @@ public class MainActivity extends BaseActivity {
                 editor.apply();
 
                 Services.audible.disableAudible();
+                Notifications.updateNotification(MainActivity.this);
             } else {
                 // Start audible
                 firebaseAnalytics.logEvent("click_start_audible", null);
@@ -232,6 +235,7 @@ public class MainActivity extends BaseActivity {
                 editor.apply();
 
                 Services.audible.enableAudible();
+                Notifications.updateNotification(MainActivity.this);
             }
             updateUIState();
             return true;
