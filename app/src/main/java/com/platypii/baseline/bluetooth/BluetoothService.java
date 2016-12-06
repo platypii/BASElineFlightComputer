@@ -36,7 +36,10 @@ public class BluetoothService {
     public static final int BT_STOPPING = 4;
 
     private static final String[] BT_STATES = {"BT_STOPPED", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
+    // Human readable messages, loaded at start
     private static String[] BT_MESSAGE;
+    private static String BT_NOT_SELECTED;
+    private static String BT_DISABLED;
 
     // Bluetooth state
     private int bluetoothState = BT_STOPPED;
@@ -53,14 +56,17 @@ public class BluetoothService {
         } else {
             setState(BluetoothService.BT_CONNECTING);
             // Load bluetooth messages
-            BT_MESSAGE = new String[] {
-                    activity.getString(R.string.bluetooth_status_stopped),
-                    activity.getString(R.string.bluetooth_status_connecting),
-                    activity.getString(R.string.bluetooth_status_connected),
-                    activity.getString(R.string.bluetooth_status_disconnected),
-                    activity.getString(R.string.bluetooth_status_stopping),
-                    activity.getString(R.string.bluetooth_status_disabled)
-            };
+            if(BT_MESSAGE == null) {
+                BT_MESSAGE = new String[]{
+                        activity.getString(R.string.bluetooth_status_stopped),
+                        activity.getString(R.string.bluetooth_status_connecting),
+                        activity.getString(R.string.bluetooth_status_connected),
+                        activity.getString(R.string.bluetooth_status_disconnected),
+                        activity.getString(R.string.bluetooth_status_stopping)
+                };
+                BT_NOT_SELECTED = activity.getString(R.string.bluetooth_status_not_selected);
+                BT_DISABLED = activity.getString(R.string.bluetooth_status_disabled);
+            }
             // Start bluetooth thread
             if(bluetoothRunnable != null) {
                 Log.e(TAG, "Bluetooth listener thread already started");
@@ -119,11 +125,15 @@ public class BluetoothService {
      */
     public String getStatusMessage() {
         if(bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
-            // Hardware enabled, return state
-            return BT_MESSAGE[bluetoothState];
+            if(preferenceDeviceId == null) {
+                return BT_NOT_SELECTED;
+            } else {
+                // Hardware enabled, return state
+                return BT_MESSAGE[bluetoothState];
+            }
         } else {
             // Hardware disabled
-            return BT_MESSAGE[5];
+            return BT_DISABLED;
         }
     }
 

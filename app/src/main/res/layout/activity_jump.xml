@@ -35,7 +35,8 @@
             android:layout_margin="5dp"
             android:onClick="clickExport"
             android:drawableTop="@drawable/button_export"
-            android:text="@string/action_export" />
+            android:text="@string/action_export"
+            style="@style/Widget.AppCompat.Button.Borderless" />
 
         <Button
             android:id="@+id/deleteButton"
@@ -45,7 +46,8 @@
             android:layout_margin="5dp"
             android:onClick="clickDelete"
             android:drawableTop="@drawable/button_delete"
-            android:text="@string/action_delete" />
+            android:text="@string/action_delete"
+            style="@style/Widget.AppCompat.Button.Borderless" />
 
     </LinearLayout>
 
@@ -62,7 +64,8 @@
             android:layout_margin="5dp"
             android:onClick="clickOpen"
             android:drawableTop="@drawable/button_view"
-            android:text="@string/action_open" />
+            android:text="@string/action_open"
+            style="@style/Widget.AppCompat.Button.Borderless" />
 
         <Button
             android:id="@+id/mapButton"
@@ -72,7 +75,8 @@
             android:layout_margin="5dp"
             android:onClick="clickKml"
             android:drawableTop="@drawable/button_map"
-            android:text="@string/action_map" />
+            android:text="@string/action_map"
+            style="@style/Widget.AppCompat.Button.Borderless" />
 
     </LinearLayout>
 

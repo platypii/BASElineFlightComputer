@@ -80,6 +80,7 @@
     <string name="pref_bluetooth_device_description">Select bluetooth device</string>
 
     <string name="bluetooth_status_disabled">Bluetooth hardware disabled</string>
+    <string name="bluetooth_status_not_selected">Bluetooth device not selected</string>
     <string name="bluetooth_status_stopped">Bluetooth stopped</string>
     <string name="bluetooth_status_connecting">Bluetooth connecting</string>
     <string name="bluetooth_status_connected">Bluetooth connected</string>
