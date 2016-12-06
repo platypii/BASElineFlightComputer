@@ -219,13 +219,14 @@ public class MainActivity extends BaseActivity {
             final SharedPreferences.Editor editor = prefs.edit();
             if (Services.audible.isEnabled()) {
                 // Stop audible
-                Toast.makeText(MainActivity.this, "Stopping audible", Toast.LENGTH_SHORT).show();
+                firebaseAnalytics.logEvent("click_stop_audible", null);
                 editor.putBoolean("audible_enabled", false);
                 editor.apply();
 
                 Services.audible.disableAudible();
             } else {
                 // Start audible
+                firebaseAnalytics.logEvent("click_start_audible", null);
                 Toast.makeText(MainActivity.this, "Starting audible", Toast.LENGTH_SHORT).show();
                 editor.putBoolean("audible_enabled", true);
                 editor.apply();

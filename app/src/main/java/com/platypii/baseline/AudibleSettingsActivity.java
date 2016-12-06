@@ -10,6 +10,7 @@ import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.platypii.baseline.audible.AudibleMinMaxPreference;
 import com.platypii.baseline.audible.AudibleMode;
 import com.platypii.baseline.audible.AudibleSettings;
@@ -35,6 +36,8 @@ public class AudibleSettingsActivity extends PreferenceActivity {
      * This fragment shows the preferences
      */
     public static class AudiblePreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
+
+        private FirebaseAnalytics firebaseAnalytics;
 
         private SwitchPreference enabledPreference;
         private ListPreference modePreference;
@@ -66,6 +69,8 @@ public class AudibleSettingsActivity extends PreferenceActivity {
             intervalPreference.setOnPreferenceChangeListener(this);
             ratePreference.setOnPreferenceChangeListener(this);
 
+            firebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
+
             updateViews();
         }
 
@@ -96,8 +101,10 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                 case "audible_enabled":
                     final boolean audibleEnabled = (Boolean) value;
                     if(audibleEnabled) {
+                        firebaseAnalytics.logEvent("pref_start_audible", null);
                         Services.audible.enableAudible();
                     } else {
+                        firebaseAnalytics.logEvent("pref_stop_audible", null);
                         Services.audible.disableAudible();
                     }
                     break;
