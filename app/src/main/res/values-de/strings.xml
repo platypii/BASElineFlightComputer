@@ -80,6 +80,7 @@
     <string name="pref_bluetooth_device_description">Wählen sie das Bluetooth-gerät</string>
 
     <string name="bluetooth_status_disabled">Bluetooth-Gerät deaktiviertabled</string>
+    <string name="bluetooth_status_not_selected">Bluetooth-Gerät nicht ausgewählt</string>
     <string name="bluetooth_status_stopped">Bluetooth gestoppt</string>
     <string name="bluetooth_status_connecting">Bluetooth verbindet</string>
     <string name="bluetooth_status_connected">Bluetooth angeschlossen</string>
@@ -96,5 +97,10 @@
     <string name="pref_sign_in_description">Melden Sie sich mit Ihrem Google-Konto ann</string>
     <string name="pref_sign_out">Abmelden</string>
     <string name="pref_sign_out_description">Angemeldet als</string>
+
+    <!-- Notifications -->
+    <string name="notify_logging">Aufzeichnungsdaten</string>
+    <string name="notify_audible_logging">Audible aktiviert, aufzeichnungsdaten</string>
+    <string name="notify_audible">Audible aktiviert</string>
 
 </resources>
