@@ -27,6 +27,7 @@ public class WearActivity extends Activity {
         recordButton = (ImageButton) findViewById(R.id.recordButton);
         audibleButton = (ImageButton) findViewById(R.id.audibleButton);
 
+        // Start wear messaging service
         wear = new WearSlave(this);
     }
 
@@ -34,20 +35,26 @@ public class WearActivity extends Activity {
         if(recording) {
             Log.i(TAG, "Clicked stop");
             wear.clickStop();
+            recording = false;
         } else {
             Log.i(TAG, "Clicked record");
             wear.clickRecord();
+            recording = true;
         }
+        updateUIState();
     }
 
     public void clickAudible(View v) {
         if(audible) {
             Log.i(TAG, "Clicked audible off");
             wear.disableAudible();
+            audible = false;
         } else {
             Log.i(TAG, "Clicked audible on");
             wear.enableAudible();
+            audible = true;
         }
+        updateUIState();
     }
 
     public void clickAltimeter(View v) {
@@ -69,6 +76,13 @@ public class WearActivity extends Activity {
         } else {
             audibleButton.setImageResource(R.drawable.audio);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        wear.stop();
+        wear = null;
     }
 
 }

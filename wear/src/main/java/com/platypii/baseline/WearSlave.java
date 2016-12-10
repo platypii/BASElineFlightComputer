@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  * Manages communication with a mobile device
  */
-class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<NodeApi.GetConnectedNodesResult> {
     private static final String TAG = "WearSlave";
 
     private static final String WEAR_MSG_RECORD = "BASEline.record";
@@ -26,12 +27,12 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     private static final String WEAR_MSG_DISABLE_AUDIBLE = "BASEline.disableAudible";
 
     private GoogleApiClient googleApiClient;
-    private boolean connected = false;
 
     // Only valid while connected:
     private String phoneId;
 
     WearSlave(Context context) {
+        Log.i(TAG, "Starting wear messaging service");
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(this)
@@ -40,8 +41,12 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         googleApiClient.connect();
     }
 
+    private boolean isConnected() {
+        return googleApiClient.isConnected() && phoneId != null;
+    }
+
     void clickRecord() {
-        if(connected) {
+        if(isConnected()) {
             Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_RECORD, null);
         } else {
             Log.w(TAG, "Failed to start recording: wearable not connected to phone");
@@ -49,7 +54,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     }
 
     void clickStop() {
-        if(connected) {
+        if(isConnected()) {
             Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_STOP, null);
         } else {
             Log.w(TAG, "Failed to stop recording: wearable not connected to phone");
@@ -57,7 +62,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     }
 
     void enableAudible() {
-        if(connected) {
+        if(isConnected()) {
             Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_ENABLE_AUDIBLE, null);
         } else {
             Log.w(TAG, "Failed to enable audible: wearable not connected to phone");
@@ -65,7 +70,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     }
 
     void disableAudible() {
-        if(connected) {
+        if(isConnected()) {
             Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_DISABLE_AUDIBLE, null);
         } else {
             Log.w(TAG, "Failed to disable audible: wearable not connected to phone");
@@ -73,38 +78,50 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        connected = true;
-        phoneId = getPhoneId();
+    public void onConnected(@Nullable Bundle connectionHint) {
+        Log.i(TAG, "Wear connected");
+        // Start fetching list of wear nodes
+        Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(this);
     }
 
     /**
      * Get the nodeId of the paired mobile device
      */
-    private String getPhoneId() {
-        final NodeApi.GetConnectedNodesResult result = Wearable.NodeApi.getConnectedNodes(googleApiClient).await();
+    @Override
+    public void onResult(@NonNull NodeApi.GetConnectedNodesResult result) {
         final List<Node> nodes = result.getNodes();
-        if (!nodes.isEmpty()) {
-            return nodes.get(0).getId();
-        } else {
-            return null;
+        switch(nodes.size()) {
+            case 0:
+                Log.w(TAG, "No connected devices found");
+                break;
+            case 1:
+                phoneId = nodes.get(0).getId();
+                break;
+            default:
+                Log.w(TAG, "More than one connected device found");
+                phoneId = nodes.get(0).getId();
         }
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-        connected = false;
+    public void onConnectionSuspended(int cause) {
+        if(cause == CAUSE_NETWORK_LOST) {
+            Log.w(TAG, "Wear connection suspended: device connection lost");
+        } else if(cause == CAUSE_SERVICE_DISCONNECTED) {
+            Log.w(TAG, "Wear connection suspended: service killed");
+        } else {
+            Log.e(TAG, "Wear connection suspended: unknown reason");
+        }
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        connected = false;
+        Log.e(TAG, "Wear connection failed: " + connectionResult);
     }
 
     void stop() {
+        Log.w(TAG, "Stopping wear messaging service");
         googleApiClient.disconnect();
-        googleApiClient = null;
-        connected = false;
     }
 
 }
