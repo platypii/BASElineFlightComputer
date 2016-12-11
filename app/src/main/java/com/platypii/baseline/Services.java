@@ -115,8 +115,10 @@ public class Services {
      * Call this function once text-to-speech data is ready
      */
     static void onTtsLoaded(Context appContext) {
-        // TTS loaded, start the audible
-        audible.start(appContext);
+        if(audible != null) {
+            // TTS loaded, start the audible
+            audible.start(appContext);
+        }
     }
 
     public static void stop() {

@@ -64,10 +64,7 @@
 
     <!-- Map -->
     <string name="title_activity_map">Navigation</string>
-
     <string name="set_altitude">Définir l\'altitude</string>
-    <string name="cancel">Annuler</string>
-
     <string name="map_crosshair">réticule</string>
     <string name="map_pin">punaise</string>
 

@@ -65,10 +65,7 @@
 
     <!-- Map -->
     <string name="title_activity_map">Navigation</string>
-
     <string name="set_altitude">Höhe Einstellen</string>
-    <string name="cancel">Abbrechen</string>
-
     <string name="map_pin">pin</string>
     <string name="map_crosshair">fadenkreuz</string>
 
