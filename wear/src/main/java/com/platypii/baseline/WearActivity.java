@@ -68,6 +68,13 @@ public class WearActivity extends Activity {
         startActivity(new Intent(this, AltimeterActivity.class));
     }
 
+    public void clickApp(View v) {
+        Log.i(TAG, "Clicked wingsuit app");
+        // Launch app
+        wear.startApp();
+        wear.requestDataSync();
+    }
+
     /**
      * Update button states and clock
      */

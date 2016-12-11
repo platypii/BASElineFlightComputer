@@ -5,6 +5,7 @@ import com.platypii.baseline.tracks.TrackFile;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
@@ -19,6 +20,12 @@ public class Intents {
     static final int RC_SIGN_IN = 0;
     static final int RC_LOCATION = 1;
     public static final int RC_TTS_DATA = 2;
+
+    public static void openApp(@NonNull Context context) {
+        final PackageManager packageManager = context.getPackageManager();
+        final Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+        context.startActivity(intent);
+    }
 
     /** Open jump activity */
     public static void openTrackActivity(@NonNull Context context, TrackFile trackFile) {

@@ -22,6 +22,8 @@ import org.greenrobot.eventbus.ThreadMode;
 public class MainActivity extends BaseActivity {
     private static final String TAG = "Main";
 
+    public static boolean isActive = false;
+
     // app start time
     // public static final long startTimeMillis = System.currentTimeMillis();
     // public static final long startTimeNano = System.nanoTime();
@@ -250,6 +252,18 @@ public class MainActivity extends BaseActivity {
             final SyncEvent.UploadFailure uploadFailure = (SyncEvent.UploadFailure) event;
             Toast.makeText(MainActivity.this, "Track sync failed: " + uploadFailure.error, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // Hacky way to tell if main activity is in the foregroundd
+    @Override
+    public void onResume() {
+        super.onResume();
+        isActive = true;
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        isActive = false;
     }
 
     @Override

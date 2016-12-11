@@ -31,11 +31,12 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
 
     private static final String STATE_URI = "/baseline/services/state";
 
-    private static final String WEAR_MSG_INIT = "BASEline.init";
-    private static final String WEAR_MSG_RECORD = "BASEline.record";
-    private static final String WEAR_MSG_STOP = "BASEline.stop";
-    private static final String WEAR_MSG_ENABLE_AUDIBLE = "BASEline.enableAudible";
-    private static final String WEAR_MSG_DISABLE_AUDIBLE = "BASEline.disableAudible";
+    private static final String WEAR_MSG_INIT = "/baseline/init";
+    private static final String WEAR_MSG_RECORD = "/baseline/record";
+    private static final String WEAR_MSG_STOP = "/baseline/stop";
+    private static final String WEAR_MSG_ENABLE_AUDIBLE = "/baseline/enableAudible";
+    private static final String WEAR_MSG_DISABLE_AUDIBLE = "/baseline/disableAudible";
+    private static final String WEAR_MSG_OPEN_APP = "/baseline/openApp";
 
     private GoogleApiClient googleApiClient;
 
@@ -64,7 +65,10 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     /**
      * Ask the mobile device to give us a state update
      */
-    private void requestDataSync() {
+    void requestDataSync() {
+        Log.i(TAG, "Requesting data sync");
+        synced = false;
+        EventBus.getDefault().post(new DataSyncEvent());
         Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_INIT, null);
     }
 
@@ -106,6 +110,10 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         } else {
             Log.w(TAG, "Failed to disable audible: wearable not connected to phone");
         }
+    }
+
+    void startApp() {
+        Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_OPEN_APP, null);
     }
 
     /**

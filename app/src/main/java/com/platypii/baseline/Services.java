@@ -14,6 +14,7 @@ import com.platypii.baseline.tracks.MigrateTracks;
 import com.platypii.baseline.tracks.TrackLogger;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.wear.WearMaster;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
