@@ -50,6 +50,7 @@ public class Services {
     public static MySensorManager sensors;
     public static BluetoothService bluetooth;
     public static MyAudible audible;
+    public static Notifications notifications;
 
     public static void start(@NonNull Activity activity) {
         startCount++;
@@ -102,6 +103,9 @@ public class Services {
             Log.i(TAG, "Checking for text-to-speech data");
             checkTextToSpeech(activity);
 
+            Log.i(TAG, "Starting notification bar service");
+            notifications = new Notifications(appContext);
+
             Log.i(TAG, "Services started");
         } else {
             Log.v(TAG, "Services already started");
@@ -147,6 +151,8 @@ public class Services {
                     location = null;
                     bluetooth.stop();
                     bluetooth = null;
+                    notifications.stop();
+                    notifications = null;
                     KVStore.stop();
                     initialized = false;
                 } else {

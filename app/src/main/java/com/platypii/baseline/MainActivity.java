@@ -17,7 +17,12 @@ import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.data.Jump;
 import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.cloud.TheCloud;
+import com.platypii.baseline.events.AudibleEvent;
+import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.util.Callback;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import java.util.Locale;
 
 public class MainActivity extends BaseActivity {
@@ -77,6 +82,9 @@ public class MainActivity extends BaseActivity {
         } else {
             Log.e(TAG, "Signal updates already started");
         }
+
+        // Listen for event updates
+        EventBus.getDefault().register(this);
     }
 
     private void enableStrictMode() {
@@ -96,21 +104,11 @@ public class MainActivity extends BaseActivity {
 
     public void clickRecord(View v) {
         if(!MyDatabase.isLogging()) {
-            Log.i(TAG, "Starting logging");
             firebaseAnalytics.logEvent("click_logging_start", null);
-
-            // Start logging
             MyDatabase.startLogging(getApplicationContext());
-            updateUIState();
-            Notifications.updateNotification(this);
         } else {
-            Log.i(TAG, "Stopping logging");
             firebaseAnalytics.logEvent("click_logging_stop", null);
-
-            // Stop logging
             final Jump jump = MyDatabase.stopLogging();
-            updateUIState();
-            Notifications.updateNotification(this);
 
             // Upload to the cloud
             if(jump != null) {
@@ -216,25 +214,15 @@ public class MainActivity extends BaseActivity {
     private final View.OnLongClickListener audibleLongClickListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-            final SharedPreferences.Editor editor = prefs.edit();
             if (Services.audible.isEnabled()) {
                 // Stop audible
                 firebaseAnalytics.logEvent("click_stop_audible", null);
-                editor.putBoolean("audible_enabled", false);
-                editor.apply();
-
                 Services.audible.disableAudible();
-                Notifications.updateNotification(MainActivity.this);
             } else {
                 // Start audible
                 firebaseAnalytics.logEvent("click_start_audible", null);
                 Toast.makeText(MainActivity.this, "Starting audible", Toast.LENGTH_SHORT).show();
-                editor.putBoolean("audible_enabled", true);
-                editor.apply();
-
                 Services.audible.enableAudible();
-                Notifications.updateNotification(MainActivity.this);
             }
             updateUIState();
             return true;
@@ -310,6 +298,15 @@ public class MainActivity extends BaseActivity {
         signalStatus.setText(status);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoggingEvent(LoggingEvent event) {
+        updateUIState();
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAudibleEvent(AudibleEvent event) {
+        updateUIState();
+    }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -321,6 +318,7 @@ public class MainActivity extends BaseActivity {
             handler.removeCallbacks(signalRunnable);
             signalRunnable = null;
         }
+        EventBus.getDefault().unregister(this);
     }
 
 }

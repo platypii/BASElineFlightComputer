@@ -8,13 +8,17 @@ import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.util.Util;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Periodically gives audio feedback
  */
 public class MyAudible {
     private static final String TAG = "Audible";
+
+    private SharedPreferences prefs;
 
     private Speech speech;
     private AudibleThread audibleThread;
@@ -30,14 +34,14 @@ public class MyAudible {
 
     public void start(Context appContext) {
         Log.i(TAG, "Initializing audible");
+        prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
         speech = new Speech(appContext);
 
         if(!isInitialized) {
             isInitialized = true;
             audibleThread = new AudibleThread(this);
 
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
-            AudibleSettings.init(prefs);
+            AudibleSettings.load(prefs);
             isEnabled = prefs.getBoolean("audible_enabled", false);
             if(isEnabled) {
                 enableAudible();
@@ -66,6 +70,10 @@ public class MyAudible {
             Log.e(TAG, "Failed to start audible: audible not initialized");
         }
         isEnabled = true;
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("audible_enabled", true);
+        editor.apply();
+        EventBus.getDefault().post(new AudibleEvent());
     }
 
     public void disableAudible() {
@@ -77,6 +85,10 @@ public class MyAudible {
             Log.e(TAG, "Failed to stop audible: audible not initialized");
         }
         isEnabled = false;
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("audible_enabled", false);
+        editor.apply();
+        EventBus.getDefault().post(new AudibleEvent());
     }
 
     /**

@@ -107,7 +107,6 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                         firebaseAnalytics.logEvent("pref_stop_audible", null);
                         Services.audible.disableAudible();
                     }
-                    Notifications.updateNotification(getActivity());
                     break;
                 case "audible_mode":
                     final String audibleMode = (String) value;

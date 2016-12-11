@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.Measurement;
@@ -45,7 +46,9 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
     public static synchronized void startLogging(@NonNull Context appContext) {
         if(db == null) {
             try {
+                Log.i(TAG, "Starting logging");
                 db = new MyDatabase(appContext);
+                EventBus.getDefault().post(new LoggingEvent());
             } catch(IOException e) {
                 Log.e(TAG, "Error starting logging", e);
             }
@@ -55,9 +58,10 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
     }
     public static synchronized Jump stopLogging() {
         if(db != null) {
-            // Stop logging
+            Log.i(TAG, "Stopping logging");
             final File logFile = db.stop();
             db = null;
+            EventBus.getDefault().post(new LoggingEvent());
             if(logFile != null) {
                 return new Jump(logFile);
             } else {

@@ -20,7 +20,7 @@ public class AudibleSettings {
     /**
      * Load audible settings from android preferences
      */
-    static void init(SharedPreferences prefs) {
+    static void load(SharedPreferences prefs) {
         final String audibleMode = prefs.getString("audible_mode", "horizontal_speed");
         mode = AudibleModes.get(audibleMode);
         min = Util.parseDouble(prefs.getString("audible_min", Float.toString(mode.defaultMin)));
