@@ -1,0 +1,27 @@
+<resources>
+
+    <string name="app_name">BASEline</string>
+
+    <!-- Home Screen -->
+    <string name="action_record">Rekord</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_audible">Audible</string>
+    <string name="action_altimeter">Alti</string>
+    <string name="action_nav">Nav</string>
+    <string name="action_tracks">Spuren</string>
+    <string name="action_settings">Einstellungen</string>
+
+    <!-- Track Activity -->
+    <string name="action_open">Öffnen</string>
+    <string name="action_sync">Sync</string>
+    <string name="action_map">Karte</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_export">Export</string>
+
+    <string name="delete_local">Möchten sie diese Daten wirklich von diesem Geraet löschen? Die Daten wurden noch nicht online synchronisiert.</string>
+    <string name="delete_remote">Möchten sie diese Daten wirklich von diesem Geraet löschen? Die Daten werden weiterhin auf http://base-line.ws verfuegbar sein.</string>
+
+    <string name="error_export_intent">Export der Datei fehlgeschlagen</string>
+    <string name="error_map_intent">Google earth konnte nicht geoeffnet werden</string>
+
+</resources>

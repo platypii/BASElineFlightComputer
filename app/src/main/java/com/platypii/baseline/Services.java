@@ -58,6 +58,7 @@ public class Services {
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();
     public static final BaselineCloud cloud = new BaselineCloud();
+    private static WearMaster wear; // TODO: Make final
 
     /**
      * We want preferences to be available as early as possible.
@@ -133,6 +134,9 @@ public class Services {
             // Check if migration is necessary
             MigrateTracks.migrate(appContext);
 
+            Log.i(TAG, "Starting wear messaging service");
+            wear = new WearMaster(appContext);
+
             Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
         } else if(startCount > 2) {
             // Activity lifecycles can overlap
@@ -195,6 +199,7 @@ public class Services {
                 location.stop();
                 logger.stop();
                 bluetooth.stop();
+                wear.stop();
                 initialized = false;
                 handler.removeCallbacks(stopRunnable);
             } else {

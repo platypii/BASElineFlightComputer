@@ -30,6 +30,7 @@ dependencies {
     compile 'com.android.support:support-v4:25.4.0'
     compile 'com.google.android.gms:play-services-auth:11.0.2'
     compile 'com.google.android.gms:play-services-maps:11.0.2'
+    compile 'com.google.android.gms:play-services-wearable:11.0.2'
     compile 'com.google.firebase:firebase-crash:11.0.2'
     compile 'org.greenrobot:eventbus:3.0.0'
     testCompile 'junit:junit:4.12'

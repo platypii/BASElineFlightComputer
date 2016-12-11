@@ -1,0 +1,27 @@
+<resources>
+
+    <string name="app_name">BASEline</string>
+
+    <!-- Home Screen -->
+    <string name="action_record">Record</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_audible">Audible</string>
+    <string name="action_altimeter">Alti</string>
+    <string name="action_nav">Nav</string>
+    <string name="action_tracks">Tracks</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Track Activity -->
+    <string name="action_open">View</string>
+    <string name="action_sync">Sync</string>
+    <string name="action_map">Map</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_export">Export</string>
+
+    <string name="delete_local">Are you sure you want to delete this track from the local device? It has not been synced online yet.</string>
+    <string name="delete_remote">Are you sure you want to delete this track from the local device? It will remain on https://base-line.ws/ for later viewing.</string>
+
+    <string name="error_export_intent">Failed to export track file</string>
+    <string name="error_map_intent">Failed to open google earth</string>
+
+</resources>
