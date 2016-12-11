@@ -56,8 +56,7 @@ class WearMaster implements MessageApi.MessageListener, GoogleApiClient.Connecti
             case WEAR_MSG_STOP:
                 Log.i(TAG, "Received stop message");
                 if(Services.logger.isLogging()) {
-                    Services.logger.startLogging();
-                    // TODO: Upload track to the cloud
+                    Services.logger.stopLogging();
                 } else {
                     Log.w(TAG, "Received record message, but already recording");
                 }

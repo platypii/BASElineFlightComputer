@@ -11,17 +11,7 @@
     <string name="action_tracks">Pistes</string>
     <string name="action_settings">Paramètres</string>
 
-    <!-- Track Activity -->
-    <string name="action_open">Ouvert</string>
-    <string name="action_sync">Sync</string>
-    <string name="action_map">Carte</string>
-    <string name="action_delete">Supprimer</string>
-    <string name="action_export">Exporter</string>
-
-    <string name="delete_local">Voulez-vous vraiment supprimer cette piste?</string>
-    <string name="delete_remote">Voulez-vous vraiment supprimer cette piste?</string>
-
-    <string name="error_export_intent">Impossible d\'exporter le fichier de piste</string>
-    <string name="error_map_intent">Impossible d\'ouvrir google earth</string>
+    <!-- Altimeter Activity -->
+    <string name="set_altitude">Définir l\'altitude</string>
 
 </resources>

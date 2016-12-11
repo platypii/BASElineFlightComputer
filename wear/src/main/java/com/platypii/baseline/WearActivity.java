@@ -1,10 +1,12 @@
 package com.platypii.baseline;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import com.platypii.baseline.alti.AltimeterActivity;
 
 public class WearActivity extends Activity {
     private static final String TAG = "WearActivity";
@@ -59,22 +61,34 @@ public class WearActivity extends Activity {
 
     public void clickAltimeter(View v) {
         Log.i(TAG, "Clicked altimeter");
-        // TODO: Launch micro altimeter
+        // Launch micro altimeter
+        startActivity(new Intent(this, AltimeterActivity.class));
     }
 
     /**
      * Update button states and clock
      */
     private void updateUIState() {
-        if(recording) {
-            recordButton.setImageResource(R.drawable.square);
-        } else {
-            recordButton.setImageResource(R.drawable.circle);
+        if(recordButton == null) {
+            recordButton = (ImageButton) findViewById(R.id.recordButton);
         }
-        if(audible) {
-            audibleButton.setImageResource(R.drawable.audio_on);
-        } else {
-            audibleButton.setImageResource(R.drawable.audio);
+        if(audibleButton == null) {
+            audibleButton = (ImageButton) findViewById(R.id.audibleButton);
+        }
+
+        if(recordButton != null) {
+            if (recording) {
+                recordButton.setImageResource(R.drawable.square);
+            } else {
+                recordButton.setImageResource(R.drawable.circle);
+            }
+        }
+        if(audibleButton != null) {
+            if (audible) {
+                audibleButton.setImageResource(R.drawable.audio_on);
+            } else {
+                audibleButton.setImageResource(R.drawable.audio);
+            }
         }
     }
 
