@@ -9,6 +9,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
+import com.platypii.baseline.R;
 
 public class AnalogAltimeter extends View {
 
@@ -90,17 +91,17 @@ public class AnalogAltimeter extends View {
         // Harddeck
         paint.setColor(0xffee2211);
         canvas.drawArc(circ, -90, options.harddeck_angle, true, paint); // 0..2500
- 
+
         // Labels
         paint.setColor(0xff111111);
         paint.setStyle(Paint.Style.FILL);
         paint.setTextSize(32 * scale_factor);
         paint.setTextAlign(Paint.Align.CENTER);
         int major_i = 0;
-        for(double theta = 0; theta < 2 * Math.PI; theta += options.major_angle) {
+        for (double theta = 0; theta < 2 * Math.PI; theta += options.major_angle) {
             double r = radius * 0.86;
-            float x = (float)(center_x + r * Math.sin(theta));
-            float y = (float)(center_y - r * Math.cos(theta)) + 9 * scale_factor;
+            float x = (float) (center_x + r * Math.sin(theta));
+            float y = (float) (center_y - r * Math.cos(theta)) + 9 * scale_factor;
             canvas.drawText(Integer.toString(major_i), x, y, paint);
             major_i++;
         }
@@ -114,44 +115,44 @@ public class AnalogAltimeter extends View {
         // Draw tick marks
         // Major
         paint.setStrokeWidth(5 * scale_factor);
-        for(double theta = 0; theta < 2 * Math.PI; theta += options.major_angle) {
+        for (double theta = 0; theta < 2 * Math.PI; theta += options.major_angle) {
             final double r1 = radius * 0.60;
             final double r2 = radius * 0.75;
-            final float x1 = (float)(center_x + r1 * Math.sin(theta));
-            final float y1 = (float)(center_y - r1 * Math.cos(theta));
-            final float x2 = (float)(center_x + r2 * Math.sin(theta));
-            final float y2 = (float)(center_y - r2 * Math.cos(theta));
+            final float x1 = (float) (center_x + r1 * Math.sin(theta));
+            final float y1 = (float) (center_y - r1 * Math.cos(theta));
+            final float x2 = (float) (center_x + r2 * Math.sin(theta));
+            final float y2 = (float) (center_y - r2 * Math.cos(theta));
             canvas.drawLine(x1, y1, x2, y2, paint);
         }
 
         // Minor
         paint.setStrokeWidth(3 * scale_factor);
-        for(double theta = options.major_angle / 2; theta < 2 * Math.PI; theta += options.major_angle) {
+        for (double theta = options.major_angle / 2; theta < 2 * Math.PI; theta += options.major_angle) {
             final double r1 = radius * 0.65;
             final double r2 = radius * 0.71;
-            final float x1 = (float)(center_x + r1 * Math.sin(theta));
-            final float y1 = (float)(center_y - r1 * Math.cos(theta));
-            final float x2 = (float)(center_x + r2 * Math.sin(theta));
-            final float y2 = (float)(center_y - r2 * Math.cos(theta));
+            final float x1 = (float) (center_x + r1 * Math.sin(theta));
+            final float y1 = (float) (center_y - r1 * Math.cos(theta));
+            final float x2 = (float) (center_x + r2 * Math.sin(theta));
+            final float y2 = (float) (center_y - r2 * Math.cos(theta));
             canvas.drawLine(x1, y1, x2, y2, paint);
         }
 
         // 1/2 Minor
         paint.setStrokeWidth(2 * scale_factor);
-        for(double theta = options.major_angle / 4; theta < 2 * Math.PI; theta += options.major_angle / 2) {
+        for (double theta = options.major_angle / 4; theta < 2 * Math.PI; theta += options.major_angle / 2) {
             final double r1 = radius * 0.65;
             final double r2 = radius * 0.68;
-            final float x1 = (float)(center_x + r1 * Math.sin(theta));
-            final float y1 = (float)(center_y - r1 * Math.cos(theta));
-            final float x2 = (float)(center_x + r2 * Math.sin(theta));
-            final float y2 = (float)(center_y - r2 * Math.cos(theta));
+            final float x1 = (float) (center_x + r1 * Math.sin(theta));
+            final float y1 = (float) (center_y - r1 * Math.cos(theta));
+            final float x2 = (float) (center_x + r2 * Math.sin(theta));
+            final float y2 = (float) (center_y - r2 * Math.cos(theta));
             canvas.drawLine(x1, y1, x2, y2, paint);
         }
 
         // Hand
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(0xff111111);
-        if(!Double.isNaN(altitude)) {
+        if (!Double.isNaN(altitude)) {
             canvas.save();
             final float theta360 = (float) (360 * altitude / options.max_altitude);
             final float scale = (float) (radius * 0.90);
@@ -171,10 +172,15 @@ public class AnalogAltimeter extends View {
                 center_x + 60 * scale_factor + 16, center_y + 20 * scale_factor + 12);
         paint.setColor(0xff333333);
         canvas.drawRoundRect(digitalAltiBox, 4 * scale_factor, 4 * scale_factor, paint);
-        // Draw digital alti
-        final String alt_label = Convert.altitude(altitude);
+        // Draw digital alti text
+        final String alt_label;
+        if (Util.isReal(altitude)) {
+            alt_label = Convert.altitude(altitude);
+        } else {
+            alt_label = getContext().getString(R.string.no_barometer);
+        }
         paint.setColor(0xffeeeeee);
-        paint.setTextSize(28 * scale_factor + 24);
+        paint.setTextSize(28 * scale_factor + 20);
         canvas.drawText(alt_label, center_x, center_y + 12 * scale_factor + 4, paint);
     }
 

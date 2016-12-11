@@ -75,6 +75,8 @@ public class MyAltimeter {
                     if (sensor != null) {
                         // Start sensor updates
                         sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+                    } else {
+                        Log.e(TAG, "No pressure sensor found");
                     }
                 } else {
                     Log.e(TAG, "MyAltimeter already started");

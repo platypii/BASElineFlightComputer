@@ -12,7 +12,9 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.platypii.baseline.R;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class AltimeterActivity extends FragmentActivity {
     private static final String TAG = "Altimeter";
@@ -45,7 +47,6 @@ public class AltimeterActivity extends FragmentActivity {
         Log.i(TAG, "Prompting for ground level adjustment");
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("Set Altitude AGL");
-        builder.setMessage("Altitude above ground level in feet");
         final EditText input = new EditText(activity);
         input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
         input.setHint("0");
@@ -63,41 +64,47 @@ public class AltimeterActivity extends FragmentActivity {
                 }
             }
         });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-            }
-        });
         // Create the AlertDialog
         final AlertDialog dialog = builder.create();
         dialog.show();
     }
 
     /**
-     * TODO: Listen for altitude updates
+     * Listen for altitude updates
      */
-    @Subscribe()
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAltitudeEvent(MAltitude alt) {
-        updateFlightStats();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         updateFlightStats();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // TODO: Start sensor updates
+        // Start altimeter
         alti = new MyAltimeter();
         alti.startAsync(this);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Start sensor updates
+        EventBus.getDefault().register(this);
+        updateFlightStats();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Stop sensor updates
+        EventBus.getDefault().unregister(this);
+    }
+
     @Override
     public void onStop() {
         super.onStop();
-        // TODO: Stop sensor updates
+        // Stop altimeter
         alti.stop();
+        alti = null;
     }
 }

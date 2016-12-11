@@ -13,5 +13,6 @@
 
     <!-- Altimeter Activity -->
     <string name="set_altitude">Set Altitude</string>
+    <string name="no_barometer">no alti</string>
 
 </resources>

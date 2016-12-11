@@ -8,8 +8,13 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
@@ -23,6 +28,9 @@ import org.greenrobot.eventbus.ThreadMode;
 class WearMaster implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "WearMaster";
 
+    private static final String STATE_URI = "/baseline/services/state";
+
+    private static final String WEAR_MSG_INIT = "BASEline.init";
     private static final String WEAR_MSG_RECORD = "BASEline.record";
     private static final String WEAR_MSG_STOP = "BASEline.stop";
     private static final String WEAR_MSG_ENABLE_AUDIBLE = "BASEline.enableAudible";
@@ -45,6 +53,10 @@ class WearMaster implements MessageApi.MessageListener, GoogleApiClient.Connecti
     public void onMessageReceived(MessageEvent messageEvent) {
         Log.d(TAG, "Received message: " + messageEvent);
         switch(messageEvent.getPath()) {
+            case WEAR_MSG_INIT:
+                Log.i(TAG, "Received init message");
+                sendUpdate();
+                break;
             case WEAR_MSG_RECORD:
                 Log.i(TAG, "Received record message");
                 if(!Services.logger.isLogging()) {
@@ -82,10 +94,24 @@ class WearMaster implements MessageApi.MessageListener, GoogleApiClient.Connecti
         }
     }
 
+    private void sendUpdate() {
+        Log.i(TAG, "Sending state update to wear device");
+        final PutDataMapRequest putDataMapReq = PutDataMapRequest.create(STATE_URI);
+        final DataMap map = putDataMapReq.getDataMap();
+        map.putBoolean("logging_enabled", Services.logger.isLogging());
+        map.putBoolean("audible_enabled", Services.audible.isEnabled());
+        final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        final PendingResult<DataApi.DataItemResult> pendingResult =
+                Wearable.DataApi.putDataItem(googleApiClient, putDataReq);
+        // TODO: Check result
+    }
+
+    // Google api client callbacks
     @Override
     public void onConnected(@Nullable Bundle connectionHint) {
         Log.i(TAG, "Wear connected");
         Wearable.MessageApi.addListener(googleApiClient, this);
+        sendUpdate();
     }
 
     @Override
@@ -106,13 +132,12 @@ class WearMaster implements MessageApi.MessageListener, GoogleApiClient.Connecti
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoggingEvent(LoggingEvent event) {
-        // TODO: update();
+        sendUpdate();
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAudibleEvent(AudibleEvent event) {
-        // TODO: update();
+        sendUpdate();
     }
-
 
     void stop() {
         Log.w(TAG, "Stopping wear messaging service");

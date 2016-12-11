@@ -7,6 +7,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import com.platypii.baseline.alti.AltimeterActivity;
+import com.platypii.baseline.events.DataSyncEvent;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class WearActivity extends Activity {
     private static final String TAG = "WearActivity";
@@ -15,10 +19,6 @@ public class WearActivity extends Activity {
     private ImageButton audibleButton;
 
     private WearSlave wear;
-
-    // TODO: Use synced data
-    private boolean recording = false;
-    private boolean audible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,28 +33,31 @@ public class WearActivity extends Activity {
         wear = new WearSlave(this);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+        updateUIState();
+    }
+
     public void clickRecord(View v) {
-        if(recording) {
+        if(wear.logging) {
             Log.i(TAG, "Clicked stop");
             wear.clickStop();
-            recording = false;
         } else {
             Log.i(TAG, "Clicked record");
             wear.clickRecord();
-            recording = true;
         }
         updateUIState();
     }
 
     public void clickAudible(View v) {
-        if(audible) {
+        if(wear.audible) {
             Log.i(TAG, "Clicked audible off");
             wear.disableAudible();
-            audible = false;
         } else {
             Log.i(TAG, "Clicked audible on");
             wear.enableAudible();
-            audible = true;
         }
         updateUIState();
     }
@@ -77,19 +80,41 @@ public class WearActivity extends Activity {
         }
 
         if(recordButton != null) {
-            if (recording) {
+            if(wear.synced) {
+                recordButton.setAlpha(1f);
+            } else {
+                recordButton.setAlpha(0.5f);
+            }
+            if (wear.logging) {
                 recordButton.setImageResource(R.drawable.square);
             } else {
                 recordButton.setImageResource(R.drawable.circle);
             }
         }
         if(audibleButton != null) {
-            if (audible) {
+            if(wear.synced) {
+                audibleButton.setAlpha(1f);
+            } else {
+                audibleButton.setAlpha(0.5f);
+            }
+            if (wear.audible) {
                 audibleButton.setImageResource(R.drawable.audio_on);
             } else {
                 audibleButton.setImageResource(R.drawable.audio);
             }
         }
+    }
+
+    // Listen for app state changes
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDataSyncEvent(DataSyncEvent event) {
+        updateUIState();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
