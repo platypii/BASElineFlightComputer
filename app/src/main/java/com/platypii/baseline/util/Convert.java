@@ -1,5 +1,7 @@
 package com.platypii.baseline.util;
 
+import android.util.Log;
+import com.platypii.baseline.Services;
 import java.util.Locale;
 
 /**
@@ -8,6 +10,7 @@ import java.util.Locale;
  * Technically the metric unit for angles should be radians. We use degrees.
  */
 public class Convert {
+    private static final String TAG = "Convert";
 
     public static boolean metric = false;
 
@@ -264,4 +267,11 @@ public class Convert {
         return Math.round(degrees) + "°";
     }
 
+    public static void setMetric(boolean metric) {
+        Log.i(TAG, "Setting metric mode: " + Convert.metric);
+        Convert.metric = metric;
+        if(Services.wear != null) {
+            Services.wear.sendUpdate();
+        }
+    }
 }

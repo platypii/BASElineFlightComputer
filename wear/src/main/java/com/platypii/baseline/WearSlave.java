@@ -18,6 +18,7 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
+import com.platypii.baseline.alti.Convert;
 import com.platypii.baseline.events.DataSyncEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -130,6 +131,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
                     // Update logging and audible state
                     logging = dataMap.getBoolean("logging_enabled");
                     audible = dataMap.getBoolean("audible_enabled");
+                    Convert.metric = dataMap.getBoolean("metric");
                     synced = true;
                     EventBus.getDefault().post(new DataSyncEvent());
                     Log.i(TAG, "Received sync data from phone: logging = " + logging + " audible = " + audible);

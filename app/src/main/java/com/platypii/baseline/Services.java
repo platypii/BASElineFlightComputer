@@ -59,7 +59,7 @@ public class Services {
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();
     public static final BaselineCloud cloud = new BaselineCloud();
-    private static WearMaster wear; // TODO: Make final
+    public static WearMaster wear; // TODO: Make final
 
     /**
      * We want preferences to be available as early as possible.

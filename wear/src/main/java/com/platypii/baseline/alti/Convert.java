@@ -7,9 +7,9 @@ import java.util.Locale;
  * Internally we always use metric units (meters, m/s, etc)
  * Technically the metric unit for angles should be radians. We use degrees.
  */
-class Convert {
+public class Convert {
 
-    static boolean metric = false;
+    public static boolean metric = false;
 
     // Convert to standard metric (1000 * FT = 304.8 * M)
     static final double FT = 0.3048;
