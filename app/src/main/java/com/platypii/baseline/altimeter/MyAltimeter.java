@@ -303,8 +303,12 @@ public class MyAltimeter {
 
     public static void stop() {
         Services.location.removeListener(locationListener);
-        sensorManager.unregisterListener(sensorEventListener);
-        sensorManager = null;
+        if(sensorManager != null) {
+            sensorManager.unregisterListener(sensorEventListener);
+            sensorManager = null;
+        } else {
+            Log.e(TAG, "MyAltimeter.stop() called, but service is already stopped");
+        }
         prefs = null;
     }
 
