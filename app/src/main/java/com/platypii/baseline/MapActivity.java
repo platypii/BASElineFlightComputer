@@ -1,5 +1,6 @@
 package com.platypii.baseline;
 
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -22,7 +23,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.data.MyFlightManager;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
@@ -44,6 +44,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     private TextView flightStatsGlide;
     private ImageButton homeButton;
     private ImageView crosshair;
+    private AlertDialog alertDialog;
 
     private TouchableMapFragment mapFragment;
     private GoogleMap map; // Might be null if Google Play services APK is not available
@@ -89,7 +90,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         analogAltimeter.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                AltimeterActivity.promptForAltitude(MapActivity.this);
+                alertDialog = AltimeterActivity.promptForAltitude(MapActivity.this);
                 return false;
             }
         });
@@ -360,6 +361,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     public void onResume() {
         super.onResume();
         paused = false;
+        // Recenter on last location
         if(Services.location.lastLoc != null) {
             onLocationChangedPostExecute();
         }
@@ -369,6 +371,10 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     public void onPause() {
         super.onPause();
         paused = true;
+        if(alertDialog != null) {
+            alertDialog.dismiss();
+            alertDialog = null;
+        }
     }
 
     @Override

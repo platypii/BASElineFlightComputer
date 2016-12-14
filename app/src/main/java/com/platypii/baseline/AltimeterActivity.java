@@ -21,6 +21,8 @@ import org.greenrobot.eventbus.ThreadMode;
 public class AltimeterActivity extends FragmentActivity {
     private static final String TAG = "Altimeter";
 
+    private AlertDialog alertDialog;
+
     private PolarPlot polar;
     private AnalogAltimeter analogAltimeter;
 
@@ -37,7 +39,7 @@ public class AltimeterActivity extends FragmentActivity {
         analogAltimeter.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                promptForAltitude(AltimeterActivity.this);
+                alertDialog = promptForAltitude(AltimeterActivity.this);
                 return false;
             }
         });
@@ -47,7 +49,7 @@ public class AltimeterActivity extends FragmentActivity {
         analogAltimeter.setAltitude(Services.alti.altitudeAGL());
     }
 
-    public static void promptForAltitude(final Activity activity) {
+    public static AlertDialog promptForAltitude(final Activity activity) {
         Log.i(TAG, "Prompting for ground level adjustment");
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("Set Altitude AGL");
@@ -75,8 +77,7 @@ public class AltimeterActivity extends FragmentActivity {
             }
         });
         // Create the AlertDialog
-        final AlertDialog dialog = builder.create();
-        dialog.show();
+        return builder.show();
     }
 
     /**
@@ -101,6 +102,10 @@ public class AltimeterActivity extends FragmentActivity {
         // Stop sensor updates
         EventBus.getDefault().unregister(this);
         polar.stop();
+        if(alertDialog != null) {
+            alertDialog.dismiss();
+            alertDialog = null;
+        }
     }
 
     @Override

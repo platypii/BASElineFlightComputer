@@ -21,12 +21,13 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
-public class JumpActivity extends BaseActivity {
+public class JumpActivity extends BaseActivity implements DialogInterface.OnClickListener {
     private static final String TAG = "Jump";
 
     private View signInPanel;
     private View signInButton;
     private View signInSpinner;
+    private AlertDialog alertDialog;
 
     private Jump jump;
 
@@ -141,21 +142,25 @@ public class JumpActivity extends BaseActivity {
     public void clickDelete(View v) {
         firebaseAnalytics.logEvent("click_track_delete_1", null);
         final int deleteConfirmMessage = (jump.getCloudData() == null)? R.string.delete_local : R.string.delete_remote;
-        new AlertDialog.Builder(this)
+        alertDialog = new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setTitle("Delete this track?")
             .setMessage(deleteConfirmMessage)
-            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // Delete jump
-                    firebaseAnalytics.logEvent("click_track_delete_2", null);
-                    deleteLocal();
-                }
-
-            })
+            .setPositiveButton("Delete", this)
             .setNegativeButton("Cancel", null)
             .show();
+    }
+
+    /**
+     * User clicked "ok" on delete track
+     */
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        if(which == DialogInterface.BUTTON_POSITIVE) {
+            // Delete jump
+            firebaseAnalytics.logEvent("click_track_delete_2", null);
+            deleteLocal();
+        }
     }
 
     private void deleteLocal() {
@@ -188,6 +193,10 @@ public class JumpActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+        if(alertDialog != null) {
+            alertDialog.dismiss();
+            alertDialog = null;
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
