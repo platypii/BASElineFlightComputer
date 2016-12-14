@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Util;
@@ -45,7 +44,7 @@ public class AltimeterActivity extends FragmentActivity {
     }
 
     private void updateFlightStats() {
-        analogAltimeter.setAltitude(MyAltimeter.altitudeAGL());
+        analogAltimeter.setAltitude(Services.alti.altitudeAGL());
     }
 
     public static void promptForAltitude(final Activity activity) {
@@ -63,7 +62,7 @@ public class AltimeterActivity extends FragmentActivity {
                 final double altitude = inputText.isEmpty()? 0.0 : Util.parseDouble(inputText) * Convert.FT;
                 if(Util.isReal(altitude)) {
                     Log.w(TAG, "Setting altitude above ground level to " + altitude + "m");
-                    MyAltimeter.setGroundLevel(MyAltimeter.pressure_altitude_filtered - altitude);
+                    Services.alti.setGroundLevel(Services.alti.pressure_altitude_filtered - altitude);
                 } else {
                     Log.e(TAG, "Invalid altitude above ground level: " + altitude);
                     Toast.makeText(activity, "Invalid altitude", Toast.LENGTH_SHORT).show();

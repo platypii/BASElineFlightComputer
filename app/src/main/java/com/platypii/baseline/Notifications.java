@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat; // TODO: minsdk16
 import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.events.AudibleEvent;
@@ -16,14 +17,16 @@ import org.greenrobot.eventbus.ThreadMode;
 /**
  * Manage notification bars
  */
-class Notifications {
+class Notifications implements Service {
     private static final int notificationId = 117;
 
     private Context context;
 
-    Notifications(Context appContext) {
-        this.context = appContext;
+    @Override
+    public void start(@NonNull Context context) {
+        this.context = context;
         EventBus.getDefault().register(this);
+        update();
     }
 
     private void update() {
@@ -67,6 +70,7 @@ class Notifications {
         update();
     }
 
+    @Override
     public void stop() {
         EventBus.getDefault().unregister(this);
         context = null;

@@ -3,6 +3,7 @@ package com.platypii.baseline.measurements;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.crash.FirebaseCrash;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
@@ -35,8 +36,8 @@ public class MLocation extends Measurement {
                      int numSat) {
 
         // Load state data (altimeter, flightMode, orientation, etc)
-        this.altitude = MyAltimeter.altitude;
-        this.climb = MyAltimeter.climb;
+        this.altitude = Services.alti.altitude;
+        this.climb = Services.alti.climb;
 
         // Sanity checks
         final int locationError = LocationCheck.validate(latitude, longitude);

@@ -322,18 +322,18 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
     }
 
     private void updateFlightStats() {
-        analogAltimeter.setAltitude(MyAltimeter.altitudeAGL());
-        if(MyAltimeter.climb < 0) {
+        analogAltimeter.setAltitude(Services.alti.altitudeAGL());
+        if(Services.alti.climb < 0) {
             flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp,0,0,0);
-            flightStatsVario.setText(Convert.speed(-MyAltimeter.climb));
+            flightStatsVario.setText(Convert.speed(-Services.alti.climb));
         } else {
             flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward_white_24dp,0,0,0);
-            flightStatsVario.setText(Convert.speed(MyAltimeter.climb));
+            flightStatsVario.setText(Convert.speed(Services.alti.climb));
         }
         final double groundSpeed = Services.location.groundSpeed();
         if(Util.isReal(groundSpeed)) {
             flightStatsSpeed.setText(Convert.speed(groundSpeed));
-            flightStatsGlide.setText(Convert.glide(groundSpeed, MyAltimeter.climb, 2, true));
+            flightStatsGlide.setText(Convert.glide(groundSpeed, Services.alti.climb, 2, true));
         } else {
             flightStatsSpeed.setText("");
             flightStatsGlide.setText("");

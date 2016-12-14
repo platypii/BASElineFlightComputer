@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.platypii.baseline.Service;
 import com.platypii.baseline.measurements.MAccel;
 import com.platypii.baseline.measurements.MGravity;
 import com.platypii.baseline.measurements.MRotation;
@@ -21,7 +22,7 @@ import com.platypii.baseline.util.SyncedList;
  * Service to manage orientation sensors, and listeners
  * accelerometer, gravity, gyro, linear accel, magnetic, pressure, humidity, rotation, temp
  */
-public class MySensorManager implements SensorEventListener {
+public class MySensorManager implements SensorEventListener, Service {
     private static final String TAG = "MySensorManager";
 
     private SensorManager sensorManager;
@@ -36,15 +37,16 @@ public class MySensorManager implements SensorEventListener {
     /**
      * Initialize orientation sensor services
      *
-     * @param appContext The Application context
+     * @param context The Application context
      */
-    public MySensorManager(@NonNull final Context appContext) {
+    @Override
+    public void start(@NonNull final Context context) {
         Log.i(TAG, "Starting sensor manager");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 // Get android sensor manager
-                sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
+                sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
                 // Find sensors
                 final Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
                 final Sensor gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
@@ -107,6 +109,7 @@ public class MySensorManager implements SensorEventListener {
 //        return buffer;
 //    }
 
+    @Override
     public void stop() {
         sensorManager.unregisterListener(this);
         sensorManager = null;

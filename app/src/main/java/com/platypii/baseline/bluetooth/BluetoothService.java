@@ -3,11 +3,14 @@ package com.platypii.baseline.bluetooth;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
 import android.location.GpsStatus;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.R;
+import com.platypii.baseline.Service;
 import com.platypii.baseline.events.BluetoothEvent;
 import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
@@ -18,7 +21,7 @@ import java.util.Set;
  * Class to manage a bluetooth GPS receiver.
  * Note: instantiating this class will not automatically start bluetooth. Call startAsync to connect.
  */
-public class BluetoothService {
+public class BluetoothService implements Service {
     private static final String TAG = "Bluetooth";
 
     private static final int ENABLE_BLUETOOTH_CODE = 13;
@@ -49,7 +52,13 @@ public class BluetoothService {
 
     final List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
 
-    public void startAsync(final Activity activity) {
+    @Override
+    public void start(@NonNull Context context) {
+        if(!(context instanceof Activity)) {
+            FirebaseCrash.report(new Exception("Bluetooth context must be an activity"));
+            return;
+        }
+        final Activity activity = (Activity) context;
         if (bluetoothState != BT_STOPPED) {
             Log.e(TAG, "Bluetooth already started: " + BT_STATES[bluetoothState]);
             FirebaseCrash.report(new Exception("Bluetooth already started: " + BT_STATES[bluetoothState]));
@@ -137,6 +146,7 @@ public class BluetoothService {
         }
     }
 
+    @Override
     public synchronized void stop() {
         if(bluetoothState != BT_STOPPED) {
             Log.i(TAG, "Stopping bluetooth service");
@@ -166,7 +176,7 @@ public class BluetoothService {
         if(bluetoothState != BT_STOPPED) {
             Log.e(TAG, "Error restarting bluetooth: not stopped: " + BT_STATES[bluetoothState]);
         }
-        startAsync(activity);
+        start(activity);
     }
 
     public void addNmeaListener(GpsStatus.NmeaListener nmeaListener) {

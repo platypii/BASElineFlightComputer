@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Stat;
@@ -28,61 +29,63 @@ import org.greenrobot.eventbus.EventBus;
  *
  * TODO: Correct barometer drift with GPS
  */
-public class MyAltimeter {
+public class MyAltimeter implements Service {
     private static final String TAG = "MyAltimeter";
 
-    private static SensorManager sensorManager;
-    private static SharedPreferences prefs;
+    private SensorManager sensorManager;
+    private SharedPreferences prefs;
 
     // Pressure data
-    public static float pressure = Float.NaN; // hPa (millibars)
-    public static double pressure_altitude_raw = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
-    public static double pressure_altitude_filtered = Double.NaN; // kalman filtered pressure altitude
+    public float pressure = Float.NaN; // hPa (millibars)
+    public double pressure_altitude_raw = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
+    public double pressure_altitude_filtered = Double.NaN; // kalman filtered pressure altitude
 
     // official altitude AMSL = pressure_altitude - altitude_offset
     // altitude_offset uses GPS to get absolute altitude right
-    private static double altitude_offset = 0.0;
+    private double altitude_offset = 0.0;
 
     // Pressure altitude kalman filter
-    private static final Filter filter = new FilterKalman(); // Unfiltered(), AlphaBeta(), MovingAverage(), etc
+    private final Filter filter = new FilterKalman(); // Unfiltered(), AlphaBeta(), MovingAverage(), etc
 
     // Official altitude data
-    public static double altitude = Double.NaN; // Meters AMSL
-    public static double climb = Double.NaN; // Rate of climb m/s
+    public double altitude = Double.NaN; // Meters AMSL
+    public double climb = Double.NaN; // Rate of climb m/s
     // public static double verticalAcceleration = Double.NaN;
 
     // Ground level
     // Save ground level for 12 hours (in milliseconds)
     private static final double GROUND_LEVEL_TTL = 12 * 60 * 60 * 1000;
-    private static boolean ground_level_initialized = false;
-    private static double ground_level = Double.NaN;
+    private boolean ground_level_initialized = false;
+    private double ground_level = Double.NaN;
 
-    private static long lastFixNano; // nanoseconds
-    private static long lastFixMillis; // milliseconds
+    private long lastFixNano; // nanoseconds
+    private long lastFixMillis; // milliseconds
 
     // Stats
     // Model error is the difference between our filtered output and the raw pressure altitude
     // Model error should approximate the sensor variance, even when in motion
-    public static final Stat model_error = new Stat();
-    public static float refreshRate = 0; // Moving average of refresh rate in Hz
-    public static long n = 0; // number of samples
+    public final Stat model_error = new Stat();
+    public float refreshRate = 0; // Moving average of refresh rate in Hz
+    public long n = 0; // number of samples
 
     /**
-     * Initializes altimeter services, if not already running
-     * @param appContext The Application context
+     * Initializes altimeter services, if not already running.
+     * Starts async in a background thread
+     * @param context The Application context
      */
-    public static synchronized void startAsync(@NonNull final Context appContext) {
+    @Override
+    public synchronized void start(@NonNull final Context context) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 // Get a new preference manager
-                prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+                prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 if(sensorManager == null) {
                     // Load ground level from preferences
                     loadGroundLevel();
 
                     // Add sensor listener
-                    sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
+                    sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
                     final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
                     if (sensor != null) {
                         // Start sensor updates
@@ -102,18 +105,18 @@ public class MyAltimeter {
         });
     }
 
-    public static double altitudeAGL() {
+    public double altitudeAGL() {
         return pressure_altitude_filtered - ground_level;
     }
 
-    public static double groundLevel() {
+    public double groundLevel() {
         return ground_level;
     }
 
     /**
      * Load ground level from preferences
      */
-    private static void loadGroundLevel() {
+    private void loadGroundLevel() {
         final long groundLevelTime = prefs.getLong("altimeter_ground_level_time", -1L);
         if(groundLevelTime != -1 && System.currentTimeMillis() - groundLevelTime < GROUND_LEVEL_TTL) {
             ground_level = prefs.getFloat("altimeter_ground_level", 0);
@@ -127,7 +130,7 @@ public class MyAltimeter {
      * Should not be called until altimeter is initialized.
      * @param groundLevel the pressure altitude at ground level (0m AGL)
      */
-    public static void setGroundLevel(double groundLevel) {
+    public void setGroundLevel(double groundLevel) {
         ground_level = groundLevel;
         ground_level_initialized = true;
         // Save to preferences
@@ -138,22 +141,22 @@ public class MyAltimeter {
     }
 
     // Sensor Event Listener
-    private static final SensorEventListener sensorEventListener = new AltimeterSensorEventListener();
-    private static class AltimeterSensorEventListener implements SensorEventListener {
+    private final SensorEventListener sensorEventListener = new AltimeterSensorEventListener();
+    private class AltimeterSensorEventListener implements SensorEventListener {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
         public void onSensorChanged(@NonNull SensorEvent event) {
             long millis = System.currentTimeMillis(); // Record time as soon as possible
             // assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
             // Log.w(TAG, "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
-            MyAltimeter.updateBarometer(millis, event);
+            updateBarometer(millis, event);
         }
     }
 
     // Location Listener
-    private static final MyLocationListener locationListener = new AltimeterLocationListener();
-    private static class AltimeterLocationListener implements MyLocationListener {
+    private final MyLocationListener locationListener = new AltimeterLocationListener();
+    private class AltimeterLocationListener implements MyLocationListener {
         public void onLocationChanged(@NonNull MLocation loc) {
-            MyAltimeter.updateGPS(loc);
+            updateGPS(loc);
         }
         public void onLocationChangedPostExecute() {}
     }
@@ -161,7 +164,7 @@ public class MyAltimeter {
     /**
      * Process new barometer reading
      */
-    private static void updateBarometer(long millis, SensorEvent event) {
+    private void updateBarometer(long millis, SensorEvent event) {
         if(event == null || event.values.length == 0 || Double.isNaN(event.values[0]))
             return;
 
@@ -228,11 +231,11 @@ public class MyAltimeter {
         updateAltitude();
     }
 
-    private static long gps_sample_count = 0;
+    private long gps_sample_count = 0;
     /**
      * Process new GPS reading
      */
-    private static void updateGPS(MLocation loc) {
+    private void updateGPS(MLocation loc) {
         // Log.d(TAG, "GPS Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + loc.millis);
         if(!Double.isNaN(loc.altitude_gps)) {
             if(n > 0) {
@@ -272,7 +275,7 @@ public class MyAltimeter {
     /**
      * Saves an official altitude measurement
      */
-    private static void updateAltitude() {
+    private void updateAltitude() {
         // Log.d(TAG, "Altimeter Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + lastFixMillis + " " + lastFixNano);
         // Create the measurement
         final MAltitude myAltitude = new MAltitude(lastFixMillis, lastFixNano, altitude, climb, pressure);
@@ -301,7 +304,8 @@ public class MyAltimeter {
         return altitude0 - temp0 * (1 - Math.pow(pressure / pressure0, EXP)) / L;
     }
 
-    public static void stop() {
+    @Override
+    public void stop() {
         Services.location.removeListener(locationListener);
         if(sensorManager != null) {
             sensorManager.unregisterListener(sensorEventListener);

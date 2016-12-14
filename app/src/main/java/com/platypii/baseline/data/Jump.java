@@ -3,6 +3,7 @@ package com.platypii.baseline.data;
 import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import java.io.File;
 import java.text.ParseException;
@@ -34,9 +35,9 @@ public class Jump {
             return cloudData;
         } else {
             // Get from KV store
-            final String trackUrl = KVStore.getString(cacheKey());
+            final String trackUrl = Services.kv.getString(cacheKey());
             if(trackUrl != null) {
-                final String trackKml = KVStore.getString(cacheKey() + ".trackKml");
+                final String trackKml = Services.kv.getString(cacheKey() + ".trackKml");
                 cloudData = new CloudData(trackUrl, trackKml);
                 return cloudData;
             } else {
@@ -47,8 +48,8 @@ public class Jump {
     }
 
     public void setCloudData(CloudData cloudData) {
-        KVStore.put(cacheKey(), cloudData.trackUrl);
-        KVStore.put(cacheKey() + ".trackKml", cloudData.trackKml);
+        Services.kv.put(cacheKey(), cloudData.trackUrl);
+        Services.kv.put(cacheKey() + ".trackKml", cloudData.trackKml);
         this.cloudData = cloudData;
     }
 

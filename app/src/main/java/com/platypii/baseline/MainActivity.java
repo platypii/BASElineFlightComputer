@@ -290,7 +290,7 @@ public class MainActivity extends BaseActivity {
         }
 
         // Barometer status
-        if(MyAltimeter.n == 0) {
+        if(Services.alti.n == 0) {
             status += " (no barometer)";
         }
 

@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.util.Util;
@@ -15,7 +16,7 @@ import org.greenrobot.eventbus.EventBus;
 /**
  * Periodically gives audio feedback
  */
-public class MyAudible {
+public class MyAudible implements Service {
     private static final String TAG = "Audible";
 
     private SharedPreferences prefs;
@@ -32,10 +33,11 @@ public class MyAudible {
     private static final int STATE_MAX = 1;
     private int boundaryState = STATE_INSIDE;
 
-    public void start(Context appContext) {
+    @Override
+    public void start(@NonNull Context context) {
         Log.i(TAG, "Initializing audible");
-        prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
-        speech = new Speech(appContext);
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        speech = new Speech(context);
 
         if(!isInitialized) {
             isInitialized = true;
@@ -195,6 +197,7 @@ public class MyAudible {
     /**
      * Stop audible service
      */
+    @Override
     public void stop() {
         if(isInitialized) {
             if(audibleThread.isRunning()) {
@@ -203,6 +206,7 @@ public class MyAudible {
             audibleThread = null;
             isInitialized = false;
             speech = null;
+            prefs = null;
         }
     }
 

@@ -65,7 +65,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 BluetoothService.preferenceEnabled = (Boolean) value;
                 if(BluetoothService.preferenceEnabled) {
                     firebaseAnalytics.logEvent("bluetooth_enabled", null);
-                    Services.bluetooth.startAsync(getActivity());
+                    Services.bluetooth.start(getActivity());
                 } else {
                     firebaseAnalytics.logEvent("bluetooth_disabled", null);
                     Services.bluetooth.stop();

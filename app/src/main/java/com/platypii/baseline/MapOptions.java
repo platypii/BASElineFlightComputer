@@ -1,7 +1,6 @@
 package com.platypii.baseline;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.util.Util;
 
 /**
@@ -24,7 +23,7 @@ class MapOptions {
      * Returns the default zoom for a given altitude
      */
     static float getZoom() {
-        final double altitude = MyAltimeter.altitudeAGL();
+        final double altitude = Services.alti.altitudeAGL();
 
         // Piecewise linear zoom function
         final double alts[] = {100, 600, 1200, 2000};

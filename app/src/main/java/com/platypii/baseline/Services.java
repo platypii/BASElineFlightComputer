@@ -46,11 +46,13 @@ public class Services {
     private static final int shutdownDelay = 10000;
 
     // Services
-    public static LocationService location;
-    public static MySensorManager sensors;
-    public static BluetoothService bluetooth;
-    public static MyAudible audible;
-    public static Notifications notifications;
+    public static final KVStore kv = new KVStore();
+    public static final LocationService location = new LocationService();
+    public static final MyAltimeter alti = new MyAltimeter();
+    public static final MySensorManager sensors = new MySensorManager();
+    public static final BluetoothService bluetooth = new BluetoothService();
+    public static final MyAudible audible = new MyAudible();
+    private static final Notifications notifications = new Notifications();
 
     public static void start(@NonNull Activity activity) {
         startCount++;
@@ -66,21 +68,14 @@ public class Services {
             loadPreferences(appContext);
 
             Log.i(TAG, "Starting key value store");
-            KVStore.start(appContext);
-
-            // Create audible class, but wait for text-to-speech to start
-            audible = new MyAudible();
+            kv.start(appContext);
 
             Log.i(TAG, "Starting bluetooth service");
-            if(bluetooth == null) {
-                bluetooth = new BluetoothService();
-            }
             if(BluetoothService.preferenceEnabled) {
-                bluetooth.startAsync(activity);
+                bluetooth.start(activity);
             }
 
             Log.i(TAG, "Starting location service");
-            location = new LocationService();
             if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 // Enable location services
                 try {
@@ -95,16 +90,17 @@ public class Services {
             }
 
             Log.i(TAG, "Starting sensors");
-            sensors = new MySensorManager(appContext);
+            sensors.start(appContext);
 
             Log.i(TAG, "Starting altimeter");
-            MyAltimeter.startAsync(appContext);
+            alti.start(appContext);
 
+            // TTS is prerequisite for audible
             Log.i(TAG, "Checking for text-to-speech data");
             checkTextToSpeech(activity);
 
             Log.i(TAG, "Starting notification bar service");
-            notifications = new Notifications(appContext);
+            notifications.start(appContext);
 
             Log.i(TAG, "Services started");
         } else {
@@ -118,11 +114,9 @@ public class Services {
     /**
      * Call this function once text-to-speech data is ready
      */
-    static void onTtsLoaded(Context appContext) {
-        if(audible != null) {
-            // TTS loaded, start the audible
-            audible.start(appContext);
-        }
+    static void onTtsLoaded(Context context) {
+        // TTS loaded, start the audible
+        audible.start(context);
     }
 
     public static void stop() {
@@ -143,17 +137,12 @@ public class Services {
                     Log.i(TAG, "All activities have stopped. Stopping services.");
                     // Stop services
                     audible.stop();
-                    audible = null;
-                    MyAltimeter.stop();
+                    alti.stop();
                     sensors.stop();
-                    sensors = null;
                     location.stop();
-                    location = null;
                     bluetooth.stop();
-                    bluetooth = null;
                     notifications.stop();
-                    notifications = null;
-                    KVStore.stop();
+                    kv.stop();
                     initialized = false;
                 } else {
                     if(MyDatabase.isLogging()) {

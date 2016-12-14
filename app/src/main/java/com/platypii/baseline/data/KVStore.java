@@ -4,44 +4,51 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import com.platypii.baseline.Service;
 
-public class KVStore {
+/**
+ * Abstraction over android's preferences to implement a simple key value store, with string types
+ */
+public class KVStore implements Service {
+    private static final String TAG = "KVStore";
 
-    private static SharedPreferences prefs;
-    private static boolean started = false;
+    private SharedPreferences prefs;
+    private boolean started = false;
 
-    public static synchronized void start(@NonNull Context appContext) {
+    @Override
+    public synchronized void start(@NonNull Context context) {
         // Load shared preferences for persistence
         if(started) {
-            Log.e("KVStore", "Already started");
+            Log.e(TAG, "Already started");
         }
-        prefs = appContext.getSharedPreferences("baseline", Context.MODE_PRIVATE);
+        prefs = context.getSharedPreferences("baseline", Context.MODE_PRIVATE);
         started = true;
     }
 
-    public static String getString(String key) {
+    public String getString(String key) {
         if(started) {
             return prefs.getString(key, null);
         } else {
-            Log.e("KVStore", "Get attempted on uninitialized key/value store");
+            Log.e(TAG, "Get attempted on uninitialized key/value store");
             return null;
         }
     }
 
-    public static void put(String key, String value) {
+    void put(String key, String value) {
         if(started) {
             final SharedPreferences.Editor editor = prefs.edit();
             editor.putString(key, value);
             editor.apply();
         } else {
-            Log.e("KVStore", "Put attempted on uninitialized key/value store");
+            Log.e(TAG, "Put attempted on uninitialized key/value store");
         }
     }
 
     /**
      * Stop the key value store service and free resources
      */
-    public static void stop() {
+    @Override
+    public void stop() {
         started = false;
         prefs = null;
     }

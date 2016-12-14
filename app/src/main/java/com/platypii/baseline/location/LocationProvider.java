@@ -4,14 +4,14 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
-abstract class LocationProvider {
+abstract class LocationProvider implements Service {
     // Duration until location considered stale, in milliseconds
     private static final long LOCATION_TTL = 10000;
 
@@ -44,6 +44,7 @@ abstract class LocationProvider {
      * Start location updates
      * @param context The Application context
      */
+    @Override
     public abstract void start(@NonNull Context context);
 
     /**
@@ -179,7 +180,7 @@ abstract class LocationProvider {
      */
     public double totalSpeed() {
         if(isFresh()) {
-            final double verticalSpeed = MyAltimeter.climb;
+            final double verticalSpeed = Services.alti.climb;
             final double horizontalSpeed = Services.location.groundSpeed();
             return Math.sqrt(verticalSpeed * verticalSpeed + horizontalSpeed * horizontalSpeed);
         }
@@ -218,6 +219,7 @@ abstract class LocationProvider {
         return Double.NaN;
     }
 
+    @Override
     public void stop() {
         if(!listeners.isEmpty()) {
             Log.e(providerName(), "Stopping location service, but listeners are still listening");

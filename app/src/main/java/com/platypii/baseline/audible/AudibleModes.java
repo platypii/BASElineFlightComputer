@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.util.Convert;
 
 /**
@@ -50,7 +49,7 @@ class AudibleModes {
     private static final AudibleMode vertical_speed = new AudibleMode("vertical_speed", "Vertical Speed", "speed", -140 * Convert.MPHf, 0, 0) {
         @Override
         public @NonNull AudibleSample currentSample(int precision) {
-            final double verticalSpeed = MyAltimeter.climb;
+            final double verticalSpeed = Services.alti.climb;
             final String verticalSpeedString;
             if (verticalSpeed > 0) {
                 verticalSpeedString = "+ " + shortSpeed(verticalSpeed, precision);
@@ -72,9 +71,7 @@ class AudibleModes {
     private static final AudibleMode total_speed = new AudibleMode("total_speed", "Total Speed", "speed", 0, 200 * Convert.MPHf, 0) {
         @Override
         public @NonNull AudibleSample currentSample(int precision) {
-            final double verticalSpeed = MyAltimeter.climb;
-            final double horizontalSpeed = Services.location.groundSpeed();
-            final double totalSpeed = Math.sqrt(verticalSpeed * verticalSpeed + horizontalSpeed * horizontalSpeed);
+            final double totalSpeed = Services.location.totalSpeed();
             return new AudibleSample(totalSpeed, shortSpeed(totalSpeed, precision));
         }
         @Override
@@ -94,7 +91,7 @@ class AudibleModes {
         @Override
         public @NonNull AudibleSample currentSample(int precision) {
             final double glideRatio = Services.location.glideRatio();
-            String glideRatioString = Convert.glide(Services.location.groundSpeed(), MyAltimeter.climb, AudibleSettings.precision, false);
+            String glideRatioString = Convert.glide(Services.location.groundSpeed(), Services.alti.climb, AudibleSettings.precision, false);
             if(glideRatioString.equals(Convert.GLIDE_STATIONARY)) {
                 if(stationary) {
                     // Only say stationary once

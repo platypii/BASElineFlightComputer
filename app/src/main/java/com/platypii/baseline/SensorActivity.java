@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MSensor;
@@ -165,13 +164,13 @@ public class SensorActivity extends Activity implements MyLocationListener {
     }
 
     private void updateAltimeter() {
-        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(MyAltimeter.pressure), MyAltimeter.refreshRate));
-        pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(MyAltimeter.pressure_altitude_raw, 2, true));
-        pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(MyAltimeter.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(MyAltimeter.model_error.var()), 2, true));
-        altitudeLabel.setText("Altitude (gps corrected): " + Convert.distance(MyAltimeter.altitude, 2, true));
-        groundLevelLabel.setText("Ground level: " + Convert.distance(MyAltimeter.groundLevel(), 2, true) + " pressure alt");
-        altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(MyAltimeter.altitudeAGL(), 2, true) + " AGL");
-        fallrateLabel.setText("Fallrate: " + Convert.speed(-MyAltimeter.climb, 2, true));
+        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.pressure), Services.alti.refreshRate));
+        pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(Services.alti.pressure_altitude_raw, 2, true));
+        pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(Services.alti.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(Services.alti.model_error.var()), 2, true));
+        altitudeLabel.setText("Altitude (gps corrected): " + Convert.distance(Services.alti.altitude, 2, true));
+        groundLevelLabel.setText("Ground level: " + Convert.distance(Services.alti.groundLevel(), 2, true) + " pressure alt");
+        altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(Services.alti.altitudeAGL(), 2, true) + " AGL");
+        fallrateLabel.setText("Fallrate: " + Convert.speed(-Services.alti.climb, 2, true));
     }
 
     private void updateGPS(MLocation loc) {
@@ -227,7 +226,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
             lastFixLabel.setText("Last fix: ");
         }
         // Altitude refresh rate
-        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(MyAltimeter.pressure), MyAltimeter.refreshRate));
+        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.pressure), Services.alti.refreshRate));
     }
 
     @Override
