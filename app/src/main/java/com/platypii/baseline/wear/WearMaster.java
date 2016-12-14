@@ -1,5 +1,6 @@
 package com.platypii.baseline.wear;
 
+import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
@@ -26,7 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 /**
  * Manages communication with a wear device
  */
-public class WearMaster implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class WearMaster implements Service, MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "WearMaster";
 
     private static final String STATE_URI = "/baseline/services/state";
@@ -40,9 +41,10 @@ public class WearMaster implements MessageApi.MessageListener, GoogleApiClient.C
 
     private GoogleApiClient googleApiClient;
 
-    public WearMaster(Context appContext) {
+    @Override
+    public void start(@NonNull Context context) {
         Log.i(TAG, "Starting wear messaging service");
-        googleApiClient = new GoogleApiClient.Builder(appContext)
+        googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -148,11 +150,13 @@ public class WearMaster implements MessageApi.MessageListener, GoogleApiClient.C
         sendUpdate();
     }
 
+    @Override
     public void stop() {
         Log.w(TAG, "Stopping wear messaging service");
         EventBus.getDefault().unregister(this);
         Wearable.MessageApi.removeListener(googleApiClient, this);
         googleApiClient.disconnect();
+        googleApiClient = null;
     }
 
 }

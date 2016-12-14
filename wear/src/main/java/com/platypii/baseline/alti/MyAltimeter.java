@@ -57,20 +57,20 @@ public class MyAltimeter {
 
     /**
      * Initializes altimeter services, if not already running
-     * @param appContext The Application context
+     * @param context The Application context
      */
-    synchronized void startAsync(@NonNull final Context appContext) {
+    synchronized void start(@NonNull final Context context) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 // Get a new preference manager
-                prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+                prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 if(sensorManager == null) {
                     // Load ground level from preferences
                     loadGroundLevel();
 
                     // Add sensor listener
-                    sensorManager = (SensorManager) appContext.getSystemService(Context.SENSOR_SERVICE);
+                    sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
                     final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
                     if (sensor != null) {
                         // Start sensor updates

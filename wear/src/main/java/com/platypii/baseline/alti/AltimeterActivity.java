@@ -19,7 +19,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class AltimeterActivity extends FragmentActivity {
     private static final String TAG = "Altimeter";
 
-    private MyAltimeter alti = new MyAltimeter();
+    private final MyAltimeter alti = new MyAltimeter();
     private AnalogAltimeter analogAltimeter;
 
     @Override
@@ -81,8 +81,7 @@ public class AltimeterActivity extends FragmentActivity {
     public void onStart() {
         super.onStart();
         // Start altimeter
-        alti = new MyAltimeter();
-        alti.startAsync(this);
+        alti.start(this);
     }
 
     @Override
@@ -105,6 +104,5 @@ public class AltimeterActivity extends FragmentActivity {
         super.onStop();
         // Stop altimeter
         alti.stop();
-        alti = null;
     }
 }

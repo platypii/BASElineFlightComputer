@@ -59,7 +59,7 @@ public class Services {
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();
     public static final BaselineCloud cloud = new BaselineCloud();
-    public static WearMaster wear; // TODO: Make final
+    public static final WearMaster wear = new WearMaster();
 
     /**
      * We want preferences to be available as early as possible.
@@ -136,7 +136,7 @@ public class Services {
             MigrateTracks.migrate(appContext);
 
             Log.i(TAG, "Starting wear messaging service");
-            wear = new WearMaster(appContext);
+            wear.start(appContext);
 
             Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
         } else if(startCount > 2) {
