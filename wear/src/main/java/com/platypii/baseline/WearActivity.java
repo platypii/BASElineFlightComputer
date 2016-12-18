@@ -17,6 +17,7 @@ public class WearActivity extends Activity {
 
     private ImageButton recordButton;
     private ImageButton audibleButton;
+    private ImageButton baselineButton;
 
     private WearSlave wear;
 
@@ -24,10 +25,6 @@ public class WearActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wear);
-
-        // Find views
-        recordButton = (ImageButton) findViewById(R.id.recordButton);
-        audibleButton = (ImageButton) findViewById(R.id.audibleButton);
 
         // Start wear messaging service
         wear = new WearSlave(this);
@@ -79,6 +76,9 @@ public class WearActivity extends Activity {
      * Update button states and clock
      */
     private void updateUIState() {
+        if(baselineButton == null) {
+            baselineButton = (ImageButton) findViewById(R.id.baselineButton);
+        }
         if(recordButton == null) {
             recordButton = (ImageButton) findViewById(R.id.recordButton);
         }
@@ -86,6 +86,15 @@ public class WearActivity extends Activity {
             audibleButton = (ImageButton) findViewById(R.id.audibleButton);
         }
 
+        // Update baseline button
+        if(baselineButton != null) {
+            if(wear.synced) {
+                baselineButton.setAlpha(1f);
+            } else {
+                baselineButton.setAlpha(0.5f);
+            }
+        }
+        // Update record/stop button
         if(recordButton != null) {
             if(wear.synced) {
                 recordButton.setAlpha(1f);
@@ -98,6 +107,7 @@ public class WearActivity extends Activity {
                 recordButton.setImageResource(R.drawable.circle);
             }
         }
+        // Update audible button
         if(audibleButton != null) {
             if(wear.synced) {
                 audibleButton.setAlpha(1f);

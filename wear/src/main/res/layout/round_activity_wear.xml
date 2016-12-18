@@ -44,11 +44,22 @@
 
         <ImageButton
             android:id="@+id/altiButton"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:onClick="clickAltimeter"
             android:src="@drawable/alti"
             android:contentDescription="@string/action_altimeter"
+            style="@android:style/Widget.Material.Button.Borderless" />
+
+        <ImageButton
+            android:id="@+id/baselineButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="clickApp"
+            android:src="@drawable/wingsuit"
+            android:contentDescription="@string/action_app"
             style="@android:style/Widget.Material.Button.Borderless" />
 
     </LinearLayout>

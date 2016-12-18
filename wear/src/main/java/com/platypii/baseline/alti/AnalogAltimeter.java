@@ -190,8 +190,9 @@ public class AnalogAltimeter extends View {
         int finalWidth, finalHeight;
 
         if (originalWidth > originalHeight) {
-            finalWidth = originalHeight;
-            finalHeight = originalHeight;
+            // Set dimensions based on width to handle wear chin
+            finalWidth = originalWidth;
+            finalHeight = originalWidth;
         } else {
             finalWidth = originalWidth;
             finalHeight = originalWidth;

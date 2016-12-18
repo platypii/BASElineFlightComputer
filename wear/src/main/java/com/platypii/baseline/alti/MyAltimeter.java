@@ -20,8 +20,8 @@ import org.greenrobot.eventbus.EventBus;
  *
  * TODO: Correct barometer drift with GPS
  */
-public class MyAltimeter {
-    private final String TAG = "MyAltimeter";
+class MyAltimeter {
+    private static final String TAG = "MyAltimeter";
 
     private SensorManager sensorManager;
     private SharedPreferences prefs;
@@ -56,7 +56,8 @@ public class MyAltimeter {
     private long n = 0; // number of samples
 
     /**
-     * Initializes altimeter services, if not already running
+     * Initializes altimeter services, if not already running.
+     * Starts async in a background thread
      * @param context The Application context
      */
     synchronized void start(@NonNull final Context context) {
@@ -139,9 +140,9 @@ public class MyAltimeter {
             Log.e(TAG, "Double update: " + lastFixNano);
         }
 
-        double prevAltitude = altitude;
-        // double prevClimb = climb;
-        long prevLastFixNano = lastFixNano;
+        final double prevAltitude = altitude;
+        // final double prevClimb = climb;
+        final long prevLastFixNano = lastFixNano;
 
         pressure = event.values[0];
         lastFixNano = event.timestamp;
@@ -231,8 +232,12 @@ public class MyAltimeter {
     }
 
     void stop() {
-        sensorManager.unregisterListener(sensorEventListener);
-        sensorManager = null;
+        if(sensorManager != null) {
+            sensorManager.unregisterListener(sensorEventListener);
+            sensorManager = null;
+        } else {
+            Log.e(TAG, "MyAltimeter.stop() called, but service is already stopped");
+        }
         prefs = null;
     }
 

@@ -52,12 +52,12 @@
             style="@android:style/Widget.Material.Button.Borderless" />
 
         <ImageButton
-            android:id="@+id/appButton"
+            android:id="@+id/baselineButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="clickApp"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/wingsuit"
             android:contentDescription="@string/action_app"
             style="@android:style/Widget.Material.Button.Borderless" />
 

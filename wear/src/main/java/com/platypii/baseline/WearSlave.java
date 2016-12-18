@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
@@ -15,6 +16,7 @@ import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
@@ -63,6 +65,29 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         return googleApiClient.isConnected() && phoneId != null;
     }
 
+    private void sendMessage(final String message) {
+        if(phoneId != null) {
+            // Send message to mobile device
+            Log.d(TAG, "Sending " + message + " to " + phoneId);
+            final PendingResult<MessageApi.SendMessageResult> result =
+                    Wearable.MessageApi.sendMessage(googleApiClient, phoneId, message, null);
+            // Handle result
+            result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+                @Override
+                public void onResult(@NonNull MessageApi.SendMessageResult sendMessageResult) {
+                    // Log.d(TAG, "Message result: " + sendMessageResult.getStatus());
+                    if (sendMessageResult.getStatus().isSuccess()) {
+                        Log.d(TAG, "Message sent successfully: " + message);
+                    } else {
+                        Log.w(TAG, "Message error: " + sendMessageResult.getStatus());
+                    }
+                }
+            });
+        } else {
+            Log.e(TAG, "Message error: phone id not available to send " + message);
+        }
+    }
+
     /**
      * Ask the mobile device to give us a state update
      */
@@ -70,12 +95,12 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         Log.i(TAG, "Requesting data sync");
         synced = false;
         EventBus.getDefault().post(new DataSyncEvent());
-        Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_INIT, null);
+        sendMessage(WEAR_MSG_INIT);
     }
 
     void clickRecord() {
         if(isConnected()) {
-            Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_RECORD, null);
+            sendMessage(WEAR_MSG_RECORD);
             logging = true;
             synced = false;
         } else {
@@ -85,7 +110,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
 
     void clickStop() {
         if(isConnected()) {
-            Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_STOP, null);
+            sendMessage(WEAR_MSG_STOP);
             logging = false;
             synced = false;
         } else {
@@ -95,7 +120,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
 
     void enableAudible() {
         if(isConnected()) {
-            Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_ENABLE_AUDIBLE, null);
+            sendMessage(WEAR_MSG_ENABLE_AUDIBLE);
             audible = true;
             synced = false;
         } else {
@@ -105,7 +130,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
 
     void disableAudible() {
         if(isConnected()) {
-            Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_DISABLE_AUDIBLE, null);
+            sendMessage(WEAR_MSG_DISABLE_AUDIBLE);
             audible = false;
             synced = false;
         } else {
@@ -113,8 +138,12 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         }
     }
 
+    /**
+     * Start the phone app on a paired device, so that we can start logging or audible remotely
+     */
     void startApp() {
-        Wearable.MessageApi.sendMessage(googleApiClient, phoneId, WEAR_MSG_OPEN_APP, null);
+        // Send message to mobile device
+        sendMessage(WEAR_MSG_OPEN_APP);
     }
 
     /**
@@ -138,6 +167,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
                 }
             } else if (event.getType() == DataEvent.TYPE_DELETED) {
                 // DataItem deleted
+                Log.d(TAG, "Received data delete: " + event);
             }
         }
     }
@@ -145,7 +175,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     // Google api client callbacks
     @Override
     public void onConnected(@Nullable Bundle connectionHint) {
-        Log.i(TAG, "Wear connected");
+        Log.i(TAG, "Google api connected");
         // Start fetching list of wear nodes
         Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(this);
         Wearable.DataApi.addListener(googleApiClient, this);
@@ -161,6 +191,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         switch(nodes.size()) {
             case 0:
                 Log.w(TAG, "No connected devices found");
+                phoneId = null;
                 break;
             case 1:
                 phoneId = nodes.get(0).getId();
@@ -192,7 +223,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     }
 
     void stop() {
-        Log.w(TAG, "Stopping wear messaging service");
+        Log.i(TAG, "Stopping wear messaging service");
         googleApiClient.disconnect();
         synced = false;
         EventBus.getDefault().post(new DataSyncEvent());

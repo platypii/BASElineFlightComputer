@@ -123,6 +123,7 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
         Log.i(TAG, "Wear connected");
         Wearable.MessageApi.addListener(googleApiClient, this);
         sendUpdate();
+        // TODO: Firebase event for wear connected
     }
 
     @Override
@@ -152,7 +153,7 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
 
     @Override
     public void stop() {
-        Log.w(TAG, "Stopping wear messaging service");
+        Log.i(TAG, "Stopping wear messaging service");
         EventBus.getDefault().unregister(this);
         Wearable.MessageApi.removeListener(googleApiClient, this);
         googleApiClient.disconnect();
