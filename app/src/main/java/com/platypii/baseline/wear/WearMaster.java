@@ -33,6 +33,8 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
     private static final String STATE_URI = "/baseline/services/state";
 
     private static final String WEAR_MSG_INIT = "/baseline/init";
+    private static final String WEAR_MSG_PING = "/baseline/ping";
+    private static final String WEAR_MSG_PONG = "/baseline/pong";
     private static final String WEAR_MSG_RECORD = "/baseline/record";
     private static final String WEAR_MSG_STOP = "/baseline/stop";
     private static final String WEAR_MSG_ENABLE_AUDIBLE = "/baseline/enableAudible";
@@ -60,6 +62,10 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
             case WEAR_MSG_INIT:
                 Log.i(TAG, "Received hello message");
                 sendUpdate();
+                break;
+            case WEAR_MSG_PING:
+                Log.i(TAG, "Received ping message");
+                sendPong(messageEvent.getSourceNodeId());
                 break;
             case WEAR_MSG_RECORD:
                 Log.i(TAG, "Received record message");
@@ -115,6 +121,11 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
         final PendingResult<DataApi.DataItemResult> pendingResult =
                 Wearable.DataApi.putDataItem(googleApiClient, putDataReq);
         // TODO: Check result
+    }
+
+    void sendPong(String nodeId) {
+        Log.i(TAG, "Sending PONG to wear device");
+        Wearable.MessageApi.sendMessage(googleApiClient, nodeId, WEAR_MSG_PONG, null);
     }
 
     // Google api client callbacks

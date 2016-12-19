@@ -17,6 +17,7 @@ import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
@@ -29,12 +30,14 @@ import java.util.List;
 /**
  * Manages communication with a mobile device
  */
-class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<NodeApi.GetConnectedNodesResult>, DataApi.DataListener {
+class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<NodeApi.GetConnectedNodesResult>, DataApi.DataListener, MessageApi.MessageListener {
     private static final String TAG = "WearSlave";
 
     private static final String STATE_URI = "/baseline/services/state";
 
     private static final String WEAR_MSG_INIT = "/baseline/init";
+    private static final String WEAR_MSG_PING = "/baseline/ping";
+    private static final String WEAR_MSG_PONG = "/baseline/pong";
     private static final String WEAR_MSG_RECORD = "/baseline/record";
     private static final String WEAR_MSG_STOP = "/baseline/stop";
     private static final String WEAR_MSG_ENABLE_AUDIBLE = "/baseline/enableAudible";
@@ -51,7 +54,11 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     boolean logging = false;
     boolean audible = false;
 
-    WearSlave(Context context) {
+    // Last time we synced with the phone (millis since epoch)
+    private long lastPong = 0;
+    private static final long connectionTimeout = 3000; // milliseconds
+
+    WearSlave(@NonNull Context context) {
         Log.i(TAG, "Starting wear messaging service");
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(Wearable.API)
@@ -61,14 +68,31 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         googleApiClient.connect();
     }
 
-    private boolean isConnected() {
+    boolean isConnected() {
         return googleApiClient.isConnected() && phoneId != null;
+    }
+
+    private boolean active = false;
+    boolean isActive() {
+        if(System.currentTimeMillis() - connectionTimeout <= lastPong) {
+            active = true;
+            return true;
+        } else if(lastPong == 0) {
+            // Log.d(TAG, "Mobile device has not yet announced");
+            return false;
+        } else {
+            if(active) {
+                Log.w(TAG, "Connection to mobile device timed out");
+                active = false;
+            }
+            return false;
+        }
     }
 
     private void sendMessage(final String message) {
         if(phoneId != null) {
             // Send message to mobile device
-            Log.d(TAG, "Sending " + message + " to " + phoneId);
+            // Log.d(TAG, "Sending " + message + " to " + phoneId);
             final PendingResult<MessageApi.SendMessageResult> result =
                     Wearable.MessageApi.sendMessage(googleApiClient, phoneId, message, null);
             // Handle result
@@ -76,9 +100,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
                 @Override
                 public void onResult(@NonNull MessageApi.SendMessageResult sendMessageResult) {
                     // Log.d(TAG, "Message result: " + sendMessageResult.getStatus());
-                    if (sendMessageResult.getStatus().isSuccess()) {
-                        Log.d(TAG, "Message sent successfully: " + message);
-                    } else {
+                    if (!sendMessageResult.getStatus().isSuccess()) {
                         Log.w(TAG, "Message error: " + sendMessageResult.getStatus());
                     }
                 }
@@ -96,6 +118,15 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         synced = false;
         EventBus.getDefault().post(new DataSyncEvent());
         sendMessage(WEAR_MSG_INIT);
+    }
+
+    /**
+     * Ask the mobile device to give us a state update.
+     * Same message as data sync, but doesn't sent the synced flag to false.
+     */
+    void sendPing() {
+        // Log.d(TAG, "Sending ping");
+        sendMessage(WEAR_MSG_PING);
     }
 
     void clickRecord() {
@@ -162,6 +193,8 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
                     audible = dataMap.getBoolean("audible_enabled");
                     Convert.metric = dataMap.getBoolean("metric");
                     synced = true;
+                    // Data sync counts as a heartbeat from the phone:
+                    lastPong = System.currentTimeMillis();
                     EventBus.getDefault().post(new DataSyncEvent());
                     Log.i(TAG, "Received sync data from phone: logging = " + logging + " audible = " + audible);
                 }
@@ -172,6 +205,19 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         }
     }
 
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        // Log.d(TAG, "Received message: " + messageEvent);
+        switch (messageEvent.getPath()) {
+            case WEAR_MSG_PONG:
+                // Log.d(TAG, "Received pong");
+                lastPong = System.currentTimeMillis();
+                break;
+            default:
+                Log.w(TAG, "Received unknown message: " + messageEvent.getPath());
+        }
+    }
+
     // Google api client callbacks
     @Override
     public void onConnected(@Nullable Bundle connectionHint) {
@@ -179,7 +225,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         // Start fetching list of wear nodes
         Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(this);
         Wearable.DataApi.addListener(googleApiClient, this);
-        requestDataSync();
+        Wearable.MessageApi.addListener(googleApiClient, this);
     }
 
     /**
@@ -199,6 +245,9 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
             default:
                 Log.w(TAG, "More than one connected device found");
                 phoneId = nodes.get(0).getId();
+        }
+        if(phoneId != null) {
+            requestDataSync();
         }
     }
 
@@ -220,6 +269,24 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         Log.e(TAG, "Wear connection failed: " + connectionResult);
         synced = false;
         EventBus.getDefault().post(new DataSyncEvent());
+    }
+
+    private Thread pingThread;
+    private final PingRunnable pingRunnable = new PingRunnable(this);
+    void startPingThread() {
+        if(pingThread == null) {
+            Log.i(TAG, "Starting ping thread");
+            pingThread = new Thread(pingRunnable);
+            pingThread.start();
+        } else {
+            Log.e(TAG, "startPingThread called twice");
+        }
+    }
+
+    void stopPingThread() {
+        Log.i(TAG, "Stopping ping thread");
+        pingRunnable.stop();
+        pingThread = null;
     }
 
     void stop() {

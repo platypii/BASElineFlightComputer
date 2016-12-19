@@ -3,6 +3,7 @@ package com.platypii.baseline;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -21,6 +22,19 @@ public class WearActivity extends Activity {
 
     private WearSlave wear;
 
+    // Periodic update thread
+    private boolean updating = false;
+    private final int updateInterval = 250; // milliseconds
+    private final Handler handler = new Handler();
+    private final Runnable updateRunnable = new Runnable() {
+        public void run() {
+            if(updating) {
+                updateUIState();
+                handler.postDelayed(this, updateInterval);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +49,11 @@ public class WearActivity extends Activity {
         super.onResume();
         EventBus.getDefault().register(this);
         updateUIState();
+
+        // Start signal updates
+        wear.startPingThread();
+        updating = true;
+        handler.postDelayed(updateRunnable, updateInterval);
     }
 
     public void clickRecord(View v) {
@@ -88,18 +107,18 @@ public class WearActivity extends Activity {
 
         // Update baseline button
         if(baselineButton != null) {
-            if(wear.synced) {
+            if(wear.isActive()) {
                 baselineButton.setAlpha(1f);
             } else {
-                baselineButton.setAlpha(0.5f);
+                baselineButton.setAlpha(0.4f);
             }
         }
         // Update record/stop button
         if(recordButton != null) {
-            if(wear.synced) {
+            if(wear.isActive() && wear.synced) {
                 recordButton.setAlpha(1f);
             } else {
-                recordButton.setAlpha(0.5f);
+                recordButton.setAlpha(0.4f);
             }
             if (wear.logging) {
                 recordButton.setImageResource(R.drawable.square);
@@ -109,10 +128,10 @@ public class WearActivity extends Activity {
         }
         // Update audible button
         if(audibleButton != null) {
-            if(wear.synced) {
+            if(wear.isActive() && wear.synced) {
                 audibleButton.setAlpha(1f);
             } else {
-                audibleButton.setAlpha(0.5f);
+                audibleButton.setAlpha(0.4f);
             }
             if (wear.audible) {
                 audibleButton.setImageResource(R.drawable.audio_on);
@@ -132,6 +151,8 @@ public class WearActivity extends Activity {
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+        updating = false;
+        wear.stopPingThread();
     }
 
     @Override
