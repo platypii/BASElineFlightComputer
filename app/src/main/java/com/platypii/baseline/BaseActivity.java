@@ -6,7 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -24,7 +24,7 @@ import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.util.Callback;
 import org.greenrobot.eventbus.EventBus;
 
-abstract class BaseActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "BaseActivity";
 
     FirebaseAnalytics firebaseAnalytics;

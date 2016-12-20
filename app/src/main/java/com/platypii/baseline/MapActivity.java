@@ -1,11 +1,11 @@
 package com.platypii.baseline;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -35,7 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends FragmentActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
+public class MapActivity extends Activity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
     private static final String TAG = "Map";
 
     private AnalogAltimeter analogAltimeter;
@@ -100,7 +100,7 @@ public class MapActivity extends FragmentActivity implements MyLocationListener,
         homeButton.setOnClickListener(homeButtonListener);
 
         // Initialize map
-        mapFragment = (TouchableMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (TouchableMapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
