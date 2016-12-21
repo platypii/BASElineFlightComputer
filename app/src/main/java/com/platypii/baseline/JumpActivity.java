@@ -24,6 +24,8 @@ import java.io.File;
 public class JumpActivity extends BaseActivity implements DialogInterface.OnClickListener {
     private static final String TAG = "Jump";
 
+    static final String EXTRA_TRACK_FILE = "TRACK_FILE";
+
     private View signInPanel;
     private View signInButton;
     private View signInSpinner;
@@ -43,9 +45,11 @@ public class JumpActivity extends BaseActivity implements DialogInterface.OnClic
         // Load jump from extras
         final Bundle extras = getIntent().getExtras();
         if(extras != null) {
-            final String logFilename = extras.getString("JUMP_FILE");
-            final File logDir = JumpLog.getLogDirectory(getApplicationContext());
-            jump = new Jump(new File(logDir, logFilename));
+            final String trackFile = extras.getString(EXTRA_TRACK_FILE);
+            if(trackFile != null) {
+                final File logDir = JumpLog.getLogDirectory(getApplicationContext());
+                jump = new Jump(new File(logDir, trackFile));
+            }
         }
     }
 

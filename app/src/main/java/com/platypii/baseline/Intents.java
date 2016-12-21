@@ -19,7 +19,7 @@ class Intents {
     /** Open jump activity */
     static void openJumpActivity(@NonNull Context context, Jump jump) {
         final Intent intent = new Intent(context, JumpActivity.class);
-        intent.putExtra("JUMP_FILE", jump.logFile.getName());
+        intent.putExtra(JumpActivity.EXTRA_TRACK_FILE, jump.logFile.getName());
         context.startActivity(intent);
     }
 

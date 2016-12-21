@@ -72,9 +72,11 @@ public class MyAudible implements Service {
             Log.e(TAG, "Failed to start audible: audible not initialized");
         }
         isEnabled = true;
-        final SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("audible_enabled", true);
-        editor.apply();
+        if(prefs != null) {
+            final SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("audible_enabled", true);
+            editor.apply();
+        }
         EventBus.getDefault().post(new AudibleEvent());
     }
 
@@ -87,9 +89,11 @@ public class MyAudible implements Service {
             Log.e(TAG, "Failed to stop audible: audible not initialized");
         }
         isEnabled = false;
-        final SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("audible_enabled", false);
-        editor.apply();
+        if(prefs != null) {
+            final SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("audible_enabled", false);
+            editor.apply();
+        }
         EventBus.getDefault().post(new AudibleEvent());
     }
 
@@ -200,13 +204,12 @@ public class MyAudible implements Service {
     @Override
     public void stop() {
         if(isInitialized) {
-            if(audibleThread.isRunning()) {
+            if(isEnabled) {
                 disableAudible();
             }
             audibleThread = null;
             isInitialized = false;
             speech = null;
-            prefs = null;
         }
     }
 

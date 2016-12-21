@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.data.Jump;
