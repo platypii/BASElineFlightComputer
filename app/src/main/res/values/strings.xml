@@ -66,6 +66,8 @@
     <!-- Map -->
     <string name="title_activity_map">Navigation</string>
     <string name="set_altitude">Set Altitude</string>
+    <string name="set_altitude_title">Set Altitude AGL</string>
+    <string name="set_altitude_message">Enter your current altitude above ground level</string>
     <string name="map_crosshair">crosshair</string>
     <string name="map_pin">pin</string>
 

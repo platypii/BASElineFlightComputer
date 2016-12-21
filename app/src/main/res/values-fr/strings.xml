@@ -65,6 +65,8 @@
     <!-- Map -->
     <string name="title_activity_map">Navigation</string>
     <string name="set_altitude">Définir l\'altitude</string>
+    <string name="set_altitude_title">Définir l\'altitude AGL</string>
+    <string name="set_altitude_message">Définir votre altitude actuelle au-dessus du niveau du sol</string>
     <string name="map_crosshair">réticule</string>
     <string name="map_pin">punaise</string>
 

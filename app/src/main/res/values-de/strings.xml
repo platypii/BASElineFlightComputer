@@ -66,6 +66,8 @@
     <!-- Map -->
     <string name="title_activity_map">Navigation</string>
     <string name="set_altitude">Höhe Einstellen</string>
+    <string name="set_altitude_title">Höhe Einstellen AGL</string>
+    <string name="set_altitude_message">Stellen Sie Ihre aktuelle Höhe über dem Boden</string>
     <string name="map_pin">pin</string>
     <string name="map_crosshair">fadenkreuz</string>
 

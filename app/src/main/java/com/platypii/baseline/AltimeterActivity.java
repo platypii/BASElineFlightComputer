@@ -51,8 +51,8 @@ public class AltimeterActivity extends Activity {
     public static AlertDialog promptForAltitude(final Activity activity) {
         Log.i(TAG, "Prompting for ground level adjustment");
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("Set Altitude AGL");
-        builder.setMessage("Altitude above ground level in feet");
+        builder.setTitle(R.string.set_altitude_title);
+        builder.setMessage(R.string.set_altitude_message);
         final EditText input = new EditText(activity);
         input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
         input.setHint("0");
@@ -60,7 +60,8 @@ public class AltimeterActivity extends Activity {
         builder.setPositiveButton(R.string.set_altitude, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 final String inputText = input.getText().toString();
-                final double altitude = inputText.isEmpty()? 0.0 : Util.parseDouble(inputText) * Convert.FT;
+                final double units = Convert.metric? 1 : Convert.FT;
+                final double altitude = inputText.isEmpty()? 0.0 : Util.parseDouble(inputText) * units;
                 if(Util.isReal(altitude)) {
                     Log.w(TAG, "Setting altitude above ground level to " + altitude + "m");
                     Services.alti.setGroundLevel(Services.alti.pressure_altitude_filtered - altitude);
