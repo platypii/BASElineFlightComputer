@@ -1,4 +1,4 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline.tracks;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.sensors.MySensorListener;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
@@ -29,8 +30,8 @@ import java.util.zip.GZIPOutputStream;
  * Logs altitude and location data to the database. Also contains event and jump databases
  * AKA- The Black Box flight recorder
  */
-public class MyDatabase implements MyLocationListener, MySensorListener {
-    private static final String TAG = "DB";
+public class TrackLogger implements MyLocationListener, MySensorListener {
+    private static final String TAG = "TrackLogger";
 
     private boolean logging = false;
 
@@ -63,14 +64,14 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
     /**
      * Stop data logging, and return track data
      */
-    public synchronized Jump stopLogging() {
+    public synchronized TrackFile stopLogging() {
         if(logging) {
             Log.i(TAG, "Stopping logging");
             final File logFile = stopFileLogging();
             logging = false;
             EventBus.getDefault().post(new LoggingEvent());
             if(logFile != null) {
-                return new Jump(logFile);
+                return new TrackFile(logFile);
             } else {
                 return null;
             }
@@ -115,7 +116,7 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
 
     private void startFileLogging(@NonNull Context appContext) throws IOException {
         // Open log file for writing
-        final File logDir = JumpLog.getLogDirectory(appContext);
+        final File logDir = TrackFiles.getTrackDirectory(appContext);
         final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
         final String timestamp = dt.format(new Date());
 

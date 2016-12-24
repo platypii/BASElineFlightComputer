@@ -1,4 +1,4 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline.tracks;
 
 import android.util.Log;
 
@@ -11,19 +11,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Jump {
+public class TrackFile {
+    private static final String TAG = "TrackFile";
 
-    // Jump info
-    public final File logFile;
+    // TrackFile info
+    public final File file;
 
     private CloudData cloudData;
 
-    public Jump(File logFile) {
-        this.logFile = logFile;
+    public TrackFile(File file) {
+        this.file = file;
     }
 
     private String cacheKey() {
-        return "track." + logFile.getName();
+        return "track." + file.getName();
     }
 
     /**
@@ -54,14 +55,14 @@ public class Jump {
     }
 
     public String getName() {
-        return logFile.getName()
+        return file.getName()
                 .replaceAll(".csv.gz", "")
                 .replaceAll("_", " ")
                 .replaceAll("-", ".");
     }
 
     public String getSize() {
-        final long size = logFile.length() / 1024;
+        final long size = file.length() / 1024;
         return size + "kb";
     }
 
@@ -74,7 +75,7 @@ public class Jump {
         try {
             return format.parse(dateString);
         } catch (ParseException e) {
-            Log.e("Jump", "Failed to parse date from filename", e);
+            Log.e(TAG, "Failed to parse date from filename", e);
             FirebaseCrash.report(e);
             return null;
         }
@@ -82,7 +83,7 @@ public class Jump {
 
     /** Delete local track file */
     public boolean delete() {
-        if(logFile.delete()) {
+        if(file.delete()) {
             cloudData = null;
             return true;
         } else {

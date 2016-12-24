@@ -1,7 +1,7 @@
 package com.platypii.baseline;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 
 /**
  * Contains configuration settings for navigation mode
@@ -51,7 +51,7 @@ class MapOptions {
      * @return the zoom duration in milliseconds
      */
     static int zoomDuration() {
-        if(Util.isReal(Services.location.refreshRate) && Services.location.refreshRate > 0) {
+        if(Numbers.isReal(Services.location.refreshRate) && Services.location.refreshRate > 0) {
             final int gpsUpdateDuration = (int) (1000f / Services.location.refreshRate);
             return Math.min(gpsUpdateDuration, MAX_ANIMATION_DURATION);
         } else {

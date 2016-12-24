@@ -1,10 +1,9 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.platypii.baseline.Service;
 
 /**
  * Abstraction over android's preferences to implement a simple key value store, with string types
@@ -34,7 +33,7 @@ public class KVStore implements Service {
         }
     }
 
-    void put(String key, String value) {
+    public void put(String key, String value) {
         if(started) {
             final SharedPreferences.Editor editor = prefs.edit();
             editor.putString(key, value);

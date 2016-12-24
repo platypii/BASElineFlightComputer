@@ -1,9 +1,9 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline.sensors;
 
 import com.platypii.baseline.measurements.Measurement;
 
 /** Used by Managers to notify of updated sensors */
-interface MySensorListener {
+public interface MySensorListener {
 
     void onSensorChanged(Measurement measurement);
 

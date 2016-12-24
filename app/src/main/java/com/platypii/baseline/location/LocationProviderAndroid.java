@@ -12,7 +12,7 @@ import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 
 class LocationProviderAndroid extends LocationProvider {
     private static final String TAG = "LocationServiceAndroid";
@@ -40,7 +40,7 @@ class LocationProviderAndroid extends LocationProvider {
     private final LocationListener androidLocationListener = new LocationListener() {
         public void onLocationChanged(Location loc) {
             // Log.v(TAG, "onLocationChanged(" + loc + ")");
-            if (Util.isReal(loc.getLatitude()) && Util.isReal(loc.getLongitude())) {
+            if (Numbers.isReal(loc.getLatitude()) && Numbers.isReal(loc.getLongitude())) {
                 final float hAcc;
                 if (loc.hasAccuracy())
                     hAcc = loc.getAccuracy();
@@ -71,7 +71,7 @@ class LocationProviderAndroid extends LocationProvider {
 
                 final double vN;
                 final double vE;
-                if(Util.isReal(groundSpeed) && Util.isReal(bearing)) {
+                if(Numbers.isReal(groundSpeed) && Numbers.isReal(bearing)) {
                     vN = groundSpeed * Math.cos(Math.toRadians(bearing));
                     vE = groundSpeed * Math.sin(Math.toRadians(bearing));
                 } else {

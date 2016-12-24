@@ -9,7 +9,7 @@ import com.platypii.baseline.bluetooth.BluetoothService;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 
 class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
     protected final String TAG = "LocationServiceNMEA";
@@ -126,27 +126,27 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // Overall satellite data (DOP and active satellites)
                 // boolean autoDim = split[1].equals("A"); // A = Auto 2D/3D, M = Forced 2D/3D
                 // gpsFix = split[2].isEmpty() ? 0 : Integer.parseInt(split[2]); // 0 = null, 1 = No fix, 2 = 2D, 3 = 3D
-                pdop = Util.parseFloat(split[15]);
-                hdop = Util.parseFloat(split[16]);
-                vdop = Util.parseFloat(split[17]);
+                pdop = Numbers.parseFloat(split[15]);
+                hdop = Numbers.parseFloat(split[16]);
+                vdop = Numbers.parseFloat(split[17]);
                 break;
             case "GSV":
                 // Detailed satellite data (satellites in view)
-                satellitesInView = Util.parseInt(split[3], -1);
+                satellitesInView = Numbers.parseInt(split[3], -1);
                 break;
             case "GGA":
                 // Fix data
                 latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
                 longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
-                gpsFix = Util.parseInt(split[6], -1); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
-                satellitesUsed = Util.parseInt(split[7], -1);
-                hdop = Util.parseFloat(split[8]);
+                gpsFix = Numbers.parseInt(split[6], -1); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
+                satellitesUsed = Numbers.parseInt(split[7], -1);
+                hdop = Numbers.parseFloat(split[8]);
                 if (!split[9].isEmpty()) {
                     if(!split[10].equals("M")) {
                         Log.e(NMEA_TAG, "Expected meters, was " + split[10] + " in nmea: " + nmea);
                         FirebaseCrash.report(new NMEAException("Expected meters, was " + split[10] + " in nmea: " + nmea));
                     }
-                    altitude_gps = Util.parseDouble(split[9]);
+                    altitude_gps = Numbers.parseDouble(split[9]);
                 }
                 // double geoidSeparation = parseDouble(split[11]]); // Geoid separation according to WGS-84 ellipsoid
                 // assert split[12].equals("M")// Separation Units
@@ -172,8 +172,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // boolean status = split[2].equals("A"); // A = active, V = void
                 latitude = NMEA.parseDegreesMinutes(split[3], split[4]);
                 longitude = NMEA.parseDegreesMinutes(split[5], split[6]);
-                final double groundSpeedRMC = Convert.kts2mps(Util.parseDouble(split[7])); // Speed over ground
-                final double bearingRMC = Util.parseDouble(split[8]); // Course over ground
+                final double groundSpeedRMC = Convert.kts2mps(Numbers.parseDouble(split[7])); // Speed over ground
+                final double bearingRMC = Numbers.parseDouble(split[8]); // Course over ground
                 // split[10], split[11]: 003.1,W magnetic Variation
                 // split[9]: Date: 230394 = 23 March 1994
                 // split[1]: Time: 123456 = 12:34:56 UTC
@@ -217,7 +217,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
                 longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
                 if (!split[9].isEmpty()) {
-                    altitude_gps = Util.parseDouble(split[9]);
+                    altitude_gps = Numbers.parseDouble(split[9]);
                     // double geoidSeparation = parseDouble(split[10]]);
                 }
                 if (!split[7].isEmpty()) {
@@ -225,8 +225,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 }
                 break;
             case "VTG":
-                // final double bearingVTG = Util.parseDouble(split[1]); // Course over ground
-                // final double groundSpeedVTG = Convert.kts2mps(Util.parseDouble(split[5])); // Speed over ground
+                // final double bearingVTG = Numbers.parseDouble(split[1]); // Course over ground
+                // final double groundSpeedVTG = Convert.kts2mps(Numbers.parseDouble(split[5])); // Speed over ground
                 break;
             case "GLL":
                 // latitude = parseDegreesMinutes(split[1], split[2]);

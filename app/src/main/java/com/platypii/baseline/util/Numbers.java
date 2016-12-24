@@ -2,7 +2,7 @@ package com.platypii.baseline.util;
 
 import com.google.firebase.crash.FirebaseCrash;
 
-public class Util {
+public class Numbers {
 
     public static boolean isReal(double value) {
         return !Double.isNaN(value) && !Double.isInfinite(value);

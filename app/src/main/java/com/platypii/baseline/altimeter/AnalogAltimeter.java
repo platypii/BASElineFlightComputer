@@ -1,4 +1,4 @@
-package com.platypii.baseline;
+package com.platypii.baseline.altimeter;
 
 import android.content.Context;
 import android.graphics.BlurMaskFilter;

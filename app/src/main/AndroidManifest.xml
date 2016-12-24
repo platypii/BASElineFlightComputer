@@ -52,26 +52,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".JumpsActivity"
+            android:name=".AltimeterActivity"
+            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".MapActivity"
+            android:label="@string/title_activity_map"/>
+        <activity
+            android:name=".TrackListActivity"
             android:label="@string/app_name"/>
         <activity
-            android:name=".JumpActivity"
-            android:label="@string/app_name"/>
-        <activity
-            android:name=".SensorActivity"
+            android:name=".TrackActivity"
             android:label="@string/app_name"/>
         <activity
             android:name=".AudibleSettingsActivity"
             android:label="@string/title_activity_audible_settings"/>
         <activity
-            android:name=".MapActivity"
-            android:label="@string/title_activity_map"/>
-        <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"/>
         <activity
-            android:name=".AltimeterActivity"
-            android:screenOrientation="landscape"/>
+            android:name=".SensorActivity"
+            android:label="@string/app_name"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

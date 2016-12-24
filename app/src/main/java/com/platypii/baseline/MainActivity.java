@@ -13,8 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.data.Jump;
-import com.platypii.baseline.data.MyDatabase;
+import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.cloud.TheCloud;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
@@ -102,23 +101,23 @@ public class MainActivity extends BaseActivity {
     }
 
     public void clickRecord(View v) {
-        if(!Services.db.isLogging()) {
+        if(!Services.logger.isLogging()) {
             firebaseAnalytics.logEvent("click_logging_start", null);
-            Services.db.startLogging(getApplicationContext());
+            Services.logger.startLogging(getApplicationContext());
         } else {
             firebaseAnalytics.logEvent("click_logging_stop", null);
-            final Jump jump = Services.db.stopLogging();
+            final TrackFile trackList = Services.logger.stopLogging();
 
             // Upload to the cloud
-            if(jump != null) {
-                uploadToCloud(jump);
+            if(trackList != null) {
+                uploadToCloud(trackList);
             } else {
-                Log.e(TAG, "Error reading log file");
+                Log.e(TAG, "Error reading track file");
             }
         }
     }
 
-    private void uploadToCloud(final Jump jump) {
+    private void uploadToCloud(final TrackFile jump) {
         if(isSignedIn()) {
             // Begin automatic upload
             getAuthToken(new Callback<String>() {
@@ -149,7 +148,7 @@ public class MainActivity extends BaseActivity {
 
     // Enables buttons and clock
     private void updateUIState() {
-        if(Services.db.isLogging()) {
+        if(Services.logger.isLogging()) {
             recordButton.setText(R.string.action_stop);
             recordButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.square, 0, 0);
 
@@ -158,7 +157,7 @@ public class MainActivity extends BaseActivity {
                 clockRunnable = new Runnable() {
                     public void run() {
                         updateClock();
-                        if (Services.db.isLogging()) {
+                        if (Services.logger.isLogging()) {
                             handler.postDelayed(this, clockUpdateInterval);
                         }
                     }
@@ -195,9 +194,9 @@ public class MainActivity extends BaseActivity {
         startActivity(new Intent(this, MapActivity.class));
     }
 
-    public void clickJumps(View v) {
+    public void clickTracks(View v) {
         firebaseAnalytics.logEvent("click_tracks", null);
-        startActivity(new Intent(this, JumpsActivity.class));
+        startActivity(new Intent(this, TrackListActivity.class));
     }
 
     public void clickAudible(View v) {
@@ -232,8 +231,8 @@ public class MainActivity extends BaseActivity {
      * Update the text view for timer
      */
     private void updateClock() {
-        if(Services.db.isLogging()) {
-            clock.setText(Services.db.getLogTime());
+        if(Services.logger.isLogging()) {
+            clock.setText(Services.logger.getLogTime());
         } else {
             clock.setText("");
         }

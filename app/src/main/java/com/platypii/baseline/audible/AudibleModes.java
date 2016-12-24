@@ -118,10 +118,10 @@ class AudibleModes {
 //        public @NonNull AudibleSample currentSample(int precision) {
 //            double distance = 0.0;
 //            String distanceString = "";
-//            if(MyFlightManager.homeLoc != null) {
-//                distance = Services.location.lastLoc.distanceTo(MyFlightManager.homeLoc);
+//            if(LandingZone.homeLoc != null) {
+//                distance = Services.location.lastLoc.distanceTo(LandingZone.homeLoc);
 //                if(AudibleSettings.min <= distance && distance <= AudibleSettings.max) {
-//                    final double bearing = Services.location.lastLoc.bearingTo(MyFlightManager.homeLoc);
+//                    final double bearing = Services.location.lastLoc.bearingTo(LandingZone.homeLoc);
 //                    if (Math.abs(distance) > 0.3) {
 //                        distanceString = Convert.distance(distance) + " " + Convert.bearing(bearing);
 //                    } else {

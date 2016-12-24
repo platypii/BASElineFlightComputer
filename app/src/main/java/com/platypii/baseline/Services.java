@@ -22,13 +22,12 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.data.KVStore;
-import com.platypii.baseline.data.MyDatabase;
-import com.platypii.baseline.data.MyFlightManager;
-import com.platypii.baseline.data.MySensorManager;
+import com.platypii.baseline.location.LandingZone;
+import com.platypii.baseline.tracks.TrackLogger;
+import com.platypii.baseline.sensors.MySensorManager;
 import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 
 /**
  * Start and stop essential services
@@ -46,7 +45,7 @@ public class Services {
     private static final int shutdownDelay = 10000;
 
     // Services
-    public static final MyDatabase db = new MyDatabase();
+    public static final TrackLogger logger = new TrackLogger();
     public static final KVStore kv = new KVStore();
     public static final LocationService location = new LocationService();
     public static final MyAltimeter alti = new MyAltimeter();
@@ -134,7 +133,7 @@ public class Services {
         @Override
         public void run() {
             if(initialized && startCount == 0) {
-                if(!db.isLogging() && !audible.isEnabled()) {
+                if(!logger.isLogging() && !audible.isEnabled()) {
                     Log.i(TAG, "All activities have stopped. Stopping services.");
                     // Stop services
                     audible.stop();
@@ -146,7 +145,7 @@ public class Services {
                     kv.stop();
                     initialized = false;
                 } else {
-                    if(db.isLogging()) {
+                    if(logger.isLogging()) {
                         Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
                     }
                     if(audible.isEnabled()) {
@@ -169,11 +168,11 @@ public class Services {
         BluetoothService.preferenceDeviceName = prefs.getString("bluetooth_device_name", null);
 
         // Home location
-        final double home_latitude = Util.parseDouble(prefs.getString("home_latitude", null));
-        final double home_longitude = Util.parseDouble(prefs.getString("home_longitude", null));
-        if(Util.isReal(home_latitude) && Util.isReal(home_longitude)) {
+        final double home_latitude = Numbers.parseDouble(prefs.getString("home_latitude", null));
+        final double home_longitude = Numbers.parseDouble(prefs.getString("home_longitude", null));
+        if(Numbers.isReal(home_latitude) && Numbers.isReal(home_longitude)) {
             // Set home location
-            MyFlightManager.homeLoc = new LatLng(home_latitude, home_longitude);
+            LandingZone.homeLoc = new LatLng(home_latitude, home_longitude);
         }
     }
 

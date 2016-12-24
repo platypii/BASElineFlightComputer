@@ -10,8 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.data.Jump;
-import com.platypii.baseline.data.JumpLog;
+import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackFiles;
 import com.platypii.baseline.cloud.TheCloud;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
@@ -21,8 +21,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
-public class JumpActivity extends BaseActivity implements DialogInterface.OnClickListener {
-    private static final String TAG = "Jump";
+public class TrackActivity extends BaseActivity implements DialogInterface.OnClickListener {
+    private static final String TAG = "TrackActivity";
 
     static final String EXTRA_TRACK_FILE = "TRACK_FILE";
 
@@ -31,7 +31,7 @@ public class JumpActivity extends BaseActivity implements DialogInterface.OnClic
     private View signInSpinner;
     private AlertDialog alertDialog;
 
-    private Jump jump;
+    private TrackFile trackFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +45,10 @@ public class JumpActivity extends BaseActivity implements DialogInterface.OnClic
         // Load jump from extras
         final Bundle extras = getIntent().getExtras();
         if(extras != null) {
-            final String trackFile = extras.getString(EXTRA_TRACK_FILE);
-            if(trackFile != null) {
-                final File logDir = JumpLog.getLogDirectory(getApplicationContext());
-                jump = new Jump(new File(logDir, trackFile));
+            final String extraTrackFile = extras.getString(EXTRA_TRACK_FILE);
+            if(extraTrackFile != null) {
+                final File trackDir = TrackFiles.getTrackDirectory(getApplicationContext());
+                trackFile = new TrackFile(new File(trackDir, extraTrackFile));
             }
         }
     }
@@ -61,7 +61,7 @@ public class JumpActivity extends BaseActivity implements DialogInterface.OnClic
     }
 
     private void updateViews() {
-        if(jump != null) {
+        if(trackFile != null) {
             // Find views
             final TextView filenameLabel = (TextView) findViewById(R.id.filename);
             final TextView filesizeLabel = (TextView) findViewById(R.id.filesize);
@@ -69,11 +69,11 @@ public class JumpActivity extends BaseActivity implements DialogInterface.OnClic
             final Button openButton = (Button) findViewById(R.id.openButton);
             final Button mapButton = (Button) findViewById(R.id.mapButton);
 
-            filenameLabel.setText(jump.getName());
-            filesizeLabel.setText(jump.getSize());
+            filenameLabel.setText(trackFile.getName());
+            filesizeLabel.setText(trackFile.getSize());
 
             // Update cloud sync state
-            final CloudData cloudData = jump.getCloudData();
+            final CloudData cloudData = trackFile.getCloudData();
             if(cloudData != null) {
                 errorLabel.setVisibility(View.GONE);
                 openButton.setText(R.string.action_open);
@@ -99,7 +99,7 @@ public class JumpActivity extends BaseActivity implements DialogInterface.OnClic
     }
 
     public void clickOpen(View v) {
-        final CloudData cloudData = jump.getCloudData();
+        final CloudData cloudData = trackFile.getCloudData();
         if(cloudData != null) {
             // Open web app
             firebaseAnalytics.logEvent("click_track_open", null);
@@ -110,23 +110,23 @@ public class JumpActivity extends BaseActivity implements DialogInterface.OnClic
             getAuthToken(new Callback<String>() {
                 @Override
                 public void apply(String authToken) {
-                    Toast.makeText(JumpActivity.this, "Syncing track...", Toast.LENGTH_SHORT).show();
-                    TheCloud.upload(jump, authToken, new Callback<CloudData>() {
+                    Toast.makeText(TrackActivity.this, "Syncing track...", Toast.LENGTH_SHORT).show();
+                    TheCloud.upload(trackFile, authToken, new Callback<CloudData>() {
                         @Override
                         public void apply(CloudData cloudData) {
                             updateViews();
-                            Toast.makeText(JumpActivity.this, "Track sync success", Toast.LENGTH_LONG).show();
+                            Toast.makeText(TrackActivity.this, "Track sync success", Toast.LENGTH_LONG).show();
                         }
                         @Override
                         public void error(String error) {
                             Log.e(TAG, "Failed to upload track: " + error);
-                            Toast.makeText(JumpActivity.this, "Track sync failed", Toast.LENGTH_LONG).show();
+                            Toast.makeText(TrackActivity.this, "Track sync failed", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
                 @Override
                 public void error(String error) {
-                    Toast.makeText(JumpActivity.this, "Failed to get auth token", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TrackActivity.this, "Failed to get auth token", Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -134,7 +134,7 @@ public class JumpActivity extends BaseActivity implements DialogInterface.OnClic
 
     public void clickKml(View v) {
         firebaseAnalytics.logEvent("click_track_kml", null);
-        final CloudData cloudData = jump.getCloudData();
+        final CloudData cloudData = trackFile.getCloudData();
         if(cloudData != null) {
             // Open web app
             Intents.openTrackKml(this, cloudData);
@@ -145,7 +145,7 @@ public class JumpActivity extends BaseActivity implements DialogInterface.OnClic
 
     public void clickDelete(View v) {
         firebaseAnalytics.logEvent("click_track_delete_1", null);
-        final int deleteConfirmMessage = (jump.getCloudData() == null)? R.string.delete_local : R.string.delete_remote;
+        final int deleteConfirmMessage = (trackFile.getCloudData() == null)? R.string.delete_local : R.string.delete_remote;
         alertDialog = new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setTitle("Delete this track?")
@@ -168,20 +168,20 @@ public class JumpActivity extends BaseActivity implements DialogInterface.OnClic
     }
 
     private void deleteLocal() {
-        if(jump.delete()) {
+        if(trackFile.delete()) {
             // Notify user
-            Toast.makeText(getApplicationContext(), "Deleted " + jump.getName(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Deleted " + trackFile.getName(), Toast.LENGTH_LONG).show();
             // Exit activity
             finish();
         } else {
             // Delete failed
-            Toast.makeText(getApplicationContext(), "Failed to delete track " + jump.getName(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Failed to delete track " + trackFile.getName(), Toast.LENGTH_LONG).show();
         }
     }
 
     public void clickExport(View v) {
         firebaseAnalytics.logEvent("click_track_export", null);
-        Intents.exportTrackFile(this, jump);
+        Intents.exportTrackFile(this, trackFile);
     }
 
     @Override

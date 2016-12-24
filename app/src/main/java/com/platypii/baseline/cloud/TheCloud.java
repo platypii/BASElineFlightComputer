@@ -1,6 +1,6 @@
 package com.platypii.baseline.cloud;
 
-import com.platypii.baseline.data.Jump;
+import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Callback;
 import java.util.List;
 
@@ -11,8 +11,8 @@ public class TheCloud {
         new ListTask(auth, cb).execute();
     }
 
-    public static void upload(Jump jump, String auth, Callback<CloudData> cb) {
-        new UploadTask(jump, auth, cb).execute();
+    public static void upload(TrackFile trackFile, String auth, Callback<CloudData> cb) {
+        new UploadTask(trackFile, auth, cb).execute();
     }
 
 }

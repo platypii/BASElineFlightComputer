@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:name="com.platypii.baseline.TouchableMapFragment" />
 
-    <com.platypii.baseline.AnalogAltimeter
+    <com.platypii.baseline.altimeter.AnalogAltimeter
         android:id="@+id/analogAltimeter"
         android:layout_width="160dp"
         android:layout_height="160dp"

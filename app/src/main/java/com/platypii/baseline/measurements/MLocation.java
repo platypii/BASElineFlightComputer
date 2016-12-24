@@ -6,7 +6,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 import java.util.Locale;
 
 public class MLocation extends Measurement {
@@ -64,8 +64,8 @@ public class MLocation extends Measurement {
     @Override
     public String toRow() {
         final String sat_str = (numSat != -1)? Integer.toString(numSat) : "";
-        final String vN_str = Util.isReal(vN)? Double.toString(vN) : "";
-        final String vE_str = Util.isReal(vE)? Double.toString(vE) : "";
+        final String vN_str = Numbers.isReal(vN)? Double.toString(vN) : "";
+        final String vE_str = Numbers.isReal(vE)? Double.toString(vE) : "";
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
         return String.format(Locale.US, "%d,,gps,,%f,%f,%f,%s,%s,%s", millis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
     }

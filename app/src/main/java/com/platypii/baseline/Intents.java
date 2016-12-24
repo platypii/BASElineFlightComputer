@@ -11,15 +11,15 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.data.Jump;
+import com.platypii.baseline.tracks.TrackFile;
 
 class Intents {
     private static final String TAG = "Intents";
 
     /** Open jump activity */
-    static void openJumpActivity(@NonNull Context context, Jump jump) {
-        final Intent intent = new Intent(context, JumpActivity.class);
-        intent.putExtra(JumpActivity.EXTRA_TRACK_FILE, jump.logFile.getName());
+    static void openTrackActivity(@NonNull Context context, TrackFile trackFile) {
+        final Intent intent = new Intent(context, TrackActivity.class);
+        intent.putExtra(TrackActivity.EXTRA_TRACK_FILE, trackFile.file.getName());
         context.startActivity(intent);
     }
 
@@ -48,16 +48,16 @@ class Intents {
     }
 
 //    /** Share link to base-line.ws */
-//    public static void shareTrack(@NonNull Context context, Jump jump) {
-//        final CloudData cloudData = jump.getCloudData();
+//    public static void shareTrack(@NonNull Context context, TrackFile trackFile) {
+//        final CloudData cloudData = trackFile.getCloudData();
 //        if(cloudData != null) {
 //            final SimpleDateFormat format = new SimpleDateFormat("EEE MMM d yyyy, h:mma z", Locale.US);
-//            final String date = format.format(jump.getDate());
+//            final String date = format.format(trackFile.getDate());
 //
 //            final Intent intent = new Intent();
 //            intent.setAction(Intent.ACTION_SEND);
 //            intent.putExtra(Intent.EXTRA_SUBJECT, "BASEline Track " + date);
-//            intent.putExtra(Intent.EXTRA_TEXT, jump.getCloudData().trackUrl);
+//            intent.putExtra(Intent.EXTRA_TEXT, trackFile.getCloudData().trackUrl);
 //            intent.setType("text/plain");
 //            context.startActivity(Intent.createChooser(intent, "Share Track"));
 //        } else {
@@ -66,13 +66,13 @@ class Intents {
 //    }
 
     /** Share track data file */
-    static void exportTrackFile(@NonNull Context context, Jump jump) {
+    static void exportTrackFile(@NonNull Context context, TrackFile trackFile) {
         try {
-            final Uri trackFileUri = FileProvider.getUriForFile(context, "com.platypii.baseline.provider", jump.logFile);
+            final Uri trackFileUri = FileProvider.getUriForFile(context, "com.platypii.baseline.provider", trackFile.file);
             Log.d(TAG, "Exporting track file " + trackFileUri);
             final Intent intent = new Intent();
             intent.setAction(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_SUBJECT, jump.getName());
+            intent.putExtra(Intent.EXTRA_SUBJECT, trackFile.getName());
             intent.putExtra(Intent.EXTRA_STREAM, trackFileUri);
             intent.setType("application/csv");
             context.startActivity(intent);

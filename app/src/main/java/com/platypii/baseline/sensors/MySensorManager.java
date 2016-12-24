@@ -1,4 +1,4 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline.sensors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +121,7 @@ public class MySensorManager implements SensorEventListener, Service {
     /**
      * Add a new listener to be notified of location updates
      */
-    void addListener(MySensorListener listener) {
+    public void addListener(MySensorListener listener) {
         synchronized(listeners) {
             listeners.add(listener);
         }
@@ -130,7 +130,7 @@ public class MySensorManager implements SensorEventListener, Service {
     /**
      * Remove a listener from location updates
      */
-    void removeListener(MySensorListener listener) {
+    public void removeListener(MySensorListener listener) {
         synchronized(listeners) {
             listeners.remove(listener);
         }

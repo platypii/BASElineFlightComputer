@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat; // TODO: minsdk16
-import com.platypii.baseline.data.MyDatabase;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import org.greenrobot.eventbus.EventBus;
@@ -31,7 +30,7 @@ class Notifications implements Service {
 
     private void update() {
         final NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        final boolean logging = Services.db.isLogging();
+        final boolean logging = Services.logger.isLogging();
         final boolean audible = Services.audible.isEnabled();
 
         if(logging || audible) {
@@ -44,10 +43,10 @@ class Notifications implements Service {
                     .setOngoing(true)
                     .setContentIntent(pendingIntent);
             if(logging && audible) {
-                builder = builder.setUsesChronometer(true).setWhen(Services.db.getStartTime());
+                builder = builder.setUsesChronometer(true).setWhen(Services.logger.getStartTime());
                 builder = builder.setContentText(context.getString(R.string.notify_audible_logging));
             } else if(logging) {
-                builder = builder.setUsesChronometer(true).setWhen(Services.db.getStartTime());
+                builder = builder.setUsesChronometer(true).setWhen(Services.logger.getStartTime());
                 builder = builder.setContentText(context.getString(R.string.notify_logging));
             } else {
                 builder = builder.setContentText(context.getString(R.string.notify_audible));

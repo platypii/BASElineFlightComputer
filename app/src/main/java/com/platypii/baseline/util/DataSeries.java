@@ -1,12 +1,14 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline.util;
 
 import android.util.Log;
-import com.platypii.baseline.util.Util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
+/**
+ * Represent a series of data points to be plotted.
+ */
 public class DataSeries implements Iterable<DataSeries.Point> {
     private static final String TAG = "DataSeries";
 
@@ -16,7 +18,7 @@ public class DataSeries implements Iterable<DataSeries.Point> {
     public class Point {
         public double x;
         public double y;
-        public Point(double x, double y) {
+        Point(double x, double y) {
             this.x = x;
             this.y = y;
         }
@@ -27,7 +29,7 @@ public class DataSeries implements Iterable<DataSeries.Point> {
     }
 
     public void addPoint(double x, double y) {
-        if(!Util.isReal(x) || !Util.isReal(y)) {
+        if(!Numbers.isReal(x) || !Numbers.isReal(y)) {
             Log.w(TAG, "Invalid point added to data series " + x + " " + y);
         }
         if(n < points.size()) {

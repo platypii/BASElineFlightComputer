@@ -1,4 +1,4 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline.util;
 
 /**
  * Mutable double bounds.

@@ -1,7 +1,7 @@
 package com.platypii.baseline.audible;
 
 import android.content.SharedPreferences;
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 
 /**
  * Static class to store audible settings in memory.
@@ -23,11 +23,11 @@ public class AudibleSettings {
     static void load(SharedPreferences prefs) {
         final String audibleMode = prefs.getString("audible_mode", "horizontal_speed");
         mode = AudibleModes.get(audibleMode);
-        min = Util.parseDouble(prefs.getString("audible_min", Float.toString(mode.defaultMin)));
-        max = Util.parseDouble(prefs.getString("audible_max", Float.toString(mode.defaultMax)));
-        precision = Util.parseInt(prefs.getString("audible_precision", Integer.toString(mode.defaultPrecision)), mode.defaultPrecision);
-        speechInterval = Util.parseFloat(prefs.getString("audible_interval", "2.5"));
-        speechRate = Util.parseFloat(prefs.getString("audible_rate", "1.0"));
+        min = Numbers.parseDouble(prefs.getString("audible_min", Float.toString(mode.defaultMin)));
+        max = Numbers.parseDouble(prefs.getString("audible_max", Float.toString(mode.defaultMax)));
+        precision = Numbers.parseInt(prefs.getString("audible_precision", Integer.toString(mode.defaultPrecision)), mode.defaultPrecision);
+        speechInterval = Numbers.parseFloat(prefs.getString("audible_interval", "2.5"));
+        speechRate = Numbers.parseFloat(prefs.getString("audible_rate", "1.0"));
     }
 
     /**

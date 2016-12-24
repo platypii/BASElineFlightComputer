@@ -1,9 +1,9 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.data.Bounds;
-import com.platypii.baseline.data.DataSeries;
-import com.platypii.baseline.data.DataSeries.Point;
-import com.platypii.baseline.data.IntBounds;
+import com.platypii.baseline.util.Bounds;
+import com.platypii.baseline.util.DataSeries;
+import com.platypii.baseline.util.DataSeries.Point;
+import com.platypii.baseline.util.IntBounds;
 
 import android.content.Context;
 import android.graphics.Canvas;

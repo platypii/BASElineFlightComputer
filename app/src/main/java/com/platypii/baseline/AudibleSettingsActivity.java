@@ -14,7 +14,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.platypii.baseline.audible.AudibleMinMaxPreference;
 import com.platypii.baseline.audible.AudibleMode;
 import com.platypii.baseline.audible.AudibleSettings;
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 import java.util.Locale;
 
 /**
@@ -124,18 +124,18 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                     break;
                 case "audible_min":
                     final float min = (Float) value;
-                    if(!Util.isReal(min)) return false;
+                    if(!Numbers.isReal(min)) return false;
                     AudibleSettings.min = min;
                     updateViews();
                     break;
                 case "audible_max":
                     final float max = (Float) value;
-                    if(!Util.isReal(max)) return false;
+                    if(!Numbers.isReal(max)) return false;
                     AudibleSettings.max = max;
                     updateViews();
                     break;
                 case "audible_precision":
-                    final int precision = Util.parseInt((String) value, 1);
+                    final int precision = Numbers.parseInt((String) value, 1);
                     if(precision < 0) {
                         Toast.makeText(getActivity(), "Precision cannot be negative", Toast.LENGTH_SHORT).show();
                         return false;
@@ -147,14 +147,14 @@ public class AudibleSettingsActivity extends PreferenceActivity {
                     updateViews();
                     break;
                 case "audible_interval":
-                    final float speechInterval = Util.parseFloat((String) value);
-                    if(!Util.isReal(speechInterval)) return false;
+                    final float speechInterval = Numbers.parseFloat((String) value);
+                    if(!Numbers.isReal(speechInterval)) return false;
                     AudibleSettings.speechInterval = speechInterval;
                     updateViews();
                     break;
                 case "audible_rate":
-                    final float speechRate = Util.parseFloat((String) value);
-                    if(!Util.isReal(speechRate)) return false;
+                    final float speechRate = Numbers.parseFloat((String) value);
+                    if(!Numbers.isReal(speechRate)) return false;
                     AudibleSettings.speechRate = speechRate;
                     updateViews();
                     break;

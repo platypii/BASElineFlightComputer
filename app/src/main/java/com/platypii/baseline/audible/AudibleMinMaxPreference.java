@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.platypii.baseline.R;
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 
 /**
  * Preference dialog that converts to/from internal units in the preference,
@@ -26,7 +26,7 @@ public class AudibleMinMaxPreference extends DialogPreference {
     }
 
     public float getValue() {
-        return Util.parseFloat(getPersistedString(null));
+        return Numbers.parseFloat(getPersistedString(null));
     }
 
     public void setValue(float value) {
@@ -45,7 +45,7 @@ public class AudibleMinMaxPreference extends DialogPreference {
         mEditText = (EditText) view.findViewById(R.id.minmax_input);
 
         final float value = getValue();
-        if(Util.isReal(value)) {
+        if(Numbers.isReal(value)) {
             final float valueLocalUnits = value / getMode().units();
             mEditText.setText(Float.toString(valueLocalUnits));
         } else {
@@ -60,9 +60,9 @@ public class AudibleMinMaxPreference extends DialogPreference {
             // Convert mEditText into value
             final String valueString = mEditText.getText().toString();
             if(!valueString.isEmpty()) {
-                final float valueLocalUnits = Util.parseFloat(valueString);
+                final float valueLocalUnits = Numbers.parseFloat(valueString);
                 final float value = valueLocalUnits * getMode().units();
-                if(Util.isReal(value)) {
+                if(Numbers.isReal(value)) {
                     persistString(Float.toString(value));
                     callChangeListener(value);
                 }

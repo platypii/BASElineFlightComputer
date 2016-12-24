@@ -13,8 +13,8 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MSensor;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.SyncedList;
-import com.platypii.baseline.util.Util;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -176,12 +176,12 @@ public class SensorActivity extends Activity implements MyLocationListener {
     private void updateGPS(MLocation loc) {
         satelliteLabel.setText("Satellites: " + Services.location.satellitesInView + " visible, " + Services.location.satellitesUsed + " used in fix");
         if(loc != null) {
-            if (Util.isReal(loc.latitude)) {
+            if (Numbers.isReal(loc.latitude)) {
                 latitudeLabel.setText(String.format(Locale.getDefault(), "Lat: %.6f", loc.latitude));
             } else {
                 latitudeLabel.setText("Lat: ");
             }
-            if (Util.isReal(loc.latitude)) {
+            if (Numbers.isReal(loc.latitude)) {
                 longitudeLabel.setText(String.format(Locale.getDefault(), "Long: %.6f", loc.longitude));
             } else {
                 longitudeLabel.setText("Long: ");

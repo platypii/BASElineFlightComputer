@@ -10,9 +10,10 @@ import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.platypii.baseline.altimeter.AnalogAltimeter;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -61,8 +62,8 @@ public class AltimeterActivity extends Activity {
             public void onClick(DialogInterface dialog, int id) {
                 final String inputText = input.getText().toString();
                 final double units = Convert.metric? 1 : Convert.FT;
-                final double altitude = inputText.isEmpty()? 0.0 : Util.parseDouble(inputText) * units;
-                if(Util.isReal(altitude)) {
+                final double altitude = inputText.isEmpty()? 0.0 : Numbers.parseDouble(inputText) * units;
+                if(Numbers.isReal(altitude)) {
                     Log.w(TAG, "Setting altitude above ground level to " + altitude + "m");
                     Services.alti.setGroundLevel(Services.alti.pressure_altitude_filtered - altitude);
                 } else {

@@ -10,7 +10,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 import org.greenrobot.eventbus.EventBus;
 
 /**
@@ -141,7 +141,7 @@ public class MyAudible implements Service {
         // Check for fresh signal (not applicable to vertical speed)
         if(AudibleSettings.mode.id.equals("vertical_speed") || goodGpsFix()) {
             // Check for real valued sample
-            if (Util.isReal(sample.value)) {
+            if (Numbers.isReal(sample.value)) {
                 if(sample.value < AudibleSettings.min) {
                     if(boundaryState != STATE_MIN) {
                         boundaryState = STATE_MIN;

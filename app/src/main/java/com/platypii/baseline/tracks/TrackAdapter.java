@@ -1,4 +1,4 @@
-package com.platypii.baseline.data;
+package com.platypii.baseline.tracks;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -19,22 +19,22 @@ public class TrackAdapter extends BaseAdapter {
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    private final List<Jump> tracks;
+    private final List<TrackFile> tracks;
 
     private final LayoutInflater inflater;
     private List<ListItem> items;
 
-    public TrackAdapter(Context context, List<Jump> tracks) {
+    public TrackAdapter(Context context, List<TrackFile> tracks) {
         this.tracks = tracks;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         items = populateItems(tracks);
     }
 
-    private static List<ListItem> populateItems(List<Jump> tracks) {
+    private static List<ListItem> populateItems(List<TrackFile> tracks) {
         // Count synced and not synced
         int num_synced = 0;
         int num_unsynced = 0;
-        for(Jump jump : tracks) {
+        for(TrackFile jump : tracks) {
             if(jump.getCloudData() == null) {
                 num_unsynced++;
             } else {
@@ -45,7 +45,7 @@ public class TrackAdapter extends BaseAdapter {
         // Add Unsynced tracks
         if(num_unsynced > 0) {
             items.add(new TrackHeader("Not synced (local only)"));
-            for (Jump jump : tracks) {
+            for (TrackFile jump : tracks) {
                 if (jump.getCloudData() == null) {
                     items.add(new TrackItem(jump));
                 }
@@ -54,7 +54,7 @@ public class TrackAdapter extends BaseAdapter {
         // Add synced tracks
         if(num_synced > 0) {
             items.add(new TrackHeader("Synced"));
-            for (Jump jump : tracks) {
+            for (TrackFile jump : tracks) {
                 if (jump.getCloudData() != null) {
                     items.add(new TrackItem(jump));
                 }
@@ -88,7 +88,7 @@ public class TrackAdapter extends BaseAdapter {
                 headerNameView.setText(header.name);
                 break;
             case TYPE_ITEM:
-                final Jump track = ((TrackItem) item).track;
+                final TrackFile track = ((TrackItem) item).track;
                 final TextView itemNameView = (TextView) convertView.findViewById(R.id.list_item_name);
                 final TextView itemSizeView = (TextView) convertView.findViewById(R.id.list_item_filesize);
                 itemNameView.setText(track.toString());
@@ -110,7 +110,7 @@ public class TrackAdapter extends BaseAdapter {
         return items.get(position);
     }
 
-    public Jump getTrack(int position) {
+    public TrackFile getTrack(int position) {
         final ListItem item = items.get(position);
         if(item instanceof TrackItem) {
             return ((TrackItem) item).track;
@@ -156,8 +156,8 @@ public class TrackAdapter extends BaseAdapter {
     }
 
     private static class TrackItem implements ListItem {
-        public final Jump track;
-        TrackItem(Jump track) {
+        public final TrackFile track;
+        TrackItem(TrackFile track) {
             this.track = track;
         }
     }

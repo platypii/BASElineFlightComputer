@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
-import com.platypii.baseline.data.Jump;
-import com.platypii.baseline.data.JumpLog;
-import com.platypii.baseline.data.TrackAdapter;
+import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackFiles;
+import com.platypii.baseline.tracks.TrackAdapter;
 import com.platypii.baseline.events.SyncEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -16,9 +16,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JumpsActivity extends ListActivity {
+public class TrackListActivity extends ListActivity {
 
-    private List<Jump> jumpList;
+    private List<TrackFile> trackList;
     private TrackAdapter listAdapter;
 
     private View tracksEmptyLabel;
@@ -31,8 +31,8 @@ public class JumpsActivity extends ListActivity {
         tracksEmptyLabel = findViewById(R.id.tracks_empty);
 
         // Initialize the ListAdapter
-        jumpList = new ArrayList<>();
-        listAdapter = new TrackAdapter(this, jumpList);
+        trackList = new ArrayList<>();
+        listAdapter = new TrackAdapter(this, trackList);
         setListAdapter(listAdapter);
     }
 
@@ -41,12 +41,12 @@ public class JumpsActivity extends ListActivity {
         super.onResume();
 
         // Update the ListAdapter
-        jumpList.clear();
-        jumpList.addAll(JumpLog.getJumps(getApplicationContext()));
+        trackList.clear();
+        trackList.addAll(TrackFiles.getTracks(getApplicationContext()));
         listAdapter.notifyDataSetChanged();
 
         // Handle no-tracks case
-        if(jumpList.size() > 0) {
+        if(trackList.size() > 0) {
             tracksEmptyLabel.setVisibility(View.GONE);
         } else {
             tracksEmptyLabel.setVisibility(View.VISIBLE);
@@ -58,9 +58,9 @@ public class JumpsActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        final Jump track = listAdapter.getTrack(position);
+        final TrackFile track = listAdapter.getTrack(position);
         if(track != null) {
-            Intents.openJumpActivity(this, track);
+            Intents.openTrackActivity(this, track);
         }
     }
 

@@ -3,7 +3,7 @@ package com.platypii.baseline.cloud;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.data.Jump;
+import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Callback;
 import com.platypii.baseline.util.IOUtil;
@@ -12,7 +12,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,12 +27,12 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
 
     private static final String postUrl = TheCloud.baselineServer + "/tracks";
 
-    private final Jump jump;
+    private final TrackFile trackFile;
     private final String auth;
     private final Callback<CloudData> cb;
 
-    UploadTask(Jump jump, String auth, Callback<CloudData> cb) {
-        this.jump = jump;
+    UploadTask(TrackFile trackFile, String auth, Callback<CloudData> cb) {
+        this.trackFile = trackFile;
         this.auth = auth;
         this.cb = cb;
     }
@@ -41,14 +40,14 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
     @Override
     protected Try<CloudData> doInBackground(Void... voids) {
         Log.i(TAG, "Uploading track with auth " + auth);
-        if(jump.getCloudData() != null) {
+        if(trackFile.getCloudData() != null) {
             Log.e(TAG, "Track already uploaded");
         }
         try {
             // Make HTTP request
-            final CloudData result = postTrack(jump, auth);
+            final CloudData result = postTrack(trackFile, auth);
             // Save cloud data
-            jump.setCloudData(result);
+            trackFile.setCloudData(result);
             Log.i(TAG, "Upload successful, url " + result.trackUrl);
             return new Try.Success<>(result);
         } catch(IOException e) {
@@ -75,13 +74,12 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
         }
     }
 
-    private static CloudData postTrack(Jump jump, String auth) throws IOException, JSONException {
-        final File file = jump.logFile;
+    private static CloudData postTrack(TrackFile trackFile, String auth) throws IOException, JSONException {
         final URL url = new URL(postUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Content-Type", "application/gzip");
         conn.setRequestProperty("Authorization", auth);
-        final long contentLength = file.length();
+        final long contentLength = trackFile.file.length();
         try {
             conn.setDoOutput(true);
             // Write to OutputStream
@@ -90,7 +88,7 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
             } else {
                 conn.setFixedLengthStreamingMode((int) contentLength);
             }
-            final InputStream is = new FileInputStream(file);
+            final InputStream is = new FileInputStream(trackFile.file);
             final OutputStream os = new BufferedOutputStream(conn.getOutputStream());
             IOUtil.copy(is, os);
             is.close();

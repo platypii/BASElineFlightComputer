@@ -1,6 +1,6 @@
 package com.platypii.baseline.location;
 
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 
 public class LocationCheck {
 
@@ -25,7 +25,7 @@ public class LocationCheck {
      * Returns null if seems valid
      */
     public static int validate(double latitude, double longitude) {
-        if(Util.isReal(latitude) && Util.isReal(longitude)) {
+        if(Numbers.isReal(latitude) && Numbers.isReal(longitude)) {
             final double latitude_abs = Math.abs(latitude);
             final double longitude_abs = Math.abs(longitude);
             if(latitude_abs < 0.1 && longitude_abs < 0.1) {

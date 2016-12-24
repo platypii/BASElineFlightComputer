@@ -7,7 +7,7 @@ import android.util.Log;
 import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.util.Util;
+import com.platypii.baseline.util.Numbers;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -157,7 +157,7 @@ abstract class LocationProvider implements Service {
     public double groundSpeed() {
         if(isFresh()) {
             final double lastGroundSpeed = lastLoc.groundSpeed();
-            if(Util.isReal(lastGroundSpeed)) {
+            if(Numbers.isReal(lastGroundSpeed)) {
                 return lastGroundSpeed;
             } else {
                 // Compute ground speed from previous location
@@ -195,7 +195,7 @@ abstract class LocationProvider implements Service {
     public double bearing() {
         if(isFresh()) {
             final double lastBearing = lastLoc.bearing();
-            if(Util.isReal(lastBearing)) {
+            if(Numbers.isReal(lastBearing)) {
                 return lastBearing;
             } else {
                 // Compute ground speed from previous location
