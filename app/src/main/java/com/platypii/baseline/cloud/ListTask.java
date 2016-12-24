@@ -54,7 +54,7 @@ class ListTask extends AsyncTask<Void,Void,Try<List<CloudData>>> {
     }
     @Override
     protected void onPostExecute(Try<List<CloudData>> result) {
-        EventBus.getDefault().post(new SyncEvent());
+        EventBus.getDefault().post(SyncEvent.listing());
         if(cb != null) {
             if(result instanceof Try.Success) {
                 final List<CloudData> cloudData = ((Try.Success<List<CloudData>>) result).result;

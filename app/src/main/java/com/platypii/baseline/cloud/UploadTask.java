@@ -62,13 +62,16 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
     }
     @Override
     protected void onPostExecute(Try<CloudData> result) {
-        EventBus.getDefault().post(new SyncEvent());
-        if(cb != null) {
-            if(result instanceof Try.Success) {
+        if(result instanceof Try.Success) {
+            EventBus.getDefault().post(SyncEvent.success());
+            if(cb != null) {
                 final CloudData cloudData = ((Try.Success<CloudData>) result).result;
                 cb.apply(cloudData);
-            } else {
-                final String error = ((Try.Failure<CloudData>) result).error;
+            }
+        } else {
+            final String error = ((Try.Failure<CloudData>) result).error;
+            EventBus.getDefault().post(SyncEvent.error(error));
+            if(cb != null) {
                 cb.error(error);
             }
         }

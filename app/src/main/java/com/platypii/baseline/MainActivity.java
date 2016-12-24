@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.cloud.TheCloud;
 import com.platypii.baseline.events.AudibleEvent;
@@ -123,17 +123,7 @@ public class MainActivity extends BaseActivity {
             getAuthToken(new Callback<String>() {
                 @Override
                 public void apply(String authToken) {
-                    TheCloud.upload(jump, authToken, new Callback<CloudData>() {
-                        @Override
-                        public void apply(CloudData cloudData) {
-                            Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void error(String error) {
-                            Toast.makeText(MainActivity.this, "Track sync failed: " + error, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    TheCloud.upload(jump, authToken, null);
                 }
 
                 @Override
@@ -296,6 +286,7 @@ public class MainActivity extends BaseActivity {
         signalStatus.setText(status);
     }
 
+    // Listen for events
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoggingEvent(LoggingEvent event) {
         updateUIState();
@@ -303,6 +294,14 @@ public class MainActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAudibleEvent(AudibleEvent event) {
         updateUIState();
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSyncEvent(SyncEvent event) {
+        if(event.type == SyncEvent.SYNC_UPLOAD_SUCCESS) {
+            Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
+        } else if(event.type == SyncEvent.SYNC_UPLOAD_FAILED) {
+            Toast.makeText(MainActivity.this, "Track sync failed: " + event.error, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
