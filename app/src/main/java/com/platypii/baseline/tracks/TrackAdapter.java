@@ -13,11 +13,10 @@ import com.platypii.baseline.R;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: notifydatasetchanged probably broken
-
 public class TrackAdapter extends BaseAdapter {
+    // Item types
     private static final int TYPE_HEADER = 0;
-    private static final int TYPE_ITEM = 1;
+    private static final int TYPE_TRACK_FILE = 1;
 
     private final List<TrackFile> tracks;
 
@@ -44,19 +43,19 @@ public class TrackAdapter extends BaseAdapter {
         final List<ListItem> items = new ArrayList<>();
         // Add Unsynced tracks
         if(num_unsynced > 0) {
-            items.add(new TrackHeader("Not synced (local only)"));
-            for (TrackFile jump : tracks) {
-                if (jump.getCloudData() == null) {
-                    items.add(new TrackItem(jump));
+            items.add(new ListHeader("Not synced (local only)"));
+            for (TrackFile trackFile : tracks) {
+                if (trackFile.getCloudData() == null) {
+                    items.add(new ListTrackFile(trackFile));
                 }
             }
         }
         // Add synced tracks
         if(num_synced > 0) {
-            items.add(new TrackHeader("Synced"));
-            for (TrackFile jump : tracks) {
-                if (jump.getCloudData() != null) {
-                    items.add(new TrackItem(jump));
+            items.add(new ListHeader("Synced"));
+            for (TrackFile trackFile : tracks) {
+                if (trackFile.getCloudData() != null) {
+                    items.add(new ListTrackFile(trackFile));
                 }
             }
         }
@@ -67,14 +66,14 @@ public class TrackAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         final ListItem item = getItem(position);
-        final int itemType = getItemViewType(position);
+        final int itemType = item.getType();
 
         if(convertView == null) {
             switch(itemType) {
                 case TYPE_HEADER:
                     convertView = inflater.inflate(R.layout.track_list_header, parent, false);
                     break;
-                case TYPE_ITEM:
+                case TYPE_TRACK_FILE:
                     convertView = inflater.inflate(R.layout.track_list_item, parent, false);
                     break;
             }
@@ -83,12 +82,12 @@ public class TrackAdapter extends BaseAdapter {
         // Update views
         switch(itemType) {
             case TYPE_HEADER:
-                final TrackHeader header = (TrackHeader) item;
+                final ListHeader header = (ListHeader) item;
                 final TextView headerNameView = (TextView) convertView.findViewById(R.id.list_header_name);
                 headerNameView.setText(header.name);
                 break;
-            case TYPE_ITEM:
-                final TrackFile track = ((TrackItem) item).track;
+            case TYPE_TRACK_FILE:
+                final TrackFile track = ((ListTrackFile) item).track;
                 final TextView itemNameView = (TextView) convertView.findViewById(R.id.list_item_name);
                 final TextView itemSizeView = (TextView) convertView.findViewById(R.id.list_item_filesize);
                 itemNameView.setText(track.toString());
@@ -112,8 +111,8 @@ public class TrackAdapter extends BaseAdapter {
 
     public TrackFile getTrack(int position) {
         final ListItem item = items.get(position);
-        if(item instanceof TrackItem) {
-            return ((TrackItem) item).track;
+        if(item instanceof ListTrackFile) {
+            return ((ListTrackFile) item).track;
         } else {
             return null;
         }
@@ -138,27 +137,31 @@ public class TrackAdapter extends BaseAdapter {
     @Override
     public int getItemViewType(int position) {
         final ListItem item = getItem(position);
-        if(item instanceof TrackHeader) {
-            return TYPE_HEADER;
-        } else {
-            return TYPE_ITEM;
-        }
+        return item.getType();
     }
 
     // Create two types of list item so we can have headers
-    interface ListItem {}
+    private interface ListItem {
+        int getType();
+    }
 
-    private static class TrackHeader implements ListItem {
-        public final String name;
-        TrackHeader(String name) {
+    private static class ListHeader implements ListItem {
+        final String name;
+        ListHeader(String name) {
             this.name = name;
+        }
+        public int getType() {
+            return TYPE_HEADER;
         }
     }
 
-    private static class TrackItem implements ListItem {
-        public final TrackFile track;
-        TrackItem(TrackFile track) {
+    private static class ListTrackFile implements ListItem {
+        final TrackFile track;
+        ListTrackFile(TrackFile track) {
             this.track = track;
+        }
+        public int getType() {
+            return TYPE_TRACK_FILE;
         }
     }
 
