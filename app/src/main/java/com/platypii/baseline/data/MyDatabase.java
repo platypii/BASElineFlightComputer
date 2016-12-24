@@ -32,22 +32,25 @@ import java.util.zip.GZIPOutputStream;
 public class MyDatabase implements MyLocationListener, MySensorListener {
     private static final String TAG = "DB";
 
-    // Singleton database when logging
-    private static MyDatabase db = null;
+    private boolean logging = false;
 
-    private final long startTimeMillis = System.currentTimeMillis();
-    private final long startTimeNano = System.nanoTime();
+    private long startTimeMillis = System.currentTimeMillis();
+    private long startTimeNano = System.nanoTime();
     private long stopTimeNano = -1;
 
     // Log file
-    private final File logFile;
-    private final BufferedWriter log;
+    private File logFile;
+    private BufferedWriter log;
     
-    public static synchronized void startLogging(@NonNull Context appContext) {
-        if(db == null) {
+    public synchronized void startLogging(@NonNull Context context) {
+        if(!logging) {
+            Log.i(TAG, "Starting logging");
+            logging = true;
+            startTimeMillis = System.currentTimeMillis();
+            startTimeNano = System.nanoTime();
+            stopTimeNano = -1;
             try {
-                Log.i(TAG, "Starting logging");
-                db = new MyDatabase(appContext);
+                startFileLogging(context);
                 EventBus.getDefault().post(new LoggingEvent());
             } catch(IOException e) {
                 Log.e(TAG, "Error starting logging", e);
@@ -56,11 +59,15 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
             Log.e(TAG, "startLogging() called when database already logging");
         }
     }
-    public static synchronized Jump stopLogging() {
-        if(db != null) {
+
+    /**
+     * Stop data logging, and return track data
+     */
+    public synchronized Jump stopLogging() {
+        if(logging) {
             Log.i(TAG, "Stopping logging");
-            final File logFile = db.stop();
-            db = null;
+            final File logFile = stopFileLogging();
+            logging = false;
             EventBus.getDefault().post(new LoggingEvent());
             if(logFile != null) {
                 return new Jump(logFile);
@@ -73,36 +80,40 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
         }
     }
 
-    public static boolean isLogging() {
-        return db != null;
+    public boolean isLogging() {
+        return logging;
     }
 
-    public static long getStartTime() {
-        if(db != null) {
-            return db.startTimeMillis;
+    public long getStartTime() {
+        if(logging) {
+            return startTimeMillis;
         } else {
             return 0;
         }
     }
-    public static String getLogTime() {
-        if(db != null) {
+
+    /**
+     * Returns the amount of time we've been logging, as a nice string 0:00.000
+     */
+    public String getLogTime() {
+        if(logging) {
             long nanoTime;
-            if (db.stopTimeNano == -1) {
-                nanoTime = System.nanoTime() - db.startTimeNano;
+            if (stopTimeNano == -1) {
+                nanoTime = System.nanoTime() - startTimeNano;
             } else {
-                nanoTime = db.stopTimeNano - db.startTimeNano;
+                nanoTime = stopTimeNano - startTimeNano;
             }
             final long millis = (nanoTime / 1000000L) % 1000;
             final long seconds = (nanoTime / 1000000000L) % 60;
             final long minutes = nanoTime / 60000000000L;
             return String.format(Locale.US, "%d:%02d.%03d", minutes, seconds, millis);
         } else {
-            return "0:00.000";
+            return "";
         }
     }
 
 
-    private MyDatabase(@NonNull Context appContext) throws IOException {
+    private void startFileLogging(@NonNull Context appContext) throws IOException {
         // Open log file for writing
         final File logDir = JumpLog.getLogDirectory(appContext);
         final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
@@ -123,27 +134,26 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
         Log.i(TAG, "Logging to " + logFile);
     }
 
-    private File stop() {
-        if(stopTimeNano == -1) {
-            stopTimeNano = System.nanoTime();
+    /**
+     * Stop logging and return the log file.
+     * Precondition: logging = true
+     */
+    private File stopFileLogging() {
+        stopTimeNano = System.nanoTime();
 
-            // Stop sensor updates
-            EventBus.getDefault().unregister(this);
-            Services.location.removeListener(this);
-            Services.sensors.removeListener(this);
+        // Stop sensor updates
+        EventBus.getDefault().unregister(this);
+        Services.location.removeListener(this);
+        Services.sensors.removeListener(this);
 
-            // Close file writer
-            try {
-                log.close();
-                Log.i(TAG, "Logging stopped for " + logFile.getName());
-                return logFile;
-            } catch (IOException e) {
-                Log.e(TAG, "Failed to close log file " + logFile, e);
-                FirebaseCrash.report(e);
-                return null;
-            }
-        } else {
-            Log.e(TAG, "Logging stopped twice");
+        // Close file writer
+        try {
+            log.close();
+            Log.i(TAG, "Logging stopped for " + logFile.getName());
+            return logFile;
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to close log file " + logFile, e);
+            FirebaseCrash.report(e);
             return null;
         }
     }
@@ -178,7 +188,7 @@ public class MyDatabase implements MyLocationListener, MySensorListener {
      * @param line the measurement to store
      */
     private synchronized void logLine(String line) {
-        if(stopTimeNano == -1) {
+        if(logging) {
             try {
                 log.write(line);
                 log.write('\n');

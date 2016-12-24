@@ -31,7 +31,7 @@ class Notifications implements Service {
 
     private void update() {
         final NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        final boolean logging = MyDatabase.isLogging();
+        final boolean logging = Services.db.isLogging();
         final boolean audible = Services.audible.isEnabled();
 
         if(logging || audible) {
@@ -44,10 +44,10 @@ class Notifications implements Service {
                     .setOngoing(true)
                     .setContentIntent(pendingIntent);
             if(logging && audible) {
-                builder = builder.setUsesChronometer(true).setWhen(MyDatabase.getStartTime());
+                builder = builder.setUsesChronometer(true).setWhen(Services.db.getStartTime());
                 builder = builder.setContentText(context.getString(R.string.notify_audible_logging));
             } else if(logging) {
-                builder = builder.setUsesChronometer(true).setWhen(MyDatabase.getStartTime());
+                builder = builder.setUsesChronometer(true).setWhen(Services.db.getStartTime());
                 builder = builder.setContentText(context.getString(R.string.notify_logging));
             } else {
                 builder = builder.setContentText(context.getString(R.string.notify_audible));

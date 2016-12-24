@@ -1,7 +1,8 @@
 package com.platypii.baseline.data;
 
 /**
- * Mutable integer bounds
+ * Mutable integer bounds.
+ * Used by PlotView to represent padding.
  */
 public class IntBounds {
 

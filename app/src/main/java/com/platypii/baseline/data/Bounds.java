@@ -1,6 +1,9 @@
 package com.platypii.baseline.data;
 
-
+/**
+ * Mutable double bounds.
+ * Used by PlotView.
+ */
 public class Bounds {
 
     public double left;

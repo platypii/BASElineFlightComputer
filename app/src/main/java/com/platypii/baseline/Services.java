@@ -46,6 +46,7 @@ public class Services {
     private static final int shutdownDelay = 10000;
 
     // Services
+    public static final MyDatabase db = new MyDatabase();
     public static final KVStore kv = new KVStore();
     public static final LocationService location = new LocationService();
     public static final MyAltimeter alti = new MyAltimeter();
@@ -133,7 +134,7 @@ public class Services {
         @Override
         public void run() {
             if(initialized && startCount == 0) {
-                if(!MyDatabase.isLogging() && !audible.isEnabled()) {
+                if(!db.isLogging() && !audible.isEnabled()) {
                     Log.i(TAG, "All activities have stopped. Stopping services.");
                     // Stop services
                     audible.stop();
@@ -145,7 +146,7 @@ public class Services {
                     kv.stop();
                     initialized = false;
                 } else {
-                    if(MyDatabase.isLogging()) {
+                    if(db.isLogging()) {
                         Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
                     }
                     if(audible.isEnabled()) {

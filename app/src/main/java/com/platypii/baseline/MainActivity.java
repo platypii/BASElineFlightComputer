@@ -102,12 +102,12 @@ public class MainActivity extends BaseActivity {
     }
 
     public void clickRecord(View v) {
-        if(!MyDatabase.isLogging()) {
+        if(!Services.db.isLogging()) {
             firebaseAnalytics.logEvent("click_logging_start", null);
-            MyDatabase.startLogging(getApplicationContext());
+            Services.db.startLogging(getApplicationContext());
         } else {
             firebaseAnalytics.logEvent("click_logging_stop", null);
-            final Jump jump = MyDatabase.stopLogging();
+            final Jump jump = Services.db.stopLogging();
 
             // Upload to the cloud
             if(jump != null) {
@@ -149,7 +149,7 @@ public class MainActivity extends BaseActivity {
 
     // Enables buttons and clock
     private void updateUIState() {
-        if(MyDatabase.isLogging()) {
+        if(Services.db.isLogging()) {
             recordButton.setText(R.string.action_stop);
             recordButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.square, 0, 0);
 
@@ -158,7 +158,7 @@ public class MainActivity extends BaseActivity {
                 clockRunnable = new Runnable() {
                     public void run() {
                         updateClock();
-                        if (MyDatabase.isLogging()) {
+                        if (Services.db.isLogging()) {
                             handler.postDelayed(this, clockUpdateInterval);
                         }
                     }
@@ -232,8 +232,8 @@ public class MainActivity extends BaseActivity {
      * Update the text view for timer
      */
     private void updateClock() {
-        if(MyDatabase.isLogging()) {
-            clock.setText(MyDatabase.getLogTime());
+        if(Services.db.isLogging()) {
+            clock.setText(Services.db.getLogTime());
         } else {
             clock.setText("");
         }
