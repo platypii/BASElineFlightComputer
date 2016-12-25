@@ -7,7 +7,7 @@ import java.util.List;
 public class TheCloud {
     static final String baselineServer = "https://base-line.ws";
 
-    public static void list(String auth, Callback<List<CloudData>> cb) {
+    public static void list(String auth, Callback<List<TrackData>> cb) {
         new ListTask(auth, cb).execute();
     }
 

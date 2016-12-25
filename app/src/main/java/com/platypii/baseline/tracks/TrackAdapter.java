@@ -140,7 +140,7 @@ public class TrackAdapter extends BaseAdapter {
         return item.getType();
     }
 
-    // Create two types of list item so we can have headers
+    // Create list item types so we can have headers
     private interface ListItem {
         int getType();
     }

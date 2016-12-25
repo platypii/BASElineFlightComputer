@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackFiles;
@@ -51,15 +50,15 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
                 trackFile = new TrackFile(new File(trackDir, extraTrackFile));
             }
         }
-    }
 
-    @Override
-    protected void handleSignInResult(GoogleSignInResult result) {
-        super.handleSignInResult(result);
-        // Update view based on sign-in state
+        // Initial view updates
         updateViews();
+        // Note: don't update auth views until we get a SyncEvent, since it would blink the sign in button
     }
 
+    /**
+     * Update view states (except for auth state)
+     */
     private void updateViews() {
         if(trackFile != null) {
             // Find views
@@ -90,10 +89,8 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
             // Update view based on sign-in state
             if(isSignedIn() || cloudData != null) {
                 openButton.setEnabled(true);
-                onAuthEvent(AuthEvent.SIGNED_IN);
             } else {
                 openButton.setEnabled(false);
-                onAuthEvent(AuthEvent.SIGNED_OUT);
             }
         }
     }
@@ -185,18 +182,18 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
+    public void onStart() {
+        super.onStart();
         // Listen for sync and auth updates
         EventBus.getDefault().register(this);
         updateViews();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         EventBus.getDefault().unregister(this);
+        // Dismiss alert to prevent context leak
         if(alertDialog != null) {
             alertDialog.dismiss();
             alertDialog = null;
@@ -210,16 +207,20 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAuthEvent(AuthEvent event) {
         // Update sign in panel state
-        if(event == AuthEvent.SIGNED_OUT) {
-            signInButton.setEnabled(true);
-            signInSpinner.setVisibility(View.GONE);
-            signInPanel.setVisibility(View.VISIBLE);
+        if(event == AuthEvent.SIGNED_IN || trackFile.getCloudData() != null) {
+            // Hide panel if track already synced
+            signInPanel.setVisibility(View.GONE);
         } else if(event == AuthEvent.SIGNING_IN) {
             signInButton.setEnabled(false);
             signInSpinner.setVisibility(View.VISIBLE);
             signInPanel.setVisibility(View.VISIBLE);
-        } else if(event == AuthEvent.SIGNED_IN) {
-            signInPanel.setVisibility(View.GONE);
+        } else if(event == AuthEvent.SIGNED_OUT) {
+            signInButton.setEnabled(true);
+            signInSpinner.setVisibility(View.GONE);
+            signInPanel.setVisibility(View.VISIBLE);
         }
+        // Signing in enables the sync button, so update button views:
+        updateViews();
     }
+
 }

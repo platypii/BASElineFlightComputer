@@ -20,25 +20,25 @@ import java.util.List;
 /**
  * List tracks from the cloud
  */
-class ListTask extends AsyncTask<Void,Void,Try<List<CloudData>>> {
+class ListTask extends AsyncTask<Void,Void,Try<List<TrackData>>> {
     private static final String TAG = "CloudUpload";
 
-    private static final String listUrl = TheCloud.baselineServer + "/v0/tracks";
+    private static final String listUrl = TheCloud.baselineServer + "/v1/tracks";
 
     private final String auth;
-    private final Callback<List<CloudData>> cb;
+    private final Callback<List<TrackData>> cb;
 
-    ListTask(String auth, Callback<List<CloudData>> cb) {
+    ListTask(String auth, Callback<List<TrackData>> cb) {
         this.auth = auth;
         this.cb = cb;
     }
 
     @Override
-    protected Try<List<CloudData>> doInBackground(Void... voids) {
+    protected Try<List<TrackData>> doInBackground(Void... voids) {
         Log.i(TAG, "Listing tracks with auth " + auth);
         try {
             // Make HTTP request
-            final List<CloudData> result = listTracks(auth);
+            final List<TrackData> result = listTracks(auth);
             // TODO: Save cloud data
             Log.i(TAG, "Listing successful: " + result.size());
             return new Try.Success<>(result);
@@ -53,20 +53,23 @@ class ListTask extends AsyncTask<Void,Void,Try<List<CloudData>>> {
         }
     }
     @Override
-    protected void onPostExecute(Try<List<CloudData>> result) {
+    protected void onPostExecute(Try<List<TrackData>> result) {
         EventBus.getDefault().post(SyncEvent.listing());
         if(cb != null) {
             if(result instanceof Try.Success) {
-                final List<CloudData> cloudData = ((Try.Success<List<CloudData>>) result).result;
-                cb.apply(cloudData);
+                final List<TrackData> trackData = ((Try.Success<List<TrackData>>) result).result;
+                cb.apply(trackData);
             } else {
-                final String error = ((Try.Failure<List<CloudData>>) result).error;
+                final String error = ((Try.Failure<List<TrackData>>) result).error;
                 cb.error(error);
             }
         }
     }
 
-    private static List<CloudData> listTracks(String auth) throws IOException, JSONException {
+    /**
+     * Make http request to BASEline server for track listing
+     */
+    private static List<TrackData> listTracks(String auth) throws IOException, JSONException {
         final URL url = new URL(listUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", auth);
@@ -87,12 +90,15 @@ class ListTask extends AsyncTask<Void,Void,Try<List<CloudData>>> {
         }
     }
 
-    private static List<CloudData> parseListing(String json) throws JSONException {
-        final ArrayList<CloudData> results = new ArrayList<>();
+    /**
+     * Parse raw json into a list of track data
+     */
+    private static List<TrackData> parseListing(String json) throws JSONException {
+        final ArrayList<TrackData> results = new ArrayList<>();
         final JSONArray jsonArray = new JSONArray(json);
         for(int i = 0; i < jsonArray.length(); i++) {
             final JSONObject jsonObject = jsonArray.getJSONObject(i);
-            final CloudData cloudData = CloudData.fromJson(jsonObject);
+            final TrackData cloudData = TrackData.fromJson(jsonObject);
             results.add(cloudData);
         }
         return results;

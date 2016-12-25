@@ -77,6 +77,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
         super.onStart();
 
         final OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        // TODO: Question, if opr.isDone, can we still just setResultCallback to have 1 code path?
         if (opr.isDone()) {
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
             // and the GoogleSignInResult will be available instantly.
@@ -87,6 +88,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
+            // TODO: When Java8, use this::handleSignInResult
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
                 public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
@@ -169,7 +171,8 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
 
     }
 
-    protected void handleSignInResult(GoogleSignInResult result) {
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d(TAG, "handleSignInResult " + result.getStatus());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             account = result.getSignInAccount();
