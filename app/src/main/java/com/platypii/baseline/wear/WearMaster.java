@@ -30,16 +30,16 @@ import org.greenrobot.eventbus.ThreadMode;
 public class WearMaster implements Service, MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "WearMaster";
 
-    private static final String STATE_URI = "/baseline/services/state";
+    private static final String STATE_URI = "/baseline/app/state";
 
-    private static final String WEAR_MSG_INIT = "/baseline/init";
-    private static final String WEAR_MSG_PING = "/baseline/ping";
-    private static final String WEAR_MSG_PONG = "/baseline/pong";
-    private static final String WEAR_MSG_RECORD = "/baseline/record";
-    private static final String WEAR_MSG_STOP = "/baseline/stop";
-    private static final String WEAR_MSG_ENABLE_AUDIBLE = "/baseline/enableAudible";
-    private static final String WEAR_MSG_DISABLE_AUDIBLE = "/baseline/disableAudible";
-    static final String WEAR_MSG_OPEN_APP = "/baseline/openApp";
+    private static final String WEAR_PING = "/baseline/ping";
+
+    private static final String WEAR_APP_PREFIX = "/baseline/app";
+    private static final String WEAR_APP_INIT = WEAR_APP_PREFIX + "/init";
+    private static final String WEAR_APP_RECORD = WEAR_APP_PREFIX + "/logger/record";
+    private static final String WEAR_APP_STOP = WEAR_APP_PREFIX + "/logger/stop";
+    private static final String WEAR_APP_AUDIBLE_ENABLE = WEAR_APP_PREFIX + "/audible/enable";
+    private static final String WEAR_APP_AUDIBLE_DISABLE = WEAR_APP_PREFIX + "/audible/disable";
 
     private GoogleApiClient googleApiClient;
 
@@ -57,54 +57,48 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        Log.d(TAG, "Received message: " + messageEvent);
-        switch(messageEvent.getPath()) {
-            case WEAR_MSG_INIT:
+        // Log.d(TAG, "Received message: " + messageEvent);
+        switch (messageEvent.getPath()) {
+            case WEAR_APP_INIT:
                 Log.i(TAG, "Received hello message");
                 sendUpdate();
                 break;
-            case WEAR_MSG_PING:
-                Log.i(TAG, "Received ping message");
-                sendPong(messageEvent.getSourceNodeId());
-                break;
-            case WEAR_MSG_RECORD:
+            case WEAR_APP_RECORD:
                 Log.i(TAG, "Received record message");
-                if(!Services.logger.isLogging()) {
+                if (!Services.logger.isLogging()) {
                     Services.logger.startLogging();
                 } else {
                     Log.w(TAG, "Received record message, but already recording");
                 }
                 break;
-            case WEAR_MSG_STOP:
+            case WEAR_APP_STOP:
                 Log.i(TAG, "Received stop message");
-                if(Services.logger.isLogging()) {
+                if (Services.logger.isLogging()) {
                     Services.logger.stopLogging();
                 } else {
                     Log.w(TAG, "Received record message, but already recording");
                 }
                 break;
-            case WEAR_MSG_ENABLE_AUDIBLE:
+            case WEAR_APP_AUDIBLE_ENABLE:
                 Log.i(TAG, "Received audible enable message");
-                if(!Services.audible.isEnabled()) {
+                if (!Services.audible.isEnabled()) {
                     Services.audible.enableAudible();
                 } else {
                     Log.w(TAG, "Received audible enable message, but audible already on");
                 }
                 break;
-            case WEAR_MSG_DISABLE_AUDIBLE:
+            case WEAR_APP_AUDIBLE_DISABLE:
                 Log.i(TAG, "Received audible disable message");
-                if(Services.audible.isEnabled()) {
+                if (Services.audible.isEnabled()) {
                     Services.audible.disableAudible();
                 } else {
                     Log.w(TAG, "Received audible disable message, but audible already off");
                 }
                 break;
-            case WEAR_MSG_OPEN_APP:
-                // Let the wearable listener service launch the app
-                Log.d(TAG, "Received app start message (ignored)");
-                break;
             default:
-                Log.w(TAG, "Received unknown message: " + messageEvent.getPath());
+                if(messageEvent.getPath().startsWith(WEAR_APP_PREFIX)) {
+                    Log.e(TAG, "Received unknown message: " + messageEvent.getPath());
+                }
         }
     }
 
@@ -121,11 +115,6 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
         final PendingResult<DataApi.DataItemResult> pendingResult =
                 Wearable.DataApi.putDataItem(googleApiClient, putDataReq);
         // TODO: Check result
-    }
-
-    void sendPong(String nodeId) {
-        Log.i(TAG, "Sending PONG to wear device");
-        Wearable.MessageApi.sendMessage(googleApiClient, nodeId, WEAR_MSG_PONG, null);
     }
 
     // Google api client callbacks

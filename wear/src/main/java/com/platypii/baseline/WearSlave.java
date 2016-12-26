@@ -33,16 +33,20 @@ import java.util.List;
 class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<NodeApi.GetConnectedNodesResult>, DataApi.DataListener, MessageApi.MessageListener {
     private static final String TAG = "WearSlave";
 
-    private static final String STATE_URI = "/baseline/services/state";
+    private static final String STATE_URI = "/baseline/app/state";
 
-    private static final String WEAR_MSG_INIT = "/baseline/init";
-    private static final String WEAR_MSG_PING = "/baseline/ping";
-    private static final String WEAR_MSG_PONG = "/baseline/pong";
-    private static final String WEAR_MSG_RECORD = "/baseline/record";
-    private static final String WEAR_MSG_STOP = "/baseline/stop";
-    private static final String WEAR_MSG_ENABLE_AUDIBLE = "/baseline/enableAudible";
-    private static final String WEAR_MSG_DISABLE_AUDIBLE = "/baseline/disableAudible";
-    private static final String WEAR_MSG_OPEN_APP = "/baseline/openApp";
+    private static final String WEAR_PING = "/baseline/ping";
+
+    private static final String WEAR_APP_PREFIX = "/baseline/app";
+    private static final String WEAR_APP_INIT = WEAR_APP_PREFIX + "/init";
+    private static final String WEAR_APP_RECORD = WEAR_APP_PREFIX + "/logger/record";
+    private static final String WEAR_APP_STOP = WEAR_APP_PREFIX + "/logger/stop";
+    private static final String WEAR_APP_AUDIBLE_ENABLE = WEAR_APP_PREFIX + "/audible/enable";
+    private static final String WEAR_APP_AUDIBLE_DISABLE = WEAR_APP_PREFIX + "/audible/disable";
+
+    private static final String WEAR_SERVICE_PREFIX = "/baseline/service";
+    private static final String WEAR_SERVICE_OPEN_APP = WEAR_SERVICE_PREFIX + "/openApp";
+    private static final String WEAR_SERVICE_PONG = WEAR_SERVICE_PREFIX + "/pong";
 
     private GoogleApiClient googleApiClient;
 
@@ -56,7 +60,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
 
     // Last time we synced with the phone (millis since epoch)
     private long lastPong = 0;
-    private static final long connectionTimeout = 3000; // milliseconds
+    private static final long connectionTimeout = 10000; // milliseconds
 
     WearSlave(@NonNull Context context) {
         Log.i(TAG, "Starting wear messaging service");
@@ -68,7 +72,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         googleApiClient.connect();
     }
 
-    boolean isConnected() {
+    private boolean isConnected() {
         return googleApiClient.isConnected() && phoneId != null;
     }
 
@@ -117,7 +121,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         Log.i(TAG, "Requesting data sync");
         synced = false;
         EventBus.getDefault().post(new DataSyncEvent());
-        sendMessage(WEAR_MSG_INIT);
+        sendMessage(WEAR_APP_INIT);
     }
 
     /**
@@ -126,12 +130,12 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
      */
     void sendPing() {
         // Log.d(TAG, "Sending ping");
-        sendMessage(WEAR_MSG_PING);
+        sendMessage(WEAR_PING);
     }
 
     void clickRecord() {
         if(isConnected()) {
-            sendMessage(WEAR_MSG_RECORD);
+            sendMessage(WEAR_APP_RECORD);
             logging = true;
             synced = false;
         } else {
@@ -141,7 +145,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
 
     void clickStop() {
         if(isConnected()) {
-            sendMessage(WEAR_MSG_STOP);
+            sendMessage(WEAR_APP_STOP);
             logging = false;
             synced = false;
         } else {
@@ -151,7 +155,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
 
     void enableAudible() {
         if(isConnected()) {
-            sendMessage(WEAR_MSG_ENABLE_AUDIBLE);
+            sendMessage(WEAR_APP_AUDIBLE_ENABLE);
             audible = true;
             synced = false;
         } else {
@@ -161,7 +165,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
 
     void disableAudible() {
         if(isConnected()) {
-            sendMessage(WEAR_MSG_DISABLE_AUDIBLE);
+            sendMessage(WEAR_APP_AUDIBLE_DISABLE);
             audible = false;
             synced = false;
         } else {
@@ -174,7 +178,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
      */
     void startApp() {
         // Send message to mobile device
-        sendMessage(WEAR_MSG_OPEN_APP);
+        sendMessage(WEAR_SERVICE_OPEN_APP);
     }
 
     /**
@@ -209,7 +213,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     public void onMessageReceived(MessageEvent messageEvent) {
         // Log.d(TAG, "Received message: " + messageEvent);
         switch (messageEvent.getPath()) {
-            case WEAR_MSG_PONG:
+            case WEAR_SERVICE_PONG:
                 // Log.d(TAG, "Received pong");
                 lastPong = System.currentTimeMillis();
                 break;

@@ -7,7 +7,7 @@ class PingRunnable implements Runnable {
 
     private final WearSlave wear;
     private boolean running = false;
-    private static final long updateInterval = 1000; // milliseconds
+    private static final long updateInterval = 3000; // milliseconds
 
     PingRunnable(WearSlave wear) {
         this.wear = wear;
