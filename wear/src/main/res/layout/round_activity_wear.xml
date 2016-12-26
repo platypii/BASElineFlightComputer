@@ -8,60 +8,6 @@
               tools:context="com.platypii.baseline.WearActivity"
               tools:deviceIds="wear_round">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/recordButton"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:onClick="clickRecord"
-            android:src="@drawable/circle"
-            android:contentDescription="@string/action_record"
-            style="@android:style/Widget.Material.Button.Borderless" />
-
-        <ImageButton
-            android:id="@+id/audibleButton"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:onClick="clickAudible"
-            android:src="@drawable/audio"
-            android:contentDescription="@string/action_audible"
-            style="@android:style/Widget.Material.Button.Borderless" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/altiButton"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:onClick="clickAltimeter"
-            android:src="@drawable/alti"
-            android:contentDescription="@string/action_altimeter"
-            style="@android:style/Widget.Material.Button.Borderless" />
-
-        <ImageButton
-            android:id="@+id/baselineButton"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:onClick="clickApp"
-            android:src="@drawable/wingsuit"
-            android:contentDescription="@string/action_app"
-            style="@android:style/Widget.Material.Button.Borderless" />
-
-    </LinearLayout>
+    <include layout="@layout/button_panel" />
 
 </LinearLayout>

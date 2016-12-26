@@ -30,17 +30,6 @@ import org.greenrobot.eventbus.ThreadMode;
 public class WearMaster implements Service, MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "WearMaster";
 
-    private static final String STATE_URI = "/baseline/app/state";
-
-    private static final String WEAR_PING = "/baseline/ping";
-
-    private static final String WEAR_APP_PREFIX = "/baseline/app";
-    private static final String WEAR_APP_INIT = WEAR_APP_PREFIX + "/init";
-    private static final String WEAR_APP_RECORD = WEAR_APP_PREFIX + "/logger/record";
-    private static final String WEAR_APP_STOP = WEAR_APP_PREFIX + "/logger/stop";
-    private static final String WEAR_APP_AUDIBLE_ENABLE = WEAR_APP_PREFIX + "/audible/enable";
-    private static final String WEAR_APP_AUDIBLE_DISABLE = WEAR_APP_PREFIX + "/audible/disable";
-
     private GoogleApiClient googleApiClient;
 
     @Override
@@ -59,11 +48,11 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
     public void onMessageReceived(MessageEvent messageEvent) {
         // Log.d(TAG, "Received message: " + messageEvent);
         switch (messageEvent.getPath()) {
-            case WEAR_APP_INIT:
+            case WearMessages.WEAR_APP_INIT:
                 Log.i(TAG, "Received hello message");
                 sendUpdate();
                 break;
-            case WEAR_APP_RECORD:
+            case WearMessages.WEAR_APP_RECORD:
                 Log.i(TAG, "Received record message");
                 if (!Services.logger.isLogging()) {
                     Services.logger.startLogging();
@@ -71,7 +60,7 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
                     Log.w(TAG, "Received record message, but already recording");
                 }
                 break;
-            case WEAR_APP_STOP:
+            case WearMessages.WEAR_APP_STOP:
                 Log.i(TAG, "Received stop message");
                 if (Services.logger.isLogging()) {
                     Services.logger.stopLogging();
@@ -79,7 +68,7 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
                     Log.w(TAG, "Received record message, but already recording");
                 }
                 break;
-            case WEAR_APP_AUDIBLE_ENABLE:
+            case WearMessages.WEAR_APP_AUDIBLE_ENABLE:
                 Log.i(TAG, "Received audible enable message");
                 if (!Services.audible.isEnabled()) {
                     Services.audible.enableAudible();
@@ -87,7 +76,7 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
                     Log.w(TAG, "Received audible enable message, but audible already on");
                 }
                 break;
-            case WEAR_APP_AUDIBLE_DISABLE:
+            case WearMessages.WEAR_APP_AUDIBLE_DISABLE:
                 Log.i(TAG, "Received audible disable message");
                 if (Services.audible.isEnabled()) {
                     Services.audible.disableAudible();
@@ -96,7 +85,7 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
                 }
                 break;
             default:
-                if(messageEvent.getPath().startsWith(WEAR_APP_PREFIX)) {
+                if(messageEvent.getPath().startsWith(WearMessages.WEAR_APP_PREFIX)) {
                     Log.e(TAG, "Received unknown message: " + messageEvent.getPath());
                 }
         }
@@ -105,7 +94,7 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
     private int count = 0;
     public void sendUpdate() {
         Log.i(TAG, "Sending state update to wear device");
-        final PutDataMapRequest putDataMapReq = PutDataMapRequest.create(STATE_URI);
+        final PutDataMapRequest putDataMapReq = PutDataMapRequest.create(WearMessages.STATE_URI);
         final DataMap map = putDataMapReq.getDataMap();
         map.putBoolean("logging_enabled", Services.logger.isLogging());
         map.putBoolean("audible_enabled", Services.audible.isEnabled());

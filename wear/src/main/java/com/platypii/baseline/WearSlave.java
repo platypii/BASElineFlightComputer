@@ -33,37 +33,19 @@ import java.util.List;
 class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<NodeApi.GetConnectedNodesResult>, DataApi.DataListener, MessageApi.MessageListener {
     private static final String TAG = "WearSlave";
 
-    private static final String STATE_URI = "/baseline/app/state";
-
-    private static final String WEAR_PING = "/baseline/ping";
-
-    private static final String WEAR_APP_PREFIX = "/baseline/app";
-    private static final String WEAR_APP_INIT = WEAR_APP_PREFIX + "/init";
-    private static final String WEAR_APP_RECORD = WEAR_APP_PREFIX + "/logger/record";
-    private static final String WEAR_APP_STOP = WEAR_APP_PREFIX + "/logger/stop";
-    private static final String WEAR_APP_AUDIBLE_ENABLE = WEAR_APP_PREFIX + "/audible/enable";
-    private static final String WEAR_APP_AUDIBLE_DISABLE = WEAR_APP_PREFIX + "/audible/disable";
-
-    private static final String WEAR_SERVICE_PREFIX = "/baseline/service";
-    private static final String WEAR_SERVICE_OPEN_APP = WEAR_SERVICE_PREFIX + "/openApp";
-    private static final String WEAR_SERVICE_PONG = WEAR_SERVICE_PREFIX + "/pong";
-
+    private RemoteApp remoteApp;
     private GoogleApiClient googleApiClient;
 
     // Only valid while connected:
     private String phoneId;
 
-    // App state synced from phone
-    boolean synced = false;
-    boolean logging = false;
-    boolean audible = false;
-
     // Last time we synced with the phone (millis since epoch)
     private long lastPong = 0;
     private static final long connectionTimeout = 10000; // milliseconds
 
-    WearSlave(@NonNull Context context) {
+    WearSlave(@NonNull Context context, RemoteApp remoteApp) {
         Log.i(TAG, "Starting wear messaging service");
+        this.remoteApp = remoteApp;
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(this)
@@ -72,7 +54,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         googleApiClient.connect();
     }
 
-    private boolean isConnected() {
+    boolean isConnected() {
         return googleApiClient.isConnected() && phoneId != null;
     }
 
@@ -93,7 +75,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         }
     }
 
-    private void sendMessage(final String message) {
+    void sendMessage(final String message) {
         if(phoneId != null) {
             // Send message to mobile device
             // Log.d(TAG, "Sending " + message + " to " + phoneId);
@@ -115,70 +97,12 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     }
 
     /**
-     * Ask the mobile device to give us a state update
-     */
-    void requestDataSync() {
-        Log.i(TAG, "Requesting data sync");
-        synced = false;
-        EventBus.getDefault().post(new DataSyncEvent());
-        sendMessage(WEAR_APP_INIT);
-    }
-
-    /**
      * Ask the mobile device to give us a state update.
      * Same message as data sync, but doesn't sent the synced flag to false.
      */
     void sendPing() {
         // Log.d(TAG, "Sending ping");
-        sendMessage(WEAR_PING);
-    }
-
-    void clickRecord() {
-        if(isConnected()) {
-            sendMessage(WEAR_APP_RECORD);
-            logging = true;
-            synced = false;
-        } else {
-            Log.w(TAG, "Failed to start recording: wearable not connected to phone");
-        }
-    }
-
-    void clickStop() {
-        if(isConnected()) {
-            sendMessage(WEAR_APP_STOP);
-            logging = false;
-            synced = false;
-        } else {
-            Log.w(TAG, "Failed to stop recording: wearable not connected to phone");
-        }
-    }
-
-    void enableAudible() {
-        if(isConnected()) {
-            sendMessage(WEAR_APP_AUDIBLE_ENABLE);
-            audible = true;
-            synced = false;
-        } else {
-            Log.w(TAG, "Failed to enable audible: wearable not connected to phone");
-        }
-    }
-
-    void disableAudible() {
-        if(isConnected()) {
-            sendMessage(WEAR_APP_AUDIBLE_DISABLE);
-            audible = false;
-            synced = false;
-        } else {
-            Log.w(TAG, "Failed to disable audible: wearable not connected to phone");
-        }
-    }
-
-    /**
-     * Start the phone app on a paired device, so that we can start logging or audible remotely
-     */
-    void startApp() {
-        // Send message to mobile device
-        sendMessage(WEAR_SERVICE_OPEN_APP);
+        sendMessage(WearMessages.WEAR_PING);
     }
 
     /**
@@ -190,13 +114,14 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 final DataItem item = event.getDataItem();
-                if (item.getUri().getPath().equals(STATE_URI)) {
+                if (item.getUri().getPath().equals(WearMessages.STATE_URI)) {
                     final DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    // Update logging and audible state
-                    logging = dataMap.getBoolean("logging_enabled");
-                    audible = dataMap.getBoolean("audible_enabled");
+                    // Get metric/imperial units from mobile device settings
                     Convert.metric = dataMap.getBoolean("metric");
-                    synced = true;
+                    // Update logging and audible state
+                    final boolean logging = dataMap.getBoolean("logging_enabled");
+                    final boolean audible = dataMap.getBoolean("audible_enabled");
+                    remoteApp.onSync(logging, audible);
                     // Data sync counts as a heartbeat from the phone:
                     lastPong = System.currentTimeMillis();
                     EventBus.getDefault().post(new DataSyncEvent());
@@ -213,8 +138,8 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     public void onMessageReceived(MessageEvent messageEvent) {
         // Log.d(TAG, "Received message: " + messageEvent);
         switch (messageEvent.getPath()) {
-            case WEAR_SERVICE_PONG:
-                // Log.d(TAG, "Received pong");
+            case WearMessages.WEAR_SERVICE_PONG:
+                Log.d(TAG, "Received pong");
                 lastPong = System.currentTimeMillis();
                 break;
             default:
@@ -251,7 +176,8 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
                 phoneId = nodes.get(0).getId();
         }
         if(phoneId != null) {
-            requestDataSync();
+            // Request initial data sync
+            sendMessage(WearMessages.WEAR_APP_INIT);
         }
     }
 
@@ -264,39 +190,18 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         } else {
             Log.e(TAG, "Wear connection suspended: unknown reason");
         }
-        synced = false;
         EventBus.getDefault().post(new DataSyncEvent());
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e(TAG, "Wear connection failed: " + connectionResult);
-        synced = false;
         EventBus.getDefault().post(new DataSyncEvent());
-    }
-
-    private Thread pingThread;
-    private final PingRunnable pingRunnable = new PingRunnable(this);
-    void startPingThread() {
-        if(pingThread == null) {
-            Log.i(TAG, "Starting ping thread");
-            pingThread = new Thread(pingRunnable);
-            pingThread.start();
-        } else {
-            Log.e(TAG, "startPingThread called twice");
-        }
-    }
-
-    void stopPingThread() {
-        Log.i(TAG, "Stopping ping thread");
-        pingRunnable.stop();
-        pingThread = null;
     }
 
     void stop() {
         Log.i(TAG, "Stopping wear messaging service");
         googleApiClient.disconnect();
-        synced = false;
         EventBus.getDefault().post(new DataSyncEvent());
     }
 

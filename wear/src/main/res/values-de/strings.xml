@@ -8,8 +8,6 @@
     <string name="action_audible">Audible</string>
     <string name="action_altimeter">Alti</string>
     <string name="action_nav">Nav</string>
-    <string name="action_tracks">Spuren</string>
-    <string name="action_settings">Einstellungen</string>
 
     <!-- Altimeter Activity -->
     <string name="set_altitude">Höhe Einstellen</string>

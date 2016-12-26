@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import com.platypii.baseline.alti.AltimeterActivity;
 import com.platypii.baseline.events.DataSyncEvent;
 import org.greenrobot.eventbus.EventBus;
@@ -16,11 +17,13 @@ import org.greenrobot.eventbus.ThreadMode;
 public class WearActivity extends Activity {
     private static final String TAG = "WearActivity";
 
+    private TextView remoteStatus;
+    private View remoteControls;
     private ImageButton recordButton;
     private ImageButton audibleButton;
     private ImageButton baselineButton;
 
-    private WearSlave wear;
+    private RemoteApp remoteApp;
 
     // Periodic update thread
     private boolean updating = false;
@@ -41,39 +44,50 @@ public class WearActivity extends Activity {
         setContentView(R.layout.activity_wear);
 
         // Start wear messaging service
-        wear = new WearSlave(this);
+        remoteApp = new RemoteApp(this);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         EventBus.getDefault().register(this);
         updateUIState();
 
+        // Find views
+        findViews();
+
         // Start signal updates
-        wear.startPingThread();
+        remoteApp.startPinging();
         updating = true;
         handler.postDelayed(updateRunnable, updateInterval);
     }
 
+    private void findViews() {
+        remoteStatus = (TextView) findViewById(R.id.remoteStatus);
+        remoteControls = findViewById(R.id.remoteControls);
+        baselineButton = (ImageButton) findViewById(R.id.baselineButton);
+        recordButton = (ImageButton) findViewById(R.id.recordButton);
+        audibleButton = (ImageButton) findViewById(R.id.audibleButton);
+    }
+
     public void clickRecord(View v) {
-        if(wear.logging) {
+        if(remoteApp.logging) {
             Log.i(TAG, "Clicked stop");
-            wear.clickStop();
+            remoteApp.clickStop();
         } else {
             Log.i(TAG, "Clicked record");
-            wear.clickRecord();
+            remoteApp.clickRecord();
         }
         updateUIState();
     }
 
     public void clickAudible(View v) {
-        if(wear.audible) {
+        if(remoteApp.audible) {
             Log.i(TAG, "Clicked audible off");
-            wear.disableAudible();
+            remoteApp.disableAudible();
         } else {
             Log.i(TAG, "Clicked audible on");
-            wear.enableAudible();
+            remoteApp.enableAudible();
         }
         updateUIState();
     }
@@ -87,57 +101,52 @@ public class WearActivity extends Activity {
     public void clickApp(View v) {
         Log.i(TAG, "Clicked wingsuit app");
         // Launch app
-        wear.startApp();
-        wear.requestDataSync();
+        remoteApp.startApp();
+        remoteApp.requestDataSync();
     }
 
     /**
      * Update button states and clock
      */
     private void updateUIState() {
-        if(baselineButton == null) {
-            baselineButton = (ImageButton) findViewById(R.id.baselineButton);
-        }
-        if(recordButton == null) {
-            recordButton = (ImageButton) findViewById(R.id.recordButton);
-        }
-        if(audibleButton == null) {
-            audibleButton = (ImageButton) findViewById(R.id.audibleButton);
+        // For some reason, findviewbyid often returns null on wear
+        if(remoteStatus == null) {
+            findViews();
+            if(remoteStatus == null) {
+                return;
+            }
         }
 
         // Update baseline button
-        if(baselineButton != null) {
-            if(wear.isActive()) {
-                baselineButton.setAlpha(1f);
-            } else {
-                baselineButton.setAlpha(0.4f);
-            }
-        }
-        // Update record/stop button
-        if(recordButton != null) {
-            if(wear.isActive() && wear.synced) {
+        if(remoteApp.isActive()) {
+            baselineButton.setAlpha(1f);
+            remoteStatus.setVisibility(View.GONE);
+            remoteControls.setVisibility(View.VISIBLE);
+            // Update remote control buttons
+            if(remoteApp.isActive() && remoteApp.synced) {
                 recordButton.setAlpha(1f);
+                audibleButton.setAlpha(1f);
             } else {
                 recordButton.setAlpha(0.4f);
+                audibleButton.setAlpha(0.4f);
             }
-            if (wear.logging) {
+            // Update logging button
+            if (remoteApp.logging) {
                 recordButton.setImageResource(R.drawable.square);
             } else {
                 recordButton.setImageResource(R.drawable.circle);
             }
-        }
-        // Update audible button
-        if(audibleButton != null) {
-            if(wear.isActive() && wear.synced) {
-                audibleButton.setAlpha(1f);
-            } else {
-                audibleButton.setAlpha(0.4f);
-            }
-            if (wear.audible) {
+            // Update audible button
+            if (remoteApp.audible) {
                 audibleButton.setImageResource(R.drawable.audio_on);
             } else {
                 audibleButton.setImageResource(R.drawable.audio);
             }
+        } else {
+            baselineButton.setAlpha(0.4f);
+            remoteStatus.setVisibility(View.VISIBLE);
+            remoteStatus.setText(R.string.error_not_connected);
+            remoteControls.setVisibility(View.GONE);
         }
     }
 
@@ -148,18 +157,18 @@ public class WearActivity extends Activity {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
+        remoteApp.stopPinging();
         EventBus.getDefault().unregister(this);
         updating = false;
-        wear.stopPingThread();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        wear.stop();
-        wear = null;
+        remoteApp.stopService();
+        remoteApp = null;
     }
 
 }
