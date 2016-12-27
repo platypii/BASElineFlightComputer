@@ -52,6 +52,10 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
                 Log.i(TAG, "Received hello message");
                 sendUpdate();
                 break;
+            case WearMessages.WEAR_PING:
+                Log.i(TAG, "Received ping message");
+                sendUpdate();
+                break;
             case WearMessages.WEAR_APP_RECORD:
                 Log.i(TAG, "Received record message");
                 if (!Services.logger.isLogging()) {
@@ -94,7 +98,7 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
     private int count = 0;
     public void sendUpdate() {
         Log.i(TAG, "Sending state update to wear device");
-        final PutDataMapRequest putDataMapReq = PutDataMapRequest.create(WearMessages.STATE_URI);
+        final PutDataMapRequest putDataMapReq = PutDataMapRequest.create(WearMessages.STATE_URI).setUrgent();
         final DataMap map = putDataMapReq.getDataMap();
         map.putBoolean("logging_enabled", Services.logger.isLogging());
         map.putBoolean("audible_enabled", Services.audible.isEnabled());

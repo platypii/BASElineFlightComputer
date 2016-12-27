@@ -1,7 +1,11 @@
 package com.platypii.baseline.wear;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
@@ -30,14 +34,37 @@ public class MyWearableListenerService extends WearableListenerService {
                 }
                 break;
             case WearMessages.WEAR_PING:
-                if(googleApiClient != null && googleApiClient.isConnected()) {
-                    Log.d(TAG, "Wear service ping? pong!");
-                    final String nodeId = messageEvent.getSourceNodeId();
-                    Wearable.MessageApi.sendMessage(googleApiClient, nodeId, WearMessages.WEAR_SERVICE_PONG, null);
-                } else {
-                    Log.e(TAG, "Unable to respond to service ping");
-                }
+                final byte[] data = messageEvent.getData();
+                Log.d(TAG, "Received ping " + new String(data));
+                // Send service pong
+                sendMessage(messageEvent.getSourceNodeId(), WearMessages.WEAR_SERVICE_PONG, data);
                 break;
+        }
+    }
+
+    private void sendMessage(String nodeId, String message, byte[] data) {
+        if(googleApiClient != null) {
+            if(!googleApiClient.isConnected()) {
+                // Attempt to reconnect
+                googleApiClient.blockingConnect();
+            }
+            if(googleApiClient.isConnected()) {
+                Log.d(TAG, "Sending " + message);
+                final PendingResult<MessageApi.SendMessageResult> result =
+                        Wearable.MessageApi.sendMessage(googleApiClient, nodeId, message, data);
+                // Handle result
+                result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+                    @Override
+                    public void onResult(@NonNull MessageApi.SendMessageResult sendMessageResult) {
+                        // Log.d(TAG, "Message result: " + sendMessageResult.getStatus());
+                        if (!sendMessageResult.getStatus().isSuccess()) {
+                            Log.w(TAG, "Message error: " + sendMessageResult.getStatus());
+                        }
+                    }
+                });
+            }
+        } else {
+            Log.e(TAG, "Unable to respond to service ping");
         }
     }
 
@@ -47,7 +74,6 @@ public class MyWearableListenerService extends WearableListenerService {
         googleApiClient = new GoogleApiClient.Builder(getApplicationContext())
                 .addApi(Wearable.API)
                 .build();
-        googleApiClient.connect();
     }
 
     @Override

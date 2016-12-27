@@ -26,6 +26,7 @@ import com.platypii.baseline.events.DataSyncEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Manages communication with a mobile device
@@ -41,7 +42,10 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
 
     // Last time we synced with the phone (millis since epoch)
     private long lastPong = 0;
-    private static final long connectionTimeout = 10000; // milliseconds
+
+    // According to android docs, messages can be delayed up to 30 minutes.
+    // Experimentally, it's instant when phone is active, slow when asleep.
+    private static final long connectionTimeout = 120 * 1000; // milliseconds
 
     WearSlave(@NonNull Context context, RemoteApp remoteApp) {
         Log.i(TAG, "Starting wear messaging service");
@@ -60,27 +64,31 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
 
     private boolean active = false;
     boolean isActive() {
-        if(System.currentTimeMillis() - connectionTimeout <= lastPong) {
+        final long lastPingDuration = System.currentTimeMillis() - lastPong; // milliseconds
+        if(lastPong == 0) {
+            // Mobile device has not yet announced
+            return false;
+        } else if(lastPingDuration <= connectionTimeout) {
             active = true;
             return true;
-        } else if(lastPong == 0) {
-            // Log.d(TAG, "Mobile device has not yet announced");
-            return false;
         } else {
             if(active) {
-                Log.w(TAG, "Connection to mobile device timed out");
+                Log.w(TAG, String.format(Locale.getDefault(), "Connection to mobile device timed out, last update %.3s", lastPingDuration * 0.001));
                 active = false;
             }
             return false;
         }
     }
 
-    void sendMessage(final String message) {
+    /**
+     * Send a message from the wear device to the phone
+     */
+    void sendMessage(final String message, byte[] data) {
         if(phoneId != null) {
             // Send message to mobile device
             // Log.d(TAG, "Sending " + message + " to " + phoneId);
             final PendingResult<MessageApi.SendMessageResult> result =
-                    Wearable.MessageApi.sendMessage(googleApiClient, phoneId, message, null);
+                    Wearable.MessageApi.sendMessage(googleApiClient, phoneId, message, data);
             // Handle result
             result.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
                 @Override
@@ -96,13 +104,16 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         }
     }
 
+    private int pingCount = 0;
     /**
      * Ask the mobile device to give us a state update.
      * Same message as data sync, but doesn't sent the synced flag to false.
      */
     void sendPing() {
-        // Log.d(TAG, "Sending ping");
-        sendMessage(WearMessages.WEAR_PING);
+        Log.d(TAG, "Sending ping " + pingCount);
+        final byte[] data = Long.toString(pingCount).getBytes();
+        sendMessage(WearMessages.WEAR_PING, data);
+        pingCount++;
     }
 
     /**
@@ -139,7 +150,8 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         // Log.d(TAG, "Received message: " + messageEvent);
         switch (messageEvent.getPath()) {
             case WearMessages.WEAR_SERVICE_PONG:
-                Log.d(TAG, "Received pong");
+                final byte[] data = messageEvent.getData();
+                Log.d(TAG, "Received pong " + new String(data));
                 lastPong = System.currentTimeMillis();
                 break;
             default:
@@ -177,7 +189,7 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
         }
         if(phoneId != null) {
             // Request initial data sync
-            sendMessage(WearMessages.WEAR_APP_INIT);
+            sendMessage(WearMessages.WEAR_APP_INIT, null);
         }
     }
 

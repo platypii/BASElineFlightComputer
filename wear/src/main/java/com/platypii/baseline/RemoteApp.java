@@ -34,12 +34,12 @@ class RemoteApp {
         Log.i(TAG, "Requesting data sync");
         synced = false;
         EventBus.getDefault().post(new DataSyncEvent());
-        wear.sendMessage(WearMessages.WEAR_APP_INIT);
+        wear.sendMessage(WearMessages.WEAR_APP_INIT, null);
     }
 
     void clickRecord() {
         if(wear.isConnected()) {
-            wear.sendMessage(WearMessages.WEAR_APP_RECORD);
+            wear.sendMessage(WearMessages.WEAR_APP_RECORD, null);
             logging = true;
             synced = false;
         } else {
@@ -49,7 +49,7 @@ class RemoteApp {
 
     void clickStop() {
         if(wear.isConnected()) {
-            wear.sendMessage(WearMessages.WEAR_APP_STOP);
+            wear.sendMessage(WearMessages.WEAR_APP_STOP, null);
             logging = false;
             synced = false;
         } else {
@@ -59,7 +59,7 @@ class RemoteApp {
 
     void enableAudible() {
         if(wear.isConnected()) {
-            wear.sendMessage(WearMessages.WEAR_APP_AUDIBLE_ENABLE);
+            wear.sendMessage(WearMessages.WEAR_APP_AUDIBLE_ENABLE, null);
             audible = true;
             synced = false;
         } else {
@@ -69,7 +69,7 @@ class RemoteApp {
 
     void disableAudible() {
         if(wear.isConnected()) {
-            wear.sendMessage(WearMessages.WEAR_APP_AUDIBLE_DISABLE);
+            wear.sendMessage(WearMessages.WEAR_APP_AUDIBLE_DISABLE, null);
             audible = false;
             synced = false;
         } else {
@@ -82,7 +82,7 @@ class RemoteApp {
      */
     void startApp() {
         // Send message to mobile device
-        wear.sendMessage(WearMessages.WEAR_SERVICE_OPEN_APP);
+        wear.sendMessage(WearMessages.WEAR_SERVICE_OPEN_APP, null);
     }
 
     /**
