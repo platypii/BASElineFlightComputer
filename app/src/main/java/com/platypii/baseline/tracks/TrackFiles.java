@@ -20,30 +20,30 @@ import java.util.List;
 public class TrackFiles {
     private static final String TAG = "TrackFiles";
 
-    private static final String syncedDirectoryName = "synced";
-
     public static synchronized List<TrackFile> getTracks(@NonNull Context context) {
-        final List<TrackFile> jumps = new ArrayList<>();
+        final List<TrackFile> tracks = new ArrayList<>();
         // Load jumps from disk
         final File logDir = getTrackDirectory(context);
         if(logDir != null) {
             final File[] files = logDir.listFiles();
             for (File file : files) {
-                if(!file.getName().equals(syncedDirectoryName)) {
-                    jumps.add(new TrackFile(file));
+                final String filename = file.getName();
+                // Tracks look like "track_(yyyy-MM-dd_HH-mm-ss).csv.gz"
+                if(filename.startsWith("track_") && filename.endsWith(".csv.gz")) {
+                    tracks.add(new TrackFile(file));
                 }
             }
             // Sort by date descending
-            Collections.sort(jumps, new Comparator<TrackFile>() {
+            Collections.sort(tracks, new Comparator<TrackFile>() {
                 @Override
                 public int compare(TrackFile track1, TrackFile track2) {
-                    return -track1.getDate().compareTo(track2.getDate());
+                    return -track1.getName().compareTo(track2.getName());
                 }
             });
-            return jumps;
+            return tracks;
         } else {
             Log.e(TAG, "Track storage directory not available");
-            return jumps;
+            return tracks;
         }
     }
 
