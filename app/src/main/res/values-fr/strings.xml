@@ -18,6 +18,7 @@
     <string name="action_earth">Earth</string>
     <string name="action_delete">Supprimer</string>
     <string name="action_export">Exporter</string>
+    <string name="action_augmented">Vue 3D</string>
 
     <string name="upload_waiting">En attente de téléchargement</string>
     <string name="uploading">Téléchargement…</string>
@@ -79,7 +80,6 @@
     <string name="pref_audible_rate">Vitesse d\'élocution</string>
 
     <!-- Map -->
-    <string name="title_activity_map">Navigation</string>
     <string name="map_crosshair">réticule</string>
     <string name="map_pin">punaise</string>
 

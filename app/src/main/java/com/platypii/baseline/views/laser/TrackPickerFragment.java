@@ -9,6 +9,7 @@ import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerLocal;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerRemote;
+import com.platypii.baseline.views.tracks.TrackDownloadFragment;
 import com.platypii.baseline.views.tracks.TrackListFragment;
 import com.platypii.baseline.views.tracks.TrackListItem;
 import com.platypii.baseline.views.tracks.TrackLoader;

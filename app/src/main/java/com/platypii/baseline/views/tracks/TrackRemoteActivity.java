@@ -11,7 +11,6 @@ import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.charts.ChartStatsFragment;
 import com.platypii.baseline.views.charts.ChartsFragment;
-import com.platypii.baseline.views.laser.TrackDownloadFragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -50,6 +49,7 @@ public class TrackRemoteActivity extends TrackDataActivity implements DialogInte
             // Setup button listeners
             findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
             findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
+            findViewById(R.id.augmentedButton).setOnClickListener(this::clickAugmented);
             findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
             setupMenu();
         } catch (IllegalStateException e) {
@@ -146,6 +146,11 @@ public class TrackRemoteActivity extends TrackDataActivity implements DialogInte
                 .setPositiveButton(R.string.action_delete, this)
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
+    }
+
+    private void clickAugmented(View v) {
+        // Open time chart activity
+        Intents.openAugmented(this, track);
     }
 
     /**

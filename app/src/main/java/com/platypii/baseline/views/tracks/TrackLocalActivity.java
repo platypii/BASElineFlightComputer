@@ -64,6 +64,7 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
             // Setup button listeners
             findViewById(R.id.exportButton).setOnClickListener(this::clickExport);
             findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+            findViewById(R.id.augmentedButton).setOnClickListener(this::clickAugmented);
             setupMenu();
         } catch (IllegalStateException e) {
             Exceptions.report(e);
@@ -134,6 +135,11 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
                 .setPositiveButton("Delete", this)
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void clickAugmented(View v) {
+        // Open time chart activity
+        Intents.openAugmented(this, trackFile.file);
     }
 
     /**

@@ -9,7 +9,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import java.io.File;
 
 /**
@@ -21,7 +20,7 @@ public class TrackLoader {
     public static final String EXTRA_TRACK_FILE = "TRACK_FILE";
 
     @NonNull
-    public static TrackMetadata loadCloudData(@Nullable Bundle extras) {
+    static TrackMetadata loadCloudData(@Nullable Bundle extras) {
         // Load track id from extras
         if (extras != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
@@ -46,11 +45,6 @@ public class TrackLoader {
     }
 
     @NonNull
-    public static TrackFile loadTrackFile(@NonNull Fragment fragment) {
-        return loadTrackFile(fragment.getArguments());
-    }
-
-    @NonNull
     private static TrackFile loadTrackFile(@Nullable Bundle extras) {
         // Load track file from extras
         if (extras != null) {
@@ -71,7 +65,7 @@ public class TrackLoader {
     }
 
     @NonNull
-    public static Bundle trackBundle(@NonNull File file) {
+    static Bundle trackBundle(@NonNull File file) {
         return ABundle.of(EXTRA_TRACK_FILE, file.getAbsolutePath());
     }
 

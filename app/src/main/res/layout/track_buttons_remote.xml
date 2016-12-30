@@ -26,6 +26,15 @@
         style="@style/Widget.AppCompat.Button.Borderless" />
 
     <Button
+        android:id="@+id/augmentedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:drawableEnd="@drawable/button_eye"
+        android:text="@string/action_augmented"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+    <Button
         android:id="@+id/deleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

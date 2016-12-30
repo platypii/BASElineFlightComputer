@@ -1,5 +1,6 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.augmented.AugmentedActivity;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.util.Exceptions;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
+import java.io.File;
 
 public class Intents {
     private static final String TAG = "Intents";
@@ -34,6 +36,25 @@ public class Intents {
         final Intent intent = new Intent(context, TrackRemoteActivity.class);
         intent.putExtra(TrackLoader.EXTRA_TRACK_ID, track.track_id);
         context.startActivity(intent);
+    }
+
+    /**
+     * Open augmented reality view
+     */
+    public static void openAugmented(@NonNull Context context, @NonNull File trackFile) {
+        final Intent intent = new Intent(context, AugmentedActivity.class);
+        intent.putExtra(TrackLoader.EXTRA_TRACK_FILE, trackFile.getAbsolutePath());
+        context.startActivity(intent);
+    }
+    public static void openAugmented(@NonNull Context context, @NonNull TrackMetadata track) {
+        // Check if track data file exists
+        final File trackFile = track.abbrvFile(context);
+        if (trackFile.exists()) {
+            // File exists, open charts activity directly
+            openAugmented(context, trackFile);
+        } else {
+            Toast.makeText(context, "Track file not found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

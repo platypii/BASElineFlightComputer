@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.platypii.baseline"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 101
         versionName "4.12-beta"
@@ -39,11 +39,15 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.fragment:fragment:1.2.2'
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation "androidx.camera:camera-core:1.0.0-beta02"
+    implementation "androidx.camera:camera-camera2:1.0.0-beta02"
+    implementation "androidx.camera:camera-lifecycle:1.0.0-beta02"
+    implementation "androidx.camera:camera-view:1.0.0-alpha09"
+    implementation 'androidx.fragment:fragment:1.2.4'
+    implementation 'com.google.android.gms:play-services-auth:18.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.google.firebase:firebase-core:17.2.2'
+    implementation 'com.google.firebase:firebase-core:17.3.0'
     implementation 'com.google.firebase:firebase-perf:19.0.5'
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.2'

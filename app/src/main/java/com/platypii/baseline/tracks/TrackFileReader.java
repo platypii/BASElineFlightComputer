@@ -26,13 +26,13 @@ import static com.platypii.baseline.util.CSVParse.getColumnLong;
 /**
  * Parse location data from track file
  */
-class TrackFileReader {
+public class TrackFileReader {
     private static final String TAG = "TrackFileReader";
 
     @NonNull
     private final File trackFile;
 
-    TrackFileReader(@NonNull File trackFile) {
+    public TrackFileReader(@NonNull File trackFile) {
         this.trackFile = trackFile;
     }
 
@@ -40,7 +40,7 @@ class TrackFileReader {
      * Load track data from file into location data
      */
     @NonNull
-    List<MLocation> read() {
+    public List<MLocation> read() {
         // Read file line by line
         if (trackFile.getName().endsWith(".gz")) {
             // GZipped track file

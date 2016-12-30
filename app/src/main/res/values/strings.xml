@@ -18,6 +18,7 @@
     <string name="action_earth">Earth</string>
     <string name="action_delete">Delete</string>
     <string name="action_export">Export</string>
+    <string name="action_augmented">3D View</string>
 
     <string name="upload_waiting">Waiting for upload…</string>
     <string name="uploading">Uploading…</string>
@@ -79,7 +80,6 @@
     <string name="pref_audible_rate">Speech rate</string>
 
     <!-- Map -->
-    <string name="title_activity_map">Navigation</string>
     <string name="map_crosshair">crosshair</string>
     <string name="map_pin">pin</string>
 
