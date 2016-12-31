@@ -97,12 +97,15 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
             }
         }
     }
+    @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+    @Override
     public void surfaceCreated(SurfaceHolder holder) {
         drawingThread = new DrawingThread(holder);
         drawingThread.running = true;
         drawingThread.start();
     }
+    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         // we have to tell thread to shut down & wait for it to finish, or else
         // it might touch the Surface after we return and explode

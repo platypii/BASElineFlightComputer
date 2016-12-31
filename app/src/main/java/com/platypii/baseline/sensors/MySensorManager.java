@@ -21,6 +21,8 @@ import com.platypii.baseline.util.SyncedList;
 /**
  * Service to manage orientation sensors, and listeners
  * accelerometer, gravity, gyro, linear accel, magnetic, pressure, humidity, rotation, temp
+ *
+ * TODO: Do we care about gravity sensor? Or would we be better off with accel + rotation?
  */
 public class MySensorManager implements SensorEventListener, Service {
     private static final String TAG = "MySensorManager";
