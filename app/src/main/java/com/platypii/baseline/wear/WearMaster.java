@@ -4,6 +4,7 @@ import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
+import com.platypii.baseline.location.LocationStatus;
 import com.platypii.baseline.util.Convert;
 import android.content.Context;
 import android.os.Bundle;
@@ -103,6 +104,8 @@ public class WearMaster implements Service, MessageApi.MessageListener, GoogleAp
         map.putBoolean("logging_enabled", Services.logger.isLogging());
         map.putBoolean("audible_enabled", Services.audible.isEnabled());
         map.putBoolean("metric", Convert.metric);
+        map.putString("gps_status_message", LocationStatus.getStatus().message);
+        map.putInt("gps_status_color", LocationStatus.getStatus().iconColor);
         map.putInt("nonce", count++); // add a unique nonce to force sync TODO: use datamap properly
         final PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         final PendingResult<DataApi.DataItemResult> pendingResult =

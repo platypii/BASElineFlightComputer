@@ -13,11 +13,28 @@ public class LocationStatus {
     private static final String TAG = "LocationStatus";
 
     public final String message;
-    public final int icon;
+    public final int iconColor;
 
-    private LocationStatus(String message, int icon) {
+    private static final int STATUS_WARNING = 0;
+    private static final int STATUS_RED = 1;
+    private static final int STATUS_YELLOW = 2;
+    private static final int STATUS_GREEN = 3;
+    private static final int STATUS_BLUE = 4;
+    private static final int[] icons = {
+            R.drawable.warning,
+            R.drawable.status_red,
+            R.drawable.status_yellow,
+            R.drawable.status_green,
+            R.drawable.status_blue
+    };
+
+    private LocationStatus(String message, int iconColor) {
         this.message = message;
-        this.icon = icon;
+        this.iconColor = iconColor;
+    }
+
+    public int icon() {
+        return icons[iconColor];
     }
 
     /**
@@ -30,7 +47,7 @@ public class LocationStatus {
         // GPS signal status
         if(BluetoothService.preferenceEnabled && Services.bluetooth.getState() != BluetoothService.BT_CONNECTED) {
             // Bluetooth enabled, but not connected
-            icon = R.drawable.warning;
+            icon = STATUS_WARNING;
             switch(Services.bluetooth.getState()) {
                 case BluetoothService.BT_CONNECTING:
                     message = "GPS bluetooth connecting...";
@@ -47,7 +64,7 @@ public class LocationStatus {
             if(Services.location.lastFixDuration() < 0) {
                 // No fix yet
                 message = "GPS searching...";
-                icon = R.drawable.status_red;
+                icon = STATUS_RED;
             } else {
                 final long lastFixDuration = Services.location.lastFixDuration();
                 // TODO: Use better method to determine signal.
@@ -55,16 +72,16 @@ public class LocationStatus {
                 // How many of the last X expected fixes have we missed?
                 if (lastFixDuration > 10000) {
                     message = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
-                    icon = R.drawable.status_red;
+                    icon = STATUS_RED;
                 } else if (lastFixDuration > 2000) {
                     message = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
-                    icon = R.drawable.status_yellow;
+                    icon = STATUS_YELLOW;
                 } else if (BluetoothService.preferenceEnabled && Services.bluetooth.getState() == BluetoothService.BT_CONNECTED) {
                     message = String.format(Locale.getDefault(), "GPS bluetooth %.2fHz", Services.location.refreshRate);
-                    icon = R.drawable.status_blue;
+                    icon = STATUS_BLUE;
                 } else {
                     message = String.format(Locale.getDefault(), "GPS %.2fHz", Services.location.refreshRate);
-                    icon = R.drawable.status_green;
+                    icon = STATUS_GREEN;
                 }
             }
         }

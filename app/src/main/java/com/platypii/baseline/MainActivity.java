@@ -231,7 +231,7 @@ public class MainActivity extends BaseActivity {
      */
     private void updateSignal() {
         final LocationStatus status = LocationStatus.getStatus();
-        signalStatus.setCompoundDrawablesWithIntrinsicBounds(status.icon, 0, 0, 0);
+        signalStatus.setCompoundDrawablesWithIntrinsicBounds(status.icon(), 0, 0, 0);
         signalStatus.setText(status.message);
     }
 
