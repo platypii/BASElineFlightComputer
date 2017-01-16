@@ -4,6 +4,8 @@ BASEline Flight Computer is an android app that uses phone sensors to provide au
 
 https://base-line.ws/
 
+[BASEline on Google Play](https://play.google.com/store/apps/details?id=com.platypii.baseline)
+
 ## Logging
 
 Record GPS, altimeter and accelerometer data on your phone.

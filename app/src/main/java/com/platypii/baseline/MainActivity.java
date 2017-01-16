@@ -11,8 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.location.LocationStatus;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.cloud.TheCloud;
 import com.platypii.baseline.events.AudibleEvent;
@@ -21,7 +21,6 @@ import com.platypii.baseline.util.Callback;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import java.util.Locale;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "Main";
@@ -232,58 +231,9 @@ public class MainActivity extends BaseActivity {
      * Update the views for GPS signal strength
      */
     private void updateSignal() {
-        String status;
-        int statusIcon;
-
-        // GPS signal status
-        if(BluetoothService.preferenceEnabled && Services.bluetooth.getState() != BluetoothService.BT_CONNECTED) {
-            // Bluetooth enabled, but not connected
-            statusIcon = R.drawable.warning;
-            switch(Services.bluetooth.getState()) {
-                case BluetoothService.BT_CONNECTING:
-                    status = "GPS bluetooth connecting...";
-                    break;
-                case BluetoothService.BT_DISCONNECTED:
-                    status = "GPS bluetooth not connected";
-                    break;
-                default:
-                    status = "GPS bluetooth not connected";
-                    Log.e(TAG, "Bluetooth inconsistent state: preference enabled, state = " + Services.bluetooth.getState());
-            }
-        } else {
-            // Internal GPS, or bluetooth connected:
-            if(Services.location.lastFixDuration() < 0) {
-                // No fix yet
-                status = "GPS searching...";
-                statusIcon = R.drawable.status_red;
-            } else {
-                final long lastFixDuration = Services.location.lastFixDuration();
-                // TODO: Use better method to determine signal.
-                // Take into account acc and dop
-                // How many of the last X expected fixes have we missed?
-                if (lastFixDuration > 10000) {
-                    status = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
-                    statusIcon = R.drawable.status_red;
-                } else if (lastFixDuration > 2000) {
-                    status = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
-                    statusIcon = R.drawable.status_yellow;
-                } else if (BluetoothService.preferenceEnabled && Services.bluetooth.getState() == BluetoothService.BT_CONNECTED) {
-                    status = String.format(Locale.getDefault(), "GPS bluetooth %.2fHz", Services.location.refreshRate);
-                    statusIcon = R.drawable.status_blue;
-                } else {
-                    status = String.format(Locale.getDefault(), "GPS %.2fHz", Services.location.refreshRate);
-                    statusIcon = R.drawable.status_green;
-                }
-            }
-        }
-
-        // Barometer status
-        if(Services.alti.n == 0) {
-            status += " (no barometer)";
-        }
-
-        signalStatus.setCompoundDrawablesWithIntrinsicBounds(statusIcon, 0, 0, 0);
-        signalStatus.setText(status);
+        final LocationStatus status = LocationStatus.getStatus();
+        signalStatus.setCompoundDrawablesWithIntrinsicBounds(status.icon, 0, 0, 0);
+        signalStatus.setText(status.message);
     }
 
     // Listen for events

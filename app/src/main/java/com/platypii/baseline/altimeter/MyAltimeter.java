@@ -54,7 +54,7 @@ public class MyAltimeter implements Service {
 
     // Ground level
     // Save ground level for 12 hours (in milliseconds)
-    private static final double GROUND_LEVEL_TTL = 12 * 60 * 60 * 1000;
+    private static final long GROUND_LEVEL_TTL = 12 * 60 * 60 * 1000;
     private boolean ground_level_initialized = false;
     private double ground_level = Double.NaN;
 
