@@ -11,12 +11,15 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import com.platypii.baseline.R;
 
 public class AugmentedActivity extends Activity implements SensorEventListener, LocationListener {
     private static final String TAG = "AR";
+
+    private static final int REQUEST_PERMISSION_CAMERA = 1;
 
     private AugmentedView augmentedView;
 
@@ -42,8 +45,26 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
             // TODO: call requestPermissions()
             // TODO: implement onRequestPermissionsResult()
         }
-    }
 
+        // Camera
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // Request permission
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION_CAMERA);
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSION_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.i(TAG, "Camera permission granted");
+                } else {
+                    Log.w(TAG, "Camera permission denied");
+                }
+            }
+        }
+    }
     private final float[] cameraRotation = new float[9];
     private final float[] rotation = new float[9];
     private final float[] orientation = new float[3];

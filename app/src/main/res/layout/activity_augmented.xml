@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.platypii.baseline.augmented.AugmentedView
-    android:id="@+id/augmentedView"
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.platypii.baseline.augmented.AugmentedActivity">
 
-</com.platypii.baseline.augmented.AugmentedView>
+    <com.platypii.baseline.augmented.CameraView
+        android:id="@+id/cameraView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.platypii.baseline.augmented.AugmentedView
+        android:id="@+id/augmentedView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</FrameLayout>
