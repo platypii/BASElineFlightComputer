@@ -126,4 +126,9 @@ public class AugmentedView extends View {
         roll = orientation[2];
         invalidate();
     }
+
+    public void updateLocation(Location location) {
+        currentLocation = location;
+        invalidate();
+    }
 }

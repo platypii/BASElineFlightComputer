@@ -2,6 +2,7 @@ package com.platypii.baseline.augmented;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import com.google.android.cameraview.CameraView;
 import com.platypii.baseline.R;
 
 public class AugmentedActivity extends Activity implements SensorEventListener, LocationListener {
@@ -21,14 +23,17 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
 
     private static final int REQUEST_PERMISSION_CAMERA = 1;
 
+    private CameraView cameraView;
     private AugmentedView augmentedView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_augmented);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // Find views
+        cameraView = (CameraView) findViewById(R.id.camera);
         augmentedView = (AugmentedView) findViewById(R.id.augmentedView);
 
         // Sensors
@@ -37,13 +42,12 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
         sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
 
         // Location
+        // TODO: Use BASEline location manager
         final LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         } else {
             Log.e(TAG, "Location permission not granted");
-            // TODO: call requestPermissions()
-            // TODO: implement onRequestPermissionsResult()
         }
 
         // Camera
@@ -81,9 +85,31 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
                 Log.e("MySensorManager", "Received unexpected sensor event");
         }
     }
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    public void onLocationChanged(Location location) {
+        // Update location
+        augmentedView.updateLocation(location);
+    }
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+    @Override
+    public void onProviderEnabled(String provider) {}
+    @Override
+    public void onProviderDisabled(String provider) {}
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cameraView.start();
+        // TODO: Get camera FOV
+    }
+    @Override
+    protected void onPause() {
+        cameraView.stop();
+        super.onPause();
     }
 
     @Override
@@ -101,14 +127,4 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
         }
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {}
-    @Override
-    public void onProviderEnabled(String s) {}
-    @Override
-    public void onProviderDisabled(String s) {}
 }
