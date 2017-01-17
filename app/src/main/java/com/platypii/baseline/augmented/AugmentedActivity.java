@@ -18,7 +18,7 @@ import com.platypii.baseline.R;
 public class AugmentedActivity extends Activity implements SensorEventListener, LocationListener {
     private static final String TAG = "AR";
 
-    private ExitView exitView;
+    private AugmentedView augmentedView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
         setContentView(R.layout.activity_augmented);
 
         // Find views
-        exitView = (ExitView) findViewById(R.id.exitView);
+        augmentedView = (AugmentedView) findViewById(R.id.augmentedView);
 
         // Sensors
         final SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -54,7 +54,7 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
                 SensorManager.getRotationMatrixFromVector(rotation, event.values);
                 SensorManager.remapCoordinateSystem(rotation, SensorManager.AXIS_X, SensorManager.AXIS_Z, cameraRotation);
                 SensorManager.getOrientation(cameraRotation, orientation);
-                exitView.update(orientation);
+                augmentedView.updateOrientation(orientation);
                 break;
             default:
                 Log.e("MySensorManager", "Received unexpected sensor event");
