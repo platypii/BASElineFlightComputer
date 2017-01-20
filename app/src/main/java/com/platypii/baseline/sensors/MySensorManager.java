@@ -61,6 +61,7 @@ public class MySensorManager implements SensorEventListener, Service {
         });
     }
 
+    /** SensorEventListener */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
     @Override

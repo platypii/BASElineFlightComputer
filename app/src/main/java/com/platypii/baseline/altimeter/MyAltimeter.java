@@ -29,7 +29,7 @@ import org.greenrobot.eventbus.EventBus;
  *
  * TODO: Correct barometer drift with GPS
  */
-public class MyAltimeter implements Service {
+public class MyAltimeter implements Service, MyLocationListener, SensorEventListener {
     private static final String TAG = "MyAltimeter";
 
     private SensorManager sensorManager;
@@ -89,12 +89,12 @@ public class MyAltimeter implements Service {
                     final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
                     if (sensor != null) {
                         // Start sensor updates
-                        sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+                        sensorManager.registerListener(MyAltimeter.this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
                     }
 
                     // Start GPS updates
                     if(Services.location != null) {
-                        Services.location.addListener(locationListener);
+                        Services.location.addListener(MyAltimeter.this);
                     } else {
                         Log.e(TAG, "Location services should be initialized before altimeter");
                     }
@@ -140,26 +140,24 @@ public class MyAltimeter implements Service {
         edit.apply();
     }
 
-    // Sensor Event Listener
-    private final SensorEventListener sensorEventListener = new AltimeterSensorEventListener();
-    private class AltimeterSensorEventListener implements SensorEventListener {
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-        public void onSensorChanged(@NonNull SensorEvent event) {
-            long millis = System.currentTimeMillis(); // Record time as soon as possible
-            // assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
-            // Log.w(TAG, "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
-            updateBarometer(millis, event);
-        }
+    /** SensorEventListener */
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    @Override
+    public void onSensorChanged(@NonNull SensorEvent event) {
+        long millis = System.currentTimeMillis(); // Record time as soon as possible
+        // assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
+        // Log.w(TAG, "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
+        updateBarometer(millis, event);
     }
 
-    // Location Listener
-    private final MyLocationListener locationListener = new AltimeterLocationListener();
-    private class AltimeterLocationListener implements MyLocationListener {
-        public void onLocationChanged(@NonNull MLocation loc) {
-            updateGPS(loc);
-        }
-        public void onLocationChangedPostExecute() {}
+    /** Location Listener */
+    @Override
+    public void onLocationChanged(@NonNull MLocation loc) {
+        updateGPS(loc);
     }
+    @Override
+    public void onLocationChangedPostExecute() {}
 
     /**
      * Process new barometer reading
@@ -306,9 +304,9 @@ public class MyAltimeter implements Service {
 
     @Override
     public void stop() {
-        Services.location.removeListener(locationListener);
+        Services.location.removeListener(this);
         if(sensorManager != null) {
-            sensorManager.unregisterListener(sensorEventListener);
+            sensorManager.unregisterListener(this);
             sensorManager = null;
         } else {
             Log.e(TAG, "MyAltimeter.stop() called, but service is already stopped");
