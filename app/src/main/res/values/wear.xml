@@ -1,0 +1,5 @@
+<resources>
+    <string-array name="android_wear_capabilities" translatable="false">
+        <item>baseline_master</item>
+    </string-array>
+</resources>

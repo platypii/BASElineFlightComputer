@@ -10,6 +10,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.CapabilityApi;
+import com.google.android.gms.wearable.CapabilityInfo;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -19,20 +21,26 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 import com.platypii.baseline.alti.Convert;
 import com.platypii.baseline.events.DataSyncEvent;
 
 import org.greenrobot.eventbus.EventBus;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Manages communication with a mobile device
  */
-class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<NodeApi.GetConnectedNodesResult>, DataApi.DataListener, MessageApi.MessageListener {
+class WearSlave implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        ResultCallback<CapabilityApi.GetCapabilityResult>,
+        DataApi.DataListener, MessageApi.MessageListener {
     private static final String TAG = "WearSlave";
+
+    private static final String CAPABILITY_BASELINE_MASTER = "baseline_master";
 
     private RemoteApp remoteApp;
     private GoogleApiClient googleApiClient;
@@ -164,7 +172,8 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
     public void onConnected(@Nullable Bundle connectionHint) {
         Log.i(TAG, "Google api connected");
         // Start fetching list of wear nodes
-        Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(this);
+        Wearable.CapabilityApi.getCapability(googleApiClient, CAPABILITY_BASELINE_MASTER, CapabilityApi.FILTER_REACHABLE)
+                .setResultCallback(this);
         Wearable.DataApi.addListener(googleApiClient, this);
         Wearable.MessageApi.addListener(googleApiClient, this);
     }
@@ -173,19 +182,18 @@ class WearSlave implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.
      * Get the nodeId of the paired mobile device
      */
     @Override
-    public void onResult(@NonNull NodeApi.GetConnectedNodesResult result) {
-        final List<Node> nodes = result.getNodes();
-        switch(nodes.size()) {
-            case 0:
-                Log.w(TAG, "No connected devices found");
-                phoneId = null;
-                break;
-            case 1:
-                phoneId = nodes.get(0).getId();
-                break;
-            default:
+    public void onResult(@NonNull CapabilityApi.GetCapabilityResult result) {
+        final CapabilityInfo capability = result.getCapability();
+        final Set<Node> nodes = capability.getNodes();
+        if(nodes.isEmpty()) {
+            Log.w(TAG, "No connected devices found");
+        } else {
+            // At least one node found, return the first
+            final Iterator<Node> it = nodes.iterator();
+            phoneId = it.next().getId();
+            if(it.hasNext()) {
                 Log.w(TAG, "More than one connected device found");
-                phoneId = nodes.get(0).getId();
+            }
         }
         if(phoneId != null) {
             // Request initial data sync
