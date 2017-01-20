@@ -20,7 +20,7 @@ import org.greenrobot.eventbus.EventBus;
  *
  * TODO: Correct barometer drift with GPS
  */
-class MyAltimeter {
+class MyAltimeter implements SensorEventListener {
     private static final String TAG = "MyAltimeter";
 
     private SensorManager sensorManager;
@@ -75,7 +75,7 @@ class MyAltimeter {
                     final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
                     if (sensor != null) {
                         // Start sensor updates
-                        sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+                        sensorManager.registerListener(MyAltimeter.this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
                     } else {
                         Log.e(TAG, "No pressure sensor found");
                     }
@@ -117,16 +117,15 @@ class MyAltimeter {
         edit.apply();
     }
 
-    // Sensor Event Listener
-    private final SensorEventListener sensorEventListener = new AltimeterSensorEventListener();
-    private class AltimeterSensorEventListener implements SensorEventListener {
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-        public void onSensorChanged(@NonNull SensorEvent event) {
-            long millis = System.currentTimeMillis(); // Record time as soon as possible
-            // assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
-            // Log.w(TAG, "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
-            updateBarometer(millis, event);
-        }
+    /** SensorEventListener */
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    @Override
+    public void onSensorChanged(@NonNull SensorEvent event) {
+        long millis = System.currentTimeMillis(); // Record time as soon as possible
+        // assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
+        // Log.w(TAG, "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
+        updateBarometer(millis, event);
     }
 
     /**
@@ -233,7 +232,7 @@ class MyAltimeter {
 
     void stop() {
         if(sensorManager != null) {
-            sensorManager.unregisterListener(sensorEventListener);
+            sensorManager.unregisterListener(this);
             sensorManager = null;
         } else {
             Log.e(TAG, "MyAltimeter.stop() called, but service is already stopped");

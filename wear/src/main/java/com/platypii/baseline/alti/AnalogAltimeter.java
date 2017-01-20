@@ -36,6 +36,7 @@ public class AnalogAltimeter extends View {
 
     public AnalogAltimeter(Context context, AttributeSet attrs) {
         super(context, attrs);
+        // Software layer required for hand path, and inner blur
         this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         if(Convert.metric) {
@@ -58,11 +59,12 @@ public class AnalogAltimeter extends View {
     public void onDraw(Canvas canvas) {
         final int width = getWidth();
         final int height = getHeight();
+        final float radius = Math.max(width, height) * 0.5f;
 
-        final float center_x = width / 2.0f;
-        final float center_y = height / 2.0f;
+        // Zoom to fit:
+        final float center_x = radius;
+        final float center_y = radius;
 
-        final float radius = Math.min(center_x, center_y) - 5;
         final float inner_radius = radius * 0.65f;
 
         // Adjust line thickness and text size based on size
@@ -184,22 +186,4 @@ public class AnalogAltimeter extends View {
         canvas.drawText(alt_label, center_x, center_y + 12 * scale_factor + 4, paint);
     }
 
-    @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        final int originalWidth = MeasureSpec.getSize(widthMeasureSpec);
-        final int originalHeight = MeasureSpec.getSize(heightMeasureSpec);
-        int finalWidth, finalHeight;
-
-        if (originalWidth > originalHeight) {
-            // Set dimensions based on width to handle wear chin
-            finalWidth = originalWidth;
-            finalHeight = originalWidth;
-        } else {
-            finalWidth = originalWidth;
-            finalHeight = originalWidth;
-        }
-
-        super.onMeasure(
-                MeasureSpec.makeMeasureSpec(finalWidth, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(finalHeight, MeasureSpec.EXACTLY));
-    }
 }
