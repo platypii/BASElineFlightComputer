@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.platypii.baseline.events.DataSyncEvent;
+import com.platypii.baseline.location.LocationStatus;
 import org.greenrobot.eventbus.EventBus;
 
 /**
@@ -22,6 +23,7 @@ class RemoteApp {
     boolean synced = false;
     boolean logging = false;
     boolean audible = false;
+    LocationStatus locationStatus = null;
 
     RemoteApp(@NonNull Context context) {
         wear = new WearSlave(context, this);
@@ -88,9 +90,10 @@ class RemoteApp {
     /**
      * Called by wear slave when new data sync comes in
      */
-    void onSync(boolean logging, boolean audible) {
+    void onSync(boolean logging, boolean audible, LocationStatus locationStatus) {
         this.logging = logging;
         this.audible = audible;
+        this.locationStatus = locationStatus;
         synced = true;
     }
 

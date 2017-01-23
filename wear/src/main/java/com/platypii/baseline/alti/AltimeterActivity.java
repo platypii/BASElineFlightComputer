@@ -9,6 +9,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.platypii.baseline.R;
@@ -27,6 +28,7 @@ public class AltimeterActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_altimeter);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
         analogAltimeter.setLongClickable(true);

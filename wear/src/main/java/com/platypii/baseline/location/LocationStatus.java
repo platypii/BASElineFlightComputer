@@ -19,7 +19,7 @@ public class LocationStatus {
             R.drawable.status_blue
     };
 
-    LocationStatus(String message, int iconColor) {
+    public LocationStatus(String message, int iconColor) {
         this.message = message;
         this.iconColor = iconColor;
     }

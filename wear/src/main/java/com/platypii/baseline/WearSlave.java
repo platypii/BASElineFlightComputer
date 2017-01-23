@@ -24,6 +24,7 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 import com.platypii.baseline.alti.Convert;
 import com.platypii.baseline.events.DataSyncEvent;
+import com.platypii.baseline.location.LocationStatus;
 
 import org.greenrobot.eventbus.EventBus;
 import java.util.Iterator;
@@ -140,7 +141,10 @@ class WearSlave implements
                     // Update logging and audible state
                     final boolean logging = dataMap.getBoolean("logging_enabled");
                     final boolean audible = dataMap.getBoolean("audible_enabled");
-                    remoteApp.onSync(logging, audible);
+                    final String message = dataMap.getString("gps_status_message");
+                    final int iconColor = dataMap.getInt("gps_status_color");
+                    final LocationStatus locationStatus = new LocationStatus(message, iconColor);
+                    remoteApp.onSync(logging, audible, locationStatus);
                     // Data sync counts as a heartbeat from the phone:
                     lastPong = System.currentTimeMillis();
                     EventBus.getDefault().post(new DataSyncEvent());

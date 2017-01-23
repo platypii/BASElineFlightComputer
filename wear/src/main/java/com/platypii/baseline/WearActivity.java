@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.platypii.baseline.alti.AltimeterActivity;
 import com.platypii.baseline.events.DataSyncEvent;
@@ -22,6 +23,7 @@ public class WearActivity extends Activity {
     private ImageButton recordButton;
     private ImageButton audibleButton;
     private ImageButton baselineButton;
+    private ImageView signalStatus;
 
     private RemoteApp remoteApp;
 
@@ -68,6 +70,7 @@ public class WearActivity extends Activity {
         baselineButton = (ImageButton) findViewById(R.id.baselineButton);
         recordButton = (ImageButton) findViewById(R.id.recordButton);
         audibleButton = (ImageButton) findViewById(R.id.audibleButton);
+        signalStatus = (ImageView) findViewById(R.id.signalStatus);
     }
 
     public void clickRecord(View v) {
@@ -141,6 +144,13 @@ public class WearActivity extends Activity {
                 audibleButton.setImageResource(R.drawable.audio_on);
             } else {
                 audibleButton.setImageResource(R.drawable.audio);
+            }
+            // Update gps status
+            if (remoteApp.locationStatus != null) {
+                signalStatus.setImageResource(remoteApp.locationStatus.icon());
+                signalStatus.setVisibility(View.VISIBLE);
+            } else {
+                signalStatus.setVisibility(View.GONE);
             }
         } else {
             baselineButton.setAlpha(0.4f);
