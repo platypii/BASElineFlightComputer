@@ -29,7 +29,7 @@ class MyAltimeter implements SensorEventListener {
     // Pressure data
     private float pressure = Float.NaN; // hPa (millibars)
     private double pressure_altitude_raw = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
-    double pressure_altitude_filtered = Double.NaN; // kalman filtered pressure altitude
+    private double pressure_altitude_filtered = Double.NaN; // kalman filtered pressure altitude
 
     // Pressure altitude kalman filter
     private final FilterKalman filter = new FilterKalman(); // Unfiltered(), AlphaBeta(), MovingAverage(), etc
@@ -43,7 +43,7 @@ class MyAltimeter implements SensorEventListener {
     // Save ground level for 12 hours (in milliseconds)
     private static final long GROUND_LEVEL_TTL = 12 * 60 * 60 * 1000;
     private boolean ground_level_initialized = false;
-    private double ground_level = Double.NaN;
+    double ground_level = Double.NaN;
 
     private long lastFixNano; // nanoseconds
     private long lastFixMillis; // milliseconds
@@ -61,6 +61,7 @@ class MyAltimeter implements SensorEventListener {
      * @param context The Application context
      */
     synchronized void start(@NonNull final Context context) {
+        Log.i(TAG, "Starting altimeter");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -99,6 +100,8 @@ class MyAltimeter implements SensorEventListener {
             ground_level = prefs.getFloat("altimeter_ground_level", 0);
             ground_level_initialized = true;
             Log.i(TAG, "Restoring ground level from preferences: " + Convert.distance(ground_level, 2, true));
+        } else {
+            Log.i(TAG, "Initializing ground level to zero");
         }
     }
 

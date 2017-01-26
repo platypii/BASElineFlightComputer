@@ -1,27 +1,34 @@
 package com.platypii.baseline.alti;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.text.InputType;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.Toast;
 import com.platypii.baseline.R;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class AltimeterActivity extends FragmentActivity {
+public class AltimeterActivity extends FragmentActivity implements GestureDetector.OnGestureListener {
     private static final String TAG = "Altimeter";
 
     private final MyAltimeter alti = new MyAltimeter();
     private AnalogAltimeter analogAltimeter;
+
+    // Altitude set mode
+    private boolean groundLevelMode = false;
+    private double altitudeOffset = 0;
+
+    // Gestures
+    private GestureDetector gestures;
+    private final Handler handler = new Handler();
+    private static final int updateInterval = 30; // milliseconds
+    private float velocity = 0; // current swipe velocity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,40 +42,27 @@ public class AltimeterActivity extends FragmentActivity {
         analogAltimeter.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                promptForAltitude(AltimeterActivity.this);
+                toggleGroundLevelMode();
                 return false;
             }
         });
+        gestures = new GestureDetector(this, this);
     }
 
-    private void updateFlightStats() {
-        analogAltimeter.setAltitude(alti.altitudeAGL());
+    private void update() {
+        analogAltimeter.setAltitude(alti.altitudeAGL() + altitudeOffset);
     }
 
-    public void promptForAltitude(final Activity activity) {
-        Log.i(TAG, "Prompting for ground level adjustment");
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("Set Altitude AGL");
-        final EditText input = new EditText(activity);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
-        input.setHint("0");
-        builder.setView(input);
-        builder.setPositiveButton(R.string.set_altitude, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                final String inputText = input.getText().toString();
-                final double altitude = inputText.isEmpty()? 0.0 : Util.parseDouble(inputText) * Convert.FT;
-                if(Util.isReal(altitude)) {
-                    Log.w(TAG, "Setting altitude above ground level to " + altitude + "m");
-                    alti.setGroundLevel(alti.pressure_altitude_filtered - altitude);
-                } else {
-                    Log.e(TAG, "Invalid altitude above ground level: " + altitude);
-                    Toast.makeText(activity, "Invalid altitude", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        // Create the AlertDialog
-        final AlertDialog dialog = builder.create();
-        dialog.show();
+    private void toggleGroundLevelMode() {
+        groundLevelMode = !groundLevelMode;
+        altitudeOffset = 0;
+        if(groundLevelMode) {
+            Log.i(TAG, "Starting ground level adjustment");
+        } else {
+            Log.i(TAG, "Finished ground level adjustment");
+            // Save ground level adjustment
+            alti.setGroundLevel(alti.ground_level - altitudeOffset);
+        }
     }
 
     /**
@@ -76,7 +70,68 @@ public class AltimeterActivity extends FragmentActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAltitudeEvent(MAltitude alt) {
-        updateFlightStats();
+        update();
+    }
+
+    /** Listen for gestures */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Log.d(TAG,"onTouchEvent: " + event);
+        gestures.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        if(groundLevelMode) {
+            // Scroll (drag) gesture
+            velocity = 0;
+            altitudeOffset += distanceY * Convert.FT; // 1 pixel = 1 foot
+        }
+        update();
+        return true;
+    }
+    @Override
+    public boolean onDown(MotionEvent e) {
+        Log.d(TAG,"onDown: " + e);
+        velocity = 0;
+        return true;
+    }
+    private static final int SWIPE_MIN_DISTANCE = 50;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 100;
+    private static final float DECELERATION = 3;
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, final float velocityY) {
+        Log.d(TAG, "onFling: " + e1 + " " +e2);
+        if(Math.abs(e1.getY() - e2.getY()) > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+            // Animate
+            velocity = -velocityY / 80;
+            handler.removeCallbacks(flinger);
+            handler.post(flinger);
+        }
+        return true;
+    }
+    private final Runnable flinger = new Runnable() {
+        public void run() {
+            if(groundLevelMode) {
+                altitudeOffset += velocity;
+                update();
+                if (Math.abs(DECELERATION) < Math.abs(velocity)) {
+                    if (velocity < 0)
+                        velocity += DECELERATION;
+                    else
+                        velocity -= DECELERATION;
+                    handler.postDelayed(this, updateInterval);
+                }
+            }
+        }
+    };
+    @Override
+    public void onLongPress(MotionEvent e) {}
+    @Override
+    public void onShowPress(MotionEvent e) {}
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return true;
     }
 
     @Override
@@ -84,6 +139,8 @@ public class AltimeterActivity extends FragmentActivity {
         super.onStart();
         // Start altimeter
         alti.start(this);
+        groundLevelMode = false;
+        altitudeOffset = 0;
     }
 
     @Override
@@ -91,7 +148,7 @@ public class AltimeterActivity extends FragmentActivity {
         super.onResume();
         // Start sensor updates
         EventBus.getDefault().register(this);
-        updateFlightStats();
+        update();
     }
 
     @Override
