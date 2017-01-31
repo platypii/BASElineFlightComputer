@@ -44,11 +44,24 @@ public class BluetoothDevicePreference extends ListPreference {
             final CharSequence[] entryValues = new CharSequence[devices.size()];
             int i = 0;
             deviceNames.clear();
+            // Add devices in two passes
+            // First pass, likely GPS devices
             for(BluetoothDevice device : devices) {
-                deviceNames.put(device.getAddress(), device.getName());
-                entries[i] = device.getName();
-                entryValues[i] = device.getAddress();
-                i++;
+                if(isGPS(device)) {
+                    deviceNames.put(device.getAddress(), device.getName());
+                    entries[i] = device.getName();
+                    entryValues[i] = device.getAddress();
+                    i++;
+                }
+            }
+            // Second pass, all the rest
+            for(BluetoothDevice device : devices) {
+                if(!isGPS(device)) {
+                    deviceNames.put(device.getAddress(), device.getName());
+                    entries[i] = device.getName();
+                    entryValues[i] = device.getAddress();
+                    i++;
+                }
             }
 
             // Populate list
@@ -59,6 +72,14 @@ public class BluetoothDevicePreference extends ListPreference {
             setEntries(new CharSequence[0]);
             setEntryValues(new CharSequence[0]);
         }
+    }
+
+    // How to detect bluetooth gps:
+    // - device name contains "GPS"
+    // - device name starts with "XGPS160-"
+    // - device.getBluetoothClass().getDeviceClass() == 1804
+    private static boolean isGPS(BluetoothDevice device) {
+        return device.getName().contains("GPS");
     }
 
     public String getName(String id) {
