@@ -47,6 +47,8 @@ public class SensorActivity extends Activity implements MyLocationListener {
     private TextView glideRatioLabel;
     private TextView glideAngleLabel;
     private TextView bearingLabel;
+    // Misc
+    private TextView flightModeLabel;
 
     // Sensors
     private LinearLayout sensorLayout;
@@ -89,6 +91,9 @@ public class SensorActivity extends Activity implements MyLocationListener {
         glideRatioLabel = (TextView)findViewById(R.id.glideRatioLabel);
         glideAngleLabel = (TextView)findViewById(R.id.glideAngleLabel);
         bearingLabel = (TextView)findViewById(R.id.bearingLabel);
+
+        // Misc
+        flightModeLabel = (TextView) findViewById(R.id.flightModeLabel);
 
         // Sensors
         sensorLayout = (LinearLayout)findViewById(R.id.sensorLayout);
@@ -197,6 +202,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
             glideRatioLabel.setText("Glide ratio: " + Convert.glide(loc.groundSpeed(), loc.climb, 2, true));
             glideAngleLabel.setText("Glide angle: " + Convert.angle(loc.glideAngle()));
             bearingLabel.setText("Bearing: " + Convert.bearing2(loc.bearing()));
+            flightModeLabel.setText("Flight mode: " + Services.flightMode.getModeString());
         }
     }
 
