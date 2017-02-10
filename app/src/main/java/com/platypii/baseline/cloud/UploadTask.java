@@ -23,7 +23,7 @@ import java.net.URL;
  * Upload to the cloud
  */
 class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
-    private static final String TAG = "CloudUpload";
+    private static final String TAG = "UploadTask";
 
     private static final String postUrl = TheCloud.baselineServer + "/tracks";
 

@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.cloud.TheCloud;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +30,11 @@ public class TrackAdapter extends BaseAdapter {
         items = populateItems(tracks);
     }
 
-    private static List<ListItem> populateItems(List<TrackFile> tracks) {
+    private static List<ListItem> populateItems(List<TrackFile> trackFiles) {
         // Count synced and not synced
         int num_synced = 0;
         int num_unsynced = 0;
-        for(TrackFile jump : tracks) {
+        for(TrackFile jump : trackFiles) {
             if(jump.getCloudData() == null) {
                 num_unsynced++;
             } else {
@@ -44,7 +45,7 @@ public class TrackAdapter extends BaseAdapter {
         // Add Unsynced tracks
         if(num_unsynced > 0) {
             items.add(new ListHeader("Not synced (local only)"));
-            for (TrackFile trackFile : tracks) {
+            for (TrackFile trackFile : trackFiles) {
                 if (trackFile.getCloudData() == null) {
                     items.add(new ListTrackFile(trackFile));
                 }
@@ -53,12 +54,20 @@ public class TrackAdapter extends BaseAdapter {
         // Add synced tracks
         if(num_synced > 0) {
             items.add(new ListHeader("Synced"));
-            for (TrackFile trackFile : tracks) {
+            for (TrackFile trackFile : trackFiles) {
                 if (trackFile.getCloudData() != null) {
                     items.add(new ListTrackFile(trackFile));
                 }
             }
         }
+        // TODO: Add cloud tracks
+//        final List<TrackData> trackList = TheCloud.listCached();
+//        if(!trackList.isEmpty()) {
+//            items.add(new ListHeader("Synced"));
+//            for(TrackData trackData : trackList) {
+//                items.add(new ListTrackData(trackData));
+//            }
+//        }
         return items;
     }
 
@@ -158,6 +167,16 @@ public class TrackAdapter extends BaseAdapter {
     private static class ListTrackFile implements ListItem {
         final TrackFile track;
         ListTrackFile(TrackFile track) {
+            this.track = track;
+        }
+        public int getType() {
+            return TYPE_TRACK_FILE;
+        }
+    }
+
+    private static class ListTrackData implements ListItem {
+        final TrackData track;
+        ListTrackData(TrackData track) {
             this.track = track;
         }
         public int getType() {

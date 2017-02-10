@@ -45,8 +45,8 @@ public class Services {
     private static final int shutdownDelay = 10000;
 
     // Services
+    public static SharedPreferences prefs;
     public static final TrackLogger logger = new TrackLogger();
-    public static final KVStore kv = new KVStore();
     public static final LocationService location = new LocationService();
     public static final MyAltimeter alti = new MyAltimeter();
     public static final MySensorManager sensors = new MySensorManager();
@@ -66,9 +66,6 @@ public class Services {
 
             Log.i(TAG, "Loading app settings");
             loadPreferences(appContext);
-
-            Log.i(TAG, "Starting key value store");
-            kv.start(appContext);
 
             Log.i(TAG, "Starting bluetooth service");
             if(BluetoothService.preferenceEnabled) {
@@ -136,13 +133,12 @@ public class Services {
                 if(!logger.isLogging() && !audible.isEnabled()) {
                     Log.i(TAG, "All activities have stopped. Stopping services.");
                     // Stop services
+                    notifications.stop();
                     audible.stop();
                     alti.stop();
                     sensors.stop();
                     location.stop();
                     bluetooth.stop();
-                    notifications.stop();
-                    kv.stop();
                     initialized = false;
                 } else {
                     if(logger.isLogging()) {
@@ -157,7 +153,7 @@ public class Services {
     };
 
     private static void loadPreferences(Context appContext) {
-        final SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(appContext);
+        prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
 
         // Metric
         Convert.metric = prefs.getBoolean("metric_enabled", false);

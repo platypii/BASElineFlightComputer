@@ -1,7 +1,7 @@
 package com.platypii.baseline.tracks;
 
+import android.content.SharedPreferences;
 import android.util.Log;
-
 import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
@@ -36,9 +36,9 @@ public class TrackFile {
             return cloudData;
         } else {
             // Get from KV store
-            final String trackUrl = Services.kv.getString(cacheKey());
+            final String trackUrl = Services.prefs.getString(cacheKey(), null);
             if(trackUrl != null) {
-                final String trackKml = Services.kv.getString(cacheKey() + ".trackKml");
+                final String trackKml = Services.prefs.getString(cacheKey() + ".trackKml", null);
                 cloudData = new CloudData(trackUrl, trackKml);
                 return cloudData;
             } else {
@@ -49,8 +49,10 @@ public class TrackFile {
     }
 
     public void setCloudData(CloudData cloudData) {
-        Services.kv.put(cacheKey(), cloudData.trackUrl);
-        Services.kv.put(cacheKey() + ".trackKml", cloudData.trackKml);
+        final SharedPreferences.Editor editor = Services.prefs.edit();
+        editor.putString(cacheKey(), cloudData.trackUrl);
+        editor.putString(cacheKey() + ".trackKml", cloudData.trackKml);
+        editor.commit();
         this.cloudData = cloudData;
     }
 
@@ -69,7 +71,7 @@ public class TrackFile {
     /**
      * Parse date from filename
      */
-    Date getDate() {
+    private Date getDate() {
         final String dateString = getName().replaceAll("track ", "");
         final SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH.mm.ss", Locale.US);
         try {
