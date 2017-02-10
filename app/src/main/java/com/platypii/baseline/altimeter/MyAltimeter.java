@@ -1,5 +1,12 @@
 package com.platypii.baseline.altimeter;
 
+import com.platypii.baseline.Service;
+import com.platypii.baseline.Services;
+import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.measurements.MAltitude;
+import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Stat;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
@@ -10,15 +17,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.Service;
-import com.platypii.baseline.Services;
-import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Stat;
-import com.platypii.baseline.measurements.MAltitude;
-import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.location.MyLocationListener;
 import org.greenrobot.eventbus.EventBus;
 
 /**

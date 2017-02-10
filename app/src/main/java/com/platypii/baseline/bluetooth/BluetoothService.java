@@ -1,5 +1,8 @@
 package com.platypii.baseline.bluetooth;
 
+import com.platypii.baseline.R;
+import com.platypii.baseline.Service;
+import com.platypii.baseline.events.BluetoothEvent;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,9 +12,6 @@ import android.location.GpsStatus;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.R;
-import com.platypii.baseline.Service;
-import com.platypii.baseline.events.BluetoothEvent;
 import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;

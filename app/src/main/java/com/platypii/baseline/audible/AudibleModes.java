@@ -1,11 +1,10 @@
 package com.platypii.baseline.audible;
 
-import android.support.annotation.NonNull;
-import android.util.Log;
-
-import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.util.Convert;
+import android.support.annotation.NonNull;
+import android.util.Log;
+import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * Contains the default audible modes

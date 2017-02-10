@@ -1,5 +1,14 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.audible.MyAudible;
+import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.location.LandingZone;
+import com.platypii.baseline.location.LocationService;
+import com.platypii.baseline.sensors.MySensorManager;
+import com.platypii.baseline.tracks.TrackLogger;
+import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Numbers;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -16,18 +25,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.altimeter.MyAltimeter;
-import com.platypii.baseline.audible.MyAudible;
-import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.location.LandingZone;
-import com.platypii.baseline.tracks.TrackLogger;
-import com.platypii.baseline.sensors.MySensorManager;
-import com.platypii.baseline.location.LocationService;
-import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Numbers;
 
 /**
  * Start and stop essential services

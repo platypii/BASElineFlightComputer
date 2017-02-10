@@ -1,13 +1,13 @@
 package com.platypii.baseline.location;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.util.Log;
 import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 

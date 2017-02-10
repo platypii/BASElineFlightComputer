@@ -1,16 +1,15 @@
 package com.platypii.baseline.audible;
 
+import com.platypii.baseline.Service;
+import com.platypii.baseline.Services;
+import com.platypii.baseline.events.AudibleEvent;
+import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.Service;
-import com.platypii.baseline.Services;
-import com.platypii.baseline.events.AudibleEvent;
-import com.platypii.baseline.util.Numbers;
 import org.greenrobot.eventbus.EventBus;
 
 /**

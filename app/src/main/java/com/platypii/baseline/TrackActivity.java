@@ -1,5 +1,12 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.cloud.TheCloud;
+import com.platypii.baseline.events.AuthEvent;
+import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackFiles;
+import com.platypii.baseline.util.Callback;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -8,13 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.cloud.TheCloud;
-import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.tracks.TrackFiles;
-import com.platypii.baseline.events.AuthEvent;
-import com.platypii.baseline.events.SyncEvent;
-import com.platypii.baseline.util.Callback;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

@@ -2,7 +2,6 @@ package com.platypii.baseline.location;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import com.google.firebase.crash.FirebaseCrash;
 import java.util.Calendar;
 import java.util.GregorianCalendar;

@@ -1,5 +1,7 @@
 package com.platypii.baseline.location;
 
+import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
@@ -9,10 +11,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.util.Numbers;
 
 class LocationProviderAndroid extends LocationProvider implements LocationListener, GpsStatus.Listener {
     private static final String TAG = "LocationServiceAndroid";

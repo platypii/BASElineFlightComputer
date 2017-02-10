@@ -1,5 +1,6 @@
 package com.platypii.baseline.bluetooth;
 
+import com.platypii.baseline.Services;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.preference.ListPreference;
@@ -8,7 +9,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import com.platypii.baseline.Services;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

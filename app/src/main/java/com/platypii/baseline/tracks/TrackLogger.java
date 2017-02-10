@@ -1,18 +1,16 @@
 package com.platypii.baseline.tracks;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.util.Log;
-
-import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.sensors.MySensorListener;
 import com.platypii.baseline.events.LoggingEvent;
+import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.Measurement;
-import com.platypii.baseline.location.MyLocationListener;
-
+import com.platypii.baseline.sensors.MySensorListener;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.util.Log;
+import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

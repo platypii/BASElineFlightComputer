@@ -1,5 +1,10 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.bluetooth.BluetoothDevicePreference;
+import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.events.AuthEvent;
+import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.util.Convert;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,14 +13,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.util.Log;
-
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.platypii.baseline.bluetooth.BluetoothDevicePreference;
-import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.events.AuthEvent;
-import com.platypii.baseline.events.BluetoothEvent;
-import com.platypii.baseline.util.Convert;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

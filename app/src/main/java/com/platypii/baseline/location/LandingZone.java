@@ -1,9 +1,9 @@
 package com.platypii.baseline.location;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Stores the target landing zone to be displayed on the map.

@@ -1,14 +1,14 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.events.AudibleEvent;
+import com.platypii.baseline.events.LoggingEvent;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat; // TODO: minsdk16
-import com.platypii.baseline.events.AudibleEvent;
-import com.platypii.baseline.events.LoggingEvent;
+import android.support.v4.app.NotificationCompat;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

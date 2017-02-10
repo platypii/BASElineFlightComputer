@@ -1,5 +1,7 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.tracks.TrackFile;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -8,10 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.tracks.TrackFile;
 
 class Intents {
     private static final String TAG = "Intents";

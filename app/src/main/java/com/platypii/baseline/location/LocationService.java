@@ -1,11 +1,10 @@
 package com.platypii.baseline.location;
 
+import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.measurements.MLocation;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
-import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.measurements.MLocation;
 
 /**
  * Meta location provider that uses bluetooth, nmea, or android location source

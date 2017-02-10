@@ -1,15 +1,14 @@
 package com.platypii.baseline.cloud;
 
+import com.platypii.baseline.Services;
+import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.TrackData;
+import com.platypii.baseline.util.IOUtil;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.TheCloud;
-import com.platypii.baseline.events.SyncEvent;
-import com.platypii.baseline.tracks.TrackData;
-import com.platypii.baseline.util.IOUtil;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;

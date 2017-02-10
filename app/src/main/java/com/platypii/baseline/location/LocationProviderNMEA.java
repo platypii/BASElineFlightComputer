@@ -1,15 +1,15 @@
 package com.platypii.baseline.location;
 
+import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.location.GpsStatus;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.platypii.baseline.bluetooth.BluetoothService;
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Numbers;
 
 class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
     protected final String TAG = "LocationServiceNMEA";

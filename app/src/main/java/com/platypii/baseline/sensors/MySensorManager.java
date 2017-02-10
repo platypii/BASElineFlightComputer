@@ -1,7 +1,11 @@
 package com.platypii.baseline.sensors;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.platypii.baseline.Service;
+import com.platypii.baseline.measurements.MAccel;
+import com.platypii.baseline.measurements.MGravity;
+import com.platypii.baseline.measurements.MRotation;
+import com.platypii.baseline.measurements.MSensor;
+import com.platypii.baseline.util.SyncedList;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,13 +14,8 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
-import com.platypii.baseline.Service;
-import com.platypii.baseline.measurements.MAccel;
-import com.platypii.baseline.measurements.MGravity;
-import com.platypii.baseline.measurements.MRotation;
-import com.platypii.baseline.measurements.MSensor;
-import com.platypii.baseline.util.SyncedList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Service to manage orientation sensors, and listeners

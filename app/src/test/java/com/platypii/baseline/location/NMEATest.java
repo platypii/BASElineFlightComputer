@@ -2,8 +2,8 @@ package com.platypii.baseline.location;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Ensure that we are parsing NMEA correctly

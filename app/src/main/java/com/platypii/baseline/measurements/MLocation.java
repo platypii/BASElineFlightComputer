@@ -1,12 +1,12 @@
 package com.platypii.baseline.measurements;
 
-import android.util.Log;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
 import com.platypii.baseline.util.Numbers;
+import android.util.Log;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.crash.FirebaseCrash;
 import java.util.Locale;
 
 public class MLocation extends Measurement {

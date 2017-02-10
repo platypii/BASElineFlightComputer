@@ -1,5 +1,9 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.audible.AudibleMinMaxPreference;
+import com.platypii.baseline.audible.AudibleMode;
+import com.platypii.baseline.audible.AudibleSettings;
+import com.platypii.baseline.util.Numbers;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -9,12 +13,7 @@ import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
-
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.platypii.baseline.audible.AudibleMinMaxPreference;
-import com.platypii.baseline.audible.AudibleMode;
-import com.platypii.baseline.audible.AudibleSettings;
-import com.platypii.baseline.util.Numbers;
 import java.util.Locale;
 
 /**

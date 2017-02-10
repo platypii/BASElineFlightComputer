@@ -1,5 +1,6 @@
 package com.platypii.baseline.altimeter;
 
+import com.platypii.baseline.util.Convert;
 import android.content.Context;
 import android.graphics.BlurMaskFilter;
 import android.graphics.BlurMaskFilter.Blur;
@@ -9,7 +10,6 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
-import com.platypii.baseline.util.Convert;
 
 public class AnalogAltimeter extends View {
 

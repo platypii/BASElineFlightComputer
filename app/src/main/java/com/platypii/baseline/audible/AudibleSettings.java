@@ -1,7 +1,7 @@
 package com.platypii.baseline.audible;
 
-import android.content.SharedPreferences;
 import com.platypii.baseline.util.Numbers;
+import android.content.SharedPreferences;
 
 /**
  * Static class to store audible settings in memory.

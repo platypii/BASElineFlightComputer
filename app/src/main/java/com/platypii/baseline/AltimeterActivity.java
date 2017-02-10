@@ -1,5 +1,9 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.altimeter.AnalogAltimeter;
+import com.platypii.baseline.measurements.MAltitude;
+import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Numbers;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -10,10 +14,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.platypii.baseline.altimeter.AnalogAltimeter;
-import com.platypii.baseline.measurements.MAltitude;
-import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Numbers;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

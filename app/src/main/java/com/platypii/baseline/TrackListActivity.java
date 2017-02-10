@@ -1,15 +1,13 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.TrackAdapter;
+import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackFiles;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
-
-import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.tracks.TrackFiles;
-import com.platypii.baseline.tracks.TrackAdapter;
-import com.platypii.baseline.events.SyncEvent;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

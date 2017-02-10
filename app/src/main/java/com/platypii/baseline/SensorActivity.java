@@ -1,5 +1,12 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.measurements.MAltitude;
+import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.measurements.MSensor;
+import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.util.SyncedList;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -8,13 +15,6 @@ import android.os.Handler;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.platypii.baseline.measurements.MAltitude;
-import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.measurements.MSensor;
-import com.platypii.baseline.location.MyLocationListener;
-import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Numbers;
-import com.platypii.baseline.util.SyncedList;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

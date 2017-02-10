@@ -1,10 +1,10 @@
 package com.platypii.baseline.tracks;
 
+import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.CloudData;
 import android.content.SharedPreferences;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.CloudData;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

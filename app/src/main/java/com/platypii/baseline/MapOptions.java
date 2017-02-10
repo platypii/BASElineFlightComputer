@@ -1,7 +1,7 @@
 package com.platypii.baseline;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.platypii.baseline.util.Numbers;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Contains configuration settings for navigation mode

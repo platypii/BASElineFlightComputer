@@ -1,13 +1,12 @@
 package com.platypii.baseline.audible;
 
+import com.platypii.baseline.R;
+import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
-
-import com.platypii.baseline.R;
-import com.platypii.baseline.util.Numbers;
 
 /**
  * Preference dialog that converts to/from internal units in the preference,

@@ -1,11 +1,9 @@
 package com.platypii.baseline.location;
 
-import android.util.Log;
-
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothService;
-
+import android.util.Log;
 import java.util.Locale;
 
 /**

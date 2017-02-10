@@ -1,5 +1,7 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.events.AuthEvent;
+import com.platypii.baseline.util.Callback;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,8 +22,6 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.platypii.baseline.events.AuthEvent;
-import com.platypii.baseline.util.Callback;
 import org.greenrobot.eventbus.EventBus;
 
 abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener {

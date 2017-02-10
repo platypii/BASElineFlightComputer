@@ -1,13 +1,13 @@
 package com.platypii.baseline.cloud;
 
-import android.os.AsyncTask;
-import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Callback;
 import com.platypii.baseline.util.IOUtil;
 import com.platypii.baseline.util.Try;
+import android.os.AsyncTask;
+import android.util.Log;
+import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;

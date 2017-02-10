@@ -1,5 +1,12 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.altimeter.AnalogAltimeter;
+import com.platypii.baseline.location.LandingZone;
+import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.measurements.MAltitude;
+import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Numbers;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
@@ -23,13 +30,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.platypii.baseline.altimeter.AnalogAltimeter;
-import com.platypii.baseline.location.LandingZone;
-import com.platypii.baseline.measurements.MAltitude;
-import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.location.MyLocationListener;
-import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Numbers;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

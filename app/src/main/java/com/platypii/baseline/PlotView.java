@@ -4,7 +4,6 @@ import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.util.DataSeries.Point;
 import com.platypii.baseline.util.IntBounds;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;

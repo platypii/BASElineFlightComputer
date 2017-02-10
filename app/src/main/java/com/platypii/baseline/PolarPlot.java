@@ -1,11 +1,10 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.util.Bounds;
-import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.SyncedList;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;

@@ -1,5 +1,12 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.cloud.TheCloud;
+import com.platypii.baseline.events.AudibleEvent;
+import com.platypii.baseline.events.LoggingEvent;
+import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.location.LocationStatus;
+import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.util.Callback;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,13 +18,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.platypii.baseline.cloud.TheCloud;
-import com.platypii.baseline.events.SyncEvent;
-import com.platypii.baseline.location.LocationStatus;
-import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.events.AudibleEvent;
-import com.platypii.baseline.events.LoggingEvent;
-import com.platypii.baseline.util.Callback;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

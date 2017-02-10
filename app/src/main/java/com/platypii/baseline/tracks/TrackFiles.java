@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
