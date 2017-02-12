@@ -247,10 +247,12 @@ public class MainActivity extends BaseActivity {
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(SyncEvent event) {
-        if(event.type == SyncEvent.SYNC_UPLOAD_SUCCESS) {
-            Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
-        } else if(event.type == SyncEvent.SYNC_UPLOAD_FAILED) {
-            Toast.makeText(MainActivity.this, "Track sync failed: " + event.error, Toast.LENGTH_SHORT).show();
+        if(event.type == SyncEvent.TYPE_UPLOAD) {
+            if(event.error == null) {
+                Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Track sync failed: " + event.error, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

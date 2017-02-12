@@ -1,6 +1,7 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.cloud.TheCloud;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ public class TrackAdapter extends BaseAdapter {
     // Item types
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_TRACK_FILE = 1;
+    private static final int TYPE_TRACK_DATA = 2;
 
     private final List<TrackFile> tracks;
 
@@ -57,9 +59,9 @@ public class TrackAdapter extends BaseAdapter {
                 }
             }
         }
-        // TODO: Add cloud tracks
+        // Add cloud tracks
 //        final List<TrackData> trackList = TheCloud.listCached();
-//        if(!trackList.isEmpty()) {
+//        if(trackList != null && !trackList.isEmpty()) {
 //            items.add(new ListHeader("Synced"));
 //            for(TrackData trackData : trackList) {
 //                items.add(new ListTrackData(trackData));
@@ -80,6 +82,7 @@ public class TrackAdapter extends BaseAdapter {
                     convertView = inflater.inflate(R.layout.track_list_header, parent, false);
                     break;
                 case TYPE_TRACK_FILE:
+                case TYPE_TRACK_DATA:
                     convertView = inflater.inflate(R.layout.track_list_item, parent, false);
                     break;
             }
@@ -93,11 +96,18 @@ public class TrackAdapter extends BaseAdapter {
                 headerNameView.setText(header.name);
                 break;
             case TYPE_TRACK_FILE:
-                final TrackFile track = ((ListTrackFile) item).track;
+                final TrackFile trackFile = ((ListTrackFile) item).track;
                 final TextView itemNameView = (TextView) convertView.findViewById(R.id.list_item_name);
-                final TextView itemSizeView = (TextView) convertView.findViewById(R.id.list_item_filesize);
-                itemNameView.setText(track.toString());
-                itemSizeView.setText(track.getSize());
+                final TextView itemSizeView = (TextView) convertView.findViewById(R.id.list_item_subtitle);
+                itemNameView.setText(trackFile.toString());
+                itemSizeView.setText(trackFile.getSize());
+                break;
+            case TYPE_TRACK_DATA:
+                final TrackData trackData = ((ListTrackData) item).track;
+                final TextView itemNameView2 = (TextView) convertView.findViewById(R.id.list_item_name);
+                final TextView itemSizeView2 = (TextView) convertView.findViewById(R.id.list_item_subtitle);
+                itemNameView2.setText(trackData.date_string);
+                itemSizeView2.setText(trackData.location);
                 break;
         }
 
@@ -134,10 +144,9 @@ public class TrackAdapter extends BaseAdapter {
         return items.size();
     }
 
-    // Set the number of list item types to 2 (tracks and headers)
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -177,7 +186,7 @@ public class TrackAdapter extends BaseAdapter {
             this.track = track;
         }
         public int getType() {
-            return TYPE_TRACK_FILE;
+            return TYPE_TRACK_DATA;
         }
     }
 

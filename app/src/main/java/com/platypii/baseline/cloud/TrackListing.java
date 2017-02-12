@@ -49,7 +49,7 @@ class TrackListing {
             // Notify listeners
             EventBus.getDefault().post(SyncEvent.listing());
 
-            Log.i(TAG, "Listing successful: " + trackList.size());
+            Log.i(TAG, "Listing successful: " + trackList.size() + " tracks");
         } catch(IOException e) {
             Log.e(TAG, "Failed to list tracks", e);
             FirebaseCrash.report(e);

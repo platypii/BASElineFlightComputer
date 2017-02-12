@@ -24,7 +24,7 @@ public class TrackData {
         final String track_id = json.getString("track_id");
         final long date = json.getLong("date");
         final String date_string = json.getString("date_string");
-        final String location = json.getString("location");
+        final String location = json.optString("location");
         return new TrackData(track_id, date, date_string, location);
     }
 

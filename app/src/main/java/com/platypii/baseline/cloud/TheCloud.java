@@ -40,7 +40,7 @@ public class TheCloud {
     }
 
     /**
-     * Query baseline server asynchronously
+     * Query baseline server for track listing asynchronously
      */
     public static void list(@NonNull String auth) {
         TrackListing.listTracksAsync(auth);

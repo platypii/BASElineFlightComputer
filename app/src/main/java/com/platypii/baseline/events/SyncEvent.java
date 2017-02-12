@@ -7,9 +7,8 @@ import android.support.annotation.NonNull;
  */
 public class SyncEvent {
 
-    public static final int SYNC_UPLOAD_SUCCESS = 0;
-    public static final int SYNC_UPLOAD_FAILED = 1;
-    public static final int SYNC_LISTING = 2;
+    public static final int TYPE_UPLOAD = 0;
+    private static final int TYPE_LISTING = 1;
 
     // Sync event type
     public int type;
@@ -26,21 +25,21 @@ public class SyncEvent {
      * Upload success event
      */
     public static SyncEvent success() {
-        return new SyncEvent(SYNC_UPLOAD_SUCCESS, null);
+        return new SyncEvent(TYPE_UPLOAD, null);
     }
 
     /**
      * Upload error event
      */
     public static SyncEvent error(@NonNull String error) {
-        return new SyncEvent(SYNC_UPLOAD_FAILED, error);
+        return new SyncEvent(TYPE_UPLOAD, error);
     }
 
     /**
      * Track listing updated event
      */
     public static SyncEvent listing() {
-        return new SyncEvent(SYNC_LISTING, null);
+        return new SyncEvent(TYPE_LISTING, null);
     }
 
 }
