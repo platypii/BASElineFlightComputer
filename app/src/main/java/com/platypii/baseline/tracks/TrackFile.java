@@ -35,14 +35,19 @@ public class TrackFile {
         if(cloudData != null) {
             return cloudData;
         } else {
-            // Get from KV store
-            final String trackUrl = Services.prefs.getString(cacheKey(), null);
-            if(trackUrl != null) {
-                final String trackKml = Services.prefs.getString(cacheKey() + ".trackKml", null);
-                cloudData = new CloudData(trackUrl, trackKml);
-                return cloudData;
+            if(Services.prefs != null) {
+                // Get from KV store
+                final String trackUrl = Services.prefs.getString(cacheKey(), null);
+                if (trackUrl != null) {
+                    final String trackKml = Services.prefs.getString(cacheKey() + ".trackKml", null);
+                    cloudData = new CloudData(trackUrl, trackKml);
+                    return cloudData;
+                } else {
+                    // Not in KV store, not uploaded
+                    return null;
+                }
             } else {
-                // Not in KV store, not uploaded
+                // KV store not initialized?
                 return null;
             }
         }

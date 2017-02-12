@@ -1,5 +1,6 @@
 package com.platypii.baseline.tracks;
 
+import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.cloud.TheCloud;
 import android.content.Context;
@@ -125,12 +126,18 @@ public class TrackAdapter extends BaseAdapter {
         return items.get(position);
     }
 
-    public TrackFile getTrack(int position) {
+    public void clickItem(int position, Context context) {
         final ListItem item = items.get(position);
-        if(item instanceof ListTrackFile) {
-            return ((ListTrackFile) item).track;
-        } else {
-            return null;
+        final int itemType = item.getType();
+        switch(itemType) {
+            case TYPE_TRACK_FILE:
+                final TrackFile trackFile = ((ListTrackFile) item).track;
+                Intents.openTrackActivity(context, trackFile);
+                break;
+            case TYPE_TRACK_DATA:
+                final TrackData trackData = ((ListTrackData) item).track;
+                Intents.openTrackDataActivity(context, trackData);
+                break;
         }
     }
 

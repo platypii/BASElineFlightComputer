@@ -64,6 +64,9 @@
             android:name=".TrackActivity"
             android:label="@string/app_name"/>
         <activity
+            android:name=".TrackDataActivity"
+            android:label="@string/app_name"/>
+        <activity
             android:name=".AudibleSettingsActivity"
             android:label="@string/title_activity_audible_settings"/>
         <activity

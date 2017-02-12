@@ -100,7 +100,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
         if(cloudData != null) {
             // Open web app
             firebaseAnalytics.logEvent("click_track_open", null);
-            Intents.openTrackUrl(this, cloudData);
+            Intents.openTrackUrl(this, cloudData.trackUrl);
         } else {
             // Start upload
             firebaseAnalytics.logEvent("click_track_sync", null);
@@ -134,7 +134,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
         final CloudData cloudData = trackFile.getCloudData();
         if(cloudData != null) {
             // Open web app
-            Intents.openTrackKml(this, cloudData);
+            Intents.openTrackKml(this, cloudData.trackKml);
         } else {
             Toast.makeText(getApplicationContext(), "Track not synced", Toast.LENGTH_SHORT).show();
         }

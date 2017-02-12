@@ -16,6 +16,18 @@ public class TheCloud {
 
     static final String CACHE_TRACK_LIST = "cloud.track_list";
 
+    public static TrackData getCached(String track_id) {
+        final List<TrackData> tracks = listCached();
+        if(tracks != null) {
+            for(TrackData track : tracks) {
+                if(track.track_id.equals(track_id)) {
+                    return track;
+                }
+            }
+        }
+        return null;
+    }
+
     public static List<TrackData> listCached() {
         final String jsonString = Services.prefs.getString(CACHE_TRACK_LIST, null);
         if(jsonString != null) {
@@ -50,4 +62,8 @@ public class TheCloud {
         new UploadTask(trackFile, auth, cb).execute();
     }
 
+    public static boolean deleteTrack(TrackData track) {
+        // TODO: Delete track on server
+        return false;
+    }
 }

@@ -56,10 +56,7 @@ public class TrackListActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        final TrackFile track = listAdapter.getTrack(position);
-        if(track != null) {
-            Intents.openTrackActivity(this, track);
-        }
+        listAdapter.clickItem(position, this);
     }
 
     @Override

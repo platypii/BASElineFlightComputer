@@ -1,6 +1,7 @@
 package com.platypii.baseline;
 
 import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -12,36 +13,40 @@ import android.util.Log;
 import android.widget.Toast;
 import com.google.firebase.crash.FirebaseCrash;
 
-class Intents {
+public class Intents {
     private static final String TAG = "Intents";
 
     /** Open jump activity */
-    static void openTrackActivity(@NonNull Context context, TrackFile trackFile) {
+    public static void openTrackActivity(@NonNull Context context, TrackFile trackFile) {
         final Intent intent = new Intent(context, TrackActivity.class);
         intent.putExtra(TrackActivity.EXTRA_TRACK_FILE, trackFile.file.getName());
         context.startActivity(intent);
     }
+    public static void openTrackDataActivity(@NonNull Context context, TrackData track) {
+        final Intent intent = new Intent(context, TrackDataActivity.class);
+        intent.putExtra(TrackDataActivity.EXTRA_TRACK_ID, track.track_id);
+        context.startActivity(intent);
+    }
 
     /** Open track url in browser */
-    static void openTrackUrl(@NonNull Context context, CloudData cloudData) {
-        final String url = cloudData.trackUrl;
+    static void openTrackUrl(@NonNull Context context, String url) {
         final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(browserIntent);
     }
 
     /** Open track as KML in google earth */
-    static void openTrackKml(@NonNull Context context, CloudData cloudData) {
+    static void openTrackKml(@NonNull Context context, String urlKml) {
         try {
-            openTrackGoogleEarth(context, cloudData);
+            openTrackGoogleEarth(context, urlKml);
         } catch(ActivityNotFoundException e) {
             Log.e(TAG, "Failed to open KML file in google maps", e);
             Toast.makeText(context, R.string.error_map_intent, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private static void openTrackGoogleEarth(@NonNull Context context, CloudData cloudData) {
+    private static void openTrackGoogleEarth(@NonNull Context context, String urlKml) {
         final Intent earthIntent = new Intent(android.content.Intent.ACTION_VIEW);
-        earthIntent.setDataAndType(Uri.parse(cloudData.trackKml), "application/vnd.google-earth.kml+xml");
+        earthIntent.setDataAndType(Uri.parse(urlKml), "application/vnd.google-earth.kml+xml");
         earthIntent.setClassName("com.google.earth", "com.google.earth.EarthActivity");
         context.startActivity(earthIntent);
     }

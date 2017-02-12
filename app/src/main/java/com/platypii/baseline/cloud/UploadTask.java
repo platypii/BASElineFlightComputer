@@ -12,6 +12,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -102,7 +103,10 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
                 // Read body
                 final String body = IOUtil.toString(conn.getInputStream());
                 final JSONObject jsonObject = new JSONObject(body);
-                return CloudData.fromJson(jsonObject);
+                final CloudData cloudData = CloudData.fromJson(jsonObject);
+                // TODO: Move track to synced directory
+//                moveTrackFile(trackFile);
+                return cloudData;
             } else if(status == 401) {
                 throw new IOException("authorization required");
             } else {
@@ -111,6 +115,17 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
         } finally {
             conn.disconnect();
         }
+    }
+
+    private static void moveTrackFile(TrackFile trackFile) {
+        // Ensure synced directory exists
+        final File syncedDir = new File(trackFile.file.getParentFile(), "synced");
+        if(!syncedDir.exists()) {
+            syncedDir.mkdir();
+        }
+        // Move track file to synced directory
+        final File destination = new File(syncedDir, trackFile.file.getName());
+        trackFile.file.renameTo(destination);
     }
 
 }
