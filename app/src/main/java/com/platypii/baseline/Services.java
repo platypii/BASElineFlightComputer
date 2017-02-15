@@ -3,6 +3,7 @@ package com.platypii.baseline;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.jarvis.FlightMode;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.sensors.MySensorManager;
@@ -49,6 +50,7 @@ public class Services {
     public static final LocationService location = new LocationService();
     public static final MyAltimeter alti = new MyAltimeter();
     public static final MySensorManager sensors = new MySensorManager();
+    public static final FlightMode flightMode = new FlightMode();
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();
@@ -90,6 +92,9 @@ public class Services {
 
             Log.i(TAG, "Starting altimeter");
             alti.start(appContext);
+
+            Log.i(TAG, "Starting flight services");
+            flightMode.start();
 
             // TTS is prerequisite for audible
             Log.i(TAG, "Checking for text-to-speech data");
@@ -134,6 +139,7 @@ public class Services {
                     // Stop services
                     notifications.stop();
                     audible.stop();
+                    flightMode.stop();
                     alti.stop();
                     sensors.stop();
                     location.stop();
