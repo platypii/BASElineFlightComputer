@@ -2,7 +2,9 @@ package com.platypii.baseline;
 
 import com.platypii.baseline.cloud.TheCloud;
 import com.platypii.baseline.events.AuthEvent;
+import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackData;
+import com.platypii.baseline.util.Callback;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -91,14 +93,38 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
     }
 
     private void deleteRemote() {
-        if(TheCloud.deleteTrack(track)) {
+        if(isSignedIn()) {
+            // Begin automatic upload
+            getAuthToken(new Callback<String>() {
+                @Override
+                public void apply(String authToken) {
+                    TheCloud.deleteTrack(track, authToken);
+                }
+                @Override
+                public void error(String error) {
+                    Toast.makeText(getApplicationContext(), "Track delete failed: " + error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Log.w(TAG, "Track delete failed: not signed in");
+        }
+    }
+
+    // Listen for deletion of this track
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    private void onDeleteSuccess(SyncEvent.DeleteSuccess event) {
+        if(event.track_id.equals(track.track_id)) {
             // Notify user
             Toast.makeText(getApplicationContext(), "Deleted track", Toast.LENGTH_LONG).show();
             // Exit activity
             finish();
-        } else {
-            // Delete failed
-            Toast.makeText(getApplicationContext(), "Failed to delete track", Toast.LENGTH_LONG).show();
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    private void onDeleteFailure(SyncEvent.DeleteFailure event) {
+        if(event.track_id.equals(track.track_id)) {
+            // Notify user
+            Toast.makeText(getApplicationContext(), "Track delete failed: " + event.error, Toast.LENGTH_SHORT).show();
         }
     }
 

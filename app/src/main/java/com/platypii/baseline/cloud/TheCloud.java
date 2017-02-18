@@ -54,7 +54,9 @@ public class TheCloud {
     /**
      * Query baseline server for track listing asynchronously
      */
-    public static void list(@NonNull String auth) {
+    public static void list(@NonNull String auth, boolean force) {
+        // TODO: Compute time since last update
+        // TODO: Only check periodically
         TrackListing.listTracksAsync(auth);
     }
 
@@ -62,8 +64,8 @@ public class TheCloud {
         new UploadTask(trackFile, auth, cb).execute();
     }
 
-    public static boolean deleteTrack(TrackData track) {
-        // TODO: Delete track on server
-        return false;
+    public static void deleteTrack(TrackData track, String auth) {
+        // Delete track on server
+        TrackDelete.deleteAsync(auth, track.track_url);
     }
 }

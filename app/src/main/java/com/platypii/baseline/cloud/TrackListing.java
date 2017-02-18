@@ -26,11 +26,11 @@ class TrackListing {
     private static final String TAG = "TrackListing";
 
     static void listTracksAsync(@NonNull final String auth) {
-        Log.i(TAG, "Listing tracks with auth " + auth);
+        Log.i(TAG, "Listing tracks");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                listTracksWrapper(auth);
+                listTracks(auth);
             }
         });
     }
@@ -38,16 +38,16 @@ class TrackListing {
     /**
      * Notify listeners and handle exceptions
      */
-    private static void listTracksWrapper(String auth) {
+    private static void listTracks(String auth) {
         try {
             // Make HTTP request
-            final List<TrackData> trackList = listTracks(auth);
+            final List<TrackData> trackList = listRemote(auth);
             // Save track listing to local cache
             final SharedPreferences.Editor editor = Services.prefs.edit();
             editor.putString(TheCloud.CACHE_TRACK_LIST, toJson(trackList));
             editor.apply();
             // Notify listeners
-            EventBus.getDefault().post(SyncEvent.listing());
+            EventBus.getDefault().post(new SyncEvent.ListingSuccess());
 
             Log.i(TAG, "Listing successful: " + trackList.size() + " tracks");
         } catch(IOException e) {
@@ -60,9 +60,9 @@ class TrackListing {
     }
 
     /**
-     * Make http request to BASEline server for track listing
+     * Send http request to BASEline server for track listing
      */
-    private static List<TrackData> listTracks(String auth) throws IOException, JSONException {
+    private static List<TrackData> listRemote(String auth) throws IOException, JSONException {
         final URL url = new URL(TheCloud.listUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", auth);

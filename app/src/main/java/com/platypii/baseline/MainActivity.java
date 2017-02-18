@@ -124,7 +124,6 @@ public class MainActivity extends BaseActivity {
                 public void apply(String authToken) {
                     TheCloud.upload(jump, authToken, null);
                 }
-
                 @Override
                 public void error(String error) {
                     Toast.makeText(MainActivity.this, "Track sync failed: " + error, Toast.LENGTH_SHORT).show();
@@ -247,12 +246,11 @@ public class MainActivity extends BaseActivity {
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(SyncEvent event) {
-        if(event.type == SyncEvent.TYPE_UPLOAD) {
-            if(event.error == null) {
-                Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MainActivity.this, "Track sync failed: " + event.error, Toast.LENGTH_SHORT).show();
-            }
+        if(event instanceof SyncEvent.UploadSuccess) {
+            Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
+        } else if(event instanceof SyncEvent.UploadFailure) {
+            final SyncEvent.UploadFailure uploadFailure = (SyncEvent.UploadFailure) event;
+            Toast.makeText(MainActivity.this, "Track sync failed: " + uploadFailure.error, Toast.LENGTH_SHORT).show();
         }
     }
 

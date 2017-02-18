@@ -19,7 +19,7 @@
     <string name="action_export">Export</string>
 
     <string name="delete_local">Möchten sie diese Daten wirklich von diesem Geraet löschen? Die Daten wurden noch nicht online synchronisiert.</string>
-    <string name="delete_remote">Möchten sie diese Daten wirklich von diesem Geraet löschen? Die Daten werden weiterhin auf http://base-line.ws verfuegbar sein.</string>
+    <string name="delete_remote"></string>
 
     <string name="error_export_intent">Export der Datei fehlgeschlagen</string>
     <string name="error_map_intent">Google earth konnte nicht geoeffnet werden</string>

@@ -1,45 +1,36 @@
 package com.platypii.baseline.events;
 
-import android.support.annotation.NonNull;
-
 /**
  * Indicates that a track upload has completed, or sync status has changed
  */
-public class SyncEvent {
+public abstract class SyncEvent {
 
-    public static final int TYPE_UPLOAD = 0;
-    private static final int TYPE_LISTING = 1;
-
-    // Sync event type
-    public int type;
-
-    // Optional error field
-    public final String error;
-
-    private SyncEvent(int type, String error) {
-        this.type = type;
-        this.error = error;
+    public static class UploadSuccess extends SyncEvent {}
+    public static class UploadFailure extends SyncEvent {
+        public final String error;
+        public UploadFailure(String error) {
+            this.error = error;
+        }
     }
 
-    /**
-     * Upload success event
-     */
-    public static SyncEvent success() {
-        return new SyncEvent(TYPE_UPLOAD, null);
+    public static class DeleteSuccess extends SyncEvent {
+        public final String track_id;
+        DeleteSuccess(String track_id) {
+            this.track_id = track_id;
+        }
     }
-
-    /**
-     * Upload error event
-     */
-    public static SyncEvent error(@NonNull String error) {
-        return new SyncEvent(TYPE_UPLOAD, error);
+    public static class DeleteFailure extends SyncEvent {
+        public final String track_id;
+        public final String error;
+        DeleteFailure(String track_id, String error) {
+            this.track_id = track_id;
+            this.error = error;
+        }
     }
 
     /**
      * Track listing updated event
      */
-    public static SyncEvent listing() {
-        return new SyncEvent(TYPE_LISTING, null);
-    }
+    public static class ListingSuccess extends SyncEvent {}
 
 }
