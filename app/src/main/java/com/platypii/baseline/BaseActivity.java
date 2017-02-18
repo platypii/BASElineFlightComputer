@@ -76,6 +76,9 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
     protected void onStart() {
         super.onStart();
 
+        // Start flight services
+        Services.start(this);
+
         final OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         // TODO: Question, if opr.isDone, can we still just setResultCallback to have 1 code path?
         if (opr.isDone()) {
@@ -102,9 +105,6 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
         if(signInButton != null) {
             signInButton.setOnClickListener(signInClickListener);
         }
-
-        // Start flight services
-        Services.start(this);
     }
     private final View.OnClickListener signInClickListener = new View.OnClickListener() {
         @Override

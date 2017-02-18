@@ -1,6 +1,7 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.TrackData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -16,12 +17,12 @@ import java.net.URL;
 class TrackDelete {
     private static final String TAG = "TrackDelete";
 
-    static void deleteAsync(@NonNull final String auth, final String track_url) {
-        Log.i(TAG, "Deleting track " + track_url);
+    static void deleteAsync(@NonNull final String auth, final TrackData track) {
+        Log.i(TAG, "Deleting track " + track.track_id);
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                delete(auth, track_url);
+                delete(auth, track);
             }
         });
     }
@@ -29,15 +30,21 @@ class TrackDelete {
     /**
      * Notify listeners and handle exceptions
      */
-    private static void delete(String auth, String track_url) {
+    private static void delete(String auth, TrackData track) {
         try {
             // Make HTTP request
-            deleteRemote(auth, track_url);
-            Log.i(TAG, "Track delete successful: " + track_url);
+            deleteRemote(auth, track.track_url);
+            Log.i(TAG, "Track delete successful: " + track.track_id);
+            // Update track list
+            TheCloud.invalidateCache();
+            TheCloud.list(auth, true);
             // Notify listeners
-            EventBus.getDefault().post(new SyncEvent.ListingSuccess());
+            EventBus.getDefault().post(new SyncEvent.DeleteSuccess(track.track_id));
         } catch(IOException e) {
-            Log.e(TAG, "Failed to delete track " + track_url, e);
+            Log.e(TAG, "Failed to delete track " + track.track_id, e);
+            // Notify listeners
+            EventBus.getDefault().post(new SyncEvent.DeleteFailure(track.track_id, "failed to delete track"));
+            // Report error
             FirebaseCrash.report(e);
         }
     }
@@ -48,6 +55,7 @@ class TrackDelete {
     private static void deleteRemote(String auth, String track_url) throws IOException {
         final URL url = new URL(track_url);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("DELETE");
         conn.setRequestProperty("Authorization", auth);
         try {
             // Read response

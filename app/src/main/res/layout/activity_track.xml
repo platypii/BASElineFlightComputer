@@ -28,19 +28,19 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/exportButton"
-            android:layout_width="100dp"
+            android:id="@+id/openButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
-            android:onClick="clickExport"
-            android:drawableTop="@drawable/button_export"
-            android:text="@string/action_export"
+            android:onClick="clickOpen"
+            android:drawableTop="@drawable/button_view"
+            android:text="@string/action_open"
             style="@style/Widget.AppCompat.Button.Borderless" />
 
         <Button
             android:id="@+id/deleteButton"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
@@ -57,19 +57,8 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/openButton"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:onClick="clickOpen"
-            android:drawableTop="@drawable/button_view"
-            android:text="@string/action_open"
-            style="@style/Widget.AppCompat.Button.Borderless" />
-
-        <Button
             android:id="@+id/mapButton"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
@@ -92,12 +81,5 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:visibility="gone" />
-
-    <View
-        android:layout_height="0dp"
-        android:layout_width="0dp"
-        android:layout_weight="1"/>
-
-    <include layout="@layout/sign_in_panel"/>
 
 </LinearLayout>

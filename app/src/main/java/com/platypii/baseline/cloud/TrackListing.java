@@ -1,10 +1,8 @@
 package com.platypii.baseline.cloud;
 
-import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.IOUtil;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -39,13 +37,13 @@ class TrackListing {
      * Notify listeners and handle exceptions
      */
     private static void listTracks(String auth) {
+        boolean success = false;
         try {
             // Make HTTP request
             final List<TrackData> trackList = listRemote(auth);
+            success = true;
             // Save track listing to local cache
-            final SharedPreferences.Editor editor = Services.prefs.edit();
-            editor.putString(TheCloud.CACHE_TRACK_LIST, toJson(trackList));
-            editor.apply();
+            TheCloud.updateCache(toJson(trackList));
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.ListingSuccess());
 
@@ -56,6 +54,10 @@ class TrackListing {
         } catch(JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
             FirebaseCrash.report(e);
+        }
+        if(!success) {
+            // Reset last updated time on failure
+            TheCloud.invalidateCache();
         }
     }
 
