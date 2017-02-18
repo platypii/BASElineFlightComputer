@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name">BASEline</string>
+    <string name="app_name_long">BASEline Flight Computer</string>
 
     <!-- Home Screen -->
     <string name="action_record">Rekord</string>
