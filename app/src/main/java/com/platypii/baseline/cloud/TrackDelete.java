@@ -33,7 +33,7 @@ class TrackDelete {
     private static void delete(String auth, TrackData track) {
         try {
             // Make HTTP request
-            deleteRemote(auth, track.track_url);
+            deleteRemote(auth, track.trackUrl);
             Log.i(TAG, "Track delete successful: " + track.track_id);
             // Update track list
             TheCloud.invalidateCache();
@@ -52,8 +52,8 @@ class TrackDelete {
     /**
      * Send http delete to BASEline server
      */
-    private static void deleteRemote(String auth, String track_url) throws IOException {
-        final URL url = new URL(track_url);
+    private static void deleteRemote(String auth, String trackUrl) throws IOException {
+        final URL url = new URL(trackUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("DELETE");
         conn.setRequestProperty("Authorization", auth);

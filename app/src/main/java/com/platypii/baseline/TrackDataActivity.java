@@ -60,13 +60,13 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
     public void clickOpen(View v) {
         // Open web app
         firebaseAnalytics.logEvent("click_track_open", null);
-        Intents.openTrackUrl(this, track.track_url);
+        Intents.openTrackUrl(this, track.trackUrl);
     }
 
     public void clickKml(View v) {
         firebaseAnalytics.logEvent("click_track_kml", null);
         // Open web app
-        Intents.openTrackKml(this, track.track_kml);
+        Intents.openTrackKml(this, track.trackKml);
     }
 
     public void clickDelete(View v) {
