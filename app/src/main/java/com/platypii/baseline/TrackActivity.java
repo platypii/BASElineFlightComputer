@@ -1,9 +1,9 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.cloud.TheCloud;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackFiles;
 import com.platypii.baseline.util.Callback;
@@ -64,89 +64,53 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
             // Find views
             final TextView filenameLabel = (TextView) findViewById(R.id.filename);
             final TextView filesizeLabel = (TextView) findViewById(R.id.filesize);
-            final TextView errorLabel = (TextView) findViewById(R.id.error_message);
-            final Button openButton = (Button) findViewById(R.id.openButton);
-            final Button mapButton = (Button) findViewById(R.id.mapButton);
+            final Button syncButton = (Button) findViewById(R.id.syncButton);
 
             filenameLabel.setText(trackFile.getName());
             filesizeLabel.setText(trackFile.getSize());
 
-            // Update cloud sync state
-            final CloudData cloudData = trackFile.getCloudData();
-            if(cloudData != null) {
-                errorLabel.setVisibility(View.GONE);
-                openButton.setText(R.string.action_open);
-                openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.button_view, 0, 0);
-                mapButton.setEnabled(true);
-            } else {
-                errorLabel.setText(R.string.error_not_uploaded);
-                errorLabel.setVisibility(View.VISIBLE);
-                openButton.setText(R.string.action_sync);
-                openButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.button_sync, 0, 0);
-                mapButton.setEnabled(false);
-            }
-
             // Update view based on sign-in state
-            if(isSignedIn() || cloudData != null) {
-                openButton.setEnabled(true);
+            if(isSignedIn()) {
+                syncButton.setEnabled(true);
             } else {
-                openButton.setEnabled(false);
+                syncButton.setEnabled(false);
             }
         }
     }
 
-    public void clickOpen(View v) {
-        final CloudData cloudData = trackFile.getCloudData();
-        if(cloudData != null) {
-            // Open web app
-            firebaseAnalytics.logEvent("click_track_open", null);
-            Intents.openTrackUrl(this, cloudData.trackUrl);
-        } else {
-            // Start upload
-            firebaseAnalytics.logEvent("click_track_sync", null);
-            getAuthToken(new Callback<String>() {
-                @Override
-                public void apply(String authToken) {
-                    Toast.makeText(TrackActivity.this, "Syncing track...", Toast.LENGTH_SHORT).show();
-                    TheCloud.upload(trackFile, authToken, new Callback<CloudData>() {
-                        @Override
-                        public void apply(CloudData cloudData) {
-                            updateViews();
-                            Toast.makeText(TrackActivity.this, "Track sync success", Toast.LENGTH_LONG).show();
-                        }
-                        @Override
-                        public void error(String error) {
-                            Log.e(TAG, "Failed to upload track: " + error);
-                            Toast.makeText(TrackActivity.this, "Track sync failed", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-                @Override
-                public void error(String error) {
-                    Toast.makeText(TrackActivity.this, "Failed to get auth token", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-    }
-
-    public void clickKml(View v) {
-        firebaseAnalytics.logEvent("click_track_kml", null);
-        final CloudData cloudData = trackFile.getCloudData();
-        if(cloudData != null) {
-            // Open web app
-            Intents.openTrackKml(this, cloudData.trackKml);
-        } else {
-            Toast.makeText(getApplicationContext(), "Track not synced", Toast.LENGTH_SHORT).show();
-        }
+    public void clickSync(View v) {
+        // Start upload
+        firebaseAnalytics.logEvent("click_track_sync", null);
+        getAuthToken(new Callback<String>() {
+            @Override
+            public void apply(String authToken) {
+                Toast.makeText(getApplicationContext(), "Syncing track...", Toast.LENGTH_SHORT).show();
+                TheCloud.upload(trackFile, authToken, new Callback<TrackData>() {
+                    @Override
+                    public void apply(TrackData cloudData) {
+                        updateViews();
+                        Toast.makeText(getApplicationContext(), "Track sync success", Toast.LENGTH_LONG).show();
+                    }
+                    @Override
+                    public void error(String error) {
+                        Log.e(TAG, "Failed to upload track: " + error);
+                        Toast.makeText(getApplicationContext(), "Track sync failed", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            @Override
+            public void error(String error) {
+                Toast.makeText(getApplicationContext(), "Failed to get auth token", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void clickDelete(View v) {
         firebaseAnalytics.logEvent("click_track_delete_1", null);
-        final int deleteConfirmMessage = (trackFile.getCloudData() == null)? R.string.delete_local : R.string.delete_remote;
         alertDialog = new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setTitle("Delete this track?")
-            .setMessage(deleteConfirmMessage)
+            .setMessage(R.string.delete_local)
             .setPositiveButton("Delete", this)
             .setNegativeButton("Cancel", null)
             .show();
@@ -201,14 +165,18 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSyncEvent(SyncEvent event) {
+    public void onSyncEvent(SyncEvent.UploadSuccess event) {
+        if(event.trackFile.getName().equals(trackFile.getName())) {
+            // Track uploaded, open TrackActivity
+            Intents.openTrackDataActivity(this, event.trackData);
+            finish();
+        }
         updateViews();
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAuthEvent(AuthEvent event) {
         // Update sign in panel state
-        if(event == AuthEvent.SIGNED_IN || trackFile.getCloudData() != null) {
-            // Hide panel if track already synced
+        if(event == AuthEvent.SIGNED_IN) {
             signInPanel.setVisibility(View.GONE);
         } else if(event == AuthEvent.SIGNING_IN) {
             signInButton.setEnabled(false);

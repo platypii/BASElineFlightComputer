@@ -37,7 +37,7 @@ class TrackDelete {
             Log.i(TAG, "Track delete successful: " + track.track_id);
             // Update track list
             TheCloud.invalidateCache();
-            TheCloud.list(auth, true);
+            TheCloud.listAsync(auth, true);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteSuccess(track.track_id));
         } catch(IOException e) {

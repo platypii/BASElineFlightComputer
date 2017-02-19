@@ -47,10 +47,17 @@ public class TheCloud {
         }
     }
 
-    static void updateCache(String trackListJson) {
+    static void updateCache(List<TrackData> trackList) {
+        final String trackListJson = TrackListing.toJson(trackList);
         final SharedPreferences.Editor editor = Services.prefs.edit();
         editor.putString(TheCloud.CACHE_TRACK_LIST, trackListJson);
         editor.apply();
+    }
+
+    static void addTrackData(TrackData trackData) {
+        final List<TrackData> trackList = listCached();
+        trackList.add(trackData);
+        updateCache(trackList);
     }
 
     /**
@@ -66,7 +73,7 @@ public class TheCloud {
     /**
      * Query baseline server for track listing asynchronously
      */
-    public static void list(@NonNull String auth, boolean force) {
+    public static void listAsync(@NonNull String auth, boolean force) {
         // Compute time since last update
         final long lastUpdate = System.currentTimeMillis() - Services.prefs.getLong(CACHE_DATE, 0);
         if(force || TRACK_LIST_TTL < lastUpdate) {
@@ -81,7 +88,7 @@ public class TheCloud {
         }
     }
 
-    public static void upload(TrackFile trackFile, String auth, Callback<CloudData> cb) {
+    public static void upload(TrackFile trackFile, String auth, Callback<TrackData> cb) {
         new UploadTask(trackFile, auth, cb).execute();
     }
 

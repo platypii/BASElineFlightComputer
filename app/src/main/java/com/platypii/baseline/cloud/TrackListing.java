@@ -43,7 +43,7 @@ class TrackListing {
             final List<TrackData> trackList = listRemote(auth);
             success = true;
             // Save track listing to local cache
-            TheCloud.updateCache(toJson(trackList));
+            TheCloud.updateCache(trackList);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.ListingSuccess());
 
@@ -102,7 +102,7 @@ class TrackListing {
     /**
      * Stringify a list of track data into a json string
      */
-    private static String toJson(List<TrackData> trackList) {
+    static String toJson(List<TrackData> trackList) {
         final JSONArray arr = new JSONArray();
         for(TrackData track : trackList) {
             final JSONObject trackObj = track.toJson();

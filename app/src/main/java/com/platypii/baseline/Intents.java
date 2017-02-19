@@ -1,6 +1,5 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
 import android.content.ActivityNotFoundException;
@@ -30,8 +29,13 @@ public class Intents {
 
     /** Open track url in browser */
     static void openTrackUrl(@NonNull Context context, String url) {
-        final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        context.startActivity(browserIntent);
+        if(url != null && !url.isEmpty()) {
+            Log.i(TAG, "Opening track url " + url);
+            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            context.startActivity(intent);
+        } else {
+            Log.e(TAG, "Cannot open missing track url");
+        }
     }
 
     /** Open track as KML in google earth */

@@ -1,11 +1,21 @@
 package com.platypii.baseline.events;
 
+import com.platypii.baseline.tracks.TrackData;
+import com.platypii.baseline.tracks.TrackFile;
+
 /**
  * Indicates that a track upload has completed, or sync status has changed
  */
 public abstract class SyncEvent {
 
-    public static class UploadSuccess extends SyncEvent {}
+    public static class UploadSuccess extends SyncEvent {
+        public TrackFile trackFile;
+        public TrackData trackData;
+        public UploadSuccess(TrackFile trackFile, TrackData trackData) {
+            this.trackFile = trackFile;
+            this.trackData = trackData;
+        }
+    }
     public static class UploadFailure extends SyncEvent {
         public final String error;
         public UploadFailure(String error) {

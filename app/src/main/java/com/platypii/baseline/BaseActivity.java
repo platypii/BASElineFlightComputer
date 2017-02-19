@@ -188,7 +188,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
             // Log.d(TAG, "Got id token " + idToken);
 
             // Update track listing
-            TheCloud.list(account.getIdToken(), false);
+            TheCloud.listAsync(account.getIdToken(), false);
 
             // Notify listeners
             EventBus.getDefault().post(AuthEvent.SIGNED_IN);

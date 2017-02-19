@@ -1,8 +1,6 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.CloudData;
-import android.content.SharedPreferences;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 import java.io.File;
@@ -17,8 +15,6 @@ public class TrackFile {
     // TrackFile info
     public final File file;
 
-    private CloudData cloudData;
-
     public TrackFile(File file) {
         this.file = file;
     }
@@ -28,37 +24,10 @@ public class TrackFile {
     }
 
     /**
-     * Returns cloud url info, if this track has been uploaded.
-     * Will not initialize an upload, and will get cached, safe to use whenever.
+     * Return true iff track was synced and saved in preferences in BASEline 2.x
      */
-    public CloudData getCloudData() {
-        if(cloudData != null) {
-            return cloudData;
-        } else {
-            if(Services.prefs != null) {
-                // Get from KV store
-                final String trackUrl = Services.prefs.getString(cacheKey(), null);
-                if (trackUrl != null) {
-                    final String trackKml = Services.prefs.getString(cacheKey() + ".trackKml", null);
-                    cloudData = new CloudData(trackUrl, trackKml);
-                    return cloudData;
-                } else {
-                    // Not in KV store, not uploaded
-                    return null;
-                }
-            } else {
-                // KV store not initialized?
-                return null;
-            }
-        }
-    }
-
-    public void setCloudData(CloudData cloudData) {
-        final SharedPreferences.Editor editor = Services.prefs.edit();
-        editor.putString(cacheKey(), cloudData.trackUrl);
-        editor.putString(cacheKey() + ".trackKml", cloudData.trackKml);
-        editor.commit();
-        this.cloudData = cloudData;
+    boolean isSyncedV2() {
+        return Services.prefs.getString(cacheKey(), null) != null;
     }
 
     public String getName() {
@@ -90,12 +59,7 @@ public class TrackFile {
 
     /** Delete local track file */
     public boolean delete() {
-        if(file.delete()) {
-            cloudData = null;
-            return true;
-        } else {
-            return false;
-        }
+        return file.delete();
     }
 
     /**

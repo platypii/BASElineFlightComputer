@@ -1,6 +1,7 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Callback;
 import com.platypii.baseline.util.IOUtil;
@@ -12,7 +13,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,34 +23,35 @@ import java.net.URL;
 /**
  * Upload to the cloud
  */
-class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
+class UploadTask extends AsyncTask<Void,Void,Try<TrackData>> {
     private static final String TAG = "UploadTask";
 
     private static final String postUrl = TheCloud.baselineServer + "/tracks";
 
     private final TrackFile trackFile;
     private final String auth;
-    private final Callback<CloudData> cb;
+    private final Callback<TrackData> cb;
 
-    UploadTask(TrackFile trackFile, String auth, Callback<CloudData> cb) {
+    UploadTask(TrackFile trackFile, String auth, Callback<TrackData> cb) {
         this.trackFile = trackFile;
         this.auth = auth;
         this.cb = cb;
     }
 
     @Override
-    protected Try<CloudData> doInBackground(Void... voids) {
+    protected Try<TrackData> doInBackground(Void... voids) {
         Log.i(TAG, "Uploading track with auth " + auth);
-        if(trackFile.getCloudData() != null) {
-            Log.e(TAG, "Track already uploaded");
-        }
         try {
             // Make HTTP request
-            final CloudData result = postTrack(trackFile, auth);
+            final TrackData trackData = postTrack(trackFile, auth);
             // Move track to synced directory
             trackFile.archive();
-            Log.i(TAG, "Upload successful, url " + result.trackUrl);
-            return new Try.Success<>(result);
+            // Add to cache
+            TheCloud.addTrackData(trackData);
+            // Update track listing
+            TheCloud.listAsync(auth, true);
+            Log.i(TAG, "Upload successful, track " + trackData.track_id);
+            return new Try.Success<>(trackData);
         } catch(IOException e) {
             Log.e(TAG, "Failed to upload file", e);
             FirebaseCrash.report(e);
@@ -62,18 +63,16 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
         }
     }
     @Override
-    protected void onPostExecute(Try<CloudData> result) {
+    protected void onPostExecute(Try<TrackData> result) {
         // Notify listeners
         if(result instanceof Try.Success) {
-            EventBus.getDefault().post(new SyncEvent.UploadSuccess());
+            final TrackData trackData = ((Try.Success<TrackData>) result).result;
+            EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, trackData));
             if(cb != null) {
-                final CloudData cloudData = ((Try.Success<CloudData>) result).result;
-                cb.apply(cloudData);
+                cb.apply(trackData);
             }
-            // Update track listing
-            TheCloud.list(auth, true);
         } else {
-            final String error = ((Try.Failure<CloudData>) result).error;
+            final String error = ((Try.Failure<TrackData>) result).error;
             EventBus.getDefault().post(new SyncEvent.UploadFailure(error));
             if(cb != null) {
                 cb.error(error);
@@ -81,7 +80,7 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
         }
     }
 
-    private static CloudData postTrack(TrackFile trackFile, String auth) throws IOException, JSONException {
+    private static TrackData postTrack(TrackFile trackFile, String auth) throws IOException, JSONException {
         final URL url = new URL(postUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Content-Type", "application/gzip");
@@ -106,7 +105,7 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
                 // Read body
                 final String body = IOUtil.toString(conn.getInputStream());
                 final JSONObject jsonObject = new JSONObject(body);
-                return CloudData.fromJson(jsonObject);
+                return TrackData.fromJson(jsonObject);
             } else if(status == 401) {
                 throw new IOException("authorization required");
             } else {

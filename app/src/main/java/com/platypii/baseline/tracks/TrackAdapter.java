@@ -35,10 +35,10 @@ public class TrackAdapter extends BaseAdapter {
         int num_synced = 0;
         int num_unsynced = 0;
         for(TrackFile jump : trackFiles) {
-            if(jump.getCloudData() == null) {
-                num_unsynced++;
-            } else {
+            if(jump.isSyncedV2()) {
                 num_synced++;
+            } else {
+                num_unsynced++;
             }
         }
         final List<ListItem> items = new ArrayList<>();
@@ -46,7 +46,7 @@ public class TrackAdapter extends BaseAdapter {
         if(num_unsynced > 0) {
             items.add(new ListHeader("Not synced (local only)"));
             for (TrackFile trackFile : trackFiles) {
-                if (trackFile.getCloudData() == null) {
+                if (!trackFile.isSyncedV2()) {
                     items.add(new ListTrackFile(trackFile));
                 }
             }
@@ -55,7 +55,7 @@ public class TrackAdapter extends BaseAdapter {
         if(num_synced > 0) {
             items.add(new ListHeader("Synced"));
             for (TrackFile trackFile : trackFiles) {
-                if (trackFile.getCloudData() != null) {
+                if (trackFile.isSyncedV2()) {
                     items.add(new ListTrackFile(trackFile));
                 }
             }

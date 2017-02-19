@@ -21,11 +21,12 @@ public class MigrateTracks {
             Log.w(TAG, "Migrating tracks to v3");
             final SharedPreferences.Editor editor = Services.prefs.edit();
             for(TrackFile trackFile : TrackFiles.getTracks(context)) {
-                if(trackFile.getCloudData() != null) {
+                if(trackFile.isSyncedV2()) {
                     Log.w(TAG, "Moving track " + trackFile.getName());
                     trackFile.archive();
-                    // TODO: Delete from preferences
+                    // Delete from preferences
                     editor.remove(trackFile.cacheKey());
+                    editor.remove(trackFile.cacheKey() + ".trackKml");
                 }
             }
             editor.putInt(PREF_MIGRATE_VERSION, 3);
