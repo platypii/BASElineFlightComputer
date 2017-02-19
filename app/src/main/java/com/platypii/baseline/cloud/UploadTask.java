@@ -47,8 +47,8 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
         try {
             // Make HTTP request
             final CloudData result = postTrack(trackFile, auth);
-            // Save cloud data
-            trackFile.setCloudData(result);
+            // Move track to synced directory
+            trackFile.archive();
             Log.i(TAG, "Upload successful, url " + result.trackUrl);
             return new Try.Success<>(result);
         } catch(IOException e) {
@@ -104,10 +104,7 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
                 // Read body
                 final String body = IOUtil.toString(conn.getInputStream());
                 final JSONObject jsonObject = new JSONObject(body);
-                final CloudData cloudData = CloudData.fromJson(jsonObject);
-                // TODO: Move track to synced directory
-//                moveTrackFile(trackFile);
-                return cloudData;
+                return CloudData.fromJson(jsonObject);
             } else if(status == 401) {
                 throw new IOException("authorization required");
             } else {
@@ -116,17 +113,6 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
         } finally {
             conn.disconnect();
         }
-    }
-
-    private static void moveTrackFile(TrackFile trackFile) {
-        // Ensure synced directory exists
-        final File syncedDir = new File(trackFile.file.getParentFile(), "synced");
-        if(!syncedDir.exists()) {
-            syncedDir.mkdir();
-        }
-        // Move track file to synced directory
-        final File destination = new File(syncedDir, trackFile.file.getName());
-        trackFile.file.renameTo(destination);
     }
 
 }

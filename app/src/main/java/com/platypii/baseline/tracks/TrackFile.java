@@ -23,7 +23,7 @@ public class TrackFile {
         this.file = file;
     }
 
-    private String cacheKey() {
+    String cacheKey() {
         return "track." + file.getName();
     }
 
@@ -96,6 +96,20 @@ public class TrackFile {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Move the track file to synced directory
+     */
+    public void archive() {
+        // Ensure synced directory exists
+        final File syncedDir = new File(file.getParentFile(), "synced");
+        if(!syncedDir.exists()) {
+            syncedDir.mkdir();
+        }
+        // Move track file to synced directory
+        final File destination = new File(syncedDir, file.getName());
+        file.renameTo(destination);
     }
 
     @Override

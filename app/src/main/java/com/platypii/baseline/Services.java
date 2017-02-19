@@ -7,6 +7,7 @@ import com.platypii.baseline.jarvis.FlightMode;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.sensors.MySensorManager;
+import com.platypii.baseline.tracks.MigrateTracks;
 import com.platypii.baseline.tracks.TrackLogger;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
@@ -102,6 +103,9 @@ public class Services {
 
             Log.i(TAG, "Starting notification bar service");
             notifications.start(appContext);
+
+            // TODO: Check if migration is necessary
+            // MigrateTracks.migrate(appContext);
 
             Log.i(TAG, "Services started");
         } else {
