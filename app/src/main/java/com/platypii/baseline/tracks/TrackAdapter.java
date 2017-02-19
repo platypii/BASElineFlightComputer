@@ -61,13 +61,13 @@ public class TrackAdapter extends BaseAdapter {
             }
         }
         // Add cloud tracks
-//        final List<TrackData> trackList = TheCloud.listCached();
-//        if(trackList != null && !trackList.isEmpty()) {
-//            items.add(new ListHeader("Synced"));
-//            for(TrackData trackData : trackList) {
-//                items.add(new ListTrackData(trackData));
-//            }
-//        }
+        final List<TrackData> trackList = TheCloud.listCached();
+        if(trackList != null && !trackList.isEmpty()) {
+            items.add(new ListHeader("Synced"));
+            for(TrackData trackData : trackList) {
+                items.add(new ListTrackData(trackData));
+            }
+        }
         return items;
     }
 

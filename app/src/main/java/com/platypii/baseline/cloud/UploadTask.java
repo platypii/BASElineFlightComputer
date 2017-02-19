@@ -70,6 +70,8 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
                 final CloudData cloudData = ((Try.Success<CloudData>) result).result;
                 cb.apply(cloudData);
             }
+            // Update track listing
+            TheCloud.list(auth, true);
         } else {
             final String error = ((Try.Failure<CloudData>) result).error;
             EventBus.getDefault().post(new SyncEvent.UploadFailure(error));

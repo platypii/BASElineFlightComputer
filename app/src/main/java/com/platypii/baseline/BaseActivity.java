@@ -1,5 +1,6 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.cloud.TheCloud;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.util.Callback;
 import android.Manifest;
@@ -185,6 +186,9 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
 
             // final String idToken = account.getIdToken();
             // Log.d(TAG, "Got id token " + idToken);
+
+            // Update track listing
+            TheCloud.list(account.getIdToken(), false);
 
             // Notify listeners
             EventBus.getDefault().post(AuthEvent.SIGNED_IN);
