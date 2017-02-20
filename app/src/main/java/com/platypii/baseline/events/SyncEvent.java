@@ -9,8 +9,8 @@ import com.platypii.baseline.tracks.TrackFile;
 public abstract class SyncEvent {
 
     public static class UploadSuccess extends SyncEvent {
-        public TrackFile trackFile;
-        public TrackData trackData;
+        public final TrackFile trackFile;
+        public final TrackData trackData;
         public UploadSuccess(TrackFile trackFile, TrackData trackData) {
             this.trackFile = trackFile;
             this.trackData = trackData;

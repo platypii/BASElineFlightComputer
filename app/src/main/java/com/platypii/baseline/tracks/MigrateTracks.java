@@ -22,7 +22,7 @@ public class MigrateTracks {
             final SharedPreferences.Editor editor = Services.prefs.edit();
             for(TrackFile trackFile : TrackFiles.getTracks(context)) {
                 if(trackFile.isSyncedV2()) {
-                    Log.w(TAG, "Moving track " + trackFile.getName());
+                    Log.w(TAG, "Archiving " + trackFile.file.getName());
                     trackFile.archive();
                     // Delete from preferences
                     editor.remove(trackFile.cacheKey());

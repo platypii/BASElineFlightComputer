@@ -104,8 +104,8 @@ public class Services {
             Log.i(TAG, "Starting notification bar service");
             notifications.start(appContext);
 
-            // TODO: Check if migration is necessary
-            // MigrateTracks.migrate(appContext);
+            // Check if migration is necessary
+            MigrateTracks.migrate(appContext);
 
             Log.i(TAG, "Services started");
         } else {

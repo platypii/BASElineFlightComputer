@@ -120,6 +120,10 @@ public class TrackLogger implements MyLocationListener, MySensorListener {
 
         // gzip log file
         logFile = new File(logDir, "track_" + timestamp + ".csv.gz");
+        // Avoid file conflicts
+        for(int i = 2; logFile.exists(); i++) {
+            logFile = new File(logDir, "track_" + timestamp + "_" + i + ".csv.gz");
+        }
         log = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(logFile))));
 
         // Write header

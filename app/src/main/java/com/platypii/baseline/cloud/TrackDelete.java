@@ -36,7 +36,6 @@ class TrackDelete {
             deleteRemote(auth, track.trackUrl);
             Log.i(TAG, "Track delete successful: " + track.track_id);
             // Update track list
-            TheCloud.invalidateCache();
             TheCloud.listAsync(auth, true);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteSuccess(track.track_id));

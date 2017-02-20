@@ -30,6 +30,10 @@ public class Intents {
     /** Open track url in browser */
     static void openTrackUrl(@NonNull Context context, String url) {
         if(url != null && !url.isEmpty()) {
+            // Add mobile flag
+            if(!url.contains("?")) {
+                url += "?mobile";
+            }
             Log.i(TAG, "Opening track url " + url);
             final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             context.startActivity(intent);

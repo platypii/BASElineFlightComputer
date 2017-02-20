@@ -112,7 +112,7 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
 
     // Listen for deletion of this track
     @Subscribe(threadMode = ThreadMode.MAIN)
-    private void onDeleteSuccess(SyncEvent.DeleteSuccess event) {
+    public void onDeleteSuccess(SyncEvent.DeleteSuccess event) {
         if(event.track_id.equals(track.track_id)) {
             // Notify user
             Toast.makeText(getApplicationContext(), "Deleted track", Toast.LENGTH_LONG).show();
@@ -121,10 +121,18 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    private void onDeleteFailure(SyncEvent.DeleteFailure event) {
+    public void onDeleteFailure(SyncEvent.DeleteFailure event) {
         if(event.track_id.equals(track.track_id)) {
             // Notify user
-            Toast.makeText(getApplicationContext(), "Track delete failed: " + event.error, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Track delete failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAuthEvent(AuthEvent event) {
+        // If user gets signed out, close the track activity
+        if(event == AuthEvent.SIGNED_OUT) {
+            Log.i(TAG, "User signed out, closing cloud track");
+            finish();
         }
     }
 
@@ -143,14 +151,6 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
         if(alertDialog != null) {
             alertDialog.dismiss();
             alertDialog = null;
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAuthEvent(AuthEvent event) {
-        // If user gets signed out, close the track activity
-        if(event == AuthEvent.SIGNED_OUT) {
-            finish();
         }
     }
 

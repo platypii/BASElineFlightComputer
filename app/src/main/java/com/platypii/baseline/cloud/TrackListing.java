@@ -37,11 +37,9 @@ class TrackListing {
      * Notify listeners and handle exceptions
      */
     private static void listTracks(String auth) {
-        boolean success = false;
         try {
             // Make HTTP request
             final List<TrackData> trackList = listRemote(auth);
-            success = true;
             // Save track listing to local cache
             TheCloud.updateCache(trackList);
             // Notify listeners
@@ -54,10 +52,6 @@ class TrackListing {
         } catch(JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
             FirebaseCrash.report(e);
-        }
-        if(!success) {
-            // Reset last updated time on failure
-            TheCloud.invalidateCache();
         }
     }
 

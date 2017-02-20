@@ -5,15 +5,19 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.cloud.TheCloud;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import com.google.firebase.crash.FirebaseCrash;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TrackAdapter extends BaseAdapter {
+    private static final String TAG = "TrackAdapter";
+
     // Item types
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_TRACK_FILE = 1;
@@ -31,33 +35,16 @@ public class TrackAdapter extends BaseAdapter {
     }
 
     private static List<ListItem> populateItems(List<TrackFile> trackFiles) {
-        // Count synced and not synced
-        int num_synced = 0;
-        int num_unsynced = 0;
-        for(TrackFile jump : trackFiles) {
-            if(jump.isSyncedV2()) {
-                num_synced++;
-            } else {
-                num_unsynced++;
-            }
-        }
         final List<ListItem> items = new ArrayList<>();
         // Add Unsynced tracks
-        if(num_unsynced > 0) {
+        if(!trackFiles.isEmpty()) {
             items.add(new ListHeader("Not synced (local only)"));
             for (TrackFile trackFile : trackFiles) {
-                if (!trackFile.isSyncedV2()) {
-                    items.add(new ListTrackFile(trackFile));
-                }
-            }
-        }
-        // Add synced tracks
-        if(num_synced > 0) {
-            items.add(new ListHeader("Synced"));
-            for (TrackFile trackFile : trackFiles) {
                 if (trackFile.isSyncedV2()) {
-                    items.add(new ListTrackFile(trackFile));
+                    Log.e(TAG, "Synced tracks should have been archived");
+                    FirebaseCrash.report(new Exception("Synced tracks should have been archived"));
                 }
+                items.add(new ListTrackFile(trackFile));
             }
         }
         // Add cloud tracks

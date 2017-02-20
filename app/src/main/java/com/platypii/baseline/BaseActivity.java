@@ -179,16 +179,16 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
             account = result.getSignInAccount();
             if(account != null) {
                 Log.i(TAG, "Sign in successful for user " + account.getDisplayName());
+
+                // final String authCode = account.getServerAuthCode();
+                // Log.d(TAG, "Got auth code " + authCode);
+
+                // final String idToken = account.getIdToken();
+                // Log.d(TAG, "Got id token " + idToken);
+
+                // Update track listing
+                TheCloud.listAsync(account.getIdToken(), false);
             }
-
-            // final String authCode = account.getServerAuthCode();
-            // Log.d(TAG, "Got auth code " + authCode);
-
-            // final String idToken = account.getIdToken();
-            // Log.d(TAG, "Got id token " + idToken);
-
-            // Update track listing
-            TheCloud.listAsync(account.getIdToken(), false);
 
             // Notify listeners
             EventBus.getDefault().post(AuthEvent.SIGNED_IN);
@@ -197,6 +197,8 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
             }
         } else {
             Log.w(TAG, "Sign in failed");
+            // Clear track listing
+            TheCloud.signOut();
             // Notify listeners
             EventBus.getDefault().post(AuthEvent.SIGNED_OUT);
             if(userClickedSignIn) {
@@ -209,7 +211,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Log.i(TAG, "Not signed in");
+        Log.i(TAG, "Not signed in - connection failed");
     }
 
     /** Get google auth token and return asynchronously via callback */
