@@ -2,7 +2,8 @@ package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
-import com.platypii.baseline.cloud.TheCloud;
+import com.platypii.baseline.cloud.BaselineCloud;
+import com.platypii.baseline.cloud.CloudData;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -48,10 +49,10 @@ public class TrackAdapter extends BaseAdapter {
             }
         }
         // Add cloud tracks
-        final List<TrackData> trackList = TheCloud.listCached();
+        final List<CloudData> trackList = BaselineCloud.listCached();
         if(trackList != null && !trackList.isEmpty()) {
             items.add(new ListHeader("Synced"));
-            for(TrackData trackData : trackList) {
+            for(CloudData trackData : trackList) {
                 items.add(new ListTrackData(trackData));
             }
         }
@@ -91,7 +92,7 @@ public class TrackAdapter extends BaseAdapter {
                 itemSizeView.setText(trackFile.getSize());
                 break;
             case TYPE_TRACK_DATA:
-                final TrackData trackData = ((ListTrackData) item).track;
+                final CloudData trackData = ((ListTrackData) item).track;
                 final TextView itemNameView2 = (TextView) convertView.findViewById(R.id.list_item_name);
                 final TextView itemSizeView2 = (TextView) convertView.findViewById(R.id.list_item_subtitle);
                 itemNameView2.setText(trackData.date_string);
@@ -122,7 +123,7 @@ public class TrackAdapter extends BaseAdapter {
                 Intents.openTrackActivity(context, trackFile);
                 break;
             case TYPE_TRACK_DATA:
-                final TrackData trackData = ((ListTrackData) item).track;
+                final CloudData trackData = ((ListTrackData) item).track;
                 Intents.openTrackDataActivity(context, trackData);
                 break;
         }
@@ -175,8 +176,8 @@ public class TrackAdapter extends BaseAdapter {
     }
 
     private static class ListTrackData implements ListItem {
-        final TrackData track;
-        ListTrackData(TrackData track) {
+        final CloudData track;
+        ListTrackData(CloudData track) {
             this.track = track;
         }
         public int getType() {

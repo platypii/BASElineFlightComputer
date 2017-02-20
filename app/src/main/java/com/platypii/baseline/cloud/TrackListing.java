@@ -1,7 +1,6 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.events.SyncEvent;
-import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.IOUtil;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -39,9 +38,9 @@ class TrackListing {
     private static void listTracks(String auth) {
         try {
             // Make HTTP request
-            final List<TrackData> trackList = listRemote(auth);
+            final List<CloudData> trackList = listRemote(auth);
             // Save track listing to local cache
-            TheCloud.updateCache(trackList);
+            BaselineCloud.updateCache(trackList);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.ListingSuccess());
 
@@ -58,8 +57,8 @@ class TrackListing {
     /**
      * Send http request to BASEline server for track listing
      */
-    private static List<TrackData> listRemote(String auth) throws IOException, JSONException {
-        final URL url = new URL(TheCloud.listUrl);
+    private static List<CloudData> listRemote(String auth) throws IOException, JSONException {
+        final URL url = new URL(BaselineCloud.listUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", auth);
         try {
@@ -82,12 +81,12 @@ class TrackListing {
     /**
      * Parse a json string into a list of track data
      */
-    static List<TrackData> fromJson(String json) throws JSONException {
-        final ArrayList<TrackData> listing = new ArrayList<>();
+    static List<CloudData> fromJson(String json) throws JSONException {
+        final ArrayList<CloudData> listing = new ArrayList<>();
         final JSONArray arr = new JSONArray(json);
         for(int i = 0; i < arr.length(); i++) {
             final JSONObject jsonObject = arr.getJSONObject(i);
-            final TrackData cloudData = TrackData.fromJson(jsonObject);
+            final CloudData cloudData = CloudData.fromJson(jsonObject);
             listing.add(cloudData);
         }
         return listing;
@@ -96,9 +95,9 @@ class TrackListing {
     /**
      * Stringify a list of track data into a json string
      */
-    static String toJson(List<TrackData> trackList) {
+    static String toJson(List<CloudData> trackList) {
         final JSONArray arr = new JSONArray();
-        for(TrackData track : trackList) {
+        for(CloudData track : trackList) {
             final JSONObject trackObj = track.toJson();
             arr.put(trackObj);
         }

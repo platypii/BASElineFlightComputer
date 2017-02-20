@@ -1,6 +1,6 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.tracks.TrackData;
+import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -21,7 +21,7 @@ public class Intents {
         intent.putExtra(TrackActivity.EXTRA_TRACK_FILE, trackFile.file.getName());
         context.startActivity(intent);
     }
-    public static void openTrackDataActivity(@NonNull Context context, TrackData track) {
+    public static void openTrackDataActivity(@NonNull Context context, CloudData track) {
         final Intent intent = new Intent(context, TrackDataActivity.class);
         intent.putExtra(TrackDataActivity.EXTRA_TRACK_ID, track.track_id);
         context.startActivity(intent);

@@ -113,7 +113,7 @@ public class Services {
         }
 
         // If you wanted to automatically upload any unsynced files, this is how:
-        // TheCloud.uploadAll();
+        // BaselineCloud.uploadAll();
     }
 
     /**

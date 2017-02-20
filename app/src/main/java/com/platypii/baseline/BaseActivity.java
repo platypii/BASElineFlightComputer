@@ -1,6 +1,6 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.cloud.TheCloud;
+import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.util.Callback;
 import android.Manifest;
@@ -187,7 +187,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
                 // Log.d(TAG, "Got id token " + idToken);
 
                 // Update track listing
-                TheCloud.listAsync(account.getIdToken(), false);
+                BaselineCloud.listAsync(account.getIdToken(), false);
             }
 
             // Notify listeners
@@ -198,7 +198,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
         } else {
             Log.w(TAG, "Sign in failed");
             // Clear track listing
-            TheCloud.signOut();
+            BaselineCloud.signOut();
             // Notify listeners
             EventBus.getDefault().post(AuthEvent.SIGNED_OUT);
             if(userClickedSignIn) {

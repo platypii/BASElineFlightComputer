@@ -1,9 +1,9 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.cloud.TheCloud;
+import com.platypii.baseline.cloud.BaselineCloud;
+import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
-import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.Callback;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -23,7 +23,7 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
 
     private AlertDialog alertDialog;
 
-    private TrackData track;
+    private CloudData track;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
         final Bundle extras = getIntent().getExtras();
         if(extras != null && extras.getString(EXTRA_TRACK_ID) != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
-            track = TheCloud.getCached(track_id);
+            track = BaselineCloud.getCached(track_id);
         } else {
             Log.e(TAG, "Failed to load track_id from extras");
         }
@@ -98,7 +98,7 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
             getAuthToken(new Callback<String>() {
                 @Override
                 public void apply(String authToken) {
-                    TheCloud.deleteTrack(track, authToken);
+                    BaselineCloud.deleteTrack(track, authToken);
                 }
                 @Override
                 public void error(String error) {

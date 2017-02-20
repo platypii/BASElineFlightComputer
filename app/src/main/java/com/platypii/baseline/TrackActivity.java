@@ -1,9 +1,9 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.cloud.TheCloud;
+import com.platypii.baseline.cloud.BaselineCloud;
+import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
-import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackFiles;
 import com.platypii.baseline.util.Callback;
@@ -85,9 +85,9 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
             @Override
             public void apply(String authToken) {
                 Toast.makeText(getApplicationContext(), "Syncing track...", Toast.LENGTH_SHORT).show();
-                TheCloud.upload(trackFile, authToken, new Callback<TrackData>() {
+                BaselineCloud.upload(trackFile, authToken, new Callback<CloudData>() {
                     @Override
-                    public void apply(TrackData cloudData) {
+                    public void apply(CloudData cloudData) {
                         updateViews();
                         Toast.makeText(getApplicationContext(), "Track sync success", Toast.LENGTH_LONG).show();
                     }
@@ -168,7 +168,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     public void onSyncEvent(SyncEvent.UploadSuccess event) {
         if(event.trackFile.getName().equals(trackFile.getName())) {
             // Track uploaded, open TrackActivity
-            Intents.openTrackDataActivity(this, event.trackData);
+            Intents.openTrackDataActivity(this, event.cloudData);
             finish();
         }
         updateViews();

@@ -1,6 +1,6 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.cloud.TheCloud;
+import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.events.SyncEvent;
@@ -122,7 +122,7 @@ public class MainActivity extends BaseActivity {
             getAuthToken(new Callback<String>() {
                 @Override
                 public void apply(String authToken) {
-                    TheCloud.upload(jump, authToken, null);
+                    BaselineCloud.upload(jump, authToken, null);
                 }
                 @Override
                 public void error(String error) {

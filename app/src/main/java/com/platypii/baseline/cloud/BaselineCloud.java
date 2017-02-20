@@ -1,7 +1,6 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.Services;
-import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Callback;
 import android.content.SharedPreferences;
@@ -11,11 +10,11 @@ import com.google.firebase.crash.FirebaseCrash;
 import org.json.JSONException;
 import java.util.List;
 
-public class TheCloud {
-    private static final String TAG = "TheCloud";
+public class BaselineCloud {
+    private static final String TAG = "BaselineCloud";
 
     static final String baselineServer = "https://base-line.ws";
-    static final String listUrl = TheCloud.baselineServer + "/v1/tracks";
+    static final String listUrl = BaselineCloud.baselineServer + "/v1/tracks";
 
     // Track list local cache
     private static final String CACHE_LAST_REQUEST = "cloud.track_list.request_time";
@@ -26,10 +25,10 @@ public class TheCloud {
     // Maximum lifetime of a successful track listing
     private static final long UPDATE_TTL = 5 * 60 * 1000; // milliseconds
 
-    public static TrackData getCached(String track_id) {
-        final List<TrackData> tracks = listCached();
+    public static CloudData getCached(String track_id) {
+        final List<CloudData> tracks = listCached();
         if(tracks != null) {
-            for(TrackData track : tracks) {
+            for(CloudData track : tracks) {
                 if(track.track_id.equals(track_id)) {
                     return track;
                 }
@@ -38,7 +37,7 @@ public class TheCloud {
         return null;
     }
 
-    public static List<TrackData> listCached() {
+    public static List<CloudData> listCached() {
         final String jsonString = Services.prefs.getString(CACHE_TRACK_LIST, null);
         if(jsonString != null) {
             try {
@@ -52,7 +51,7 @@ public class TheCloud {
         }
     }
 
-    static void updateCache(List<TrackData> trackList) {
+    static void updateCache(List<CloudData> trackList) {
         final String trackListJson = TrackListing.toJson(trackList);
         final SharedPreferences.Editor editor = Services.prefs.edit();
         editor.putLong(CACHE_LAST_UPDATE, System.currentTimeMillis());
@@ -60,8 +59,8 @@ public class TheCloud {
         editor.apply();
     }
 
-    static void addTrackData(TrackData trackData) {
-        final List<TrackData> trackList = listCached();
+    static void addTrackData(CloudData trackData) {
+        final List<CloudData> trackList = listCached();
         if(trackList != null) {
             trackList.add(trackData);
             updateCache(trackList);
@@ -103,11 +102,11 @@ public class TheCloud {
         }
     }
 
-    public static void upload(TrackFile trackFile, String auth, Callback<TrackData> cb) {
+    public static void upload(TrackFile trackFile, String auth, Callback<CloudData> cb) {
         new UploadTask(trackFile, auth, cb).execute();
     }
 
-    public static void deleteTrack(TrackData track, String auth) {
+    public static void deleteTrack(CloudData track, String auth) {
         // Delete track on server
         TrackDelete.deleteAsync(auth, track);
     }

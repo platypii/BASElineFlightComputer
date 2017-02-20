@@ -1,7 +1,6 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.events.SyncEvent;
-import com.platypii.baseline.tracks.TrackData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -17,7 +16,7 @@ import java.net.URL;
 class TrackDelete {
     private static final String TAG = "TrackDelete";
 
-    static void deleteAsync(@NonNull final String auth, final TrackData track) {
+    static void deleteAsync(@NonNull final String auth, final CloudData track) {
         Log.i(TAG, "Deleting track " + track.track_id);
         AsyncTask.execute(new Runnable() {
             @Override
@@ -30,13 +29,13 @@ class TrackDelete {
     /**
      * Notify listeners and handle exceptions
      */
-    private static void delete(String auth, TrackData track) {
+    private static void delete(String auth, CloudData track) {
         try {
             // Make HTTP request
             deleteRemote(auth, track.trackUrl);
             Log.i(TAG, "Track delete successful: " + track.track_id);
             // Update track list
-            TheCloud.listAsync(auth, true);
+            BaselineCloud.listAsync(auth, true);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteSuccess(track.track_id));
         } catch(IOException e) {

@@ -1,10 +1,9 @@
 package com.platypii.baseline.tracks;
 
+import com.platypii.baseline.Services;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-
-import com.platypii.baseline.Services;
 
 /**
  * Move files from the track directory into the synced directory

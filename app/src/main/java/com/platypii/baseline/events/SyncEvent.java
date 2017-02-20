@@ -1,6 +1,6 @@
 package com.platypii.baseline.events;
 
-import com.platypii.baseline.tracks.TrackData;
+import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
 
 /**
@@ -10,10 +10,10 @@ public abstract class SyncEvent {
 
     public static class UploadSuccess extends SyncEvent {
         public final TrackFile trackFile;
-        public final TrackData trackData;
-        public UploadSuccess(TrackFile trackFile, TrackData trackData) {
+        public final CloudData cloudData;
+        public UploadSuccess(TrackFile trackFile, CloudData cloudData) {
             this.trackFile = trackFile;
-            this.trackData = trackData;
+            this.cloudData = cloudData;
         }
     }
     public static class UploadFailure extends SyncEvent {
