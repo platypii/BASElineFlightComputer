@@ -34,7 +34,7 @@
             android:layout_weight="1"
             android:layout_margin="5dp"
             android:onClick="clickExport"
-            android:drawableTop="@drawable/button_export"
+            android:drawableTop="@drawable/share"
             android:text="@string/action_export"
             style="@style/Widget.AppCompat.Button.Borderless" />
 
@@ -45,7 +45,7 @@
             android:layout_weight="1"
             android:layout_margin="5dp"
             android:onClick="clickDelete"
-            android:drawableTop="@drawable/button_delete"
+            android:drawableTop="@drawable/delete"
             android:text="@string/action_delete"
             style="@style/Widget.AppCompat.Button.Borderless" />
 
