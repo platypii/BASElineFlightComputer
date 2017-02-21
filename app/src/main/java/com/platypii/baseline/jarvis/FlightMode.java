@@ -54,7 +54,7 @@ public class FlightMode implements MyLocationListener {
         } else if(climb < -13) {
             // Falling at least 30 mph
             return MODE_FREEFALL;
-        } else if(-9 < climb && climb < 1.1 && groundSpeed < 25) {
+        } else if(-9 < climb && climb < -1.1 && groundSpeed < 25) {
             // Descending at least 2-20mph, speed less than 55mph
             return MODE_CANOPY;
         } else if(-1.1 < climb && climb < 1.1 && groundSpeed < 32) {

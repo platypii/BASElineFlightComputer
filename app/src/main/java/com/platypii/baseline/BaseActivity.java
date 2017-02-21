@@ -141,6 +141,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
                         Toast.makeText(BaseActivity.this, R.string.signout_success, Toast.LENGTH_LONG).show();
 
                         account = null;
+                        BaselineCloud.signOut();
 
                         // Notify listeners
                         EventBus.getDefault().post(AuthEvent.SIGNED_OUT);

@@ -70,7 +70,7 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
     }
 
     public void clickDelete(View v) {
-        firebaseAnalytics.logEvent("click_track_delete_1", null);
+        firebaseAnalytics.logEvent("click_track_delete_remote_1", null);
         alertDialog = new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setTitle("Delete this track?")
@@ -86,8 +86,8 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if(which == DialogInterface.BUTTON_POSITIVE) {
-            // Delete jump
-            firebaseAnalytics.logEvent("click_track_delete_2", null);
+            // Delete track
+            firebaseAnalytics.logEvent("click_track_delete_remote_2", null);
             deleteRemote();
         }
     }

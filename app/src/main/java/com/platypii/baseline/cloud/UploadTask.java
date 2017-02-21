@@ -85,6 +85,7 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
         conn.setRequestProperty("Content-Type", "application/gzip");
         conn.setRequestProperty("Authorization", auth);
         final long contentLength = trackFile.file.length();
+        // Log.d(TAG, "Uploading file with size " + contentLength);
         try {
             conn.setDoOutput(true);
             // Write to OutputStream

@@ -44,10 +44,10 @@ public class TrackListActivity extends ListActivity {
         listAdapter.notifyDataSetChanged();
 
         // Handle no-tracks case
-        if(trackList.size() > 0) {
-            tracksEmptyLabel.setVisibility(View.GONE);
-        } else {
+        if(listAdapter.isEmpty()) {
             tracksEmptyLabel.setVisibility(View.VISIBLE);
+        } else {
+            tracksEmptyLabel.setVisibility(View.GONE);
         }
 
         // Listen for sync updates

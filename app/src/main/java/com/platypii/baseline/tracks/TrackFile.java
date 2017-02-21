@@ -59,6 +59,7 @@ public class TrackFile {
 
     /** Delete local track file */
     public boolean delete() {
+        Log.w(TAG, "Deleting track file " + file);
         return file.delete();
     }
 
