@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -37,7 +36,7 @@ class Notifications implements Service {
             // Show/update notification
             final Intent baselineIntent = new Intent(context, MainActivity.class);
             final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, baselineIntent, 0);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+            Notification.Builder builder = new Notification.Builder(context)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("BASEline Flight Computer")
                     .setOngoing(true)

@@ -80,12 +80,9 @@ class BluetoothRunnable implements Runnable {
         // Get bluetooth device
         final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(BluetoothService.preferenceDeviceId);
         UUID uuid = DEFAULT_UUID;
-        // TODO: Is the following necessary?
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            final ParcelUuid[] uuids = bluetoothDevice.getUuids();
-            if(uuids != null && uuids.length > 0) {
-                uuid = uuids[0].getUuid();
-            }
+        final ParcelUuid[] uuids = bluetoothDevice.getUuids();
+        if(uuids != null && uuids.length > 0) {
+            uuid = uuids[0].getUuid();
         }
         // Connect to bluetooth device
         Log.i(TAG, "Connecting to bluetooth device: " + bluetoothDevice.getName());
