@@ -39,7 +39,15 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
     static final int MY_PERMISSIONS_REQUEST_LOCATION = 64;
     static final int MY_TTS_DATA_CHECK_CODE = 48;
 
+    // If user didn't click, don't show sign in/out toast
     private boolean userClickedSignIn = false;
+
+    // Sign in panel
+    private View signInPanel;
+    private View signInSpinner;
+
+    // Save last sign in state so that sign in panel doesn't blink
+    private static AuthEvent currentState = null;
 
     protected boolean isSignedIn() {
         return account != null;
@@ -50,6 +58,33 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
             return account.getDisplayName();
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Update sign in state, notify listeners, and update shared UI
+     */
+    private void updateState(AuthEvent event) {
+        currentState = event;
+        // Notify listeners
+        EventBus.getDefault().post(event);
+        // Update sign in panel state
+        if(signInPanel != null) {
+            if (event == AuthEvent.SIGNED_IN) {
+                signInPanel.setVisibility(View.GONE);
+            } else if (event == AuthEvent.SIGNING_IN) {
+                signInSpinner.setVisibility(View.VISIBLE);
+                signInPanel.setVisibility(View.VISIBLE);
+            } else if (event == AuthEvent.SIGNED_OUT) {
+                signInSpinner.setVisibility(View.GONE);
+                signInPanel.setVisibility(View.VISIBLE);
+            }
+        }
+        // Show toasts
+        if(userClickedSignIn && event == AuthEvent.SIGNED_IN) {
+            Toast.makeText(this, R.string.signin_success, Toast.LENGTH_LONG).show();
+        } else if(userClickedSignIn && event == AuthEvent.SIGNED_OUT) {
+            Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -102,9 +137,19 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
         }
 
         // Listen for sign in button click
+        signInPanel = findViewById(R.id.sign_in_panel);
+        signInSpinner = findViewById(R.id.sign_in_spinner);
         final View signInButton = findViewById(R.id.sign_in_button);
         if(signInButton != null) {
             signInButton.setOnClickListener(signInClickListener);
+        }
+        // If we know that we are signed out, then show the panel
+        if(signInPanel != null) {
+            if(currentState == AuthEvent.SIGNED_OUT) {
+                signInPanel.setVisibility(View.VISIBLE);
+            } else {
+                signInPanel.setVisibility(View.GONE);
+            }
         }
     }
     private final View.OnClickListener signInClickListener = new View.OnClickListener() {
@@ -125,7 +170,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
         userClickedSignIn = true;
 
         // Notify sign in listeners
-        EventBus.getDefault().post(AuthEvent.SIGNING_IN);
+        updateState(AuthEvent.SIGNING_IN);
 
         final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -144,7 +189,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
                         BaselineCloud.signOut();
 
                         // Notify listeners
-                        EventBus.getDefault().post(AuthEvent.SIGNED_OUT);
+                        updateState(AuthEvent.SIGNED_OUT);
                     }
                 }
         );
@@ -192,19 +237,13 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
             }
 
             // Notify listeners
-            EventBus.getDefault().post(AuthEvent.SIGNED_IN);
-            if(userClickedSignIn) {
-                Toast.makeText(this, R.string.signin_success, Toast.LENGTH_LONG).show();
-            }
+            updateState(AuthEvent.SIGNED_IN);
         } else {
             Log.w(TAG, "Sign in failed");
             // Clear track listing
             BaselineCloud.signOut();
             // Notify listeners
-            EventBus.getDefault().post(AuthEvent.SIGNED_OUT);
-            if(userClickedSignIn) {
-                Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
-            }
+            updateState(AuthEvent.SIGNED_OUT);
         }
         userClickedSignIn = false;
     }

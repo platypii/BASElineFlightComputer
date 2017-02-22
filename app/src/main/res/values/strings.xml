@@ -26,7 +26,7 @@
     <string name="error_map_intent">Failed to open google earth</string>
 
     <!-- Auth -->
-    <string name="signin_prompt">Sign in using your google account to sync tracks with https://base-line.ws/</string>
+    <string name="signin_prompt">Sign in with google to sync tracks with\nhttps://base-line.ws/</string>
     <string name="signin_success">Signed in</string>
     <string name="signin_failed">Sign in failed</string>
     <string name="signout_success">Signed out</string>
@@ -96,7 +96,7 @@
     <string name="pref_sign_in">Sign in</string>
     <string name="pref_sign_in_description">Sign in with your google account</string>
     <string name="pref_sign_out">Sign out</string>
-    <string name="pref_sign_out_description">Signed in as</string>
+    <string name="pref_sign_out_description">Sign out</string>
 
     <!-- Notifications -->
     <string name="notify_audible">Audible enabled</string>

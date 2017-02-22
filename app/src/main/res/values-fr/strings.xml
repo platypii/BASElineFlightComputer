@@ -97,7 +97,7 @@
     <string name="pref_sign_in">Connecter</string>
     <string name="pref_sign_in_description">Connectez-vous avec votre compte Google</string>
     <string name="pref_sign_out">Déconnecter</string>
-    <string name="pref_sign_out_description">Se connecter en tant que</string>
+    <string name="pref_sign_out_description">Déconnecter</string>
 
     <!-- Notifications -->
     <string name="notify_audible">Audible activé</string>

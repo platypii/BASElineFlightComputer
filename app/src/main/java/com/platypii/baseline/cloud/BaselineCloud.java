@@ -84,21 +84,25 @@ public class BaselineCloud {
     /**
      * Query baseline server for track listing asynchronously
      */
-    public static void listAsync(@NonNull String auth, boolean force) {
-        // Compute time since last update
-        final long lastUpdateDuration = System.currentTimeMillis() - Services.prefs.getLong(CACHE_LAST_UPDATE, 0);
-        final long lastRequestDuration = System.currentTimeMillis() - Services.prefs.getLong(CACHE_LAST_REQUEST, 0);
-        final boolean shouldRequest = UPDATE_TTL < lastUpdateDuration && REQUEST_TTL < lastRequestDuration;
-        if(force || shouldRequest) {
-            final SharedPreferences.Editor editor = Services.prefs.edit();
-            editor.putLong(CACHE_LAST_REQUEST, System.currentTimeMillis());
-            editor.apply();
-            // Update the track listing
-            TrackListing.listTracksAsync(auth);
+    public static void listAsync(String auth, boolean force) {
+        if(auth != null) {
+            // Compute time since last update
+            final long lastUpdateDuration = System.currentTimeMillis() - Services.prefs.getLong(CACHE_LAST_UPDATE, 0);
+            final long lastRequestDuration = System.currentTimeMillis() - Services.prefs.getLong(CACHE_LAST_REQUEST, 0);
+            final boolean shouldRequest = UPDATE_TTL < lastUpdateDuration && REQUEST_TTL < lastRequestDuration;
+            if (force || shouldRequest) {
+                final SharedPreferences.Editor editor = Services.prefs.edit();
+                editor.putLong(CACHE_LAST_REQUEST, System.currentTimeMillis());
+                editor.apply();
+                // Update the track listing
+                TrackListing.listTracksAsync(auth);
+            } else {
+                final double t1 = lastUpdateDuration * 0.001;
+                final double t2 = lastRequestDuration * 0.001;
+                Log.d(TAG, String.format("Using cached track list (updated %.3fs, requested %.3fs)", t1, t2));
+            }
         } else {
-            final double t1 = lastUpdateDuration * 0.001;
-            final double t2 = lastRequestDuration * 0.001;
-            Log.d(TAG, String.format("Using cached track list (updated %.3fs, requested %.3fs)", t1, t2));
+            Log.e(TAG, "Failed to list tracks, missing auth");
         }
     }
 

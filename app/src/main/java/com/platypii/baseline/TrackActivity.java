@@ -25,9 +25,6 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
 
     static final String EXTRA_TRACK_FILE = "TRACK_FILE";
 
-    private View signInPanel;
-    private View signInButton;
-    private View signInSpinner;
     private AlertDialog alertDialog;
 
     private TrackFile trackFile;
@@ -36,10 +33,6 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jump);
-
-        signInPanel = findViewById(R.id.sign_in_panel);
-        signInButton = findViewById(R.id.sign_in_button);
-        signInSpinner = findViewById(R.id.sign_in_spinner);
 
         // Load jump from extras
         final Bundle extras = getIntent().getExtras();
@@ -175,18 +168,6 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAuthEvent(AuthEvent event) {
-        // Update sign in panel state
-        if(event == AuthEvent.SIGNED_IN) {
-            signInPanel.setVisibility(View.GONE);
-        } else if(event == AuthEvent.SIGNING_IN) {
-            signInButton.setEnabled(false);
-            signInSpinner.setVisibility(View.VISIBLE);
-            signInPanel.setVisibility(View.VISIBLE);
-        } else if(event == AuthEvent.SIGNED_OUT) {
-            signInButton.setEnabled(true);
-            signInSpinner.setVisibility(View.GONE);
-            signInPanel.setVisibility(View.VISIBLE);
-        }
         // Signing in enables the sync button, so update button views:
         updateViews();
     }
