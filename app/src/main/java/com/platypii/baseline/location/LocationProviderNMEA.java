@@ -252,6 +252,16 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // $GPGLG,VER2,GNSS,130616,171913.0,85,4737.550964,N,12219.566617,W,96.0,38.5,2.0,0.0,13.0,TP,Seoul,,,15,3,,*5C
                 // $GPGLG,version,provider,???,???,???,lat,lat,lon,lon,...
                 break;
+            case "GST":
+            case "JNR":
+            case "NVD":
+            case "ZCD":
+                // Rockchip 3GR
+                // $GNGST,183132.000,6.1,15,11,76,11,15,32
+                // $PGJNR,3,3,09,09,64,11,21
+                // $PGNVD,2,1137580,1138164,419442.000,0.612,0.11,-0.01,5,31.0,0,0.0,0,4.6,130,68,15
+                // $GNZCD,682.617,+
+                break;
             case "LOR":
                 // Samsung Galaxy S6 SM-G920F
                 // $PGLOR,0,HLA,123444.00,L,,Al,,A,,H,,,M,1,Ac,0,Gr,0,S,,,Sx,,,T,0,Tr,,Mn,0*33

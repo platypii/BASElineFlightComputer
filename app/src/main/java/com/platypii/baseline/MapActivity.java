@@ -7,7 +7,6 @@ import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -36,7 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends Activity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
+public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
     private static final String TAG = "Map";
 
     private AnalogAltimeter analogAltimeter;
@@ -108,8 +107,6 @@ public class MapActivity extends Activity implements MyLocationListener, OnMapRe
     @Override
     public void onStart() {
         super.onStart();
-        // Start flight services
-        Services.start(this);
         // Start sensor updates
         Services.location.addListener(this);
         EventBus.getDefault().register(this);
@@ -385,8 +382,6 @@ public class MapActivity extends Activity implements MyLocationListener, OnMapRe
         // Stop sensor updates
         Services.location.removeListener(this);
         EventBus.getDefault().unregister(this);
-        // Stop flight services
-        Services.stop();
     }
 
     @Override

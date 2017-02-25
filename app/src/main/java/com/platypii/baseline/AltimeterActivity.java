@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class AltimeterActivity extends Activity {
+public class AltimeterActivity extends BaseActivity {
     private static final String TAG = "Altimeter";
 
     private AlertDialog alertDialog;
@@ -107,18 +107,5 @@ public class AltimeterActivity extends Activity {
             alertDialog.dismiss();
             alertDialog = null;
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Start flight services
-        Services.start(this);
-    }
-    @Override
-    public void onStop() {
-        super.onStop();
-        // Stop flight services
-        Services.stop();
     }
 }
