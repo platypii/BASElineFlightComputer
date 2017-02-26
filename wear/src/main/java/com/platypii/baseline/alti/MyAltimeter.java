@@ -20,7 +20,7 @@ import org.greenrobot.eventbus.EventBus;
  *
  * TODO: Correct barometer drift with GPS
  */
-class MyAltimeter implements SensorEventListener {
+public class MyAltimeter implements SensorEventListener {
     private static final String TAG = "MyAltimeter";
 
     private SensorManager sensorManager;
@@ -60,7 +60,7 @@ class MyAltimeter implements SensorEventListener {
      * Starts async in a background thread
      * @param context The Application context
      */
-    synchronized void start(@NonNull final Context context) {
+    public synchronized void start(@NonNull final Context context) {
         Log.i(TAG, "Starting altimeter");
         AsyncTask.execute(new Runnable() {
             @Override
@@ -233,7 +233,7 @@ class MyAltimeter implements SensorEventListener {
         return altitude0 - temp0 * (1 - Math.pow(pressure / pressure0, EXP)) / L;
     }
 
-    void stop() {
+    public void stop() {
         if(sensorManager != null) {
             sensorManager.unregisterListener(this);
             sensorManager = null;

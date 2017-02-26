@@ -25,8 +25,8 @@ class RemoteApp {
     boolean audible = false;
     LocationStatus locationStatus = null;
 
-    RemoteApp(@NonNull Context context) {
-        wear = new WearSlave(context, this);
+    RemoteApp(@NonNull WearSlave wear) {
+        this.wear = wear;
     }
 
     /**

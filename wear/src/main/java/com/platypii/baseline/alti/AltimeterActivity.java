@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import com.platypii.baseline.R;
+import com.platypii.baseline.Services;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -17,7 +19,6 @@ import org.greenrobot.eventbus.ThreadMode;
 public class AltimeterActivity extends FragmentActivity implements GestureDetector.OnGestureListener {
     private static final String TAG = "Altimeter";
 
-    private final MyAltimeter alti = new MyAltimeter();
     private AnalogAltimeter analogAltimeter;
 
     // Altitude set mode
@@ -50,7 +51,7 @@ public class AltimeterActivity extends FragmentActivity implements GestureDetect
     }
 
     private void update() {
-        analogAltimeter.setAltitude(alti.altitudeAGL() + altitudeOffset);
+        analogAltimeter.setAltitude(Services.alti.altitudeAGL() + altitudeOffset);
     }
 
     private void toggleGroundLevelMode() {
@@ -61,7 +62,7 @@ public class AltimeterActivity extends FragmentActivity implements GestureDetect
         } else {
             Log.i(TAG, "Finished ground level adjustment");
             // Save ground level adjustment
-            alti.setGroundLevel(alti.ground_level - altitudeOffset);
+            Services.alti.setGroundLevel(Services.alti.ground_level - altitudeOffset);
         }
     }
 
@@ -137,8 +138,8 @@ public class AltimeterActivity extends FragmentActivity implements GestureDetect
     @Override
     public void onStart() {
         super.onStart();
-        // Start altimeter
-        alti.start(this);
+        // Start services
+        Services.start(this);
         groundLevelMode = false;
         altitudeOffset = 0;
     }
@@ -161,7 +162,7 @@ public class AltimeterActivity extends FragmentActivity implements GestureDetect
     @Override
     public void onStop() {
         super.onStop();
-        // Stop altimeter
-        alti.stop();
+        // Stop services
+        Services.stop();
     }
 }

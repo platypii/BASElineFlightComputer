@@ -26,8 +26,6 @@ public class WearActivity extends Activity {
     private ImageButton baselineButton;
     private ImageView signalStatus;
 
-    private RemoteApp remoteApp;
-
     // Periodic update thread
     private boolean updating = false;
     private final int updateInterval = 250; // milliseconds
@@ -46,9 +44,6 @@ public class WearActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wear);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        // Start wear messaging service
-        remoteApp = new RemoteApp(this);
     }
 
     @Override
@@ -60,8 +55,10 @@ public class WearActivity extends Activity {
         // Find views
         findViews();
 
+        // Start services
+        Services.start(this);
+
         // Start signal updates
-        remoteApp.startPinging();
         updating = true;
         handler.postDelayed(updateRunnable, updateInterval);
     }
@@ -76,23 +73,23 @@ public class WearActivity extends Activity {
     }
 
     public void clickRecord(View v) {
-        if(remoteApp.logging) {
+        if(Services.remoteApp.logging) {
             Log.i(TAG, "Clicked stop");
-            remoteApp.clickStop();
+            Services.remoteApp.clickStop();
         } else {
             Log.i(TAG, "Clicked record");
-            remoteApp.clickRecord();
+            Services.remoteApp.clickRecord();
         }
         updateUIState();
     }
 
     public void clickAudible(View v) {
-        if(remoteApp.audible) {
+        if(Services.remoteApp.audible) {
             Log.i(TAG, "Clicked audible off");
-            remoteApp.disableAudible();
+            Services.remoteApp.disableAudible();
         } else {
             Log.i(TAG, "Clicked audible on");
-            remoteApp.enableAudible();
+            Services.remoteApp.enableAudible();
         }
         updateUIState();
     }
@@ -106,8 +103,8 @@ public class WearActivity extends Activity {
     public void clickApp(View v) {
         Log.i(TAG, "Clicked wingsuit app");
         // Launch app
-        remoteApp.startApp();
-        remoteApp.requestDataSync();
+        Services.remoteApp.startApp();
+        Services.remoteApp.requestDataSync();
     }
 
     /**
@@ -123,12 +120,12 @@ public class WearActivity extends Activity {
         }
 
         // Update baseline button
-        if(remoteApp.isActive()) {
+        if(Services.remoteApp.isActive()) {
             baselineButton.setAlpha(1f);
             remoteStatus.setVisibility(View.GONE);
             remoteControls.setVisibility(View.VISIBLE);
             // Update remote control buttons
-            if(remoteApp.isActive() && remoteApp.synced) {
+            if(Services.remoteApp.isActive() && Services.remoteApp.synced) {
                 recordButton.setAlpha(1f);
                 audibleButton.setAlpha(1f);
             } else {
@@ -136,20 +133,20 @@ public class WearActivity extends Activity {
                 audibleButton.setAlpha(0.4f);
             }
             // Update logging button
-            if (remoteApp.logging) {
+            if (Services.remoteApp.logging) {
                 recordButton.setImageResource(R.drawable.square);
             } else {
                 recordButton.setImageResource(R.drawable.circle);
             }
             // Update audible button
-            if (remoteApp.audible) {
+            if (Services.remoteApp.audible) {
                 audibleButton.setImageResource(R.drawable.audio_on);
             } else {
                 audibleButton.setImageResource(R.drawable.audio);
             }
             // Update gps status
-            if (remoteApp.locationStatus != null) {
-                signalStatus.setImageResource(remoteApp.locationStatus.icon());
+            if (Services.remoteApp.locationStatus != null) {
+                signalStatus.setImageResource(Services.remoteApp.locationStatus.icon());
                 signalStatus.setVisibility(View.VISIBLE);
             } else {
                 signalStatus.setVisibility(View.GONE);
@@ -171,16 +168,11 @@ public class WearActivity extends Activity {
     @Override
     public void onStop() {
         super.onStop();
-        remoteApp.stopPinging();
+
+        // Stop services
+        Services.stop();
         EventBus.getDefault().unregister(this);
         updating = false;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        remoteApp.stopService();
-        remoteApp = null;
     }
 
 }

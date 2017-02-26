@@ -43,7 +43,6 @@ class WearSlave implements
 
     private static final String CAPABILITY_BASELINE_MASTER = "baseline_master";
 
-    private RemoteApp remoteApp;
     private GoogleApiClient googleApiClient;
 
     // Only valid while connected:
@@ -56,9 +55,8 @@ class WearSlave implements
     // Experimentally, it's instant when phone is active, slow when asleep.
     private static final long connectionTimeout = 120 * 1000; // milliseconds
 
-    WearSlave(@NonNull Context context, RemoteApp remoteApp) {
+    void start(@NonNull Context context) {
         Log.i(TAG, "Starting wear messaging service");
-        this.remoteApp = remoteApp;
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(this)
@@ -144,7 +142,7 @@ class WearSlave implements
                     final String message = dataMap.getString("gps_status_message");
                     final int iconColor = dataMap.getInt("gps_status_color");
                     final LocationStatus locationStatus = new LocationStatus(message, iconColor);
-                    remoteApp.onSync(logging, audible, locationStatus);
+                    Services.remoteApp.onSync(logging, audible, locationStatus);
                     // Data sync counts as a heartbeat from the phone:
                     lastPong = System.currentTimeMillis();
                     EventBus.getDefault().post(new DataSyncEvent());
