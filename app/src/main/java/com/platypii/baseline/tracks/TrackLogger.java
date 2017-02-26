@@ -38,22 +38,29 @@ public class TrackLogger implements MyLocationListener, MySensorListener {
     private long stopTimeNano = -1;
 
     // Log file
+    private File logDir;
     private File logFile;
     private BufferedWriter log;
-    
-    public synchronized void startLogging(@NonNull Context context) {
-        if(!logging) {
+
+    public void start(@NonNull Context context) {
+        logDir = TrackFiles.getTrackDirectory(context);
+    }
+
+    public synchronized void startLogging() {
+        if(!logging && logDir != null) {
             Log.i(TAG, "Starting logging");
             logging = true;
             startTimeMillis = System.currentTimeMillis();
             startTimeNano = System.nanoTime();
             stopTimeNano = -1;
             try {
-                startFileLogging(context);
+                startFileLogging();
                 EventBus.getDefault().post(new LoggingEvent());
             } catch(IOException e) {
                 Log.e(TAG, "Error starting logging", e);
             }
+        } else if(logDir == null) {
+            Log.e(TAG, "startLogging() called before start()");
         } else {
             Log.e(TAG, "startLogging() called when database already logging");
         }
@@ -111,10 +118,8 @@ public class TrackLogger implements MyLocationListener, MySensorListener {
         }
     }
 
-
-    private void startFileLogging(@NonNull Context appContext) throws IOException {
+    private void startFileLogging() throws IOException {
         // Open log file for writing
-        final File logDir = TrackFiles.getTrackDirectory(appContext);
         final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
         final String timestamp = dt.format(new Date());
 

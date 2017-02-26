@@ -19,7 +19,7 @@ import java.util.List;
 public class TrackFiles {
     private static final String TAG = "TrackFiles";
 
-    public static synchronized List<TrackFile> getTracks(@NonNull Context context) {
+    static synchronized List<TrackFile> getTracks(@NonNull Context context) {
         final List<TrackFile> tracks = new ArrayList<>();
         // Load jumps from disk
         final File logDir = getTrackDirectory(context);

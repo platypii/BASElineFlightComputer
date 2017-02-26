@@ -31,7 +31,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.crash.FirebaseCrash;
 
 /**
- * Start and stop essential services
+ * Start and stop essential services.
+ * This class provides essential services intended to persist between activities.
+ * This class will also keep services running if logging or audible is enabled.
  */
 public class Services {
     private static final String TAG = "Services";
@@ -47,11 +49,11 @@ public class Services {
 
     // Services
     public static SharedPreferences prefs;
-    public static final TrackLogger logger = new TrackLogger();
+    static final TrackLogger logger = new TrackLogger();
     public static final LocationService location = new LocationService();
     public static final MyAltimeter alti = new MyAltimeter();
     public static final MySensorManager sensors = new MySensorManager();
-    public static final FlightMode flightMode = new FlightMode();
+    static final FlightMode flightMode = new FlightMode();
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();
@@ -73,6 +75,9 @@ public class Services {
             if(BluetoothService.preferenceEnabled) {
                 bluetooth.start(activity);
             }
+
+            // Initialize track logger
+            logger.start(appContext);
 
             Log.i(TAG, "Starting location service");
             if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -108,6 +113,9 @@ public class Services {
             MigrateTracks.migrate(appContext);
 
             Log.i(TAG, "Services started");
+        } else if(startCount > 2) {
+            // Activity lifecycles can overlap
+            Log.w(TAG, "Services started more than twice");
         } else {
             Log.v(TAG, "Services already started");
         }
@@ -127,6 +135,7 @@ public class Services {
     public static void stop() {
         startCount--;
         if(startCount == 0) {
+            Log.i(TAG, String.format("All activities have stopped. Services will stop in %.3fs", shutdownDelay * 0.001));
             handler.postDelayed(stopRunnable, shutdownDelay);
         }
     }

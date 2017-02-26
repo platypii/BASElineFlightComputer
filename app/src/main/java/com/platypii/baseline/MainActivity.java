@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity {
     public void clickRecord(View v) {
         if(!Services.logger.isLogging()) {
             firebaseAnalytics.logEvent("click_logging_start", null);
-            Services.logger.startLogging(getApplicationContext());
+            Services.logger.startLogging();
         } else {
             firebaseAnalytics.logEvent("click_logging_stop", null);
             final TrackFile trackList = Services.logger.stopLogging();

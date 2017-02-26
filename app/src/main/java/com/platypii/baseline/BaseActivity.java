@@ -113,6 +113,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
         super.onStart();
 
         // Start flight services
+        // Log.d(TAG, getClass().getSimpleName() + " starting, starting services");
         Services.start(this);
 
         final OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
@@ -293,6 +294,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
         super.onStop();
 
         // If track is still recording, services will wait
+        // Log.d(TAG, getClass().getSimpleName() + " stopping, stopping services");
         Services.stop();
     }
 
