@@ -6,8 +6,10 @@ import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.SyncedList;
 import android.content.Context;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 
@@ -26,12 +28,11 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         padding.right = (int) (75 * density);
         
         min.left = max.left = 0;
-        min.right = 5 * Convert.MPH;
+        min.right = 10 * Convert.MPH;
         max.bottom = -2 * Convert.MPH;
         min.top = 2 * Convert.MPH;
         
-        x_major_units = 1 * Convert.MPH;
-        y_major_units = 1 * Convert.MPH;
+        x_major_units = y_major_units = Convert.metric? Convert.KPH : Convert.MPH;
 
         history.setMaxSize(300);
     }
@@ -42,12 +43,39 @@ public class PolarPlot extends PlotView implements MyLocationListener {
             final long currentTime = System.currentTimeMillis() - Services.location.phoneOffsetMillis;
             final MLocation loc = Services.location.lastLoc;
             if(loc != null && currentTime - loc.millis <= window) {
+                // Draw background ellipses
+                drawEllipses(canvas);
+
                 // Draw history
                 drawHistory(canvas);
 
                 // Draw current location
                 drawLocation(canvas, loc);
+            } else {
+                // Draw "no gps signal"
+                text.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText("no gps signal", (left + right) / 2, (top + bottom) / 2, text);
             }
+        }
+    }
+
+    private BlurMaskFilter blurry = new BlurMaskFilter(2 * density, BlurMaskFilter.Blur.NORMAL);
+    private void drawEllipses(Canvas canvas) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(0x33cccccc);
+            paint.setMaskFilter(blurry);
+            // Draw canopy ellipse
+            canvas.save();
+            canvas.rotate(9, getX(11), getY(-5.5));
+            canvas.drawOval(getX(1), getY(-1), getX(21), getY(-10), paint);
+            canvas.restore();
+            // Draw wingsuit ellipse
+            canvas.save();
+            canvas.rotate(35, getX(38), getY(-21));
+            canvas.drawOval(getX(20), getY(-10), getX(56), getY(-32), paint);
+            canvas.restore();
+            paint.setMaskFilter(null);
         }
     }
 
