@@ -1,6 +1,8 @@
 package com.platypii.baseline.altimeter;
 
+import com.platypii.baseline.R;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.graphics.BlurMaskFilter;
 import android.graphics.BlurMaskFilter.Blur;
@@ -183,8 +185,14 @@ public class AnalogAltimeter extends View {
                 center_x + 60 * scale_factor + 16, center_y + 20 * scale_factor + 12);
         paint.setColor(0xff333333);
         canvas.drawRoundRect(digitalAltiBox, 4 * scale_factor, 4 * scale_factor, paint);
+
         // Draw digital alti
-        final String alt_label = Convert.altitude(altitude);
+        final String alt_label;
+        if (Numbers.isReal(altitude)) {
+            alt_label = Convert.altitude(altitude);
+        } else {
+            alt_label = getContext().getString(R.string.no_barometer);
+        }
         paint.setColor(0xffeeeeee);
         paint.setTextSize(28 * scale_factor + 24);
         canvas.drawText(alt_label, center_x, center_y + 12 * scale_factor + 4, paint);

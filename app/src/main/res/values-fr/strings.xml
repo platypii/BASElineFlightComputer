@@ -12,6 +12,12 @@
     <string name="action_tracks">Pistes</string>
     <string name="action_settings">Paramètres</string>
 
+    <!-- Altimeter Activity -->
+    <string name="no_barometer">non alti</string>
+    <string name="set_altitude">Définir l\'altitude</string>
+    <string name="set_altitude_title">Définir l\'altitude AGL</string>
+    <string name="set_altitude_message">Définir votre altitude actuelle au-dessus du niveau du sol</string>
+
     <!-- Track Activity -->
     <string name="action_open">Ouvert</string>
     <string name="action_sync">Sync</string>
@@ -65,9 +71,6 @@
 
     <!-- Map -->
     <string name="title_activity_map">Navigation</string>
-    <string name="set_altitude">Définir l\'altitude</string>
-    <string name="set_altitude_title">Définir l\'altitude AGL</string>
-    <string name="set_altitude_message">Définir votre altitude actuelle au-dessus du niveau du sol</string>
     <string name="map_crosshair">réticule</string>
     <string name="map_pin">punaise</string>
 
