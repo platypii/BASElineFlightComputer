@@ -12,7 +12,7 @@
     <string name="error_not_connected">Not Connected</string>
 
     <!-- Altimeter Activity -->
-    <string name="set_altitude">Set Altitude</string>
+    <string name="set_altitude">Set?</string>
     <string name="no_barometer">no alti</string>
 
 </resources>

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.platypii.baseline.alti.AltimeterActivity">
 
-    <com.platypii.baseline.alti.AnalogAltimeter
+    <com.platypii.baseline.alti.AnalogAltimeterSettable
         android:id="@+id/analogAltimeter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -13,12 +13,12 @@ import com.platypii.baseline.R;
 
 public class AnalogAltimeter extends View {
 
-    private double altitude = 0.0;
+    protected double altitude = 0.0;
 
     private final AnalogAltimeterOptions options;
 
     // Avoid creating new objects unnecessarily
-    private final Paint paint = new Paint();
+    protected final Paint paint = new Paint();
     private final RectF circ = new RectF();
     private final BlurMaskFilter blurMask;
     private final RectF digitalAltiBox = new RectF();
@@ -37,7 +37,7 @@ public class AnalogAltimeter extends View {
     public AnalogAltimeter(Context context, AttributeSet attrs) {
         super(context, attrs);
         // Software layer required for hand path, and inner blur
-        this.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         if(Convert.metric) {
             options = AnalogAltimeterOptions.metric;
@@ -52,7 +52,7 @@ public class AnalogAltimeter extends View {
 
     public void setAltitude(double altitude) {
         this.altitude = altitude;
-        this.invalidate();
+        invalidate();
     }
 
     @Override
@@ -170,20 +170,24 @@ public class AnalogAltimeter extends View {
 
         // Draw digital alti background
         digitalAltiBox.set(
-                center_x - 60 * scale_factor - 16, center_y - 20 * scale_factor - 12,
-                center_x + 60 * scale_factor + 16, center_y + 20 * scale_factor + 12);
+                center_x - 60 * scale_factor - 20, center_y - 20 * scale_factor - 12,
+                center_x + 60 * scale_factor + 20, center_y + 20 * scale_factor + 12);
         paint.setColor(0xff333333);
-        canvas.drawRoundRect(digitalAltiBox, 4 * scale_factor, 4 * scale_factor, paint);
+        canvas.drawRoundRect(digitalAltiBox, 5 * scale_factor, 5 * scale_factor, paint);
+
         // Draw digital alti text
-        final String alt_label;
-        if (Util.isReal(altitude)) {
-            alt_label = Convert.altitude(altitude);
-        } else {
-            alt_label = getContext().getString(R.string.no_barometer);
-        }
         paint.setColor(0xffeeeeee);
         paint.setTextSize(28 * scale_factor + 20);
+        final String alt_label = getLabelText();
         canvas.drawText(alt_label, center_x, center_y + 12 * scale_factor + 4, paint);
+    }
+
+    protected String getLabelText() {
+        if (Numbers.isReal(altitude)) {
+            return Convert.altitude(altitude);
+        } else {
+            return getContext().getString(R.string.no_barometer);
+        }
     }
 
 }

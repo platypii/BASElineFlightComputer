@@ -10,6 +10,7 @@
     <string name="action_nav">Nav</string>
 
     <!-- Altimeter Activity -->
-    <string name="set_altitude">Définir l\'altitude</string>
+    <string name="set_altitude">Régler?</string>
+    <string name="no_barometer">non alti</string>
 
 </resources>
