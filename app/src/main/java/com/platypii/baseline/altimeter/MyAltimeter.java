@@ -160,7 +160,9 @@ public class MyAltimeter implements Service, MyLocationListener {
                 ground_level = baro.pressure_altitude_raw;
             } else if (baro_sample_count < 30) {
                 // Average the first N raw samples
-                ground_level += (baro.pressure_altitude_raw - ground_level) / (baro_sample_count + 1);
+                // Note: because we divide by baro_sample_count, we actually discard the first sample.
+                // This is intentional, because Moto360 gives a garbage first reading.
+                ground_level += (baro.pressure_altitude_raw - ground_level) / baro_sample_count;
             } else {
                 setGroundLevel(ground_level);
             }

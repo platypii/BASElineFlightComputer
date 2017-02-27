@@ -126,8 +126,9 @@ public class MyAltimeter implements SensorEventListener {
     @Override
     public void onSensorChanged(@NonNull SensorEvent event) {
         long millis = System.currentTimeMillis(); // Record time as soon as possible
-        // assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
-        // Log.w(TAG, "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
+        if(event.sensor.getType() != Sensor.TYPE_PRESSURE) {
+            Log.e(TAG, "Invalid sensor type: " + event.sensor.getType());
+        }
         updateBarometer(millis, event);
     }
 
@@ -190,7 +191,9 @@ public class MyAltimeter implements SensorEventListener {
                 ground_level = pressure_altitude_raw;
             } else if (n < 30) {
                 // Average the first N raw samples
-                ground_level += (pressure_altitude_raw - ground_level) / (n + 1);
+                // Note: because we divide by n, we actually discard the first sample.
+                // This is intentional, because Moto360 gives a garbage first reading.
+                ground_level += (pressure_altitude_raw - ground_level) / n;
             } else {
                 setGroundLevel(ground_level);
             }
