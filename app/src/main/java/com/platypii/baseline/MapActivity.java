@@ -86,14 +86,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         crosshair = (ImageView) findViewById(R.id.crosshair);
 
         analogAltimeter.setOverlay(true);
-        analogAltimeter.setLongClickable(true);
-        analogAltimeter.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                alertDialog = AltimeterActivity.promptForAltitude(MapActivity.this);
-                return false;
-            }
-        });
 
         // Home button listener
         final ImageButton homeButton = (ImageButton) findViewById(R.id.homeButton);

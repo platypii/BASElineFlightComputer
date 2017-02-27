@@ -14,9 +14,7 @@
 
     <!-- Altimeter Activity -->
     <string name="no_barometer">non alti</string>
-    <string name="set_altitude">Définir l\'altitude</string>
-    <string name="set_altitude_title">Définir l\'altitude AGL</string>
-    <string name="set_altitude_message">Définir votre altitude actuelle au-dessus du niveau du sol</string>
+    <string name="set_altitude">Régler?</string>
 
     <!-- Track Activity -->
     <string name="action_open">Ouvert</string>
