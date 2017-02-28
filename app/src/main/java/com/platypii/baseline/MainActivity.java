@@ -1,5 +1,6 @@
 package com.platypii.baseline;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
@@ -21,6 +22,8 @@ import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.FileNotFoundException;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "Main";
@@ -105,13 +108,14 @@ public class MainActivity extends BaseActivity {
             Services.logger.startLogging();
         } else {
             firebaseAnalytics.logEvent("click_logging_stop", null);
-            final TrackFile trackList = Services.logger.stopLogging();
+            final TrackFile trackFile = Services.logger.stopLogging();
 
             // Upload to the cloud
-            if(trackList != null) {
-                uploadToCloud(trackList);
+            if(trackFile != null && trackFile.file.exists()) {
+                uploadToCloud(trackFile);
             } else {
-                Log.e(TAG, "Error reading track file");
+                Log.e(TAG, "Error reading track file: " + trackFile);
+                FirebaseCrash.report(new FileNotFoundException("Error reading track file: " + trackFile));
             }
         }
     }

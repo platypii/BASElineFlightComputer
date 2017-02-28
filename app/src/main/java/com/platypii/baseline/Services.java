@@ -156,6 +156,7 @@ public class Services {
                     alti.stop();
                     sensors.stop();
                     location.stop();
+                    logger.stop();
                     bluetooth.stop();
                     initialized = false;
                 } else {

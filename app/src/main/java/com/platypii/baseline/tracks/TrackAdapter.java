@@ -16,7 +16,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrackAdapter extends BaseAdapter {
+class TrackAdapter extends BaseAdapter {
     private static final String TAG = "TrackAdapter";
 
     // Item types
@@ -29,7 +29,7 @@ public class TrackAdapter extends BaseAdapter {
     private final LayoutInflater inflater;
     private List<ListItem> items;
 
-    public TrackAdapter(Context context, List<TrackFile> tracks) {
+    TrackAdapter(Context context, List<TrackFile> tracks) {
         this.tracks = tracks;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         items = populateItems(tracks);

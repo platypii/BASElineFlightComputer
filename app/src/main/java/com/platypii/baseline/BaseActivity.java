@@ -19,7 +19,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -116,26 +115,14 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
         // Log.d(TAG, getClass().getSimpleName() + " starting, starting services");
         Services.start(this);
 
-        final OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-        // TODO: Question, if opr.isDone, can we still just setResultCallback to have 1 code path?
-        if (opr.isDone()) {
-            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-            // and the GoogleSignInResult will be available instantly.
-            Log.d(TAG, "Got cached sign-in");
-            final GoogleSignInResult result = opr.get();
-            handleSignInResult(result);
-        } else {
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
-            // TODO: When Java8, use this::handleSignInResult
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
-                    handleSignInResult(googleSignInResult);
-                }
-            });
-        }
+        Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient)
+                .setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                    @Override
+                    public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+                        handleSignInResult(googleSignInResult);
+                    }
+                });
+                // .setResultCallback(this::handleSignInResult) // TODO: Java8
 
         // Listen for sign in button click
         signInPanel = findViewById(R.id.sign_in_panel);
@@ -178,19 +165,14 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
     }
 
     protected void clickSignOut() {
-        Log.i(TAG, "clickSignOut");
+        Log.i(TAG, "User clicked sign out");
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
-                        Log.d(TAG, "signOut:onResult:" + status);
+                        Log.d(TAG, "Signed out: " + status);
                         Toast.makeText(BaseActivity.this, R.string.signout_success, Toast.LENGTH_LONG).show();
-
-                        account = null;
-                        BaselineCloud.signOut();
-
-                        // Notify listeners
-                        updateState(AuthEvent.SIGNED_OUT);
+                        signedOut();
                     }
                 }
         );
@@ -241,12 +223,18 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
             updateState(AuthEvent.SIGNED_IN);
         } else {
             Log.w(TAG, "Sign in failed");
-            // Clear track listing
-            BaselineCloud.signOut();
-            // Notify listeners
-            updateState(AuthEvent.SIGNED_OUT);
+            signedOut();
         }
         userClickedSignIn = false;
+    }
+
+    private void signedOut() {
+        // Clear account
+        account = null;
+        // Clear track listing
+        BaselineCloud.signOut();
+        // Notify listeners
+        updateState(AuthEvent.SIGNED_OUT);
     }
 
     @Override
@@ -256,18 +244,14 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
     }
 
     /** Get google auth token and return asynchronously via callback */
-    public void getAuthToken(final Callback<String> callback) {
+    public void getAuthToken(@NonNull Callback<String> callback) {
         if(account != null) {
             final String token = account.getIdToken();
             if(token != null) {
                 Log.i(TAG, "Got auth token " + token);
-                if(callback != null) {
-                    callback.apply(token);
-                }
+                callback.apply(token);
             } else {
-                if(callback != null) {
-                    callback.error("Failed to get auth token");
-                }
+                callback.error("Failed to get auth token");
             }
         } else {
             callback.error("Not signed in");

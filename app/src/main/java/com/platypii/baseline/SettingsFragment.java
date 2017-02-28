@@ -129,7 +129,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             startActivity(new Intent(getActivity(), SensorActivity.class));
         } else if(preference.getKey().equals("sign_in")) {
             // Handle sign in click
-            final SettingsActivity activity = (SettingsActivity) getActivity();
+            final BaseActivity activity = (BaseActivity) getActivity();
             if(activity.isSignedIn()) {
                 activity.clickSignOut();
             } else {

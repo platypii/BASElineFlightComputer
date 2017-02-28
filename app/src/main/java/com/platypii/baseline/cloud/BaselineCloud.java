@@ -4,7 +4,6 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Callback;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 import org.json.JSONException;
