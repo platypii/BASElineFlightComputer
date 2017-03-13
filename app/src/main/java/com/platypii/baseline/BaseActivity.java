@@ -93,6 +93,9 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        // Initialize early services
+        Services.create(this);
+
         // Initialize Google sign in
         final String serverClientId = getString(R.string.server_client_id);
         final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

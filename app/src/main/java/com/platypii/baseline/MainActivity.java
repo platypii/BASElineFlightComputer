@@ -103,11 +103,14 @@ public class MainActivity extends BaseActivity {
     }
 
     public void clickRecord(View v) {
+        final Bundle bundle = new Bundle();
+        bundle.putFloat("lat", (float) Services.location.lastLoc.latitude);
+        bundle.putFloat("lon", (float) Services.location.lastLoc.longitude);
         if(!Services.logger.isLogging()) {
-            firebaseAnalytics.logEvent("click_logging_start", null);
+            firebaseAnalytics.logEvent("click_logging_start", bundle);
             Services.logger.startLogging();
         } else {
-            firebaseAnalytics.logEvent("click_logging_stop", null);
+            firebaseAnalytics.logEvent("click_logging_stop", bundle);
             final TrackFile trackFile = Services.logger.stopLogging();
 
             // Upload to the cloud

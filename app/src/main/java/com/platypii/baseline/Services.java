@@ -58,7 +58,18 @@ public class Services {
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();
 
-    public static void start(@NonNull Activity activity) {
+    /**
+     * We want preferences to be available as early as possible.
+     * Call this in onCreate
+     */
+    static void create(@NonNull Activity activity) {
+        if(prefs == null) {
+            Log.i(TAG, "Loading app preferences");
+            loadPreferences(activity.getApplicationContext());
+        }
+    }
+
+    static void start(@NonNull Activity activity) {
         startCount++;
         if(!initialized) {
             initialized = true;
@@ -67,9 +78,6 @@ public class Services {
             handler.removeCallbacks(stopRunnable);
 
             // Start the various services
-
-            Log.i(TAG, "Loading app settings");
-            loadPreferences(appContext);
 
             Log.i(TAG, "Starting bluetooth service");
             if(BluetoothService.preferenceEnabled) {
@@ -132,7 +140,7 @@ public class Services {
         audible.start(context);
     }
 
-    public static void stop() {
+    static void stop() {
         startCount--;
         if(startCount == 0) {
             Log.i(TAG, String.format("All activities have stopped. Services will stop in %.3fs", shutdownDelay * 0.001));
@@ -171,8 +179,8 @@ public class Services {
         }
     };
 
-    private static void loadPreferences(Context appContext) {
-        prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+    private static void loadPreferences(Context context) {
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         // Metric
         Convert.metric = prefs.getBoolean("metric_enabled", false);

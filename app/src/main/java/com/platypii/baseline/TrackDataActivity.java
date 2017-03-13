@@ -58,19 +58,29 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
     }
 
     public void clickOpen(View v) {
+        // Analytics
+        final Bundle bundle = new Bundle();
+        bundle.putString("track_id", track.track_id);
+        firebaseAnalytics.logEvent("click_track_open", bundle);
         // Open web app
-        firebaseAnalytics.logEvent("click_track_open", null);
         Intents.openTrackUrl(this, track.trackUrl);
     }
 
     public void clickKml(View v) {
-        firebaseAnalytics.logEvent("click_track_kml", null);
-        // Open web app
+        // Analytics
+        final Bundle bundle = new Bundle();
+        bundle.putString("track_id", track.track_id);
+        firebaseAnalytics.logEvent("click_track_kml", bundle);
+        // Open google earth
         Intents.openTrackKml(this, track.trackKml);
     }
 
     public void clickDelete(View v) {
-        firebaseAnalytics.logEvent("click_track_delete_remote_1", null);
+        // Analytics
+        final Bundle bundle = new Bundle();
+        bundle.putString("track_id", track.track_id);
+        firebaseAnalytics.logEvent("click_track_delete_remote_1", bundle);
+        // Prompt user for confirmation
         alertDialog = new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setTitle("Delete this track?")
@@ -86,8 +96,11 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if(which == DialogInterface.BUTTON_POSITIVE) {
+            // Analytics
+            final Bundle bundle = new Bundle();
+            bundle.putString("track_id", track.track_id);
+            firebaseAnalytics.logEvent("click_track_delete_remote_2", bundle);
             // Delete track
-            firebaseAnalytics.logEvent("click_track_delete_remote_2", null);
             deleteRemote();
         }
     }

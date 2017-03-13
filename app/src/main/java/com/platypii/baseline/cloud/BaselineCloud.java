@@ -37,17 +37,17 @@ public class BaselineCloud {
     }
 
     public static List<CloudData> listCached() {
-        final String jsonString = Services.prefs.getString(CACHE_TRACK_LIST, null);
-        if(jsonString != null) {
-            try {
-                return TrackListing.fromJson(jsonString);
-            } catch (JSONException e) {
-                FirebaseCrash.report(e);
-                return null;
+        if(Services.prefs != null) {
+            final String jsonString = Services.prefs.getString(CACHE_TRACK_LIST, null);
+            if (jsonString != null) {
+                try {
+                    return TrackListing.fromJson(jsonString);
+                } catch (JSONException e) {
+                    FirebaseCrash.report(e);
+                }
             }
-        } else {
-            return null;
         }
+        return null;
     }
 
     static void updateCache(List<CloudData> trackList) {
