@@ -33,11 +33,6 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
     private GoogleApiClient mGoogleApiClient;
     private GoogleSignInAccount account;
 
-    /* Request codes used to invoke user interactions */
-    private static final int RC_SIGN_IN = 0;
-    static final int MY_PERMISSIONS_REQUEST_LOCATION = 64;
-    static final int MY_TTS_DATA_CHECK_CODE = 48;
-
     // If user didn't click, don't show sign in/out toast
     private boolean userClickedSignIn = false;
 
@@ -164,7 +159,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
         updateState(AuthEvent.SIGNING_IN);
 
         final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        startActivityForResult(signInIntent, Intents.RC_SIGN_IN);
     }
 
     protected void clickSignOut() {
@@ -187,10 +182,10 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
         // Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == Intents.RC_SIGN_IN) {
             final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-        } else if(requestCode == MY_TTS_DATA_CHECK_CODE) {
+        } else if(requestCode == Intents.RC_TTS_DATA) {
             if(resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 // Notify services that TTS is ready
                 Services.onTtsLoaded(getApplicationContext());
@@ -263,7 +258,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+        if(requestCode == Intents.RC_LOCATION) {
             if(grantResults.length == 1 &&
                     permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION) &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {

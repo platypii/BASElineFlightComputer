@@ -1,6 +1,7 @@
 package com.platypii.baseline;
 
 import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.audible.CheckTextToSpeechTask;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.jarvis.FlightMode;
@@ -13,22 +14,15 @@ import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
 import android.Manifest;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * Start and stop essential services.
@@ -46,6 +40,9 @@ public class Services {
     // How long to wait after the last activity shutdown to terminate services
     private final static Handler handler = new Handler();
     private static final int shutdownDelay = 10000;
+
+    // Have we checked for TTS data?
+    private static boolean ttsLoaded = false;
 
     // Services
     public static SharedPreferences prefs;
@@ -88,6 +85,7 @@ public class Services {
             logger.start(appContext);
 
             Log.i(TAG, "Starting location service");
+            // Note: Activity.checkSelfPermission added in minsdk 23
             if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 // Enable location services
                 try {
@@ -98,7 +96,7 @@ public class Services {
             } else {
                 // Request the missing permissions
                 final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
-                ActivityCompat.requestPermissions(activity, permissions, BaseActivity.MY_PERMISSIONS_REQUEST_LOCATION);
+                ActivityCompat.requestPermissions(activity, permissions, Intents.RC_LOCATION);
             }
 
             Log.i(TAG, "Starting sensors");
@@ -111,8 +109,13 @@ public class Services {
             flightMode.start();
 
             // TTS is prerequisite for audible
-            Log.i(TAG, "Checking for text-to-speech data");
-            checkTextToSpeech(activity);
+            if(ttsLoaded) {
+                Log.i(TAG, "Text-to-speech data already loaded, starting audible");
+                audible.start(appContext);
+            } else {
+                Log.i(TAG, "Checking for text-to-speech data");
+                new CheckTextToSpeechTask(activity).execute();
+            }
 
             Log.i(TAG, "Starting notification bar service");
             notifications.start(appContext);
@@ -128,15 +131,16 @@ public class Services {
             Log.v(TAG, "Services already started");
         }
 
-        // If you wanted to automatically upload any unsynced files, this is how:
+        // TODO: If you wanted to automatically upload any unsynced files, this is how:
         // BaselineCloud.uploadAll();
     }
 
     /**
-     * Call this function once text-to-speech data is ready
+     * BaseActivity calls this function once text-to-speech data is ready
      */
     static void onTtsLoaded(Context context) {
         // TTS loaded, start the audible
+        ttsLoaded = true;
         audible.start(context);
     }
 
@@ -197,41 +201,6 @@ public class Services {
             // Set home location
             LandingZone.homeLoc = new LatLng(home_latitude, home_longitude);
         }
-    }
-
-    private static void checkTextToSpeech(final Activity activity) {
-        new AsyncTask<Void,Void,Boolean>() {
-            @Override
-            protected Boolean doInBackground(Void... voids) {
-                Log.i("TextToSpeech", "Checking for text-to-speech");
-                final Intent checkIntent = new Intent();
-                checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-
-                // Check if intent is supported
-                final PackageManager pm = activity.getPackageManager();
-                final ResolveInfo resolveInfo = pm.resolveActivity(checkIntent, PackageManager.MATCH_DEFAULT_ONLY);
-                if(resolveInfo != null) {
-                    try {
-                        activity.startActivityForResult(checkIntent, BaseActivity.MY_TTS_DATA_CHECK_CODE);
-                        return true;
-                    } catch(ActivityNotFoundException e) {
-                        Log.e("TextToSpeech", "Failed to check for TTS package", e);
-                        FirebaseCrash.report(e);
-                        return false;
-                    }
-                } else {
-                    Log.e("TextToSpeech", "TTS package not supported");
-                    return false;
-                }
-            }
-            @Override
-            protected void onPostExecute(Boolean success) {
-                if(!success) {
-                    // Let the user know the audible won't be working
-                    Toast.makeText(activity, R.string.error_audible_not_available, Toast.LENGTH_LONG).show();
-                }
-            }
-        }.execute();
     }
 
 }

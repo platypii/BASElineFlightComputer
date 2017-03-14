@@ -15,6 +15,11 @@ import com.google.firebase.crash.FirebaseCrash;
 public class Intents {
     private static final String TAG = "Intents";
 
+    /* Request codes used to invoke user interactions */
+    static final int RC_SIGN_IN = 0;
+    static final int RC_LOCATION = 1;
+    public static final int RC_TTS_DATA = 2;
+
     /** Open jump activity */
     public static void openTrackActivity(@NonNull Context context, TrackFile trackFile) {
         final Intent intent = new Intent(context, TrackActivity.class);
