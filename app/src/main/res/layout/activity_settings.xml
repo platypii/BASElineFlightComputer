@@ -1,0 +1,8 @@
+<fragment
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.platypii.baseline.SettingsActivity"
+    android:id="@+id/trackList"
+    android:name="com.platypii.baseline.SettingsFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
