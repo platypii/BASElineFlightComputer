@@ -69,7 +69,7 @@ class TrackListing {
                 final String body = IOUtil.toString(conn.getInputStream());
                 return fromJson(body);
             } else if(status == 401) {
-                throw new IOException("authorization required");
+                throw new AuthException(auth);
             } else {
                 throw new IOException("http status code " + status);
             }

@@ -60,7 +60,7 @@ class TrackDelete {
             final int status = conn.getResponseCode();
             if(status != 200) {
                 if (status == 401) {
-                    throw new IOException("authorization required");
+                    throw new AuthException(auth);
                 } else {
                     throw new IOException("http status code " + status);
                 }

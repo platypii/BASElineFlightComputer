@@ -51,6 +51,10 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
             BaselineCloud.listAsync(auth, true);
             Log.i(TAG, "Upload successful, track " + trackData.track_id);
             return new Try.Success<>(trackData);
+        } catch(AuthException e) {
+            Log.e(TAG, "Failed to upload file - auth error", e);
+            FirebaseCrash.report(e);
+            return new Try.Failure<>("auth error");
         } catch(IOException e) {
             Log.e(TAG, "Failed to upload file", e);
             FirebaseCrash.report(e);
@@ -58,7 +62,7 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
         } catch(JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
             FirebaseCrash.report(e);
-            return new Try.Failure<>(e.toString());
+            return new Try.Failure<>("invalid response from server");
         }
     }
     @Override
@@ -107,7 +111,7 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
                 final JSONObject jsonObject = new JSONObject(body);
                 return CloudData.fromJson(jsonObject);
             } else if(status == 401) {
-                throw new IOException("authorization required");
+                throw new AuthException(auth);
             } else {
                 throw new IOException("http status code " + status);
             }
