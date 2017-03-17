@@ -104,8 +104,10 @@ public class MainActivity extends BaseActivity {
 
     public void clickRecord(View v) {
         final Bundle bundle = new Bundle();
-        bundle.putFloat("lat", (float) Services.location.lastLoc.latitude);
-        bundle.putFloat("lon", (float) Services.location.lastLoc.longitude);
+        if(Services.location.lastLoc != null) {
+            bundle.putFloat("lat", (float) Services.location.lastLoc.latitude);
+            bundle.putFloat("lon", (float) Services.location.lastLoc.longitude);
+        }
         if(!Services.logger.isLogging()) {
             firebaseAnalytics.logEvent("click_logging_start", bundle);
             Services.logger.startLogging();
