@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * A general view for plotting data.
@@ -87,10 +88,17 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
                             drawPlot(canvas);
                         }
                     }
+                } catch(Exception e) {
+                    FirebaseCrash.report(e);
                 } finally {
                     // do this in a finally so that if an exception is thrown, we don't leave the Surface in an inconsistent state
                     if(canvas != null) {
-                        _surfaceHolder.unlockCanvasAndPost(canvas);
+                        try {
+                            _surfaceHolder.unlockCanvasAndPost(canvas);
+                        } catch(Exception e) {
+                            // _surfaceHolder.getSurface().isValid()?
+                            FirebaseCrash.report(new Exception("Crash while unlocking canvas: " + canvas, e));
+                        }
                     }
                 }
             }
