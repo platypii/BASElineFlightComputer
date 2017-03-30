@@ -31,6 +31,7 @@ import org.greenrobot.eventbus.EventBus;
 public class MyAltimeter implements Service, MyLocationListener, SensorEventListener {
     private static final String TAG = "MyAltimeter";
 
+    private static final int sensorDelay = 100000; // microseconds
     private SensorManager sensorManager;
     private SharedPreferences prefs;
 
@@ -88,7 +89,7 @@ public class MyAltimeter implements Service, MyLocationListener, SensorEventList
                     final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
                     if (sensor != null) {
                         // Start sensor updates
-                        sensorManager.registerListener(MyAltimeter.this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+                        sensorManager.registerListener(MyAltimeter.this, sensor, sensorDelay);
                     }
 
                     // Start GPS updates
