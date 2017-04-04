@@ -113,8 +113,12 @@ public class MySensorManager implements SensorEventListener, Service {
 
     @Override
     public void stop() {
-        sensorManager.unregisterListener(this);
-        sensorManager = null;
+        if(sensorManager != null) {
+            sensorManager.unregisterListener(this);
+            sensorManager = null;
+        } else {
+            Log.e(TAG, "Sensor manager already stopped");
+        }
         if(!listeners.isEmpty()) {
             Log.e(TAG, "Stopping sensor service, but listeners are still listening");
         }

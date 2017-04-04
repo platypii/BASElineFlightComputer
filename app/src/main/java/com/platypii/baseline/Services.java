@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * Start and stop essential services.
@@ -111,6 +112,7 @@ public class Services {
             // TTS is prerequisite for audible
             if(ttsLoaded) {
                 Log.i(TAG, "Text-to-speech data already loaded, starting audible");
+                FirebaseCrash.log("text-to-speech already loaded");
                 audible.start(appContext);
             } else {
                 Log.i(TAG, "Checking for text-to-speech data");
@@ -141,6 +143,7 @@ public class Services {
     static void onTtsLoaded(Context context) {
         // TTS loaded, start the audible
         ttsLoaded = true;
+        FirebaseCrash.log("onTtsLoaded");
         audible.start(context);
     }
 
@@ -158,30 +161,38 @@ public class Services {
     private static final Runnable stopRunnable = new Runnable() {
         @Override
         public void run() {
-            if(initialized && startCount == 0) {
-                if(!logger.isLogging() && !audible.isEnabled()) {
-                    Log.i(TAG, "All activities have stopped. Stopping services.");
-                    // Stop services
-                    notifications.stop();
-                    audible.stop();
-                    flightMode.stop();
-                    alti.stop();
-                    sensors.stop();
-                    location.stop();
-                    logger.stop();
-                    bluetooth.stop();
-                    initialized = false;
-                } else {
-                    if(logger.isLogging()) {
-                        Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
-                    }
-                    if(audible.isEnabled()) {
-                        Log.w(TAG, "All activities have stopped, but audible still active. Leaving services running.");
-                    }
+            stopIfIdle();
+        }
+    };
+
+    /**
+     * Stop services IF nothing is using them
+     */
+    private static synchronized void stopIfIdle() {
+        if(initialized && startCount == 0) {
+            if(!logger.isLogging() && !audible.isEnabled()) {
+                Log.i(TAG, "All activities have stopped. Stopping services.");
+                // Stop services
+                notifications.stop();
+                audible.stop();
+                flightMode.stop();
+                alti.stop();
+                sensors.stop();
+                location.stop();
+                logger.stop();
+                bluetooth.stop();
+                initialized = false;
+                handler.removeCallbacks(stopRunnable);
+            } else {
+                if(logger.isLogging()) {
+                    Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
+                }
+                if(audible.isEnabled()) {
+                    Log.w(TAG, "All activities have stopped, but audible still active. Leaving services running.");
                 }
             }
         }
-    };
+    }
 
     private static void loadPreferences(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
