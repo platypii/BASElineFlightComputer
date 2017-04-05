@@ -37,8 +37,8 @@ class Notifications implements Service {
             final Intent baselineIntent = new Intent(context, MainActivity.class);
             final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, baselineIntent, 0);
             Notification.Builder builder = new Notification.Builder(context)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle("BASEline Flight Computer")
+                    .setSmallIcon(R.drawable.ws_white)
+                    .setContentTitle(context.getString(R.string.app_name_long))
                     .setOngoing(true)
                     .setContentIntent(pendingIntent);
             if(logging && audible) {
