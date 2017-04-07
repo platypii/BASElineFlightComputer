@@ -4,7 +4,10 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import android.util.Log;
 
-class AutoStop {
+/**
+ * Automatically stop logging when landing is detected (after a known jump)
+ */
+public class AutoStop {
     private static final String TAG = "AutoStop";
 
     public static boolean preferenceEnabled = true;

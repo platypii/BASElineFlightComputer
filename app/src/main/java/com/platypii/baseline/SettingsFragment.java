@@ -4,6 +4,7 @@ import com.platypii.baseline.bluetooth.BluetoothDevicePreference;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.util.Convert;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -58,6 +59,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             case "metric_enabled":
                 Convert.metric = (Boolean) value;
                 Log.i(TAG, "Setting metric mode: " + Convert.metric);
+                break;
+            case "auto_stop_enabled":
+                AutoStop.preferenceEnabled = (Boolean) value;
+                Log.i(TAG, "Setting auto-stop mode: " + AutoStop.preferenceEnabled);
                 break;
             case "bluetooth_enabled":
                 BluetoothService.preferenceEnabled = (Boolean) value;

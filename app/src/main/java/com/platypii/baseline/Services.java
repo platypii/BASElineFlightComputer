@@ -4,6 +4,7 @@ import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.audible.CheckTextToSpeechTask;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.jarvis.FlightComputer;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.LocationService;
@@ -199,6 +200,9 @@ public class Services {
 
         // Metric
         Convert.metric = prefs.getBoolean("metric_enabled", false);
+
+        // Auto-stop
+        AutoStop.preferenceEnabled = prefs.getBoolean("auto_stop_enabled", true);
 
         // Bluetooth
         BluetoothService.preferenceEnabled = prefs.getBoolean("bluetooth_enabled", false);

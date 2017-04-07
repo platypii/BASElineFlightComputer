@@ -6,6 +6,12 @@
         android:title="@string/pref_metric"
         android:defaultValue="false"/>
 
+    <CheckBoxPreference
+        android:key="auto_stop_enabled"
+        android:summary="@string/pref_auto_stop_description"
+        android:title="@string/pref_auto_stop"
+        android:defaultValue="true"/>
+
     <SwitchPreference
         android:key="bluetooth_enabled"
         android:summary="@string/pref_bluetooth_description"
