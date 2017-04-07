@@ -56,7 +56,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
             stopTimeNano = -1;
             try {
                 startFileLogging();
-                EventBus.getDefault().post(new LoggingEvent());
+                EventBus.getDefault().post(new LoggingEvent(true));
             } catch(IOException e) {
                 Log.e(TAG, "Error starting logging", e);
             }
@@ -75,7 +75,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
             Log.i(TAG, "Stopping logging");
             final File logFile = stopFileLogging();
             logging = false;
-            EventBus.getDefault().post(new LoggingEvent());
+            EventBus.getDefault().post(new LoggingEvent(false));
             if(logFile != null) {
                 return new TrackFile(logFile);
             } else {

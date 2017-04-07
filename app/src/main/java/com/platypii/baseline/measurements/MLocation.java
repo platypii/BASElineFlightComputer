@@ -1,6 +1,7 @@
 package com.platypii.baseline.measurements;
 
 import com.platypii.baseline.Services;
+import com.platypii.baseline.jarvis.FlightMode;
 import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
 import com.platypii.baseline.util.Numbers;
@@ -104,9 +105,6 @@ public class MLocation extends Measurement {
         return new LatLng(latitude, longitude);
     }
 
-    public double bearingTo(LatLng dest) {
-        return bearingTo(latitude, longitude, dest.latitude, dest.longitude);
-    }
     public double bearingTo(MLocation dest) {
         return bearingTo(latitude, longitude, dest.latitude, dest.longitude);
     }
@@ -120,9 +118,6 @@ public class MLocation extends Measurement {
         return Math.toDegrees(Math.atan2(y, x));
     }
 
-    public double distanceTo(LatLng dest) {
-        return distanceTo(latitude, longitude, dest.latitude, dest.longitude);
-    }
     public double distanceTo(MLocation dest) {
         return distanceTo(latitude, longitude, dest.latitude, dest.longitude);
     }
@@ -169,6 +164,13 @@ public class MLocation extends Measurement {
         final double lon3 = mod360(degrees(lon2));
 
         return new LatLng(lat3, lon3);
+    }
+
+    /**
+     * Return the flight mode based on only this one measurement
+     */
+    public int flightMode() {
+        return FlightMode.getMode(groundSpeed(), climb);
     }
 
     private static double radians(double degrees) {

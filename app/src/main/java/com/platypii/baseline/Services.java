@@ -4,7 +4,7 @@ import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.audible.CheckTextToSpeechTask;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.jarvis.FlightMode;
+import com.platypii.baseline.jarvis.FlightComputer;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.sensors.MySensorManager;
@@ -47,11 +47,11 @@ public class Services {
 
     // Services
     public static SharedPreferences prefs;
-    static final TrackLogger logger = new TrackLogger();
+    public static final TrackLogger logger = new TrackLogger();
     public static final LocationService location = new LocationService();
     public static final MyAltimeter alti = new MyAltimeter();
     public static final MySensorManager sensors = new MySensorManager();
-    static final FlightMode flightMode = new FlightMode();
+    static final FlightComputer flightComputer = new FlightComputer();
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();
@@ -107,7 +107,7 @@ public class Services {
             alti.start(appContext);
 
             Log.i(TAG, "Starting flight services");
-            flightMode.start();
+            flightComputer.start(appContext);
 
             // TTS is prerequisite for audible
             if(ttsLoaded) {
@@ -175,7 +175,7 @@ public class Services {
                 // Stop services
                 notifications.stop();
                 audible.stop();
-                flightMode.stop();
+                flightComputer.stop();
                 alti.stop();
                 sensors.stop();
                 location.stop();
