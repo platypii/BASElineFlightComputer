@@ -6,7 +6,7 @@
         android:title="@string/pref_metric"
         android:defaultValue="false"/>
 
-    <CheckBoxPreference
+    <SwitchPreference
         android:key="auto_stop_enabled"
         android:summary="@string/pref_auto_stop_description"
         android:title="@string/pref_auto_stop"

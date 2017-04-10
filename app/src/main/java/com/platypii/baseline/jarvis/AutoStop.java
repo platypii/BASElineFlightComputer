@@ -2,6 +2,7 @@ package com.platypii.baseline.jarvis;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
+import android.os.Handler;
 import android.util.Log;
 
 /**
@@ -12,14 +13,20 @@ public class AutoStop {
 
     public static boolean preferenceEnabled = true;
 
+    // Jump detection state
     private static final int STATE_STOPPED = 0;
     private static final int STATE_STARTED = 1;
     private static final int STATE_EXITED = 2;
-    private static final int STATE_LANDED = 3;
+    private int state = STATE_STOPPED;
+
+    private static final String landing_message = "Landing detected";
+    private static final String timeout_message = "Jump timeout";
+
+    // When auto stop is enabled, if we haven't detected landing in 1 hour, stop recording
+    private final static Handler handler = new Handler();
+    private static final long autoTimeout = 3600000; // 1 hour
 
     private static final double minHeight = 60;
-
-    private int state = STATE_STOPPED;
 
     private double prExited = 0;
     private double prLanded = 0;
@@ -45,7 +52,8 @@ public class AutoStop {
                 prExited -= prExited * 0.6;
             }
             if(prExited > 0.85) {
-                exited();
+                Log.i(TAG, "Exit detected");
+                state = STATE_EXITED;
             }
         } else if(state == STATE_EXITED) {
             // Look for landing
@@ -54,7 +62,7 @@ public class AutoStop {
                 prLanded += (1 - prExited) * 0.6;
             }
             if(prLanded > 0.95) {
-                landed();
+                landed(landing_message);
             }
         }
     }
@@ -70,6 +78,8 @@ public class AutoStop {
         // TODO: Should we reset altitude range per recording or per app session?
         altMin = Double.NaN;
         altMax = Double.NaN;
+        // When auto stop is enabled, timeout after 1 hour
+        handler.postDelayed(stopRunnable, autoTimeout);
     }
 
     /**
@@ -77,24 +87,39 @@ public class AutoStop {
      */
     void stopLogging() {
         state = STATE_STOPPED;
+        // Stop timeout thread
+        handler.removeCallbacks(stopRunnable);
     }
 
-    private void exited() {
-        Log.i(TAG, "Exit detected");
-        state = STATE_EXITED;
-        Services.audible.speakNow("Exit"); // TODO: Say exit for debug only
-    }
-    private void landed() {
-        Log.i(TAG, "Landing detected");
-        state = STATE_LANDED;
+    private void landed(String msg) {
+        Log.i(TAG, "Auto-stop landing detected: " + msg);
+        state = STATE_STOPPED;
         // If audible enabled, say landing detected
-        Services.audible.speakNow("Landing detected");
         if(preferenceEnabled) {
             // If audible enabled, disable
-            Services.audible.disableAudible();
+            if(Services.audible.isEnabled()) {
+                Services.audible.speakNow(msg);
+                Services.audible.disableAudible();
+            }
             // If logging enabled, disable
-            Services.logger.stopLogging();
-            // TODO: Returns a trackfile, upload to cloud?
+            if(Services.logger.isLogging()) {
+                Services.logger.stopLogging();
+                // TODO: Returns a trackfile, upload to cloud?
+            } else {
+                Log.e(TAG, "Landing detected, but logger not logging");
+            }
         }
     }
+
+    /**
+     * A thread that stops recording after 1 hour
+     */
+    private final Runnable stopRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.i(TAG, "Auto-stop timeout");
+            landed(timeout_message);
+        }
+    };
+
 }
