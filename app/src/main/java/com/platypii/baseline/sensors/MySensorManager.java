@@ -14,8 +14,8 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Service to manage orientation sensors, and listeners
@@ -33,7 +33,7 @@ public class MySensorManager implements SensorEventListener, Service {
     public final SyncedList<MSensor> gravity = new SyncedList<>();
     public final SyncedList<MSensor> rotation = new SyncedList<>();
 
-    private final List<MySensorListener> listeners = new ArrayList<>();
+    private final List<MySensorListener> listeners = new CopyOnWriteArrayList<>();
 
     /**
      * Initialize orientation sensor services
@@ -128,18 +128,14 @@ public class MySensorManager implements SensorEventListener, Service {
      * Add a new listener to be notified of location updates
      */
     public void addListener(MySensorListener listener) {
-        synchronized(listeners) {
-            listeners.add(listener);
-        }
+        listeners.add(listener);
     }
 
     /**
      * Remove a listener from location updates
      */
     public void removeListener(MySensorListener listener) {
-        synchronized(listeners) {
-            listeners.remove(listener);
-        }
+        listeners.remove(listener);
     }
 
 }

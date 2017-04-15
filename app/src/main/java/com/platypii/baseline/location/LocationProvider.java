@@ -8,15 +8,15 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 abstract class LocationProvider implements Service {
     // Duration until location considered stale, in milliseconds
     private static final long LOCATION_TTL = 10000;
 
     // Listeners
-    private final List<MyLocationListener> listeners = new ArrayList<>();
+    private final List<MyLocationListener> listeners = new CopyOnWriteArrayList<>();
 
     // GPS status
     public float refreshRate = 0; // Moving average of refresh rate in Hz
@@ -73,18 +73,14 @@ abstract class LocationProvider implements Service {
      * Add a new listener to be notified of location updates
      */
     public void addListener(MyLocationListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
+        listeners.add(listener);
     }
 
     /**
      * Remove a listener from location updates
      */
     public void removeListener(MyLocationListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
+        listeners.remove(listener);
     }
 
     /**
@@ -133,10 +129,8 @@ abstract class LocationProvider implements Service {
         new AsyncTask<MLocation, Void, Void>() {
             @Override
             protected Void doInBackground(MLocation... params) {
-                synchronized (listeners) {
-                    for (MyLocationListener listener : listeners) {
-                        listener.onLocationChanged(params[0]);
-                    }
+                for (MyLocationListener listener : listeners) {
+                    listener.onLocationChanged(params[0]);
                 }
                 return null;
             }
