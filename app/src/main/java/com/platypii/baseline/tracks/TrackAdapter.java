@@ -2,7 +2,7 @@ package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
-import com.platypii.baseline.cloud.BaselineCloud;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -49,7 +49,7 @@ class TrackAdapter extends BaseAdapter {
             }
         }
         // Add cloud tracks
-        final List<CloudData> trackList = BaselineCloud.listCached();
+        final List<CloudData> trackList = Services.cloud.listing.cache.list();
         if(trackList != null && !trackList.isEmpty()) {
             items.add(new ListHeader("Synced"));
             for(CloudData trackData : trackList) {

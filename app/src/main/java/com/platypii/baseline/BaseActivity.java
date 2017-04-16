@@ -1,6 +1,5 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.util.Callback;
 import android.Manifest;
@@ -214,7 +213,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
                 // Log.d(TAG, "Got id token " + idToken);
 
                 // Update track listing
-                BaselineCloud.listAsync(account.getIdToken(), false);
+                Services.cloud.listing.listAsync(account.getIdToken(), false);
             }
 
             // Notify listeners
@@ -230,7 +229,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
         // Clear account
         account = null;
         // Clear track listing
-        BaselineCloud.signOut();
+        Services.cloud.signOut();
         // Notify listeners
         updateState(AuthEvent.SIGNED_OUT);
     }

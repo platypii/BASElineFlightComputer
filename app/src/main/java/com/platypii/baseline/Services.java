@@ -4,6 +4,7 @@ import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.audible.CheckTextToSpeechTask;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.jarvis.FlightComputer;
 import com.platypii.baseline.location.LandingZone;
@@ -56,6 +57,7 @@ public class Services {
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();
+    public static final BaselineCloud cloud = new BaselineCloud();
 
     /**
      * We want preferences to be available as early as possible.

@@ -1,5 +1,6 @@
 package com.platypii.baseline.cloud;
 
+import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Callback;
@@ -46,9 +47,9 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
             // Move track to synced directory
             trackFile.archive();
             // Add to cache
-            BaselineCloud.addTrackData(trackData);
+            Services.cloud.tracks.addTrackData(trackData);
             // Update track listing
-            BaselineCloud.listAsync(auth, true);
+            Services.cloud.listing.listAsync(auth, true);
             Log.i(TAG, "Upload successful, track " + trackData.track_id);
             return new Try.Success<>(trackData);
         } catch(AuthException e) {

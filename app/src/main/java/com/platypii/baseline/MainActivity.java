@@ -1,7 +1,6 @@
 package com.platypii.baseline;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.events.SyncEvent;
@@ -131,7 +130,7 @@ public class MainActivity extends BaseActivity {
             getAuthToken(new Callback<String>() {
                 @Override
                 public void apply(String authToken) {
-                    BaselineCloud.upload(jump, authToken, null);
+                    Services.cloud.upload(jump, authToken, null);
                 }
                 @Override
                 public void error(String error) {

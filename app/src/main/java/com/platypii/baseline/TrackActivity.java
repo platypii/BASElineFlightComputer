@@ -1,6 +1,5 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
@@ -78,7 +77,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
             @Override
             public void apply(String authToken) {
                 Toast.makeText(getApplicationContext(), "Syncing track...", Toast.LENGTH_SHORT).show();
-                BaselineCloud.upload(trackFile, authToken, new Callback<CloudData>() {
+                Services.cloud.upload(trackFile, authToken, new Callback<CloudData>() {
                     @Override
                     public void apply(CloudData cloudData) {
                         updateViews();

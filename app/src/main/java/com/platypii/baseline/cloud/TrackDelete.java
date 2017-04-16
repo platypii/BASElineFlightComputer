@@ -1,5 +1,6 @@
 package com.platypii.baseline.cloud;
 
+import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -35,7 +36,7 @@ class TrackDelete {
             deleteRemote(auth, track.trackUrl);
             Log.i(TAG, "Track delete successful: " + track.track_id);
             // Update track list
-            BaselineCloud.listAsync(auth, true);
+            Services.cloud.listing.listAsync(auth, true);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteSuccess(track.track_id));
         } catch(IOException e) {

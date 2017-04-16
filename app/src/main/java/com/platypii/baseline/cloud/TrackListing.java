@@ -1,9 +1,10 @@
 package com.platypii.baseline.cloud;
 
+import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.IOUtil;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
@@ -19,28 +20,56 @@ import java.util.List;
 /**
  * List tracks from the cloud
  */
-class TrackListing {
+public class TrackListing {
     private static final String TAG = "TrackListing";
 
-    static void listTracksAsync(@NonNull final String auth) {
-        Log.i(TAG, "Listing tracks");
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                listTracks(auth);
+    public TrackListingCache cache = new TrackListingCache();
+
+    // Minimum time between requests
+    private static final long REQUEST_TTL = 30 * 1000; // milliseconds
+    // Maximum lifetime of a successful track listing
+    private static final long UPDATE_TTL = 5 * 60 * 1000; // milliseconds
+
+    /**
+     * Query baseline server for track listing asynchronously
+     */
+    public void listAsync(final String auth, boolean force) {
+        if(auth != null) {
+            // Compute time since last update
+            final long lastUpdateDuration = System.currentTimeMillis() - Services.prefs.getLong(TrackListingCache.CACHE_LAST_UPDATE, 0);
+            final long lastRequestDuration = System.currentTimeMillis() - Services.prefs.getLong(TrackListingCache.CACHE_LAST_REQUEST, 0);
+            final boolean shouldRequest = UPDATE_TTL < lastUpdateDuration && REQUEST_TTL < lastRequestDuration;
+            if (force || shouldRequest) {
+                final SharedPreferences.Editor editor = Services.prefs.edit();
+                editor.putLong(TrackListingCache.CACHE_LAST_REQUEST, System.currentTimeMillis());
+                editor.apply();
+                // Update the track listing in a thread
+                Log.i(TAG, "Listing tracks");
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        listTracks(auth);
+                    }
+                });
+            } else {
+                final double t1 = lastUpdateDuration * 0.001;
+                final double t2 = lastRequestDuration * 0.001;
+                Log.d(TAG, String.format("Using cached track list (updated %.3fs, requested %.3fs)", t1, t2));
             }
-        });
+        } else {
+            Log.e(TAG, "Failed to list tracks, missing auth");
+        }
     }
 
     /**
      * Notify listeners and handle exceptions
      */
-    private static void listTracks(String auth) {
+    private void listTracks(String auth) {
         try {
             // Make HTTP request
             final List<CloudData> trackList = listRemote(auth);
             // Save track listing to local cache
-            BaselineCloud.updateCache(trackList);
+            Services.cloud.listing.cache.update(trackList);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.ListingSuccess());
 
@@ -57,7 +86,7 @@ class TrackListing {
     /**
      * Send http request to BASEline server for track listing
      */
-    private static List<CloudData> listRemote(String auth) throws IOException, JSONException {
+    private List<CloudData> listRemote(String auth) throws IOException, JSONException {
         final URL url = new URL(BaselineCloud.listUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", auth);
