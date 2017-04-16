@@ -73,26 +73,17 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     public void clickSync(View v) {
         // Start upload
         firebaseAnalytics.logEvent("click_track_sync", null);
-        getAuthToken(new Callback<String>() {
+        Toast.makeText(getApplicationContext(), "Syncing track...", Toast.LENGTH_SHORT).show();
+        Services.cloud.uploads.upload(trackFile, new Callback<CloudData>() {
             @Override
-            public void apply(String authToken) {
-                Toast.makeText(getApplicationContext(), "Syncing track...", Toast.LENGTH_SHORT).show();
-                Services.cloud.upload(trackFile, authToken, new Callback<CloudData>() {
-                    @Override
-                    public void apply(CloudData cloudData) {
-                        updateViews();
-                        Toast.makeText(getApplicationContext(), "Track sync success", Toast.LENGTH_LONG).show();
-                    }
-                    @Override
-                    public void error(String error) {
-                        Log.e(TAG, "Failed to upload track: " + error);
-                        Toast.makeText(getApplicationContext(), "Track sync failed", Toast.LENGTH_LONG).show();
-                    }
-                });
+            public void apply(CloudData cloudData) {
+                updateViews();
+                Toast.makeText(getApplicationContext(), "Track sync success", Toast.LENGTH_LONG).show();
             }
             @Override
             public void error(String error) {
-                Toast.makeText(getApplicationContext(), "Failed to get auth token", Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Failed to upload track: " + error);
+                Toast.makeText(getApplicationContext(), "Track sync failed", Toast.LENGTH_LONG).show();
             }
         });
     }

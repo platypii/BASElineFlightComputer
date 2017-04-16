@@ -1,12 +1,9 @@
 package com.platypii.baseline;
 
-import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.location.LocationStatus;
-import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.util.Callback;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,8 +18,6 @@ import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.io.FileNotFoundException;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "Main";
@@ -112,33 +107,7 @@ public class MainActivity extends BaseActivity {
             Services.logger.startLogging();
         } else {
             firebaseAnalytics.logEvent("click_logging_stop", bundle);
-            final TrackFile trackFile = Services.logger.stopLogging();
-
-            // Upload to the cloud
-            if(trackFile != null && trackFile.file.exists()) {
-                uploadToCloud(trackFile);
-            } else {
-                Log.e(TAG, "Error reading track file: " + trackFile);
-                FirebaseCrash.report(new FileNotFoundException("Error reading track file: " + trackFile));
-            }
-        }
-    }
-
-    private void uploadToCloud(final TrackFile jump) {
-        if(isSignedIn()) {
-            // Begin automatic upload
-            getAuthToken(new Callback<String>() {
-                @Override
-                public void apply(String authToken) {
-                    Services.cloud.upload(jump, authToken, null);
-                }
-                @Override
-                public void error(String error) {
-                    Toast.makeText(MainActivity.this, "Track sync failed: " + error, Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            Log.w(TAG, "Track sync failed: not signed in");
+            Services.logger.stopLogging();
         }
     }
 

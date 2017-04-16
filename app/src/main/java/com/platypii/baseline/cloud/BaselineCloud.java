@@ -1,15 +1,16 @@
 package com.platypii.baseline.cloud;
 
-import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.util.Callback;
+import com.platypii.baseline.Service;
+import android.content.Context;
 
-public class BaselineCloud {
+public class BaselineCloud implements Service {
 
     static final String baselineServer = "https://base-line.ws";
     static final String listUrl = BaselineCloud.baselineServer + "/v1/tracks";
 
     public final TrackListing listing = new TrackListing();
     public final TrackDatabase tracks = new TrackDatabase();
+    public final UploadManager uploads = new UploadManager();
 
     /**
      * Clear the track list cache (for when user signs out)
@@ -18,12 +19,20 @@ public class BaselineCloud {
         listing.cache.clear();
     }
 
-    public void upload(TrackFile trackFile, String auth, Callback<CloudData> cb) {
-        new UploadTask(trackFile, auth, cb).execute();
-    }
-
     public void deleteTrack(CloudData track, String auth) {
         // Delete track on server
         TrackDelete.deleteAsync(auth, track);
     }
+
+    @Override
+    public void start(Context context) {
+        // Start the upload manager
+        uploads.start(context);
+    }
+
+    @Override
+    public void stop() {
+        uploads.stop();
+    }
+
 }

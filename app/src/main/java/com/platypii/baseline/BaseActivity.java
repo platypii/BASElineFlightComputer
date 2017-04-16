@@ -23,7 +23,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
 
-abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener {
+public abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "BaseActivity";
 
     FirebaseAnalytics firebaseAnalytics;
@@ -40,7 +40,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
     private View signInSpinner;
 
     // Save last sign in state so that sign in panel doesn't blink
-    private static AuthEvent currentState = null;
+    public static AuthEvent currentState = null;
 
     protected boolean isSignedIn() {
         return account != null;
@@ -219,7 +219,7 @@ abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.
             // Notify listeners
             updateState(AuthEvent.SIGNED_IN);
         } else {
-            Log.w(TAG, "Sign in failed");
+            Log.w(TAG, "Sign in failed: " + result.getStatus());
             signedOut();
         }
         userClickedSignIn = false;

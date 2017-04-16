@@ -6,6 +6,7 @@ import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Callback;
 import com.platypii.baseline.util.IOUtil;
 import com.platypii.baseline.util.Try;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
@@ -28,28 +29,30 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
 
     private static final String postUrl = BaselineCloud.baselineServer + "/tracks";
 
+    private final Context context;
     private final TrackFile trackFile;
-    private final String auth;
     private final Callback<CloudData> cb;
 
-    UploadTask(TrackFile trackFile, String auth, Callback<CloudData> cb) {
+    UploadTask(Context context, TrackFile trackFile, Callback<CloudData> cb) {
+        this.context = context;
         this.trackFile = trackFile;
-        this.auth = auth;
         this.cb = cb;
     }
 
     @Override
     protected Try<CloudData> doInBackground(Void... voids) {
-        Log.i(TAG, "Uploading track with auth " + auth);
+        Log.i(TAG, "Uploading track " + trackFile);
         try {
+            // Get auth token
+            final String authToken = AuthToken.getAuthToken(context);
             // Make HTTP request
-            final CloudData trackData = postTrack(trackFile, auth);
+            final CloudData trackData = postTrack(trackFile, authToken);
             // Move track to synced directory
             trackFile.archive();
             // Add to cache
             Services.cloud.tracks.addTrackData(trackData);
             // Update track listing
-            Services.cloud.listing.listAsync(auth, true);
+            Services.cloud.listing.listAsync(authToken, true);
             Log.i(TAG, "Upload successful, track " + trackData.track_id);
             return new Try.Success<>(trackData);
         } catch(AuthException e) {

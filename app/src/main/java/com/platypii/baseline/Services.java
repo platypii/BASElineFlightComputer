@@ -127,6 +127,9 @@ public class Services {
             Log.i(TAG, "Starting notification bar service");
             notifications.start(appContext);
 
+            Log.i(TAG, "Starting cloud services");
+            cloud.start(appContext);
+
             // Check if migration is necessary
             MigrateTracks.migrate(appContext);
 
@@ -137,9 +140,6 @@ public class Services {
         } else {
             Log.v(TAG, "Services already started");
         }
-
-        // TODO: If you wanted to automatically upload any unsynced files, this is how:
-        // BaselineCloud.uploadAll();
     }
 
     /**
@@ -179,6 +179,7 @@ public class Services {
             if(!logger.isLogging() && !audible.isEnabled()) {
                 Log.i(TAG, "All activities have stopped. Stopping services.");
                 // Stop services
+                cloud.stop();
                 notifications.stop();
                 audible.stop();
                 flightComputer.stop();
