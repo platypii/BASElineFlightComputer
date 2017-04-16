@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
+    <SwitchPreference
         android:key="metric_enabled"
         android:summary="@string/pref_metric_description"
         android:title="@string/pref_metric"

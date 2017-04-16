@@ -191,19 +191,9 @@ public class MainActivity extends BaseActivity {
         startActivity(new Intent(this, MapActivity.class));
     }
 
-    public void clickTracks(View v) {
-        firebaseAnalytics.logEvent("click_tracks", null);
-        startActivity(new Intent(this, TrackListActivity.class));
-    }
-
     public void clickAudible(View v) {
         firebaseAnalytics.logEvent("click_audible", null);
         startActivity(new Intent(this, AudibleSettingsActivity.class));
-    }
-
-    public void clickSettings(View v) {
-        firebaseAnalytics.logEvent("click_settings", null);
-        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     private final View.OnLongClickListener audibleLongClickListener = new View.OnLongClickListener() {
@@ -223,6 +213,16 @@ public class MainActivity extends BaseActivity {
             return true;
         }
     };
+
+    public void clickTracks(View v) {
+        firebaseAnalytics.logEvent("click_tracks", null);
+        startActivity(new Intent(this, TrackListActivity.class));
+    }
+
+    public void clickSettings(View v) {
+        firebaseAnalytics.logEvent("click_settings", null);
+        startActivity(new Intent(this, SettingsActivity.class));
+    }
 
     /**
      * Update the text view for timer

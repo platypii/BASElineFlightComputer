@@ -9,7 +9,6 @@ import com.platypii.baseline.util.Convert;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
@@ -27,7 +26,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     private FirebaseAnalytics firebaseAnalytics;
 
-    private CheckBoxPreference metricPreference;
+    private SwitchPreference metricPreference;
     private SwitchPreference bluetoothPreference;
     private BluetoothDevicePreference bluetoothDevicePreference;
     private Preference signInPreference;
@@ -40,7 +39,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
 
-        metricPreference = (CheckBoxPreference) findPreference("metric_enabled");
+        metricPreference = (SwitchPreference) findPreference("metric_enabled");
         metricPreference.setOnPreferenceChangeListener(this);
 
         bluetoothPreference = (SwitchPreference) findPreference("bluetooth_enabled");
