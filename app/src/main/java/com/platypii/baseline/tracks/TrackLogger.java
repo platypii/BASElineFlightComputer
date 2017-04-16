@@ -9,6 +9,7 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.Measurement;
 import com.platypii.baseline.sensors.MySensorListener;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
@@ -43,8 +44,13 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
     private File logFile;
     private BufferedWriter log;
 
-    public void start(@NonNull Context context) {
-        logDir = TrackFiles.getTrackDirectory(context);
+    public void start(@NonNull final Context context) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                logDir = TrackFiles.getTrackDirectory(context);
+            }
+        });
     }
 
     public synchronized void startLogging() {

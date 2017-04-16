@@ -72,6 +72,7 @@ public class Services {
         startCount++;
         if(!initialized) {
             initialized = true;
+            final long startTime = System.currentTimeMillis();
             Log.i(TAG, "Starting services");
             final Context appContext = activity.getApplicationContext();
             handler.removeCallbacks(stopRunnable);
@@ -84,6 +85,7 @@ public class Services {
             }
 
             // Initialize track logger
+            Log.i(TAG, "Starting logger service");
             logger.start(appContext);
 
             Log.i(TAG, "Starting location service");
@@ -126,7 +128,7 @@ public class Services {
             // Check if migration is necessary
             MigrateTracks.migrate(appContext);
 
-            Log.i(TAG, "Services started");
+            Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
         } else if(startCount > 2) {
             // Activity lifecycles can overlap
             Log.w(TAG, "Services started more than twice");
@@ -143,6 +145,7 @@ public class Services {
      */
     static void onTtsLoaded(Context context) {
         // TTS loaded, start the audible
+        Log.i(TAG, "Text-to-speech data loaded, starting audible");
         ttsLoaded = true;
         FirebaseCrash.log("onTtsLoaded");
         audible.start(context);

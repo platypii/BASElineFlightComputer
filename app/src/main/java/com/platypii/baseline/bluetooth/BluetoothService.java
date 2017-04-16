@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.location.GpsStatus;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
@@ -59,10 +60,7 @@ public class BluetoothService implements Service {
             return;
         }
         final Activity activity = (Activity) context;
-        if (bluetoothState != BT_STOPPED) {
-            Log.e(TAG, "Bluetooth already started: " + BT_STATES[bluetoothState]);
-            FirebaseCrash.report(new Exception("Bluetooth already started: " + BT_STATES[bluetoothState]));
-        } else {
+        if (bluetoothState == BT_STOPPED) {
             setState(BluetoothService.BT_CONNECTING);
             // Load bluetooth messages
             if(BT_MESSAGE == null) {
@@ -80,11 +78,23 @@ public class BluetoothService implements Service {
             if(bluetoothRunnable != null) {
                 Log.e(TAG, "Bluetooth listener thread already started");
             }
-            bluetoothAdapter = getAdapter(activity);
-            bluetoothRunnable = new BluetoothRunnable(this, bluetoothAdapter);
-            bluetoothThread = new Thread(bluetoothRunnable);
-            bluetoothThread.start();
+            startAsync(activity);
+        } else {
+            Log.e(TAG, "Bluetooth already started: " + BT_STATES[bluetoothState]);
+            FirebaseCrash.report(new Exception("Bluetooth already started: " + BT_STATES[bluetoothState]));
         }
+    }
+
+    private void startAsync(final Activity activity) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                bluetoothAdapter = getAdapter(activity);
+                bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
+                bluetoothThread = new Thread(bluetoothRunnable);
+                bluetoothThread.start();
+            }
+        });
     }
 
     /**

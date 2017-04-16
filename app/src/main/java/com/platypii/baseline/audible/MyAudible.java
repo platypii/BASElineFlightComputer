@@ -6,6 +6,7 @@ import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -35,22 +36,30 @@ public class MyAudible implements Service {
     @Override
     public void start(@NonNull Context context) {
         Log.i(TAG, "Initializing audible");
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        speech = new Speech(context);
-
         if(!isInitialized) {
             isInitialized = true;
-            audibleThread = new AudibleThread(this);
-
-            AudibleSettings.load(prefs);
-            isEnabled = prefs.getBoolean("audible_enabled", false);
-            if(isEnabled) {
-                enableAudible();
-            }
+            startAsync(context);
         } else {
             Log.w(TAG, "Audible initialized twice");
             FirebaseCrash.report(new IllegalStateException("Audible initialized twice"));
         }
+    }
+
+    private void startAsync(final Context context) {
+        // Audible thread has a handler, which needs to be created in looper thread
+        audibleThread = new AudibleThread();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                speech = new Speech(context);
+                AudibleSettings.load(prefs);
+                isEnabled = prefs.getBoolean("audible_enabled", false);
+                if (isEnabled) {
+                    enableAudible();
+                }
+            }
+        });
     }
 
     public void enableAudible() {
