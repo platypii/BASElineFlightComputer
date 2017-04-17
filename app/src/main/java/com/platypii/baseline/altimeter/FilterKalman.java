@@ -5,7 +5,7 @@ import android.util.Log;
 /**
  * Implements a Kalman Filter
  */
-class FilterKalman extends Filter {
+public class FilterKalman extends Filter {
     private static final String TAG = "Kalman";
 
     // TODO: Acceleration

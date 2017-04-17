@@ -2,6 +2,8 @@ package com.platypii.baseline.location;
 
 import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.altimeter.Filter;
+import com.platypii.baseline.altimeter.FilterKalman;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
@@ -19,6 +21,7 @@ abstract class LocationProvider implements Service {
     private final List<MyLocationListener> listeners = new CopyOnWriteArrayList<>();
 
     // GPS status
+    // TODO: Include time from last sample until now if > refreshTime
     public float refreshRate = 0; // Moving average of refresh rate in Hz
 
     // Satellite data
@@ -29,7 +32,8 @@ abstract class LocationProvider implements Service {
     public long phoneOffsetMillis = 0;
 
     // Computed parameters
-    public double vD = 0;
+    // GPS altitude kalman filter
+    private final Filter altitudeFilter = new FilterKalman();
 
     // History
     public MLocation lastLoc; // last location received
@@ -105,14 +109,14 @@ abstract class LocationProvider implements Service {
         phoneOffsetMillis = clockOffset;
 
         if (prevLoc != null) {
-            // Compute vertical speed
-            vD = -1000.0 * (lastLoc.altitude_gps - prevLoc.altitude_gps) / (lastLoc.millis - prevLoc.millis);
+            final long deltaTime = lastLoc.millis - prevLoc.millis; // time since last refresh
+
+            // Compute vertical speed using kalman filter
+            altitudeFilter.update(lastLoc.altitude_gps, deltaTime * 0.001);
 
             // GPS sample refresh rate
-            // TODO: Include time from last sample until now if > refreshTime
-            final long deltaTime = lastLoc.millis - prevLoc.millis; // time since last refresh
             if (deltaTime > 0) {
-                final float newRefreshRate = 1000.0f / (float) (deltaTime); // Refresh rate based on last 2 samples
+                final float newRefreshRate = 1000f / deltaTime; // Refresh rate based on last 2 samples
                 if(refreshRate == 0) {
                     refreshRate = newRefreshRate;
                 } else {
@@ -123,6 +127,9 @@ abstract class LocationProvider implements Service {
                     refreshRate = 0;
                 }
             }
+        } else {
+            // Initialize vertical speed kalman filter
+            altitudeFilter.update(lastLoc.altitude_gps, 0);
         }
 
         // Notify listeners (using AsyncTask so the manager never blocks!)
@@ -211,6 +218,13 @@ abstract class LocationProvider implements Service {
             return lastLoc.glideRatio();
         }
         return Double.NaN;
+    }
+
+    /**
+     * Velocity down, computed by kalman filter
+     */
+    public double vD() {
+        return altitudeFilter.v;
     }
 
     @Override

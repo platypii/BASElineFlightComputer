@@ -4,7 +4,7 @@ package com.platypii.baseline.altimeter;
  * Abstract representation of a filter (eg- Low pass, high pass, moving average, kalman, etc)
  * Models a 1 dimensional physical process with position and velocity
  */
-abstract class Filter {
+public abstract class Filter {
 
     // Official altitude data
     public double x = Double.NaN; // Meters AGL
