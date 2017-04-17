@@ -41,6 +41,10 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     private long dateTime; // The number of milliseconds until the start of this day, midnight GMT
     private int gpsFix;
 
+    // Satellite data
+    private int satellitesInView = -1;
+    private int satellitesUsed = -1;
+
     // Android Location manager
     private static LocationManager manager;
 
@@ -67,7 +71,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         final float hAcc = Float.NaN;
         super.updateLocation(new MLocation(
                 lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
-                hAcc, pdop, hdop, vdop, satellitesUsed
+                hAcc, pdop, hdop, vdop, satellitesUsed, satellitesInView
         ));
     }
 
@@ -224,12 +228,13 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 lastFixMillis = dateTime + NMEA.parseTime(split[1]);
                 latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
                 longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
+                if (!split[7].isEmpty()) {
+                    satellitesUsed = Integer.parseInt(split[7]);
+                }
+                // hdop = Numbers.parseFloat(split[8]);
                 if (!split[9].isEmpty()) {
                     altitude_gps = Numbers.parseDouble(split[9]);
                     // double geoidSeparation = parseDouble(split[10]]);
-                }
-                if (!split[7].isEmpty()) {
-                    satellitesUsed = Integer.parseInt(split[7]);
                 }
                 break;
             case "VTG":

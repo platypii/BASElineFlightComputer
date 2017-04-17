@@ -19,6 +19,10 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     // Android Location manager
     private LocationManager manager;
 
+    // Satellite data comes from GpsStatusListener
+    private int satellitesInView = -1;
+    private int satellitesUsed = -1;
+
     @Override
     protected String providerName() {
         return TAG;
@@ -82,7 +86,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
 
             // Update official location
             updateLocation(new MLocation(lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
-                    hAcc, pdop, hdop, vdop, satellitesUsed));
+                    hAcc, pdop, hdop, vdop, satellitesUsed, satellitesInView));
         }
     }
     @Override

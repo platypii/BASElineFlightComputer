@@ -25,7 +25,8 @@ public class MLocation extends Measurement {
     public final float pdop; // Positional dilution of precision
     public final float hdop; // Horizontal dilution of precision
     public final float vdop; // Vertical dilution of precision
-    public final int numSat; // Number of satellites
+    public final int satellitesUsed; // Satellites used in fix
+    public final int satellitesInView; // Satellites in view
 
     public final double altitude;  // Altitude (m)
     public final double climb;  // Rate of climb (m/s)
@@ -33,7 +34,7 @@ public class MLocation extends Measurement {
     public MLocation(long millis, double latitude, double longitude, double altitude_gps,
                      double vN, double vE,
                      float hAcc, float pdop, float hdop, float vdop,
-                     int numSat) {
+                     int satellitesUsed, int satellitesInView) {
 
         // Load state data (altimeter, flightMode, orientation, etc)
         this.altitude = Services.alti.altitude;
@@ -59,12 +60,13 @@ public class MLocation extends Measurement {
         this.pdop = pdop;
         this.hdop = hdop;
         this.vdop = vdop;
-        this.numSat = numSat;
+        this.satellitesUsed = satellitesUsed;
+        this.satellitesInView = satellitesInView;
     }
 
     @Override
     public String toRow() {
-        final String sat_str = (numSat != -1)? Integer.toString(numSat) : "";
+        final String sat_str = (satellitesUsed != -1)? Integer.toString(satellitesUsed) : "";
         final String vN_str = Numbers.isReal(vN)? Double.toString(vN) : "";
         final String vE_str = Numbers.isReal(vE)? Double.toString(vE) : "";
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc

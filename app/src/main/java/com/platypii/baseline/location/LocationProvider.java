@@ -24,10 +24,6 @@ abstract class LocationProvider implements Service {
     // TODO: Include time from last sample until now if > refreshTime
     public float refreshRate = 0; // Moving average of refresh rate in Hz
 
-    // Satellite data
-    public int satellitesInView = -1; // Satellites in view
-    public int satellitesUsed = -1; // Satellites used in last fix
-
     // phone time = GPS time + offset
     public long phoneOffsetMillis = 0;
 
