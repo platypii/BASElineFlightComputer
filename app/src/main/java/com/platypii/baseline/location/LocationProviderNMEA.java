@@ -85,10 +85,10 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
      */
     @Override
     public void onNmeaReceived(long timestamp, String nmea) {
-        nmea = nmea.trim();
-        // Log.v(NMEA_TAG, "[" + timestamp + "] " + nmea);
+        // Log.v(NMEA_TAG, "[" + timestamp + "] " + nmea.trim()); // Trim because logcat fails on trailing \0
 
-        if(nmea.isEmpty()) {
+        nmea = cleanNmea(nmea);
+        if(nmea.length() < 8) {
             return;
         }
 
@@ -105,7 +105,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         }
     }
 
-    private void handleNmea(long timestamp, String nmea) {
+    private String cleanNmea(String nmea) {
         // Remove skypro welcome message
         if(BluetoothService.preferenceEnabled) {
             if(nmea.startsWith(skyproPrefix1)) {
@@ -114,7 +114,11 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 nmea = nmea.substring(skyproPrefix2.length());
             }
         }
+        // Trim whitespace and \0
+        return nmea.trim();
+    }
 
+    private void handleNmea(long timestamp, String nmea) {
         // Validate NMEA sentence and print errors, but still try to parse
         try {
             NMEA.validate(nmea);

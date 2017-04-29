@@ -108,7 +108,9 @@ abstract class LocationProvider implements Service {
             final long deltaTime = lastLoc.millis - prevLoc.millis; // time since last refresh
 
             // Compute vertical speed using kalman filter
-            altitudeFilter.update(lastLoc.altitude_gps, deltaTime * 0.001);
+            if(Numbers.isReal(lastLoc.altitude_gps)) {
+                altitudeFilter.update(lastLoc.altitude_gps, deltaTime * 0.001);
+            }
 
             // GPS sample refresh rate
             if (deltaTime > 0) {
