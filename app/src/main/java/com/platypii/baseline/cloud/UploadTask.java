@@ -5,6 +5,7 @@ import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Callback;
 import com.platypii.baseline.util.IOUtil;
+import com.platypii.baseline.util.MD5;
 import com.platypii.baseline.util.Try;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -88,11 +89,13 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
     }
 
     private static CloudData postTrack(TrackFile trackFile, String auth) throws IOException, JSONException {
+        final long contentLength = trackFile.file.length();
+        final String md5 = MD5.md5(trackFile.file);
         final URL url = new URL(postUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Content-Type", "application/gzip");
         conn.setRequestProperty("Authorization", auth);
-        final long contentLength = trackFile.file.length();
+        conn.setRequestProperty("ETag", md5);
         // Log.d(TAG, "Uploading file with size " + contentLength);
         try {
             conn.setDoOutput(true);
