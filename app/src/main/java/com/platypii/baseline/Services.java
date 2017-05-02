@@ -147,10 +147,14 @@ public class Services {
      */
     static void onTtsLoaded(Context context) {
         // TTS loaded, start the audible
-        Log.i(TAG, "Text-to-speech data loaded, starting audible");
-        ttsLoaded = true;
         FirebaseCrash.log("onTtsLoaded");
-        audible.start(context);
+        if(!ttsLoaded) {
+            Log.i(TAG, "Text-to-speech data loaded, starting audible");
+            ttsLoaded = true;
+            audible.start(context);
+        } else {
+            Log.w(TAG, "Text-to-speech already loaded");
+        }
     }
 
     static void stop() {

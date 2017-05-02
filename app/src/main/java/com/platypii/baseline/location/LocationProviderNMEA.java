@@ -129,7 +129,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
         // Strip checksum
         final int starIndex = nmea.lastIndexOf('*');
-        if(starIndex > 0) {
+        if(0 < starIndex && starIndex < nmea.length()) {
             nmea = nmea.substring(0, starIndex);
         }
 
