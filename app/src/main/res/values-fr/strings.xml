@@ -30,6 +30,7 @@
     <string name="error_map_intent">Impossible d\'ouvrir google earth</string>
 
     <!-- Auth -->
+    <string name="signin_prompt">Connectez-vous avec votre compte Google pour synchroniser les pistes avec https://baseline.ws/</string>
     <string name="signin_success">Connecté</string>
     <string name="signin_failed">Connexion refusée</string>
     <string name="signout_success">Deconnecté</string>
@@ -93,7 +94,6 @@
     <string name="pref_metric_description">Utiliser des unités métriques</string>
     <string name="pref_sensor_info">Informations du capteur</string>
     <string name="pref_sensor_info_description">Afficher les informations du capteur</string>
-    <string name="signin_prompt">Connectez-vous avec votre compte Google pour synchroniser les pistes avec https://base-line.ws/</string>
 
     <string name="pref_sign_in">Connecter</string>
     <string name="pref_sign_in_description">Connectez-vous avec votre compte Google</string>

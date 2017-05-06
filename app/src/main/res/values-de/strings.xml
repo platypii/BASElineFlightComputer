@@ -30,7 +30,7 @@
     <string name="error_map_intent">Google earth konnte nicht geoeffnet werden</string>
 
     <!-- Auth -->
-    <string name="signin_prompt">Um Spuren mit https://base-line.ws/ zu synchronisieremelden Sie sich mit Ihrem Google-Konto ann</string>
+    <string name="signin_prompt">Um Spuren mit https://baseline.ws/ zu synchronisieremelden Sie sich mit Ihrem Google-Konto ann</string>
     <string name="signin_success">Angemeldet</string>
     <string name="signin_failed">Anmeldung fehlgeschlagen</string>
     <string name="signout_success">Abgemeldet</string>

@@ -5,7 +5,7 @@ import android.content.Context;
 
 public class BaselineCloud implements Service {
 
-    static final String baselineServer = "https://base-line.ws";
+    static final String baselineServer = "https://baseline.ws";
     static final String listUrl = BaselineCloud.baselineServer + "/v1/tracks";
 
     public final TrackListing listing = new TrackListing();

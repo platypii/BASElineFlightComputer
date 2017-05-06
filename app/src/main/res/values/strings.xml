@@ -30,7 +30,7 @@
     <string name="error_map_intent">Failed to open google earth</string>
 
     <!-- Auth -->
-    <string name="signin_prompt">Sign in with google to sync tracks with\nhttps://base-line.ws/</string>
+    <string name="signin_prompt">Sign in with google to sync tracks with\nhttps://baseline.ws/</string>
     <string name="signin_success">Signed in</string>
     <string name="signin_failed">Sign in failed</string>
     <string name="signout_success">Signed out</string>

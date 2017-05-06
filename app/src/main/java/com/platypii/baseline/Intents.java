@@ -64,7 +64,7 @@ public class Intents {
         context.startActivity(earthIntent);
     }
 
-//    /** Share link to base-line.ws */
+//    /** Share link to baseline.ws */
 //    public static void shareTrack(@NonNull Context context, TrackFile trackFile) {
 //        final CloudData cloudData = trackFile.getCloudData();
 //        if(cloudData != null) {
