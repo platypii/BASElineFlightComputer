@@ -47,7 +47,7 @@ public class AutoStop {
             if(loc.climb < -15 && altMax - alt > minHeight) {
                 prExited += (1 - prExited) * 0.6;
             } else if(loc.flightMode() == FlightMode.MODE_CANOPY && altMax - alt > minHeight) {
-                prExited += (1 - prExited) * 0.6;
+                prExited += (1 - prExited) * 0.2;
             } else {
                 prExited -= prExited * 0.6;
             }
@@ -59,7 +59,7 @@ public class AutoStop {
             // Look for landing
             final double altNormalized = (alt - altMin) / (altMax - altMin);
             if(loc.flightMode() == FlightMode.MODE_GROUND && altMax - altMin > minHeight && altNormalized < 0.1) {
-                prLanded += (1 - prExited) * 0.6;
+                prLanded += (1 - prLanded) * 0.2;
             }
             if(prLanded > 0.95) {
                 landed(landing_message);
