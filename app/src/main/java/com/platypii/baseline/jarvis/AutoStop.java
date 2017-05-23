@@ -67,28 +67,30 @@ public class AutoStop {
         }
     }
 
-    /**
-     * Called when logging is started
-     */
-    void startLogging() {
-        // Reset state
-        state = STATE_STARTED;
-        prExited = 0;
-        prLanded = 0;
-        // TODO: Should we reset altitude range per recording or per app session?
-        altMin = Double.NaN;
-        altMax = Double.NaN;
-        // When auto stop is enabled, timeout after 1 hour
-        handler.postDelayed(stopRunnable, autoTimeout);
+    void start() {
+        if(state == STATE_STOPPED) {
+            // Reset state
+            state = STATE_STARTED;
+            prExited = 0;
+            prLanded = 0;
+            // TODO: Should we reset altitude range per recording or per app session?
+            altMin = Double.NaN;
+            altMax = Double.NaN;
+            // When auto stop is enabled, timeout after 1 hour
+            handler.postDelayed(stopRunnable, autoTimeout);
+        } else {
+            Log.e(TAG, "Autostop should not be started twice");
+        }
     }
 
-    /**
-     * Called when logging is stopped by the user
-     */
-    void stopLogging() {
-        state = STATE_STOPPED;
-        // Stop timeout thread
-        handler.removeCallbacks(stopRunnable);
+    void stop() {
+        if(state != STATE_STOPPED) {
+            state = STATE_STOPPED;
+            // Stop timeout thread
+            handler.removeCallbacks(stopRunnable);
+        } else {
+            Log.e(TAG, "Autostop should not be stopped twice");
+        }
     }
 
     private void landed(String msg) {

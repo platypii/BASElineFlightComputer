@@ -85,7 +85,7 @@ public class MyAudible implements Service {
             editor.putBoolean("audible_enabled", true);
             editor.apply();
         }
-        EventBus.getDefault().post(new AudibleEvent());
+        EventBus.getDefault().post(new AudibleEvent(true));
     }
 
     public void disableAudible() {
@@ -102,7 +102,7 @@ public class MyAudible implements Service {
             editor.putBoolean("audible_enabled", false);
             editor.apply();
         }
-        EventBus.getDefault().post(new AudibleEvent());
+        EventBus.getDefault().post(new AudibleEvent(false));
     }
 
     /**
