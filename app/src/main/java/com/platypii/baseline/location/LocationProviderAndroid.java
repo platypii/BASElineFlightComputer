@@ -13,6 +13,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 
+// TODO: Switch to GnssStatus when minsdk >= 24
+@SuppressWarnings("deprecation")
 class LocationProviderAndroid extends LocationProvider implements LocationListener, GpsStatus.Listener {
     private static final String TAG = "LocationServiceAndroid";
 
@@ -35,7 +37,11 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     @Override
     public synchronized void start(@NonNull Context context) throws SecurityException {
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        try {
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        } catch(Exception e) {
+            FirebaseCrash.report(e);
+        }
         manager.addGpsStatusListener(this);
     }
 
@@ -101,10 +107,13 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     public void onGpsStatusChanged(int event) {
         switch (event) {
             case GpsStatus.GPS_EVENT_STARTED:
+                Log.i(TAG, "GPS started");
                 break;
             case GpsStatus.GPS_EVENT_STOPPED:
+                Log.i(TAG, "GPS stopped");
                 break;
             case GpsStatus.GPS_EVENT_FIRST_FIX:
+                Log.i(TAG, "GPS first fix");
                 break;
             case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
                 if(manager != null) {
