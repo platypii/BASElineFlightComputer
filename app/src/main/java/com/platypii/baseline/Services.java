@@ -145,15 +145,16 @@ public class Services {
     /**
      * BaseActivity calls this function once text-to-speech data is ready
      */
-    static void onTtsLoaded(Context context) {
+    static void onTtsLoaded(Activity context) {
         // TTS loaded, start the audible
-        FirebaseCrash.log("onTtsLoaded");
+        FirebaseCrash.log("onTtsLoaded from " + context.getLocalClassName());
         if(!ttsLoaded) {
             Log.i(TAG, "Text-to-speech data loaded, starting audible");
             ttsLoaded = true;
-            audible.start(context);
+            audible.start(context.getApplicationContext());
         } else {
             Log.w(TAG, "Text-to-speech already loaded");
+            FirebaseCrash.report(new IllegalStateException("Text-to-speech loaded twice"));
         }
     }
 

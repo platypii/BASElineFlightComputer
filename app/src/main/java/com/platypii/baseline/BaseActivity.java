@@ -187,7 +187,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         } else if(requestCode == Intents.RC_TTS_DATA) {
             if(resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 // Notify services that TTS is ready
-                Services.onTtsLoaded(getApplicationContext());
+                Services.onTtsLoaded(this);
             } else {
                 // missing data, install it
                 final Intent installIntent = new Intent();
