@@ -20,7 +20,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class FlightComputer implements Service, MyLocationListener {
     private static final String TAG = "FlightComputer";
 
-    private AutoStop autoStop = new AutoStop();
+    private final AutoStop autoStop = new AutoStop();
     private int startCount = 0;
 
     /**

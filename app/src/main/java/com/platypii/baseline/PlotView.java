@@ -29,7 +29,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     private final static float font_size = 16;
 
     // Padding
-    final IntBounds padding = new IntBounds(0,0,0,0);
+    final IntBounds padding = new IntBounds();
 
     double x_major_units = 1;
     double y_major_units = 1;
@@ -326,9 +326,9 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         for(int n = 0; n < steps_x; n++) {
             final double x = start_x + n * step_x;
             if(Math.abs(x) < EPSILON) {
-                drawXline(canvas, x, 0, axis_color, formatX(x));
+                drawXline(canvas, x, axis_color, formatX(x));
             } else {
-                drawXline(canvas, x, 0, grid_color, formatX(x));
+                drawXline(canvas, x, grid_color, formatX(x));
             }
 
             if(n > MAX_LINES) {
@@ -351,9 +351,9 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         for(int n = 0; n < steps_y; n++) {
             final double y = start_y + n * step_y;
             if(Math.abs(y) < EPSILON) {
-                drawYline(canvas, y, 0, axis_color, formatY(y));
+                drawYline(canvas, y, axis_color, formatY(y));
             } else {
-                drawYline(canvas, y, 0, grid_color, formatY(y));
+                drawYline(canvas, y, grid_color, formatY(y));
             }
 
             if(n > MAX_LINES) {
@@ -366,11 +366,11 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     /**
      * Draws an X grid line (vertical)
      */
-    public void drawXline(Canvas canvas, double x, float width, int color, String label) {
+    public void drawXline(Canvas canvas, double x, int color, String label) {
         // Screen coordinate
         final int sx = (int) getX(x);
         paint.setColor(color);
-        paint.setStrokeWidth(width);
+        paint.setStrokeWidth(0);
         canvas.drawLine(sx, top, sx, bottom, paint);
         if(label != null) {
             text.setTextAlign(Paint.Align.LEFT);
@@ -380,10 +380,10 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     /**
      * Draws a Y grid line (horizontal)
      */
-    public void drawYline(Canvas canvas, double y, float width, int color, String label) {
+    public void drawYline(Canvas canvas, double y, int color, String label) {
         final int sy = (int) getY(y);
         paint.setColor(color);
-        paint.setStrokeWidth(width);
+        paint.setStrokeWidth(0);
         canvas.drawLine(left, sy, right, sy, paint);
         if(label != null) {
             // Left align

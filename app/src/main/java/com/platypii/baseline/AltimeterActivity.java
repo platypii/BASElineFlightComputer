@@ -10,7 +10,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class AltimeterActivity extends BaseActivity {
-    private static final String TAG = "Altimeter";
 
     private AlertDialog alertDialog;
 

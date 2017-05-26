@@ -5,7 +5,6 @@ import com.platypii.baseline.BaseActivity;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.tracks.TrackFiles;
 import com.platypii.baseline.util.Callback;
 import android.content.Context;
 import android.util.Log;

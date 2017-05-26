@@ -23,7 +23,7 @@ import java.util.List;
 public class TrackListing {
     private static final String TAG = "TrackListing";
 
-    public TrackListingCache cache = new TrackListingCache();
+    public final TrackListingCache cache = new TrackListingCache();
 
     // Minimum time between requests
     private static final long REQUEST_TTL = 30 * 1000; // milliseconds

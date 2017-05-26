@@ -59,7 +59,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         }
     }
 
-    private BlurMaskFilter blurry = new BlurMaskFilter(2 * density, BlurMaskFilter.Blur.NORMAL);
+    private final BlurMaskFilter blurry = new BlurMaskFilter(2 * density, BlurMaskFilter.Blur.NORMAL);
     private void drawEllipses(Canvas canvas) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             paint.setStyle(Paint.Style.FILL);

@@ -92,6 +92,8 @@
     <string name="title_activity_settings">Paramètres</string>
     <string name="pref_metric">Métrique</string>
     <string name="pref_metric_description">Utiliser des unités métriques</string>
+    <string name="pref_auto_stop">Arrêter automatiquement</string>
+    <string name="pref_auto_stop_description">Arrêtez l\'enregistrement et audible lors de l\'atterrissage</string>
     <string name="pref_sensor_info">Informations du capteur</string>
     <string name="pref_sensor_info_description">Afficher les informations du capteur</string>
 

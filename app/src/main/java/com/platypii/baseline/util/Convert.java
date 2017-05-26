@@ -118,36 +118,36 @@ public class Convert {
         }
     }
 
-    /**
-     * Convert the bearing to a human readable format
-     * @param degrees bearing in degrees
-     * @return "40° (NE)"
-     */
-    public static String bearing(double degrees) {
-        if(Double.isNaN(degrees)) {
-            return "";
-        } else {
-            if(degrees < 0) degrees += 360;
-            if(337.5 <= degrees || degrees < 22.5)
-                return "North";
-            else if(22.5 <= degrees && degrees < 67.5)
-                return "Northeast";
-            else if(67.5 <= degrees && degrees < 112.5)
-                return "East";
-            else if(112.5 <= degrees && degrees < 157.5)
-                return "Southeast";
-            else if(157.5 <= degrees && degrees < 202.5)
-                return "South";
-            else if(202.5 <= degrees && degrees < 247.5)
-                return "Southwest";
-            else if(247.5 <= degrees && degrees < 292.5)
-                return "West";
-            else if(292.5 <= degrees && degrees < 337.5)
-                return "Northwest";
-            else
-                return "";
-        }
-    }
+//    /**
+//     * Convert the bearing to a human readable format
+//     * @param degrees bearing in degrees
+//     * @return "40° (NE)"
+//     */
+//    public static String bearing(double degrees) {
+//        if(Double.isNaN(degrees)) {
+//            return "";
+//        } else {
+//            if(degrees < 0) degrees += 360;
+//            if(337.5 <= degrees || degrees < 22.5)
+//                return "North";
+//            else if(22.5 <= degrees && degrees < 67.5)
+//                return "Northeast";
+//            else if(67.5 <= degrees && degrees < 112.5)
+//                return "East";
+//            else if(112.5 <= degrees && degrees < 157.5)
+//                return "Southeast";
+//            else if(157.5 <= degrees && degrees < 202.5)
+//                return "South";
+//            else if(202.5 <= degrees && degrees < 247.5)
+//                return "Southwest";
+//            else if(247.5 <= degrees && degrees < 292.5)
+//                return "West";
+//            else if(292.5 <= degrees && degrees < 337.5)
+//                return "Northwest";
+//            else
+//                return "";
+//        }
+//    }
 
     /**
      * Convert the bearing to a human readable format, with more precision

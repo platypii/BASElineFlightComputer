@@ -2,6 +2,7 @@ package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.Service;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 public class BaselineCloud implements Service {
 
@@ -25,7 +26,7 @@ public class BaselineCloud implements Service {
     }
 
     @Override
-    public void start(Context context) {
+    public void start(@NonNull Context context) {
         // Start the upload manager
         uploads.start(context);
     }

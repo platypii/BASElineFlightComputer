@@ -28,7 +28,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
     private double altitudeOffset = 0;
 
     // Gestures
-    private GestureDetector gestures;
+    private final GestureDetector gestures;
     private final Handler handler = new Handler();
     private static final int updateInterval = 30; // milliseconds
     private float velocity = 0; // current swipe velocity
