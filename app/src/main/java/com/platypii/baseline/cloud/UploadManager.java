@@ -1,5 +1,6 @@
 package com.platypii.baseline.cloud;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.BaseActivity;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.LoggingEvent;
@@ -24,6 +25,7 @@ public class UploadManager {
     private Context context;
 
     public void upload(TrackFile trackFile, Callback<CloudData> cb) {
+        FirebaseCrash.log("User upload track " + trackFile.getName());
         new UploadTask(context, trackFile, cb).execute();
     }
 
@@ -48,8 +50,9 @@ public class UploadManager {
     public void onLoggingEvent(LoggingEvent event) {
         if(BaseActivity.currentState == AuthEvent.SIGNED_IN && autosyncEnabled && !event.started) {
             Log.i(TAG, "Auto syncing track " + event.trackFile);
+            FirebaseCrash.log("Logging stopped, autosyncing track " + event.trackFile.getName());
             // TODO: Mark track as queued for upload
-            upload(event.trackFile, null);
+            new UploadTask(context, event.trackFile, null).execute();
         }
     }
 

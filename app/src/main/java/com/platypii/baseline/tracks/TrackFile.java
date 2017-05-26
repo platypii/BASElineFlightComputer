@@ -13,7 +13,7 @@ public class TrackFile {
     private static final String TAG = "TrackFile";
 
     // TrackFile info
-    public final File file;
+    public File file;
 
     public TrackFile(File file) {
         this.file = file;
@@ -67,6 +67,7 @@ public class TrackFile {
      * Move the track file to synced directory
      */
     public void archive() {
+        Log.i(TAG, "Archiving track file " + file.getName());
         // Ensure synced directory exists
         final File syncedDir = new File(file.getParentFile(), "synced");
         if(!syncedDir.exists()) {
@@ -74,7 +75,10 @@ public class TrackFile {
         }
         // Move track file to synced directory
         final File destination = new File(syncedDir, file.getName());
-        file.renameTo(destination);
+        if(file.renameTo(destination)) {
+            // Move succeeded
+            file = destination;
+        }
     }
 
     @Override
