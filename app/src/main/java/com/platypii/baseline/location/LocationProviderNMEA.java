@@ -254,11 +254,12 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "ACC":
             case "ACCURACY":
                 // $GNACCURACY,0.8*1E
-                break;
             case "ATT":
                 // $GPATT,45.781233,10.862333,1796.3,45.0,2.6,2.6,*72
                 // $GPATT,lat,lon,alt,bear?,???,???
-                break;
+            case "DSTAT":
+                // Samsung SM-G955U
+                // $AIDSTAT,3,3,3,2,-597,7
             case "GDS":
                 // Fly FS451
                 // $PCGDS,EPH sow 407586: 1 3 6 9 11 12 14 17 19 22 23 25 31 32--AS:,1995387692*6A
@@ -268,7 +269,10 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "GLG":
                 // $GPGLG,VER2,GNSS,130616,171913.0,85,4737.550964,N,12219.566617,W,96.0,38.5,2.0,0.0,13.0,TP,Seoul,,,15,3,,*5C
                 // $GPGLG,version,provider,???,???,???,lat,lat,lon,lon,...
-                break;
+            case "EVT":
+                // LG-E460
+                // $GPEVT,19052017,234044.807,19,,,,
+                // split[1]: Date: 19052017 = 19 May 2017
             case "GST":
             case "JNR":
             case "NVD":
@@ -278,7 +282,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // $PGJNR,3,3,09,09,64,11,21
                 // $PGNVD,2,1137580,1138164,419442.000,0.612,0.11,-0.01,5,31.0,0,0.0,0,4.6,130,68,15
                 // $GNZCD,682.617,+
-                break;
             case "LOR":
                 // Samsung Galaxy S6 SM-G920F
                 // $PGLOR,0,HLA,123444.00,L,,Al,,A,,H,,,M,1,Ac,0,Gr,0,S,,,Sx,,,T,0,Tr,,Mn,0*33
@@ -288,18 +291,14 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // $PGLOR,3,PWR,mA,36.4,RFTm,1000,OscTm,1000,MeasTm,1000,UTC,123444.00*32
                 // $PGLOR,6,STA,122301.03,0.000,0.000,-270,236,9999,0,P,F,L,1,C,0,S,0000,0,2,R,0000,TPeF,19,2122,LC,,*13
                 // $PGLOR,SPL,20160704142257.8,STATUS,2*38
-                break;
             case "TKTSX1":
                 // ZVI
                 // $PMTKTSX1,181512,0.000,0.293,44.717,4af30000,-3.324382,0.000099,-0.000850,-0.207713,0.386944*40
-                break;
             case "TIS":
                 // Samsung Note7
                 // $PSTIS,*61
-                break;
             case "ZDA":
                 // $GPZDA,115729.61,18,06,2016,,*62
-                break;
             case "PWR":
                 // I don't know what PWR does, but we get a lot of them via bluetooth
                 break;
