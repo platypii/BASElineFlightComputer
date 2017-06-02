@@ -35,7 +35,7 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
         trackList = new ArrayList<>();
-        listAdapter = new TrackAdapter(this.getActivity(), trackList);
+        listAdapter = new TrackAdapter(getActivity(), trackList);
         setListAdapter(listAdapter);
         getListView().setOnItemClickListener(this);
     }
@@ -44,9 +44,17 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
     public void onResume() {
         super.onResume();
 
-        // Update the ListAdapter
+        // Update the views
+        updateList();
+
+        // Listen for sync updates
+        EventBus.getDefault().register(this);
+    }
+
+    private void updateList() {
+        // Update list from track cache
         trackList.clear();
-        trackList.addAll(TrackFiles.getTracks(this.getActivity()));
+        trackList.addAll(TrackFiles.getTracks(getActivity()));
         listAdapter.notifyDataSetChanged();
 
         // Handle no-tracks case
@@ -55,9 +63,6 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
         } else {
             tracksEmptyLabel.setVisibility(View.GONE);
         }
-
-        // Listen for sync updates
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -76,8 +81,7 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(SyncEvent event) {
-        // Update sync status in the list
-        listAdapter.notifyDataSetChanged();
+        updateList();
     }
 
 }
