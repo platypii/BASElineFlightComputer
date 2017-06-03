@@ -61,7 +61,7 @@ public class AutoStop {
             if(loc.flightMode() == FlightMode.MODE_GROUND && altMax - altMin > minHeight && altNormalized < 0.1) {
                 prLanded += (1 - prLanded) * 0.2;
             }
-            if(prLanded > 0.95) {
+            if(prLanded > 0.98) {
                 landed(landing_message);
             }
         }
