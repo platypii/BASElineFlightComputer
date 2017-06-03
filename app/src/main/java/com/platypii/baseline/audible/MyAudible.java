@@ -3,6 +3,7 @@ package com.platypii.baseline.audible;
 import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
+import com.platypii.baseline.jarvis.FlightMode;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,6 +27,12 @@ public class MyAudible implements Service {
 
     private boolean isInitialized = false;
     private boolean isEnabled = false;
+
+    // Airplane mode detection enabled?
+    public boolean preferenceQuiet = true;
+    // When was the last time we announced airplane mode?
+    private long airplaneAnnounceTime;
+    private static final long AIRPLANE_ANNOUNCE_INTERVAL = 30000; // 30 seconds
 
     // Was the last sample below/inside/above the boundary?
     private static final int STATE_MIN = -1;
@@ -55,6 +62,7 @@ public class MyAudible implements Service {
                 speech = new Speech(context);
                 AudibleSettings.load(prefs);
                 isEnabled = prefs.getBoolean("audible_enabled", false);
+                preferenceQuiet = prefs.getBoolean("audible_quiet", true);
                 if (isEnabled) {
                     enableAudible();
                 }
@@ -142,14 +150,38 @@ public class MyAudible implements Service {
     }
 
     /**
-     * Returns the text of what to say for the current measurement mode
+     * Returns the text of what to say for the current measurement mode.
+     * This function mostly just handles airplane mode checks.
      */
     private @NonNull String getMeasurement() {
+        // First, check for airplane mode
+        if(preferenceQuiet && Services.flightComputer.flightMode == FlightMode.MODE_PLANE) {
+            // TODO: Announce every N seconds
+            final long delta = System.currentTimeMillis() - airplaneAnnounceTime;
+            if(AIRPLANE_ANNOUNCE_INTERVAL < delta) {
+                // Announce airplane mode
+                Log.i(TAG, "Airplane mode");
+                airplaneAnnounceTime = System.currentTimeMillis();
+                return "Airplane mode";
+            } else {
+                return "";
+            }
+        } else {
+            // Not airplane mode
+            airplaneAnnounceTime = 0;
+            return getMeasurementSample();
+        }
+    }
+
+    /**
+     * Get the text of what to say for the current measurement value
+     */
+    private @NonNull String getMeasurementSample() {
         final AudibleSample sample = AudibleSettings.mode.currentSample(AudibleSettings.precision);
         // Check for fresh signal (not applicable to vertical speed)
         if(AudibleSettings.mode.id.equals("vertical_speed") || goodGpsFix()) {
             // Check for real valued sample
-            if (Numbers.isReal(sample.value)) {
+            if(Numbers.isReal(sample.value)) {
                 if(sample.value < AudibleSettings.min) {
                     if(boundaryState != STATE_MIN) {
                         boundaryState = STATE_MIN;

@@ -58,6 +58,8 @@
 
     <string name="pref_audible_enabled">Enable audible</string>
     <string name="pref_audible_enabled_description">Enable audible feedback</string>
+    <string name="pref_audible_quiet">Airplane mode</string>
+    <string name="pref_audible_quiet_description">Quiet during plane ride</string>
 
     <string name="pref_audible_mode">Measurement mode</string>
 

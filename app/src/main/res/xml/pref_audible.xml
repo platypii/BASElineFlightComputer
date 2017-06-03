@@ -6,9 +6,12 @@
         android:title="@string/pref_audible_enabled"
         android:summary="@string/pref_audible_enabled_description" />
 
-    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
-         dismiss it. -->
-    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="audible_quiet"
+        android:title="@string/pref_audible_quiet"
+        android:summary="@string/pref_audible_quiet_description" />
+
     <ListPreference
         android:key="audible_mode"
         android:title="@string/pref_audible_mode"

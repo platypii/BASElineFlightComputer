@@ -22,7 +22,6 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
 
     private FirebaseAnalytics firebaseAnalytics;
 
-    private SwitchPreference enabledPreference;
     private ListPreference modePreference;
     private AudibleMinMaxPreference minPreference;
     private AudibleMinMaxPreference maxPreference;
@@ -36,7 +35,8 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
         addPreferencesFromResource(R.xml.pref_audible);
         setHasOptionsMenu(true);
 
-        enabledPreference = (SwitchPreference) findPreference("audible_enabled");
+        final SwitchPreference enabledPreference = (SwitchPreference) findPreference("audible_enabled");
+        final SwitchPreference quietPreference = (SwitchPreference) findPreference("audible_quiet");
         modePreference = (ListPreference) findPreference("audible_mode");
         minPreference = (AudibleMinMaxPreference) findPreference("audible_min");
         maxPreference = (AudibleMinMaxPreference) findPreference("audible_max");
@@ -45,6 +45,7 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
         ratePreference = (EditTextPreference) findPreference("audible_rate");
 
         enabledPreference.setOnPreferenceChangeListener(this);
+        quietPreference.setOnPreferenceChangeListener(this);
         modePreference.setOnPreferenceChangeListener(this);
         minPreference.setOnPreferenceChangeListener(this);
         maxPreference.setOnPreferenceChangeListener(this);
@@ -90,6 +91,9 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
                     firebaseAnalytics.logEvent("pref_stop_audible", null);
                     Services.audible.disableAudible();
                 }
+                break;
+            case "audible_quiet":
+                Services.audible.preferenceQuiet = (Boolean) value;
                 break;
             case "audible_mode":
                 final String audibleMode = (String) value;

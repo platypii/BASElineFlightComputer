@@ -8,7 +8,7 @@ public class FlightMode {
 
     static final int MODE_UNKNOWN = 0;
     static final int MODE_GROUND = 1;
-    private static final int MODE_PLANE = 2;
+    public static final int MODE_PLANE = 2;
     private static final int MODE_WINGSUIT = 3;
     private static final int MODE_FREEFALL = 4;
     static final int MODE_CANOPY = 5;

@@ -53,7 +53,7 @@ public class Services {
     public static final LocationService location = new LocationService();
     public static final MyAltimeter alti = new MyAltimeter();
     public static final MySensorManager sensors = new MySensorManager();
-    static final FlightComputer flightComputer = new FlightComputer();
+    public static final FlightComputer flightComputer = new FlightComputer();
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();

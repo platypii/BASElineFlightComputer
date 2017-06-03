@@ -58,6 +58,8 @@
 
     <string name="pref_audible_enabled">Akutisches feedback aktivieren</string>
     <string name="pref_audible_enabled_description">Aktivieren Sie eine akustische Rückmeldung</string>
+    <string name="pref_audible_quiet">Flugmodus</string>
+    <string name="pref_audible_quiet_description">Stille während der Flugzeugfahrt</string>
 
     <string name="pref_audible_mode">Messmodus</string>
 

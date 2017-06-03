@@ -23,17 +23,14 @@ public class FlightComputer implements Service, MyLocationListener {
     private final AutoStop autoStop = new AutoStop();
     private int startCount = 0;
 
+    // Public state
+    public int flightMode = FlightMode.MODE_UNKNOWN;
+
     /**
-     * Return a human readable flight mode (
+     * Return a human readable flight mode
      */
     public String getModeString() {
-        if(Services.location.lastLoc != null) {
-            final double groundSpeed = Services.location.lastLoc.groundSpeed();
-            final double climb = Services.location.lastLoc.climb;
-            return FlightMode.getModeString(FlightMode.getMode(groundSpeed, climb));
-        } else {
-            return FlightMode.getModeString(FlightMode.MODE_UNKNOWN);
-        }
+        return FlightMode.getModeString(flightMode);
     }
 
     public void start(@NonNull Context context) {
@@ -44,6 +41,8 @@ public class FlightComputer implements Service, MyLocationListener {
 
     @Override
     public void onLocationChanged(@NonNull MLocation loc) {
+        // Update flight mode
+        flightMode = FlightMode.getMode(loc.groundSpeed(),loc.climb);
         // Update autostop
         autoStop.update(loc);
     }

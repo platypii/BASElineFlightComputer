@@ -58,6 +58,8 @@
 
     <string name="pref_audible_enabled">Activer le audible</string>
     <string name="pref_audible_enabled_description">Activer le audible</string>
+    <string name="pref_audible_quiet">Mode avion</string>
+    <string name="pref_audible_quiet_description">Silencieux audible en avion</string>
 
     <string name="pref_audible_mode">Mode mesure</string>
 
