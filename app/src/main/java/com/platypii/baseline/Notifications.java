@@ -7,6 +7,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,13 +36,21 @@ class Notifications implements Service {
 
         if(logging || audible) {
             // Show/update notification
-            final Intent baselineIntent = new Intent(context, MainActivity.class);
-            final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, baselineIntent, 0);
+            final Intent mainIntent = new Intent(context, MainActivity.class);
+            final PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
             Notification.Builder builder = new Notification.Builder(context)
                     .setSmallIcon(R.drawable.ws_white)
                     .setContentTitle(context.getString(R.string.app_name_long))
                     .setOngoing(true)
-                    .setContentIntent(pendingIntent);
+                    .setContentIntent(mainPendingIntent);
+            // Add stop action
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                final Intent stopIntent = new Intent(context, MainActivity.class);
+                stopIntent.setType("baseline/stop");
+                final PendingIntent stopPendingIntent = PendingIntent.getActivity(context, 0, stopIntent, 0);
+                final Notification.Action stopAction = new Notification.Action.Builder(R.drawable.square, "Stop", stopPendingIntent).build();
+                builder = builder.addAction(stopAction);
+            }
             if(logging && audible) {
                 builder = builder.setUsesChronometer(true).setWhen(Services.logger.getStartTime());
                 builder = builder.setContentText(context.getString(R.string.notify_audible_logging));

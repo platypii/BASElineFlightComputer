@@ -55,6 +55,26 @@ public class MainActivity extends BaseActivity {
         if(audibleButton != null) {
             audibleButton.setOnLongClickListener(audibleLongClickListener);
         }
+
+        // Handle intents
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        final String intentType = intent.getType();
+        if("baseline/stop".equals(intentType)) {
+            // Stop audible and logging
+            Services.logger.stopLogging();
+            Services.audible.disableAudible();
+        } else {
+            Log.w(TAG, "Unknown intent type: " + intentType);
+        }
     }
 
     @Override
