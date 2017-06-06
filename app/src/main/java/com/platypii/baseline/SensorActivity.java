@@ -1,8 +1,8 @@
 package com.platypii.baseline;
 
 import com.platypii.baseline.location.MyLocationListener;
-import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.measurements.MSensor;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
@@ -169,9 +169,9 @@ public class SensorActivity extends Activity implements MyLocationListener {
     }
 
     private void updateAltimeter() {
-        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.pressure), Services.alti.refreshRate));
-        pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(Services.alti.pressure_altitude_raw, 2, true));
-        pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(Services.alti.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(Services.alti.model_error.var()), 2, true));
+        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate));
+        pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(Services.alti.baro.pressure_altitude_raw, 2, true));
+        pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(Services.alti.baro.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(Services.alti.baro.model_error.var()), 2, true));
         altitudeLabel.setText("Altitude (gps corrected): " + Convert.distance(Services.alti.altitude, 2, true));
         groundLevelLabel.setText("Ground level: " + Convert.distance(Services.alti.groundLevel(), 2, true) + " pressure alt");
         altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(Services.alti.altitudeAGL(), 2, true) + " AGL");
@@ -232,7 +232,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
             lastFixLabel.setText("Last fix: ");
         }
         // Altitude refresh rate
-        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.pressure), Services.alti.refreshRate));
+        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate));
     }
 
     @Override
@@ -253,7 +253,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
      * Listen for altitude updates
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAltitudeEvent(MAltitude alt) {
+    public void onPressureEvent(MPressure alt) {
         updateAltimeter();
     }
 

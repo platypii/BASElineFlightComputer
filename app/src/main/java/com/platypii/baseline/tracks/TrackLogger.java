@@ -4,8 +4,8 @@ import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.location.MyLocationListener;
-import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.measurements.Measurement;
 import com.platypii.baseline.sensors.MySensorListener;
 import android.content.Context;
@@ -172,7 +172,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
      * Listen for altitude updates
      */
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void onAltitudeEvent(MAltitude alt) {
+    public void onAltitudeEvent(MPressure alt) {
         if(!Double.isNaN(alt.pressure)) {
             logLine(alt.toRow());
         }

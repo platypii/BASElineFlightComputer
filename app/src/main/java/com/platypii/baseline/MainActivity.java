@@ -72,7 +72,7 @@ public class MainActivity extends BaseActivity {
             // Stop audible and logging
             Services.logger.stopLogging();
             Services.audible.disableAudible();
-        } else {
+        } else if(intentType != null) {
             Log.w(TAG, "Unknown intent type: " + intentType);
         }
     }
