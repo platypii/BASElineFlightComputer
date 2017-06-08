@@ -1,5 +1,9 @@
 package com.platypii.baseline.altimeter;
 
+import com.platypii.baseline.Service;
+import com.platypii.baseline.Services;
+import com.platypii.baseline.measurements.MPressure;
+import com.platypii.baseline.util.Stat;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -7,13 +11,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import com.google.firebase.crash.FirebaseCrash;
-import com.platypii.baseline.Service;
-import com.platypii.baseline.Services;
-import com.platypii.baseline.measurements.MPressure;
-import com.platypii.baseline.util.Stat;
-
+import java.util.Arrays;
 import org.greenrobot.eventbus.EventBus;
 
 /**
@@ -27,6 +26,8 @@ public class BaroAltimeter implements Service, SensorEventListener {
     private static final int sensorDelay = 100000; // microseconds
     private SensorManager sensorManager;
 
+    private long lastFixNano; // nanoseconds
+
     // Pressure data
     public float pressure = Float.NaN; // hPa (millibars)
     public double pressure_altitude_raw = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
@@ -39,15 +40,11 @@ public class BaroAltimeter implements Service, SensorEventListener {
     public double climb = Double.NaN; // Rate of climb m/s
     // public static double verticalAcceleration = Double.NaN;
 
-    private long lastFixNano; // nanoseconds
-    private long lastFixMillis; // milliseconds
-
     // Stats
     // Model error is the difference between our filtered output and the raw pressure altitude
     // Model error should approximate the sensor variance, even when in motion
     public final Stat model_error = new Stat();
     public float refreshRate = 0; // Moving average of refresh rate in Hz
-    public long sample_count = 0; // number of samples
 
     /**
      * Initializes altimeter services, if not already running.
@@ -70,36 +67,36 @@ public class BaroAltimeter implements Service, SensorEventListener {
         }
     }
 
-    /** SensorEventListener */
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-    @Override
-    public void onSensorChanged(@NonNull SensorEvent event) {
-        long millis = System.currentTimeMillis(); // Record time as soon as possible
-        // assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
-        // Log.w(TAG, "values[] = " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
-        updateBarometer(millis, event);
-    }
-
     /**
      * Process new barometer reading
      */
-    private void updateBarometer(long millis, SensorEvent event) {
-        if(event == null || event.values.length == 0 || Double.isNaN(event.values[0]))
+    @Override
+    public void onSensorChanged(@NonNull SensorEvent event) {
+        final long millis = System.currentTimeMillis(); // Record system time as soon as possible
+
+        // Sanity checks
+        // assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
+        if(event.values.length == 0 || Double.isNaN(event.values[0])) {
+            Log.e(TAG, "Invalid update: " + Arrays.toString(event.values));
             return;
-
-        if(lastFixNano == event.timestamp) {
-            Log.e(TAG, "Double update: " + lastFixNano);
         }
-        final long prevLastFixNano = lastFixNano;
+        if(lastFixNano >= event.timestamp) {
+            Log.e(TAG, "Double update: " + lastFixNano);
+            return;
+        }
 
-        pressure = event.values[0];
+        // Convert system time to GPS time
+        final long lastFixMillis = millis - Services.location.phoneOffsetMillis;
+        // Compute time since last sample in nanoseconds
+        final long deltaTime = (lastFixNano == 0)? 0 : (event.timestamp - lastFixNano);
         lastFixNano = event.timestamp;
-        lastFixMillis = millis - Services.location.phoneOffsetMillis; // Convert to GPS time
+
+        // Convert pressure to altitude
+        pressure = event.values[0];
+        pressure_altitude_raw = pressureToAltitude(pressure);
 
         // Barometer refresh rate
-        final long deltaTime = lastFixNano - prevLastFixNano; // time since last refresh
-        if(deltaTime > 0 && prevLastFixNano > 0) {
+        if(deltaTime > 0) {
             final float newRefreshRate = 1E9f / (float) (deltaTime); // Refresh rate based on last 2 samples
             if(refreshRate == 0) {
                 refreshRate = newRefreshRate;
@@ -113,52 +110,41 @@ public class BaroAltimeter implements Service, SensorEventListener {
             }
         }
 
-        // Convert pressure to altitude
-        pressure_altitude_raw = pressureToAltitude(pressure);
-
         // Apply kalman filter to pressure altitude, to produce smooth barometric pressure altitude.
-        final double dt = (prevLastFixNano == 0)? 0 : (lastFixNano - prevLastFixNano) * 1E-9;
-        filter.update(pressure_altitude_raw, dt);
+        filter.update(pressure_altitude_raw, deltaTime * 1E-9);
         pressure_altitude_filtered = filter.x;
         climb = filter.v;
 
         // Compute model error
         model_error.addSample(pressure_altitude_filtered - pressure_altitude_raw);
 
-        sample_count++;
-        updateAltitude();
-    }
-
-    /**
-     * Saves an official altitude measurement
-     */
-    private void updateAltitude() {
-        // Log.d(TAG, "Altimeter Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + lastFixMillis + " " + lastFixNano);
-        // Create the measurement
+        // Publish official altitude measurement
         final MPressure myPressure = new MPressure(lastFixMillis, lastFixNano, pressure_altitude_filtered, climb, pressure);
         EventBus.getDefault().post(myPressure);
     }
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
-    // ISA pressure and temperature
-    private static final double altitude0 = 0; // ISA height 0 meters
+    // Physical constants and ISA standard atmosphere
     private static final double pressure0 = SensorManager.PRESSURE_STANDARD_ATMOSPHERE; // ISA pressure 1013.25 hPa
-    private static final double temp0 = 288.15; // ISA temperature 15 degrees celcius
-
-    // Physical constants
+//    private static final double temp0 = 288.15; // ISA temperature 15 degrees celcius
 //    private static final double G = 9.80665; // Gravity (m/s^2)
 //    private static final double R = 8.31432; // Universal Gas Constant ((N m)/(mol K))
 //    private static final double M = 0.0289644; // Molar Mass of air (kg/mol)
-    private static final double L = -0.0065; // Temperature Lapse Rate (K/m)
+//    private static final double L = -0.0065; // Temperature Lapse Rate (K/m)
     private static final double EXP = 0.190263237; // -L * R / (G * M);
+    private static final double SCALE = 44330.76923; // -temp0 / L
 
     /**
-     * Convert air pressure to altitude
+     * Convert air pressure to altitude according to standard lapse rate.
+     * alt = alt0 - (temp0 / L) * (1 - (pressure / pressure0)^(-LR/GM))
+     *
      * @param pressure Pressure in hPa
      * @return The pressure altitude in meters
      */
     private static double pressureToAltitude(double pressure) {
         // Barometric formula
-        return altitude0 - temp0 * (1 - Math.pow(pressure / pressure0, EXP)) / L;
+        return SCALE * (1 - Math.pow(pressure / pressure0, EXP));
     }
 
     @Override

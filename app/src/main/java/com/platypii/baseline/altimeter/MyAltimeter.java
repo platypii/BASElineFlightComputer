@@ -7,12 +7,14 @@ import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -21,7 +23,6 @@ import org.greenrobot.eventbus.ThreadMode;
  * The main Altimeter class.
  * This class integrates sensor readings from barometer and GPS to model the altitude of the phone.
  * Altitude is measured both AGL and AMSL. Ground level is set to zero on initialization.
- * Kalman filter is used to smooth barometer data.
  *
  * TODO: Correct barometer drift with GPS
  */
@@ -47,6 +48,10 @@ public class MyAltimeter implements Service, MyLocationListener {
     private static final long GROUND_LEVEL_TTL = 12 * 60 * 60 * 1000;
     private boolean ground_level_initialized = false;
     private double ground_level = Double.NaN;
+
+    // Sample counts
+    public long baro_sample_count = 0;
+    private long gps_sample_count = 0;
 
     private long lastFixMillis; // milliseconds
 
@@ -98,9 +103,11 @@ public class MyAltimeter implements Service, MyLocationListener {
     private void loadGroundLevel() {
         final long groundLevelTime = prefs.getLong("altimeter_ground_level_time", -1L);
         if(groundLevelTime != -1 && System.currentTimeMillis() - groundLevelTime < GROUND_LEVEL_TTL) {
-            ground_level = prefs.getFloat("altimeter_ground_level", 0);
-            ground_level_initialized = true;
-            Log.i(TAG, "Restoring ground level from preferences: " + Convert.distance(ground_level, 2, true));
+            ground_level = prefs.getFloat("altimeter_ground_level", Float.NaN);
+            if(Numbers.isReal(ground_level)) {
+                ground_level_initialized = true;
+                Log.i(TAG, "Restoring ground level from preferences: " + Convert.distance(ground_level, 2, true));
+            }
         }
     }
 
@@ -110,13 +117,17 @@ public class MyAltimeter implements Service, MyLocationListener {
      * @param groundLevel the pressure altitude at ground level (0m AGL)
      */
     void setGroundLevel(double groundLevel) {
-        ground_level = groundLevel;
-        ground_level_initialized = true;
-        // Save to preferences
-        final SharedPreferences.Editor edit = prefs.edit();
-        edit.putFloat("altimeter_ground_level", (float) ground_level);
-        edit.putLong("altimeter_ground_level_time", System.currentTimeMillis());
-        edit.apply();
+        if(Numbers.isReal(groundLevel)) {
+            ground_level = groundLevel;
+            ground_level_initialized = true;
+            // Save to preferences
+            final SharedPreferences.Editor edit = prefs.edit();
+            edit.putFloat("altimeter_ground_level", (float) ground_level);
+            edit.putLong("altimeter_ground_level_time", System.currentTimeMillis());
+            edit.apply();
+        } else {
+            FirebaseCrash.report(new IllegalArgumentException("Ground level must be real"));
+        }
     }
 
     /** Location Listener */
@@ -143,28 +154,28 @@ public class MyAltimeter implements Service, MyLocationListener {
 
         // Adjust for ground level
         if(!ground_level_initialized) {
-            if (baro.sample_count == 0) {
+            if (baro_sample_count == 0) {
                 // First pressure reading. Calibrate ground level.
                 ground_level = baro.pressure_altitude_raw;
-            } else if (baro.sample_count < 30) {
+            } else if (baro_sample_count < 30) {
                 // Average the first N raw samples
-                ground_level += (baro.pressure_altitude_raw - ground_level) / (baro.sample_count + 1);
+                ground_level += (baro.pressure_altitude_raw - ground_level) / (baro_sample_count + 1);
             } else {
                 setGroundLevel(ground_level);
             }
         }
+        baro_sample_count++;
 
         updateAltitude();
     }
 
-    private long gps_sample_count = 0;
     /**
      * Process new GPS reading
      */
     private void updateGPS(MLocation loc) {
         // Log.d(TAG, "GPS Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + loc.millis);
         if(!Double.isNaN(loc.altitude_gps)) {
-            if(baro.sample_count > 0) {
+            if(baro_sample_count > 0) {
                 // Log.d(TAG, "alt = " + altitude + ", alt_gps = " + altitude_gps + ", offset = " + altitude_offset);
                 // GPS correction for altitude AMSL
                 if(gps_sample_count == 0) {
