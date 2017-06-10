@@ -12,6 +12,12 @@
         android:title="@string/pref_auto_stop"
         android:defaultValue="true"/>
 
+    <SwitchPreference
+        android:key="barometer_enabled"
+        android:summary="@string/pref_barometer_description"
+        android:title="@string/pref_barometer"
+        android:defaultValue="true"/>
+
     <Preference
         android:key="audible_settings"
         android:widgetLayout="@layout/icon_audio"

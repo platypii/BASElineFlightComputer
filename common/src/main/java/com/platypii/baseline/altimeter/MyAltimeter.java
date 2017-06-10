@@ -32,6 +32,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
 
     // Barometric altimeter
     public final BaroAltimeter baro = new BaroAltimeter();
+    public boolean barometerEnabled = true;
 
     // GPS altitude kalman filter
     private final Filter gpsFilter = new FilterKalman();
@@ -104,6 +105,8 @@ public class MyAltimeter implements BaseService, MyLocationListener {
      */
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onPressureEvent(@NonNull MPressure pressure) {
+        if (!barometerEnabled) return;
+
         lastFixMillis = pressure.millis - TimeOffset.phoneOffsetMillis; // Convert to GPS time
 
         // Compute GPS corrected altitude AMSL
@@ -123,7 +126,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
     private void updateGPS(@NonNull MLocation loc) {
         // Log.d(TAG, "GPS Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + loc.millis);
         if (!Double.isNaN(loc.altitude_gps)) {
-            if (baro_sample_count > 0) {
+            if (barometerEnabled && baro_sample_count > 0) {
                 // GPS correction for altitude AMSL
                 if (gps_sample_count == 0) {
                     // First altitude reading. Calibrate ground level.
@@ -147,7 +150,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
             lastLoc = loc;
 
             // Use gps for altitude instead of barometer
-            if (baro_sample_count == 0) {
+            if (!barometerEnabled || baro_sample_count == 0) {
                 // No barometer use gps
                 lastFixMillis = loc.millis;
                 // Update the official altitude

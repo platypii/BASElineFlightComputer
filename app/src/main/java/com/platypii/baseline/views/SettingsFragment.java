@@ -29,6 +29,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     private SwitchPreference metricPreference;
     private Preference bluetoothPreference;
+    private SwitchPreference barometerPreference;
     private Preference signInPreference;
 
     @Override
@@ -41,6 +42,9 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         metricPreference = (SwitchPreference) findPreference("metric_enabled");
         metricPreference.setOnPreferenceChangeListener(this);
+
+        barometerPreference = (SwitchPreference) findPreference("barometer_enabled");
+        barometerPreference.setOnPreferenceChangeListener(this);
 
         findPreference("audible_settings").setOnPreferenceClickListener(this);
         bluetoothPreference = findPreference("bluetooth_settings");
@@ -58,6 +62,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 Log.i(TAG, "Setting metric mode: " + value);
                 Convert.metric = (Boolean) value;
                 break;
+            case "barometer_enabled":
+                Log.i(TAG, "Setting barometer enabled: " + value);
+                Services.alti.barometerEnabled = (Boolean) value;
+                break;
             case "auto_stop_enabled":
                 Log.i(TAG, "Setting auto-stop mode: " + value);
                 AutoStop.preferenceEnabled = (Boolean) value;
@@ -74,6 +82,14 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         } else {
             metricPreference.setSummary("Current units: imperial");
         }
+
+        // Update barometer views
+        if (Services.alti.barometerEnabled) {
+            barometerPreference.setSummary("Barometric altimeter enabled");
+        } else {
+            barometerPreference.setSummary("Barometric altimeter disabled");
+        }
+
         // Update sign in views
         final SettingsActivity activity = (SettingsActivity) getActivity();
         if (BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {

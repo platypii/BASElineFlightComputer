@@ -213,6 +213,9 @@ public class Services {
         // Metric
         Convert.metric = prefs.getBoolean("metric_enabled", Convert.metric);
 
+        // Barometer
+        Services.alti.barometerEnabled = prefs.getBoolean("barometer_enabled", true);
+
         // Auto-stop
         AutoStop.preferenceEnabled = prefs.getBoolean("auto_stop_enabled", true);
 

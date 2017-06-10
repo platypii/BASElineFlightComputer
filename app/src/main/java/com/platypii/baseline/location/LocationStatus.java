@@ -72,7 +72,7 @@ public class LocationStatus {
         }
 
         // Barometer status
-        if(Services.alti.baro_sample_count == 0) {
+        if (Services.alti.barometerEnabled && Services.alti.baro_sample_count == 0) {
             message += " (no baro)";
         }
 
