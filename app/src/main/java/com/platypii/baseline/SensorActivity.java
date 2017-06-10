@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -243,7 +244,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
 
     // Listeners
     @Override
-    public void onLocationChanged(MLocation loc) {}
+    public void onLocationChanged(@NonNull MLocation loc) {}
     @Override
     public void onLocationChangedPostExecute() {
         updateGPS(Services.location.lastLoc);

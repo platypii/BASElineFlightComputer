@@ -189,6 +189,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
     public void onLocationChangedPostExecute() {}
 
     // Sensor listener
+    @Override
     public void onSensorChanged(@NonNull Measurement measure) {
         logLine(measure.toRow());
     }

@@ -21,7 +21,7 @@ public class LocationService extends LocationProvider {
 
     private final MyLocationListener nmeaListener = new MyLocationListener() {
         @Override
-        public void onLocationChanged(MLocation loc) {
+        public void onLocationChanged(@NonNull MLocation loc) {
             if(!BluetoothService.preferenceEnabled) {
                 if (Float.isNaN(loc.hAcc)) {
                     loc.hAcc = hAcc;
@@ -34,7 +34,7 @@ public class LocationService extends LocationProvider {
     };
     private final MyLocationListener androidListener = new MyLocationListener() {
         @Override
-        public void onLocationChanged(MLocation loc) {
+        public void onLocationChanged(@NonNull MLocation loc) {
             // Only use android location if we aren't getting NMEA
             if(!locationProviderNMEA.nmeaReceived) {
                 Log.v(TAG, "No NMEA data, falling back to LocationManager: " + loc);
@@ -47,7 +47,7 @@ public class LocationService extends LocationProvider {
     };
     private final MyLocationListener bluetoothListener = new MyLocationListener() {
         @Override
-        public void onLocationChanged(MLocation loc) {
+        public void onLocationChanged(@NonNull MLocation loc) {
             if(BluetoothService.preferenceEnabled) {
                 if (Float.isNaN(loc.hAcc)) {
                     loc.hAcc = hAcc;

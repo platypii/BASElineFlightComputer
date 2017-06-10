@@ -43,7 +43,7 @@ public class FlightComputer implements Service, MyLocationListener {
     }
 
     @Override
-    public void onLocationChanged(MLocation loc) {
+    public void onLocationChanged(@NonNull MLocation loc) {
         // Update autostop
         autoStop.update(loc);
     }

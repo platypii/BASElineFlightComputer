@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -230,7 +231,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     @Override
-    public void onLocationChanged(MLocation loc) {}
+    public void onLocationChanged(@NonNull MLocation loc) {}
     @Override
     public void onLocationChangedPostExecute() {
         if(!paused) {
