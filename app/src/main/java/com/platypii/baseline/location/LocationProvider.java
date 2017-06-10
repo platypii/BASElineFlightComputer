@@ -27,10 +27,6 @@ abstract class LocationProvider implements Service {
     // phone time = GPS time + offset
     public long phoneOffsetMillis = 0;
 
-    // Computed parameters
-    // GPS altitude kalman filter
-    private final Filter altitudeFilter = new FilterKalman();
-
     // History
     public MLocation lastLoc; // last location received
     private MLocation prevLoc; // 2nd to last
@@ -107,11 +103,6 @@ abstract class LocationProvider implements Service {
         if (prevLoc != null) {
             final long deltaTime = lastLoc.millis - prevLoc.millis; // time since last refresh
 
-            // Compute vertical speed using kalman filter
-            if(Numbers.isReal(lastLoc.altitude_gps)) {
-                altitudeFilter.update(lastLoc.altitude_gps, deltaTime * 0.001);
-            }
-
             // GPS sample refresh rate
             if (deltaTime > 0) {
                 final float newRefreshRate = 1000f / deltaTime; // Refresh rate based on last 2 samples
@@ -125,9 +116,6 @@ abstract class LocationProvider implements Service {
                     refreshRate = 0;
                 }
             }
-        } else {
-            // Initialize vertical speed kalman filter
-            altitudeFilter.update(lastLoc.altitude_gps, 0);
         }
 
         // Notify listeners (using AsyncTask so the manager never blocks!)
@@ -216,13 +204,6 @@ abstract class LocationProvider implements Service {
             return lastLoc.glideRatio();
         }
         return Double.NaN;
-    }
-
-    /**
-     * Velocity down, computed by kalman filter
-     */
-    public double vD() {
-        return altitudeFilter.v;
     }
 
     @Override

@@ -192,7 +192,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
                 longitudeLabel.setText("Long: ");
             }
             gpsAltitudeLabel.setText("GPS altitude: " + Convert.distance(loc.altitude_gps, 2, true));
-            gpsFallrateLabel.setText("GPS fallrate: " + Convert.speed(Services.location.vD(), 2, true));
+            gpsFallrateLabel.setText("GPS fallrate: " + Convert.speed(-Services.alti.gpsClimb(), 2, true));
             hAccLabel.setText("hAcc: " + Convert.distance(loc.hAcc));
             pdopLabel.setText(String.format(Locale.getDefault(), "pdop: %.1f", loc.pdop));
             hdopLabel.setText(String.format(Locale.getDefault(), "hdop: %.1f", loc.hdop));

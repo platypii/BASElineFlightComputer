@@ -22,7 +22,8 @@ public class FilterKalman extends Filter {
     private double p22 = 1;
 
     public void update(double z, double dt) {
-        if(Double.isNaN(x) && !Double.isNaN(z) && dt == 0) {
+        if(Double.isNaN(z)) return;
+        if(Double.isNaN(x) && dt == 0) {
             // First data point
             this.x = z;
             this.v = 0;

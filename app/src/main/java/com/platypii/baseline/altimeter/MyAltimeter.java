@@ -34,6 +34,10 @@ public class MyAltimeter implements Service, MyLocationListener {
     // Barometric altimeter
     public BaroAltimeter baro = new BaroAltimeter();
 
+    // GPS altitude kalman filter
+    private final Filter gpsFilter = new FilterKalman();
+    private MLocation lastLoc;
+
     // official altitude AMSL = pressure_altitude - altitude_offset
     // altitude_offset uses GPS to get absolute altitude right
     private double altitude_offset = 0.0;
@@ -147,13 +151,10 @@ public class MyAltimeter implements Service, MyLocationListener {
 
         // Compute GPS corrected altitude AMSL
         altitude = baro.pressure_altitude_filtered - altitude_offset;
-        if(Double.isNaN(altitude)) {
-            Log.w(TAG, "Altitude should not be NaN: altitude = " + altitude);
-        }
         climb = pressure.climb;
 
         // Adjust for ground level
-        if(!ground_level_initialized) {
+        if (!ground_level_initialized) {
             if (baro_sample_count == 0) {
                 // First pressure reading. Calibrate ground level.
                 ground_level = baro.pressure_altitude_raw;
@@ -172,13 +173,12 @@ public class MyAltimeter implements Service, MyLocationListener {
     /**
      * Process new GPS reading
      */
-    private void updateGPS(MLocation loc) {
+    private void updateGPS(@NonNull MLocation loc) {
         // Log.d(TAG, "GPS Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + loc.millis);
         if(!Double.isNaN(loc.altitude_gps)) {
             if(baro_sample_count > 0) {
-                // Log.d(TAG, "alt = " + altitude + ", alt_gps = " + altitude_gps + ", offset = " + altitude_offset);
                 // GPS correction for altitude AMSL
-                if(gps_sample_count == 0) {
+                if (gps_sample_count == 0) {
                     // First altitude reading. Calibrate ground level.
                     altitude_offset = baro.pressure_altitude_filtered - loc.altitude_gps;
                 } else {
@@ -188,20 +188,27 @@ public class MyAltimeter implements Service, MyLocationListener {
                     final double altitude_correction = altitude_error / correction_factor;
                     altitude_offset += altitude_correction;
                 }
+            }
+
+            // Update gps kalman filter
+            if(lastLoc != null) {
+                final long deltaTime = loc.millis - lastLoc.millis; // time since last gps altitude
+                gpsFilter.update(loc.altitude_gps, deltaTime * 0.001);
             } else {
+                gpsFilter.update(loc.altitude_gps, 0);
+            }
+            lastLoc = loc;
+
+            // Use gps for altitude instead of barometer
+            if(baro_sample_count == 0) {
+                // TODO: Handle ground level
                 // No barometer use gps
-                final double prevAltitude = altitude;
-                final long prevLastFix = lastFixMillis;
                 lastFixMillis = loc.millis;
                 // Update the official altitude
                 altitude = loc.altitude_gps;
-                // TODO: Use kalman filter to compute climb rate
-                if(Double.isNaN(prevAltitude)) {
-                    climb = 0;
-                } else {
-                    final double dt = (lastFixMillis - prevLastFix) * 1E-3;
-                    climb = (altitude - prevAltitude) / dt; // m/s
-                }
+                // Use kalman filter to compute climb rate
+                // We don't use kalman for altitude, since gps probably already smoothing
+                climb = gpsFilter.v;
                 // Only update official altitude if we are relying solely on GPS for altitude
                 updateAltitude();
             }
@@ -214,9 +221,19 @@ public class MyAltimeter implements Service, MyLocationListener {
      */
     private void updateAltitude() {
         // Log.d(TAG, "Altimeter Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + lastFixMillis + " " + lastFixNano);
+        if(Double.isNaN(altitude)) {
+            Log.e(TAG, "Altitude should not be NaN: altitude = " + altitude);
+        }
         // Create the measurement
         final MAltitude myAltitude = new MAltitude(lastFixMillis, altitude, climb);
         EventBus.getDefault().post(myAltitude);
+    }
+
+    /**
+     * GPS climb rate
+     */
+    public double gpsClimb() {
+        return gpsFilter.v;
     }
 
     @Override

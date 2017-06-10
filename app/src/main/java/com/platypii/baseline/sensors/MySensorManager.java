@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class MySensorManager implements SensorEventListener, Service {
     private static final String TAG = "MySensorManager";
 
+    private static final int sensorDelay = SensorManager.SENSOR_DELAY_FASTEST; // microseconds
     private SensorManager sensorManager;
 
     // History
@@ -53,9 +54,9 @@ public class MySensorManager implements SensorEventListener, Service {
                 final Sensor gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
                 final Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
                 // Register listeners
-                sensorManager.registerListener(MySensorManager.this, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
-                sensorManager.registerListener(MySensorManager.this, gravitySensor, SensorManager.SENSOR_DELAY_FASTEST);
-                sensorManager.registerListener(MySensorManager.this, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                sensorManager.registerListener(MySensorManager.this, accelSensor, sensorDelay);
+                sensorManager.registerListener(MySensorManager.this, gravitySensor, sensorDelay);
+                sensorManager.registerListener(MySensorManager.this, rotationSensor, sensorDelay);
             }
         });
     }
