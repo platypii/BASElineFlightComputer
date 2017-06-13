@@ -30,3 +30,5 @@
 
 -keepattributes EnclosingMethod
 -keepattributes InnerClasses
+
+-dontobfuscate
