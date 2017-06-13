@@ -5,7 +5,6 @@ import com.platypii.baseline.BaseActivity;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.util.Callback;
 import android.content.Context;
 import android.util.Log;
 import org.greenrobot.eventbus.EventBus;
@@ -23,9 +22,9 @@ public class UploadManager {
 
     private Context context;
 
-    public void upload(TrackFile trackFile, Callback<CloudData> cb) {
+    public void upload(TrackFile trackFile) {
         FirebaseCrash.log("User upload track " + trackFile.getName());
-        new UploadTask(context, trackFile, cb).execute();
+        new Thread(new UploadTask(context, trackFile)).start();
     }
 
 //    private void uploadAll() {
@@ -51,7 +50,7 @@ public class UploadManager {
             Log.i(TAG, "Auto syncing track " + event.trackFile);
             FirebaseCrash.log("Logging stopped, autosyncing track " + event.trackFile.getName());
             // TODO: Mark track as queued for upload
-            new UploadTask(context, event.trackFile, null).execute();
+            new Thread(new UploadTask(context, event.trackFile)).start();
         }
     }
 

@@ -1,11 +1,9 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackFiles;
-import com.platypii.baseline.util.Callback;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -74,18 +72,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
         // Start upload
         firebaseAnalytics.logEvent("click_track_sync", null);
         Toast.makeText(getApplicationContext(), "Syncing track...", Toast.LENGTH_SHORT).show();
-        Services.cloud.uploads.upload(trackFile, new Callback<CloudData>() {
-            @Override
-            public void apply(CloudData cloudData) {
-                updateViews();
-                Toast.makeText(getApplicationContext(), "Track sync success", Toast.LENGTH_LONG).show();
-            }
-            @Override
-            public void error(String error) {
-                Log.e(TAG, "Failed to upload track: " + error);
-                Toast.makeText(getApplicationContext(), "Track sync failed", Toast.LENGTH_LONG).show();
-            }
-        });
+        Services.cloud.uploads.upload(trackFile);
     }
 
     public void clickDelete(View v) {
@@ -148,14 +135,24 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSyncEvent(SyncEvent.UploadSuccess event) {
+    public void onUploadSuccess(SyncEvent.UploadSuccess event) {
         if(event.trackFile.getName().equals(trackFile.getName())) {
             // Track uploaded, open TrackActivity
+            Toast.makeText(getApplicationContext(), "Track sync success", Toast.LENGTH_SHORT).show();
             Intents.openTrackDataActivity(this, event.cloudData);
             finish();
         }
         updateViews();
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUploadFailure(SyncEvent.UploadFailure event) {
+        if(event.trackFile.getName().equals(trackFile.getName())) {
+            Log.e(TAG, "Failed to upload track: " + event.error);
+            Toast.makeText(getApplicationContext(), "Track sync failed", Toast.LENGTH_LONG).show();
+        }
+        updateViews();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAuthEvent(AuthEvent event) {
         // Signing in enables the sync button, so update button views:

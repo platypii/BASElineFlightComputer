@@ -2,8 +2,6 @@ package com.platypii.baseline.location;
 
 import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.altimeter.Filter;
-import com.platypii.baseline.altimeter.FilterKalman;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
@@ -91,8 +89,8 @@ abstract class LocationProvider implements Service {
 
         // Update gps time offset
         final long clockOffset = System.currentTimeMillis() - lastLoc.millis;
-        if(Math.abs(phoneOffsetMillis - clockOffset) > 1000) {
-            if(clockOffset < 0) {
+        if (Math.abs(phoneOffsetMillis - clockOffset) > 1000) {
+            if (clockOffset < 0) {
                 Log.w(providerName(), "Adjusting clock: phone behind gps by " + (-clockOffset) + "ms");
             } else {
                 Log.w(providerName(), "Adjusting clock: phone ahead of gps by " + clockOffset + "ms");
@@ -106,7 +104,7 @@ abstract class LocationProvider implements Service {
             // GPS sample refresh rate
             if (deltaTime > 0) {
                 final float newRefreshRate = 1000f / deltaTime; // Refresh rate based on last 2 samples
-                if(refreshRate == 0) {
+                if (refreshRate == 0) {
                     refreshRate = newRefreshRate;
                 } else {
                     refreshRate += (newRefreshRate - refreshRate) * 0.5f; // Moving average

@@ -17,8 +17,10 @@ public abstract class SyncEvent {
         }
     }
     public static class UploadFailure extends SyncEvent {
+        public final TrackFile trackFile;
         public final String error;
-        public UploadFailure(String error) {
+        public UploadFailure(TrackFile trackFile, String error) {
+            this.trackFile = trackFile;
             this.error = error;
         }
     }

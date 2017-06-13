@@ -3,12 +3,9 @@ package com.platypii.baseline.cloud;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.util.Callback;
 import com.platypii.baseline.util.IOUtil;
 import com.platypii.baseline.util.MD5;
-import com.platypii.baseline.util.Try;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
@@ -25,23 +22,21 @@ import java.net.URL;
 /**
  * Upload to the cloud
  */
-class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
+class UploadTask implements Runnable {
     private static final String TAG = "UploadTask";
 
     private static final String postUrl = BaselineCloud.baselineServer + "/tracks";
 
     private final Context context;
     private final TrackFile trackFile;
-    private final Callback<CloudData> cb;
 
-    UploadTask(Context context, TrackFile trackFile, Callback<CloudData> cb) {
+    UploadTask(Context context, TrackFile trackFile) {
         this.context = context;
         this.trackFile = trackFile;
-        this.cb = cb;
     }
 
     @Override
-    protected Try<CloudData> doInBackground(Void... voids) {
+    public void run() {
         Log.i(TAG, "Uploading track " + trackFile);
         try {
             // Get auth token
@@ -55,36 +50,19 @@ class UploadTask extends AsyncTask<Void,Void,Try<CloudData>> {
             // Update track listing
             Services.cloud.listing.listAsync(authToken, true);
             Log.i(TAG, "Upload successful, track " + trackData.track_id);
-            return new Try.Success<>(trackData);
+            EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, trackData));
         } catch(AuthException e) {
             Log.e(TAG, "Failed to upload file - auth error", e);
             FirebaseCrash.report(e);
-            return new Try.Failure<>("auth error");
+            EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "auth error"));
         } catch(IOException e) {
             Log.e(TAG, "Failed to upload file", e);
             FirebaseCrash.report(e);
-            return new Try.Failure<>(e.getMessage());
+            EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
         } catch(JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
             FirebaseCrash.report(e);
-            return new Try.Failure<>("invalid response from server");
-        }
-    }
-    @Override
-    protected void onPostExecute(Try<CloudData> result) {
-        // Notify listeners
-        if(result instanceof Try.Success) {
-            final CloudData trackData = ((Try.Success<CloudData>) result).result;
-            EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, trackData));
-            if(cb != null) {
-                cb.apply(trackData);
-            }
-        } else {
-            final String error = ((Try.Failure<CloudData>) result).error;
-            EventBus.getDefault().post(new SyncEvent.UploadFailure(error));
-            if(cb != null) {
-                cb.error(error);
-            }
+            EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "invalid response from server"));
         }
     }
 

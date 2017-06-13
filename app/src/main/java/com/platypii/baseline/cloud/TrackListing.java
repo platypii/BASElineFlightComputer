@@ -4,7 +4,6 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.IOUtil;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
@@ -45,12 +44,12 @@ public class TrackListing {
                 editor.apply();
                 // Update the track listing in a thread
                 Log.i(TAG, "Listing tracks");
-                AsyncTask.execute(new Runnable() {
+                new Thread() {
                     @Override
                     public void run() {
                         listTracks(auth);
                     }
-                });
+                }.start();
             } else {
                 final double t1 = lastUpdateDuration * 0.001;
                 final double t2 = lastRequestDuration * 0.001;
