@@ -12,6 +12,8 @@ import org.json.JSONObject;
  * Class representing online track info
  */
 public class CloudData {
+    private static final String TAG = "CloudData";
+
     public final String track_id;
     public final long date;
     public final String date_string;

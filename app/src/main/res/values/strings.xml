@@ -18,6 +18,7 @@
     <string name="action_delete">Delete</string>
     <string name="action_export">Export</string>
     <string name="action_charts">Charts</string>
+    <string name="action_augmented">3D View</string>
 
     <string name="upload_waiting">Waiting for upload…</string>
     <string name="uploading">Uploading…</string>

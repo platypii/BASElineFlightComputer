@@ -1,5 +1,6 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.augmented.AugmentedActivity;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
@@ -91,6 +92,13 @@ public class Intents {
         earthIntent.setDataAndType(Uri.parse(urlKml), "application/vnd.google-earth.kml+xml");
         earthIntent.setClassName("com.google.earth", "com.google.earth.EarthActivity");
         context.startActivity(earthIntent);
+    }
+
+    /** Open augmented activity */
+    static void openAugmentedView(@NonNull Context context, String track_id) {
+        final Intent intent = new Intent(context, AugmentedActivity.class);
+        intent.putExtra(AugmentedActivity.EXTRA_TRACK_ID, track_id);
+        context.startActivity(intent);
     }
 
 //    /** Share link to baseline.ws */
