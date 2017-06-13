@@ -283,7 +283,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // $PGNVD,2,1137580,1138164,419442.000,0.612,0.11,-0.01,5,31.0,0,0.0,0,4.6,130,68,15
                 // $GNZCD,682.617,+
             case "LOR":
-                // Samsung Galaxy S6 SM-G920F
+                // Samsung Galaxy S6, S7
                 // $PGLOR,0,HLA,123444.00,L,,Al,,A,,H,,,M,1,Ac,0,Gr,0,S,,,Sx,,,T,0,Tr,,Mn,0*33
                 // $PGLOR,1,FIX,1.0,1.0*20
                 // $PGLOR,2,SIO,TxERR,0,RxERR,0,TxCNT,461,RxCNT,4416,MLFRMPKT,0,DTMS,997,DTIN,5,11,DTOUT,100,987,HATMD,26*20
@@ -291,6 +291,11 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // $PGLOR,3,PWR,mA,36.4,RFTm,1000,OscTm,1000,MeasTm,1000,UTC,123444.00*32
                 // $PGLOR,6,STA,122301.03,0.000,0.000,-270,236,9999,0,P,F,L,1,C,0,S,0000,0,2,R,0000,TPeF,19,2122,LC,,*13
                 // $PGLOR,SPL,20160704142257.8,STATUS,2*38
+            case "TK010":
+            case "TK011":
+                // XGPS-160
+                // $PMTK010,002
+                // $PMTK011,MTKGPS
             case "TKTSX1":
                 // ZVI
                 // $PMTKTSX1,181512,0.000,0.293,44.717,4af30000,-3.324382,0.000099,-0.000850,-0.207713,0.386944*40

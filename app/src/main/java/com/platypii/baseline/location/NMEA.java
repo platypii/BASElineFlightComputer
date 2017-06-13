@@ -96,13 +96,14 @@ class NMEA {
     static void validate(@NonNull String nmea) throws NMEAException {
         final int starIndex = nmea.lastIndexOf('*');
         final int length = nmea.length();
+        final boolean isPGLOR = nmea.startsWith("$PGLOR,");
         // Ensure that:
         // - string is long enough
         // - starts with $
         // - ends with checksum
         // Could use regex ^\\$.*\\*[0-9a-fA-F]{2} but this is faster:
         if(length < 8 || nmea.charAt(0) != '$' || starIndex != length - 3) {
-            if(nmea.startsWith("$PGLOR,")) {
+            if(isPGLOR) {
                 // PGLOR commands often omit checksum or truncate to 1 char, no need to report it
                 return;
             } else {
@@ -116,7 +117,7 @@ class NMEA {
             checksum1 ^= nmea.charAt(i);
         }
         final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1), 16);
-        if(checksum1 != checksum2) {
+        if(checksum1 != checksum2 && !isPGLOR) {
             throw new NMEAException("Invalid NMEA checksum: " + checksum1 + " != " + checksum2 + " for sentence: " + nmea);
         }
     }
