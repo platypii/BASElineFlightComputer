@@ -6,6 +6,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.measurements.MAltitude;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

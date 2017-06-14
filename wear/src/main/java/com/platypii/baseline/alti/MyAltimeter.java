@@ -1,16 +1,16 @@
 package com.platypii.baseline.alti;
 
+import com.platypii.baseline.measurements.MAltitude;
+import com.platypii.baseline.measurements.MPressure;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * The main Altimeter class.
@@ -20,19 +20,13 @@ import org.greenrobot.eventbus.EventBus;
  *
  * TODO: Correct barometer drift with GPS
  */
-public class MyAltimeter implements SensorEventListener {
+public class MyAltimeter {
     private static final String TAG = "MyAltimeter";
 
-    private SensorManager sensorManager;
     private SharedPreferences prefs;
 
-    // Pressure data
-    private float pressure = Float.NaN; // hPa (millibars)
-    private double pressure_altitude_raw = Double.NaN; // pressure converted to altitude under standard conditions (unfiltered)
-    private double pressure_altitude_filtered = Double.NaN; // kalman filtered pressure altitude
-
-    // Pressure altitude kalman filter
-    private final FilterKalman filter = new FilterKalman(); // Unfiltered(), AlphaBeta(), MovingAverage(), etc
+    // Barometric altimeter
+    private BaroAltimeter baro = new BaroAltimeter();
 
     // Official altitude data
     private double altitude = Double.NaN; // Meters AMSL
@@ -45,15 +39,10 @@ public class MyAltimeter implements SensorEventListener {
     private boolean ground_level_initialized = false;
     double ground_level = Double.NaN;
 
-    private long lastFixNano; // nanoseconds
-    private long lastFixMillis; // milliseconds
+    // Sample counts
+    private long baro_sample_count = 0;
 
-    // Stats
-    // Model error is the difference between our filtered output and the raw pressure altitude
-    // Model error should approximate the sensor variance, even when in motion
-    private final Stat model_error = new Stat();
-    private float refreshRate = 0; // Moving average of refresh rate in Hz
-    private long n = 0; // number of samples
+    private long lastFixMillis; // milliseconds
 
     /**
      * Initializes altimeter services, if not already running.
@@ -65,21 +54,16 @@ public class MyAltimeter implements SensorEventListener {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                // Get a new preference manager
-                prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                if(sensorManager == null) {
+                if(prefs == null) {
+                    // Get a new preference manager
+                    prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+                    // Start barometer
+                    EventBus.getDefault().register(MyAltimeter.this);
+                    baro.start(context);
+
                     // Load ground level from preferences
                     loadGroundLevel();
-
-                    // Add sensor listener
-                    sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-                    final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-                    if (sensor != null) {
-                        // Start sensor updates
-                        sensorManager.registerListener(MyAltimeter.this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
-                    } else {
-                        Log.e(TAG, "No pressure sensor found");
-                    }
                 } else {
                     Log.e(TAG, "MyAltimeter already started");
                 }
@@ -88,7 +72,7 @@ public class MyAltimeter implements SensorEventListener {
     }
 
     double altitudeAGL() {
-        return pressure_altitude_filtered - ground_level;
+        return baro.pressure_altitude_filtered - ground_level;
     }
 
     /**
@@ -120,130 +104,60 @@ public class MyAltimeter implements SensorEventListener {
         edit.apply();
     }
 
-    /** SensorEventListener */
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-    @Override
-    public void onSensorChanged(@NonNull SensorEvent event) {
-        long millis = System.currentTimeMillis(); // Record time as soon as possible
-        if(event.sensor.getType() != Sensor.TYPE_PRESSURE) {
-            Log.e(TAG, "Invalid sensor type: " + event.sensor.getType());
-        }
-        updateBarometer(millis, event);
-    }
-
     /**
      * Process new barometer reading
      */
-    private void updateBarometer(long millis, SensorEvent event) {
-        if(event == null || event.values.length == 0 || Double.isNaN(event.values[0]))
-            return;
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onPressureEvent(MPressure pressure) {
+        lastFixMillis = pressure.millis;
+//        lastFixMillis = pressure.millis - Services.location.phoneOffsetMillis; // TODO: Convert to GPS time
 
-        if(lastFixNano == event.timestamp) {
-            Log.e(TAG, "Double update: " + lastFixNano);
-        }
-
-        final double prevAltitude = altitude;
-        // final double prevClimb = climb;
-        final long prevLastFixNano = lastFixNano;
-
-        pressure = event.values[0];
-        lastFixNano = event.timestamp;
-        lastFixMillis = millis;
-
-        // Barometer refresh rate
-        final long deltaTime = lastFixNano - prevLastFixNano; // time since last refresh
-        if(deltaTime > 0 && prevLastFixNano > 0) {
-            final float newRefreshRate = 1E9f / (float) (deltaTime); // Refresh rate based on last 2 samples
-            if(refreshRate == 0) {
-                refreshRate = newRefreshRate;
-            } else {
-                refreshRate += (newRefreshRate - refreshRate) * 0.5f; // Moving average
-            }
-            if (Double.isNaN(refreshRate)) {
-                Log.e(TAG, "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + newRefreshRate);
-                refreshRate = 0;
-            }
-        }
-
-        // Convert pressure to altitude
-        pressure_altitude_raw = pressureToAltitude(pressure);
-
-        // Apply kalman filter to pressure altitude, to produce smooth barometric pressure altitude.
-        final double dt = Double.isNaN(prevAltitude)? 0 : (lastFixNano - prevLastFixNano) * 1E-9;
-        filter.update(pressure_altitude_raw, dt);
-        pressure_altitude_filtered = filter.x;
-        climb = filter.v;
-
-        // Compute model error
-        model_error.addSample(pressure_altitude_filtered - pressure_altitude_raw);
-
-        // Compute GPS corrected altitude AMSL
-        altitude = pressure_altitude_filtered;
-        if(Double.isNaN(altitude)) {
-            Log.w(TAG, "Altitude should not be NaN: altitude = " + altitude);
-        }
+        // TODO: Compute GPS corrected altitude AMSL
+//        altitude = baro.pressure_altitude_filtered - altitude_offset;
+        altitude = baro.pressure_altitude_filtered;
+        climb = pressure.climb;
 
         // Adjust for ground level
-        if(!ground_level_initialized) {
-            if (n == 0) {
+        if (!ground_level_initialized) {
+            if (baro_sample_count == 0) {
                 // First pressure reading. Calibrate ground level.
-                ground_level = pressure_altitude_raw;
-            } else if (n < 30) {
+                ground_level = baro.pressure_altitude_raw;
+            } else if (baro_sample_count < 30) {
                 // Average the first N raw samples
-                // Note: because we divide by n, we actually discard the first sample.
+                // Note: because we divide by baro_sample_count, we actually discard the first sample.
                 // This is intentional, because Moto360 gives a garbage first reading.
-                ground_level += (pressure_altitude_raw - ground_level) / n;
+                ground_level += (baro.pressure_altitude_raw - ground_level) / baro_sample_count;
             } else {
                 setGroundLevel(ground_level);
             }
         }
+        baro_sample_count++;
 
-        n++;
         updateAltitude();
     }
+
 
     /**
      * Saves an official altitude measurement
      */
     private void updateAltitude() {
         // Log.d(TAG, "Altimeter Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + lastFixMillis + " " + lastFixNano);
+        if(Double.isNaN(altitude)) {
+            Log.e(TAG, "Altitude should not be NaN: altitude = " + altitude);
+        }
         // Create the measurement
-        final MAltitude myAltitude = new MAltitude(lastFixMillis, lastFixNano, altitude, climb, pressure);
+        final MAltitude myAltitude = new MAltitude(lastFixMillis, altitude, climb);
         // Notify listeners
         EventBus.getDefault().post(myAltitude);
     }
 
-    // ISA pressure and temperature
-    private static final double altitude0 = 0; // ISA height 0 meters
-    private static final double pressure0 = SensorManager.PRESSURE_STANDARD_ATMOSPHERE; // ISA pressure 1013.25 hPa
-    private static final double temp0 = 288.15; // ISA temperature 15 degrees celcius
-
-    // Physical constants
-//    private static final double G = 9.80665; // Gravity (m/s^2)
-//    private static final double R = 8.31432; // Universal Gas Constant ((N m)/(mol K))
-//    private static final double M = 0.0289644; // Molar Mass of air (kg/mol)
-    private static final double L = -0.0065; // Temperature Lapse Rate (K/m)
-    private static final double EXP = 0.190263237; // -L * R / (G * M);
-
-    /**
-     * Convert air pressure to altitude
-     * @param pressure Pressure in hPa
-     * @return The pressure altitude in meters
-     */
-    private static double pressureToAltitude(double pressure) {
-        // Barometric formula
-        return altitude0 - temp0 * (1 - Math.pow(pressure / pressure0, EXP)) / L;
-    }
-
     public void stop() {
-        if(sensorManager != null) {
-            sensorManager.unregisterListener(this);
-            sensorManager = null;
+        EventBus.getDefault().unregister(this);
+        if(prefs != null) {
+            prefs = null;
         } else {
             Log.e(TAG, "MyAltimeter.stop() called, but service is already stopped");
         }
-        prefs = null;
     }
 
 }

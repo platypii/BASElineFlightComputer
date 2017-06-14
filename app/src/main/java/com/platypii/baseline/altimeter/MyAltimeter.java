@@ -228,6 +228,7 @@ public class MyAltimeter implements Service, MyLocationListener {
         }
         // Create the measurement
         final MAltitude myAltitude = new MAltitude(lastFixMillis, altitude, climb);
+        // Notify listeners
         EventBus.getDefault().post(myAltitude);
     }
 
