@@ -3,6 +3,7 @@ package com.platypii.baseline.altimeter;
 import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MPressure;
+import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.Stat;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -114,6 +115,12 @@ public class BaroAltimeter implements Service, SensorEventListener {
         filter.update(pressure_altitude_raw, deltaTime * 1E-9);
         pressure_altitude_filtered = filter.x;
         climb = filter.v;
+
+        // Altitude should never be null:
+        if(!Numbers.isReal(pressure_altitude_filtered)) {
+            FirebaseCrash.report(new IllegalArgumentException("Invalid pressure altitude: " + pressure + " -> " + pressure_altitude_filtered));
+            return;
+        }
 
         // Compute model error
         model_error.addSample(pressure_altitude_filtered - pressure_altitude_raw);

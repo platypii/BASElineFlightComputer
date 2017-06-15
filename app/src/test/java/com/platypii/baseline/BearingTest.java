@@ -18,8 +18,8 @@ public class BearingTest {
         double vN = groundSpeed * Math.cos(Math.toRadians(bearing));
         double vE = groundSpeed * Math.sin(Math.toRadians(bearing));
 
-        assertEquals(vN, -10, .1);
-        assertEquals(vE, 17.3, .1);
+        assertEquals(-10, vN, .1);
+        assertEquals(17.3, vE, .1);
     }
 
     @Test
@@ -28,7 +28,7 @@ public class BearingTest {
         double vE = 17.3;
         MLocation loc = new MLocation(0, 47, -122, 486, vN, vE, 0, 0, 0, 0, 0, 0);
 
-        assertEquals(loc.bearing(), 120, .1);
+        assertEquals(120, loc.bearing(), .1);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class BearingTest {
         double vE = 17.3;
         MLocation loc = new MLocation(0, 47, -122, 486, vN, vE, 0, 0, 0, 0, 0, 0);
 
-        assertEquals(loc.groundSpeed(), 20, .1);
+        assertEquals(20, loc.groundSpeed(), .1);
     }
 
 }

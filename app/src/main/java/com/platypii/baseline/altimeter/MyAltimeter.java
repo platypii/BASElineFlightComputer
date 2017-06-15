@@ -40,7 +40,7 @@ public class MyAltimeter implements Service, MyLocationListener {
 
     // official altitude AMSL = pressure_altitude - altitude_offset
     // altitude_offset uses GPS to get absolute altitude right
-    private double altitude_offset = 0.0;
+    private double altitude_offset = 0;
 
     // Official altitude data
     public double altitude = Double.NaN; // Meters AMSL
@@ -130,7 +130,7 @@ public class MyAltimeter implements Service, MyLocationListener {
             edit.putLong("altimeter_ground_level_time", System.currentTimeMillis());
             edit.apply();
         } else {
-            FirebaseCrash.report(new IllegalArgumentException("Ground level must be real"));
+            FirebaseCrash.report(new IllegalArgumentException("Ground level must be real: " + groundLevel));
         }
     }
 
