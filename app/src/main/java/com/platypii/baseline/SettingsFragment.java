@@ -47,6 +47,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         bluetoothDevicePreference = (BluetoothDevicePreference) findPreference("bluetooth_device_id");
         bluetoothDevicePreference.setOnPreferenceChangeListener(this);
 
+        findPreference("audible_settings").setOnPreferenceClickListener(this);
         findPreference("sensor_info").setOnPreferenceClickListener(this);
         signInPreference = findPreference("sign_in");
         signInPreference.setOnPreferenceClickListener(this);
@@ -127,7 +128,11 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        if(preference.getKey().equals("sensor_info")) {
+        if(preference.getKey().equals("audible_settings")) {
+            // Open audible settings activity
+            firebaseAnalytics.logEvent("click_audible_settings", null);
+            startActivity(new Intent(getActivity(), AudibleSettingsActivity.class));
+        } else if(preference.getKey().equals("sensor_info")) {
             // Open sensor activity
             firebaseAnalytics.logEvent("click_sensors", null);
             startActivity(new Intent(getActivity(), SensorActivity.class));

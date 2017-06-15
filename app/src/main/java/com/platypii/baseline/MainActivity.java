@@ -180,24 +180,24 @@ public class MainActivity extends BaseActivity {
     }
 
     public void clickAudible(View v) {
-        firebaseAnalytics.logEvent("click_audible", null);
-        startActivity(new Intent(this, AudibleSettingsActivity.class));
+        if (Services.audible.isEnabled()) {
+            // Stop audible
+            firebaseAnalytics.logEvent("click_stop_audible", null);
+            Services.audible.disableAudible();
+        } else {
+            // Start audible
+            firebaseAnalytics.logEvent("click_start_audible", null);
+            Toast.makeText(MainActivity.this, "Starting audible", Toast.LENGTH_SHORT).show();
+            Services.audible.enableAudible();
+        }
+        updateUIState();
     }
 
     private final View.OnLongClickListener audibleLongClickListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if (Services.audible.isEnabled()) {
-                // Stop audible
-                firebaseAnalytics.logEvent("click_stop_audible", null);
-                Services.audible.disableAudible();
-            } else {
-                // Start audible
-                firebaseAnalytics.logEvent("click_start_audible", null);
-                Toast.makeText(MainActivity.this, "Starting audible", Toast.LENGTH_SHORT).show();
-                Services.audible.enableAudible();
-            }
-            updateUIState();
+            firebaseAnalytics.logEvent("long_click_audible", null);
+            startActivity(new Intent(MainActivity.this, AudibleSettingsActivity.class));
             return true;
         }
     };

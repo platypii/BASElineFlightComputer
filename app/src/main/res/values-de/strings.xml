@@ -94,6 +94,8 @@
     <string name="pref_metric_description">Metrische Einheiten verwenden</string>
     <string name="pref_auto_stop">Stoppen Sie automatisch</string>
     <string name="pref_auto_stop_description">Stoppen Sie die Aufzeichnungsdaten und Akutisches bei der Landung</string>
+    <string name="pref_audible_settings">Akustische Einstellungen</string>
+    <string name="pref_audible_settings_description">Konfigurieren von akustischen Optionen</string>
     <string name="pref_sensor_info">Sensorinformationen</string>
     <string name="pref_sensor_info_description">Anzeige von sensordaten</string>
     <string name="pref_sign_in">Anmelden</string>
