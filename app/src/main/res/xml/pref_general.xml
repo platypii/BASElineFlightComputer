@@ -25,6 +25,7 @@
 
     <Preference
         android:key="audible_settings"
+        android:widgetLayout="@layout/icon_audio"
         android:title="@string/pref_audible_settings"
         android:summary="@string/pref_audible_settings_description"/>
 
