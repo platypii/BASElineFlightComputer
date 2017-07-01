@@ -56,7 +56,7 @@ public class UploadManager {
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onLoggingEvent(LoggingEvent event) {
-        if(BaseActivity.currentState == AuthEvent.SIGNED_IN && autosyncEnabled && !event.started) {
+        if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN && autosyncEnabled && !event.started) {
             Log.i(TAG, "Auto syncing track " + event.trackFile);
             FirebaseCrash.log("Logging stopped, autosyncing track " + event.trackFile.getName());
             // TODO: Mark track as queued for upload

@@ -4,8 +4,10 @@ import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.util.Callback;
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -40,7 +42,8 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     private View signInSpinner;
 
     // Save last sign in state so that sign in panel doesn't blink
-    public static AuthEvent currentState = null;
+    public static AuthEvent currentAuthState = null;
+    private static final String PREF_AUTH_STATE = "auth_state";
 
     protected boolean isSignedIn() {
         return account != null;
@@ -57,8 +60,8 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     /**
      * Update sign in state, notify listeners, and update shared UI
      */
-    private void updateState(AuthEvent event) {
-        currentState = event;
+    private void updateAuthState(AuthEvent event) {
+        currentAuthState = event;
         // Notify listeners
         EventBus.getDefault().post(event);
         // Update sign in panel state
@@ -79,6 +82,11 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         } else if(userClickedSignIn && event == AuthEvent.SIGNED_OUT) {
             Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
         }
+        // Save to preferences
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PREF_AUTH_STATE, event.state);
+        editor.apply();
     }
 
     @Override
@@ -89,6 +97,12 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
 
         // Initialize early services
         Services.create(this);
+
+        // Load previous auth state
+        if(currentAuthState == null) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            currentAuthState = AuthEvent.fromString(prefs.getString(PREF_AUTH_STATE, null));
+        }
 
         // Initialize Google sign in
         final String serverClientId = getString(R.string.server_client_id);
@@ -130,7 +144,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         }
         // If we know that we are signed out, then show the panel
         if(signInPanel != null) {
-            if(currentState == AuthEvent.SIGNED_OUT) {
+            if(currentAuthState == AuthEvent.SIGNED_OUT) {
                 signInPanel.setVisibility(View.VISIBLE);
             } else {
                 signInPanel.setVisibility(View.GONE);
@@ -155,7 +169,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         userClickedSignIn = true;
 
         // Notify sign in listeners
-        updateState(AuthEvent.SIGNING_IN);
+        updateAuthState(AuthEvent.SIGNING_IN);
 
         final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, Intents.RC_SIGN_IN);
@@ -217,7 +231,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
             }
 
             // Notify listeners
-            updateState(AuthEvent.SIGNED_IN);
+            updateAuthState(AuthEvent.SIGNED_IN);
         } else {
             Log.w(TAG, "Sign in failed: " + result.getStatus());
             signedOut();
@@ -231,7 +245,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         // Clear track listing
         Services.cloud.signOut();
         // Notify listeners
-        updateState(AuthEvent.SIGNED_OUT);
+        updateAuthState(AuthEvent.SIGNED_OUT);
     }
 
     @Override
