@@ -39,12 +39,14 @@
         <item>Vertical Speed</item>
         <item>Total Speed</item>
         <item>Glide Ratio</item>
+        <item>Navigation</item>
     </string-array>
     <string-array name="audible_modes_values">
         <item>horizontal_speed</item>
         <item>vertical_speed</item>
         <item>total_speed</item>
         <item>glide_ratio</item>
+        <item>navigation</item>
     </string-array>
 
     <!-- Audible settings -->

@@ -105,6 +105,9 @@ public class MLocation extends Measurement {
     public double bearingTo(MLocation dest) {
         return bearingTo(latitude, longitude, dest.latitude, dest.longitude);
     }
+    public double bearingTo(LatLng dest) {
+        return bearingTo(latitude, longitude, dest.latitude, dest.longitude);
+    }
 
     private static double bearingTo(double lat1, double lon1, double lat2, double lon2) {
         final double φ1 = Math.toRadians(lat1);
@@ -116,6 +119,9 @@ public class MLocation extends Measurement {
     }
 
     public double distanceTo(MLocation dest) {
+        return distanceTo(latitude, longitude, dest.latitude, dest.longitude);
+    }
+    public double distanceTo(LatLng dest) {
         return distanceTo(latitude, longitude, dest.latitude, dest.longitude);
     }
 

@@ -15,6 +15,7 @@ public class Convert {
     public static final double FT = 0.3048;
     public static final double MPH = 0.44704;
     public static final double KPH = 0.277778;
+    private static final double MILE = 1609.34;
 
     // Float equivalents
     public static final float MPHf = 0.44704f;
@@ -84,6 +85,57 @@ public class Convert {
                 return String.format("%."+precision+"f%s", localValue, unitString);
             }
         }
+    }
+
+    /**
+     * Shortened distance intended to be spoken
+     * @param m meters
+     * @param precision number of decimal places
+     * @param units show the units?
+     */
+    public static String distance2(double m, int precision, boolean units) {
+        if(Double.isNaN(m)) {
+            return "";
+        } else if(Double.isInfinite(m)) {
+            return Double.toString(m);
+        } else {
+            String unitString;
+            double localValue;
+            if(metric) {
+                if(m > 1000) {
+                    unitString = "kilometers";
+                    localValue = m * 0.001;
+                } else {
+                    unitString = "meters";
+                    localValue = m;
+                }
+            } else {
+                if(m > MILE) {
+                    unitString = "miles";
+                    localValue = m * 0.000621371;
+                } else {
+                    unitString = "feet";
+                    localValue = m * 3.2808399;
+                }
+            }
+            if(!units) {
+                unitString = "";
+            }
+
+            final double localValueTruncated = truncate(localValue);
+            if(precision == 0) {
+                // Faster special case for integers
+                return Math.round(localValueTruncated) + unitString;
+            } else {
+                return String.format("%."+precision+"f%s", localValueTruncated, unitString);
+            }
+        }
+    }
+    /** Truncate to 2 significant digits */
+    private static double truncate(double value) {
+        final double mag = Math.floor(Math.log10(value));
+        final double mask = Math.pow(10, mag - 1);
+        return value - (value % mask);
     }
 
     /**
@@ -287,6 +339,26 @@ public class Convert {
     public static String angle(double degrees) {
         // Faster special case for integers
         return Math.round(degrees) + "°";
+    }
+
+    /**
+     * Convert yaw angle to a human readable format
+     * @param degrees yaw angle in degrees
+     * @return "15 right" (degrees)
+     */
+    public static String angle2(double degrees) {
+        // Adjust range to -180..180
+        degrees = (degrees + 540) % 360 - 180;
+        // Shorten to two significant digits
+        degrees = truncate(degrees);
+        if(degrees < 0)
+            return Math.round(-degrees) + " left";
+        else if(degrees == 0)
+            return "straight";
+        else if(degrees > 0)
+            return Math.round(degrees) + " right";
+        else
+            return "";
     }
 
 }
