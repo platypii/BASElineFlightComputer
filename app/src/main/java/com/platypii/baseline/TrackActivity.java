@@ -22,6 +22,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
 
     static final String EXTRA_TRACK_FILE = "TRACK_FILE";
 
+    private Button syncButton;
     private AlertDialog alertDialog;
 
     private TrackFile trackFile;
@@ -30,6 +31,8 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jump);
+
+        syncButton = (Button) findViewById(R.id.syncButton);
 
         // Load jump from extras
         final Bundle extras = getIntent().getExtras();
@@ -51,16 +54,22 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
      */
     private void updateViews() {
         if(trackFile != null) {
+            if(trackFile.uploaded) {
+                // Track uploaded, open TrackDataActivity
+                Intents.openTrackDataActivity(this, trackFile.cloudData);
+                finish();
+                return;
+            }
+
             // Find views
             final TextView filenameLabel = (TextView) findViewById(R.id.filename);
             final TextView filesizeLabel = (TextView) findViewById(R.id.filesize);
-            final Button syncButton = (Button) findViewById(R.id.syncButton);
 
             filenameLabel.setText(trackFile.getName());
             filesizeLabel.setText(trackFile.getSize());
 
             // Update view based on sign-in state
-            if(isSignedIn()) {
+            if(isSignedIn() && !trackFile.uploading) {
                 syncButton.setEnabled(true);
             } else {
                 syncButton.setEnabled(false);
@@ -73,6 +82,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
         firebaseAnalytics.logEvent("click_track_sync", null);
         Toast.makeText(getApplicationContext(), "Syncing track...", Toast.LENGTH_SHORT).show();
         Services.cloud.uploads.upload(trackFile);
+        updateViews();
     }
 
     public void clickDelete(View v) {
@@ -116,17 +126,22 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         // Listen for sync and auth updates
         EventBus.getDefault().register(this);
         updateViews();
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
         // Dismiss alert to prevent context leak
         if(alertDialog != null) {
             alertDialog.dismiss();
@@ -142,15 +157,14 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
             Intents.openTrackDataActivity(this, event.cloudData);
             finish();
         }
-        updateViews();
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUploadFailure(SyncEvent.UploadFailure event) {
         if(event.trackFile.getName().equals(trackFile.getName())) {
             Log.e(TAG, "Failed to upload track: " + event.error);
             Toast.makeText(getApplicationContext(), "Track sync failed", Toast.LENGTH_LONG).show();
+            updateViews();
         }
-        updateViews();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

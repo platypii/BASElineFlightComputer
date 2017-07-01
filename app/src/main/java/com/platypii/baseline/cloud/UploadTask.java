@@ -66,6 +66,9 @@ class UploadTask implements Runnable {
         }
     }
 
+    /**
+     * HTTP post track to baseline, parse response as CloudData
+     */
     private static CloudData postTrack(TrackFile trackFile, String auth) throws IOException, JSONException {
         final long contentLength = trackFile.file.length();
         final String md5 = MD5.md5(trackFile.file);

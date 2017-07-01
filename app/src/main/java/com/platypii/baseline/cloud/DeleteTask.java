@@ -2,7 +2,6 @@ package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
@@ -12,25 +11,25 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * List tracks from the cloud
+ * Delete tracks from the cloud
  */
-class TrackDelete {
-    private static final String TAG = "TrackDelete";
+class DeleteTask implements Runnable {
+    private static final String TAG = "DeleteTask";
 
-    static void deleteAsync(@NonNull final String auth, final CloudData track) {
-        Log.i(TAG, "Deleting track " + track.track_id);
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                delete(auth, track);
-            }
-        });
+    private final String auth;
+    private final CloudData track;
+
+    DeleteTask(@NonNull String auth, CloudData track) {
+        this.auth = auth;
+        this.track = track;
     }
 
     /**
      * Notify listeners and handle exceptions
      */
-    private static void delete(String auth, CloudData track) {
+    @Override
+    public void run() {
+        Log.i(TAG, "Deleting track " + track.track_id);
         try {
             // Make HTTP request
             deleteRemote(auth, track.trackUrl);

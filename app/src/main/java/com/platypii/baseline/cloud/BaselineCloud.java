@@ -22,7 +22,7 @@ public class BaselineCloud implements Service {
 
     public void deleteTrack(CloudData track, String auth) {
         // Delete track on server
-        TrackDelete.deleteAsync(auth, track);
+        new Thread(new DeleteTask(auth, track)).start();
     }
 
     @Override

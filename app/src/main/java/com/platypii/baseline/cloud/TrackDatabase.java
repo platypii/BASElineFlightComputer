@@ -23,12 +23,13 @@ public class TrackDatabase {
     }
 
     void addTrackData(CloudData trackData) {
+        // Update track list cache, if it exists
         final List<CloudData> trackList = Services.cloud.listing.cache.list();
         if(trackList != null) {
             trackList.add(trackData);
             Services.cloud.listing.cache.update(trackList);
         } else {
-            // TODO: Save singleton track list
+            // TODO: Save singleton track list?
             Log.e(TAG, "Failed to add to null track list");
         }
     }

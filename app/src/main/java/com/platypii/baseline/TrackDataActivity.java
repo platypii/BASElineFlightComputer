@@ -99,6 +99,8 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
             final Bundle bundle = new Bundle();
             bundle.putString("track_id", track.track_id);
             firebaseAnalytics.logEvent("click_track_delete_remote_2", bundle);
+            // Disable delete button
+            findViewById(R.id.deleteButton).setEnabled(false);
             // Delete track
             deleteRemote();
         }
@@ -135,6 +137,7 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDeleteFailure(SyncEvent.DeleteFailure event) {
         if(event.track_id.equals(track.track_id)) {
+            findViewById(R.id.deleteButton).setEnabled(true);
             // Notify user
             Toast.makeText(getApplicationContext(), "Track delete failed", Toast.LENGTH_SHORT).show();
         }

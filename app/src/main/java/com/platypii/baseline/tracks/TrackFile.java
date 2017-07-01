@@ -1,6 +1,7 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.CloudData;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 import java.io.File;
@@ -9,11 +10,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Represents a track file on the local device (pre-upload)
+ */
 public class TrackFile {
     private static final String TAG = "TrackFile";
 
     // TrackFile info
     public File file;
+
+    // Upload state
+    public boolean uploading = false;
+    public boolean uploaded = false;
+    public CloudData cloudData;
 
     public TrackFile(File file) {
         this.file = file;
