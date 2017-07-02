@@ -49,6 +49,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         findPreference("audible_settings").setOnPreferenceClickListener(this);
         findPreference("sensor_info").setOnPreferenceClickListener(this);
+        findPreference("help_page").setOnPreferenceClickListener(this);
         signInPreference = findPreference("sign_in");
         signInPreference.setOnPreferenceClickListener(this);
     }
@@ -144,6 +145,9 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             } else {
                 activity.clickSignIn();
             }
+        } else if(preference.getKey().equals("help_page")) {
+            // Handle help page click
+            Intents.openHelpUrl(getActivity());
         }
         return false;
     }

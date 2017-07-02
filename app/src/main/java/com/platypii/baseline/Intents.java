@@ -103,4 +103,13 @@ public class Intents {
             FirebaseCrash.report(e);
         }
     }
+
+    /** Open help page in browser */
+    static void openHelpUrl(@NonNull Context context) {
+        final Uri uri = Uri.parse("https://baseline.ws/help");
+        Log.i(TAG, "Opening help url " + uri);
+        final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        context.startActivity(intent);
+    }
+
 }

@@ -104,6 +104,8 @@
     <string name="pref_sign_in_description">Melden Sie sich mit Ihrem Google-Konto ann</string>
     <string name="pref_sign_out">Abmelden</string>
     <string name="pref_sign_out_description">Abmelden</string>
+    <string name="pref_help">Hilfebereich</string>
+    <string name="pref_help_description">BASEline Bedienungsanleitung</string>
 
     <!-- Notifications -->
     <string name="notify_logging">Aufzeichnungsdaten</string>

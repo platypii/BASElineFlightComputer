@@ -40,4 +40,9 @@
         android:title="@string/pref_sign_in"
         android:summary="@string/pref_sign_in_description"/>
 
+    <Preference
+        android:key="help_page"
+        android:title="@string/pref_help"
+        android:summary="@string/pref_help_description"/>
+
 </PreferenceScreen>
