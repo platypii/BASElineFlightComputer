@@ -147,6 +147,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             }
         } else if(preference.getKey().equals("help_page")) {
             // Handle help page click
+            firebaseAnalytics.logEvent("click_help", null);
             Intents.openHelpUrl(getActivity());
         }
         return false;

@@ -5,6 +5,7 @@ import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.IOUtil;
 import com.platypii.baseline.util.MD5;
+import com.platypii.baseline.util.Network;
 import android.content.Context;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
@@ -38,6 +39,8 @@ class UploadTask implements Runnable {
     @Override
     public void run() {
         Log.i(TAG, "Uploading track " + trackFile);
+        // Check for network availability. Still try to upload anyway, but don't report to firebase
+        final boolean networkAvailable = Network.isAvailable(context);
         try {
             // Get auth token
             final String authToken = AuthToken.getAuthToken(context);
@@ -53,15 +56,21 @@ class UploadTask implements Runnable {
             EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, trackData));
         } catch(AuthException e) {
             Log.e(TAG, "Failed to upload file - auth error", e);
-            FirebaseCrash.report(e);
+            if(networkAvailable) {
+                FirebaseCrash.report(e);
+            }
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "auth error"));
         } catch(IOException e) {
             Log.e(TAG, "Failed to upload file", e);
-            FirebaseCrash.report(e);
+            if(networkAvailable) {
+                FirebaseCrash.report(e);
+            }
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
         } catch(JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
-            FirebaseCrash.report(e);
+            if(networkAvailable) {
+                FirebaseCrash.report(e);
+            }
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "invalid response from server"));
         }
     }
