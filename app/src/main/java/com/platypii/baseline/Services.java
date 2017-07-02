@@ -151,7 +151,9 @@ public class Services {
         if(!ttsLoaded) {
             Log.i(TAG, "Text-to-speech data loaded, starting audible");
             ttsLoaded = true;
-            audible.start(context.getApplicationContext());
+            if(initialized) {
+                audible.start(context.getApplicationContext());
+            }
         } else {
             Log.w(TAG, "Text-to-speech already loaded");
             FirebaseCrash.report(new IllegalStateException("Text-to-speech loaded twice"));

@@ -23,18 +23,26 @@ public class UploadManager {
 
     private Context context;
 
-    public void upload(TrackFile trackFile) {
+    /**
+     * Called when user clicks sync
+     */
+    public void userUpload(TrackFile trackFile) {
         FirebaseCrash.log("User upload track " + trackFile.getName());
         // Update uploading state
         if(trackFile.uploading) {
-            FirebaseCrash.report(new IllegalStateException("Upload already in progress for track " + trackFile.getName()));
+            FirebaseCrash.report(new IllegalStateException("Upload already in progress for track " + trackFile));
         } else if(trackFile.uploaded) {
-            FirebaseCrash.report(new IllegalStateException("Upload already complete for track " + trackFile.getName()));
+            FirebaseCrash.report(new IllegalStateException("Upload already complete for track " + trackFile));
         } else {
-            trackFile.uploading = true;
-            // Start upload thread
-            new Thread(new UploadTask(context, trackFile)).start();
+            upload(trackFile);
         }
+    }
+
+    private void upload(TrackFile trackFile) {
+        // Mark track as queued for upload
+        trackFile.uploading = true;
+        // Start upload thread
+        new Thread(new UploadTask(context, trackFile)).start();
     }
 
 //    private void uploadAll() {
@@ -58,9 +66,8 @@ public class UploadManager {
     public void onLoggingEvent(LoggingEvent event) {
         if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN && autosyncEnabled && !event.started) {
             Log.i(TAG, "Auto syncing track " + event.trackFile);
-            FirebaseCrash.log("Logging stopped, autosyncing track " + event.trackFile.getName());
-            // TODO: Mark track as queued for upload
-            new Thread(new UploadTask(context, event.trackFile)).start();
+            FirebaseCrash.log("Logging stopped, autosyncing track " + event.trackFile);
+            upload(event.trackFile);
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)

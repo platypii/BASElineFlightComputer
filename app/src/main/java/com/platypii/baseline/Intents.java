@@ -52,7 +52,11 @@ public class Intents {
         try {
             openTrackGoogleEarth(context, urlKml);
         } catch(ActivityNotFoundException e) {
-            Log.e(TAG, "Failed to open KML file in google maps", e);
+            Log.e(TAG, "Failed to open KML file in google earth", e);
+            Toast.makeText(context, R.string.error_map_intent, Toast.LENGTH_SHORT).show();
+        } catch(Exception e) {
+            FirebaseCrash.report(e);
+            Log.e(TAG, "Failed to open KML file in google earth", e);
             Toast.makeText(context, R.string.error_map_intent, Toast.LENGTH_SHORT).show();
         }
     }

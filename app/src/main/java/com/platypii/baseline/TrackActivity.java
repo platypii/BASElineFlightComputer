@@ -81,7 +81,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
         // Start upload
         firebaseAnalytics.logEvent("click_track_sync", null);
         Toast.makeText(getApplicationContext(), "Syncing track...", Toast.LENGTH_SHORT).show();
-        Services.cloud.uploads.upload(trackFile);
+        Services.cloud.uploads.userUpload(trackFile);
         updateViews();
     }
 

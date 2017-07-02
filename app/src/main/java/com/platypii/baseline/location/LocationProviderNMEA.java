@@ -101,7 +101,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             handleNmea(timestamp, nmea);
         } catch(Exception e) {
             Log.e(NMEA_TAG, "Exception while handling NMEA: " + nmea, e);
-            FirebaseCrash.report(e);
+            FirebaseCrash.report(new NMEAException("Exception while handling NMEA: " + nmea, e));
         }
     }
 
@@ -211,7 +211,10 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // Sanity checks
                 final int locationError = LocationCheck.validate(latitude, longitude);
                 if(locationError != LocationCheck.INVALID_NAN) {
-                    if (locationError == LocationCheck.INVALID_ZERO || locationError == LocationCheck.INVALID_RANGE) {
+                    if (locationError == LocationCheck.INVALID_ZERO) {
+                        // So common we don't even need to report it
+                        Log.e(NMEA_TAG, LocationCheck.message[locationError] + ": " + latitude + "," + longitude);
+                    } else if (locationError == LocationCheck.INVALID_RANGE) {
                         final String locationErrorMessage = LocationCheck.message[locationError] + ": " + latitude + "," + longitude;
                         Log.e(NMEA_TAG, locationErrorMessage);
                         FirebaseCrash.report(new NMEAException(locationErrorMessage));
@@ -254,6 +257,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "ACC":
             case "ACCURACY":
                 // $GNACCURACY,0.8*1E
+            case "AMCLK":
+                // Samsung SM-G390F
+                // $PSAMCLK,1955,40841247,0,9690613,-2232227,408412467
             case "ATT":
                 // $GPATT,45.781233,10.862333,1796.3,45.0,2.6,2.6,*72
                 // $GPATT,lat,lon,alt,bear?,???,???

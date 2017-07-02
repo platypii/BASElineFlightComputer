@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -27,8 +28,8 @@ class NMEA {
         } else {
             final int index = dm.indexOf('.') - 2;
             if (index < 0) {
-                Log.e(TAG, "Lat/Long parse error missing decimal: " + dm + " " + nsew);
-                FirebaseCrash.report(new NMEAException("NMEA lat/Long parse error missing decimal: " + dm + " " + nsew));
+                Log.e(TAG, "Lat/lon parse error missing decimal: " + dm + " " + nsew);
+                FirebaseCrash.report(new NMEAException("NMEA lat/lon parse error missing decimal: " + dm + " " + nsew));
                 return Double.NaN;
             } else {
                 try {
@@ -41,8 +42,8 @@ class NMEA {
                     else
                         return degrees;
                 } catch(Exception e) {
-                    Log.e(TAG, "Lat/Long parse error: " + dm + " " + nsew);
-                    FirebaseCrash.report(new NMEAException("NMEA lat/Long parse error: " + dm + " " + nsew));
+                    Log.e(TAG, "Lat/lon parse error: " + dm + " " + nsew);
+                    FirebaseCrash.report(new NMEAException("NMEA lat/lon parse error: " + dm + " " + nsew));
                     return Double.NaN;
                 }
             }
@@ -118,7 +119,7 @@ class NMEA {
         }
         final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1), 16);
         if(checksum1 != checksum2 && !isPGLOR) {
-            throw new NMEAException("Invalid NMEA checksum: " + checksum1 + " != " + checksum2 + " for sentence: " + nmea);
+            throw new NMEAException(String.format(Locale.US, "Invalid NMEA checksum: %02X != %02X for sentence: %s", checksum1, checksum2, nmea));
         }
     }
 

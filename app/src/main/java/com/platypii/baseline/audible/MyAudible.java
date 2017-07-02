@@ -117,7 +117,11 @@ public class MyAudible implements Service {
      * Announce the current audible mode
      */
     private void speakModeWhenReady() {
-        speech.speakWhenReady(AudibleSettings.mode.name);
+        if(speech != null) {
+            speech.speakWhenReady(AudibleSettings.mode.name);
+        } else {
+            Log.e(TAG, "speakModeWhenReady called but speech is null");
+        }
     }
 
     /**
