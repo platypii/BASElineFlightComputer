@@ -11,8 +11,24 @@
     <string name="action_app">App</string>
     <string name="error_not_connected">Not Connected</string>
 
+    <!-- Settings -->
+    <string name="action_settings">Settings</string>
+    <string name="action_bluetooth">Bluetooth</string>
+    <string name="no_bluetooth_devices">No bluetooth devices</string>
+
+    <!-- Bluetooth -->
+    <string name="bluetooth_status_disabled">Bluetooth hardware disabled</string>
+    <string name="bluetooth_status_not_selected">Bluetooth device not selected</string>
+    <string name="bluetooth_status_stopped">Bluetooth stopped</string>
+    <string name="bluetooth_status_connecting">Bluetooth connecting</string>
+    <string name="bluetooth_status_connected">Bluetooth connected</string>
+    <string name="bluetooth_status_disconnected">Bluetooth not connected</string>
+    <string name="bluetooth_status_stopping">Bluetooth shutting down</string>
+
     <!-- Altimeter Activity -->
     <string name="set_altitude">Set?</string>
     <string name="no_barometer">no alti</string>
+    <string name="hello_round">Hello Round World!</string>
+    <string name="hello_square">Hello Square World!</string>
 
 </resources>

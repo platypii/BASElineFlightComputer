@@ -72,6 +72,11 @@ public class WearActivity extends Activity {
         signalStatus = (ImageView) findViewById(R.id.signalStatus);
     }
 
+    public void clickSettings(View v) {
+        // Launch settings activity
+        startActivity(new Intent(this, SettingsActivity.class));
+    }
+
     public void clickRecord(View v) {
         if(Services.remoteApp.logging) {
             Log.i(TAG, "Clicked stop");

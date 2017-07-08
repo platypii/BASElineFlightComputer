@@ -42,6 +42,16 @@
             android:contentDescription="@string/action_audible"
             style="@android:style/Widget.Material.Button.Borderless" />
 
+        <ImageButton
+            android:id="@+id/baselineButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="clickApp"
+            android:src="@drawable/wingsuit"
+            android:contentDescription="@string/action_app"
+            style="@android:style/Widget.Material.Button.Borderless" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -61,13 +71,13 @@
             style="@android:style/Widget.Material.Button.Borderless" />
 
         <ImageButton
-            android:id="@+id/baselineButton"
+            android:id="@+id/settingsButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:onClick="clickApp"
-            android:src="@drawable/wingsuit"
-            android:contentDescription="@string/action_app"
+            android:onClick="clickSettings"
+            android:src="@drawable/gears"
+            android:contentDescription="@string/action_settings"
             style="@android:style/Widget.Material.Button.Borderless" />
 
     </LinearLayout>

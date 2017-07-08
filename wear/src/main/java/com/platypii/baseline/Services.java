@@ -1,6 +1,7 @@
 package com.platypii.baseline;
 
 import com.platypii.baseline.alti.MyAltimeter;
+import com.platypii.baseline.bluetooth.BluetoothService;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
@@ -24,6 +25,7 @@ public class Services {
 
     // Services
     public static final MyAltimeter alti = new MyAltimeter();
+    public static final BluetoothService bluetooth = new BluetoothService();
     private static final WearSlave wear = new WearSlave();
     static final RemoteApp remoteApp = new RemoteApp(wear);
 
@@ -36,6 +38,11 @@ public class Services {
             handler.removeCallbacks(stopRunnable);
 
             // Start the various services
+
+            Log.i(TAG, "Starting bluetooth service");
+            if(BluetoothService.preferenceEnabled) {
+                bluetooth.start(activity);
+            }
 
             Log.i(TAG, "Starting altimeter");
             alti.start(appContext);
@@ -63,16 +70,25 @@ public class Services {
     private static final Runnable stopRunnable = new Runnable() {
         @Override
         public void run() {
-            if(initialized && startCount == 0) {
-                Log.i(TAG, "All activities have stopped. Stopping services.");
-                // Stop services
-                remoteApp.stopPinging();
-                remoteApp.stopService();
-                wear.stop();
-                alti.stop();
-                initialized = false;
-            }
+            stopIfIdle();
         }
     };
+
+    /**
+     * Stop services IF nothing is using them
+     */
+    private static synchronized void stopIfIdle() {
+        if(initialized && startCount == 0) {
+            Log.i(TAG, "All activities have stopped. Stopping services.");
+            // Stop services
+            remoteApp.stopPinging();
+            remoteApp.stopService();
+            wear.stop();
+            alti.stop();
+            bluetooth.stop();
+            initialized = false;
+            handler.removeCallbacks(stopRunnable);
+        }
+    }
 
 }
