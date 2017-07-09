@@ -16,6 +16,36 @@
             android:text="Altimeter" />
 
         <TextView
+            android:id="@+id/sourceLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Data source: " />
+
+        <TextView
+            android:id="@+id/altitudeLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Altitude (gps corrected): " />
+
+        <TextView
+            android:id="@+id/altitudeAglLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Altitude AGL: " />
+
+        <TextView
+            android:id="@+id/groundLevelLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ground level: " />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/header"
+            android:text="Barometer" />
+
+        <TextView
             android:id="@+id/pressureLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,24 +62,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Pressure altitude filtered: " />
-
-        <TextView
-            android:id="@+id/altitudeLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Altitude (gps corrected): " />
-
-        <TextView
-            android:id="@+id/groundLevelLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ground level: " />
-
-        <TextView
-            android:id="@+id/altitudeAglLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Altitude AGL: " />
 
         <TextView
             android:id="@+id/fallrateLabel"

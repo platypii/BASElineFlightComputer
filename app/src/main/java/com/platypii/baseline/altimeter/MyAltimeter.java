@@ -55,7 +55,7 @@ public class MyAltimeter implements Service, MyLocationListener {
 
     // Sample counts
     public long baro_sample_count = 0;
-    private long gps_sample_count = 0;
+    public long gps_sample_count = 0;
 
     private long lastFixMillis; // milliseconds
 
@@ -94,7 +94,7 @@ public class MyAltimeter implements Service, MyLocationListener {
     }
 
     public double altitudeAGL() {
-        return baro.pressure_altitude_filtered - ground_level;
+        return altitude - ground_level;
     }
 
     public double groundLevel() {

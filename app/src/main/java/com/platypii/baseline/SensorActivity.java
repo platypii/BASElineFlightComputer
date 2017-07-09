@@ -24,13 +24,15 @@ import java.util.Locale;
 @SuppressLint("SetTextI18n")
 public class SensorActivity extends Activity implements MyLocationListener {
 
+    // Altimeter
+    private TextView sourceLabel;
+    private TextView altitudeLabel;
+    private TextView altitudeAglLabel;
+    private TextView groundLevelLabel;
     // Barometer
     private TextView pressureLabel;
     private TextView pressureAltitudeLabel;
     private TextView pressureAltitudeFilteredLabel;
-    private TextView altitudeLabel;
-    private TextView groundLevelLabel;
-    private TextView altitudeAglLabel;
     private TextView fallrateLabel;
     // GPS
     private TextView satelliteLabel;
@@ -67,13 +69,16 @@ public class SensorActivity extends Activity implements MyLocationListener {
         setContentView(R.layout.activity_sensors);
 
         // Find UI elements:
+        // Altimeter
+        sourceLabel = (TextView)findViewById(R.id.sourceLabel);
+        altitudeLabel = (TextView)findViewById(R.id.altitudeLabel);
+        altitudeAglLabel = (TextView)findViewById(R.id.altitudeAglLabel);
+        groundLevelLabel = (TextView)findViewById(R.id.groundLevelLabel);
+
         // Barometer
         pressureLabel = (TextView)findViewById(R.id.pressureLabel);
         pressureAltitudeLabel = (TextView)findViewById(R.id.pressureAltitudeLabel);
         pressureAltitudeFilteredLabel = (TextView)findViewById(R.id.pressureAltitudeFilteredLabel);
-        altitudeLabel = (TextView)findViewById(R.id.altitudeLabel);
-        groundLevelLabel = (TextView)findViewById(R.id.groundLevelLabel);
-        altitudeAglLabel = (TextView)findViewById(R.id.altitudeAglLabel);
         fallrateLabel = (TextView)findViewById(R.id.fallrateLabel);
 
         // GPS
@@ -170,13 +175,28 @@ public class SensorActivity extends Activity implements MyLocationListener {
     }
 
     private void updateAltimeter() {
+        sourceLabel.setText("Data source: " + altimeterSource());
+        altitudeLabel.setText("Altitude (gps corrected): " + Convert.distance(Services.alti.altitude, 2, true));
+        altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(Services.alti.altitudeAGL(), 2, true) + " AGL");
+        groundLevelLabel.setText("Ground level: " + Convert.distance(Services.alti.groundLevel(), 2, true) + " pressure alt");
+
         pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate));
         pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(Services.alti.baro.pressure_altitude_raw, 2, true));
-        pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(Services.alti.baro.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(Services.alti.baro.model_error.var()), 2, true));
-        altitudeLabel.setText("Altitude (gps corrected): " + Convert.distance(Services.alti.altitude, 2, true));
-        groundLevelLabel.setText("Ground level: " + Convert.distance(Services.alti.groundLevel(), 2, true) + " pressure alt");
-        altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(Services.alti.altitudeAGL(), 2, true) + " AGL");
+        if(Double.isNaN(Services.alti.baro.pressure_altitude_filtered)) {
+            pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: ");
+        } else {
+            pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(Services.alti.baro.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(Services.alti.baro.model_error.var()), 2, true));
+        }
         fallrateLabel.setText("Fallrate: " + Convert.speed(-Services.alti.climb, 2, true));
+    }
+
+    private String altimeterSource() {
+        final boolean hasBaro = Services.alti.baro_sample_count > 0;
+        final boolean hasGps = Services.alti.gps_sample_count > 0;
+        if(hasBaro && hasGps) return "GPS + baro";
+        else if(hasBaro) return "baro";
+        else if(hasGps) return "GPS";
+        else return "none";
     }
 
     private void updateGPS(MLocation loc) {
