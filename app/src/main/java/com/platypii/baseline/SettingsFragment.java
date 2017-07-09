@@ -66,8 +66,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 Log.i(TAG, "Setting auto-stop mode: " + AutoStop.preferenceEnabled);
                 break;
             case "bluetooth_enabled":
-                BluetoothService.preferenceEnabled = (Boolean) value;
-                if(BluetoothService.preferenceEnabled) {
+                Services.bluetooth.preferenceEnabled = (Boolean) value;
+                if(Services.bluetooth.preferenceEnabled) {
                     firebaseAnalytics.logEvent("bluetooth_enabled", null);
                     Services.bluetooth.start(getActivity());
                 } else {
@@ -76,14 +76,14 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 }
                 break;
             case "bluetooth_device_id":
-                BluetoothService.preferenceDeviceId = (String) value;
-                BluetoothService.preferenceDeviceName = bluetoothDevicePreference.getName(BluetoothService.preferenceDeviceId);
-                Log.i(TAG, "Bluetooth device selected: " + BluetoothService.preferenceDeviceId);
+                Services.bluetooth.preferenceDeviceId = (String) value;
+                Services.bluetooth.preferenceDeviceName = bluetoothDevicePreference.getName(Services.bluetooth.preferenceDeviceId);
+                Log.i(TAG, "Bluetooth device selected: " + Services.bluetooth.preferenceDeviceId);
                 Services.bluetooth.restart(getActivity());
                 // Save name preference
                 final SharedPreferences prefs2 = preference.getSharedPreferences();
                 final SharedPreferences.Editor edit2 = prefs2.edit();
-                edit2.putString("bluetooth_device_name", BluetoothService.preferenceDeviceName);
+                edit2.putString("bluetooth_device_name", Services.bluetooth.preferenceDeviceName);
                 edit2.apply();
                 break;
         }
@@ -99,17 +99,17 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             metricPreference.setSummary("Current units: imperial");
         }
         // Update bluetooth views
-        if(BluetoothService.preferenceEnabled) {
+        if(Services.bluetooth.preferenceEnabled) {
             bluetoothPreference.setSummary(Services.bluetooth.getStatusMessage());
             bluetoothDevicePreference.setEnabled(true);
         } else {
             bluetoothPreference.setSummary(R.string.pref_bluetooth_disabled);
             bluetoothDevicePreference.setEnabled(false);
         }
-        if(BluetoothService.preferenceDeviceName != null) {
-            bluetoothDevicePreference.setSummary(BluetoothService.preferenceDeviceName);
-        } else if(BluetoothService.preferenceDeviceId != null) {
-            bluetoothDevicePreference.setSummary(BluetoothService.preferenceDeviceId);
+        if(Services.bluetooth.preferenceDeviceName != null) {
+            bluetoothDevicePreference.setSummary(Services.bluetooth.preferenceDeviceName);
+        } else if(Services.bluetooth.preferenceDeviceId != null) {
+            bluetoothDevicePreference.setSummary(Services.bluetooth.preferenceDeviceId);
         } else {
             bluetoothDevicePreference.setSummary(R.string.pref_bluetooth_device_description);
         }

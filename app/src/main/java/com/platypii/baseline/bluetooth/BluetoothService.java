@@ -28,9 +28,9 @@ public class BluetoothService implements Service {
     private static final int ENABLE_BLUETOOTH_CODE = 13;
 
     // Android shared preferences for bluetooth
-    public static boolean preferenceEnabled = false;
-    public static String preferenceDeviceId = null;
-    public static String preferenceDeviceName = null;
+    public boolean preferenceEnabled = false;
+    public String preferenceDeviceId = null;
+    public String preferenceDeviceName = null;
 
     // Bluetooth finite state machine
     public static final int BT_STOPPED = 0;

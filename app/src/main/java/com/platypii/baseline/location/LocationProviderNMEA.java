@@ -1,6 +1,6 @@
 package com.platypii.baseline.location;
 
-import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
@@ -107,7 +107,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
     private String cleanNmea(String nmea) {
         // Remove skypro welcome message
-        if(BluetoothService.preferenceEnabled) {
+        if(Services.bluetooth.preferenceEnabled) {
             if(nmea.startsWith(skyproPrefix1)) {
                 nmea = nmea.substring(skyproPrefix1.length());
             } else if(nmea.startsWith(skyproPrefix2)) {

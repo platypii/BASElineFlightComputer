@@ -1,6 +1,6 @@
 package com.platypii.baseline.location;
 
-import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -22,7 +22,7 @@ public class LocationService extends LocationProvider {
     private final MyLocationListener nmeaListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
-            if(!BluetoothService.preferenceEnabled) {
+            if(!Services.bluetooth.preferenceEnabled) {
                 if (Float.isNaN(loc.hAcc)) {
                     loc.hAcc = hAcc;
                 }
@@ -48,7 +48,7 @@ public class LocationService extends LocationProvider {
     private final MyLocationListener bluetoothListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
-            if(BluetoothService.preferenceEnabled) {
+            if(Services.bluetooth.preferenceEnabled) {
                 if (Float.isNaN(loc.hAcc)) {
                     loc.hAcc = hAcc;
                 }
