@@ -1,13 +1,23 @@
 package com.platypii.baseline.location;
 
-import com.platypii.baseline.Services;
+import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.bluetooth.BluetoothService;
+
 import android.content.Context;
 import android.support.annotation.NonNull;
 
 class LocationProviderBluetooth extends LocationProviderNMEA {
+
+    private final BluetoothService bluetooth;
+
     @Override
     protected String providerName() {
         return "LocationServiceBluetooth";
+    }
+
+    LocationProviderBluetooth(MyAltimeter alti, BluetoothService bluetooth) {
+        super(alti, bluetooth);
+        this.bluetooth = bluetooth;
     }
 
     /**
@@ -17,12 +27,12 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
     @Override
     public synchronized void start(@NonNull Context context) throws SecurityException {
         // Start NMEA updates
-        Services.bluetooth.addNmeaListener(this);
+        bluetooth.addNmeaListener(this);
     }
 
     @Override
     public void stop() {
         super.stop();
-        Services.bluetooth.removeNmeaListener(this);
+        bluetooth.removeNmeaListener(this);
     }
 }

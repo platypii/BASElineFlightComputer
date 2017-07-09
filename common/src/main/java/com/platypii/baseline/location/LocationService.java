@@ -1,6 +1,7 @@
 package com.platypii.baseline.location;
 
-import com.platypii.baseline.Services;
+import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.measurements.MLocation;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,17 +13,29 @@ import android.util.Log;
 public class LocationService extends LocationProvider {
     private static final String TAG = "LocationService";
 
+    private final BluetoothService bluetooth;
+
     // hAcc comes from android location provider
     private float hAcc = Float.NaN;
 
-    private final LocationProviderNMEA locationProviderNMEA = new LocationProviderNMEA();
-    private final LocationProviderAndroid locationProviderAndroid = new LocationProviderAndroid();
-    private final LocationProviderBluetooth locationProviderBluetooth = new LocationProviderBluetooth();
+    // LocationService owns the alti, because it solved the circular dependency problem
+    public final MyAltimeter alti = new MyAltimeter(this);
+
+    private final LocationProviderNMEA locationProviderNMEA;
+    private final LocationProviderAndroid locationProviderAndroid;
+    private final LocationProviderBluetooth locationProviderBluetooth;
+
+    public LocationService(BluetoothService bluetooth) {
+        this.bluetooth = bluetooth;
+        locationProviderNMEA = new LocationProviderNMEA(alti, bluetooth);
+        locationProviderAndroid = new LocationProviderAndroid(alti);
+        locationProviderBluetooth = new LocationProviderBluetooth(alti, bluetooth);
+    }
 
     private final MyLocationListener nmeaListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
-            if(!Services.bluetooth.preferenceEnabled) {
+            if(!bluetooth.preferenceEnabled) {
                 if (Float.isNaN(loc.hAcc)) {
                     loc.hAcc = hAcc;
                 }
@@ -48,10 +61,7 @@ public class LocationService extends LocationProvider {
     private final MyLocationListener bluetoothListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
-            if(Services.bluetooth.preferenceEnabled) {
-                if (Float.isNaN(loc.hAcc)) {
-                    loc.hAcc = hAcc;
-                }
+            if(bluetooth.preferenceEnabled) {
                 updateLocation(loc);
             }
         }

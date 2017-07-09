@@ -1,5 +1,7 @@
 package com.platypii.baseline.jarvis;
 
+import com.platypii.baseline.measurements.MLocation;
+
 /**
  * Determines the current flight mode
  * Attempts to detect: ground, plane, wingsuit, freefall, canopy, etc
@@ -25,7 +27,10 @@ public class FlightMode {
      * TODO: Optimize parameters
      * TODO: Use machine learning model
      */
-    public static int getMode(double groundSpeed, double climb) {
+    static int getMode(MLocation loc) {
+        final double groundSpeed = loc.groundSpeed();
+        final double climb = loc.climb;
+
         if(-5 < climb && 35 < groundSpeed) {
             // Speed at least 80mph
             return MODE_PLANE;

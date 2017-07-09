@@ -1,6 +1,8 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
@@ -18,13 +20,15 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     private static final long window = 30000; // The size of the view window, in milliseconds
     private final SyncedList<MLocation> history = new SyncedList<>();
 
+    private LocationService locationService = null;
+
     public PolarPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         final float density = getResources().getDisplayMetrics().density;
         padding.top = (int) (12 * density);
         padding.bottom = (int) (32 * density);
-        padding.left = (int) (2 * density);
+        padding.left = (int) (1 * density);
         padding.right = (int) (75 * density);
         
         min.left = max.left = 0;
@@ -39,9 +43,9 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 
     @Override
     public void drawData(Canvas canvas) {
-        if(Services.location != null) {
-            final long currentTime = System.currentTimeMillis() - Services.location.phoneOffsetMillis;
-            final MLocation loc = Services.location.lastLoc;
+        if(locationService != null) {
+            final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
+            final MLocation loc = locationService.lastLoc;
             if(loc != null && currentTime - loc.millis <= window) {
                 // Draw background ellipses
                 drawEllipses(canvas);
@@ -63,14 +67,15 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     private void drawEllipses(Canvas canvas) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(0x33cccccc);
             paint.setMaskFilter(blurry);
             // Draw canopy ellipse
+            paint.setColor(0x2244ee44);
             canvas.save();
             canvas.rotate(9, getX(11), getY(-5.5));
             canvas.drawOval(getX(1), getY(-1), getX(21), getY(-10), paint);
             canvas.restore();
             // Draw wingsuit ellipse
+            paint.setColor(0x229e62f2);
             canvas.save();
             canvas.rotate(35, getX(38), getY(-21));
             canvas.drawOval(getX(20), getY(-10), getX(56), getY(-32), paint);
@@ -83,7 +88,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
      * Draw historical points
      */
     private void drawHistory(Canvas canvas) {
-        final long currentTime = System.currentTimeMillis() - Services.location.phoneOffsetMillis;
+        final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
         synchronized(history) {
             for(MLocation loc : history) {
                 final int t = (int) (currentTime - loc.millis);
@@ -113,7 +118,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
      * Draw the current location, including position, glide slope, and x and y axis ticks.
      */
     private void drawLocation(Canvas canvas, @NonNull MLocation loc) {
-        final long currentTime = System.currentTimeMillis() - Services.location.phoneOffsetMillis;
+        final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
         final double x = loc.groundSpeed();
         final double y = loc.climb;
         final double z = loc.totalSpeed();
@@ -222,13 +227,15 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 //            return Convert.speed(y_abs, 0, true);
 //    }
 
-    public void start() {
+    public void start(LocationService locationService) {
+        this.locationService = locationService;
         // Start listening for location updates
-        Services.location.addListener(this);
+        locationService.addListener(this);
     }
     public void stop() {
         // Stop listening for location updates
-        Services.location.removeListener(this);
+        locationService.removeListener(this);
+        locationService = null;
     }
 
     @Override

@@ -46,7 +46,7 @@ public class AutoStop {
             // Look for flight / freefall
             if(loc.climb < -15 && altMax - alt > minHeight) {
                 prExited += (1 - prExited) * 0.6;
-            } else if(loc.flightMode() == FlightMode.MODE_CANOPY && altMax - alt > minHeight) {
+            } else if(FlightMode.getMode(loc) == FlightMode.MODE_CANOPY && altMax - alt > minHeight) {
                 prExited += (1 - prExited) * 0.2;
             } else {
                 prExited -= prExited * 0.6;
@@ -58,10 +58,10 @@ public class AutoStop {
         } else if(state == STATE_EXITED) {
             // Look for landing
             final double altNormalized = (alt - altMin) / (altMax - altMin);
-            if(loc.flightMode() == FlightMode.MODE_GROUND && altMax - altMin > minHeight && altNormalized < 0.1) {
+            if(FlightMode.getMode(loc) == FlightMode.MODE_GROUND && altMax - altMin > minHeight && altNormalized < 0.1) {
                 prLanded += (1 - prLanded) * 0.2;
             }
-            if(prLanded > 0.98) {
+            if(prLanded > 0.99) {
                 landed(landing_message);
             }
         }
@@ -106,7 +106,6 @@ public class AutoStop {
             // If logging enabled, disable
             if(Services.logger.isLogging()) {
                 Services.logger.stopLogging();
-                // TODO: Returns a trackfile, upload to cloud?
             } else {
                 Log.e(TAG, "Landing detected, but logger not logging");
             }

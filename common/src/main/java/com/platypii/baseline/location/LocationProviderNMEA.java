@@ -1,6 +1,7 @@
 package com.platypii.baseline.location;
 
-import com.platypii.baseline.Services;
+import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
@@ -23,6 +24,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     private static final String skyproPrefix2 = new String(new byte[] {
             85,4,0,56,0,0,-17,-65,-67,0
     });
+
+    private final MyAltimeter alti;
+    private final BluetoothService bluetooth;
 
     boolean nmeaReceived = false;
 
@@ -53,6 +57,11 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         return TAG;
     }
 
+    LocationProviderNMEA(MyAltimeter alti, BluetoothService bluetooth) {
+        this.alti = alti;
+        this.bluetooth = bluetooth;
+    }
+
     /**
      * Start location updates
      * @param context The Application context
@@ -68,10 +77,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     }
 
     private void updateLocation() {
-        final float hAcc = Float.NaN;
-        super.updateLocation(new MLocation(
-                lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
-                hAcc, pdop, hdop, vdop, satellitesUsed, satellitesInView
+        updateLocation(new MLocation(
+                lastFixMillis, latitude, longitude, altitude_gps, alti.climb, vN, vE,
+                Float.NaN, pdop, hdop, vdop, satellitesUsed, satellitesInView
         ));
     }
 
@@ -107,7 +115,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
     private String cleanNmea(String nmea) {
         // Remove skypro welcome message
-        if(Services.bluetooth.preferenceEnabled) {
+        if(bluetooth.preferenceEnabled) {
             if(nmea.startsWith(skyproPrefix1)) {
                 nmea = nmea.substring(skyproPrefix1.length());
             } else if(nmea.startsWith(skyproPrefix2)) {

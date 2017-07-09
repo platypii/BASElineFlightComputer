@@ -1,6 +1,6 @@
 package com.platypii.baseline.altimeter;
 
-import com.platypii.baseline.R;
+import com.platypii.baseline.common.R;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;

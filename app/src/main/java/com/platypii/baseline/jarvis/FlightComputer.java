@@ -42,7 +42,7 @@ public class FlightComputer implements Service, MyLocationListener {
     @Override
     public void onLocationChanged(@NonNull MLocation loc) {
         // Update flight mode
-        flightMode = FlightMode.getMode(loc.groundSpeed(),loc.climb);
+        flightMode = FlightMode.getMode(loc);
         // Update autostop
         autoStop.update(loc);
     }

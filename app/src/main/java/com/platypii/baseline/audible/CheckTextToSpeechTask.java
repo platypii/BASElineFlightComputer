@@ -1,5 +1,6 @@
 package com.platypii.baseline.audible;
 
+import com.platypii.baseline.BaseActivity;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import android.app.Activity;
@@ -36,7 +37,7 @@ public class CheckTextToSpeechTask extends AsyncTask<Void,Void,Boolean> {
         final ResolveInfo resolveInfo = pm.resolveActivity(checkIntent, PackageManager.MATCH_DEFAULT_ONLY);
         if (resolveInfo != null) {
             try {
-                activity.startActivityForResult(checkIntent, Intents.RC_TTS_DATA);
+                activity.startActivityForResult(checkIntent, BaseActivity.RC_TTS_DATA);
                 return true;
             } catch (ActivityNotFoundException e) {
                 Log.e(TAG, "Failed to check for TTS package", e);

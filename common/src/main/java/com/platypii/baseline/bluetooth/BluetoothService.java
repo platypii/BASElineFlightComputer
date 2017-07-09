@@ -1,6 +1,6 @@
 package com.platypii.baseline.bluetooth;
 
-import com.platypii.baseline.R;
+import com.platypii.baseline.common.R;
 import com.platypii.baseline.Service;
 import com.platypii.baseline.events.BluetoothEvent;
 import android.app.Activity;

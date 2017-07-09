@@ -1,7 +1,6 @@
 package com.platypii.baseline;
 
 import com.platypii.baseline.bluetooth.BluetoothDevicePreference;
-import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.jarvis.AutoStop;

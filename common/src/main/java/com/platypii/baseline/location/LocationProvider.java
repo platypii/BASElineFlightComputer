@@ -1,7 +1,6 @@
 package com.platypii.baseline.location;
 
 import com.platypii.baseline.Service;
-import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
@@ -21,9 +20,6 @@ abstract class LocationProvider implements Service {
     // GPS status
     // TODO: Include time from last sample until now if > refreshTime
     public float refreshRate = 0; // Moving average of refresh rate in Hz
-
-    // phone time = GPS time + offset
-    public long phoneOffsetMillis = 0;
 
     // History
     public MLocation lastLoc; // last location received
@@ -46,7 +42,7 @@ abstract class LocationProvider implements Service {
      */
     public long lastFixDuration() {
         if(lastLoc != null && lastLoc.millis > 0) {
-            final long duration = System.currentTimeMillis() - (lastLoc.millis + phoneOffsetMillis);
+            final long duration = System.currentTimeMillis() - (lastLoc.millis + TimeOffset.phoneOffsetMillis);
             if(duration < 0) {
                 Log.w(providerName(), "Time since last fix should never be negative");
             }
@@ -89,14 +85,14 @@ abstract class LocationProvider implements Service {
 
         // Update gps time offset
         final long clockOffset = System.currentTimeMillis() - lastLoc.millis;
-        if (Math.abs(phoneOffsetMillis - clockOffset) > 1000) {
+        if (Math.abs(TimeOffset.phoneOffsetMillis - clockOffset) > 1000) {
             if (clockOffset < 0) {
                 Log.w(providerName(), "Adjusting clock: phone behind gps by " + (-clockOffset) + "ms");
             } else {
                 Log.w(providerName(), "Adjusting clock: phone ahead of gps by " + clockOffset + "ms");
             }
         }
-        phoneOffsetMillis = clockOffset;
+        TimeOffset.phoneOffsetMillis = clockOffset;
 
         if (prevLoc != null) {
             final long deltaTime = lastLoc.millis - prevLoc.millis; // time since last refresh
@@ -165,11 +161,10 @@ abstract class LocationProvider implements Service {
      */
     public double totalSpeed() {
         if(isFresh()) {
-            final double verticalSpeed = Services.alti.climb;
-            final double horizontalSpeed = Services.location.groundSpeed();
-            return Math.sqrt(verticalSpeed * verticalSpeed + horizontalSpeed * horizontalSpeed);
+            return lastLoc.totalSpeed();
+        } else {
+            return Double.NaN;
         }
-        return Double.NaN;
     }
 
     /**

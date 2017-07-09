@@ -6,7 +6,7 @@ import java.util.Locale;
  * An barometric pressure measurement
  */
 public class MPressure extends Measurement {
-    public final String sensor = "Alt";
+    public final String sensor = "Baro";
 
     // Altimeter
     public final double altitude;  // Pressure altitude (m)

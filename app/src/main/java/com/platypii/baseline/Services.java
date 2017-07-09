@@ -50,11 +50,11 @@ public class Services {
     // Services
     public static SharedPreferences prefs;
     public static final TrackLogger logger = new TrackLogger();
-    public static final LocationService location = new LocationService();
-    public static final MyAltimeter alti = new MyAltimeter();
+    public static final BluetoothService bluetooth = new BluetoothService();
+    public static final LocationService location = new LocationService(bluetooth);
+    public static final MyAltimeter alti = location.alti;
     public static final MySensorManager sensors = new MySensorManager();
     public static final FlightComputer flightComputer = new FlightComputer();
-    public static final BluetoothService bluetooth = new BluetoothService();
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();
     public static final BaselineCloud cloud = new BaselineCloud();
@@ -102,7 +102,7 @@ public class Services {
             } else {
                 // Request the missing permissions
                 final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
-                ActivityCompat.requestPermissions(activity, permissions, Intents.RC_LOCATION);
+                ActivityCompat.requestPermissions(activity, permissions, BaseActivity.RC_LOCATION);
             }
 
             Log.i(TAG, "Starting sensors");

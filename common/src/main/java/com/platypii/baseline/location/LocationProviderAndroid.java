@@ -1,5 +1,6 @@
 package com.platypii.baseline.location;
 
+import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
@@ -18,6 +19,8 @@ import com.google.firebase.crash.FirebaseCrash;
 class LocationProviderAndroid extends LocationProvider implements LocationListener, GpsStatus.Listener {
     private static final String TAG = "LocationServiceAndroid";
 
+    private final MyAltimeter alti;
+
     // Android Location manager
     private LocationManager manager;
 
@@ -28,6 +31,10 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     @Override
     protected String providerName() {
         return TAG;
+    }
+
+    LocationProviderAndroid(MyAltimeter alti) {
+        this.alti = alti;
     }
 
     /**
@@ -91,7 +98,8 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
             pdop = hdop = vdop = Float.NaN;
 
             // Update official location
-            updateLocation(new MLocation(lastFixMillis, latitude, longitude, altitude_gps, vN, vE,
+            updateLocation(new MLocation(
+                    lastFixMillis, latitude, longitude, altitude_gps, alti.climb, vN, vE,
                     hAcc, pdop, hdop, vdop, satellitesUsed, satellitesInView));
         }
     }

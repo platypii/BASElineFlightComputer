@@ -62,7 +62,7 @@ class DeleteTask implements Runnable {
                 if (status == 401) {
                     throw new AuthException(auth);
                 } else {
-                    throw new IOException("http status code " + status);
+                    throw new IOException("http status " + status + " " + trackUrl);
                 }
             }
         } finally {

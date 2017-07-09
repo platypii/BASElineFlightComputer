@@ -1,7 +1,7 @@
 package com.platypii.baseline.altimeter;
 
-import com.platypii.baseline.R;
-import com.platypii.baseline.Services;
+import com.google.firebase.crash.FirebaseCrash;
+import com.platypii.baseline.common.R;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
@@ -14,6 +14,8 @@ import android.view.View;
 
 public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureDetector.OnGestureListener, View.OnTouchListener {
     private static final String TAG = "AnalogAltimeterSettable";
+
+    private MyAltimeter alti = null;
 
     // How long to wait in each mode
     private static final int MODE_PROMPT_TIMEOUT = 3000; // milliseconds
@@ -40,6 +42,13 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
         gestures = new GestureDetector(getContext(), this);
     }
 
+    /**
+     * MUST be called to be able to set ground level
+     */
+    public void setAlti(MyAltimeter alti) {
+        this.alti = alti;
+    }
+
     public void setGroundLevelMode(int mode) {
         this.groundLevelMode = mode;
         invalidate();
@@ -50,7 +59,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
     }
 
     private void update() {
-        super.setAltitude(Services.alti.altitudeAGL() + altitudeOffset);
+        super.setAltitude(altitude + altitudeOffset);
     }
 
     @Override protected String getLabelText() {
@@ -82,7 +91,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
             // Scroll (drag) gesture
             velocity = 0;
             final double delta = distanceY * Convert.FT;
-            final double absAltitude = Math.abs(Services.alti.altitudeAGL() + altitudeOffset);
+            final double absAltitude = Math.abs(altitude + altitudeOffset);
             if(absAltitude < 30) {
                 // Slow down near zero
                 altitudeOffset += delta / 12;
@@ -150,7 +159,11 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
             handler.removeCallbacks(reaper);
             setGroundLevelMode(MODE_ALTI);
             // Save ground level adjustment
-            Services.alti.setGroundLevel(Services.alti.groundLevel() - altitudeOffset);
+            if(alti != null) {
+                alti.setGroundLevel(alti.groundLevel() - altitudeOffset);
+            } else {
+                FirebaseCrash.report(new IllegalStateException("AnalogAltimeterSettable requires call to setAlti()"));
+            }
         }
         altitudeOffset = 0;
     }

@@ -12,10 +12,6 @@
     <string name="action_tracks">Pistes</string>
     <string name="action_settings">Paramètres</string>
 
-    <!-- Altimeter Activity -->
-    <string name="no_barometer">non alti</string>
-    <string name="set_altitude">Régler?</string>
-
     <!-- Track Activity -->
     <string name="action_open">Ouvert</string>
     <string name="action_sync">Sync</string>
@@ -81,14 +77,6 @@
     <string name="pref_bluetooth_description">utiliser un récepteur GPS bluetooth</string>
     <string name="pref_bluetooth_device">Périphérique bluetooth</string>
     <string name="pref_bluetooth_device_description">Sélectionnez périphérique bluetooth</string>
-
-    <string name="bluetooth_status_disabled">Bluetooth est désactivé</string>
-    <string name="bluetooth_status_not_selected">Périphérique Bluetooth non sélectionné</string>
-    <string name="bluetooth_status_stopped">Bluetooth arrêté</string>
-    <string name="bluetooth_status_connecting">Bluetooth se connecte</string>
-    <string name="bluetooth_status_connected">Bluetooth connecté</string>
-    <string name="bluetooth_status_disconnected">Bluetooth non connecté</string>
-    <string name="bluetooth_status_stopping">Bluetooth arrêter</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Paramètres</string>

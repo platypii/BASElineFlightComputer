@@ -1,7 +1,7 @@
 package com.platypii.baseline.altimeter;
 
 import com.platypii.baseline.Service;
-import com.platypii.baseline.Services;
+import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.Stat;
@@ -87,7 +87,7 @@ public class BaroAltimeter implements Service, SensorEventListener {
         }
 
         // Convert system time to GPS time
-        final long lastFixMillis = millis - Services.location.phoneOffsetMillis;
+        final long lastFixMillis = millis - TimeOffset.phoneOffsetMillis;
         // Compute time since last sample in nanoseconds
         final long deltaTime = (lastFixNano == 0)? 0 : (event.timestamp - lastFixNano);
         lastFixNano = event.timestamp;

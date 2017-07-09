@@ -151,13 +151,6 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
 
         // Plot the data
         drawData(canvas);
-
-        // Border box
-        paint.setColor(0xeeaaaaaa);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeCap(Cap.SQUARE);
-        paint.setStrokeWidth(2);
-        canvas.drawRect(left, top, right, bottom, paint);
     }
 
     /**

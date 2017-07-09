@@ -36,6 +36,7 @@ dependencies {
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support:support-annotations:25.4.0'
     androidTestCompile 'com.android.support.test:runner:0.5'
+    compile project(':common')
 }
 
 // Necessary for firebase:

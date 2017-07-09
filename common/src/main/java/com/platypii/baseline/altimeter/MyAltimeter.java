@@ -1,8 +1,9 @@
 package com.platypii.baseline.altimeter;
 
 import com.platypii.baseline.Service;
-import com.platypii.baseline.Services;
+import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
@@ -29,6 +30,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class MyAltimeter implements Service, MyLocationListener {
     private static final String TAG = "MyAltimeter";
 
+    private final LocationService location;
     private SharedPreferences prefs;
 
     // Barometric altimeter
@@ -59,6 +61,10 @@ public class MyAltimeter implements Service, MyLocationListener {
 
     private long lastFixMillis; // milliseconds
 
+    public MyAltimeter(LocationService location) {
+        this.location = location;
+    }
+
     /**
      * Initializes altimeter services, if not already running.
      * Starts async in a background thread
@@ -81,8 +87,8 @@ public class MyAltimeter implements Service, MyLocationListener {
                     loadGroundLevel();
 
                     // Start GPS updates
-                    if(Services.location != null) {
-                        Services.location.addListener(MyAltimeter.this);
+                    if(location != null) {
+                        location.addListener(MyAltimeter.this);
                     } else {
                         Log.e(TAG, "Location services should be initialized before altimeter");
                     }
@@ -147,7 +153,7 @@ public class MyAltimeter implements Service, MyLocationListener {
      */
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onPressureEvent(MPressure pressure) {
-        lastFixMillis = pressure.millis - Services.location.phoneOffsetMillis; // Convert to GPS time
+        lastFixMillis = pressure.millis - TimeOffset.phoneOffsetMillis; // Convert to GPS time
 
         // Compute GPS corrected altitude AMSL
         altitude = baro.pressure_altitude_filtered - altitude_offset;
@@ -238,7 +244,7 @@ public class MyAltimeter implements Service, MyLocationListener {
 
     @Override
     public void stop() {
-        Services.location.removeListener(this);
+        location.removeListener(this);
         EventBus.getDefault().unregister(this);
         if(prefs != null) {
             prefs = null;

@@ -1,7 +1,5 @@
 package com.platypii.baseline.measurements;
 
-import com.platypii.baseline.Services;
-import com.platypii.baseline.jarvis.FlightMode;
 import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
 import com.platypii.baseline.util.Numbers;
@@ -28,17 +26,13 @@ public class MLocation extends Measurement {
     public final int satellitesUsed; // Satellites used in fix
     public final int satellitesInView; // Satellites in view
 
-    public final double altitude;  // Altitude (m)
     public final double climb;  // Rate of climb (m/s)
 
     public MLocation(long millis, double latitude, double longitude, double altitude_gps,
+                     double climb, // Usually taken from altimeter
                      double vN, double vE,
                      float hAcc, float pdop, float hdop, float vdop,
                      int satellitesUsed, int satellitesInView) {
-
-        // Load state data (altimeter, flightMode, orientation, etc)
-        this.altitude = Services.alti.altitude;
-        this.climb = Services.alti.climb;
 
         // Sanity checks
         final int locationError = LocationCheck.validate(latitude, longitude);
@@ -54,6 +48,7 @@ public class MLocation extends Measurement {
         this.latitude = latitude;
         this.longitude = longitude;
         this.altitude_gps = altitude_gps;
+        this.climb = climb;
         this.vN = vN;
         this.vE = vE;
         this.hAcc = hAcc;
@@ -166,13 +161,6 @@ public class MLocation extends Measurement {
         final double lon3 = mod360(degrees(lon2));
 
         return new LatLng(lat3, lon3);
-    }
-
-    /**
-     * Return the flight mode based on only this one measurement
-     */
-    public int flightMode() {
-        return FlightMode.getMode(groundSpeed(), climb);
     }
 
     private static double radians(double degrees) {

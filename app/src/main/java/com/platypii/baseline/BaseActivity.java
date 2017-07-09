@@ -28,6 +28,11 @@ import org.greenrobot.eventbus.EventBus;
 public abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "BaseActivity";
 
+    /* Request codes used to invoke user interactions */
+    static final int RC_SIGN_IN = 0;
+    static final int RC_LOCATION = 1;
+    public static final int RC_TTS_DATA = 2;
+
     FirebaseAnalytics firebaseAnalytics;
 
     /* Client used to interact with Google APIs */
@@ -172,7 +177,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         updateAuthState(AuthEvent.SIGNING_IN);
 
         final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, Intents.RC_SIGN_IN);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     protected void clickSignOut() {
@@ -195,10 +200,10 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         // Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == Intents.RC_SIGN_IN) {
+        if (requestCode == RC_SIGN_IN) {
             final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-        } else if(requestCode == Intents.RC_TTS_DATA) {
+        } else if(requestCode == RC_TTS_DATA) {
             if(resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 // Notify services that TTS is ready
                 Services.onTtsLoaded(this);
@@ -271,7 +276,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == Intents.RC_LOCATION) {
+        if(requestCode == RC_LOCATION) {
             if(grantResults.length == 1 &&
                     permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION) &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
