@@ -4,7 +4,9 @@ import com.platypii.baseline.alti.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -24,10 +26,22 @@ public class Services {
     private static final int shutdownDelay = 10000;
 
     // Services
+    public static SharedPreferences prefs;
     public static final MyAltimeter alti = new MyAltimeter();
     public static final BluetoothService bluetooth = new BluetoothService();
     private static final WearSlave wear = new WearSlave();
     static final RemoteApp remoteApp = new RemoteApp(wear);
+
+    /**
+     * We want preferences to be available as early as possible.
+     * Call this in onCreate
+     */
+    static void create(@NonNull Activity activity) {
+        if(prefs == null) {
+            Log.i(TAG, "Loading app preferences");
+            loadPreferences(activity.getApplicationContext());
+        }
+    }
 
     public static void start(@NonNull Activity activity) {
         startCount++;
@@ -40,7 +54,7 @@ public class Services {
             // Start the various services
 
             Log.i(TAG, "Starting bluetooth service");
-            if(BluetoothService.preferenceEnabled) {
+            if(bluetooth.preferenceEnabled) {
                 bluetooth.start(activity);
             }
 
@@ -89,6 +103,15 @@ public class Services {
             initialized = false;
             handler.removeCallbacks(stopRunnable);
         }
+    }
+
+    private static void loadPreferences(Context context) {
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        // Bluetooth
+        bluetooth.preferenceEnabled = prefs.getBoolean("bluetooth_enabled", false);
+        bluetooth.preferenceDeviceId = prefs.getString("bluetooth_device_id", null);
+        bluetooth.preferenceDeviceName = prefs.getString("bluetooth_device_name", null);
     }
 
 }

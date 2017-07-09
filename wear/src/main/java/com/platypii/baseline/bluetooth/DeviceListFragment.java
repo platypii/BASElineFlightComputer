@@ -1,6 +1,7 @@
 package com.platypii.baseline.bluetooth;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import android.app.ListFragment;
 import android.bluetooth.BluetoothDevice;
@@ -31,7 +32,7 @@ public class DeviceListFragment extends ListFragment implements AdapterView.OnIt
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
         devices = new ArrayList<>();
-        listAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, devices);
+        listAdapter = new DeviceAdapter(getActivity(), R.layout.bluetooth_list_item, devices);
         setListAdapter(listAdapter);
         getListView().setOnItemClickListener(this);
     }
@@ -54,6 +55,9 @@ public class DeviceListFragment extends ListFragment implements AdapterView.OnIt
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final BluetoothDevice device = devices.get(position);
+        // Save bluetooth device to bluetooth service
+        Services.bluetooth.preferenceDeviceId = device.getAddress();
+        Services.bluetooth.preferenceDeviceName = device.getName();
         // Save bluetooth device to preferences
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefs.edit();

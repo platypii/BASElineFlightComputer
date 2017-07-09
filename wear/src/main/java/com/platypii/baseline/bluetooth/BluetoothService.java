@@ -27,16 +27,16 @@ public class BluetoothService implements Service {
     private static final int ENABLE_BLUETOOTH_CODE = 13;
 
     // Android shared preferences for bluetooth
-    public static boolean preferenceEnabled = false;
-    public static String preferenceDeviceId = null;
-    public static String preferenceDeviceName = null;
+    public boolean preferenceEnabled = false;
+    public String preferenceDeviceId = null;
+    public String preferenceDeviceName = null;
 
     // Bluetooth finite state machine
-    public static final int BT_STOPPED = 0;
-    public static final int BT_CONNECTING = 1;
-    public static final int BT_CONNECTED = 2;
-    public static final int BT_DISCONNECTED = 3;
-    public static final int BT_STOPPING = 4;
+    static final int BT_STOPPED = 0;
+    static final int BT_CONNECTING = 1;
+    static final int BT_CONNECTED = 2;
+    static final int BT_DISCONNECTED = 3;
+    static final int BT_STOPPING = 4;
 
     private static final String[] BT_STATES = {"BT_STOPPED", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
     // Human readable messages, loaded at start
