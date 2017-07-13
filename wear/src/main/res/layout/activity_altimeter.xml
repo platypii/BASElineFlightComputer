@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.platypii.baseline.ChinLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.platypii.baseline.AltimeterActivity">
+
+    <com.platypii.baseline.altimeter.AnalogAltimeterSettable
+        android:id="@+id/analogAltimeter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top" />
+
+</com.platypii.baseline.ChinLayout>
