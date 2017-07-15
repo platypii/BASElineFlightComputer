@@ -98,7 +98,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         // Start sensor updates
         Services.location.addListener(this);
@@ -349,7 +349,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         paused = false;
         // Recenter on last location
@@ -359,7 +359,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         updateFlightStats();
     }
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         paused = true;
         if(alertDialog != null) {
@@ -369,7 +369,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
 
         // Stop sensor updates
@@ -378,7 +378,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         mapFragment.removeOnTouchListeners();
     }

@@ -40,7 +40,7 @@ public class AltimeterActivity extends BaseActivity {
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         // Start sensor updates
         EventBus.getDefault().register(this);
@@ -48,7 +48,7 @@ public class AltimeterActivity extends BaseActivity {
         updateFlightStats();
     }
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         // Stop sensor updates
         EventBus.getDefault().unregister(this);

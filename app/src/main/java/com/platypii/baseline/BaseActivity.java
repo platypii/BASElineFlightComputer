@@ -290,7 +290,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     }
 
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
 
         // If track is still recording, services will wait

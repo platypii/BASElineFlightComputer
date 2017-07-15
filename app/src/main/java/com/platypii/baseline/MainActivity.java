@@ -78,7 +78,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
 
         // Restore start/stop state
@@ -252,7 +252,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
         if(clockRunnable != null) {
             handler.removeCallbacks(clockRunnable);

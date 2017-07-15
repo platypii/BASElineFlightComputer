@@ -152,14 +152,14 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
     }
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         // Listen for sync and auth updates
         EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
         // Dismiss alert to prevent context leak

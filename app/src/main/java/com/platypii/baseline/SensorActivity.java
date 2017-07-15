@@ -63,7 +63,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
     private Runnable updateRunnable;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_sensors);
@@ -128,7 +128,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
 
         // Start GPS updates
@@ -151,7 +151,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         handler.removeCallbacks(updateRunnable);
         updateRunnable = null;
@@ -257,7 +257,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         Services.sensors.accel.setMaxSize(0);
     }
@@ -279,13 +279,13 @@ public class SensorActivity extends Activity implements MyLocationListener {
     }
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         // Start flight services
         Services.start(this);
     }
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
         // Stop flight services
         Services.stop();

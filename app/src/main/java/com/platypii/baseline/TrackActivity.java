@@ -126,7 +126,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         // Listen for sync and auth updates
         EventBus.getDefault().register(this);
@@ -134,13 +134,13 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
     }
 
     @Override
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
         // Dismiss alert to prevent context leak
         if(alertDialog != null) {
