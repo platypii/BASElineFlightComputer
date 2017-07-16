@@ -1,6 +1,6 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.altimeter.AnalogAltimeter;
+import com.platypii.baseline.altimeter.AnalogAltimeterSettable;
 import com.platypii.baseline.measurements.MAltitude;
 import android.app.AlertDialog;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ public class AltimeterActivity extends BaseActivity {
     private AlertDialog alertDialog;
 
     private PolarPlot polar;
-    private AnalogAltimeter analogAltimeter;
+    private AnalogAltimeterSettable analogAltimeter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +23,9 @@ public class AltimeterActivity extends BaseActivity {
         setContentView(R.layout.activity_altimeter);
 
         polar = (PolarPlot) findViewById(R.id.polar);
-        analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
+        analogAltimeter = (AnalogAltimeterSettable) findViewById(R.id.analogAltimeter);
         analogAltimeter.setOverlay(false);
+        analogAltimeter.setAlti(Services.alti);
     }
 
     private void updateFlightStats() {

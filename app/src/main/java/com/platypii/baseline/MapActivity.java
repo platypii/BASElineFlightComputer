@@ -1,6 +1,6 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.altimeter.AnalogAltimeter;
+import com.platypii.baseline.altimeter.AnalogAltimeterSettable;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MAltitude;
@@ -39,7 +39,7 @@ import java.util.List;
 public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
     private static final String TAG = "Map";
 
-    private AnalogAltimeter analogAltimeter;
+    private AnalogAltimeterSettable analogAltimeter;
     private TextView flightStatsVario;
     private TextView flightStatsSpeed;
     private TextView flightStatsGlide;
@@ -79,7 +79,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         setContentView(R.layout.activity_map);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        analogAltimeter = (AnalogAltimeter) findViewById(R.id.analogAltimeter);
+        analogAltimeter = (AnalogAltimeterSettable) findViewById(R.id.analogAltimeter);
         flightStatsVario = (TextView) findViewById(R.id.flightStatsVario);
         flightStatsSpeed = (TextView) findViewById(R.id.flightStatsSpeed);
         flightStatsGlide = (TextView) findViewById(R.id.flightStatsGlide);
@@ -87,6 +87,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         crosshair = (ImageView) findViewById(R.id.crosshair);
 
         analogAltimeter.setOverlay(true);
+        analogAltimeter.setAlti(Services.alti);
 
         // Home button listener
         final ImageButton homeButton = (ImageButton) findViewById(R.id.homeButton);

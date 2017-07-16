@@ -15,7 +15,7 @@ import android.view.View;
 
 public class AnalogAltimeter extends View {
 
-    protected double altitude = 0.0;
+    private double altitude = 0.0;
 
     private final AnalogAltimeterOptions options;
     private boolean overlay = false;
