@@ -16,15 +16,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     protected final String TAG = "LocationServiceNMEA";
     private static final String NMEA_TAG = "NMEA";
 
-    // SkyPro GPS sends the following bytes when connection is initialized (v1.3.5)
-    private static final String skyproPrefix1 = new String(new byte[] {
-            85,4,0,56,0,0,-17,-65,-67,85,4,0,56,0,0,-17,-65,-67,85,4,0,56,0,0,-17,-65,-67
-    });
-    // SkyPro GPS sends the following bytes when connection is initialized (v2.4.0)
-    private static final String skyproPrefix2 = new String(new byte[] {
-            85,4,0,56,0,0,-17,-65,-67,0
-    });
-
     private final MyAltimeter alti;
     private final BluetoothService bluetooth;
 
@@ -100,6 +91,18 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             return;
         }
 
+        // Check for missing line breaks
+        if(nmea.indexOf('$', 1) > 0) {
+            Log.w(TAG, "Splitting multiple NMEA sentences: " + nmea);
+            final String[] split = nmea.split("\\$");
+            // Recurse on split sentences
+            for(String str : split) {
+                if(!str.isEmpty()) {
+                    onNmeaReceived(timestamp, "$" + str);
+                }
+            }
+        }
+
         if (!nmeaReceived) {
             Log.d(NMEA_TAG, "First NMEA string received");
             nmeaReceived = true;
@@ -114,13 +117,11 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     }
 
     private String cleanNmea(String nmea) {
-        // Remove skypro welcome message
-        if(bluetooth.preferenceEnabled) {
-            if(nmea.startsWith(skyproPrefix1)) {
-                nmea = nmea.substring(skyproPrefix1.length());
-            } else if(nmea.startsWith(skyproPrefix2)) {
-                nmea = nmea.substring(skyproPrefix2.length());
-            }
+        // Remove anything before $
+        final int sentenceStart = nmea.indexOf('$');
+        if(sentenceStart > 0) {
+//            Log.w(TAG, "Removing junk before NMEA sentence: " + nmea);
+            nmea = nmea.substring(sentenceStart);
         }
         // Trim whitespace and \0
         return nmea.trim();
