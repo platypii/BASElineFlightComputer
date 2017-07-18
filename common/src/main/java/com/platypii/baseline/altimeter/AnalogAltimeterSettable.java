@@ -175,7 +175,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
             setGroundLevelMode(MODE_ALTI);
             // Save ground level adjustment
             if(alti != null) {
-                alti.setGroundLevel(alti.groundLevel() - altitudeOffset);
+                alti.groundLevel.setGroundLevel(alti.groundLevel() - altitudeOffset);
             } else {
                 FirebaseCrash.report(new IllegalStateException("AnalogAltimeterSettable requires call to setAlti()"));
             }

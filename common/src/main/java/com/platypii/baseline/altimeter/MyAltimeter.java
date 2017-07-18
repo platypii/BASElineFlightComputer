@@ -7,15 +7,12 @@ import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
-import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -31,7 +28,7 @@ public class MyAltimeter implements Service, MyLocationListener {
     private static final String TAG = "MyAltimeter";
 
     private final LocationService location;
-    private SharedPreferences prefs;
+    private boolean started = false;
 
     // Barometric altimeter
     public BaroAltimeter baro = new BaroAltimeter();
@@ -50,10 +47,7 @@ public class MyAltimeter implements Service, MyLocationListener {
     // public static double verticalAcceleration = Double.NaN;
 
     // Ground level
-    // Save ground level for 12 hours (in milliseconds)
-    private static final long GROUND_LEVEL_TTL = 12 * 60 * 60 * 1000;
-    private boolean ground_level_initialized = false;
-    private double ground_level = Double.NaN;
+    GroundLevel groundLevel = new GroundLevel();
 
     // Sample counts
     public long baro_sample_count = 0;
@@ -75,16 +69,15 @@ public class MyAltimeter implements Service, MyLocationListener {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                if(prefs == null) {
-                    // Get a new preference manager
-                    prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
+                if(!started) {
                     // Start barometer
+                    started = true;
                     EventBus.getDefault().register(MyAltimeter.this);
                     baro.start(context);
 
                     // Load ground level from preferences
-                    loadGroundLevel();
+                    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    groundLevel.start(prefs);
 
                     // Start GPS updates
                     if(location != null) {
@@ -100,44 +93,11 @@ public class MyAltimeter implements Service, MyLocationListener {
     }
 
     public double altitudeAGL() {
-        return altitude - ground_level;
+        return altitude - groundLevel.ground_level;
     }
 
     public double groundLevel() {
-        return ground_level;
-    }
-
-    /**
-     * Load ground level from preferences
-     */
-    private void loadGroundLevel() {
-        final long groundLevelTime = prefs.getLong("altimeter_ground_level_time", -1L);
-        if(groundLevelTime != -1 && System.currentTimeMillis() - groundLevelTime < GROUND_LEVEL_TTL) {
-            ground_level = prefs.getFloat("altimeter_ground_level", Float.NaN);
-            if(Numbers.isReal(ground_level)) {
-                ground_level_initialized = true;
-                Log.i(TAG, "Restoring ground level from preferences: " + Convert.distance(ground_level, 2, true));
-            }
-        }
-    }
-
-    /**
-     * Set ground level, based on pressure altitude.
-     * Should not be called until altimeter is initialized.
-     * @param groundLevel the pressure altitude at ground level (0m AGL)
-     */
-    void setGroundLevel(double groundLevel) {
-        if(Numbers.isReal(groundLevel)) {
-            ground_level = groundLevel;
-            ground_level_initialized = true;
-            // Save to preferences
-            final SharedPreferences.Editor edit = prefs.edit();
-            edit.putFloat("altimeter_ground_level", (float) ground_level);
-            edit.putLong("altimeter_ground_level_time", System.currentTimeMillis());
-            edit.apply();
-        } else {
-            FirebaseCrash.report(new IllegalArgumentException("Ground level must be real: " + groundLevel));
-        }
+        return groundLevel.ground_level;
     }
 
     /** Location Listener */
@@ -159,18 +119,8 @@ public class MyAltimeter implements Service, MyLocationListener {
         altitude = baro.pressure_altitude_filtered - altitude_offset;
         climb = pressure.climb;
 
-        // Adjust for ground level
-        if (!ground_level_initialized) {
-            if (baro_sample_count == 0) {
-                // First pressure reading. Calibrate ground level.
-                ground_level = baro.pressure_altitude_raw;
-            } else if (baro_sample_count < 30) {
-                // Average the first N raw samples
-                ground_level += (baro.pressure_altitude_raw - ground_level) / (baro_sample_count + 1);
-            } else {
-                setGroundLevel(ground_level);
-            }
-        }
+        // Initialize ground level
+        groundLevel.onPressureEvent(pressure);
         baro_sample_count++;
 
         updateAltitude();
@@ -246,8 +196,8 @@ public class MyAltimeter implements Service, MyLocationListener {
     public void stop() {
         location.removeListener(this);
         EventBus.getDefault().unregister(this);
-        if(prefs != null) {
-            prefs = null;
+        if (started) {
+            started = false;
         } else {
             Log.e(TAG, "MyAltimeter.stop() called, but service is already stopped");
         }
