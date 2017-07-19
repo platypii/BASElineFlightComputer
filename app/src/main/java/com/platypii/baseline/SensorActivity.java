@@ -28,7 +28,6 @@ public class SensorActivity extends Activity implements MyLocationListener {
     private TextView sourceLabel;
     private TextView altitudeLabel;
     private TextView altitudeAglLabel;
-    private TextView groundLevelLabel;
     // Barometer
     private TextView pressureLabel;
     private TextView pressureAltitudeLabel;
@@ -73,7 +72,6 @@ public class SensorActivity extends Activity implements MyLocationListener {
         sourceLabel = (TextView)findViewById(R.id.sourceLabel);
         altitudeLabel = (TextView)findViewById(R.id.altitudeLabel);
         altitudeAglLabel = (TextView)findViewById(R.id.altitudeAglLabel);
-        groundLevelLabel = (TextView)findViewById(R.id.groundLevelLabel);
 
         // Barometer
         pressureLabel = (TextView)findViewById(R.id.pressureLabel);
@@ -176,9 +174,8 @@ public class SensorActivity extends Activity implements MyLocationListener {
 
     private void updateAltimeter() {
         sourceLabel.setText("Data source: " + altimeterSource());
-        altitudeLabel.setText("Altitude (gps corrected): " + Convert.distance(Services.alti.altitude, 2, true));
+        altitudeLabel.setText("Altitude MSL: " + Convert.distance(Services.alti.altitude, 2, true));
         altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(Services.alti.altitudeAGL(), 2, true) + " AGL");
-        groundLevelLabel.setText("Ground level: " + Convert.distance(Services.alti.groundLevel(), 2, true) + " pressure alt");
 
         pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate));
         pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(Services.alti.baro.pressure_altitude_raw, 2, true));

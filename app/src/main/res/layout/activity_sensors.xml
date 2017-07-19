@@ -34,12 +34,6 @@
             android:text="Altitude AGL: " />
 
         <TextView
-            android:id="@+id/groundLevelLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ground level: " />
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/header"

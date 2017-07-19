@@ -93,11 +93,7 @@ public class MyAltimeter implements Service, MyLocationListener {
     }
 
     public double altitudeAGL() {
-        return altitude - groundLevel.ground_level;
-    }
-
-    public double groundLevel() {
-        return groundLevel.ground_level;
+        return groundLevel.altitudeAGL();
     }
 
     /** Location Listener */
@@ -119,7 +115,7 @@ public class MyAltimeter implements Service, MyLocationListener {
         altitude = baro.pressure_altitude_filtered - altitude_offset;
         climb = pressure.climb;
 
-        // Initialize ground level
+        // Update ground level
         groundLevel.onPressureEvent(pressure);
         baro_sample_count++;
 
@@ -168,6 +164,9 @@ public class MyAltimeter implements Service, MyLocationListener {
                 // Only update official altitude if we are relying solely on GPS for altitude
                 updateAltitude();
             }
+
+            // Update ground level
+            groundLevel.onLocationEvent(loc);
             gps_sample_count++;
         }
     }

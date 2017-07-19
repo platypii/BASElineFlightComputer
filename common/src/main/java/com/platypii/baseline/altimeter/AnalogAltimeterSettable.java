@@ -158,6 +158,9 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
 
     @Override
     public void onLongPress(MotionEvent e) {
+        if(Double.isNaN(trueAltitude)) {
+            return;
+        }
         if(groundLevelMode == MODE_ALTI) {
             Log.i(TAG, "Ground level adjustment prompt");
             setGroundLevelMode(MODE_PROMPT);
@@ -175,7 +178,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
             setGroundLevelMode(MODE_ALTI);
             // Save ground level adjustment
             if(alti != null) {
-                alti.groundLevel.setGroundLevel(alti.groundLevel() - altitudeOffset);
+                alti.groundLevel.setCurrentAltitudeAGL(trueAltitude + altitudeOffset);
             } else {
                 FirebaseCrash.report(new IllegalStateException("AnalogAltimeterSettable requires call to setAlti()"));
             }
