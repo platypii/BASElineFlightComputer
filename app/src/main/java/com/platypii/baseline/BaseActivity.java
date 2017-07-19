@@ -65,7 +65,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     /**
      * Update sign in state, notify listeners, and update shared UI
      */
-    private void updateAuthState(AuthEvent event) {
+    private void updateAuthState(@NonNull AuthEvent event) {
         currentAuthState = event;
         // Notify listeners
         EventBus.getDefault().post(event);
@@ -217,7 +217,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
 
     }
 
-    private void handleSignInResult(GoogleSignInResult result) {
+    private void handleSignInResult(@NonNull GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult " + result.getStatus());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.

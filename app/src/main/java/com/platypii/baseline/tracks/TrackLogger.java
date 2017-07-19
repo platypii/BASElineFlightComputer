@@ -172,7 +172,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
      * Listen for altitude updates
      */
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void onAltitudeEvent(MPressure alt) {
+    public void onAltitudeEvent(@NonNull MPressure alt) {
         if(!Double.isNaN(alt.pressure)) {
             logLine(alt.toRow());
         }
@@ -198,7 +198,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
      * Logs a measurement to the database
      * @param line the measurement to store
      */
-    private synchronized void logLine(String line) {
+    private synchronized void logLine(@NonNull String line) {
         if(logging) {
             try {
                 log.write(line);

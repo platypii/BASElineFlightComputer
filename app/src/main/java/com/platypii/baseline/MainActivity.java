@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -61,12 +62,12 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(@NonNull Intent intent) {
         super.onNewIntent(intent);
         handleIntent(intent);
     }
 
-    private void handleIntent(Intent intent) {
+    private void handleIntent(@NonNull Intent intent) {
         final String intentType = intent.getType();
         if("baseline/stop".equals(intentType)) {
             // Stop audible and logging

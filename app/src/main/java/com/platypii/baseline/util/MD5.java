@@ -1,5 +1,6 @@
 package com.platypii.baseline.util;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +15,7 @@ public class MD5 {
     private static final String TAG = "MD5";
 
     /** Compute MD5 hash of a file */
-    public static String md5(File file) {
+    public static String md5(@NonNull File file) {
         try {
             final MessageDigest md = MessageDigest.getInstance("MD5");
             final InputStream inputStream = new DigestInputStream(new FileInputStream(file), md);

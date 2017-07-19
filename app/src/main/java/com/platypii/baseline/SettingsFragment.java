@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
@@ -54,7 +55,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     }
 
     @Override
-    public boolean onPreferenceChange(Preference preference, Object value) {
+    public boolean onPreferenceChange(@NonNull Preference preference, Object value) {
         switch(preference.getKey()) {
             case "metric_enabled":
                 Convert.metric = (Boolean) value;
@@ -127,7 +128,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     }
 
     @Override
-    public boolean onPreferenceClick(Preference preference) {
+    public boolean onPreferenceClick(@NonNull Preference preference) {
         if(preference.getKey().equals("audible_settings")) {
             // Open audible settings activity
             firebaseAnalytics.logEvent("click_audible_settings", null);

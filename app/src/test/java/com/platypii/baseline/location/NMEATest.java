@@ -1,5 +1,6 @@
 package com.platypii.baseline.location;
 
+import android.support.annotation.NonNull;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -32,7 +33,7 @@ public class NMEATest {
         assertTrue(validate("$PGLOR,1,SAT,G29,025,1F,G02,023,1F,R20,013,37,G12,011,0,G31,021,1F,G05,015,1F,G21,011,0,G20,011,0,G26,015,3F,G23,011,0*5"));
     }
 
-    private static boolean validate(String nmea) {
+    private static boolean validate(@NonNull String nmea) {
         try {
             NMEA.validate(nmea);
             return true;

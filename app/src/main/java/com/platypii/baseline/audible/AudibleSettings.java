@@ -2,6 +2,7 @@ package com.platypii.baseline.audible;
 
 import com.platypii.baseline.util.Numbers;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 
 /**
  * Static class to store audible settings in memory.
@@ -20,7 +21,7 @@ public class AudibleSettings {
     /**
      * Load audible settings from android preferences
      */
-    static void load(SharedPreferences prefs) {
+    static void load(@NonNull SharedPreferences prefs) {
         final String audibleMode = prefs.getString("audible_mode", "horizontal_speed");
         mode = AudibleModes.get(audibleMode);
         min = Numbers.parseDouble(prefs.getString("audible_min", Float.toString(mode.defaultMin)));
@@ -33,7 +34,7 @@ public class AudibleSettings {
     /**
      * Change audible mode and set default min,max,precision values
      */
-    public static void setAudibleMode(String audibleMode) {
+    public static void setAudibleMode(@NonNull String audibleMode) {
         mode = AudibleModes.get(audibleMode);
         min = mode.defaultMin;
         max = mode.defaultMax;

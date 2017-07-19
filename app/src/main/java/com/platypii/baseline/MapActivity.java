@@ -111,7 +111,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
      * This should only be called once and when we are sure that {@link #map} is not null.
      */
     @Override
-    public void onMapReady(GoogleMap map) {
+    public void onMapReady(@NonNull GoogleMap map) {
         this.map = map;
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         // Center priority: current location, home location, default location

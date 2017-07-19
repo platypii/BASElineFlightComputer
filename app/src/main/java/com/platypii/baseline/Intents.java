@@ -16,30 +16,26 @@ public class Intents {
     private static final String TAG = "Intents";
 
     /** Open jump activity */
-    public static void openTrackActivity(@NonNull Context context, TrackFile trackFile) {
+    public static void openTrackActivity(@NonNull Context context, @NonNull TrackFile trackFile) {
         final Intent intent = new Intent(context, TrackActivity.class);
         intent.putExtra(TrackActivity.EXTRA_TRACK_FILE, trackFile.file.getName());
         context.startActivity(intent);
     }
-    public static void openTrackDataActivity(@NonNull Context context, CloudData track) {
+    public static void openTrackDataActivity(@NonNull Context context, @NonNull CloudData track) {
         final Intent intent = new Intent(context, TrackDataActivity.class);
         intent.putExtra(TrackDataActivity.EXTRA_TRACK_ID, track.track_id);
         context.startActivity(intent);
     }
 
     /** Open track url in browser */
-    static void openTrackUrl(@NonNull Context context, String url) {
-        if(url != null && !url.isEmpty()) {
-            // Add mobile flag
-            if(!url.contains("?")) {
-                url += "?mobile";
-            }
-            Log.i(TAG, "Opening track url " + url);
-            final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            context.startActivity(intent);
-        } else {
-            Log.e(TAG, "Cannot open missing track url");
+    static void openTrackUrl(@NonNull Context context, @NonNull String url) {
+        // Add mobile flag
+        if(!url.contains("?")) {
+            url += "?mobile";
         }
+        Log.i(TAG, "Opening track url " + url);
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        context.startActivity(intent);
     }
 
     /** Open track as KML in google earth */
@@ -82,7 +78,7 @@ public class Intents {
 //    }
 
     /** Share track data file */
-    static void exportTrackFile(@NonNull Context context, TrackFile trackFile) {
+    static void exportTrackFile(@NonNull Context context, @NonNull TrackFile trackFile) {
         try {
             final Uri trackFileUri = FileProvider.getUriForFile(context, "com.platypii.baseline.provider", trackFile.file);
             Log.d(TAG, "Exporting track file " + trackFileUri);

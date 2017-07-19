@@ -20,7 +20,7 @@ public class BaselineCloud implements Service {
         listing.cache.clear();
     }
 
-    public void deleteTrack(CloudData track, String auth) {
+    public void deleteTrack(CloudData track, @NonNull String auth) {
         // Delete track on server
         new Thread(new DeleteTask(auth, track)).start();
     }

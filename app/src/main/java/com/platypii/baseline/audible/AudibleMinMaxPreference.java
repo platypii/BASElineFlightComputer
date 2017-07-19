@@ -4,6 +4,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.preference.DialogPreference;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
@@ -32,13 +33,14 @@ public class AudibleMinMaxPreference extends DialogPreference {
         persistString(Float.toString(value));
     }
 
+    @NonNull
     private AudibleMode getMode() {
         final String audibleMode = getSharedPreferences().getString("audible_mode", null);
         return AudibleModes.get(audibleMode);
     }
 
     @Override
-    protected void onBindDialogView(View view) {
+    protected void onBindDialogView(@NonNull View view) {
         super.onBindDialogView(view);
 
         mEditText = (EditText) view.findViewById(R.id.minmax_input);

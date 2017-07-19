@@ -4,6 +4,7 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.IOUtil;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
@@ -85,6 +86,7 @@ public class TrackListing {
     /**
      * Send http request to BASEline server for track listing
      */
+    @NonNull
     private List<CloudData> listRemote(String auth) throws IOException, JSONException {
         final URL url = new URL(BaselineCloud.listUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -109,6 +111,7 @@ public class TrackListing {
     /**
      * Parse a json string into a list of track data
      */
+    @NonNull
     static List<CloudData> fromJson(String json) throws JSONException {
         final ArrayList<CloudData> listing = new ArrayList<>();
         final JSONArray arr = new JSONArray(json);
@@ -123,7 +126,7 @@ public class TrackListing {
     /**
      * Stringify a list of track data into a json string
      */
-    static String toJson(List<CloudData> trackList) {
+    static String toJson(@NonNull List<CloudData> trackList) {
         final JSONArray arr = new JSONArray();
         for(CloudData track : trackList) {
             final JSONObject trackObj = track.toJson();

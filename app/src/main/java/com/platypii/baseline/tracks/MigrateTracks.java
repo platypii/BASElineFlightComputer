@@ -3,6 +3,7 @@ package com.platypii.baseline.tracks;
 import com.platypii.baseline.Services;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
@@ -14,7 +15,7 @@ public class MigrateTracks {
     // Has user migrated to v3?
     private static final String PREF_MIGRATE_VERSION = "baseline.migrate.version";
 
-    public static void migrate(Context context) {
+    public static void migrate(@NonNull Context context) {
         // Check if we've already migrated
         if(Services.prefs.getInt(PREF_MIGRATE_VERSION, 2) < 3) {
             Log.w(TAG, "Migrating tracks to v3");

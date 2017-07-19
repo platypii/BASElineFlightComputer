@@ -7,6 +7,7 @@ import com.platypii.baseline.util.Callback;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -62,7 +63,9 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
         bundle.putString("track_id", track.track_id);
         firebaseAnalytics.logEvent("click_track_open", bundle);
         // Open web app
-        Intents.openTrackUrl(this, track.trackUrl);
+        if(track.trackUrl != null) {
+            Intents.openTrackUrl(this, track.trackUrl);
+        }
     }
 
     public void clickKml(View v) {
@@ -111,7 +114,7 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
             // Begin automatic upload
             getAuthToken(new Callback<String>() {
                 @Override
-                public void apply(String authToken) {
+                public void apply(@NonNull String authToken) {
                     Services.cloud.deleteTrack(track, authToken);
                 }
                 @Override
@@ -126,7 +129,7 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
 
     // Listen for deletion of this track
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDeleteSuccess(SyncEvent.DeleteSuccess event) {
+    public void onDeleteSuccess(@NonNull SyncEvent.DeleteSuccess event) {
         if(event.track_id.equals(track.track_id)) {
             // Notify user
             Toast.makeText(getApplicationContext(), "Deleted track", Toast.LENGTH_LONG).show();
@@ -135,7 +138,7 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDeleteFailure(SyncEvent.DeleteFailure event) {
+    public void onDeleteFailure(@NonNull SyncEvent.DeleteFailure event) {
         if(event.track_id.equals(track.track_id)) {
             findViewById(R.id.deleteButton).setEnabled(true);
             // Notify user
@@ -143,7 +146,7 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAuthEvent(AuthEvent event) {
+    public void onAuthEvent(@NonNull AuthEvent event) {
         // If user gets signed out, close the track activity
         if(event == AuthEvent.SIGNED_OUT) {
             Log.i(TAG, "User signed out, closing cloud track");

@@ -19,6 +19,7 @@ import java.util.List;
 public class TrackFiles {
     private static final String TAG = "TrackFiles";
 
+    @NonNull
     public static synchronized List<TrackFile> getTracks(@NonNull Context context) {
         final List<TrackFile> tracks = new ArrayList<>();
         // Load jumps from disk
@@ -35,7 +36,7 @@ public class TrackFiles {
             // Sort by date descending
             Collections.sort(tracks, new Comparator<TrackFile>() {
                 @Override
-                public int compare(TrackFile track1, TrackFile track2) {
+                public int compare(@NonNull TrackFile track1, @NonNull TrackFile track2) {
                     return -track1.getName().compareTo(track2.getName());
                 }
             });

@@ -7,6 +7,7 @@ import com.platypii.baseline.tracks.TrackFiles;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -150,7 +151,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUploadSuccess(SyncEvent.UploadSuccess event) {
+    public void onUploadSuccess(@NonNull SyncEvent.UploadSuccess event) {
         if(event.trackFile.getName().equals(trackFile.getName())) {
             // Track uploaded, open TrackActivity
             Toast.makeText(getApplicationContext(), "Track sync success", Toast.LENGTH_SHORT).show();
@@ -159,7 +160,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUploadFailure(SyncEvent.UploadFailure event) {
+    public void onUploadFailure(@NonNull SyncEvent.UploadFailure event) {
         if(event.trackFile.getName().equals(trackFile.getName())) {
             Log.e(TAG, "Failed to upload track: " + event.error);
             Toast.makeText(getApplicationContext(), "Track sync failed", Toast.LENGTH_LONG).show();

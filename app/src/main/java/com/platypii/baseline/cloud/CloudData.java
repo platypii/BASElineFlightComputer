@@ -1,5 +1,6 @@
 package com.platypii.baseline.cloud;
 
+import android.support.annotation.NonNull;
 import com.google.firebase.crash.FirebaseCrash;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +25,8 @@ public class CloudData {
         this.location = location;
     }
 
-    static CloudData fromJson(JSONObject json) throws JSONException {
+    @NonNull
+    static CloudData fromJson(@NonNull JSONObject json) throws JSONException {
         final String track_id = json.getString("track_id");
         final long date = json.getLong("date");
         final String date_string = json.optString("date_string");

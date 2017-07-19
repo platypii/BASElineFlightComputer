@@ -3,6 +3,7 @@ package com.platypii.baseline.jarvis;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
@@ -34,7 +35,7 @@ public class AutoStop {
     private double altMin = Double.NaN;
     private double altMax = Double.NaN;
 
-    void update(MLocation loc) {
+    void update(@NonNull MLocation loc) {
         final double alt = loc.altitude_gps;
         // Update altitude range
         if(!Double.isNaN(alt)) {

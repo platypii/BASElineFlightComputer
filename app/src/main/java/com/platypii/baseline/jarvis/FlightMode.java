@@ -1,6 +1,7 @@
 package com.platypii.baseline.jarvis;
 
 import com.platypii.baseline.measurements.MLocation;
+import android.support.annotation.NonNull;
 
 /**
  * Determines the current flight mode
@@ -27,7 +28,7 @@ public class FlightMode {
      * TODO: Optimize parameters
      * TODO: Use machine learning model
      */
-    static int getMode(MLocation loc) {
+    static int getMode(@NonNull MLocation loc) {
         final double groundSpeed = loc.groundSpeed();
         final double climb = loc.climb;
 

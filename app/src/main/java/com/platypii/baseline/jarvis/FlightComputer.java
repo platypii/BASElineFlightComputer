@@ -50,12 +50,12 @@ public class FlightComputer implements Service, MyLocationListener {
     public void onLocationChangedPostExecute() {}
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void onAudibleEvent(AudibleEvent audible) {
+    public void onAudibleEvent(@NonNull AudibleEvent audible) {
         updateAutoStop(audible.started);
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void onLoggingEvent(LoggingEvent logging) {
+    public void onLoggingEvent(@NonNull LoggingEvent logging) {
         updateAutoStop(logging.started);
     }
 

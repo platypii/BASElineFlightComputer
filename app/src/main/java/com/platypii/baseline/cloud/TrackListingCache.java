@@ -2,6 +2,7 @@ package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.Services;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import com.google.firebase.crash.FirebaseCrash;
 import java.util.List;
 import org.json.JSONException;
@@ -33,7 +34,7 @@ public class TrackListingCache {
         return null;
     }
 
-    void update(List<CloudData> trackList) {
+    void update(@NonNull List<CloudData> trackList) {
         final String trackListJson = TrackListing.toJson(trackList);
         final SharedPreferences.Editor editor = Services.prefs.edit();
         editor.putLong(CACHE_LAST_UPDATE, System.currentTimeMillis());

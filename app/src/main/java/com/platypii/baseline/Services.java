@@ -145,7 +145,7 @@ public class Services {
     /**
      * BaseActivity calls this function once text-to-speech data is ready
      */
-    static void onTtsLoaded(Activity context) {
+    static void onTtsLoaded(@NonNull Activity context) {
         // TTS loaded, start the audible
         FirebaseCrash.log("onTtsLoaded from " + context.getLocalClassName());
         if(!ttsLoaded) {

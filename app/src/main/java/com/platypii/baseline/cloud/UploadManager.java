@@ -7,6 +7,7 @@ import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,7 +27,7 @@ public class UploadManager {
     /**
      * Called when user clicks sync
      */
-    public void userUpload(TrackFile trackFile) {
+    public void userUpload(@NonNull TrackFile trackFile) {
         FirebaseCrash.log("User upload track " + trackFile.getName());
         // Update uploading state
         if(trackFile.uploading) {
@@ -38,7 +39,7 @@ public class UploadManager {
         }
     }
 
-    private void upload(TrackFile trackFile) {
+    private void upload(@NonNull TrackFile trackFile) {
         // Mark track as queued for upload
         trackFile.uploading = true;
         // Start upload thread
@@ -63,7 +64,7 @@ public class UploadManager {
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void onLoggingEvent(LoggingEvent event) {
+    public void onLoggingEvent(@NonNull LoggingEvent event) {
         if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN && autosyncEnabled && !event.started) {
             Log.i(TAG, "Auto syncing track " + event.trackFile);
             FirebaseCrash.log("Logging stopped, autosyncing track " + event.trackFile);
@@ -71,7 +72,7 @@ public class UploadManager {
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUploadSuccess(SyncEvent.UploadSuccess event) {
+    public void onUploadSuccess(@NonNull SyncEvent.UploadSuccess event) {
         if(!event.trackFile.uploading) {
             FirebaseCrash.report(new IllegalStateException("Upload success, but track not uploading?"));
         }
@@ -80,7 +81,7 @@ public class UploadManager {
         event.trackFile.cloudData = event.cloudData;
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUploadFailure(SyncEvent.UploadFailure event) {
+    public void onUploadFailure(@NonNull SyncEvent.UploadFailure event) {
         if(!event.trackFile.uploading) {
             FirebaseCrash.report(new IllegalStateException("Upload failure, but track not uploading?"));
         }

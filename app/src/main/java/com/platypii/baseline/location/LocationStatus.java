@@ -3,6 +3,7 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothService;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import java.util.Locale;
 
@@ -23,6 +24,7 @@ public class LocationStatus {
     /**
      * Get GPS status info from services
      */
+    @NonNull
     public static LocationStatus getStatus() {
         String message;
         int icon;

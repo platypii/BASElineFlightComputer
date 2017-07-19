@@ -29,13 +29,14 @@ class TrackAdapter extends BaseAdapter {
     private final LayoutInflater inflater;
     private List<ListItem> items;
 
-    TrackAdapter(Context context, List<TrackFile> tracks) {
+    TrackAdapter(@NonNull Context context, @NonNull List<TrackFile> tracks) {
         this.tracks = tracks;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         items = populateItems(tracks);
     }
 
-    private static List<ListItem> populateItems(List<TrackFile> trackFiles) {
+    @NonNull
+    private static List<ListItem> populateItems(@NonNull List<TrackFile> trackFiles) {
         final List<ListItem> items = new ArrayList<>();
         // Add Unsynced tracks
         if(!trackFiles.isEmpty()) {
@@ -114,7 +115,7 @@ class TrackAdapter extends BaseAdapter {
         return items.get(position);
     }
 
-    public void clickItem(int position, Context context) {
+    public void clickItem(int position, @NonNull Context context) {
         final ListItem item = items.get(position);
         final int itemType = item.getType();
         switch(itemType) {

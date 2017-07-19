@@ -4,6 +4,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.events.SyncEvent;
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
     private View tracksEmptyLabel;
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
+    public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.track_list, container, false);
         tracksEmptyLabel = view.findViewById(R.id.tracks_empty);

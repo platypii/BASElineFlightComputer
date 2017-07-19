@@ -2,6 +2,7 @@ package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 import java.io.File;
@@ -28,6 +29,7 @@ public class TrackFile {
         this.file = file;
     }
 
+    @NonNull
     String cacheKey() {
         return "track." + file.getName();
     }
@@ -46,6 +48,7 @@ public class TrackFile {
                 .replaceAll("-", ".");
     }
 
+    @NonNull
     public String getSize() {
         final long size = file.length() / 1024;
         return size + "kb";

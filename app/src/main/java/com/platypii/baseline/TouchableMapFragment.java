@@ -2,6 +2,7 @@ package com.platypii.baseline;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -43,13 +44,13 @@ public class TouchableMapFragment extends MapFragment {
     }
 
     private class TouchableWrapper extends FrameLayout {
-        public TouchableWrapper(Context context) {
+        public TouchableWrapper(@NonNull Context context) {
             super(context);
         }
-        public TouchableWrapper(Context context, AttributeSet attrs) {
+        public TouchableWrapper(@NonNull Context context, AttributeSet attrs) {
             super(context, attrs);
         }
-        public TouchableWrapper(Context context, AttributeSet attrs, int defStyleAttr) {
+        public TouchableWrapper(@NonNull Context context, AttributeSet attrs, int defStyleAttr) {
             super(context, attrs, defStyleAttr);
         }
 
