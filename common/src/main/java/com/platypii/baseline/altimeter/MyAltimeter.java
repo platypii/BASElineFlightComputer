@@ -153,7 +153,6 @@ public class MyAltimeter implements Service, MyLocationListener {
 
             // Use gps for altitude instead of barometer
             if(baro_sample_count == 0) {
-                // TODO: Handle ground level
                 // No barometer use gps
                 lastFixMillis = loc.millis;
                 // Update the official altitude
