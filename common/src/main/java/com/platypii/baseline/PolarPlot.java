@@ -1,6 +1,6 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.location.LocationService;
+import com.platypii.baseline.location.LocationProvider;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MLocation;
@@ -20,7 +20,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     private static final long window = 30000; // The size of the view window, in milliseconds
     private final SyncedList<MLocation> history = new SyncedList<>();
 
-    private LocationService locationService = null;
+    private LocationProvider locationService = null;
 
     public PolarPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -227,7 +227,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 //            return Convert.speed(y_abs, 0, true);
 //    }
 
-    public void start(LocationService locationService) {
+    public void start(LocationProvider locationService) {
         this.locationService = locationService;
         // Start listening for location updates
         locationService.addListener(this);

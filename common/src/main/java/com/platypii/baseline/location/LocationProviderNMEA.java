@@ -1,7 +1,6 @@
 package com.platypii.baseline.location;
 
 import com.platypii.baseline.altimeter.MyAltimeter;
-import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
@@ -13,11 +12,10 @@ import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
 
 class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
-    protected final String TAG = "LocationServiceNMEA";
+    protected final String TAG = "LocationProviderNMEA";
     private static final String NMEA_TAG = "NMEA";
 
     private final MyAltimeter alti;
-    private final BluetoothService bluetooth;
 
     boolean nmeaReceived = false;
 
@@ -48,9 +46,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         return TAG;
     }
 
-    LocationProviderNMEA(MyAltimeter alti, BluetoothService bluetooth) {
+    LocationProviderNMEA(MyAltimeter alti) {
         this.alti = alti;
-        this.bluetooth = bluetooth;
     }
 
     /**

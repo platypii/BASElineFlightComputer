@@ -1,7 +1,7 @@
 package com.platypii.baseline.altimeter;
 
 import com.platypii.baseline.Service;
-import com.platypii.baseline.location.LocationService;
+import com.platypii.baseline.location.LocationProvider;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MAltitude;
@@ -27,7 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class MyAltimeter implements Service, MyLocationListener {
     private static final String TAG = "MyAltimeter";
 
-    private final LocationService location;
+    private final LocationProvider location;
     private boolean started = false;
 
     // Barometric altimeter
@@ -55,7 +55,7 @@ public class MyAltimeter implements Service, MyLocationListener {
 
     private long lastFixMillis; // milliseconds
 
-    public MyAltimeter(LocationService location) {
+    public MyAltimeter(LocationProvider location) {
         this.location = location;
     }
 

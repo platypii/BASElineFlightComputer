@@ -17,7 +17,7 @@ import com.google.firebase.crash.FirebaseCrash;
 // TODO: Switch to GnssStatus when minsdk >= 24
 @SuppressWarnings("deprecation")
 class LocationProviderAndroid extends LocationProvider implements LocationListener, GpsStatus.Listener {
-    private static final String TAG = "LocationServiceAndroid";
+    private static final String TAG = "LocationProviderAndroid";
 
     private final MyAltimeter alti;
 

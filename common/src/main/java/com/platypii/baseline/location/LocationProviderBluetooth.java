@@ -16,7 +16,7 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
     }
 
     LocationProviderBluetooth(MyAltimeter alti, BluetoothService bluetooth) {
-        super(alti, bluetooth);
+        super(alti);
         this.bluetooth = bluetooth;
     }
 

@@ -27,7 +27,7 @@ public class LocationService extends LocationProvider {
 
     public LocationService(BluetoothService bluetooth) {
         this.bluetooth = bluetooth;
-        locationProviderNMEA = new LocationProviderNMEA(alti, bluetooth);
+        locationProviderNMEA = new LocationProviderNMEA(alti);
         locationProviderAndroid = new LocationProviderAndroid(alti);
         locationProviderBluetooth = new LocationProviderBluetooth(alti, bluetooth);
     }

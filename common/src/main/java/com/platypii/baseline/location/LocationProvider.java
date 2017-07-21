@@ -10,7 +10,7 @@ import android.util.Log;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-abstract class LocationProvider implements Service {
+public abstract class LocationProvider implements Service {
     // Duration until location considered stale, in milliseconds
     private static final long LOCATION_TTL = 10000;
 
