@@ -9,7 +9,6 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.platypii.baseline.RequestCodes.RC_BLUE_ALL;
@@ -37,15 +36,15 @@ public class Permissions {
     }
 
     public static boolean hasLocationPermissions(@NonNull Context context) {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED;
+        return context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED;
     }
 
     public static boolean hasFineLocationPermissions(@NonNull Context context) {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
+        return context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
     }
 
     public static void requestLocationPermissions(@NonNull Activity activity) {
-        ActivityCompat.requestPermissions(activity, locationPermissions, RC_LOCATION);
+        activity.requestPermissions(locationPermissions, RC_LOCATION);
     }
 
     /**
@@ -76,7 +75,7 @@ public class Permissions {
 
     public static boolean hasBluetoothConnectPermissions(@NonNull Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED;
+            return context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED;
         } else {
             return true;
         }
@@ -95,13 +94,13 @@ public class Permissions {
 
     public static void requestBluetoothPermissions(@NonNull Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            ActivityCompat.requestPermissions(activity, btPermissions(), RC_BLUE_ALL);
+            activity.requestPermissions(btPermissions(), RC_BLUE_ALL);
         }
     }
 
     private static boolean hasBluetoothScanPermissions(@NonNull Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) == PERMISSION_GRANTED;
+            return context.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PERMISSION_GRANTED;
         } else {
             return true; // TODO: check for location permission on older android?
         }

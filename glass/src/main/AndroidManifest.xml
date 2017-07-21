@@ -1,0 +1,40 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.platypii.baseline">
+
+    <application android:allowBackup="true"
+                 android:icon="@mipmap/ic_launcher"
+                 android:label="@string/app_name"
+                 android:supportsRtl="true"
+                 android:theme="@android:style/Theme.DeviceDefault">
+
+        <activity
+            android:name=".views.GlassActivity"
+            android:icon="@drawable/wingsuit"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
+            </intent-filter>
+            <meta-data android:name="com.google.android.glass.VoiceTrigger"
+                       android:resource="@xml/baseline_voice_trigger" />
+        </activity>
+
+        <activity
+            android:name=".views.PolarActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
+            </intent-filter>
+            <meta-data android:name="com.google.android.glass.VoiceTrigger"
+                       android:resource="@xml/polar_voice_trigger" />
+        </activity>
+        <activity
+            android:name=".views.BluetoothActivity"
+            android:label="@string/action_bluetooth"/>
+
+    </application>
+
+</manifest>
