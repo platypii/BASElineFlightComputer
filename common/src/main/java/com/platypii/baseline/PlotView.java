@@ -7,7 +7,6 @@ import com.platypii.baseline.util.IntBounds;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Paint.Cap;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -25,8 +24,9 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
 
     // Drawing stuff
     private final static int axis_color = 0xffee0000;
-    private final static int grid_color = 0xff777777;
+    private final static int grid_color = 0xff555555;
     private final static float font_size = 16;
+    private static final long refreshRateMillis = 33; // Approx 30fps
 
     // Padding
     final IntBounds padding = new IntBounds();
@@ -59,13 +59,14 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
 
     public PlotView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        SurfaceHolder holder = getHolder();
+        final SurfaceHolder holder = getHolder();
         holder.addCallback(this);
         // drawingThread = new DrawingThread(holder);
         paint.setAntiAlias(true);
         paint.setDither(true);
         text.setAntiAlias(true);
         text.setTextSize(font_size * density);
+        text.setColor(0xffcccccc);
     }
 
     // SurfaceView stuff:
@@ -101,6 +102,10 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
                         }
                     }
                 }
+                // Frame limiting
+                try {
+                    Thread.sleep(refreshRateMillis);
+                } catch (InterruptedException ignored) {}
             }
         }
     }
@@ -146,7 +151,6 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         canvas.drawColor(0xff000000);
 
         // Draw grid lines
-        text.setColor(0xffcccccc);
         drawGridlines(canvas);
 
         // Plot the data
@@ -387,20 +391,20 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         }
     }
 
-    public void drawXtick(Canvas canvas, double x, String label) {
-        final int sx = (int) getX(x);
-        final int sy = (int) getY(0);
-        canvas.drawLine(sx, sy - 4 * density, sx, sy + 4 * density, paint);
-        text.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(label, sx, sy + 19 * density, text);
-    }
-    public void drawYtick(Canvas canvas, double y, String label) {
-        final int sx = (int) getX(0);
-        final int sy = (int) getY(y);
-        canvas.drawLine(sx - 4 * density, sy, sx + 4 * density, sy, paint);
-        text.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText(label, sx + 7 * density, sy + 6 * density, text);
-    }
+//    public void drawXtick(Canvas canvas, double x, String label) {
+//        final int sx = (int) getX(x);
+//        final int sy = (int) getY(0);
+//        canvas.drawLine(sx, sy - 4 * density, sx, sy + 4 * density, paint);
+//        text.setTextAlign(Paint.Align.CENTER);
+//        canvas.drawText(label, sx, sy + 19 * density, text);
+//    }
+//    public void drawYtick(Canvas canvas, double y, String label) {
+//        final int sx = (int) getX(0);
+//        final int sy = (int) getY(y);
+//        canvas.drawLine(sx - 4 * density, sy, sx + 4 * density, sy, paint);
+//        text.setTextAlign(Paint.Align.LEFT);
+//        canvas.drawText(label, sx + 7 * density, sy + 6 * density, text);
+//    }
 
     // Override this to change how labels are displayed
     public String formatX(double x) {

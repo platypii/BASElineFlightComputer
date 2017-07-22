@@ -102,6 +102,7 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
                     AudibleSettings.setAudibleMode(audibleMode);
                     minPreference.setValue(AudibleSettings.mode.defaultMin);
                     maxPreference.setValue(AudibleSettings.mode.defaultMax);
+                    precisionPreference.setText(null);
                     precisionPreference.setDefaultValue(AudibleSettings.mode.defaultPrecision);
                     updateViews();
                     if(Services.audible.isEnabled()) {

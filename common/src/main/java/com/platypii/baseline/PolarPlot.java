@@ -28,11 +28,11 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         final float density = getResources().getDisplayMetrics().density;
         padding.top = (int) (12 * density);
         padding.bottom = (int) (32 * density);
-        padding.left = (int) (1 * density);
+        padding.left = (int) (density);
         padding.right = (int) (75 * density);
         
         min.left = max.left = 0;
-        min.right = 10 * Convert.MPH;
+        min.right = 9 * Convert.MPH;
         max.bottom = -2 * Convert.MPH;
         min.top = 2 * Convert.MPH;
         
@@ -50,11 +50,19 @@ public class PolarPlot extends PlotView implements MyLocationListener {
                 // Draw background ellipses
                 drawEllipses(canvas);
 
+                // Draw horizontal, vertical speed
+                final double vx = loc.groundSpeed();
+                final double vy = loc.climb;
+                drawSpeedLines(canvas, vx, vy);
+
                 // Draw history
                 drawHistory(canvas);
 
+                // Draw horizontal, vertical speed labels
+                drawSpeedLabels(canvas, vx, vy);
+
                 // Draw current location
-                drawLocation(canvas, loc);
+                drawLocation(canvas, loc.millis, vx, vy);
             } else {
                 // Draw "no gps signal"
                 text.setTextAlign(Paint.Align.CENTER);
@@ -117,53 +125,70 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     /**
      * Draw the current location, including position, glide slope, and x and y axis ticks.
      */
-    private void drawLocation(Canvas canvas, @NonNull MLocation loc) {
-        final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
-        final double x = loc.groundSpeed();
-        final double y = loc.climb;
-        final double z = loc.totalSpeed();
-        final float sx = getX(x);
-        final float sy = getY(y);
-        final float cx = getX(0);
-        final float cy = getY(0);
-
+    private void drawLocation(Canvas canvas, long millis, double vx, double vy) {
         // Style point based on freshness
-        final int t = (int) (currentTime - loc.millis);
+        final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
+        final int t = (int) (currentTime - millis);
         final int rgb = 0x5500ff;
         int alpha = 0xff * (30000 - t) / (30000 - 10000);
         alpha = Math.max(0, Math.min(alpha, 0xff));
         final int color = (alpha << 24) + rgb; // 0xff5500ff
-        paint.setColor(color);
-
-        // Draw line
-        paint.setStrokeCap(Paint.Cap.ROUND);
-        paint.setStrokeWidth(2 * density);
-        canvas.drawLine(cx, cy, sx, sy, paint);
-
-        // Draw total speed circle
-        final float r = Math.abs(getX(z) - cx);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(density);
-        paint.setColor(0xdddddddd);
-        canvas.drawCircle(cx, cy, r, paint);
-
-        // Draw total speed label
-        final String totalSpeed = Convert.speed(z);
-        canvas.drawText(totalSpeed, sx + 6 * density, sy + 22 * density, text);
-        final String glideRatio = Convert.glide(x, y, 2, true);
-        canvas.drawText(glideRatio, sx + 6 * density, sy + 40 * density, text);
-
-        // Draw axis ticks
-        paint.setColor(0xffdddddd);
-        paint.setStrokeCap(Paint.Cap.SQUARE);
-        // paint.setStrokeWidth(density);
-        drawXtick(canvas, x, Convert.speed(x));
-        drawYtick(canvas, y, Convert.speed(Math.abs(y)));
 
         // Draw point
         float radius = 16f * (6000 - t) / 8000;
         radius = Math.max(3, Math.min(radius, 16));
-        drawPoint(canvas, x, y, radius, color);
+        drawPoint(canvas, vx, vy, radius, color);
+    }
+
+    private void drawSpeedLines(Canvas canvas, double vx, double vy) {
+        final double v = Math.sqrt(vx*vx + vy*vy);
+        final float sx = getX(vx);
+        final float sy = getY(vy);
+        final float cx = getX(0);
+        final float cy = getY(0);
+
+        // Draw horizontal and vertical speed lines
+        paint.setStrokeWidth(density);
+        paint.setColor(0xff666666);
+        canvas.drawLine(cx, (int) sy, sx, (int) sy, paint); // Horizontal
+        canvas.drawLine((int) sx, cy, (int) sx, sy, paint); // Vertical
+
+        // Draw total speed circle
+        paint.setStyle(Paint.Style.STROKE);
+        final float r = Math.abs(getX(v) - cx);
+        canvas.drawCircle(cx, cy, r, paint);
+
+        // Draw glide line
+        paint.setColor(0xff999999);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        canvas.drawLine(cx, cy, sx, sy, paint);
+    }
+
+    private void drawSpeedLabels(Canvas canvas, double vx, double vy) {
+        final double v = Math.sqrt(vx*vx + vy*vy);
+        final float sx = getX(vx);
+        final float sy = getY(vy);
+        final float cx = getX(0);
+        final float cy = getY(0);
+
+        // Draw horizontal and vertical speed labels (unless near axis)
+        text.setColor(0xff999999);
+        if(sy - cy < -44 * density || 18 * density < sy - cy) {
+            // Horizontal speed label
+            canvas.drawText(Convert.speed(vx, 0, true), sx + 3 * density, cy + 16 * density, text);
+        }
+        if(12 * density < sx - cx) {
+            // Vertical speed label
+            canvas.drawText(Convert.speed(Math.abs(vy), 0, true), cx + 3 * density, sy + 16 * density, text);
+        }
+
+        // Draw total speed label
+        text.setColor(0xffcccccc);
+        text.setTextAlign(Paint.Align.LEFT);
+        final String totalSpeed = Convert.speed(v);
+        canvas.drawText(totalSpeed, sx + 6 * density, sy + 22 * density, text);
+        final String glideRatio = Convert.glide2(vx, vy, 2, true);
+        canvas.drawText(glideRatio, sx + 6 * density, sy + 40 * density, text);
     }
 
     // Always keep square aspect ratio
