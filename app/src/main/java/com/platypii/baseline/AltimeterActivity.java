@@ -22,8 +22,8 @@ public class AltimeterActivity extends BaseActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_altimeter);
 
-        polar = (PolarPlot) findViewById(R.id.polar);
-        analogAltimeter = (AnalogAltimeterSettable) findViewById(R.id.analogAltimeter);
+        polar = findViewById(R.id.polar);
+        analogAltimeter = findViewById(R.id.analogAltimeter);
         analogAltimeter.setOverlay(false);
         analogAltimeter.setAlti(Services.alti);
     }

@@ -27,7 +27,8 @@ public class BaselineCloud implements Service {
 
     @Override
     public void start(@NonNull Context context) {
-        // Start the upload manager
+        // Start cloud services
+        listing.start(context);
         uploads.start(context);
     }
 

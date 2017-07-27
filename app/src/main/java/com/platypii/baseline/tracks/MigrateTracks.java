@@ -1,8 +1,8 @@
 package com.platypii.baseline.tracks;
 
-import com.platypii.baseline.Services;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -17,21 +17,26 @@ public class MigrateTracks {
 
     public static void migrate(@NonNull Context context) {
         // Check if we've already migrated
-        if(Services.prefs.getInt(PREF_MIGRATE_VERSION, 2) < 3) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if(prefs.getInt(PREF_MIGRATE_VERSION, 2) < 3) {
             Log.w(TAG, "Migrating tracks to v3");
-            final SharedPreferences.Editor editor = Services.prefs.edit();
+            final SharedPreferences.Editor editor = prefs.edit();
             for(TrackFile trackFile : TrackFiles.getTracks(context)) {
-                if(trackFile.isSyncedV2()) {
+                if(prefs.getString(cacheKey(trackFile), null) != null) {
                     Log.w(TAG, "Archiving " + trackFile.file.getName());
                     trackFile.archive();
                     // Delete from preferences
-                    editor.remove(trackFile.cacheKey());
-                    editor.remove(trackFile.cacheKey() + ".trackKml");
+                    editor.remove(cacheKey(trackFile));
+                    editor.remove(cacheKey(trackFile) + ".trackKml");
                 }
             }
             editor.putInt(PREF_MIGRATE_VERSION, 3);
             editor.apply();
         }
+    }
+
+    private static String cacheKey(TrackFile trackFile) {
+        return "track." + trackFile.file.getName();
     }
 
 }

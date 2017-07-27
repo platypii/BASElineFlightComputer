@@ -79,18 +79,18 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         setContentView(R.layout.activity_map);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        analogAltimeter = (AnalogAltimeterSettable) findViewById(R.id.analogAltimeter);
-        flightStatsVario = (TextView) findViewById(R.id.flightStatsVario);
-        flightStatsSpeed = (TextView) findViewById(R.id.flightStatsSpeed);
-        flightStatsGlide = (TextView) findViewById(R.id.flightStatsGlide);
-        homeButton = (ImageButton) findViewById(R.id.homeButton);
-        crosshair = (ImageView) findViewById(R.id.crosshair);
+        analogAltimeter = findViewById(R.id.analogAltimeter);
+        flightStatsVario = findViewById(R.id.flightStatsVario);
+        flightStatsSpeed = findViewById(R.id.flightStatsSpeed);
+        flightStatsGlide = findViewById(R.id.flightStatsGlide);
+        homeButton = findViewById(R.id.homeButton);
+        crosshair = findViewById(R.id.crosshair);
 
         analogAltimeter.setOverlay(true);
         analogAltimeter.setAlti(Services.alti);
 
         // Home button listener
-        final ImageButton homeButton = (ImageButton) findViewById(R.id.homeButton);
+        final ImageButton homeButton = findViewById(R.id.homeButton);
         homeButton.setOnClickListener(homeButtonListener);
 
         // Initialize map

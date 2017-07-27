@@ -33,7 +33,7 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jump);
 
-        syncButton = (Button) findViewById(R.id.syncButton);
+        syncButton = findViewById(R.id.syncButton);
 
         // Load jump from extras
         final Bundle extras = getIntent().getExtras();
@@ -63,8 +63,8 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
             }
 
             // Find views
-            final TextView filenameLabel = (TextView) findViewById(R.id.filename);
-            final TextView filesizeLabel = (TextView) findViewById(R.id.filesize);
+            final TextView filenameLabel = findViewById(R.id.filename);
+            final TextView filesizeLabel = findViewById(R.id.filesize);
 
             filenameLabel.setText(trackFile.getName());
             filesizeLabel.setText(trackFile.getSize());

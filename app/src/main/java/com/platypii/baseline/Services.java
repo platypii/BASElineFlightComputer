@@ -48,7 +48,6 @@ public class Services {
     private static boolean ttsLoaded = false;
 
     // Services
-    public static SharedPreferences prefs;
     public static final TrackLogger logger = new TrackLogger();
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final LocationService location = new LocationService(bluetooth);
@@ -64,11 +63,13 @@ public class Services {
      * Call this in onCreate
      */
     static void create(@NonNull Activity activity) {
-        if(prefs == null) {
+        if(!created) {
             Log.i(TAG, "Loading app preferences");
-            loadPreferences(activity.getApplicationContext());
+            loadPreferences(activity);
+            created = true;
         }
     }
+    private static boolean created = false;
 
     static void start(@NonNull Activity activity) {
         startCount++;
@@ -209,7 +210,7 @@ public class Services {
     }
 
     private static void loadPreferences(Context context) {
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         // Metric
         Convert.metric = prefs.getBoolean("metric_enabled", false);

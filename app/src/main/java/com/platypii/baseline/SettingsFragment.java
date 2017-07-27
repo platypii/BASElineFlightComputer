@@ -58,12 +58,12 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public boolean onPreferenceChange(@NonNull Preference preference, Object value) {
         switch(preference.getKey()) {
             case "metric_enabled":
+                Log.i(TAG, "Setting metric mode: " + value);
                 Convert.metric = (Boolean) value;
-                Log.i(TAG, "Setting metric mode: " + Convert.metric);
                 break;
             case "auto_stop_enabled":
+                Log.i(TAG, "Setting auto-stop mode: " + value);
                 AutoStop.preferenceEnabled = (Boolean) value;
-                Log.i(TAG, "Setting auto-stop mode: " + AutoStop.preferenceEnabled);
                 break;
             case "bluetooth_enabled":
                 Services.bluetooth.preferenceEnabled = (Boolean) value;

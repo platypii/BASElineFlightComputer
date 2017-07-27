@@ -1,6 +1,5 @@
 package com.platypii.baseline.tracks;
 
-import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -27,18 +26,6 @@ public class TrackFile {
 
     public TrackFile(File file) {
         this.file = file;
-    }
-
-    @NonNull
-    String cacheKey() {
-        return "track." + file.getName();
-    }
-
-    /**
-     * Return true iff track was synced and saved in preferences in BASEline 2.x
-     */
-    boolean isSyncedV2() {
-        return Services.prefs.getString(cacheKey(), null) != null;
     }
 
     public String getName() {

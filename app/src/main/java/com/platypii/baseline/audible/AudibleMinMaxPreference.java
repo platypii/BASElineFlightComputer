@@ -43,7 +43,7 @@ public class AudibleMinMaxPreference extends DialogPreference {
     protected void onBindDialogView(@NonNull View view) {
         super.onBindDialogView(view);
 
-        mEditText = (EditText) view.findViewById(R.id.minmax_input);
+        mEditText = view.findViewById(R.id.minmax_input);
 
         final float value = getValue();
         if(Numbers.isReal(value)) {

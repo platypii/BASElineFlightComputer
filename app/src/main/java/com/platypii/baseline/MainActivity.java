@@ -48,10 +48,10 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         // Find views
-        recordButton = (Button) findViewById(R.id.recordButton);
-        audibleButton = (Button) findViewById(R.id.audibleButton);
-        clock = (TextView) findViewById(R.id.clock);
-        signalStatus = (TextView) findViewById(R.id.signalStatus);
+        recordButton = findViewById(R.id.recordButton);
+        audibleButton = findViewById(R.id.audibleButton);
+        clock = findViewById(R.id.clock);
+        signalStatus = findViewById(R.id.signalStatus);
 
         if(audibleButton != null) {
             audibleButton.setOnLongClickListener(audibleLongClickListener);

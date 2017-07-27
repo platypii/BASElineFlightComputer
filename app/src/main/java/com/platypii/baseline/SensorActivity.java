@@ -69,38 +69,38 @@ public class SensorActivity extends Activity implements MyLocationListener {
 
         // Find UI elements:
         // Altimeter
-        sourceLabel = (TextView)findViewById(R.id.sourceLabel);
-        altitudeLabel = (TextView)findViewById(R.id.altitudeLabel);
-        altitudeAglLabel = (TextView)findViewById(R.id.altitudeAglLabel);
+        sourceLabel = findViewById(R.id.sourceLabel);
+        altitudeLabel = findViewById(R.id.altitudeLabel);
+        altitudeAglLabel = findViewById(R.id.altitudeAglLabel);
 
         // Barometer
-        pressureLabel = (TextView)findViewById(R.id.pressureLabel);
-        pressureAltitudeLabel = (TextView)findViewById(R.id.pressureAltitudeLabel);
-        pressureAltitudeFilteredLabel = (TextView)findViewById(R.id.pressureAltitudeFilteredLabel);
-        fallrateLabel = (TextView)findViewById(R.id.fallrateLabel);
+        pressureLabel = findViewById(R.id.pressureLabel);
+        pressureAltitudeLabel = findViewById(R.id.pressureAltitudeLabel);
+        pressureAltitudeFilteredLabel = findViewById(R.id.pressureAltitudeFilteredLabel);
+        fallrateLabel = findViewById(R.id.fallrateLabel);
 
         // GPS
-        satelliteLabel = (TextView)findViewById(R.id.satelliteLabel);
-        lastFixLabel = (TextView)findViewById(R.id.lastFixLabel);
-        latitudeLabel = (TextView)findViewById(R.id.latitudeLabel);
-        longitudeLabel = (TextView)findViewById(R.id.longitudeLabel);
-        gpsAltitudeLabel = (TextView)findViewById(R.id.gpsAltitudeLabel);
-        gpsFallrateLabel = (TextView)findViewById(R.id.gpsFallrateLabel);
-        hAccLabel = (TextView)findViewById(R.id.hAccLabel);
-        pdopLabel = (TextView)findViewById(R.id.pdopLabel);
-        hdopLabel = (TextView)findViewById(R.id.hdopLabel);
-        vdopLabel = (TextView)findViewById(R.id.vdopLabel);
-        groundSpeedLabel = (TextView)findViewById(R.id.groundSpeedLabel);
-        totalSpeedLabel = (TextView)findViewById(R.id.totalSpeedLabel);
-        glideRatioLabel = (TextView)findViewById(R.id.glideRatioLabel);
-        glideAngleLabel = (TextView)findViewById(R.id.glideAngleLabel);
-        bearingLabel = (TextView)findViewById(R.id.bearingLabel);
+        satelliteLabel = findViewById(R.id.satelliteLabel);
+        lastFixLabel = findViewById(R.id.lastFixLabel);
+        latitudeLabel = findViewById(R.id.latitudeLabel);
+        longitudeLabel = findViewById(R.id.longitudeLabel);
+        gpsAltitudeLabel = findViewById(R.id.gpsAltitudeLabel);
+        gpsFallrateLabel = findViewById(R.id.gpsFallrateLabel);
+        hAccLabel = findViewById(R.id.hAccLabel);
+        pdopLabel = findViewById(R.id.pdopLabel);
+        hdopLabel = findViewById(R.id.hdopLabel);
+        vdopLabel = findViewById(R.id.vdopLabel);
+        groundSpeedLabel = findViewById(R.id.groundSpeedLabel);
+        totalSpeedLabel = findViewById(R.id.totalSpeedLabel);
+        glideRatioLabel = findViewById(R.id.glideRatioLabel);
+        glideAngleLabel = findViewById(R.id.glideAngleLabel);
+        bearingLabel = findViewById(R.id.bearingLabel);
 
         // Misc
-        flightModeLabel = (TextView) findViewById(R.id.flightModeLabel);
+        flightModeLabel = findViewById(R.id.flightModeLabel);
 
         // Sensors
-        sensorLayout = (LinearLayout)findViewById(R.id.sensorLayout);
+        sensorLayout = findViewById(R.id.sensorLayout);
         // TextView sensorsLabel = (TextView)findViewById(R.id.sensorsLabel);
         // sensorsLabel.setText("Sensors: \n" + MySensorManager.getSensorsString());
         

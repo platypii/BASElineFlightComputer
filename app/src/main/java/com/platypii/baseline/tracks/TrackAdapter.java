@@ -6,18 +6,15 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import com.google.firebase.crash.FirebaseCrash;
 import java.util.ArrayList;
 import java.util.List;
 
 class TrackAdapter extends BaseAdapter {
-    private static final String TAG = "TrackAdapter";
 
     // Item types
     private static final int TYPE_HEADER = 0;
@@ -42,10 +39,6 @@ class TrackAdapter extends BaseAdapter {
         if(!trackFiles.isEmpty()) {
             items.add(new ListHeader("Not synced (local only)"));
             for (TrackFile trackFile : trackFiles) {
-                if (trackFile.isSyncedV2()) {
-                    Log.e(TAG, "Synced tracks should have been archived");
-                    FirebaseCrash.report(new Exception("Synced tracks should have been archived"));
-                }
                 items.add(new ListTrackFile(trackFile));
             }
         }
@@ -82,20 +75,20 @@ class TrackAdapter extends BaseAdapter {
         switch(itemType) {
             case TYPE_HEADER:
                 final ListHeader header = (ListHeader) item;
-                final TextView headerNameView = (TextView) convertView.findViewById(R.id.list_header_name);
+                final TextView headerNameView = convertView.findViewById(R.id.list_header_name);
                 headerNameView.setText(header.name);
                 break;
             case TYPE_TRACK_FILE:
                 final TrackFile trackFile = ((ListTrackFile) item).track;
-                final TextView itemNameView = (TextView) convertView.findViewById(R.id.list_item_name);
-                final TextView itemSizeView = (TextView) convertView.findViewById(R.id.list_item_subtitle);
+                final TextView itemNameView = convertView.findViewById(R.id.list_item_name);
+                final TextView itemSizeView = convertView.findViewById(R.id.list_item_subtitle);
                 itemNameView.setText(trackFile.toString());
                 itemSizeView.setText(trackFile.getSize());
                 break;
             case TYPE_TRACK_DATA:
                 final CloudData trackData = ((ListTrackData) item).track;
-                final TextView itemNameView2 = (TextView) convertView.findViewById(R.id.list_item_name);
-                final TextView itemSizeView2 = (TextView) convertView.findViewById(R.id.list_item_subtitle);
+                final TextView itemNameView2 = convertView.findViewById(R.id.list_item_name);
+                final TextView itemSizeView2 = convertView.findViewById(R.id.list_item_subtitle);
                 itemNameView2.setText(trackData.date_string);
                 itemSizeView2.setText(trackData.location);
                 break;

@@ -49,8 +49,8 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
     private void updateViews() {
         if(track != null) {
             // Find views
-            final TextView trackDate = (TextView) findViewById(R.id.trackDate);
-            final TextView trackLocation = (TextView) findViewById(R.id.trackLocation);
+            final TextView trackDate = findViewById(R.id.trackDate);
+            final TextView trackLocation = findViewById(R.id.trackLocation);
 
             trackDate.setText(track.date_string);
             trackLocation.setText(track.location);

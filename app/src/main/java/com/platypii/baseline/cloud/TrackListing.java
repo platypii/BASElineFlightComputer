@@ -3,7 +3,7 @@ package com.platypii.baseline.cloud;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.IOUtil;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
@@ -25,24 +25,17 @@ public class TrackListing {
 
     public final TrackListingCache cache = new TrackListingCache();
 
-    // Minimum time between requests
-    private static final long REQUEST_TTL = 30 * 1000; // milliseconds
-    // Maximum lifetime of a successful track listing
-    private static final long UPDATE_TTL = 5 * 60 * 1000; // milliseconds
+    void start(Context context) {
+        cache.start(context);
+    }
 
     /**
      * Query baseline server for track listing asynchronously
      */
     public void listAsync(final String auth, boolean force) {
         if(auth != null) {
-            // Compute time since last update
-            final long lastUpdateDuration = System.currentTimeMillis() - Services.prefs.getLong(TrackListingCache.CACHE_LAST_UPDATE, 0);
-            final long lastRequestDuration = System.currentTimeMillis() - Services.prefs.getLong(TrackListingCache.CACHE_LAST_REQUEST, 0);
-            final boolean shouldRequest = UPDATE_TTL < lastUpdateDuration && REQUEST_TTL < lastRequestDuration;
-            if (force || shouldRequest) {
-                final SharedPreferences.Editor editor = Services.prefs.edit();
-                editor.putLong(TrackListingCache.CACHE_LAST_REQUEST, System.currentTimeMillis());
-                editor.apply();
+            if (force || cache.shouldRequest()) {
+                cache.request();
                 // Update the track listing in a thread
                 Log.i(TAG, "Listing tracks");
                 new Thread() {
@@ -51,10 +44,6 @@ public class TrackListing {
                         listTracks(auth);
                     }
                 }.start();
-            } else {
-                final double t1 = lastUpdateDuration * 0.001;
-                final double t2 = lastRequestDuration * 0.001;
-                Log.d(TAG, String.format("Using cached track list (updated %.3fs, requested %.3fs)", t1, t2));
             }
         } else {
             Log.e(TAG, "Failed to list tracks, missing auth");
