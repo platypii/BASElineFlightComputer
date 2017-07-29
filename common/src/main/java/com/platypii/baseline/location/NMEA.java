@@ -1,8 +1,8 @@
 package com.platypii.baseline.location;
 
+import com.platypii.baseline.util.Exceptions;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -29,7 +29,7 @@ class NMEA {
             final int index = dm.indexOf('.') - 2;
             if (index < 0) {
                 Log.e(TAG, "Lat/lon parse error missing decimal: " + dm + " " + nsew);
-                FirebaseCrash.report(new NMEAException("NMEA lat/lon parse error missing decimal: " + dm + " " + nsew));
+                Exceptions.report(new NMEAException("NMEA lat/lon parse error missing decimal: " + dm + " " + nsew));
                 return Double.NaN;
             } else {
                 try {
@@ -43,7 +43,7 @@ class NMEA {
                         return degrees;
                 } catch(Exception e) {
                     Log.e(TAG, "Lat/lon parse error: " + dm + " " + nsew);
-                    FirebaseCrash.report(new NMEAException("NMEA lat/lon parse error: " + dm + " " + nsew));
+                    Exceptions.report(new NMEAException("NMEA lat/lon parse error: " + dm + " " + nsew));
                     return Double.NaN;
                 }
             }

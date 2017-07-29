@@ -3,6 +3,7 @@ package com.platypii.baseline.altimeter;
 import com.platypii.baseline.Service;
 import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MPressure;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.Stat;
 import android.content.Context;
@@ -12,7 +13,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 import java.util.Arrays;
 import org.greenrobot.eventbus.EventBus;
 
@@ -106,7 +106,7 @@ public class BaroAltimeter implements Service, SensorEventListener {
             }
             if (Double.isNaN(refreshRate)) {
                 Log.e(TAG, "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + newRefreshRate);
-                FirebaseCrash.report(new Exception("Refresh rate is NaN, deltaTime = " + deltaTime + " newRefreshRate = " + newRefreshRate));
+                Exceptions.report(new Exception("Refresh rate is NaN, deltaTime = " + deltaTime + " newRefreshRate = " + newRefreshRate));
                 refreshRate = 0;
             }
         }
@@ -118,7 +118,7 @@ public class BaroAltimeter implements Service, SensorEventListener {
 
         // Altitude should never be null:
         if(!Numbers.isReal(pressure_altitude_filtered)) {
-            FirebaseCrash.report(new IllegalArgumentException("Invalid pressure altitude: " + pressure + " -> " + pressure_altitude_filtered));
+            Exceptions.report(new IllegalArgumentException("Invalid pressure altitude: " + pressure + " -> " + pressure_altitude_filtered));
             return;
         }
 

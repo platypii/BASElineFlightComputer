@@ -2,6 +2,7 @@ package com.platypii.baseline.location;
 
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.location.GpsSatellite;
@@ -12,7 +13,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 
 // TODO: Switch to GnssStatus when minsdk >= 24
 @SuppressWarnings("deprecation")
@@ -47,7 +47,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
         try {
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         } catch(Exception e) {
-            FirebaseCrash.report(e);
+            Exceptions.report(e);
         }
         manager.addGpsStatusListener(this);
     }
@@ -142,7 +142,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
                         satellitesInView = count;
                         satellitesUsed = used;
                     } catch(SecurityException e) {
-                        FirebaseCrash.report(e);
+                        Exceptions.report(e);
                     }
                 }
         }

@@ -2,10 +2,10 @@ package com.platypii.baseline.measurements;
 
 import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.crash.FirebaseCrash;
 import java.util.Locale;
 
 public class MLocation extends Measurement {
@@ -39,7 +39,7 @@ public class MLocation extends Measurement {
         if(locationError != LocationCheck.VALID) {
             final String locationErrorMessage = LocationCheck.message[locationError] + ": " + latitude + "," + longitude;
             Log.e(TAG, locationErrorMessage);
-            FirebaseCrash.report(new NMEAException(locationErrorMessage));
+            Exceptions.report(new NMEAException(locationErrorMessage));
         }
 
         // Store location data

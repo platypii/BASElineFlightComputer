@@ -1,7 +1,5 @@
 package com.platypii.baseline.util;
 
-import com.google.firebase.crash.FirebaseCrash;
-
 public class Numbers {
 
     public static boolean isReal(double value) {
@@ -15,7 +13,7 @@ public class Numbers {
             try {
                 return Double.parseDouble(str);
             } catch(NumberFormatException e) {
-                FirebaseCrash.report(e);
+                Exceptions.report(e);
                 return Double.NaN;
             }
         }
@@ -28,7 +26,7 @@ public class Numbers {
             try {
                 return Float.parseFloat(str);
             } catch(NumberFormatException e) {
-                FirebaseCrash.report(e);
+                Exceptions.report(e);
                 return Float.NaN;
             }
         }
@@ -41,7 +39,7 @@ public class Numbers {
             try {
                 return Integer.parseInt(str);
             } catch(NumberFormatException e) {
-                FirebaseCrash.report(e);
+                Exceptions.report(e);
                 return defaultValue;
             }
         }

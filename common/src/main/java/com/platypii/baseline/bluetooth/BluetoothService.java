@@ -3,6 +3,7 @@ package com.platypii.baseline.bluetooth;
 import com.platypii.baseline.common.R;
 import com.platypii.baseline.Service;
 import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.util.Exceptions;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -12,7 +13,6 @@ import android.location.GpsStatus;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class BluetoothService implements Service {
     @Override
     public void start(@NonNull Context context) {
         if(!(context instanceof Activity)) {
-            FirebaseCrash.report(new Exception("Bluetooth context must be an activity"));
+            Exceptions.report(new Exception("Bluetooth context must be an activity"));
             return;
         }
         final Activity activity = (Activity) context;
@@ -81,7 +81,7 @@ public class BluetoothService implements Service {
             startAsync(activity);
         } else {
             Log.e(TAG, "Bluetooth already started: " + BT_STATES[bluetoothState]);
-            FirebaseCrash.report(new Exception("Bluetooth already started: " + BT_STATES[bluetoothState]));
+            Exceptions.report(new Exception("Bluetooth already started: " + BT_STATES[bluetoothState]));
         }
     }
 

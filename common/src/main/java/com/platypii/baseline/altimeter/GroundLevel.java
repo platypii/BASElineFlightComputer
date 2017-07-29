@@ -3,10 +3,10 @@ package com.platypii.baseline.altimeter;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 
 /**
@@ -135,7 +135,7 @@ class GroundLevel {
                 Log.e(TAG, "Preferences should not be null");
             }
         } else {
-            FirebaseCrash.report(new IllegalArgumentException("Ground pressure altitude must be real: " + ground_pressure_altitude));
+            Exceptions.report(new IllegalArgumentException("Ground pressure altitude must be real: " + ground_pressure_altitude));
         }
     }
 
@@ -156,7 +156,7 @@ class GroundLevel {
                 Log.e(TAG, "Preferences should not be null");
             }
         } else {
-            FirebaseCrash.report(new IllegalArgumentException("Ground altitude msl must be real: " + ground_altitude_msl));
+            Exceptions.report(new IllegalArgumentException("Ground altitude msl must be real: " + ground_altitude_msl));
         }
     }
 

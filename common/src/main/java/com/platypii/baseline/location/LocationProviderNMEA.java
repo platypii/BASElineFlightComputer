@@ -3,13 +3,13 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.location.GpsStatus;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 
 class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
     protected final String TAG = "LocationProviderNMEA";
@@ -109,7 +109,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             handleNmea(timestamp, nmea);
         } catch(Exception e) {
             Log.e(NMEA_TAG, "Exception while handling NMEA: " + nmea, e);
-            FirebaseCrash.report(new NMEAException("Exception while handling NMEA: " + nmea, e));
+            Exceptions.report(new NMEAException("Exception while handling NMEA: " + nmea, e));
         }
     }
 
@@ -130,7 +130,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             NMEA.validate(nmea);
         } catch(NMEAException e) {
             Log.e(TAG, "Invalid NMEA sentence", e);
-            FirebaseCrash.report(e);
+            Exceptions.report(e);
         }
 
         // Strip checksum
@@ -166,7 +166,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 if (!split[9].isEmpty()) {
                     if(!split[10].equals("M")) {
                         Log.e(NMEA_TAG, "Expected meters, was " + split[10] + " in nmea: " + nmea);
-                        FirebaseCrash.report(new NMEAException("Expected meters, was " + split[10] + " in nmea: " + nmea));
+                        Exceptions.report(new NMEAException("Expected meters, was " + split[10] + " in nmea: " + nmea));
                     }
                     altitude_gps = Numbers.parseDouble(split[9]);
                 }
@@ -223,13 +223,13 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                     } else if (locationError == LocationCheck.INVALID_RANGE) {
                         final String locationErrorMessage = LocationCheck.message[locationError] + ": " + latitude + "," + longitude;
                         Log.e(NMEA_TAG, locationErrorMessage);
-                        FirebaseCrash.report(new NMEAException(locationErrorMessage));
+                        Exceptions.report(new NMEAException(locationErrorMessage));
                     } else {
                         if (locationError == LocationCheck.UNLIKELY_LAT || locationError == LocationCheck.UNLIKELY_LON) {
                             // Unlikely location, but still update
                             final String locationErrorMessage = LocationCheck.message[locationError] + ": " + latitude + "," + longitude;
                             Log.e(NMEA_TAG, locationErrorMessage);
-                            FirebaseCrash.report(new NMEAException(locationErrorMessage));
+                            Exceptions.report(new NMEAException(locationErrorMessage));
                         }
                         // Update the official location!
                         updateLocation();
@@ -321,7 +321,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 break;
             default:
                 Log.w(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
-                FirebaseCrash.report(new NMEAException("Unknown NMEA command " + command + ": " + nmea));
+                Exceptions.report(new NMEAException("Unknown NMEA command " + command + ": " + nmea));
         }
     }
 

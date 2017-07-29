@@ -1,8 +1,8 @@
 package com.platypii.baseline.altimeter;
 
-import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.common.R;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.os.Handler;
@@ -180,7 +180,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
             if(alti != null) {
                 alti.groundLevel.setCurrentAltitudeAGL(trueAltitude + altitudeOffset);
             } else {
-                FirebaseCrash.report(new IllegalStateException("AnalogAltimeterSettable requires call to setAlti()"));
+                Exceptions.report(new IllegalStateException("AnalogAltimeterSettable requires call to setAlti()"));
             }
         }
         altitudeOffset = 0;
