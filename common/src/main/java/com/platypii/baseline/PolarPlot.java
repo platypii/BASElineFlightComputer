@@ -29,12 +29,15 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         padding.top = (int) (12 * density);
         padding.bottom = (int) (32 * density);
         padding.left = (int) (density);
-        padding.right = (int) (75 * density);
+        padding.right = (int) (76 * density);
         
         min.left = max.left = 0;
         min.right = 9 * Convert.MPH;
+        max.right = 160 * Convert.MPH;
+        min.bottom = -160 * Convert.MPH;
         max.bottom = -2 * Convert.MPH;
         min.top = 2 * Convert.MPH;
+        max.top = 28 * Convert.MPH;
         
         x_major_units = y_major_units = Convert.metric? Convert.KPH : Convert.MPH;
 
