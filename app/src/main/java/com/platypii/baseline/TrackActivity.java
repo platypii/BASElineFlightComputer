@@ -1,5 +1,7 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.cloud.UploadManager;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
@@ -55,9 +57,11 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
      */
     private void updateViews() {
         if(trackFile != null) {
-            if(trackFile.uploaded) {
+            final int uploadState = Services.cloud.uploads.getState(trackFile);
+            if(uploadState == UploadManager.UPLOADED) {
                 // Track uploaded, open TrackDataActivity
-                Intents.openTrackDataActivity(this, trackFile.cloudData);
+                final CloudData cloudData = Services.cloud.uploads.getCompleted(trackFile);
+                Intents.openTrackDataActivity(this, cloudData);
                 finish();
                 return;
             }
@@ -65,15 +69,22 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
             // Find views
             final TextView filenameLabel = findViewById(R.id.filename);
             final TextView filesizeLabel = findViewById(R.id.filesize);
+            final TextView alertLabel = findViewById(R.id.alert_message);
 
             filenameLabel.setText(trackFile.getName());
             filesizeLabel.setText(trackFile.getSize());
 
             // Update view based on sign-in state
-            if(isSignedIn() && !trackFile.uploading) {
+            if(isSignedIn() && uploadState != UploadManager.UPLOADING) {
                 syncButton.setEnabled(true);
             } else {
                 syncButton.setEnabled(false);
+            }
+            if(uploadState == UploadManager.UPLOADING) {
+                alertLabel.setText(R.string.uploading);
+                alertLabel.setVisibility(View.VISIBLE);
+            } else {
+                alertLabel.setVisibility(View.GONE);
             }
         }
     }

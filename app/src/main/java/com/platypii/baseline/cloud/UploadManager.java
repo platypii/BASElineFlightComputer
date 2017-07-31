@@ -9,6 +9,8 @@ import com.platypii.baseline.tracks.TrackFile;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import java.util.HashMap;
+import java.util.Map;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -22,6 +24,13 @@ public class UploadManager {
 
     private static final boolean autosyncEnabled = true; // TODO: Make configurable?
 
+    // Upload state for each track file
+    private static final int NOT_UPLOADED = 0;
+    public static final int UPLOADING = 1;
+    public static final int UPLOADED = 2;
+    private Map<TrackFile,Integer> trackFileState = new HashMap<>();
+    private Map<TrackFile,CloudData> completedUploads = new HashMap<>();
+
     private Context context;
 
     /**
@@ -30,9 +39,10 @@ public class UploadManager {
     public void userUpload(@NonNull TrackFile trackFile) {
         FirebaseCrash.log("User upload track " + trackFile.getName());
         // Update uploading state
-        if(trackFile.uploading) {
+        final int state = getState(trackFile);
+        if(state == UPLOADING) {
             FirebaseCrash.report(new IllegalStateException("Upload already in progress for track " + trackFile));
-        } else if(trackFile.uploaded) {
+        } else if(state == UPLOADED) {
             FirebaseCrash.report(new IllegalStateException("Upload already complete for track " + trackFile));
         } else {
             upload(trackFile);
@@ -41,7 +51,7 @@ public class UploadManager {
 
     private void upload(@NonNull TrackFile trackFile) {
         // Mark track as queued for upload
-        trackFile.uploading = true;
+        trackFileState.put(trackFile, UPLOADING);
         // Start upload thread
         new Thread(new UploadTask(context, trackFile)).start();
     }
@@ -73,19 +83,23 @@ public class UploadManager {
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUploadSuccess(@NonNull SyncEvent.UploadSuccess event) {
-        if(!event.trackFile.uploading) {
-            FirebaseCrash.report(new IllegalStateException("Upload success, but track not uploading?"));
-        }
-        event.trackFile.uploading = false;
-        event.trackFile.uploaded = true;
-        event.trackFile.cloudData = event.cloudData;
+        trackFileState.put(event.trackFile, UPLOADED);
+        completedUploads.put(event.trackFile, event.cloudData);
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUploadFailure(@NonNull SyncEvent.UploadFailure event) {
-        if(!event.trackFile.uploading) {
-            FirebaseCrash.report(new IllegalStateException("Upload failure, but track not uploading?"));
+        trackFileState.put(event.trackFile, NOT_UPLOADED);
+    }
+
+    public int getState(@NonNull TrackFile trackFile) {
+        if(trackFileState.containsKey(trackFile)) {
+            return trackFileState.get(trackFile);
+        } else {
+            return NOT_UPLOADED;
         }
-        event.trackFile.uploading = false;
+    }
+    public CloudData getCompleted(TrackFile trackFile) {
+        return completedUploads.get(trackFile);
     }
 
     public void stop() {

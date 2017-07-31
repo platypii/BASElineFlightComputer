@@ -1,6 +1,5 @@
 package com.platypii.baseline.tracks;
 
-import com.platypii.baseline.cloud.CloudData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.firebase.crash.FirebaseCrash;
@@ -18,11 +17,6 @@ public class TrackFile {
 
     // TrackFile info
     public File file;
-
-    // Upload state
-    public boolean uploading = false;
-    public boolean uploaded = false;
-    public CloudData cloudData;
 
     public TrackFile(File file) {
         this.file = file;
@@ -84,6 +78,15 @@ public class TrackFile {
     public String toString() {
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         return format.format(getDate());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof TrackFile && file.equals(((TrackFile) obj).file);
+    }
+    @Override
+    public int hashCode() {
+        return file.hashCode();
     }
 
 }

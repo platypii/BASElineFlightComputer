@@ -19,6 +19,8 @@
     <string name="action_delete">Löschen</string>
     <string name="action_export">Export</string>
 
+    <string name="uploading">Hochladen…</string>
+
     <string name="delete_local">Möchten sie diese Daten wirklich von diesem Geraet löschen? Die Daten wurden noch nicht online synchronisiert.</string>
     <string name="delete_remote">Möchten sie diese Daten wirklich von diesem BASEline löschen?</string>
 
@@ -32,7 +34,6 @@
     <string name="signout_success">Abgemeldet</string>
 
     <string name="no_tracks">Keine Spuren</string>
-    <string name="error_not_uploaded">Datei nicht synchronisiert</string>
 
     <string-array name="audible_modes">
         <item>Horizontal Speed</item>

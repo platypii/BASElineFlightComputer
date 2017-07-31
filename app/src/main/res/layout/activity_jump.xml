@@ -70,15 +70,11 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/error_message"
+        android:id="@+id/alert_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:drawablePadding="5dp"
-        android:drawableLeft="@drawable/warning"
-        android:drawableStart="@drawable/warning"
-        android:textColor="#aa0000"
-        android:text="@string/error_not_uploaded"
         android:layout_gravity="center"
         android:gravity="center"
         android:visibility="gone" />

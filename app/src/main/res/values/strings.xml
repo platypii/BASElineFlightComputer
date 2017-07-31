@@ -19,6 +19,8 @@
     <string name="action_delete">Delete</string>
     <string name="action_export">Export</string>
 
+    <string name="uploading">Uploading…</string>
+
     <string name="delete_local">Are you sure you want to delete this track from the local device? It has not been synced online yet.</string>
     <string name="delete_remote">Are you sure you want to delete this track from BASEline?</string>
 
@@ -32,7 +34,6 @@
     <string name="signout_success">Signed out</string>
 
     <string name="no_tracks">no tracks</string>
-    <string name="error_not_uploaded">track not synced</string>
 
     <string-array name="audible_modes">
         <item>Horizontal Speed</item>

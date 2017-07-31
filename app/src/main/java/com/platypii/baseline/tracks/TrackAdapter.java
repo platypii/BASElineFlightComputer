@@ -4,12 +4,14 @@ import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.cloud.UploadManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,15 +84,24 @@ class TrackAdapter extends BaseAdapter {
                 final TrackFile trackFile = ((ListTrackFile) item).track;
                 final TextView itemNameView = convertView.findViewById(R.id.list_item_name);
                 final TextView itemSizeView = convertView.findViewById(R.id.list_item_subtitle);
+                final ProgressBar itemSpinner = convertView.findViewById(R.id.list_spinner);
                 itemNameView.setText(trackFile.toString());
                 itemSizeView.setText(trackFile.getSize());
+                final int uploadState = Services.cloud.uploads.getState(trackFile);
+                if(uploadState == UploadManager.UPLOADING) {
+                    itemSpinner.setVisibility(View.VISIBLE);
+                } else {
+                    itemSpinner.setVisibility(View.GONE);
+                }
                 break;
             case TYPE_TRACK_DATA:
                 final CloudData trackData = ((ListTrackData) item).track;
                 final TextView itemNameView2 = convertView.findViewById(R.id.list_item_name);
                 final TextView itemSizeView2 = convertView.findViewById(R.id.list_item_subtitle);
+                final ProgressBar itemSpinner2 = convertView.findViewById(R.id.list_spinner);
                 itemNameView2.setText(trackData.date_string);
                 itemSizeView2.setText(trackData.location);
+                itemSpinner2.setVisibility(View.GONE);
                 break;
         }
 
