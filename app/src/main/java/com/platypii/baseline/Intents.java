@@ -16,14 +16,14 @@ public class Intents {
     private static final String TAG = "Intents";
 
     /** Open jump activity */
-    public static void openTrackActivity(@NonNull Context context, @NonNull TrackFile trackFile) {
-        final Intent intent = new Intent(context, TrackActivity.class);
-        intent.putExtra(TrackActivity.EXTRA_TRACK_FILE, trackFile.file.getName());
+    public static void openTrackLocal(@NonNull Context context, @NonNull TrackFile trackFile) {
+        final Intent intent = new Intent(context, TrackLocalActivity.class);
+        intent.putExtra(TrackLocalActivity.EXTRA_TRACK_FILE, trackFile.file.getName());
         context.startActivity(intent);
     }
-    public static void openTrackDataActivity(@NonNull Context context, @NonNull CloudData track) {
-        final Intent intent = new Intent(context, TrackDataActivity.class);
-        intent.putExtra(TrackDataActivity.EXTRA_TRACK_ID, track.track_id);
+    public static void openTrackRemote(@NonNull Context context, @NonNull CloudData track) {
+        final Intent intent = new Intent(context, TrackRemoteActivity.class);
+        intent.putExtra(TrackRemoteActivity.EXTRA_TRACK_ID, track.track_id);
         context.startActivity(intent);
     }
 

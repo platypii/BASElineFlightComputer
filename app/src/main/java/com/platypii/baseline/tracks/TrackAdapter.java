@@ -20,8 +20,8 @@ class TrackAdapter extends BaseAdapter {
 
     // Item types
     private static final int TYPE_HEADER = 0;
-    private static final int TYPE_TRACK_FILE = 1;
-    private static final int TYPE_TRACK_DATA = 2;
+    private static final int TYPE_TRACK_LOCAL = 1;
+    private static final int TYPE_TRACK_REMOTE = 2;
 
     private final List<TrackFile> tracks;
 
@@ -66,8 +66,8 @@ class TrackAdapter extends BaseAdapter {
                 case TYPE_HEADER:
                     convertView = inflater.inflate(R.layout.track_list_header, parent, false);
                     break;
-                case TYPE_TRACK_FILE:
-                case TYPE_TRACK_DATA:
+                case TYPE_TRACK_LOCAL:
+                case TYPE_TRACK_REMOTE:
                     convertView = inflater.inflate(R.layout.track_list_item, parent, false);
                     break;
             }
@@ -80,7 +80,7 @@ class TrackAdapter extends BaseAdapter {
                 final TextView headerNameView = convertView.findViewById(R.id.list_header_name);
                 headerNameView.setText(header.name);
                 break;
-            case TYPE_TRACK_FILE:
+            case TYPE_TRACK_LOCAL:
                 final TrackFile trackFile = ((ListTrackFile) item).track;
                 final TextView itemNameView = convertView.findViewById(R.id.list_item_name);
                 final TextView itemSizeView = convertView.findViewById(R.id.list_item_subtitle);
@@ -94,7 +94,7 @@ class TrackAdapter extends BaseAdapter {
                     itemSpinner.setVisibility(View.GONE);
                 }
                 break;
-            case TYPE_TRACK_DATA:
+            case TYPE_TRACK_REMOTE:
                 final CloudData trackData = ((ListTrackData) item).track;
                 final TextView itemNameView2 = convertView.findViewById(R.id.list_item_name);
                 final TextView itemSizeView2 = convertView.findViewById(R.id.list_item_subtitle);
@@ -123,13 +123,13 @@ class TrackAdapter extends BaseAdapter {
         final ListItem item = items.get(position);
         final int itemType = item.getType();
         switch(itemType) {
-            case TYPE_TRACK_FILE:
+            case TYPE_TRACK_LOCAL:
                 final TrackFile trackFile = ((ListTrackFile) item).track;
-                Intents.openTrackActivity(context, trackFile);
+                Intents.openTrackLocal(context, trackFile);
                 break;
-            case TYPE_TRACK_DATA:
+            case TYPE_TRACK_REMOTE:
                 final CloudData trackData = ((ListTrackData) item).track;
-                Intents.openTrackDataActivity(context, trackData);
+                Intents.openTrackRemote(context, trackData);
                 break;
         }
     }
@@ -176,7 +176,7 @@ class TrackAdapter extends BaseAdapter {
             this.track = track;
         }
         public int getType() {
-            return TYPE_TRACK_FILE;
+            return TYPE_TRACK_LOCAL;
         }
     }
 
@@ -186,7 +186,7 @@ class TrackAdapter extends BaseAdapter {
             this.track = track;
         }
         public int getType() {
-            return TYPE_TRACK_DATA;
+            return TYPE_TRACK_REMOTE;
         }
     }
 

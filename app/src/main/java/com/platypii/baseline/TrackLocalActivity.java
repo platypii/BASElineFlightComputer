@@ -20,12 +20,13 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
-public class TrackActivity extends BaseActivity implements DialogInterface.OnClickListener {
-    private static final String TAG = "TrackActivity";
+public class TrackLocalActivity extends BaseActivity implements DialogInterface.OnClickListener {
+    private static final String TAG = "TrackLocalActivity";
 
     static final String EXTRA_TRACK_FILE = "TRACK_FILE";
 
     private Button syncButton;
+    private Button deleteButton;
     private AlertDialog alertDialog;
 
     private TrackFile trackFile;
@@ -33,9 +34,12 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_jump);
+        setContentView(R.layout.activity_track_local);
 
+        final TextView filenameLabel = findViewById(R.id.filename);
+        final TextView filesizeLabel = findViewById(R.id.filesize);
         syncButton = findViewById(R.id.syncButton);
+        deleteButton = findViewById(R.id.deleteButton);
 
         // Load jump from extras
         final Bundle extras = getIntent().getExtras();
@@ -44,6 +48,10 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
             if(extraTrackFile != null) {
                 final File trackDir = TrackFiles.getTrackDirectory(getApplicationContext());
                 trackFile = new TrackFile(new File(trackDir, extraTrackFile));
+
+                // Update views
+                filenameLabel.setText(trackFile.getName());
+                filesizeLabel.setText(trackFile.getSize());
             }
         }
 
@@ -59,20 +67,12 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
         if(trackFile != null) {
             final int uploadState = Services.cloud.uploads.getState(trackFile);
             if(uploadState == UploadManager.UPLOADED) {
-                // Track uploaded, open TrackDataActivity
+                // Track uploaded, open TrackRemoteActivity
                 final CloudData cloudData = Services.cloud.uploads.getCompleted(trackFile);
-                Intents.openTrackDataActivity(this, cloudData);
+                Intents.openTrackRemote(this, cloudData);
                 finish();
                 return;
             }
-
-            // Find views
-            final TextView filenameLabel = findViewById(R.id.filename);
-            final TextView filesizeLabel = findViewById(R.id.filesize);
-            final TextView alertLabel = findViewById(R.id.alert_message);
-
-            filenameLabel.setText(trackFile.getName());
-            filesizeLabel.setText(trackFile.getSize());
 
             // Update view based on sign-in state
             if(isSignedIn() && uploadState != UploadManager.UPLOADING) {
@@ -80,11 +80,15 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
             } else {
                 syncButton.setEnabled(false);
             }
+
+            final TextView alertLabel = findViewById(R.id.alert_message);
             if(uploadState == UploadManager.UPLOADING) {
                 alertLabel.setText(R.string.uploading);
                 alertLabel.setVisibility(View.VISIBLE);
+                deleteButton.setEnabled(false);
             } else {
                 alertLabel.setVisibility(View.GONE);
+                deleteButton.setEnabled(true);
             }
         }
     }
@@ -164,9 +168,9 @@ public class TrackActivity extends BaseActivity implements DialogInterface.OnCli
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUploadSuccess(@NonNull SyncEvent.UploadSuccess event) {
         if(event.trackFile.getName().equals(trackFile.getName())) {
-            // Track uploaded, open TrackActivity
+            // Track uploaded, open TrackRemoteActivity
             Toast.makeText(getApplicationContext(), "Track sync success", Toast.LENGTH_SHORT).show();
-            Intents.openTrackDataActivity(this, event.cloudData);
+            Intents.openTrackRemote(this, event.cloudData);
             finish();
         }
     }

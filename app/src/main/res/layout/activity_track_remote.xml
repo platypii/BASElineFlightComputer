@@ -1,23 +1,23 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.platypii.baseline.TrackActivity"
+    tools:context="com.platypii.baseline.TrackRemoteActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp"
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/filename"
+        android:id="@+id/trackDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         android:gravity="center"
+        android:textStyle="bold"
         android:textSize="20sp"
         android:textColor="#dddddd" />
 
     <TextView
-        android:id="@+id/filesize"
+        android:id="@+id/trackLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center" />
@@ -28,24 +28,24 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/exportButton"
-            android:layout_width="100dp"
+            android:id="@+id/openButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
-            android:onClick="clickExport"
-            android:drawableTop="@drawable/share"
-            android:text="@string/action_export"
+            android:onClick="clickOpen"
+            android:drawableTop="@drawable/browser"
+            android:text="@string/action_open"
             style="@style/Widget.AppCompat.Button.Borderless" />
 
         <Button
             android:id="@+id/deleteButton"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
             android:onClick="clickDelete"
-            android:drawableTop="@drawable/delete"
+            android:drawableTop="@drawable/button_delete"
             android:text="@string/action_delete"
             style="@style/Widget.AppCompat.Button.Borderless" />
 
@@ -57,33 +57,16 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/syncButton"
+            android:id="@+id/mapButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
-            android:onClick="clickSync"
-            android:drawableTop="@drawable/button_sync"
-            android:text="@string/action_sync"
+            android:onClick="clickKml"
+            android:drawableTop="@drawable/google_earth"
+            android:text="@string/action_map"
             style="@style/Widget.AppCompat.Button.Borderless" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/alert_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:drawablePadding="5dp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:visibility="gone" />
-
-    <View
-        android:layout_height="0dp"
-        android:layout_width="0dp"
-        android:layout_weight="1"/>
-
-    <include layout="@layout/sign_in_panel"/>
 
 </LinearLayout>

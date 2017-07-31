@@ -16,8 +16,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class TrackDataActivity extends BaseActivity implements DialogInterface.OnClickListener {
-    private static final String TAG = "TrackActivity";
+public class TrackRemoteActivity extends BaseActivity implements DialogInterface.OnClickListener {
+    private static final String TAG = "TrackRemoteActivity";
 
     static final String EXTRA_TRACK_ID = "TRACK_ID";
 
@@ -28,7 +28,7 @@ public class TrackDataActivity extends BaseActivity implements DialogInterface.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_track);
+        setContentView(R.layout.activity_track_remote);
 
         // Load jump from extras
         final Bundle extras = getIntent().getExtras();
