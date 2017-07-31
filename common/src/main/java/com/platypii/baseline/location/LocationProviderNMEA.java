@@ -32,7 +32,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     private float hdop = Float.NaN;
     private float vdop = Float.NaN;
     private long dateTime; // The number of milliseconds until the start of this day, midnight GMT
-    private int gpsFix;
 
     // Satellite data
     private int satellitesInView = -1;
@@ -124,14 +123,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         return nmea.trim();
     }
 
-    private void handleNmea(long timestamp, String nmea) {
-        // Validate NMEA sentence and print errors, but still try to parse
-        try {
-            NMEA.validate(nmea);
-        } catch(NMEAException e) {
-            Log.e(TAG, "Invalid NMEA sentence", e);
-            Exceptions.report(e);
-        }
+    private void handleNmea(long timestamp, String nmea) throws NMEAException {
+        // Validate NMEA sentence and throw errors
+        NMEA.validate(nmea);
 
         // Strip checksum
         final int starIndex = nmea.lastIndexOf('*');
@@ -157,10 +151,14 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 satellitesInView = Numbers.parseInt(split[3], -1);
                 break;
             case "GGA":
+                if(split.length < 11) {
+                    throw new NMEAException("Invalid GGA command");
+                }
+
                 // Fix data
-                latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
-                longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
-                gpsFix = Numbers.parseInt(split[6], -1); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
+                // latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
+                // longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
+                // gpsFix = Numbers.parseInt(split[6], -1); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
                 satellitesUsed = Numbers.parseInt(split[7], -1);
                 hdop = Numbers.parseFloat(split[8]);
                 if (!split[9].isEmpty()) {
@@ -191,6 +189,10 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // This is the NMEA command that we use as the "keyframe" of the NMEA stream.
                 // When we receive a valid RMC command, we issue an updateLocation() to listeners.
 
+                if(split.length < 10) {
+                    throw new NMEAException("Invalid RMC command");
+                }
+
                 // boolean status = split[2].equals("A"); // A = active, V = void
                 latitude = NMEA.parseDegreesMinutes(split[3], split[4]);
                 longitude = NMEA.parseDegreesMinutes(split[5], split[6]);
@@ -202,11 +204,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 dateTime = NMEA.parseDate(split[9]);
                 lastFixMillis = dateTime + NMEA.parseTime(split[1]);
                 // Log.w("Time", "["+timestamp+"] lastFixMillis = " + lastFixMillis + ", currentTime = " + System.currentTimeMillis());
-                if(gpsFix == 0) {
-                    // Log.v(NMEA_TAG, "Invalid fix, nmea: " + nmea);
-                } else if(lastFixMillis <= 0) {
-                    Log.w(NMEA_TAG, "Invalid timestamp " + lastFixMillis + ", nmea: " + nmea);
-                }
 
                 // Computed parameters
                 vN = groundSpeedRMC * Math.cos(Math.toRadians(bearingRMC));
@@ -215,6 +212,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // Log.i(NMEA_TAG, "["+time+"] " + Convert.latlong(latitude, longitude) + ", groundSpeed = " + Convert.speed(groundSpeed) + ", bearing = " + Convert.bearing2(bearing));
 
                 // Sanity checks
+                if(lastFixMillis <= 0) {
+                    Log.w(NMEA_TAG, "Invalid timestamp " + lastFixMillis + ", nmea: " + nmea);
+                }
                 final int locationError = LocationCheck.validate(latitude, longitude);
                 if(locationError != LocationCheck.INVALID_NAN) {
                     if (locationError == LocationCheck.INVALID_ZERO) {
@@ -239,8 +239,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "GNS":
                 // Fixes data for single or combined (GPS, GLONASS, etc) satellite navigation systems
                 lastFixMillis = dateTime + NMEA.parseTime(split[1]);
-                latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
-                longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
+                // latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
+                // longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
                 if (!split[7].isEmpty()) {
                     satellitesUsed = Integer.parseInt(split[7]);
                 }
