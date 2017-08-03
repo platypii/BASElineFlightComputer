@@ -3,9 +3,9 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 /**
  * Meta location provider that uses bluetooth, nmea, or android location source
@@ -14,9 +14,6 @@ public class LocationService extends LocationProvider {
     private static final String TAG = "LocationService";
 
     private final BluetoothService bluetooth;
-
-    // hAcc comes from android location provider
-    private float hAcc = Float.NaN;
 
     // LocationService owns the alti, because it solved the circular dependency problem
     public final MyAltimeter alti = new MyAltimeter(this);
@@ -36,9 +33,6 @@ public class LocationService extends LocationProvider {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
             if(!bluetooth.preferenceEnabled) {
-                if (Float.isNaN(loc.hAcc)) {
-                    loc.hAcc = hAcc;
-                }
                 updateLocation(loc);
             }
         }
@@ -46,14 +40,21 @@ public class LocationService extends LocationProvider {
         public void onLocationChangedPostExecute() {}
     };
     private final MyLocationListener androidListener = new MyLocationListener() {
+        private int overrideCount = 0;
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
             // Only use android location if we aren't getting NMEA
-            if(!locationProviderNMEA.nmeaReceived) {
-                Log.v(TAG, "No NMEA data, falling back to LocationManager: " + loc);
+            // TODO: Remove the android location listener if every phone provides NMEA
+            if(!bluetooth.preferenceEnabled && !locationProviderNMEA.nmeaReceived) {
+                // Log on powers of 2
+                if(isPower2(overrideCount++)) {
+                    Exceptions.report(new IllegalStateException("No NMEA data, falling back to android LocationManager: " + loc));
+                }
                 updateLocation(loc);
             }
-            hAcc = loc.hAcc;
+        }
+        private boolean isPower2(int n) {
+            return (n & (n - 1)) == 0;
         }
         @Override
         public void onLocationChangedPostExecute() {}

@@ -17,7 +17,7 @@ import android.util.AttributeSet;
 
 public class PolarPlot extends PlotView implements MyLocationListener {
 
-    private static final long window = 30000; // The size of the view window, in milliseconds
+    private static final long window = 20000; // The size of the view window, in milliseconds
     private final SyncedList<MLocation> history = new SyncedList<>();
 
     private LocationProvider locationService = null;

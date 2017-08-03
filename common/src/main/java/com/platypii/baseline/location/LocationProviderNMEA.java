@@ -266,6 +266,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "AMCLK":
                 // Samsung SM-G390F
                 // $PSAMCLK,1955,40841247,0,9690613,-2232227,408412467
+            case "AMID":
+                // $PSAMID,SLL_2.0.0_B14_ls18.J,
             case "ATT":
                 // $GPATT,45.781233,10.862333,1796.3,45.0,2.6,2.6,*72
                 // $GPATT,lat,lon,alt,bear?,???,???

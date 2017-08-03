@@ -44,18 +44,22 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     @Override
     public synchronized void start(@NonNull Context context) throws SecurityException {
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        try {
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        } catch(Exception e) {
-            Exceptions.report(e);
+        if(manager.getProvider(LocationManager.GPS_PROVIDER) != null) {
+            try {
+                // TODO: Specify looper thread?
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                manager.addGpsStatusListener(this);
+            } catch (Exception e) {
+                Exceptions.report(e);
+            }
         }
-        manager.addGpsStatusListener(this);
     }
 
     /** Android location listener */
     @Override
     public void onLocationChanged(Location loc) {
-        // Log.v(TAG, "onLocationChanged(" + loc + ")");
+        // TODO: minsdk26: loc.getVerticalAccuracyMeters();
+        // TODO: minsdk26: loc.getSpeedAccuracyMetersPerSecond()
         if (Numbers.isReal(loc.getLatitude()) && Numbers.isReal(loc.getLongitude())) {
             final float hAcc;
             if (loc.hasAccuracy())
