@@ -310,6 +310,11 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // XGPS-160
                 // $PMTK010,002
                 // $PMTK011,MTKGPS
+            case "TKGALM":
+            case "TKGEPH":
+                // Infinix HOT 4
+                // $PMTKGALM,31,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+                // $PMTKGEPH,13,0,1,1,0,1,1,1,0,1,0,0,0,1,0,2,0,1,0,1,0,0,0,1,0,0,0,0,1,0,1,0,0
             case "TKTSX1":
                 // ZVI
                 // $PMTKTSX1,181512,0.000,0.293,44.717,4af30000,-3.324382,0.000099,-0.000850,-0.207713,0.386944*40

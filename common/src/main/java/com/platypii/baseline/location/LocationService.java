@@ -47,8 +47,9 @@ public class LocationService extends LocationProvider {
             // TODO: Remove the android location listener if every phone provides NMEA
             if(!bluetooth.preferenceEnabled && !locationProviderNMEA.nmeaReceived) {
                 // Log on powers of 2
-                if(isPower2(overrideCount++)) {
-                    Exceptions.report(new IllegalStateException("No NMEA data, falling back to android LocationManager: " + loc));
+                overrideCount++;
+                if(overrideCount > 1 && isPower2(overrideCount)) {
+                    Exceptions.report(new IllegalStateException("No NMEA data, falling back to android loc #"+overrideCount+": " + loc));
                 }
                 updateLocation(loc);
             }
