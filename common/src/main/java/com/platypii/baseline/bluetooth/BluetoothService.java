@@ -170,12 +170,17 @@ public class BluetoothService implements Service {
                     // Thread is dead, clean up
                     bluetoothRunnable = null;
                     bluetoothThread = null;
+                    if(bluetoothState != BluetoothService.BT_STOPPED) {
+                        Log.e(TAG, "Unexpected bluetooth state: state should be STOPPED when thread has stopped");
+                    }
                 } catch (InterruptedException e) {
                     Log.e(TAG, "Bluetooth thread interrupted while waiting for it to die", e);
                 }
                 Log.i(TAG, "Bluetooth service stopped");
             } else {
                 Log.e(TAG, "Cannot stop bluetooth: runnable is null: " + BT_STATES[bluetoothState]);
+                // Set state to stopped since it prevents getting stuck in state STOPPING
+                setState(BluetoothService.BT_STOPPED);
             }
         }
     }

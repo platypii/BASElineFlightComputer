@@ -119,7 +119,7 @@ class BluetoothRunnable implements Runnable {
                 Log.e(TAG, "Error reading from bluetooth socket", e);
             }
         } finally {
-            Log.v(TAG, "Bluetooth thread shutting down");
+            Log.d(TAG, "Bluetooth thread shutting down");
         }
     }
 

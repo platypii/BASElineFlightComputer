@@ -17,7 +17,7 @@ import android.util.AttributeSet;
 
 public class PolarPlot extends PlotView implements MyLocationListener {
 
-    private static final long window = 20000; // The size of the view window, in milliseconds
+    private static final long window = 15000; // The size of the view window, in milliseconds
     private final SyncedList<MLocation> history = new SyncedList<>();
 
     private LocationProvider locationService = null;
@@ -109,10 +109,10 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 
                     // Style point based on freshness
                     final int purple = 0x5500ff;
-                    int darkness = 0xbb * (20000 - t) / (20000 - 1000); // Fade color to dark
+                    int darkness = 0xbb * (15000 - t) / (15000 - 1000); // Fade color to dark
                     darkness = Math.max(0x88, Math.min(darkness, 0xbb));
                     final int rgb = darken(purple, darkness);
-                    int alpha = 0xff * (30000 - t) / (30000 - 10000); // 0..1
+                    int alpha = 0xff * (15000 - t) / (15000 - 10000); // fade out at t=10..15
                     alpha = Math.max(0, Math.min(alpha, 0xff));
                     final int color = (alpha << 24) + rgb; // 0xff5500ff
 
@@ -175,12 +175,12 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         final float cy = getY(0);
 
         // Draw horizontal and vertical speed labels (unless near axis)
-        text.setColor(0xff999999);
+        text.setColor(0xff888888);
         if(sy - cy < -44 * density || 18 * density < sy - cy) {
             // Horizontal speed label
             canvas.drawText(Convert.speed(vx, 0, true), sx + 3 * density, cy + 16 * density, text);
         }
-        if(12 * density < sx - cx) {
+        if(42 * density < sx - cx) {
             // Vertical speed label
             canvas.drawText(Convert.speed(Math.abs(vy), 0, true), cx + 3 * density, sy + 16 * density, text);
         }

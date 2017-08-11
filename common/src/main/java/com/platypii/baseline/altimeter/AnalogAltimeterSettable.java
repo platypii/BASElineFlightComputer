@@ -97,7 +97,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
      */
     private void adjustOffset(double delta) {
         final double absAltitude = Math.abs(trueAltitude + altitudeOffset);
-        altitudeOffset += delta * 0.6 * (Math.tanh(absAltitude * 0.002) + 0.1);
+        altitudeOffset += delta * 0.6 * (Math.tanh(absAltitude * 0.002) + 0.05);
         update();
     }
 
