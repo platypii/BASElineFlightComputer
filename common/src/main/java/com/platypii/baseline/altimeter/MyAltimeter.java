@@ -151,6 +151,10 @@ public class MyAltimeter implements BaseService, MyLocationListener {
                 gpsFilter.update(loc.altitude_gps, 0);
             } else {
                 final long deltaTime = loc.millis - lastLoc.millis; // time since last gps altitude
+                if (deltaTime > 10000) {
+                    // TODO: Reset kalman params to fix erratic climb rate
+                    Log.w(TAG, "Stale GPS altitude " + loc.altitude_gps + " " + deltaTime);
+                }
                 gpsFilter.update(loc.altitude_gps, deltaTime * 0.001);
             }
             lastLoc = loc;
