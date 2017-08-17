@@ -138,18 +138,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
         // Parse command
         switch (command) {
-            case "GSA":
-                // Overall satellite data (DOP and active satellites)
-                // boolean autoDim = split[1].equals("A"); // A = Auto 2D/3D, M = Forced 2D/3D
-                // gpsFix = split[2].isEmpty() ? 0 : Integer.parseInt(split[2]); // 0 = null, 1 = No fix, 2 = 2D, 3 = 3D
-                pdop = Numbers.parseFloat(split[15]);
-                hdop = Numbers.parseFloat(split[16]);
-                vdop = Numbers.parseFloat(split[17]);
-                break;
-            case "GSV":
-                // Detailed satellite data (satellites in view)
-                satellitesInView = Numbers.parseInt(split[3], -1);
-                break;
             case "GGA":
                 if(split.length < 11) {
                     throw new NMEAException("Invalid GGA command");
@@ -170,8 +158,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 }
                 // double geoidSeparation = parseDouble(split[11]]); // Geoid separation according to WGS-84 ellipsoid
                 // assert split[12].equals("M")// Separation Units
-                // double dgpsAge = parseDouble(split[13]);
-                // int dgpsStationId = parseDouble(split[14]);
+                // double dgpsAge = parseDouble(split[13]); // Age of Differential GPS Data (secs)
+                // int dgpsStationId = parseDouble(split[14]); // Differential Reference Station ID
                 // TODO: hAcc, vAcc, sAcc
                 // Time. At this point we have (at least) 3 choices of clock.
                 // 1) timestamp parameter, is measured in milliseconds
@@ -198,7 +186,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 longitude = NMEA.parseDegreesMinutes(split[5], split[6]);
                 final double groundSpeedRMC = Convert.kts2mps(Numbers.parseDouble(split[7])); // Speed over ground
                 final double bearingRMC = Numbers.parseDouble(split[8]); // Course over ground
-                // split[10], split[11]: 003.1,W magnetic Variation
+                // split[10], split[11]: 003.1,W magnetic variation
                 // split[9]: Date: 230394 = 23 March 1994
                 // split[1]: Time: 123456 = 12:34:56 UTC
                 dateTime = NMEA.parseDate(split[9]);
@@ -241,6 +229,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 lastFixMillis = dateTime + NMEA.parseTime(split[1]);
                 // latitude = NMEA.parseDegreesMinutes(split[2], split[3]);
                 // longitude = NMEA.parseDegreesMinutes(split[4], split[5]);
+                // modeIndicator = split[6]
                 if (!split[7].isEmpty()) {
                     satellitesUsed = Integer.parseInt(split[7]);
                 }
@@ -250,16 +239,32 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                     // double geoidSeparation = parseDouble(split[10]]);
                 }
                 break;
+            case "GSA":
+                // Overall satellite data (DOP and active satellites)
+                // boolean autoDim = split[1].equals("A"); // A = Auto 2D/3D, M = Forced 2D/3D
+                // gpsFix = split[2].isEmpty() ? 0 : Integer.parseInt(split[2]); // 0 = null, 1 = No fix, 2 = 2D, 3 = 3D
+                pdop = Numbers.parseFloat(split[15]);
+                hdop = Numbers.parseFloat(split[16]);
+                vdop = Numbers.parseFloat(split[17]);
+                break;
+            case "GSV":
+                // Detailed satellite data (satellites in view)
+                satellitesInView = Numbers.parseInt(split[3], -1);
+                break;
+            case "PWR":
+                // Dual proprietary sentence for power
+                // $GPPWR,04C3,0,0,0,0,00,0,0,97, 1 9 ,S00 // not charging ~70%
+                // $GPPWR,0501,1,0,1,1,00,0,0,97, 1 9 ,S00 // charging
+                // voltage = split[1] // voltage not valid while charging (hex)
+                // charging = split[5]
             case "VTG":
                 // final double bearingVTG = Numbers.parseDouble(split[1]); // Course over ground
                 // final double groundSpeedVTG = Convert.kts2mps(Numbers.parseDouble(split[5])); // Speed over ground
-                break;
             case "GLL":
                 // latitude = parseDegreesMinutes(split[1], split[2]);
                 // longitude = parseDegreesMinutes(split[3], split[4]);
                 // long time = parseUTC(split[5]); // 123456 = 12:34:56 UTC
                 // boolean status = split[6].equals("A"); // A = active, V = void
-                break;
             case "ACC":
             case "ACCURACY":
                 // $GNACCURACY,0.8*1E
@@ -274,6 +279,10 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "DSTAT":
                 // Samsung SM-G955U
                 // $AIDSTAT,3,3,3,2,-597,7
+            case "EVT":
+                // LG-E460
+                // $GPEVT,19052017,234044.807,19,,,,
+                // split[1]: Date: 19052017 = 19 May 2017
             case "GDS":
                 // Fly FS451
                 // $PCGDS,EPH sow 407586: 1 3 6 9 11 12 14 17 19 22 23 25 31 32--AS:,1995387692*6A
@@ -283,19 +292,16 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "GLG":
                 // $GPGLG,VER2,GNSS,130616,171913.0,85,4737.550964,N,12219.566617,W,96.0,38.5,2.0,0.0,13.0,TP,Seoul,,,15,3,,*5C
                 // $GPGLG,version,provider,???,???,???,lat,lat,lon,lon,...
-            case "EVT":
-                // LG-E460
-                // $GPEVT,19052017,234044.807,19,,,,
-                // split[1]: Date: 19052017 = 19 May 2017
             case "GST":
+                // split[2]: RMS value of the standard deviation of the range inputs to the navigation process. Range inputs include preudoranges & DGNSS corrections.
+                // split[3]: Stdev of semi-major axis of error ellipse (meters)
+                // split[4]: Stdev of semi-minor axis of error ellipse (meters)
+                // split[5]: Orientation of semi-major axis of error ellipse (degrees from true north)
+                // split[6]: Stdev of latitude error (meters)
+                // split[7]: Stdev of longitude error (meters)
+                // split[8]: Stdev of altitude error (meters)
             case "JNR":
             case "NVD":
-            case "ZCD":
-                // Rockchip 3GR
-                // $GNGST,183132.000,6.1,15,11,76,11,15,32
-                // $PGJNR,3,3,09,09,64,11,21
-                // $PGNVD,2,1137580,1138164,419442.000,0.612,0.11,-0.01,5,31.0,0,0.0,0,4.6,130,68,15
-                // $GNZCD,682.617,+
             case "LOR":
                 // Samsung Galaxy S6, S7
                 // $PGLOR,0,HLA,123444.00,L,,Al,,A,,H,,,M,1,Ac,0,Gr,0,S,,,Sx,,,T,0,Tr,,Mn,0*33
@@ -305,6 +311,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // $PGLOR,3,PWR,mA,36.4,RFTm,1000,OscTm,1000,MeasTm,1000,UTC,123444.00*32
                 // $PGLOR,6,STA,122301.03,0.000,0.000,-270,236,9999,0,P,F,L,1,C,0,S,0000,0,2,R,0000,TPeF,19,2122,LC,,*13
                 // $PGLOR,SPL,20160704142257.8,STATUS,2*38
+            case "RMT":
+                // Samsung SM-G935F
+                // $PGRMT,GLO Software Version 3.00,,,,,,,,
             case "TK010":
             case "TK011":
                 // XGPS-160
@@ -321,10 +330,15 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "TIS":
                 // Samsung Note7
                 // $PSTIS,*61
+            case "ZCD":
+                // Rockchip 3GR
+                // $GNGST,183132.000,6.1,15,11,76,11,15,32
+                // $PGJNR,3,3,09,09,64,11,21
+                // $PGNVD,2,1137580,1138164,419442.000,0.612,0.11,-0.01,5,31.0,0,0.0,0,4.6,130,68,15
+                // $GNZCD,682.617,+
             case "ZDA":
                 // $GPZDA,115729.61,18,06,2016,,*62
-            case "PWR":
-                // I don't know what PWR does, but we get a lot of them via bluetooth
+                // timestamp, day, month, year, local zone, local zone minutes
                 break;
             default:
                 Log.w(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
