@@ -12,23 +12,17 @@
         android:title="@string/pref_auto_stop"
         android:defaultValue="true"/>
 
-    <SwitchPreference
-        android:key="bluetooth_enabled"
-        android:summary="@string/pref_bluetooth_description"
-        android:title="@string/pref_bluetooth"
-        android:defaultValue="false"/>
-
-    <com.platypii.baseline.bluetooth.BluetoothDevicePreference
-        android:key="bluetooth_device_id"
-        android:widgetLayout="@layout/icon_bluetooth"
-        android:summary="@string/pref_bluetooth_device_description"
-        android:title="@string/pref_bluetooth_device"/>
-
     <Preference
         android:key="audible_settings"
         android:widgetLayout="@layout/icon_audio"
         android:title="@string/pref_audible_settings"
         android:summary="@string/pref_audible_settings_description"/>
+
+    <Preference
+        android:key="bluetooth_settings"
+        android:widgetLayout="@layout/icon_bluetooth"
+        android:summary="@string/pref_bluetooth_description"
+        android:title="@string/pref_bluetooth"/>
 
     <Preference
         android:key="sensor_info"

@@ -1,12 +1,10 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.bluetooth.BluetoothDevicePreference;
+import com.platypii.baseline.bluetooth.BluetoothActivity;
 import com.platypii.baseline.events.AuthEvent;
-import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.util.Convert;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -27,8 +25,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     private FirebaseAnalytics firebaseAnalytics;
 
     private SwitchPreference metricPreference;
-    private SwitchPreference bluetoothPreference;
-    private BluetoothDevicePreference bluetoothDevicePreference;
+    private Preference bluetoothPreference;
     private Preference signInPreference;
 
     @Override
@@ -42,16 +39,13 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         metricPreference = (SwitchPreference) findPreference("metric_enabled");
         metricPreference.setOnPreferenceChangeListener(this);
 
-        bluetoothPreference = (SwitchPreference) findPreference("bluetooth_enabled");
-        bluetoothPreference.setOnPreferenceChangeListener(this);
-        bluetoothDevicePreference = (BluetoothDevicePreference) findPreference("bluetooth_device_id");
-        bluetoothDevicePreference.setOnPreferenceChangeListener(this);
-
         findPreference("audible_settings").setOnPreferenceClickListener(this);
+        bluetoothPreference = findPreference("bluetooth_settings");
+        bluetoothPreference.setOnPreferenceClickListener(this);
         findPreference("sensor_info").setOnPreferenceClickListener(this);
-        findPreference("help_page").setOnPreferenceClickListener(this);
         signInPreference = findPreference("sign_in");
         signInPreference.setOnPreferenceClickListener(this);
+        findPreference("help_page").setOnPreferenceClickListener(this);
     }
 
     @Override
@@ -65,27 +59,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 Log.i(TAG, "Setting auto-stop mode: " + value);
                 AutoStop.preferenceEnabled = (Boolean) value;
                 break;
-            case "bluetooth_enabled":
-                Services.bluetooth.preferenceEnabled = (Boolean) value;
-                if(Services.bluetooth.preferenceEnabled) {
-                    firebaseAnalytics.logEvent("bluetooth_enabled", null);
-                    Services.bluetooth.start(getActivity());
-                } else {
-                    firebaseAnalytics.logEvent("bluetooth_disabled", null);
-                    Services.bluetooth.stop();
-                }
-                break;
-            case "bluetooth_device_id":
-                Services.bluetooth.preferenceDeviceId = (String) value;
-                Services.bluetooth.preferenceDeviceName = bluetoothDevicePreference.getName(Services.bluetooth.preferenceDeviceId);
-                Log.i(TAG, "Bluetooth device selected: " + Services.bluetooth.preferenceDeviceId);
-                Services.bluetooth.restart(getActivity());
-                // Save name preference
-                final SharedPreferences prefs2 = preference.getSharedPreferences();
-                final SharedPreferences.Editor edit2 = prefs2.edit();
-                edit2.putString("bluetooth_device_name", Services.bluetooth.preferenceDeviceName);
-                edit2.apply();
-                break;
         }
         updateViews();
         return true;
@@ -97,21 +70,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             metricPreference.setSummary("Current units: metric");
         } else {
             metricPreference.setSummary("Current units: imperial");
-        }
-        // Update bluetooth views
-        if(Services.bluetooth.preferenceEnabled) {
-            bluetoothPreference.setSummary(Services.bluetooth.getStatusMessage());
-            bluetoothDevicePreference.setEnabled(true);
-        } else {
-            bluetoothPreference.setSummary(R.string.pref_bluetooth_disabled);
-            bluetoothDevicePreference.setEnabled(false);
-        }
-        if(Services.bluetooth.preferenceDeviceName != null) {
-            bluetoothDevicePreference.setSummary(Services.bluetooth.preferenceDeviceName);
-        } else if(Services.bluetooth.preferenceDeviceId != null) {
-            bluetoothDevicePreference.setSummary(Services.bluetooth.preferenceDeviceId);
-        } else {
-            bluetoothDevicePreference.setSummary(R.string.pref_bluetooth_device_description);
         }
         // Update sign in views
         final SettingsActivity activity = (SettingsActivity) getActivity();
@@ -125,6 +83,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             signInPreference.setTitle(R.string.pref_sign_in);
             signInPreference.setSummary(R.string.pref_sign_in_description);
         }
+        // Update bluetooth status
+        bluetoothPreference.setSummary(Services.bluetooth.getStatusMessage(activity));
     }
 
     @Override
@@ -133,6 +93,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             // Open audible settings activity
             firebaseAnalytics.logEvent("click_audible_settings", null);
             startActivity(new Intent(getActivity(), AudibleSettingsActivity.class));
+        } else if(preference.getKey().equals("bluetooth_settings")) {
+            // Open bluetooth settings activity
+            firebaseAnalytics.logEvent("click_bluetooth_settings", null);
+            startActivity(new Intent(getActivity(), BluetoothActivity.class));
         } else if(preference.getKey().equals("sensor_info")) {
             // Open sensor activity
             firebaseAnalytics.logEvent("click_sensors", null);
@@ -156,7 +120,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     @Override
     public void onResume() {
         super.onResume();
-        // Listen for bluetooth and auth updates
+        // Listen for auth updates
         EventBus.getDefault().register(this);
         updateViews();
     }
@@ -164,10 +128,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
-    }
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onBluetoothEvent(BluetoothEvent event) {
-        updateViews();
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAuthEvent(AuthEvent event) {

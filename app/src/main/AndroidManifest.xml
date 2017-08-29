@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
@@ -68,11 +69,14 @@
             android:name=".TrackRemoteActivity"
             android:label="@string/app_name"/>
         <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"/>
+        <activity
             android:name=".AudibleSettingsActivity"
             android:label="@string/title_activity_audible_settings"/>
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"/>
+            android:name=".bluetooth.BluetoothActivity"
+            android:label="@string/title_activity_bluetooth"/>
         <activity
             android:name=".SensorActivity"
             android:label="@string/app_name"/>
