@@ -122,7 +122,7 @@ public class Services {
         }
     }
 
-    private static void loadPreferences(Context context) {
+    private static void loadPreferences(@NonNull Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         // Metric

@@ -34,6 +34,9 @@
         <activity
             android:name=".views.BluetoothActivity"
             android:label="@string/action_bluetooth"/>
+        <activity
+            android:name=".BluetoothPairActivity"
+            android:label="@string/action_bluetooth"/>
 
     </application>
 

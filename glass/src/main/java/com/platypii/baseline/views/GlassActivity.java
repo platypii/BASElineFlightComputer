@@ -5,14 +5,16 @@ import com.platypii.baseline.R;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import com.google.android.glass.app.Card;
+import com.google.android.glass.widget.CardBuilder;
 import com.google.android.glass.widget.CardScrollView;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GlassActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+    private static final String TAG = "Glass";
 
     private CardScrollView cardScroller;
 
@@ -26,13 +28,15 @@ public class GlassActivity extends BaseActivity implements AdapterView.OnItemCli
         setContentView(cardScroller);
     }
 
-    private List<Card> createCards(Context context) {
-        ArrayList<Card> cards = new ArrayList<Card>();
+    private List<CardBuilder> createCards(Context context) {
+        ArrayList<CardBuilder> cards = new ArrayList<CardBuilder>();
 
         // Add cards that demonstrate TEXT layouts.
-        cards.add(new Card(context)
+        cards.add(new CardBuilder(context, CardBuilder.Layout.COLUMNS)
+                .setIcon(R.drawable.polar)
                 .setText(R.string.action_polar));
-        cards.add(new Card(context)
+        cards.add(new CardBuilder(context, CardBuilder.Layout.COLUMNS)
+                .setIcon(R.drawable.bluetooth)
                 .setText(R.string.action_bluetooth));
 
         return cards;
@@ -40,11 +44,12 @@ public class GlassActivity extends BaseActivity implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        final Card card = (Card) cardScroller.getItemAtPosition(position);
-        if(card.getText().equals("Polar")) {
+        if(position == 0) {
             startActivity(new Intent(this, PolarActivity.class));
-        } else if(card.getText().equals("Bluetooth")) {
+        } else if(position == 1) {
             startActivity(new Intent(this, BluetoothActivity.class));
+        } else {
+            Log.e(TAG, "Invalid click postition = " + position);
         }
     }
 
