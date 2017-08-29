@@ -61,7 +61,7 @@ public class Services {
             // Start the various services
 
             Log.i(TAG, "Starting bluetooth service");
-            if(bluetooth.preferenceEnabled) {
+            if(bluetooth.preferences.preferenceEnabled) {
                 bluetooth.start(activity);
             }
 
@@ -132,10 +132,7 @@ public class Services {
         Convert.metric = prefs.getBoolean("metric_enabled", false);
 
         // Bluetooth
-        bluetooth.preferenceEnabled = true;
-//        bluetooth.preferenceEnabled = prefs.getBoolean("bluetooth_enabled", true);
-        bluetooth.preferenceDeviceId = prefs.getString("bluetooth_device_id", null);
-        bluetooth.preferenceDeviceName = prefs.getString("bluetooth_device_name", null);
+        bluetooth.preferences.load(context);
     }
 
 }

@@ -1,15 +1,12 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.bluetooth.BluetoothCardAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.SharedPreferences;
+import com.platypii.baseline.bluetooth.BluetoothPairCardAdapter;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import com.google.android.glass.widget.CardScrollView;
 
-public class BluetoothActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class BluetoothPairActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     private CardScrollView cardScroller;
 
@@ -17,17 +14,14 @@ public class BluetoothActivity extends BaseActivity implements AdapterView.OnIte
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         cardScroller = new CardScrollView(this);
-        cardScroller.setAdapter(new BluetoothCardAdapter(this));
+        cardScroller.setAdapter(new BluetoothPairCardAdapter(this));
         setContentView(cardScroller);
         cardScroller.setOnItemClickListener(this);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // Save bluetooth device
-        final BluetoothDevice device = (BluetoothDevice) cardScroller.getItemAtPosition(position);
-        Services.bluetooth.preferences.save(this, true, device.getAddress(), device.getName());
-        Services.bluetooth.restart(this);
+        // TODO: Go to bluetooth activity
         finish();
     }
 

@@ -11,14 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Adapter class that handles list of cards.
+ * Adapter class that handles list of bluetooth devices available to pair.
  */
-public class BluetoothCardAdapter extends CardScrollAdapter {
+public class BluetoothPairCardAdapter extends CardScrollAdapter {
 
     private final Context context;
     private final List<BluetoothDevice> devices;
 
-    public BluetoothCardAdapter(Context context) {
+    public BluetoothPairCardAdapter(Context context) {
         this.context = context;
         this.devices = new ArrayList<BluetoothDevice>(Services.bluetooth.getDevices());
     }
