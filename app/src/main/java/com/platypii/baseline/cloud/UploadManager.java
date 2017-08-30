@@ -28,8 +28,8 @@ public class UploadManager {
     private static final int NOT_UPLOADED = 0;
     public static final int UPLOADING = 1;
     public static final int UPLOADED = 2;
-    private Map<TrackFile,Integer> trackFileState = new HashMap<>();
-    private Map<TrackFile,CloudData> completedUploads = new HashMap<>();
+    private final Map<TrackFile,Integer> trackFileState = new HashMap<>();
+    private final Map<TrackFile,CloudData> completedUploads = new HashMap<>();
 
     private Context context;
 

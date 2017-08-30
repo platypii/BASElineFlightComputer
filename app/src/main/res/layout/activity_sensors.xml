@@ -16,7 +16,7 @@
             android:text="Altimeter" />
 
         <TextView
-            android:id="@+id/sourceLabel"
+            android:id="@+id/altiSourceLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Data source: " />
@@ -69,6 +69,19 @@
             android:layout_marginTop="10dp"
             style="@style/header"
             android:text="GPS" />
+
+        <TextView
+            android:id="@+id/gpsSourceLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Data source: " />
+
+        <TextView
+            android:id="@+id/bluetoothStatusLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="Bluetooth: " />
 
         <TextView
             android:id="@+id/satelliteLabel"

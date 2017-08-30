@@ -123,4 +123,52 @@ class NMEA {
         }
     }
 
+    /**
+     * Convert Dual XGPS voltage into battery level %.
+     * Inspired by code from XGPS160API.m
+     * TODO: Voltage not valid while charging
+     *
+     * Dual proprietary sentence for battery level:
+     * $GPPWR,04C3,0,0,0,0,00,0,0,97, 1 9 ,S00 // not charging 04C3 = 1219 = ~70%
+     * $GPPWR,0501,1,0,1,1,00,0,0,97, 1 9 ,S00 // charging
+     */
+    static float parsePowerLevel(String split[]) {
+        if(!"$GPPWR".equals(split[0])) {
+            Exceptions.report(new IllegalStateException("Parse power level should only be called on GPPWR"));
+        }
+        try {
+            // Parse voltage from split[1] as hexadecimal
+            final int voltage = Integer.parseInt(split[1], 16);
+            // Voltage ranges from 1100 to 1280
+            final float batteryLevel = (voltage - 1091) / (1280f - 1091f);
+            // Restrict range from 0 to 100%
+            return Math.max(0f, Math.min(batteryLevel, 1f));
+        } catch(Exception e) {
+            Exceptions.report(e);
+            return Float.NaN;
+        }
+    }
+
+    /** Remove junk before and after nmea sentence */
+    static String cleanNmea(String nmea) {
+        // Remove anything before $
+        final int sentenceStart = nmea.indexOf('$');
+        if(sentenceStart > 0) {
+            nmea = nmea.substring(sentenceStart);
+        }
+        // Trim whitespace and \0
+        return nmea.trim();
+    }
+
+    /** Split nmea sentence into columns, no checksum */
+    static String[] splitNmea(String nmea) {
+        // Strip checksum
+        final int starIndex = nmea.lastIndexOf('*');
+        if(0 < starIndex && starIndex < nmea.length()) {
+            nmea = nmea.substring(0, starIndex);
+        }
+        // Split on comma, -1 preserves trailing columns
+        return nmea.split(",", -1);
+    }
+
 }

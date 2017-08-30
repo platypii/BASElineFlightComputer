@@ -13,6 +13,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,7 +26,7 @@ import java.util.Locale;
 public class SensorActivity extends Activity implements MyLocationListener {
 
     // Altimeter
-    private TextView sourceLabel;
+    private TextView altiSourceLabel;
     private TextView altitudeLabel;
     private TextView altitudeAglLabel;
     // Barometer
@@ -34,6 +35,8 @@ public class SensorActivity extends Activity implements MyLocationListener {
     private TextView pressureAltitudeFilteredLabel;
     private TextView fallrateLabel;
     // GPS
+    private TextView gpsSourceLabel;
+    private TextView bluetoothStatusLabel;
     private TextView satelliteLabel;
     private TextView lastFixLabel;
     private TextView latitudeLabel;
@@ -69,7 +72,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
 
         // Find UI elements:
         // Altimeter
-        sourceLabel = findViewById(R.id.sourceLabel);
+        altiSourceLabel = findViewById(R.id.altiSourceLabel);
         altitudeLabel = findViewById(R.id.altitudeLabel);
         altitudeAglLabel = findViewById(R.id.altitudeAglLabel);
 
@@ -80,6 +83,8 @@ public class SensorActivity extends Activity implements MyLocationListener {
         fallrateLabel = findViewById(R.id.fallrateLabel);
 
         // GPS
+        gpsSourceLabel = findViewById(R.id.gpsSourceLabel);
+        bluetoothStatusLabel = findViewById(R.id.bluetoothStatusLabel);
         satelliteLabel = findViewById(R.id.satelliteLabel);
         lastFixLabel = findViewById(R.id.lastFixLabel);
         latitudeLabel = findViewById(R.id.latitudeLabel);
@@ -173,7 +178,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
     }
 
     private void updateAltimeter() {
-        sourceLabel.setText("Data source: " + altimeterSource());
+        altiSourceLabel.setText("Data source: " + altimeterSource());
         altitudeLabel.setText("Altitude MSL: " + Convert.distance(Services.alti.altitude, 2, true));
         altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(Services.alti.altitudeAGL(), 2, true) + " AGL");
 
@@ -226,6 +231,26 @@ public class SensorActivity extends Activity implements MyLocationListener {
 
     /** Updates the UI that refresh continuously, such as sample rates */
     private void update() {
+        // Bluetooth battery level needs to be continuously updated
+        if(Services.bluetooth.preferenceEnabled) {
+            gpsSourceLabel.setText("Data source: Bluetooth GPS");
+            if(Services.bluetooth.preferenceDeviceName == null) {
+                bluetoothStatusLabel.setText("Bluetooth: (not selected)");
+            } else {
+                String status = "Bluetooth: " + Services.bluetooth.preferenceDeviceName; // TODO: Model name
+                if(Services.bluetooth.charging) {
+                    status += " charging";
+                } else if(!Float.isNaN(Services.bluetooth.powerLevel)) {
+                    final int powerLevel = (int) (Services.bluetooth.powerLevel * 100);
+                    status += " " + powerLevel + "%";
+                }
+                bluetoothStatusLabel.setText(status);
+                bluetoothStatusLabel.setVisibility(View.VISIBLE);
+            }
+        } else {
+            gpsSourceLabel.setText("Data source: Phone GPS");
+            bluetoothStatusLabel.setVisibility(View.GONE);
+        }
         // Last fix needs to be updated continuously since it shows time since last fix
         final long lastFixDuration = Services.location.lastFixDuration();
         if(lastFixDuration >= 0) {

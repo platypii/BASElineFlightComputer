@@ -47,6 +47,10 @@ public class BluetoothService implements Service {
     private BluetoothRunnable bluetoothRunnable;
     private Thread bluetoothThread;
 
+    // Bluetooth device battery level
+    public float powerLevel = Float.NaN;
+    public boolean charging = false;
+
     final List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
 
     @Override
@@ -64,7 +68,6 @@ public class BluetoothService implements Service {
             }
             startAsync(activity);
         } else {
-            Log.e(TAG, "Bluetooth already started: " + BT_STATES[bluetoothState]);
             Exceptions.report(new Exception("Bluetooth already started: " + BT_STATES[bluetoothState]));
         }
     }

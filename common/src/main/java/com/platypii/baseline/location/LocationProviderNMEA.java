@@ -82,7 +82,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     public void onNmeaReceived(long timestamp, String nmea) {
         // Log.v(NMEA_TAG, "[" + timestamp + "] " + nmea.trim()); // Trim because logcat fails on trailing \0
 
-        nmea = cleanNmea(nmea);
+        nmea = NMEA.cleanNmea(nmea);
         if(nmea.length() < 8) {
             return;
         }
@@ -105,38 +105,19 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         }
 
         try {
+            // Validate NMEA sentence and throw errors
+            NMEA.validate(nmea);
+
             handleNmea(timestamp, nmea);
         } catch(Exception e) {
-            Log.e(NMEA_TAG, "Exception while handling NMEA: " + nmea, e);
             Exceptions.report(new NMEAException("Exception while handling NMEA: " + nmea, e));
         }
     }
 
-    private String cleanNmea(String nmea) {
-        // Remove anything before $
-        final int sentenceStart = nmea.indexOf('$');
-        if(sentenceStart > 0) {
-//            Log.w(TAG, "Removing junk before NMEA sentence: " + nmea);
-            nmea = nmea.substring(sentenceStart);
-        }
-        // Trim whitespace and \0
-        return nmea.trim();
-    }
-
-    private void handleNmea(long timestamp, String nmea) throws NMEAException {
-        // Validate NMEA sentence and throw errors
-        NMEA.validate(nmea);
-
-        // Strip checksum
-        final int starIndex = nmea.lastIndexOf('*');
-        if(0 < starIndex && starIndex < nmea.length()) {
-            nmea = nmea.substring(0, starIndex);
-        }
-
-        final String split[] = nmea.split(",", -1); // -1 is necessary to preserve trailing columns
+    protected void handleNmea(long timestamp, String nmea) throws NMEAException {
+        // Parse NMEA command
+        final String split[] = NMEA.splitNmea(nmea);
         final String command = split[0].substring(3);
-
-        // Parse command
         switch (command) {
             case "GGA":
                 if(split.length < 11) {
@@ -151,7 +132,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 hdop = Numbers.parseFloat(split[8]);
                 if (!split[9].isEmpty()) {
                     if(!split[10].equals("M")) {
-                        Log.e(NMEA_TAG, "Expected meters, was " + split[10] + " in nmea: " + nmea);
                         Exceptions.report(new NMEAException("Expected meters, was " + split[10] + " in nmea: " + nmea));
                     }
                     altitude_gps = Numbers.parseDouble(split[9]);
@@ -209,15 +189,11 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                         // So common we don't even need to report it
                         Log.e(NMEA_TAG, LocationCheck.message[locationError] + ": " + latitude + "," + longitude);
                     } else if (locationError == LocationCheck.INVALID_RANGE) {
-                        final String locationErrorMessage = LocationCheck.message[locationError] + ": " + latitude + "," + longitude;
-                        Log.e(NMEA_TAG, locationErrorMessage);
-                        Exceptions.report(new NMEAException(locationErrorMessage));
+                        Exceptions.report(new NMEAException(LocationCheck.message[locationError] + ": " + latitude + "," + longitude));
                     } else {
                         if (locationError == LocationCheck.UNLIKELY_LAT || locationError == LocationCheck.UNLIKELY_LON) {
                             // Unlikely location, but still update
-                            final String locationErrorMessage = LocationCheck.message[locationError] + ": " + latitude + "," + longitude;
-                            Log.e(NMEA_TAG, locationErrorMessage);
-                            Exceptions.report(new NMEAException(locationErrorMessage));
+                            Exceptions.report(new NMEAException(LocationCheck.message[locationError] + ": " + latitude + "," + longitude));
                         }
                         // Update the official location!
                         updateLocation();
@@ -252,11 +228,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 satellitesInView = Numbers.parseInt(split[3], -1);
                 break;
             case "PWR":
-                // Dual proprietary sentence for power
-                // $GPPWR,04C3,0,0,0,0,00,0,0,97, 1 9 ,S00 // not charging ~70%
-                // $GPPWR,0501,1,0,1,1,00,0,0,97, 1 9 ,S00 // charging
-                // voltage = split[1] // voltage not valid while charging (hex)
-                // charging = split[5]
+                // Dual proprietary sentence for power, handled in LocationProviderBluetooth
             case "VTG":
                 // final double bearingVTG = Numbers.parseDouble(split[1]); // Course over ground
                 // final double groundSpeedVTG = Convert.kts2mps(Numbers.parseDouble(split[5])); // Speed over ground
@@ -341,7 +313,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // timestamp, day, month, year, local zone, local zone minutes
                 break;
             default:
-                Log.w(NMEA_TAG, "[" + timestamp + "] Unknown NMEA command: " + nmea);
                 Exceptions.report(new NMEAException("Unknown NMEA command " + command + ": " + nmea));
         }
     }
