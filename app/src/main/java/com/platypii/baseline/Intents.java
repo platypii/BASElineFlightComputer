@@ -3,6 +3,7 @@ package com.platypii.baseline;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -103,4 +104,13 @@ public class Intents {
         context.startActivity(intent);
     }
 
+    public static void openBluetoothSettings(@NonNull Context context) {
+        // Open bluetooth settings
+        final Intent intent = new Intent(Intent.ACTION_MAIN, null);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        final ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.bluetooth.BluetoothSettings");
+        intent.setComponent(cn);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
 }

@@ -39,7 +39,8 @@
     </LinearLayout>
 
     <!-- Bluetooth device list -->
-    <ListView
+    <fragment
+        android:name="com.platypii.baseline.bluetooth.BluetoothDeviceListFragment"
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
