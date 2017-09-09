@@ -21,12 +21,14 @@ public class LocationService extends LocationProvider {
     private final LocationProviderNMEA locationProviderNMEA;
     private final LocationProviderAndroid locationProviderAndroid;
     private final LocationProviderBluetooth locationProviderBluetooth;
+    public final LocationProviderReplay locationProviderReplay;
 
     public LocationService(BluetoothService bluetooth) {
         this.bluetooth = bluetooth;
         locationProviderNMEA = new LocationProviderNMEA(alti);
         locationProviderAndroid = new LocationProviderAndroid(alti);
         locationProviderBluetooth = new LocationProviderBluetooth(alti, bluetooth);
+        locationProviderReplay = new LocationProviderReplay();
     }
 
     private final MyLocationListener nmeaListener = new MyLocationListener() {
@@ -66,6 +68,14 @@ public class LocationService extends LocationProvider {
             if(bluetooth.preferenceEnabled) {
                 updateLocation(loc);
             }
+        }
+        @Override
+        public void onLocationChangedPostExecute() {}
+    };
+    private final MyLocationListener replayListener = new MyLocationListener() {
+        @Override
+        public void onLocationChanged(@NonNull MLocation loc) {
+            updateLocation(loc);
         }
         @Override
         public void onLocationChangedPostExecute() {}
