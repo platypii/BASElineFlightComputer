@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.RoundCap;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -190,6 +191,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
                         .visible(false)
                         .width(10)
                         .color(0x66ffffff)
+                        .startCap(new RoundCap())
+                        .endCap(new RoundCap())
         );
         // Add projected landing zone
         landingMarker = map.addMarker(new MarkerOptions()
@@ -204,6 +207,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
                         .visible(false)
                         .width(10)
                         .color(0x66ff0000)
+                        .startCap(new RoundCap())
+                        .endCap(new RoundCap())
         );
         myPositionMarker = map.addMarker(new MarkerOptions()
                 .position(home)

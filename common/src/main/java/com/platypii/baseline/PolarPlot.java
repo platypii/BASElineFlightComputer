@@ -27,7 +27,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 
         final float density = getResources().getDisplayMetrics().density;
         padding.top = (int) (12 * density);
-        padding.bottom = (int) (32 * density);
+        padding.bottom = (int) (42 * density);
         padding.left = (int) (density);
         padding.right = (int) (76 * density);
         
@@ -104,8 +104,8 @@ public class PolarPlot extends PlotView implements MyLocationListener {
             for(MLocation loc : history) {
                 final int t = (int) (currentTime - loc.millis);
                 if(t <= window) {
-                    final double x = loc.groundSpeed();
-                    final double y = loc.climb;
+                    final double vx = loc.groundSpeed();
+                    final double vy = loc.climb;
 
                     // Style point based on freshness
                     final int purple = 0x5500ff;
@@ -119,7 +119,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
                     // Draw point
                     float radius = 12f * (4000 - t) / 6000;
                     radius = Math.max(3, Math.min(radius, 12));
-                    drawPoint(canvas, x, y, radius, color);
+                    drawPoint(canvas, vx, vy, radius, color);
                 }
             }
         }
@@ -158,6 +158,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 
         // Draw total speed circle
         paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(0xff444444);
         final float r = Math.abs(getX(v) - cx);
         canvas.drawCircle(cx, cy, r, paint);
 

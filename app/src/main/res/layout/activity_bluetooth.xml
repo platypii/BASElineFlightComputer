@@ -23,13 +23,13 @@
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:onClick="clickEnable"
-        android:text="Use bluetooth GPS?"/>
+        android:text="@string/bluetooth_enabled"/>
 
     <!-- Bluetooth device list -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Devices"
+        android:text="@string/bluetooth_devices"
         style="@style/header"/>
     <fragment
         android:name="com.platypii.baseline.bluetooth.BluetoothDeviceListFragment"
@@ -46,6 +46,6 @@
         android:drawablePadding="10dp"
         android:drawableLeft="@drawable/bluetooth_pair"
         android:onClick="clickPair"
-        android:text="Pair"/>
+        android:text="@string/bluetooth_pair"/>
 
 </LinearLayout>

@@ -75,10 +75,11 @@
     <!-- Bluetooth -->
     <string name="title_activity_bluetooth">Bluetooth</string>
     <string name="pref_bluetooth">Bluetooth GPS</string>
-    <string name="pref_bluetooth_description"></string>
+    <string name="pref_bluetooth_description">Konfigurieren Sie Bluetooth-Gerät</string>
     <string name="pref_bluetooth_disabled">Bluetooth GPS ist deaktiviert</string>
-    <string name="pref_bluetooth_device">Bluetooth-gerät</string>
-    <string name="pref_bluetooth_device_description">Wählen sie das Bluetooth-gerät</string>
+    <string name="bluetooth_enabled">Verwenden Sie Bluetooth GPS?</string>
+    <string name="bluetooth_devices">Bluetooth-Geräte</string>
+    <string name="bluetooth_pair">Bluetooth-Paar</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Einstellungen</string>

@@ -4,6 +4,7 @@ import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Callback;
+import com.platypii.baseline.util.Exceptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -36,7 +37,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
             final String track_id = extras.getString(EXTRA_TRACK_ID);
             track = Services.cloud.tracks.getCached(track_id);
         } else {
-            Log.e(TAG, "Failed to load track_id from extras");
+            Exceptions.report(new IllegalStateException("Failed to load track_id from extras"));
         }
 
         // Initial view updates
@@ -73,8 +74,12 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         final Bundle bundle = new Bundle();
         bundle.putString("track_id", track.track_id);
         firebaseAnalytics.logEvent("click_track_kml", bundle);
-        // Open google earth
-        Intents.openTrackKml(this, track.trackKml);
+        if(track != null) {
+            // Open google earth
+            Intents.openTrackKml(this, track.trackKml);
+        } else {
+            Exceptions.report(new NullPointerException("Track should not be null"));
+        }
     }
 
     public void clickDelete(View v) {
