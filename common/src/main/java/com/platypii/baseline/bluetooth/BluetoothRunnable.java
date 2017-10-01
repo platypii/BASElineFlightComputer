@@ -57,6 +57,8 @@ class BluetoothRunnable implements Runnable {
                     Log.e(TAG, "Bluetooth thread interrupted");
                 }
                 Log.w(TAG, "Reconnecting to bluetooth device");
+            } else {
+                Log.i(TAG, "Bluetooth thread about to stop");
             }
         }
 

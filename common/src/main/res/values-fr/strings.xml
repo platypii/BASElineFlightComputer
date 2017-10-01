@@ -8,6 +8,7 @@
     <string name="bluetooth_status_disabled">Bluetooth est désactivé</string>
     <string name="bluetooth_status_not_selected">Périphérique Bluetooth non sélectionné</string>
     <string name="bluetooth_status_stopped">Bluetooth arrêté</string>
+    <string name="bluetooth_status_starting">Bluetooth se commence</string>
     <string name="bluetooth_status_connecting">Bluetooth se connecte</string>
     <string name="bluetooth_status_connected">Bluetooth connecté</string>
     <string name="bluetooth_status_disconnected">Bluetooth non connecté</string>

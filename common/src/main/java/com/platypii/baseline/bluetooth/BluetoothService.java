@@ -34,12 +34,13 @@ public class BluetoothService implements Service {
 
     // Bluetooth finite state machine
     public static final int BT_STOPPED = 0;
-    public static final int BT_CONNECTING = 1;
-    public static final int BT_CONNECTED = 2;
-    public static final int BT_DISCONNECTED = 3;
-    public static final int BT_STOPPING = 4;
+    public static final int BT_STARTING = 1;
+    public static final int BT_CONNECTING = 2;
+    public static final int BT_CONNECTED = 3;
+    public static final int BT_DISCONNECTED = 4;
+    public static final int BT_STOPPING = 5;
 
-    private static final String[] BT_STATES = {"BT_STOPPED", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
+    private static final String[] BT_STATES = {"BT_STOPPED", "BT_STARTING", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
 
     // Bluetooth state
     private int bluetoothState = BT_STOPPED;
@@ -61,10 +62,10 @@ public class BluetoothService implements Service {
         }
         final Activity activity = (Activity) context;
         if (bluetoothState == BT_STOPPED) {
-            setState(BluetoothService.BT_CONNECTING);
+            setState(BT_STARTING);
             // Start bluetooth thread
             if(bluetoothRunnable != null) {
-                Log.e(TAG, "Bluetooth listener thread already started");
+                Log.e(TAG, "Bluetooth thread already started");
             }
             startAsync(activity);
         } else {
@@ -125,6 +126,9 @@ public class BluetoothService implements Service {
         if(bluetoothState == BT_STOPPING && state == BT_CONNECTING) {
             Log.e(TAG, "Invalid bluetooth state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         }
+        if(bluetoothState == state) {
+            Log.e(TAG, "Null state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
+        }
         Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         bluetoothState = state;
         EventBus.getDefault().post(new BluetoothEvent(bluetoothState));
@@ -141,6 +145,8 @@ public class BluetoothService implements Service {
                 switch (bluetoothState) {
                     case BT_STOPPED:
                         return context.getString(R.string.bluetooth_status_stopped);
+                    case BT_STARTING:
+                        return context.getString(R.string.bluetooth_status_starting);
                     case BT_CONNECTING:
                         return context.getString(R.string.bluetooth_status_connecting);
                     case BT_CONNECTED:
@@ -163,7 +169,6 @@ public class BluetoothService implements Service {
     public synchronized void stop() {
         if(bluetoothState != BT_STOPPED) {
             Log.i(TAG, "Stopping bluetooth service");
-            setState(BluetoothService.BT_STOPPING);
             // Stop thread
             if (bluetoothRunnable != null) {
                 bluetoothRunnable.stop();
@@ -173,7 +178,7 @@ public class BluetoothService implements Service {
                     // Thread is dead, clean up
                     bluetoothRunnable = null;
                     bluetoothThread = null;
-                    if(bluetoothState != BluetoothService.BT_STOPPED) {
+                    if(bluetoothState != BT_STOPPED) {
                         Log.e(TAG, "Unexpected bluetooth state: state should be STOPPED when thread has stopped");
                     }
                 } catch (InterruptedException e) {
@@ -183,7 +188,7 @@ public class BluetoothService implements Service {
             } else {
                 Log.e(TAG, "Cannot stop bluetooth: runnable is null: " + BT_STATES[bluetoothState]);
                 // Set state to stopped since it prevents getting stuck in state STOPPING
-                setState(BluetoothService.BT_STOPPED);
+                setState(BT_STOPPED);
             }
         }
     }
