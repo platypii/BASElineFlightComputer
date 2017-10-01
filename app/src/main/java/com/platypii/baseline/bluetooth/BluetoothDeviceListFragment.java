@@ -43,9 +43,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
                 return score(device2) - score(device1);
             }
             private int score(BluetoothDevice device) {
-                if (device.getAddress().equals(Services.bluetooth.preferenceDeviceId)) {
-                    return 2;
-                } else if (device.getName().contains("GPS")) {
+                if (device.getName().contains("GPS")) {
                     return 1;
                 } else {
                     return 0;

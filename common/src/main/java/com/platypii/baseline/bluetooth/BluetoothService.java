@@ -56,7 +56,7 @@ public class BluetoothService implements Service {
     @Override
     public void start(@NonNull Context context) {
         if(!(context instanceof Activity)) {
-            Exceptions.report(new Exception("Bluetooth context must be an activity"));
+            Exceptions.report(new ClassCastException("Bluetooth context must be an activity"));
             return;
         }
         final Activity activity = (Activity) context;
@@ -68,10 +68,14 @@ public class BluetoothService implements Service {
             }
             startAsync(activity);
         } else {
-            Exceptions.report(new Exception("Bluetooth already started: " + BT_STATES[bluetoothState]));
+            Exceptions.report(new IllegalStateException("Bluetooth already started: " + BT_STATES[bluetoothState]));
         }
     }
 
+    /**
+     * Starts bluetooth in an asynctask.
+     * Even though we're mostly just starting the bluetooth thread, calling getAdapter can be slow.
+     */
     private void startAsync(final Activity activity) {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -184,13 +188,23 @@ public class BluetoothService implements Service {
         }
     }
 
-    public synchronized void restart(Activity activity) {
+    /**
+     * Restart bluetooth.
+     * If bluetooth is stopped, just start it.
+     */
+    synchronized void restart(Activity activity) {
         Log.i(TAG, "Restarting bluetooth service");
-        stop();
-        if(bluetoothState != BT_STOPPED) {
-            Log.e(TAG, "Error restarting bluetooth: not stopped: " + BT_STATES[bluetoothState]);
+        if(bluetoothState == BT_STOPPED) {
+            // Just start
+            start(activity);
+        } else {
+            // Stop and start
+            stop();
+            if(bluetoothState != BT_STOPPED) {
+                Exceptions.report(new IllegalStateException("Error restarting bluetooth: not stopped: " + BT_STATES[bluetoothState]));
+            }
+            start(activity);
         }
-        start(activity);
     }
 
     public void addNmeaListener(GpsStatus.NmeaListener nmeaListener) {

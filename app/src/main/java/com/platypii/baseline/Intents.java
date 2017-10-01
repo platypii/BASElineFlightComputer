@@ -98,7 +98,7 @@ public class Intents {
 
     /** Open help page in browser */
     static void openHelpUrl(@NonNull Context context) {
-        final Uri uri = Uri.parse("https://baseline.ws/help");
+        final Uri uri = Uri.parse("https://baseline.ws/help/app");
         Log.i(TAG, "Opening help url " + uri);
         final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         context.startActivity(intent);

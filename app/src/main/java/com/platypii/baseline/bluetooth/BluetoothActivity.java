@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
@@ -22,7 +22,7 @@ public class BluetoothActivity extends BaseActivity {
 
     private FirebaseAnalytics firebaseAnalytics;
 
-    private Button bluetoothButton;
+    private Switch bluetoothSwitch;
     private TextView bluetoothStatus;
 
     @Override
@@ -32,18 +32,12 @@ public class BluetoothActivity extends BaseActivity {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
-        bluetoothButton = findViewById(R.id.button_bluetooth);
+        bluetoothSwitch = findViewById(R.id.bluetooth_switch);
         bluetoothStatus = findViewById(R.id.bluetooth_status);
     }
 
     private void updateViews() {
-        if (Services.bluetooth.preferenceEnabled) {
-            bluetoothButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.bluetooth_on, 0, 0);
-            bluetoothButton.setText("Enabled");
-        } else {
-            bluetoothButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.bluetooth, 0, 0);
-            bluetoothButton.setText("Disabled");
-        }
+        bluetoothSwitch.setChecked(Services.bluetooth.preferenceEnabled);
         bluetoothStatus.setText(Services.bluetooth.getStatusMessage(this));
     }
 

@@ -11,44 +11,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"/>
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"/>
 
-    <LinearLayout
+    <Switch
+        android:id="@+id/bluetooth_switch"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/button_bluetooth"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:drawableTop="@drawable/bluetooth"
-            android:onClick="clickEnable"
-            style="@style/Widget.AppCompat.Button.Borderless"/>
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/bluetooth_pair"
-            android:onClick="clickPair"
-            android:text="Pair"/>
-
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:onClick="clickEnable"
+        android:text="Use bluetooth GPS?"/>
 
     <!-- Bluetooth device list -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Devices"
+        style="@style/header"/>
     <fragment
         android:name="com.platypii.baseline.bluetooth.BluetoothDeviceListFragment"
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <TextView
-        android:id="@android:id/empty"
+        android:layout_height="wrap_content" />
+
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:text="No bluetooth devices paired" />
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:drawablePadding="10dp"
+        android:drawableLeft="@drawable/bluetooth_pair"
+        android:onClick="clickPair"
+        android:text="Pair"/>
 
 </LinearLayout>
