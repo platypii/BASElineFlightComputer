@@ -32,7 +32,7 @@ public class LocationService extends LocationProvider {
     private final MyLocationListener nmeaListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
-            if(!bluetooth.preferenceEnabled) {
+            if(!bluetooth.preferences.preferenceEnabled) {
                 updateLocation(loc);
             }
         }
@@ -45,7 +45,7 @@ public class LocationService extends LocationProvider {
         public void onLocationChanged(@NonNull MLocation loc) {
             // Only use android location if we aren't getting NMEA
             // TODO: Remove the android location listener if every phone provides NMEA
-            if(!bluetooth.preferenceEnabled && !locationProviderNMEA.nmeaReceived) {
+            if(!bluetooth.preferences.preferenceEnabled && !locationProviderNMEA.nmeaReceived) {
                 // Log on powers of 2
                 overrideCount++;
                 if(overrideCount > 1 && isPower2(overrideCount)) {
@@ -63,7 +63,7 @@ public class LocationService extends LocationProvider {
     private final MyLocationListener bluetoothListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
-            if(bluetooth.preferenceEnabled) {
+            if(bluetooth.preferences.preferenceEnabled) {
                 updateLocation(loc);
             }
         }

@@ -232,12 +232,12 @@ public class SensorActivity extends Activity implements MyLocationListener {
     /** Updates the UI that refresh continuously, such as sample rates */
     private void update() {
         // Bluetooth battery level needs to be continuously updated
-        if(Services.bluetooth.preferenceEnabled) {
+        if(Services.bluetooth.preferences.preferenceEnabled) {
             gpsSourceLabel.setText("Data source: Bluetooth GPS");
-            if(Services.bluetooth.preferenceDeviceName == null) {
+            if(Services.bluetooth.preferences.preferenceDeviceName == null) {
                 bluetoothStatusLabel.setText("Bluetooth: (not selected)");
             } else {
-                String status = "Bluetooth: " + Services.bluetooth.preferenceDeviceName; // TODO: Model name
+                String status = "Bluetooth: " + Services.bluetooth.preferences.preferenceDeviceName; // TODO: Model name
                 if(Services.bluetooth.charging) {
                     status += " charging";
                 } else if(!Float.isNaN(Services.bluetooth.powerLevel)) {

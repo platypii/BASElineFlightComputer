@@ -37,14 +37,16 @@ public class BluetoothActivity extends BaseActivity {
     }
 
     private void updateViews() {
-        bluetoothSwitch.setChecked(Services.bluetooth.preferenceEnabled);
+        bluetoothSwitch.setChecked(Services.bluetooth.preferences.preferenceEnabled);
         bluetoothStatus.setText(Services.bluetooth.getStatusMessage(this));
     }
 
     public void clickEnable(View v) {
+        // Save preference
+        final boolean enable = !Services.bluetooth.preferences.preferenceEnabled;
+        Services.bluetooth.preferences.save(this, enable, Services.bluetooth.preferences.preferenceDeviceId, Services.bluetooth.preferences.preferenceDeviceName);
         // Start or stop bluetooth
-        Services.bluetooth.preferenceEnabled = !Services.bluetooth.preferenceEnabled;
-        if(Services.bluetooth.preferenceEnabled) {
+        if(enable) {
             Log.i(TAG, "User clicked bluetooth enable");
             firebaseAnalytics.logEvent("bluetooth_enabled", null);
             Services.bluetooth.start(this);
@@ -53,11 +55,6 @@ public class BluetoothActivity extends BaseActivity {
             firebaseAnalytics.logEvent("bluetooth_disabled", null);
             Services.bluetooth.stop();
         }
-        // Save preference
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final SharedPreferences.Editor edit = prefs.edit();
-        edit.putBoolean("bluetooth_enabled", Services.bluetooth.preferenceEnabled);
-        edit.apply();
         updateViews();
     }
 

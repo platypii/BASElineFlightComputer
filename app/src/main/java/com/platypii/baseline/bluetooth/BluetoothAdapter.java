@@ -38,7 +38,7 @@ class BluetoothAdapter extends BaseAdapter {
         final ImageView checkedView = convertView.findViewById(R.id.bluetooth_checked);
         nameView.setText(device.getName());
         addressView.setText(device.getAddress());
-        if(device.getAddress().equals(Services.bluetooth.preferenceDeviceId)) {
+        if(device.getAddress().equals(Services.bluetooth.preferences.preferenceDeviceId)) {
             checkedView.setVisibility(View.VISIBLE);
         } else {
             checkedView.setVisibility(View.GONE);

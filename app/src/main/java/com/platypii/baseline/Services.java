@@ -83,7 +83,7 @@ public class Services {
             // Start the various services
 
             Log.i(TAG, "Starting bluetooth service");
-            if(bluetooth.preferenceEnabled) {
+            if(bluetooth.preferences.preferenceEnabled) {
                 bluetooth.start(activity);
             }
 
@@ -219,9 +219,7 @@ public class Services {
         AutoStop.preferenceEnabled = prefs.getBoolean("auto_stop_enabled", true);
 
         // Bluetooth
-        bluetooth.preferenceEnabled = prefs.getBoolean("bluetooth_enabled", false);
-        bluetooth.preferenceDeviceId = prefs.getString("bluetooth_device_id", null);
-        bluetooth.preferenceDeviceName = prefs.getString("bluetooth_device_name", null);
+        bluetooth.preferences.load(context);
 
         // Home location
         final double home_latitude = Numbers.parseDouble(prefs.getString("home_latitude", null));

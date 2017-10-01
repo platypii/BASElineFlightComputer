@@ -30,7 +30,7 @@ public class LocationStatus {
         int icon;
 
         // GPS signal status
-        if(Services.bluetooth.preferenceEnabled && Services.bluetooth.getState() != BluetoothService.BT_CONNECTED) {
+        if(Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothService.BT_CONNECTED) {
             // Bluetooth enabled, but not connected
             icon = R.drawable.warning;
             switch(Services.bluetooth.getState()) {
@@ -61,7 +61,7 @@ public class LocationStatus {
                 } else if (lastFixDuration > 2000) {
                     message = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
                     icon = R.drawable.status_yellow;
-                } else if (Services.bluetooth.preferenceEnabled && Services.bluetooth.getState() == BluetoothService.BT_CONNECTED) {
+                } else if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() == BluetoothService.BT_CONNECTED) {
                     message = String.format(Locale.getDefault(), "GPS bluetooth %.2fHz", Services.location.refreshRate);
                     icon = R.drawable.status_blue;
                 } else {

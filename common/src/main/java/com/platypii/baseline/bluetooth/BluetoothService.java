@@ -28,9 +28,7 @@ public class BluetoothService implements Service {
     private static final int ENABLE_BLUETOOTH_CODE = 13;
 
     // Android shared preferences for bluetooth
-    public boolean preferenceEnabled = false;
-    public String preferenceDeviceId = null;
-    public String preferenceDeviceName = null;
+    public final BluetoothPreferences preferences = new BluetoothPreferences();
 
     // Bluetooth finite state machine
     public static final int BT_STOPPED = 0;
@@ -139,7 +137,7 @@ public class BluetoothService implements Service {
      */
     public String getStatusMessage(Context context) {
         if(bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
-            if(preferenceDeviceId == null) {
+            if(preferences.preferenceDeviceId == null) {
                 return context.getString(R.string.bluetooth_status_not_selected);
             } else {
                 switch (bluetoothState) {

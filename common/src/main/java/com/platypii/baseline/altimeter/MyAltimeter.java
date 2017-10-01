@@ -31,7 +31,7 @@ public class MyAltimeter implements Service, MyLocationListener {
     private boolean started = false;
 
     // Barometric altimeter
-    public BaroAltimeter baro = new BaroAltimeter();
+    public final BaroAltimeter baro = new BaroAltimeter();
 
     // GPS altitude kalman filter
     private final Filter gpsFilter = new FilterKalman();
@@ -47,7 +47,7 @@ public class MyAltimeter implements Service, MyLocationListener {
     // public static double verticalAcceleration = Double.NaN;
 
     // Ground level
-    GroundLevel groundLevel = new GroundLevel();
+    final GroundLevel groundLevel = new GroundLevel();
 
     // Sample counts
     public long baro_sample_count = 0;

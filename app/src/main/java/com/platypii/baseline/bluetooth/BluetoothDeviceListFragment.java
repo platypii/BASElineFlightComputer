@@ -56,16 +56,10 @@ public class BluetoothDeviceListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         final BluetoothDevice device = (BluetoothDevice) l.getItemAtPosition(position);
-        Services.bluetooth.preferenceDeviceId = device.getAddress();
-        Services.bluetooth.preferenceDeviceName = device.getName();
-        Log.i(TAG, "Bluetooth device selected: " + Services.bluetooth.preferenceDeviceId);
-        Services.bluetooth.restart(getActivity());
+        Log.i(TAG, "Bluetooth device selected: " + device.getName());
         // Save device preference
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        final SharedPreferences.Editor edit = prefs.edit();
-        edit.putString("bluetooth_device_id", Services.bluetooth.preferenceDeviceId);
-        edit.putString("bluetooth_device_name", Services.bluetooth.preferenceDeviceName);
-        edit.apply();
+        Services.bluetooth.preferences.save(getActivity(), true, device.getAddress(), device.getName());
+        Services.bluetooth.restart(getActivity());
     }
 
     @Override

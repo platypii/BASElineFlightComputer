@@ -75,12 +75,12 @@ class BluetoothRunnable implements Runnable {
         if(!bluetoothAdapter.isEnabled()) {
             Log.w(TAG, "Bluetooth is not enabled");
             return false;
-        } else if(bluetooth.preferenceDeviceId == null) {
+        } else if(bluetooth.preferences.preferenceDeviceId == null) {
             Log.w(TAG, "Cannot connect: bluetooth device not selected");
             return false;
         }
         // Get bluetooth device
-        final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(bluetooth.preferenceDeviceId);
+        final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(bluetooth.preferences.preferenceDeviceId);
         UUID uuid = DEFAULT_UUID;
         final ParcelUuid[] uuids = bluetoothDevice.getUuids();
         if(uuids != null && uuids.length > 0) {
