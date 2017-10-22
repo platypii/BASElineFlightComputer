@@ -238,8 +238,13 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
             // Notify listeners
             updateAuthState(AuthEvent.SIGNED_IN);
         } else {
-            Log.w(TAG, "Sign in failed: " + result.getStatus());
-            signedOut();
+            if(result.getStatus().getStatusCode() == ConnectionResult.NETWORK_ERROR) {
+                // Don't sign out for network errors, base jumpers often have poor signal
+                Log.w(TAG, "Sign in failed due to network error");
+            } else {
+                Log.w(TAG, "Sign in failed: " + result.getStatus());
+                signedOut();
+            }
         }
         userClickedSignIn = false;
     }
