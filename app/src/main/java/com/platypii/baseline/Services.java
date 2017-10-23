@@ -73,12 +73,16 @@ public class Services {
 
     static void start(@NonNull Activity activity) {
         startCount++;
+        if(startCount == 1 && initialized) {
+            // This happens when services are started again before the shutdown delay
+            Log.i(TAG, "Services still alive");
+            handler.removeCallbacks(stopRunnable);
+        }
         if(!initialized) {
             initialized = true;
             final long startTime = System.currentTimeMillis();
             Log.i(TAG, "Starting services");
             final Context appContext = activity.getApplicationContext();
-            handler.removeCallbacks(stopRunnable);
 
             // Start the various services
 
@@ -197,7 +201,6 @@ public class Services {
                 logger.stop();
                 bluetooth.stop();
                 initialized = false;
-                handler.removeCallbacks(stopRunnable);
             } else {
                 if(logger.isLogging()) {
                     Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
@@ -205,6 +208,8 @@ public class Services {
                 if(audible.isEnabled()) {
                     Log.w(TAG, "All activities have stopped, but audible still active. Leaving services running.");
                 }
+                // Try again periodically
+                handler.postDelayed(stopRunnable, shutdownDelay);
             }
         }
     }
