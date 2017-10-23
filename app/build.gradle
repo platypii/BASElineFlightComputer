@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId "com.platypii.baseline"
         minSdkVersion 16
-        targetSdkVersion 26
-        versionCode 37
-        versionName "3.9-beta"
+        targetSdkVersion 25
+        versionCode 38
+        versionName "3.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
