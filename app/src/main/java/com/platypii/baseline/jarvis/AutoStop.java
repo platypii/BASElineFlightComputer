@@ -116,12 +116,9 @@ public class AutoStop {
     /**
      * A thread that stops recording after 1 hour
      */
-    private final Runnable stopRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Log.i(TAG, "Auto-stop timeout");
-            landed(timeout_message);
-        }
+    private final Runnable stopRunnable = () -> {
+        Log.i(TAG, "Auto-stop timeout");
+        landed(timeout_message);
     };
 
 }

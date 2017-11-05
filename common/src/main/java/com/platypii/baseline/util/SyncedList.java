@@ -1,5 +1,6 @@
 package com.platypii.baseline.util;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -35,6 +36,7 @@ public class SyncedList<T> implements Iterable<T> {
         }
     }
 
+    @NonNull
     public Iterator<T> iterator() {
         copy();
         return values.iterator();

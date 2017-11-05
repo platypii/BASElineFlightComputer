@@ -185,14 +185,11 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
         }
         altitudeOffset = 0;
     }
-    private final Runnable reaper = new Runnable() {
-        @Override
-        public void run() {
-            if(groundLevelMode != MODE_ALTI) {
-                setGroundLevelMode(MODE_ALTI);
-                altitudeOffset = 0;
-                update();
-            }
+    private final Runnable reaper = () -> {
+        if(groundLevelMode != MODE_ALTI) {
+            setGroundLevelMode(MODE_ALTI);
+            altitudeOffset = 0;
+            update();
         }
     };
 

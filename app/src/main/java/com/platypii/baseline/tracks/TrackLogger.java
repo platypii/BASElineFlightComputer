@@ -45,12 +45,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
     private BufferedWriter log;
 
     public void start(@NonNull final Context context) {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                logDir = TrackFiles.getTrackDirectory(context);
-            }
-        });
+        AsyncTask.execute(() -> logDir = TrackFiles.getTrackDirectory(context));
     }
 
     public synchronized void startLogging() {

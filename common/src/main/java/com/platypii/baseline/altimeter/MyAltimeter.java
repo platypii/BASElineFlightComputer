@@ -66,28 +66,25 @@ public class MyAltimeter implements Service, MyLocationListener {
      */
     @Override
     public synchronized void start(@NonNull final Context context) {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                if(!started) {
-                    // Start barometer
-                    started = true;
-                    EventBus.getDefault().register(MyAltimeter.this);
-                    baro.start(context);
+        AsyncTask.execute(() -> {
+            if(!started) {
+                // Start barometer
+                started = true;
+                EventBus.getDefault().register(MyAltimeter.this);
+                baro.start(context);
 
-                    // Load ground level from preferences
-                    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                    groundLevel.start(prefs);
+                // Load ground level from preferences
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                groundLevel.start(prefs);
 
-                    // Start GPS updates
-                    if(location != null) {
-                        location.addListener(MyAltimeter.this);
-                    } else {
-                        Log.e(TAG, "Location services should be initialized before altimeter");
-                    }
+                // Start GPS updates
+                if(location != null) {
+                    location.addListener(MyAltimeter.this);
                 } else {
-                    Log.e(TAG, "MyAltimeter already started");
+                    Log.e(TAG, "Location services should be initialized before altimeter");
                 }
+            } else {
+                Log.e(TAG, "MyAltimeter already started");
             }
         });
     }

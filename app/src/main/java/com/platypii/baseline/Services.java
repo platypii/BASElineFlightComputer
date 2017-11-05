@@ -40,9 +40,10 @@ public class Services {
     private static int startCount = 0;
     private static boolean initialized = false;
 
-    // How long to wait after the last activity shutdown to terminate services
+    /** A handler to shut down services after activity has stopped */
     private final static Handler handler = new Handler();
     private static final int shutdownDelay = 10000;
+    private static final Runnable stopRunnable = Services::stopIfIdle;
 
     // Have we checked for TTS data?
     private static boolean ttsLoaded = false;
@@ -172,16 +173,6 @@ public class Services {
             handler.postDelayed(stopRunnable, shutdownDelay);
         }
     }
-
-    /**
-     * A thread that shuts down services after activity has stopped
-     */
-    private static final Runnable stopRunnable = new Runnable() {
-        @Override
-        public void run() {
-            stopIfIdle();
-        }
-    };
 
     /**
      * Stop services IF nothing is using them

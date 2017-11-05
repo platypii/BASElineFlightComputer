@@ -1,5 +1,6 @@
 package com.platypii.baseline.util;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,6 +54,7 @@ public class DataSeries implements Iterable<DataSeries.Point> {
         n = 0;
     }
 
+    @NonNull
     public Iterator<Point> iterator() {
         return new Iterator<Point>() {
             private int i = 0;

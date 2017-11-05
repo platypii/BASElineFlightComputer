@@ -44,20 +44,17 @@ public class MySensorManager implements SensorEventListener, Service {
     @Override
     public void start(@NonNull final Context context) {
         Log.i(TAG, "Starting sensor manager");
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                // Get android sensor manager
-                sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-                // Find sensors
-                final Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                final Sensor gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-                final Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-                // Register listeners
-                sensorManager.registerListener(MySensorManager.this, accelSensor, sensorDelay);
-                sensorManager.registerListener(MySensorManager.this, gravitySensor, sensorDelay);
-                sensorManager.registerListener(MySensorManager.this, rotationSensor, sensorDelay);
-            }
+        AsyncTask.execute(() -> {
+            // Get android sensor manager
+            sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+            // Find sensors
+            final Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            final Sensor gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+            final Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            // Register listeners
+            sensorManager.registerListener(MySensorManager.this, accelSensor, sensorDelay);
+            sensorManager.registerListener(MySensorManager.this, gravitySensor, sensorDelay);
+            sensorManager.registerListener(MySensorManager.this, rotationSensor, sensorDelay);
         });
     }
 

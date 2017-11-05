@@ -20,8 +20,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
 
@@ -132,13 +130,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         Services.start(this);
 
         Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient)
-                .setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                    @Override
-                    public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
-                        handleSignInResult(googleSignInResult);
-                    }
-                });
-                // .setResultCallback(this::handleSignInResult) // TODO: Java8
+                .setResultCallback(this::handleSignInResult);
 
         // Listen for sign in button click
         signInPanel = findViewById(R.id.sign_in_panel);
@@ -156,12 +148,9 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
             }
         }
     }
-    private final View.OnClickListener signInClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(@NonNull View v){
-            if(v.getId() == R.id.sign_in_button) {
-                clickSignIn();
-            }
+    private final View.OnClickListener signInClickListener = v -> {
+        if(v.getId() == R.id.sign_in_button) {
+            clickSignIn();
         }
     };
 
@@ -182,14 +171,10 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
 
     protected void clickSignOut() {
         Log.i(TAG, "User clicked sign out");
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        Log.d(TAG, "Signed out: " + status);
-                        Toast.makeText(BaseActivity.this, R.string.signout_success, Toast.LENGTH_LONG).show();
-                        signedOut();
-                    }
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(status -> {
+                    Log.d(TAG, "Signed out: " + status);
+                    Toast.makeText(BaseActivity.this, R.string.signout_success, Toast.LENGTH_LONG).show();
+                    signedOut();
                 }
         );
     }

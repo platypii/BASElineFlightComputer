@@ -194,13 +194,10 @@ public class MainActivity extends BaseActivity {
         updateUIState();
     }
 
-    private final View.OnLongClickListener audibleLongClickListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            firebaseAnalytics.logEvent("long_click_audible", null);
-            startActivity(new Intent(MainActivity.this, AudibleSettingsActivity.class));
-            return true;
-        }
+    private final View.OnLongClickListener audibleLongClickListener = v -> {
+        firebaseAnalytics.logEvent("long_click_audible", null);
+        startActivity(new Intent(MainActivity.this, AudibleSettingsActivity.class));
+        return true;
     };
 
     public void clickTracks(View v) {

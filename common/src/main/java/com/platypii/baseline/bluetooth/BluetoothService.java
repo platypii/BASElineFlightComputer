@@ -76,14 +76,11 @@ public class BluetoothService implements Service {
      * Even though we're mostly just starting the bluetooth thread, calling getAdapter can be slow.
      */
     private void startAsync(final Activity activity) {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                bluetoothAdapter = getAdapter(activity);
-                bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
-                bluetoothThread = new Thread(bluetoothRunnable);
-                bluetoothThread.start();
-            }
+        AsyncTask.execute(() -> {
+            bluetoothAdapter = getAdapter(activity);
+            bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
+            bluetoothThread = new Thread(bluetoothRunnable);
+            bluetoothThread.start();
         });
     }
 

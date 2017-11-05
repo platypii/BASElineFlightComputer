@@ -55,17 +55,14 @@ public class MyAudible implements Service {
     private void startAsync(final Context context) {
         // Audible thread has a handler, which needs to be created in looper thread
         audibleThread = new AudibleThread();
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                speech = new Speech(context);
-                AudibleSettings.load(prefs);
-                isEnabled = prefs.getBoolean("audible_enabled", false);
-                preferenceQuiet = prefs.getBoolean("audible_quiet", true);
-                if (isEnabled) {
-                    enableAudible();
-                }
+        AsyncTask.execute(() -> {
+            prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            speech = new Speech(context);
+            AudibleSettings.load(prefs);
+            isEnabled = prefs.getBoolean("audible_enabled", false);
+            preferenceQuiet = prefs.getBoolean("audible_quiet", true);
+            if (isEnabled) {
+                enableAudible();
             }
         });
     }

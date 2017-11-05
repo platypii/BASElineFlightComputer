@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">BASEline</string>
 
     <!-- Analog Altimeter -->
     <string name="no_barometer">no alti</string>
