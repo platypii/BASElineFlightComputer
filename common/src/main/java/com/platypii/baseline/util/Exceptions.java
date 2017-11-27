@@ -1,15 +1,24 @@
 package com.platypii.baseline.util;
 
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 
 public class Exceptions {
+    private static final String TAG = "Exceptions";
 
     public static void report(Throwable e) {
         try {
-            FirebaseCrash.report(e);
+            Crashlytics.logException(e);
         } catch(Exception e2) {
-            Log.e("Exceptions", "Exception while reporting exception", e2);
+            Log.e(TAG, "Exception while reporting exception", e2);
+        }
+    }
+
+    public static void log(String msg) {
+        try {
+            Crashlytics.log(msg);
+        } catch(Exception e) {
+            Log.e(TAG, "Exception while logging", e);
         }
     }
 

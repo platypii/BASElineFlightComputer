@@ -2,6 +2,7 @@ package com.platypii.baseline.audible;
 
 import com.platypii.baseline.BaseActivity;
 import com.platypii.baseline.R;
+import com.platypii.baseline.util.Exceptions;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -11,7 +12,6 @@ import android.os.AsyncTask;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.widget.Toast;
-import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * A background task to check for TTS data
@@ -40,7 +40,7 @@ public class CheckTextToSpeechTask extends AsyncTask<Void,Void,Boolean> {
                 return true;
             } catch (ActivityNotFoundException e) {
                 Log.e(TAG, "Failed to check for TTS package", e);
-                FirebaseCrash.report(e);
+                Exceptions.report(e);
                 return false;
             }
         } else {

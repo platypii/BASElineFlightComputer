@@ -8,11 +8,11 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.measurements.Measurement;
 import com.platypii.baseline.sensors.MySensorListener;
+import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -158,7 +158,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
             return logFile;
         } catch (IOException e) {
             Log.e(TAG, "Failed to close log file " + logFile, e);
-            FirebaseCrash.report(e);
+            Exceptions.report(e);
             return null;
         }
     }
@@ -200,10 +200,10 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
                 log.write('\n');
             } catch (IOException e) {
                 Log.e(TAG, "Failed to write to log file " + logFile, e);
-                FirebaseCrash.report(e);
+                Exceptions.report(e);
             }
         } else {
-            Log.e(TAG, "Attempted to log after closing file");
+            Exceptions.report(new IllegalStateException("Attempted to log after closing file"));
         }
     }
 

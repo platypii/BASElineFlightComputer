@@ -2,11 +2,11 @@ package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,10 +65,10 @@ public class TrackListing {
             Log.i(TAG, "Listing successful: " + trackList.size() + " tracks");
         } catch(IOException e) {
             Log.e(TAG, "Failed to list tracks", e);
-            FirebaseCrash.report(e);
+            Exceptions.report(e);
         } catch(JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
-            FirebaseCrash.report(e);
+            Exceptions.report(e);
         }
     }
 

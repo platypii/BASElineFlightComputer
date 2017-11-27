@@ -13,6 +13,7 @@ import com.platypii.baseline.sensors.MySensorManager;
 import com.platypii.baseline.tracks.MigrateTracks;
 import com.platypii.baseline.tracks.TrackLogger;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 import android.Manifest;
 import android.app.Activity;
@@ -25,7 +26,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * Start and stop essential services.
@@ -123,7 +123,7 @@ public class Services {
             // TTS is prerequisite for audible
             if(ttsLoaded) {
                 Log.i(TAG, "Text-to-speech data already loaded, starting audible");
-                FirebaseCrash.log("text-to-speech already loaded");
+                Exceptions.log("text-to-speech already loaded");
                 audible.start(appContext);
             } else {
                 Log.i(TAG, "Checking for text-to-speech data");
@@ -153,7 +153,7 @@ public class Services {
      */
     static void onTtsLoaded(@NonNull Activity context) {
         // TTS loaded, start the audible
-        FirebaseCrash.log("onTtsLoaded from " + context.getLocalClassName());
+        Exceptions.log("onTtsLoaded from " + context.getLocalClassName());
         if(!ttsLoaded) {
             Log.i(TAG, "Text-to-speech data loaded, starting audible");
             ttsLoaded = true;
@@ -162,7 +162,7 @@ public class Services {
             }
         } else {
             Log.w(TAG, "Text-to-speech already loaded");
-            FirebaseCrash.report(new IllegalStateException("Text-to-speech loaded twice"));
+            Exceptions.report(new IllegalStateException("Text-to-speech loaded twice"));
         }
     }
 

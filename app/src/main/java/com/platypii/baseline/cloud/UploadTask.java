@@ -3,13 +3,13 @@ package com.platypii.baseline.cloud;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
 import com.platypii.baseline.util.MD5;
 import com.platypii.baseline.util.Network;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,19 +58,19 @@ class UploadTask implements Runnable {
         } catch(AuthException e) {
             Log.e(TAG, "Failed to upload file - auth error", e);
             if(networkAvailable) {
-                FirebaseCrash.report(e);
+                Exceptions.report(e);
             }
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "auth error"));
         } catch(IOException e) {
             Log.e(TAG, "Failed to upload file", e);
             if(networkAvailable) {
-                FirebaseCrash.report(e);
+                Exceptions.report(e);
             }
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
         } catch(JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
             if(networkAvailable) {
-                FirebaseCrash.report(e);
+                Exceptions.report(e);
             }
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "invalid response from server"));
         }

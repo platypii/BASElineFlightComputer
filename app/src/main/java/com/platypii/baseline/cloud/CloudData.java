@@ -1,7 +1,7 @@
 package com.platypii.baseline.cloud;
 
+import com.platypii.baseline.util.Exceptions;
 import android.support.annotation.NonNull;
-import com.google.firebase.crash.FirebaseCrash;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,7 +47,7 @@ public class CloudData {
             obj.put("location", location);
             return obj;
         } catch (JSONException e) {
-            FirebaseCrash.report(e);
+            Exceptions.report(e);
             return null;
         }
     }

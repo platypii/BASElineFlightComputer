@@ -2,9 +2,9 @@ package com.platypii.baseline.audible;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Exceptions;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 
 /**
  * Contains the default audible modes
@@ -24,7 +24,7 @@ class AudibleModes {
                 return glide_ratio;
             default:
                 Log.e(TAG, "Invalid audible mode " + audibleMode);
-                FirebaseCrash.report(new IllegalStateException("Invalid audible mode " + audibleMode));
+                Exceptions.report(new IllegalStateException("Invalid audible mode " + audibleMode));
                 return horizontal_speed;
         }
     }

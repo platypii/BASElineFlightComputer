@@ -4,6 +4,7 @@ import com.platypii.baseline.Service;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.jarvis.FlightMode;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,7 +12,6 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
 
 /**
@@ -48,7 +48,7 @@ public class MyAudible implements Service {
             startAsync(context);
         } else {
             Log.w(TAG, "Audible initialized twice");
-            FirebaseCrash.report(new IllegalStateException("Audible initialized twice"));
+            Exceptions.report(new IllegalStateException("Audible initialized twice"));
         }
     }
 
@@ -127,7 +127,7 @@ public class MyAudible implements Service {
     public void speakNow(String text) {
         if(!isEnabled) {
             Log.e(TAG, "Should never speak when audible is disabled");
-            FirebaseCrash.report(new IllegalStateException("MyAudible.speakNow should never speak when audible is disabled"));
+            Exceptions.report(new IllegalStateException("MyAudible.speakNow should never speak when audible is disabled"));
         }
         if(speech != null) {
             speech.speakNow(text);

@@ -1,10 +1,10 @@
 package com.platypii.baseline.cloud;
 
+import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import com.google.firebase.crash.FirebaseCrash;
 import java.util.List;
 import org.json.JSONException;
 
@@ -39,7 +39,7 @@ public class TrackListingCache {
                 try {
                     return TrackListing.fromJson(jsonString);
                 } catch (JSONException e) {
-                    FirebaseCrash.report(e);
+                    Exceptions.report(e);
                 }
             }
         }

@@ -1,8 +1,8 @@
 package com.platypii.baseline.tracks;
 
+import com.platypii.baseline.util.Exceptions;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,7 +45,7 @@ public class TrackFile {
             return format.parse(dateString);
         } catch (ParseException e) {
             Log.e(TAG, "Failed to parse date from filename", e);
-            FirebaseCrash.report(e);
+            Exceptions.report(e);
             return null;
         }
     }

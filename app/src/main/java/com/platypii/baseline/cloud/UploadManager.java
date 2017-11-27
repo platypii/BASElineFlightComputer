@@ -1,11 +1,11 @@
 package com.platypii.baseline.cloud;
 
-import com.google.firebase.crash.FirebaseCrash;
 import com.platypii.baseline.BaseActivity;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -37,13 +37,13 @@ public class UploadManager {
      * Called when user clicks sync
      */
     public void userUpload(@NonNull TrackFile trackFile) {
-        FirebaseCrash.log("User upload track " + trackFile.getName());
+        Exceptions.log("User upload track " + trackFile.getName());
         // Update uploading state
         final int state = getState(trackFile);
         if(state == UPLOADING) {
-            FirebaseCrash.report(new IllegalStateException("Upload already in progress for track " + trackFile));
+            Exceptions.report(new IllegalStateException("Upload already in progress for track " + trackFile));
         } else if(state == UPLOADED) {
-            FirebaseCrash.report(new IllegalStateException("Upload already complete for track " + trackFile));
+            Exceptions.report(new IllegalStateException("Upload already complete for track " + trackFile));
         } else {
             upload(trackFile);
         }
@@ -77,7 +77,7 @@ public class UploadManager {
     public void onLoggingEvent(@NonNull LoggingEvent event) {
         if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN && autosyncEnabled && !event.started) {
             Log.i(TAG, "Auto syncing track " + event.trackFile);
-            FirebaseCrash.log("Logging stopped, autosyncing track " + event.trackFile);
+            Exceptions.log("Logging stopped, autosyncing track " + event.trackFile);
             upload(event.trackFile);
         }
     }

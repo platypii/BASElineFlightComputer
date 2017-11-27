@@ -2,9 +2,9 @@ package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.util.Exceptions;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.firebase.crash.FirebaseCrash;
 import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -43,7 +43,7 @@ class DeleteTask implements Runnable {
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteFailure(track.track_id, "failed to delete track"));
             // Report error
-            FirebaseCrash.report(e);
+            Exceptions.report(e);
         }
     }
 

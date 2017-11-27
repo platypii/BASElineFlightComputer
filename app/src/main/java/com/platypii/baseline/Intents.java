@@ -2,6 +2,7 @@ package com.platypii.baseline;
 
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.util.Exceptions;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
-import com.google.firebase.crash.FirebaseCrash;
 
 public class Intents {
     private static final String TAG = "Intents";
@@ -47,7 +47,7 @@ public class Intents {
             Log.e(TAG, "Failed to open KML file in google earth", e);
             Toast.makeText(context, R.string.error_map_intent, Toast.LENGTH_SHORT).show();
         } catch(Exception e) {
-            FirebaseCrash.report(e);
+            Exceptions.report(e);
             Log.e(TAG, "Failed to open KML file in google earth", e);
             Toast.makeText(context, R.string.error_map_intent, Toast.LENGTH_SHORT).show();
         }
@@ -92,7 +92,7 @@ public class Intents {
         } catch(Exception e) {
             Log.e(TAG, "Failed to export track file", e);
             Toast.makeText(context, R.string.error_export_intent, Toast.LENGTH_SHORT).show();
-            FirebaseCrash.report(e);
+            Exceptions.report(e);
         }
     }
 
