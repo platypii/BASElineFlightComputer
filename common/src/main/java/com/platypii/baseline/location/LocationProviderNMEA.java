@@ -274,6 +274,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // split[8]: Stdev of altitude error (meters)
             case "JNR":
             case "NVD":
+            case "8EX1":
+                // HTC One M8
+                // $LK8EX1,96660,99999,-4,17,1053,*0D
             case "LOR":
                 // Samsung Galaxy S6, S7
                 // $PGLOR,0,HLA,123444.00,L,,Al,,A,,H,,,M,1,Ac,0,Gr,0,S,,,Sx,,,T,0,Tr,,Mn,0*33
@@ -291,6 +294,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // XGPS-160
                 // $PMTK010,002
                 // $PMTK011,MTKGPS
+            case "TKAGC":
+                // Asus ZenFone 3
+                // $PMTKAGC,165141.000,2897,3107,80,0*4A
             case "TKGALM":
             case "TKGEPH":
                 // Infinix HOT 4
