@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * Logs altitude and location data to the database. Also contains event and jump databases
+ * Logs location, altitude, every scrap of data we can get to a file.
  * AKA- The Black Box flight recorder
  */
 public class TrackLogger implements MyLocationListener, MySensorListener, Service {
@@ -41,7 +41,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
 
     // Log file
     private File logDir;
-    private File logFile;
+    private TrackFile trackFile;
     private BufferedWriter log;
 
     public void start(@NonNull final Context context) {
@@ -56,7 +56,17 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
             startTimeNano = System.nanoTime();
             stopTimeNano = -1;
             try {
-                startFileLogging();
+                // Pick a log file
+                trackFile = newTrackFile();
+
+                // Update state before first byte is written
+                // Otherwise user can browse to it, and uploader might upload it
+                Services.trackState.setState(trackFile, TrackState.RECORDING);
+
+                // Start recording
+                startFileLogging(trackFile.file);
+
+                // Notify listeners that recording has started
                 EventBus.getDefault().post(new LoggingEvent(true, null));
             } catch(IOException e) {
                 Log.e(TAG, "Error starting logging", e);
@@ -75,9 +85,14 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
         if(logging) {
             logging = false;
             Log.i(TAG, "Stopping logging");
-            final File logFile = stopFileLogging();
-            final TrackFile trackFile = logFile != null? new TrackFile(logFile) : null;
-            EventBus.getDefault().post(new LoggingEvent(false, trackFile));
+            final TrackFile trackFile = stopFileLogging();
+            if(trackFile != null) {
+                // Update state before notifying listeners (such as upload manager)
+                Services.trackState.setState(trackFile, TrackState.NOT_UPLOADED);
+                EventBus.getDefault().post(new LoggingEvent(false, trackFile));
+            } else {
+                Exceptions.report(new IllegalStateException("Result of stopFileLogging should not be null"));
+            }
         } else {
             Log.e(TAG, "stopLogging() called when database isn't logging");
         }
@@ -115,17 +130,23 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
         }
     }
 
-    private void startFileLogging() throws IOException {
-        // Open log file for writing
+    private TrackFile newTrackFile() {
+        // Name file based on current timestamp
         final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
         final String timestamp = dt.format(new Date());
 
-        // gzip log file
-        logFile = new File(logDir, "track_" + timestamp + ".csv.gz");
-        // Avoid file conflicts
-        for(int i = 2; logFile.exists(); i++) {
-            logFile = new File(logDir, "track_" + timestamp + "_" + i + ".csv.gz");
+        // gzipped CSV log file
+        File file = new File(logDir, "track_" + timestamp + ".csv.gz");
+        // Avoid filename conflicts
+        for(int i = 2; file.exists(); i++) {
+            file = new File(logDir, "track_" + timestamp + "_" + i + ".csv.gz");
         }
+
+        return new TrackFile(file);
+    }
+
+    private void startFileLogging(File logFile) throws IOException {
+        // Open track file for writing
         log = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(logFile))));
 
         // Write header
@@ -140,10 +161,10 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
     }
 
     /**
-     * Stop logging and return the log file.
+     * Stop logging and return the track file.
      * Precondition: logging = true
      */
-    private File stopFileLogging() {
+    private TrackFile stopFileLogging() {
         stopTimeNano = System.nanoTime();
 
         // Stop sensor updates
@@ -154,10 +175,10 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
         // Close file writer
         try {
             log.close();
-            Log.i(TAG, "Logging stopped for " + logFile.getName());
-            return logFile;
+            Log.i(TAG, "Logging stopped for " + trackFile);
+            return trackFile;
         } catch (IOException e) {
-            Log.e(TAG, "Failed to close log file " + logFile, e);
+            Log.e(TAG, "Failed to close log file " + trackFile, e);
             Exceptions.report(e);
             return null;
         }
@@ -173,7 +194,9 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
         }
     }
 
-    // Location listener
+    /**
+     * Listen for location updates
+     */
     @Override
     public void onLocationChanged(@NonNull MLocation measure) {
         if(!Double.isNaN(measure.latitude) && !Double.isNaN(measure.longitude)) {
@@ -183,14 +206,16 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
     @Override
     public void onLocationChangedPostExecute() {}
 
-    // Sensor listener
+    /**
+     * Listen for sensor updates
+     */
     @Override
     public void onSensorChanged(@NonNull Measurement measure) {
         logLine(measure.toRow());
     }
 
     /**
-     * Logs a measurement to the database
+     * Write a measurement to the track file
      * @param line the measurement to store
      */
     private synchronized void logLine(@NonNull String line) {
@@ -199,7 +224,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
                 log.write(line);
                 log.write('\n');
             } catch (IOException e) {
-                Log.e(TAG, "Failed to write to log file " + logFile, e);
+                Log.e(TAG, "Failed to write to track file " + trackFile, e);
                 Exceptions.report(e);
             }
         } else {

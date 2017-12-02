@@ -38,7 +38,7 @@ class TrackAdapter extends BaseAdapter {
         final List<ListItem> items = new ArrayList<>();
         // Add Unsynced tracks
         if(!trackFiles.isEmpty()) {
-            items.add(new ListHeader("Not synced (local only)"));
+            items.add(new ListHeader("Not synced"));
             for (TrackFile trackFile : trackFiles) {
                 items.add(new ListTrackFile(trackFile));
             }
@@ -86,6 +86,8 @@ class TrackAdapter extends BaseAdapter {
                 final ProgressBar itemSpinner = convertView.findViewById(R.id.list_spinner);
                 itemNameView.setText(trackFile.toString());
                 itemSizeView.setText(trackFile.getSize());
+
+                // Update based on logging and sync state
                 final int uploadState = Services.trackState.getState(trackFile);
                 if(uploadState == TrackState.UPLOADING) {
                     itemSpinner.setVisibility(View.VISIBLE);
