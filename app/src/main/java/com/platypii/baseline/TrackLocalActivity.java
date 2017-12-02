@@ -25,7 +25,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
 
     static final String EXTRA_TRACK_FILE = "TRACK_FILE";
 
-    private Button syncButton;
+    private TextView alertLabel;
     private Button deleteButton;
     private AlertDialog alertDialog;
 
@@ -38,7 +38,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
 
         final TextView filenameLabel = findViewById(R.id.filename);
         final TextView filesizeLabel = findViewById(R.id.filesize);
-        syncButton = findViewById(R.id.syncButton);
+        alertLabel = findViewById(R.id.alert_message);
         deleteButton = findViewById(R.id.deleteButton);
 
         // Load jump from extras
@@ -75,13 +75,6 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
             }
 
             // Update view based on sign-in state
-            if(isSignedIn() && uploadState != UploadManager.UPLOADING) {
-                syncButton.setEnabled(true);
-            } else {
-                syncButton.setEnabled(false);
-            }
-
-            final TextView alertLabel = findViewById(R.id.alert_message);
             if(uploadState == UploadManager.UPLOADING) {
                 alertLabel.setText(R.string.uploading);
                 alertLabel.setVisibility(View.VISIBLE);
@@ -91,14 +84,6 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
                 deleteButton.setEnabled(true);
             }
         }
-    }
-
-    public void clickSync(View v) {
-        // Start upload
-        firebaseAnalytics.logEvent("click_track_sync", null);
-        Toast.makeText(getApplicationContext(), "Syncing track...", Toast.LENGTH_SHORT).show();
-        Services.cloud.uploads.userUpload(trackFile);
-        updateViews();
     }
 
     public void clickDelete(View v) {

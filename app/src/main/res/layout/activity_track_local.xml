@@ -51,24 +51,6 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/syncButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:onClick="clickSync"
-            android:drawableTop="@drawable/button_sync"
-            android:text="@string/action_sync"
-            style="@style/Widget.AppCompat.Button.Borderless" />
-
-    </LinearLayout>
-
     <TextView
         android:id="@+id/alert_message"
         android:layout_width="wrap_content"

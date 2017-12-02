@@ -14,7 +14,6 @@
 
     <!-- Track Activity -->
     <string name="action_open">Details</string>
-    <string name="action_sync">Sync</string>
     <string name="action_map">Map</string>
     <string name="action_delete">Delete</string>
     <string name="action_export">Export</string>

@@ -5,6 +5,7 @@ import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackFiles;
 import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -22,8 +23,6 @@ import org.greenrobot.eventbus.ThreadMode;
 public class UploadManager {
     private static final String TAG = "UploadManager";
 
-    private static final boolean autosyncEnabled = true; // TODO: Make configurable?
-
     // Upload state for each track file
     private static final int NOT_UPLOADED = 0;
     public static final int UPLOADING = 1;
@@ -33,20 +32,12 @@ public class UploadManager {
 
     private Context context;
 
-    /**
-     * Called when user clicks sync
-     */
-    public void userUpload(@NonNull TrackFile trackFile) {
-        Exceptions.log("User upload track " + trackFile.getName());
-        // Update uploading state
-        final int state = getState(trackFile);
-        if(state == UPLOADING) {
-            Exceptions.report(new IllegalStateException("Upload already in progress for track " + trackFile));
-        } else if(state == UPLOADED) {
-            Exceptions.report(new IllegalStateException("Upload already complete for track " + trackFile));
-        } else {
-            upload(trackFile);
-        }
+    public void start(Context context) {
+        this.context = context;
+        // Listen for track completion
+        EventBus.getDefault().register(this);
+        // Check for queued tracks to upload
+        uploadAll();
     }
 
     private void upload(@NonNull TrackFile trackFile) {
@@ -56,26 +47,18 @@ public class UploadManager {
         new Thread(new UploadTask(context, trackFile)).start();
     }
 
-//    private void uploadAll() {
-//        if(BaseActivity.currentState == AuthEvent.SIGNED_IN && autosyncEnabled) {
-//            for(TrackFile trackFile : TrackFiles.getTracks(context)) {
-//                Log.i(TAG, "Auto syncing track " + trackFile);
-//                upload(trackFile, null);
-//            }
-//        }
-//    }
-
-    public void start(Context context) {
-        this.context = context;
-        // Listen for track completion
-        EventBus.getDefault().register(this);
-        // TODO: Check for queued tracks to upload
-        // uploadAll();
+    private void uploadAll() {
+        if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {
+            for(TrackFile trackFile : TrackFiles.getTracks(context)) {
+                Log.i(TAG, "Auto syncing track " + trackFile);
+                upload(trackFile);
+            }
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onLoggingEvent(@NonNull LoggingEvent event) {
-        if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN && autosyncEnabled && !event.started) {
+        if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN && !event.started) {
             Log.i(TAG, "Auto syncing track " + event.trackFile);
             Exceptions.log("Logging stopped, autosyncing track " + event.trackFile);
             upload(event.trackFile);

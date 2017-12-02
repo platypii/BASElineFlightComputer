@@ -19,7 +19,7 @@ public class TrackFiles {
     private static final String TAG = "TrackFiles";
 
     @NonNull
-    static List<TrackFile> getTracks(@NonNull Context context) {
+    public static List<TrackFile> getTracks(@NonNull Context context) {
         final List<TrackFile> tracks = new ArrayList<>();
         // Load jumps from disk
         final File logDir = getTrackDirectory(context);
