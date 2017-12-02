@@ -15,18 +15,31 @@ public class TrackState {
     public static final int UPLOADING = 2;
     public static final int UPLOADED = 3;
 
-    private final Map<TrackFile,Integer> trackFileState = new HashMap<>();
+    private final Map<TrackFile,Integer> syncState = new HashMap<>();
+
+    // Upload progress per track file
+    private final Map<TrackFile,Integer> uploadProgress = new HashMap<>();
 
     public int getState(@NonNull TrackFile trackFile) {
-        if(trackFileState.containsKey(trackFile)) {
-            return trackFileState.get(trackFile);
+        if(syncState.containsKey(trackFile)) {
+            return syncState.get(trackFile);
         } else {
             return NOT_UPLOADED;
         }
     }
 
     public void setState(@NonNull TrackFile trackFile, int state) {
-        trackFileState.put(trackFile, state);
+        syncState.put(trackFile, state);
+    }
+
+    public int getUploadProgress(@NonNull TrackFile trackFile) {
+        final Integer progress = uploadProgress.get(trackFile);
+        if(progress != null) return uploadProgress.get(trackFile);
+        else return 0;
+    }
+
+    public void setUploadProgress(@NonNull TrackFile trackFile, int progress) {
+        uploadProgress.put(trackFile, progress);
     }
 
 }

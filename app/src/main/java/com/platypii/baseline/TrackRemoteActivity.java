@@ -36,9 +36,18 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         if(extras != null && extras.getString(EXTRA_TRACK_ID) != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
             track = Services.cloud.tracks.getCached(track_id);
+            if(track == null) {
+                Exceptions.report(new IllegalStateException("Failed to load track from cache"));
+                // TODO: finish activity?
+            }
         } else {
             Exceptions.report(new IllegalStateException("Failed to load track_id from extras"));
+            // TODO: finish activity?
         }
+
+        findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
+        findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+        findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
 
         // Initial view updates
         updateViews();
@@ -58,7 +67,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         }
     }
 
-    public void clickOpen(View v) {
+    private void clickOpen(View v) {
         // Analytics
         final Bundle bundle = new Bundle();
         bundle.putString("track_id", track.track_id);
@@ -69,7 +78,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         }
     }
 
-    public void clickKml(View v) {
+    private void clickKml(View v) {
         // Analytics
         final Bundle bundle = new Bundle();
         bundle.putString("track_id", track.track_id);
@@ -82,7 +91,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         }
     }
 
-    public void clickDelete(View v) {
+    private void clickDelete(View v) {
         // Analytics
         final Bundle bundle = new Bundle();
         bundle.putString("track_id", track.track_id);

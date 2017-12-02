@@ -8,6 +8,15 @@ import com.platypii.baseline.tracks.TrackFile;
  */
 public abstract class SyncEvent {
 
+    public static class UploadProgress extends SyncEvent {
+        public final TrackFile trackFile;
+        public final int progress;
+        public UploadProgress(TrackFile trackFile, int progress) {
+            this.trackFile = trackFile;
+            this.progress = progress;
+        }
+    }
+
     public static class UploadSuccess extends SyncEvent {
         public final TrackFile trackFile;
         public final CloudData cloudData;

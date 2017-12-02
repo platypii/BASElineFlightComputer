@@ -33,7 +33,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
-            android:onClick="clickOpen"
             android:drawableTop="@drawable/browser"
             android:text="@string/action_open"
             style="@style/Widget.AppCompat.Button.Borderless" />
@@ -44,7 +43,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
-            android:onClick="clickDelete"
             android:drawableTop="@drawable/button_delete"
             android:text="@string/action_delete"
             style="@style/Widget.AppCompat.Button.Borderless" />
@@ -62,7 +60,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
-            android:onClick="clickKml"
             android:drawableTop="@drawable/google_earth"
             android:text="@string/action_map"
             style="@style/Widget.AppCompat.Button.Borderless" />

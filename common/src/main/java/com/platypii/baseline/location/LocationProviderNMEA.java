@@ -180,9 +180,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // Log.i(NMEA_TAG, "["+time+"] " + Convert.latlong(latitude, longitude) + ", groundSpeed = " + Convert.speed(groundSpeed) + ", bearing = " + Convert.bearing2(bearing));
 
                 // Sanity checks
-                if(lastFixMillis <= 0) {
-                    Log.w(NMEA_TAG, "Invalid timestamp " + lastFixMillis + ", nmea: " + nmea);
-                }
                 final int locationError = LocationCheck.validate(latitude, longitude);
                 if(locationError != LocationCheck.INVALID_NAN) {
                     if (locationError == LocationCheck.INVALID_ZERO) {
@@ -191,9 +188,13 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                     } else if (locationError == LocationCheck.INVALID_RANGE) {
                         Exceptions.report(new NMEAException(LocationCheck.message[locationError] + ": " + latitude + "," + longitude));
                     } else {
+                        // Warnings
                         if (locationError == LocationCheck.UNLIKELY_LAT || locationError == LocationCheck.UNLIKELY_LON) {
                             // Unlikely location, but still update
                             Exceptions.report(new NMEAException(LocationCheck.message[locationError] + ": " + latitude + "," + longitude));
+                        }
+                        if(lastFixMillis <= 0) {
+                            Log.w(NMEA_TAG, "Invalid timestamp " + lastFixMillis + ", nmea: " + nmea);
                         }
                         // Update the official location!
                         updateLocation();

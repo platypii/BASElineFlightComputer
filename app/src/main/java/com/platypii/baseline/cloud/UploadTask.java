@@ -99,10 +99,8 @@ class UploadTask implements Runnable {
             } else {
                 conn.setFixedLengthStreamingMode((int) contentLength);
             }
-            final InputStream is = new FileInputStream(trackFile.file);
             final OutputStream os = new BufferedOutputStream(conn.getOutputStream());
-            IOUtil.copy(is, os);
-            is.close();
+            copy(trackFile, os);
             os.close();
             // Read response
             final int status = conn.getResponseCode();
@@ -119,6 +117,26 @@ class UploadTask implements Runnable {
         } finally {
             conn.disconnect();
         }
+    }
+
+    /**
+     * Copy bytes from track file to output stream, and update upload progress
+     */
+    private static void copy(@NonNull TrackFile trackFile, @NonNull OutputStream output) throws IOException {
+        final InputStream is = new FileInputStream(trackFile.file);
+        final byte buffer[] = new byte[1024];
+        int bytesRead;
+        int bytesCopied = 0;
+        while((bytesRead = is.read(buffer)) != -1) {
+            output.write(buffer, 0, bytesRead);
+            bytesCopied += bytesRead;
+
+            // Update upload progress state
+            Services.trackState.setUploadProgress(trackFile, bytesCopied);
+            EventBus.getDefault().post(new SyncEvent.UploadProgress(trackFile, bytesCopied));
+        }
+        is.close();
+        output.flush();
     }
 
 }

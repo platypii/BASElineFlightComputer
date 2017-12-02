@@ -8,6 +8,7 @@ public class Exceptions {
 
     public static void report(Throwable e) {
         try {
+            Log.e(TAG, "Crash report exception", e);
             Crashlytics.logException(e);
         } catch(Exception e2) {
             Log.e(TAG, "Exception while reporting exception", e2);

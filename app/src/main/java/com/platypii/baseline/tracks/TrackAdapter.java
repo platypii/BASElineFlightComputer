@@ -88,8 +88,13 @@ class TrackAdapter extends BaseAdapter {
                 itemSizeView.setText(trackFile.getSize());
 
                 // Update based on logging and sync state
-                final int uploadState = Services.trackState.getState(trackFile);
-                if(uploadState == TrackState.UPLOADING) {
+                final int trackState = Services.trackState.getState(trackFile);
+                if(trackState == TrackState.UPLOADING) {
+                    // Show upload progress
+                    final int progress = Services.trackState.getUploadProgress(trackFile);
+                    final int filesize = (int) trackFile.file.length();
+                    itemSpinner.setProgress(progress);
+                    itemSpinner.setMax(filesize);
                     itemSpinner.setVisibility(View.VISIBLE);
                 } else {
                     itemSpinner.setVisibility(View.GONE);

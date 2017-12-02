@@ -82,7 +82,12 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(SyncEvent event) {
-        updateList();
+        if(event instanceof SyncEvent.UploadProgress) {
+            // Don't change track list, just re-draw progress bar
+            listAdapter.notifyDataSetChanged();
+        } else {
+            updateList();
+        }
     }
 
 }

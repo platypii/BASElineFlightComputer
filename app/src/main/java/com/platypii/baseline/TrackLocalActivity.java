@@ -6,6 +6,7 @@ import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackFiles;
 import com.platypii.baseline.tracks.TrackState;
+import com.platypii.baseline.util.Exceptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
@@ -25,6 +27,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
 
     static final String EXTRA_TRACK_FILE = "TRACK_FILE";
 
+    private ProgressBar uploadProgress;
     private TextView alertLabel;
     private Button deleteButton;
     private AlertDialog alertDialog;
@@ -38,22 +41,27 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
 
         final TextView filenameLabel = findViewById(R.id.filename);
         final TextView filesizeLabel = findViewById(R.id.filesize);
+        uploadProgress = findViewById(R.id.uploadProgress);
         alertLabel = findViewById(R.id.alert_message);
         deleteButton = findViewById(R.id.deleteButton);
 
         // Load jump from extras
         final Bundle extras = getIntent().getExtras();
-        if(extras != null) {
+        if(extras != null && extras.getString(EXTRA_TRACK_FILE) != null) {
             final String extraTrackFile = extras.getString(EXTRA_TRACK_FILE);
-            if(extraTrackFile != null) {
-                final File trackDir = TrackFiles.getTrackDirectory(getApplicationContext());
-                trackFile = new TrackFile(new File(trackDir, extraTrackFile));
+            final File trackDir = TrackFiles.getTrackDirectory(getApplicationContext());
+            trackFile = new TrackFile(new File(trackDir, extraTrackFile));
 
-                // Update views
-                filenameLabel.setText(trackFile.getName());
-                filesizeLabel.setText(trackFile.getSize());
-            }
+            // Update views
+            filenameLabel.setText(trackFile.getName());
+            filesizeLabel.setText(trackFile.getSize());
+        } else {
+            Exceptions.report(new IllegalStateException("Failed to load track file from extras"));
+            // TODO: finish activity?
         }
+
+        findViewById(R.id.exportButton).setOnClickListener(this::clickExport);
+        findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
 
         // Initial view updates
         updateViews();
@@ -66,7 +74,20 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
     private void updateViews() {
         if(trackFile != null) {
             final int uploadState = Services.trackState.getState(trackFile);
-            if(uploadState == TrackState.UPLOADED) {
+            if(uploadState == TrackState.NOT_UPLOADED) {
+                uploadProgress.setVisibility(View.GONE);
+                alertLabel.setVisibility(View.GONE);
+                deleteButton.setEnabled(true);
+            } else if(uploadState == TrackState.RECORDING) {
+                Exceptions.report(new IllegalStateException("TrackLocalActivity should never open an actively logging track"));
+            } else if(uploadState == TrackState.UPLOADING) {
+                uploadProgress.setProgress(Services.trackState.getUploadProgress(trackFile));
+                uploadProgress.setMax((int) trackFile.file.length());
+                uploadProgress.setVisibility(View.VISIBLE);
+                alertLabel.setText(R.string.uploading);
+                alertLabel.setVisibility(View.VISIBLE);
+                deleteButton.setEnabled(false);
+            } else if(uploadState == TrackState.UPLOADED) {
                 // Track uploaded, open TrackRemoteActivity
                 final CloudData cloudData = Services.cloud.uploads.getCompleted(trackFile);
                 Intents.openTrackRemote(this, cloudData);
@@ -76,9 +97,6 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
 
             // Update view based on sign-in state
             if(uploadState == TrackState.UPLOADING) {
-                alertLabel.setText(R.string.uploading);
-                alertLabel.setVisibility(View.VISIBLE);
-                deleteButton.setEnabled(false);
             } else {
                 alertLabel.setVisibility(View.GONE);
                 deleteButton.setEnabled(true);
@@ -164,6 +182,12 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
         if(event.trackFile.getName().equals(trackFile.getName())) {
             Log.e(TAG, "Failed to upload track: " + event.error);
             Toast.makeText(getApplicationContext(), "Track sync failed", Toast.LENGTH_LONG).show();
+            updateViews();
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUploadProgress(@NonNull SyncEvent.UploadProgress event) {
+        if(event.trackFile.getName().equals(trackFile.getName())) {
             updateViews();
         }
     }

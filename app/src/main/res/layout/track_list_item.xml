@@ -26,9 +26,9 @@
 
     <ProgressBar
         android:id="@+id/list_spinner"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="26dp"
         android:layout_height="26dp"
-        android:indeterminate="true"
         android:visibility="gone"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
