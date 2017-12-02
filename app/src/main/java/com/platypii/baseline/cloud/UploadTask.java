@@ -1,5 +1,6 @@
 package com.platypii.baseline.cloud;
 
+import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
@@ -88,6 +89,7 @@ class UploadTask implements Runnable {
         conn.setRequestProperty("Content-Type", "application/gzip");
         conn.setRequestProperty("Authorization", auth);
         conn.setRequestProperty("ETag", md5);
+        conn.setRequestProperty("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME);
         // Log.d(TAG, "Uploading file with size " + contentLength);
         try {
             conn.setDoOutput(true);

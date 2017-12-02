@@ -19,7 +19,7 @@ public class TrackFiles {
     private static final String TAG = "TrackFiles";
 
     @NonNull
-    public static synchronized List<TrackFile> getTracks(@NonNull Context context) {
+    static List<TrackFile> getTracks(@NonNull Context context) {
         final List<TrackFile> tracks = new ArrayList<>();
         // Load jumps from disk
         final File logDir = getTrackDirectory(context);

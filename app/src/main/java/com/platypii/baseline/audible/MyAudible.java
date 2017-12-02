@@ -157,7 +157,7 @@ public class MyAudible implements Service {
     private @NonNull String getMeasurement() {
         // First, check for airplane mode
         if(preferenceQuiet && Services.flightComputer.flightMode == FlightMode.MODE_PLANE) {
-            // TODO: Announce every N seconds
+            // Announce every N seconds
             final long delta = System.currentTimeMillis() - airplaneAnnounceTime;
             if(AIRPLANE_ANNOUNCE_INTERVAL < delta) {
                 // Announce airplane mode

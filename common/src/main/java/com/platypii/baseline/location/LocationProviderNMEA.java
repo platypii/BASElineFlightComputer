@@ -54,7 +54,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
      * @param context The Application context
      */
     @Override
-    public synchronized void start(@NonNull Context context) throws SecurityException {
+    public void start(@NonNull Context context) throws SecurityException {
         // Start NMEA updates
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         final boolean nmeaSuccess = manager.addNmeaListener(this);

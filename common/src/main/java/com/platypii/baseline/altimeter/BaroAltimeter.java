@@ -53,7 +53,7 @@ public class BaroAltimeter implements Service, SensorEventListener {
      * @param context The Application context
      */
     @Override
-    public synchronized void start(@NonNull final Context context) {
+    public void start(@NonNull final Context context) {
         // Get a new preference manager
         if(sensorManager == null) {
             // Add sensor listener

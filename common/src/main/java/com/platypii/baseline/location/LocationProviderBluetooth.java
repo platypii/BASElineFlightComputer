@@ -38,7 +38,7 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
      * @param context The Application context
      */
     @Override
-    public synchronized void start(@NonNull Context context) throws SecurityException {
+    public void start(@NonNull Context context) throws SecurityException {
         // Start NMEA updates
         bluetooth.addNmeaListener(this);
     }

@@ -73,13 +73,14 @@ public class Services {
     private static boolean created = false;
 
     static void start(@NonNull Activity activity) {
-        startCount++;
-        if(startCount == 1 && initialized) {
+        final boolean shouldStart = inc();
+        if(shouldStart && initialized) {
             // This happens when services are started again before the shutdown delay
             Log.i(TAG, "Services still alive");
+            // Even without this line, stopRunnable would notice that startCount > 0.
+            // But why waste the cycles? Might as well remove the stop runnable.
             handler.removeCallbacks(stopRunnable);
-        }
-        if(!initialized) {
+        } else if(shouldStart) {
             initialized = true;
             final long startTime = System.currentTimeMillis();
             Log.i(TAG, "Starting services");
@@ -140,11 +141,6 @@ public class Services {
             MigrateTracks.migrate(appContext);
 
             Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
-        } else if(startCount > 2) {
-            // Activity lifecycles can overlap
-            Log.w(TAG, "Services started more than twice");
-        } else {
-            Log.v(TAG, "Services already started");
         }
     }
 
@@ -166,9 +162,21 @@ public class Services {
         }
     }
 
+    /**
+     * Increment startCount, and return true if 0 -> 1, meaning start services
+     */
+    private static synchronized boolean inc() {
+        return startCount++ == 0;
+    }
+    /**
+     * Decrement startCount, and return true if 1 -> 0, meaning stop services
+     */
+    private static synchronized boolean dec() {
+        return --startCount == 0;
+    }
+
     static void stop() {
-        startCount--;
-        if(startCount == 0) {
+        if(dec()) {
             Log.i(TAG, String.format("All activities have stopped. Services will stop in %.3fs", shutdownDelay * 0.001));
             handler.postDelayed(stopRunnable, shutdownDelay);
         }

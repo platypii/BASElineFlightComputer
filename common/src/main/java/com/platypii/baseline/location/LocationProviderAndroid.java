@@ -42,7 +42,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
      * @param context The Application context
      */
     @Override
-    public synchronized void start(@NonNull Context context) throws SecurityException {
+    public void start(@NonNull Context context) throws SecurityException {
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if(manager.getProvider(LocationManager.GPS_PROVIDER) != null) {
             try {

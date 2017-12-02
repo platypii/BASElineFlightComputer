@@ -65,7 +65,7 @@ public class MyAltimeter implements Service, MyLocationListener {
      * @param context The Application context
      */
     @Override
-    public synchronized void start(@NonNull final Context context) {
+    public void start(@NonNull final Context context) {
         AsyncTask.execute(() -> {
             if(!started) {
                 // Start barometer
