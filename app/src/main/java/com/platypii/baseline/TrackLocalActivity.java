@@ -1,11 +1,11 @@
 package com.platypii.baseline;
 
 import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.cloud.UploadManager;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackFiles;
+import com.platypii.baseline.tracks.TrackState;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -65,8 +65,8 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
      */
     private void updateViews() {
         if(trackFile != null) {
-            final int uploadState = Services.cloud.uploads.getState(trackFile);
-            if(uploadState == UploadManager.UPLOADED) {
+            final int uploadState = Services.trackState.getState(trackFile);
+            if(uploadState == TrackState.UPLOADED) {
                 // Track uploaded, open TrackRemoteActivity
                 final CloudData cloudData = Services.cloud.uploads.getCompleted(trackFile);
                 Intents.openTrackRemote(this, cloudData);
@@ -75,7 +75,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
             }
 
             // Update view based on sign-in state
-            if(uploadState == UploadManager.UPLOADING) {
+            if(uploadState == TrackState.UPLOADING) {
                 alertLabel.setText(R.string.uploading);
                 alertLabel.setVisibility(View.VISIBLE);
                 deleteButton.setEnabled(false);

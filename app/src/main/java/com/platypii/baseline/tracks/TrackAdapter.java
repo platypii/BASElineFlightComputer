@@ -4,7 +4,6 @@ import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.cloud.UploadManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -87,8 +86,8 @@ class TrackAdapter extends BaseAdapter {
                 final ProgressBar itemSpinner = convertView.findViewById(R.id.list_spinner);
                 itemNameView.setText(trackFile.toString());
                 itemSizeView.setText(trackFile.getSize());
-                final int uploadState = Services.cloud.uploads.getState(trackFile);
-                if(uploadState == UploadManager.UPLOADING) {
+                final int uploadState = Services.trackState.getState(trackFile);
+                if(uploadState == TrackState.UPLOADING) {
                     itemSpinner.setVisibility(View.VISIBLE);
                 } else {
                     itemSpinner.setVisibility(View.GONE);

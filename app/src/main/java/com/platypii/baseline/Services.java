@@ -12,6 +12,7 @@ import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.sensors.MySensorManager;
 import com.platypii.baseline.tracks.MigrateTracks;
 import com.platypii.baseline.tracks.TrackLogger;
+import com.platypii.baseline.tracks.TrackState;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
@@ -50,6 +51,7 @@ public class Services {
 
     // Services
     public static final TrackLogger logger = new TrackLogger();
+    public static final TrackState trackState = new TrackState();
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final LocationService location = new LocationService(bluetooth);
     public static final MyAltimeter alti = location.alti;
