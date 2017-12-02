@@ -31,11 +31,13 @@
         android:layout_height="wrap_content"
         android:text="@string/bluetooth_devices"
         style="@style/header"/>
+
     <fragment
-        android:name="com.platypii.baseline.bluetooth.BluetoothDeviceListFragment"
         android:id="@android:id/list"
+        android:name="com.platypii.baseline.bluetooth.BluetoothDeviceListFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
 
     <Button
         android:layout_width="match_parent"

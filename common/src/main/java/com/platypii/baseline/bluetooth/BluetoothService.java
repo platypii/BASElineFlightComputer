@@ -133,30 +133,32 @@ public class BluetoothService implements Service {
      * Return a human-readable string for the bluetooth state
      */
     public String getStatusMessage(Context context) {
-        if(bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
-            if(preferences.preferenceDeviceId == null) {
-                return context.getString(R.string.bluetooth_status_not_selected);
-            } else {
-                switch (bluetoothState) {
-                    case BT_STOPPED:
-                        return context.getString(R.string.bluetooth_status_stopped);
-                    case BT_STARTING:
-                        return context.getString(R.string.bluetooth_status_starting);
-                    case BT_CONNECTING:
-                        return context.getString(R.string.bluetooth_status_connecting);
-                    case BT_CONNECTED:
-                        return context.getString(R.string.bluetooth_status_connected);
-                    case BT_DISCONNECTED:
-                        return context.getString(R.string.bluetooth_status_disconnected);
-                    case BT_STOPPING:
-                        return context.getString(R.string.bluetooth_status_stopping);
-                    default:
-                        return "";
-                }
-            }
-        } else {
+        if(bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
             // Hardware disabled
             return context.getString(R.string.bluetooth_status_disabled);
+        } else if(!preferences.preferenceEnabled) {
+            // Bluetooth preference disabled
+            return context.getString(R.string.bluetooth_status_disabled);
+        } else if(preferences.preferenceDeviceId == null) {
+            // Bluetooth preference enabled, but device not selected
+            return context.getString(R.string.bluetooth_status_not_selected);
+        } else {
+            switch (bluetoothState) {
+                case BT_STOPPED:
+                    return context.getString(R.string.bluetooth_status_stopped);
+                case BT_STARTING:
+                    return context.getString(R.string.bluetooth_status_starting);
+                case BT_CONNECTING:
+                    return context.getString(R.string.bluetooth_status_connecting);
+                case BT_CONNECTED:
+                    return context.getString(R.string.bluetooth_status_connected);
+                case BT_DISCONNECTED:
+                    return context.getString(R.string.bluetooth_status_disconnected);
+                case BT_STOPPING:
+                    return context.getString(R.string.bluetooth_status_stopping);
+                default:
+                    return "";
+            }
         }
     }
 
