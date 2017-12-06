@@ -18,6 +18,7 @@
     <string name="action_delete">Supprimer</string>
     <string name="action_export">Exporter</string>
 
+    <string name="upload_waiting">En attente de téléchargement</string>
     <string name="uploading">Téléchargement…</string>
 
     <string name="delete_local">Voulez-vous vraiment supprimer cette piste?</string>

@@ -73,7 +73,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         }
         // Update sign in views
         final SettingsActivity activity = (SettingsActivity) getActivity();
-        if(activity.isSignedIn()) {
+        if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {
             // Change to sign out state
             signInPreference.setTitle(R.string.pref_sign_out);
             final String name = activity.getDisplayName();
@@ -104,9 +104,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         } else if(preference.getKey().equals("sign_in")) {
             // Handle sign in click
             final BaseActivity activity = (BaseActivity) getActivity();
-            if(activity.isSignedIn()) {
+            // Ignore click if state is signing in
+            if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {
                 activity.clickSignOut();
-            } else {
+            } else if(BaseActivity.currentAuthState == AuthEvent.SIGNED_OUT) {
                 activity.clickSignIn();
             }
         } else if(preference.getKey().equals("help_page")) {

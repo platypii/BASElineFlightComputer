@@ -7,7 +7,6 @@ import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
-import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -46,7 +45,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private TextView flightStatsGlide;
     private ImageButton homeButton;
     private ImageView crosshair;
-    private AlertDialog alertDialog;
 
     private TouchableMapFragment mapFragment;
     private GoogleMap map; // Might be null if Google Play services APK is not available
@@ -63,7 +61,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private BitmapDescriptor myposition2;
 
     // Activity state
-    private boolean paused = false;
     private boolean ready = false;
 
     // Drag listener
@@ -97,14 +94,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         // Initialize map
         mapFragment = (TouchableMapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Start sensor updates
-        Services.location.addListener(this);
-        EventBus.getDefault().register(this);
     }
 
     /**
@@ -240,10 +229,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     public void onLocationChanged(@NonNull MLocation loc) {}
     @Override
     public void onLocationChangedPostExecute() {
-        if(!paused) {
-            updateFlightStats();
-        }
-        if(ready && !paused) {
+        updateFlightStats();
+        if(ready) {
             final LatLng currentLoc = Services.location.lastLoc.latLng();
 
             // Update markers and overlays
@@ -279,9 +266,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAltitudeEvent(MAltitude alt) {
-        if(!paused) {
-            updateFlightStats();
-        }
+        updateFlightStats();
     }
 
     private void updateHome() {
@@ -357,27 +342,20 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     @Override
     protected void onResume() {
         super.onResume();
-        paused = false;
+        // Start sensor updates
+        Services.location.addListener(this);
+        EventBus.getDefault().register(this);
         // Recenter on last location
         if(Services.location.lastLoc != null) {
             onLocationChangedPostExecute();
         }
         updateFlightStats();
     }
+
+
     @Override
     protected void onPause() {
         super.onPause();
-        paused = true;
-        if(alertDialog != null) {
-            alertDialog.dismiss();
-            alertDialog = null;
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
         // Stop sensor updates
         Services.location.removeListener(this);
         EventBus.getDefault().unregister(this);

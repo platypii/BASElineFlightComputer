@@ -48,9 +48,6 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
         findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
         findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
-
-        // Initial view updates
-        updateViews();
     }
 
     /**
@@ -137,6 +134,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
                 }
             });
         } else {
+            // This can happen between onResume and AuthEvent
             Log.w(TAG, "Track delete failed: not signed in");
         }
     }
@@ -169,16 +167,22 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         // Listen for sync and auth updates
         EventBus.getDefault().register(this);
+        updateViews();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
         // Dismiss alert to prevent context leak
         if(alertDialog != null) {
             alertDialog.dismiss();

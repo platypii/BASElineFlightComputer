@@ -62,10 +62,6 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
 
         findViewById(R.id.exportButton).setOnClickListener(this::clickExport);
         findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
-
-        // Initial view updates
-        updateViews();
-        // Note: don't update auth views until we get a SyncEvent, since it would blink the sign in button
     }
 
     /**
@@ -76,7 +72,12 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
             final int uploadState = Services.trackState.getState(trackFile);
             if(uploadState == TrackState.NOT_UPLOADED) {
                 uploadProgress.setVisibility(View.GONE);
-                alertLabel.setVisibility(View.GONE);
+                if(currentAuthState == AuthEvent.SIGNED_IN) {
+                    alertLabel.setText(R.string.upload_waiting);
+                    alertLabel.setVisibility(View.VISIBLE);
+                } else {
+                    alertLabel.setVisibility(View.GONE);
+                }
                 deleteButton.setEnabled(true);
             } else if(uploadState == TrackState.RECORDING) {
                 Exceptions.report(new IllegalStateException("TrackLocalActivity should never open an actively logging track"));
@@ -92,19 +93,11 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
                 final CloudData cloudData = Services.cloud.uploads.getCompleted(trackFile);
                 Intents.openTrackRemote(this, cloudData);
                 finish();
-                return;
-            }
-
-            // Update view based on sign-in state
-            if(uploadState == TrackState.UPLOADING) {
-            } else {
-                alertLabel.setVisibility(View.GONE);
-                deleteButton.setEnabled(true);
             }
         }
     }
 
-    public void clickDelete(View v) {
+    private void clickDelete(View v) {
         firebaseAnalytics.logEvent("click_track_delete_local_1", null);
         alertDialog = new AlertDialog.Builder(this)
             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -139,33 +132,9 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
         }
     }
 
-    public void clickExport(View v) {
+    private void clickExport(View v) {
         firebaseAnalytics.logEvent("click_track_export", null);
         Intents.exportTrackFile(this, trackFile);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Listen for sync and auth updates
-        EventBus.getDefault().register(this);
-        updateViews();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // Dismiss alert to prevent context leak
-        if(alertDialog != null) {
-            alertDialog.dismiss();
-            alertDialog = null;
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -194,8 +163,31 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAuthEvent(AuthEvent event) {
-        // Signing in enables the sync button, so update button views:
         updateViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Listen for sync and auth updates
+        EventBus.getDefault().register(this);
+        updateViews();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Dismiss alert to prevent context leak
+        if(alertDialog != null) {
+            alertDialog.dismiss();
+            alertDialog = null;
+        }
     }
 
 }

@@ -2,7 +2,6 @@ package com.platypii.baseline;
 
 import com.platypii.baseline.altimeter.AnalogAltimeterSettable;
 import com.platypii.baseline.measurements.MAltitude;
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Window;
 import org.greenrobot.eventbus.EventBus;
@@ -10,8 +9,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class AltimeterActivity extends BaseActivity {
-
-    private AlertDialog alertDialog;
 
     private PolarPlot polar;
     private AnalogAltimeterSettable analogAltimeter;
@@ -54,9 +51,5 @@ public class AltimeterActivity extends BaseActivity {
         // Stop sensor updates
         EventBus.getDefault().unregister(this);
         polar.stop();
-        if(alertDialog != null) {
-            alertDialog.dismiss();
-            alertDialog = null;
-        }
     }
 }
