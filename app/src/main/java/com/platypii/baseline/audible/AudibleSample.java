@@ -3,12 +3,12 @@ package com.platypii.baseline.audible;
 /**
  * Represents a single audible sample and phrase
  */
-class AudibleSample {
+public class AudibleSample {
 
     final double value;
     final String phrase;
 
-    AudibleSample(double value, String phrase) {
+    public AudibleSample(double value, String phrase) {
         this.value = value;
         this.phrase = phrase;
     }
