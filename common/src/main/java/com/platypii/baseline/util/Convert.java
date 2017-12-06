@@ -100,42 +100,61 @@ public class Convert {
             return Double.toString(m);
         } else {
             String unitString;
-            double localValue;
+            String localValue;
             if(metric) {
-                if(m > 1000) {
+                if(m >= 1000) {
                     unitString = "kilometers";
-                    localValue = m * 0.001;
+                    localValue = formatDouble(m * 0.001, precision);
                 } else {
                     unitString = "meters";
-                    localValue = m;
+                    localValue = truncate(m, precision);
                 }
             } else {
-                if(m > MILE) {
+                if(m >= MILE) {
                     unitString = "miles";
-                    localValue = m * 0.000621371;
+                    localValue = formatDouble(m * 0.000621371, precision);
                 } else {
                     unitString = "feet";
-                    localValue = m * 3.2808399;
+                    localValue = truncate(m * 3.2808399, precision);
                 }
             }
-            if(!units) {
-                unitString = "";
-            }
-
-            final double localValueTruncated = truncate(localValue);
-            if(precision == 0) {
-                // Faster special case for integers
-                return Math.round(localValueTruncated) + unitString;
+            if(units) {
+                return localValue + " " + unitString;
             } else {
-                return String.format("%."+precision+"f%s", localValueTruncated, unitString);
+                return localValue;
             }
         }
     }
+
+    /**
+     * Format a double using a given precision (significant digits)
+     */
+    static String formatDouble(double value, int precision) {
+        // Precision must be at least 1
+        if(precision <= 0) precision = 1;
+        // Find magnitude of value
+        final int mag = (int) Math.log10(value);
+        // How many decimal places we need to print
+        final int decimalPlaces = precision - mag - 1;
+        if (decimalPlaces == 0) {
+            // Special case for zero decimal places
+            return Integer.toString((int) value);
+        } else if (decimalPlaces < 0) {
+            // No decimals, truncate to significant digits
+            return truncate(value, precision);
+        } else {
+            // we need decimal places
+            return String.format("%." + decimalPlaces + "f", value);
+        }
+    }
+
     /** Truncate to 2 significant digits */
-    private static double truncate(double value) {
-        final double mag = Math.floor(Math.log10(value));
-        final double mask = Math.pow(10, mag - 1);
-        return value - (value % mask);
+    private static String truncate(double value, int precision) {
+        final int mag = (int) Math.log10(value);
+        final int mask = (int) Math.pow(10, mag - precision + 1);
+        final int valueInt = (int) value;
+        final int truncated = valueInt - (valueInt % mask);
+        return Integer.toString(truncated);
     }
 
     /**
@@ -349,14 +368,12 @@ public class Convert {
     public static String angle2(double degrees) {
         // Adjust range to -180..180
         degrees = (degrees + 540) % 360 - 180;
-        // Shorten to two significant digits
-        degrees = truncate(degrees);
         if(degrees < 0)
-            return Math.round(-degrees) + " left";
+            return truncate(-degrees, 2) + " left";
         else if(degrees == 0)
             return "straight";
         else if(degrees > 0)
-            return Math.round(degrees) + " right";
+            return truncate(degrees, 2) + " right";
         else
             return "";
     }
