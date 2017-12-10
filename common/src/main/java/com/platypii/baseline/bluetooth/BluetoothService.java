@@ -103,7 +103,7 @@ public class BluetoothService implements Service {
         return bluetoothAdapter;
     }
 
-    Set<BluetoothDevice> getDevices() {
+    public Set<BluetoothDevice> getDevices() {
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter != null) {
             return bluetoothAdapter.getBondedDevices();
@@ -194,7 +194,7 @@ public class BluetoothService implements Service {
      * Restart bluetooth.
      * If bluetooth is stopped, just start it.
      */
-    synchronized void restart(Activity activity) {
+    public synchronized void restart(Activity activity) {
         Log.i(TAG, "Restarting bluetooth service");
         if(bluetoothState == BT_STOPPED) {
             // Just start

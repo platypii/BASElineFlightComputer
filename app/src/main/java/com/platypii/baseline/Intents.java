@@ -3,6 +3,8 @@ package com.platypii.baseline;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.views.tracks.TrackLocalActivity;
+import com.platypii.baseline.views.tracks.TrackRemoteActivity;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -29,7 +31,7 @@ public class Intents {
     }
 
     /** Open track url in browser */
-    static void openTrackUrl(@NonNull Context context, @NonNull String url) {
+    public static void openTrackUrl(@NonNull Context context, @NonNull String url) {
         // Add mobile flag
         if(!url.contains("?")) {
             url += "?mobile";
@@ -40,7 +42,7 @@ public class Intents {
     }
 
     /** Open track as KML in google earth */
-    static void openTrackKml(@NonNull Context context, String urlKml) {
+    public static void openTrackKml(@NonNull Context context, String urlKml) {
         try {
             openTrackGoogleEarth(context, urlKml);
         } catch(ActivityNotFoundException e) {
@@ -79,7 +81,7 @@ public class Intents {
 //    }
 
     /** Share track data file */
-    static void exportTrackFile(@NonNull Context context, @NonNull TrackFile trackFile) {
+    public static void exportTrackFile(@NonNull Context context, @NonNull TrackFile trackFile) {
         try {
             final Uri trackFileUri = FileProvider.getUriForFile(context, "com.platypii.baseline.provider", trackFile.file);
             Log.d(TAG, "Exporting track file " + trackFileUri);
@@ -97,7 +99,7 @@ public class Intents {
     }
 
     /** Open help page in browser */
-    static void openHelpUrl(@NonNull Context context) {
+    public static void openHelpUrl(@NonNull Context context) {
         final Uri uri = Uri.parse("https://baseline.ws/help/app");
         Log.i(TAG, "Opening help url " + uri);
         final Intent intent = new Intent(Intent.ACTION_VIEW, uri);

@@ -2,6 +2,7 @@ package com.platypii.baseline;
 
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
+import com.platypii.baseline.views.MainActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;

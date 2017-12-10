@@ -2,16 +2,16 @@
        xmlns:tools="http://schemas.android.com/tools"
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       tools:context="com.platypii.baseline.MapActivity"
+       tools:context="com.platypii.baseline.views.map.MapActivity"
        tools:parentTag="FrameLayout">
 
     <fragment
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.platypii.baseline.TouchableMapFragment" />
+        android:name="com.platypii.baseline.views.map.TouchableMapFragment" />
 
-    <com.platypii.baseline.altimeter.AnalogAltimeterSettable
+    <com.platypii.baseline.views.altimeter.AnalogAltimeterSettable
         android:id="@+id/analogAltimeter"
         android:layout_width="160dp"
         android:layout_height="160dp"

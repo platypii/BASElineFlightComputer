@@ -4,9 +4,9 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:background="#ff111111"
-             tools:context="com.platypii.baseline.AltimeterActivity">
+             tools:context="com.platypii.baseline.views.altimeter.AltimeterActivity">
 
-    <com.platypii.baseline.PolarPlot
+    <com.platypii.baseline.views.PolarPlot
         android:id="@+id/polar"
         android:layout_width="180dp"
         android:layout_height="180dp"
@@ -18,7 +18,7 @@
         android:layout_toLeftOf="@+id/analogAltimeter"
         android:layout_toStartOf="@+id/analogAltimeter"/>
 
-    <com.platypii.baseline.altimeter.AnalogAltimeterSettable
+    <com.platypii.baseline.views.altimeter.AnalogAltimeterSettable
         android:id="@+id/analogAltimeter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

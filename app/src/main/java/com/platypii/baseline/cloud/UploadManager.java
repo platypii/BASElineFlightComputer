@@ -1,6 +1,6 @@
 package com.platypii.baseline.cloud;
 
-import com.platypii.baseline.BaseActivity;
+import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.LoggingEvent;

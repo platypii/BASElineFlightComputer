@@ -47,7 +47,7 @@ public class MyAltimeter implements Service, MyLocationListener {
     // public static double verticalAcceleration = Double.NaN;
 
     // Ground level
-    final GroundLevel groundLevel = new GroundLevel();
+    public final GroundLevel groundLevel = new GroundLevel();
 
     // Sample counts
     public long baro_sample_count = 0;

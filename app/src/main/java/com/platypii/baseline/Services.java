@@ -16,6 +16,7 @@ import com.platypii.baseline.tracks.TrackState;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.views.BaseActivity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -65,7 +66,7 @@ public class Services {
      * We want preferences to be available as early as possible.
      * Call this in onCreate
      */
-    static void create(@NonNull Activity activity) {
+    public static void create(@NonNull Activity activity) {
         if(!created) {
             Log.i(TAG, "Loading app preferences");
             loadPreferences(activity);
@@ -74,7 +75,7 @@ public class Services {
     }
     private static boolean created = false;
 
-    static void start(@NonNull Activity activity) {
+    public static void start(@NonNull Activity activity) {
         final boolean shouldStart = inc();
         if(shouldStart && initialized) {
             // This happens when services are started again before the shutdown delay
@@ -149,7 +150,7 @@ public class Services {
     /**
      * BaseActivity calls this function once text-to-speech data is ready
      */
-    static void onTtsLoaded(@NonNull Activity context) {
+    public static void onTtsLoaded(@NonNull Activity context) {
         // TTS loaded, start the audible
         Exceptions.log("onTtsLoaded from " + context.getLocalClassName());
         if(!ttsLoaded) {
@@ -177,7 +178,7 @@ public class Services {
         return --startCount == 0;
     }
 
-    static void stop() {
+    public static void stop() {
         if(dec()) {
             Log.i(TAG, String.format("All activities have stopped. Services will stop in %.3fs", shutdownDelay * 0.001));
             handler.postDelayed(stopRunnable, shutdownDelay);

@@ -15,7 +15,7 @@ import com.platypii.baseline.util.Numbers;
  * If a barometer is available, we use that, because it is not susceptible to random gaps or
  * discontinuities in altitude. We also track the ground level relative to GPS, as a fallback.
  */
-class GroundLevel {
+public class GroundLevel {
     private static final String TAG = "GroundLevel";
 
     // Save ground level for 12 hours (in milliseconds)
@@ -107,7 +107,7 @@ class GroundLevel {
     /**
      * Set ground level for both baro and gps based on a specified altitude agl
      */
-    void setCurrentAltitudeAGL(double altitude_agl) {
+    public void setCurrentAltitudeAGL(double altitude_agl) {
         if(baroInitialized && !Double.isNaN(pressure_altitude)) {
             ground_pressure_altitude = pressure_altitude - altitude_agl;
             saveGroundPressureAltitude();

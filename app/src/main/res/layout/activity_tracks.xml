@@ -1,7 +1,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.platypii.baseline.TrackListActivity"
+    tools:context="com.platypii.baseline.views.tracks.TrackListActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,7 +9,7 @@
 
     <fragment
         android:id="@+id/trackList"
-        android:name="com.platypii.baseline.tracks.TrackListFragment"
+        android:name="com.platypii.baseline.views.tracks.TrackListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
