@@ -1,5 +1,6 @@
 package com.platypii.baseline.util;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -107,15 +108,17 @@ public class Convert {
                     localValue = formatDouble(m * 0.001, precision);
                 } else {
                     unitString = "meters";
-                    localValue = truncate(m, precision);
+                    localValue = formatInt(m, precision);
                 }
             } else {
                 if(m >= MILE) {
+                    // Need max because of float error
+                    final double miles = Math.max(1, m * 0.000621371192);
                     unitString = "miles";
-                    localValue = formatDouble(m * 0.000621371, precision);
+                    localValue = formatDouble(miles, precision);
                 } else {
                     unitString = "feet";
-                    localValue = truncate(m * 3.2808399, precision);
+                    localValue = formatInt(m * 3.2808399, precision);
                 }
             }
             if(units) {
@@ -130,31 +133,50 @@ public class Convert {
      * Format a double using a given precision (significant digits)
      */
     static String formatDouble(double value, int precision) {
+        // Switch negative, so that we floor toward zero
+        if(value < 0) return "-" + formatDouble(-value, precision);
+        // Check for special values
+        if(Double.isNaN(value) || Double.isInfinite(value)) return Double.toString(value);
+        if(value == 0.0) return "0";
         // Precision must be at least 1
         if(precision <= 0) precision = 1;
         // Find magnitude of value
-        final int mag = (int) Math.log10(value);
+        final int mag = (int) Math.floor(Math.log10(value));
+        // Significant digits as an int (9300 -> 93, 9.3 -> 93, 0.093 -> 93)
+        final int digits = (int) Math.floor(value * Math.pow(10, precision - mag - 1));
         // How many decimal places we need to print
         final int decimalPlaces = precision - mag - 1;
-        if (decimalPlaces == 0) {
-            // Special case for zero decimal places
-            return Integer.toString((int) value);
-        } else if (decimalPlaces < 0) {
-            // No decimals, truncate to significant digits
-            return truncate(value, precision);
+        if (decimalPlaces <= 0) {
+            // Add trailing zeros 9300
+            final char[] zeros = new char[-decimalPlaces];
+            Arrays.fill(zeros, '0');
+            return digits + new String(zeros);
+        } else if(precision < decimalPlaces) {
+            // Add leading zeros .093
+            final char[] zeros = new char[decimalPlaces - precision];
+            Arrays.fill(zeros, '0');
+            return "." + new String(zeros) + digits;
         } else {
-            // we need decimal places
-            return String.format("%." + decimalPlaces + "f", value);
+            // Split digits 9.3
+            final String digitsString = Integer.toString(digits);
+            final String before = digitsString.substring(0, precision - decimalPlaces);
+            final String after = digitsString.substring(precision - decimalPlaces);
+            return before + "." + after;
         }
     }
 
-    /** Truncate to 2 significant digits */
-    private static String truncate(double value, int precision) {
-        final int mag = (int) Math.log10(value);
-        final int mask = (int) Math.pow(10, mag - precision + 1);
+    /** Truncate to at most 2 int digits */
+    static String formatInt(double value, int precision) {
         final int valueInt = (int) value;
-        final int truncated = valueInt - (valueInt % mask);
-        return Integer.toString(truncated);
+        final int mag = (int) Math.floor(Math.log10(value));
+        if(mag < precision) {
+            // No need to truncate
+            return Integer.toString(valueInt);
+        } else {
+            final int mask = (int) Math.pow(10, mag - precision + 1);
+            final int truncated = valueInt - (valueInt % mask);
+            return Integer.toString(truncated);
+        }
     }
 
     /**
@@ -369,11 +391,11 @@ public class Convert {
         // Adjust range to -180..180
         degrees = (degrees + 540) % 360 - 180;
         if(degrees < 0)
-            return truncate(-degrees, 2) + " left";
+            return formatInt(-degrees, 2) + " left";
         else if(degrees == 0)
             return "straight";
         else if(degrees > 0)
-            return truncate(degrees, 2) + " right";
+            return formatInt(degrees, 2) + " right";
         else
             return "";
     }

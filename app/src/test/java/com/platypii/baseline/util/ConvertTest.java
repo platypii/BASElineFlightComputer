@@ -11,8 +11,10 @@ public class ConvertTest {
 
     @Test
     public void convertFormatDouble() {
-        assertEquals( "9", Convert.formatDouble(9.8, 0));
+        assertEquals( "0", Convert.formatDouble(0.0, 2));
+        assertEquals( "1.0", Convert.formatDouble(1.0, 2));
 
+        assertEquals( "9", Convert.formatDouble(9.8, 0));
         assertEquals( "9", Convert.formatDouble(9.8, 1));
         assertEquals( "9.8", Convert.formatDouble(9.8, 2));
         assertEquals( "9.80", Convert.formatDouble(9.8, 3));
@@ -26,6 +28,37 @@ public class ConvertTest {
         assertEquals( "3280", Convert.formatDouble(3280, 4));
         assertEquals( "3280.0", Convert.formatDouble(3280, 5));
         assertEquals( "3280.00", Convert.formatDouble(3280, 6));
+
+        assertEquals( "-9", Convert.formatDouble(-9.8, 1));
+        assertEquals( "-9.8", Convert.formatDouble(-9.8, 2));
+        assertEquals( "-9.80", Convert.formatDouble(-9.8, 3));
+
+        assertEquals( "9.2", Convert.formatDouble(9.2, 2));
+        assertEquals( ".92", Convert.formatDouble(0.92, 2));
+        assertEquals( ".092", Convert.formatDouble(0.092, 2));
+        assertEquals( ".0092", Convert.formatDouble(0.0092, 2));
+
+        assertEquals( ".098", Convert.formatDouble(0.098, 2));
+        assertEquals( ".99", Convert.formatDouble(0.999, 2));
+
+        assertEquals( "NaN", Convert.formatDouble(Double.NaN, 2));
+        assertEquals( "Infinity", Convert.formatDouble(Double.POSITIVE_INFINITY, 2));
+        assertEquals( "-Infinity", Convert.formatDouble(Double.NEGATIVE_INFINITY, 2));
+    }
+
+    @Test
+    public void convertFormatInt() {
+        assertEquals( "9", Convert.formatInt(9.8, 1));
+        assertEquals( "9", Convert.formatInt(9.8, 2));
+        assertEquals( "9", Convert.formatInt(9.8, 3));
+
+        assertEquals( "90", Convert.formatInt(98.6, 1));
+        assertEquals( "98", Convert.formatInt(98.6, 2));
+        assertEquals( "98", Convert.formatInt(98.6, 3));
+
+        assertEquals( "-9", Convert.formatInt(-9.8, 1));
+        assertEquals( "-9", Convert.formatInt(-9.8, 2));
+        assertEquals( "-9", Convert.formatInt(-9.8, 3));
     }
 
     @Test
