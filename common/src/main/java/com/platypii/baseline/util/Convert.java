@@ -1,6 +1,5 @@
 package com.platypii.baseline.util;
 
-import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -77,7 +76,7 @@ public class Convert {
         } else if(Double.isInfinite(m)) {
             return Double.toString(m);
         } else {
-            final String unitString = units? (metric? "m" : "ft") : "";
+            final String unitString = units? (metric? " m" : " ft") : "";
             final double localValue = metric? m : m * 3.2808399;
             if(precision == 0) {
                 // Faster special case for integers
@@ -105,20 +104,20 @@ public class Convert {
             if(metric) {
                 if(m >= 1000) {
                     unitString = "kilometers";
-                    localValue = formatDouble(m * 0.001, precision);
+                    localValue = ConvertUtil.formatDouble(m * 0.001, precision);
                 } else {
                     unitString = "meters";
-                    localValue = formatInt(m, precision);
+                    localValue = ConvertUtil.formatInt(m, precision);
                 }
             } else {
                 if(m >= MILE) {
                     // Need max because of float error
                     final double miles = Math.max(1, m * 0.000621371192);
                     unitString = "miles";
-                    localValue = formatDouble(miles, precision);
+                    localValue = ConvertUtil.formatDouble(miles, precision);
                 } else {
                     unitString = "feet";
-                    localValue = formatInt(m * 3.2808399, precision);
+                    localValue = ConvertUtil.formatInt(m * 3.2808399, precision);
                 }
             }
             if(units) {
@@ -126,56 +125,6 @@ public class Convert {
             } else {
                 return localValue;
             }
-        }
-    }
-
-    /**
-     * Format a double using a given precision (significant digits)
-     */
-    static String formatDouble(double value, int precision) {
-        // Switch negative, so that we floor toward zero
-        if(value < 0) return "-" + formatDouble(-value, precision);
-        // Check for special values
-        if(Double.isNaN(value) || Double.isInfinite(value)) return Double.toString(value);
-        if(value == 0.0) return "0";
-        // Precision must be at least 1
-        if(precision <= 0) precision = 1;
-        // Find magnitude of value
-        final int mag = (int) Math.floor(Math.log10(value));
-        // Significant digits as an int (9300 -> 93, 9.3 -> 93, 0.093 -> 93)
-        final int digits = (int) Math.floor(value * Math.pow(10, precision - mag - 1));
-        // How many decimal places we need to print
-        final int decimalPlaces = precision - mag - 1;
-        if (decimalPlaces <= 0) {
-            // Add trailing zeros 9300
-            final char[] zeros = new char[-decimalPlaces];
-            Arrays.fill(zeros, '0');
-            return digits + new String(zeros);
-        } else if(precision < decimalPlaces) {
-            // Add leading zeros .093
-            final char[] zeros = new char[decimalPlaces - precision];
-            Arrays.fill(zeros, '0');
-            return "." + new String(zeros) + digits;
-        } else {
-            // Split digits 9.3
-            final String digitsString = Integer.toString(digits);
-            final String before = digitsString.substring(0, precision - decimalPlaces);
-            final String after = digitsString.substring(precision - decimalPlaces);
-            return before + "." + after;
-        }
-    }
-
-    /** Truncate to at most 2 int digits */
-    static String formatInt(double value, int precision) {
-        final int valueInt = (int) value;
-        final int mag = (int) Math.floor(Math.log10(value));
-        if(mag < precision) {
-            // No need to truncate
-            return Integer.toString(valueInt);
-        } else {
-            final int mask = (int) Math.pow(10, mag - precision + 1);
-            final int truncated = valueInt - (valueInt % mask);
-            return Integer.toString(truncated);
         }
     }
 
@@ -209,6 +158,138 @@ public class Convert {
                 return String.format("%."+precision+"f%s", localValue, unitString);
             }
         }
+    }
+
+    public static String glide(double glideRatio, int precision, boolean units) {
+        if(Double.isNaN(glideRatio)) {
+            return "";
+        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 40) {
+            return GLIDE_LEVEL;
+        } else {
+            final String value;
+            if(glideRatio < 0) {
+                value = String.format("+%." + precision + "f", -glideRatio);
+            } else {
+                value = String.format("%." + precision + "f", glideRatio);
+            }
+            if(units) {
+                return value + " : 1";
+            } else {
+                return value;
+            }
+        }
+    }
+
+    public static String glide(double groundSpeed, double climb, int precision, boolean units) {
+        final double glideRatio = -groundSpeed / climb;
+        if(Double.isNaN(glideRatio)) {
+            return "";
+        } else if(groundSpeed + Math.abs(climb) < 0.5) { // ~1 mph
+            return Convert.GLIDE_STATIONARY;
+        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 30) {
+            return Convert.GLIDE_LEVEL;
+        } else if(groundSpeed < 0.5 && Math.abs(climb) > 0.5) {
+            return Convert.GLIDE_VERTICAL;
+        } else {
+            final String value;
+            if(glideRatio < 0) {
+                value = String.format("+%." + precision + "f", -glideRatio);
+            } else {
+                value = String.format("%." + precision + "f", glideRatio);
+            }
+            if(units) {
+                return value + " : 1";
+            } else {
+                return value;
+            }
+        }
+    }
+
+    /**
+     * Convert.glide2 is used by PolarPlot, and uses empty string more than Convert.glide
+     */
+    public static String glide2(double groundSpeed, double climb, int precision, boolean units) {
+        final double glideRatio = -groundSpeed / climb;
+        if(Double.isNaN(glideRatio)) {
+            return "";
+        } else if(groundSpeed + Math.abs(climb) < 0.5) { // ~1 mph
+            return ""; // Stationary
+        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 30) {
+            return ""; // Level
+        } else if(groundSpeed < 0.5 && Math.abs(climb) > 0.5) {
+            return ""; // Vertical
+        } else {
+            final String value;
+            if(glideRatio < 0) {
+                value = String.format("+%." + precision + "f", -glideRatio);
+            } else {
+                value = String.format("%." + precision + "f", glideRatio);
+            }
+            if(units) {
+                return value + " : 1";
+            } else {
+                return value;
+            }
+        }
+    }
+
+    public static String pressure(double hPa) {
+        if(Double.isNaN(hPa))
+            return "";
+        else
+            return String.format(Locale.US, "%.2f hPa", hPa);
+    }
+
+//    /**
+//     * Convert milliseconds to m:ss or h:mm:ss
+//     * @param ms milliseconds
+//     * @return "m:ss"
+//     */
+//    public static String time1(long ms) {
+//        final long hour = ms / 3600000;
+//        final long min = (ms / 60000) % 60;
+//        final long sec = (ms / 1000) % 60;
+//        String str;
+//        // m:ss
+//        if(sec < 10) str = min + ":0" + sec;
+//        else str = min + ":" + sec;
+//        // h:mm:ss
+//        if(hour > 0) {
+//            if(min < 10) str = hour + ":0" + str;
+//            else str = hour + ":" + str;
+//        }
+//        return str;
+//    }
+
+    /**
+     * Convert degrees to int degrees
+     * @param degrees angle in degrees
+     * @return angle in degrees
+     */
+    public static String angle(double degrees) {
+        // Check for non numbers
+        if(Double.isNaN(degrees) || Double.isInfinite(degrees)) return "";
+        // Faster special case for integers
+        final int degreesInt = (int) Math.floor(degrees);
+        return degreesInt + "°";
+    }
+
+    /**
+     * Convert yaw angle to a human readable format
+     * @param degrees yaw angle in degrees
+     * @return "15 right" (degrees)
+     */
+    public static String angle2(double degrees) {
+        // Adjust range to -180..180
+        degrees = (degrees + 540) % 360 - 180;
+        if(degrees < 0)
+            return ConvertUtil.formatInt(-degrees, 2) + " left";
+        else if(degrees == 0)
+            return "straight";
+        else if(degrees > 0)
+            return ConvertUtil.formatInt(degrees, 2) + " right";
+        else
+            return "";
     }
 
 //    /**
@@ -272,132 +353,6 @@ public class Convert {
             else
                 return bearingStr;
         }
-    }
-
-    public static String glide(double glideRatio, int precision, boolean units) {
-        if(Double.isNaN(glideRatio)) {
-            return "";
-        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 40) {
-            return GLIDE_LEVEL;
-        } else {
-            final String value;
-            if(glideRatio < 0) {
-                value = String.format("+%." + precision + "f", -glideRatio);
-            } else {
-                value = String.format("%." + precision + "f", glideRatio);
-            }
-            if(units) {
-                return value + " : 1";
-            } else {
-                return value;
-            }
-        }
-    }
-
-    public static String glide(double groundSpeed, double climb, int precision, boolean units) {
-        final double glideRatio = -groundSpeed / climb;
-        if(Double.isNaN(glideRatio)) {
-            return "";
-        } else if(groundSpeed + Math.abs(climb) < 0.5) { // ~1 mph
-            return Convert.GLIDE_STATIONARY;
-        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 30) {
-            return Convert.GLIDE_LEVEL;
-        } else if(groundSpeed < 0.5 && Math.abs(climb) > 0.5) {
-            return Convert.GLIDE_VERTICAL;
-        } else {
-            final String value;
-            if(glideRatio < 0) {
-                value = String.format("+%." + precision + "f", -glideRatio);
-            } else {
-                value = String.format("%." + precision + "f", glideRatio);
-            }
-            if(units) {
-                return value + " : 1";
-            } else {
-                return value;
-            }
-        }
-    }
-
-    public static String glide2(double groundSpeed, double climb, int precision, boolean units) {
-        final double glideRatio = -groundSpeed / climb;
-        if(Double.isNaN(glideRatio)) {
-            return "";
-        } else if(groundSpeed + Math.abs(climb) < 0.5) { // ~1 mph
-            return ""; // Stationary
-        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 30) {
-            return ""; // Level
-        } else if(groundSpeed < 0.5 && Math.abs(climb) > 0.5) {
-            return ""; // Vertical
-        } else {
-            final String value;
-            if(glideRatio < 0) {
-                value = String.format("+%." + precision + "f", -glideRatio);
-            } else {
-                value = String.format("%." + precision + "f", glideRatio);
-            }
-            if(units) {
-                return value + " : 1";
-            } else {
-                return value;
-            }
-        }
-    }
-
-    public static String pressure(double hPa) {
-        if(Double.isNaN(hPa))
-            return "";
-        else
-            return String.format(Locale.US, "%.2fhPa", hPa);
-    }
-
-//    /**
-//     * Convert milliseconds to m:ss or h:mm:ss
-//     * @param ms milliseconds
-//     * @return "m:ss"
-//     */
-//    public static String time1(long ms) {
-//        final long hour = ms / 3600000;
-//        final long min = (ms / 60000) % 60;
-//        final long sec = (ms / 1000) % 60;
-//        String str;
-//        // m:ss
-//        if(sec < 10) str = min + ":0" + sec;
-//        else str = min + ":" + sec;
-//        // h:mm:ss
-//        if(hour > 0) {
-//            if(min < 10) str = hour + ":0" + str;
-//            else str = hour + ":" + str;
-//        }
-//        return str;
-//    }
-
-    /**
-     * Convert degrees to local units
-     * @param degrees angle in degrees
-     * @return angle in local units
-     */
-    public static String angle(double degrees) {
-        // Faster special case for integers
-        return Math.round(degrees) + "°";
-    }
-
-    /**
-     * Convert yaw angle to a human readable format
-     * @param degrees yaw angle in degrees
-     * @return "15 right" (degrees)
-     */
-    public static String angle2(double degrees) {
-        // Adjust range to -180..180
-        degrees = (degrees + 540) % 360 - 180;
-        if(degrees < 0)
-            return formatInt(-degrees, 2) + " left";
-        else if(degrees == 0)
-            return "straight";
-        else if(degrees > 0)
-            return formatInt(degrees, 2) + " right";
-        else
-            return "";
     }
 
 }
