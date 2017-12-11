@@ -82,6 +82,7 @@
     <string name="bluetooth_enabled">Utilisez le GPS bluetooth?</string>
     <string name="bluetooth_devices">Périphériques Bluetooth</string>
     <string name="bluetooth_pair">Appairage</string>
+    <string name="error_bluetooth_intent">Impossible d\'ouvrir les paramètres Bluetooth</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Paramètres</string>

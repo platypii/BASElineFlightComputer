@@ -82,6 +82,7 @@
     <string name="bluetooth_enabled">Use bluetooth GPS?</string>
     <string name="bluetooth_devices">Devices</string>
     <string name="bluetooth_pair">Pair</string>
+    <string name="error_bluetooth_intent">Failed to open bluetooth settings</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Settings</string>

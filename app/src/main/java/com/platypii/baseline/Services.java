@@ -127,7 +127,6 @@ public class Services {
             // TTS is prerequisite for audible
             if(ttsLoaded) {
                 Log.i(TAG, "Text-to-speech data already loaded, starting audible");
-                Exceptions.log("text-to-speech already loaded");
                 audible.start(appContext);
             } else {
                 Log.i(TAG, "Checking for text-to-speech data");

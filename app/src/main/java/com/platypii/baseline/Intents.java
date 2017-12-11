@@ -107,12 +107,17 @@ public class Intents {
     }
 
     public static void openBluetoothSettings(@NonNull Context context) {
-        // Open bluetooth settings
-        final Intent intent = new Intent(Intent.ACTION_MAIN, null);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        final ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.bluetooth.BluetoothSettings");
-        intent.setComponent(cn);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+        try {
+            final Intent intent = new Intent(Intent.ACTION_MAIN, null);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            final ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.bluetooth.BluetoothSettings");
+            intent.setComponent(cn);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } catch(Exception e) {
+            Log.e(TAG, "Failed to open android bluetooth settings", e);
+            Toast.makeText(context, R.string.error_export_intent, Toast.LENGTH_SHORT).show();
+            Exceptions.report(e);
+        }
     }
 }

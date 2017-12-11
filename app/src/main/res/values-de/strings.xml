@@ -82,6 +82,7 @@
     <string name="bluetooth_enabled">Verwenden Sie Bluetooth GPS?</string>
     <string name="bluetooth_devices">Bluetooth-Geräte</string>
     <string name="bluetooth_pair">Bluetooth-Paar</string>
+    <string name="error_bluetooth_intent">Bluetooth-Einstellungen öffnen fehlgeschlagen</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Einstellungen</string>
