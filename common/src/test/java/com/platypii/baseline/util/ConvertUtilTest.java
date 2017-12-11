@@ -48,6 +48,7 @@ public class ConvertUtilTest {
 
     @Test
     public void convertFormatInt() {
+        assertEquals( "9", ConvertUtil.formatInt(9.8, 0));
         assertEquals( "9", ConvertUtil.formatInt(9.8, 1));
         assertEquals( "9", ConvertUtil.formatInt(9.8, 2));
         assertEquals( "9", ConvertUtil.formatInt(9.8, 3));

@@ -49,6 +49,8 @@ class ConvertUtil {
     static String formatInt(double value, int precision) {
         // Switch negative, so that we floor toward zero
         if(value < 0) return "-" + formatInt(-value, precision);
+        // Precision must be at least 1
+        if(precision <= 0) precision = 1;
         // Convert to int
         final int valueInt = (int) Math.floor(value);
         final int mag = (int) Math.floor(Math.log10(value));

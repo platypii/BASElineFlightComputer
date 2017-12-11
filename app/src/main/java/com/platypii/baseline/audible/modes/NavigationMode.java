@@ -18,7 +18,7 @@ public class NavigationMode extends AudibleMode {
     private boolean stationary = false;
 
     public NavigationMode() {
-        super("navigation", "Navigation", "distance", 0, 6096, 0);
+        super("navigation", "Navigation", "distance", 0, 6096, 2);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class NavigationMode extends AudibleMode {
         final MLocation lastLoc = Services.location.lastLoc;
         if(LandingZone.homeLoc != null && lastLoc != null) {
             distance = lastLoc.distanceTo(LandingZone.homeLoc);
-            if(lastLoc.groundSpeed() < 0.8) {
+            if(lastLoc.groundSpeed() < 0.6) {
                 // Only say stationary once
                 if(!stationary) {
                     measurement = Convert.GLIDE_STATIONARY;
@@ -39,7 +39,7 @@ public class NavigationMode extends AudibleMode {
                 stationary = false;
                 final double homeBearing = lastLoc.bearingTo(LandingZone.homeLoc);
                 final double deltaBearing = homeBearing - lastLoc.bearing();
-                if (Math.abs(distance) > 0.3) {
+                if (Math.abs(distance) > Convert.FT) {
                     measurement = Convert.distance2(distance, precision, true) + " " + Convert.angle2(deltaBearing);
                 } else {
                     measurement = "0";
