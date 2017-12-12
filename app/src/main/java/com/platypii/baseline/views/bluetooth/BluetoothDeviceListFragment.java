@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -33,21 +34,25 @@ public class BluetoothDeviceListFragment extends ListFragment {
 
     private void updateDeviceList() {
         devices.clear();
-        devices.addAll(Services.bluetooth.getDevices());
-        // Sort devices to put GPS at top of list
-        Collections.sort(devices, new Comparator<BluetoothDevice>() {
-            @Override
-            public int compare(BluetoothDevice device1, BluetoothDevice device2) {
-                return score(device2) - score(device1);
-            }
-            private int score(BluetoothDevice device) {
-                if (device.getName().contains("GPS")) {
-                    return 1;
-                } else {
-                    return 0;
+        final Set<BluetoothDevice> updatedDevices = Services.bluetooth.getDevices();
+        if(updatedDevices != null) {
+            devices.addAll(updatedDevices);
+            // Sort devices to put GPS at top of list
+            Collections.sort(devices, new Comparator<BluetoothDevice>() {
+                @Override
+                public int compare(BluetoothDevice device1, BluetoothDevice device2) {
+                    return score(device2) - score(device1);
                 }
-            }
-        });
+
+                private int score(BluetoothDevice device) {
+                    if (device.getName().contains("GPS")) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+        }
         bluetoothAdapter.notifyDataSetChanged();
     }
 
