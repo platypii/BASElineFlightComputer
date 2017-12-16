@@ -9,6 +9,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -136,7 +138,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     /**
      * Draw the plot (do not override lightly)
      */
-    private void drawPlot(Canvas canvas) {
+    private void drawPlot(@NonNull Canvas canvas) {
         bottom = getHeight();
         top = 0;
         left = 0;
@@ -176,7 +178,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * @param radius The width of the path
      * @param color The color of the path
      */
-    public void drawPoint(Canvas canvas, double x, double y, float radius, int color) {
+    public void drawPoint(@NonNull Canvas canvas, double x, double y, float radius, int color) {
         dataBounds.expandBounds(x, y);
         // Screen coordinates
         float sx = getX(x);
@@ -210,7 +212,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * @param series The data series to draw
      * @param radius The width of the path
      */
-    public void drawLine(Canvas canvas, DataSeries series, float radius) {
+    public void drawLine(@NonNull Canvas canvas, @NonNull DataSeries series, float radius) {
         if(series.size() > 0) {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2 * radius * density);
@@ -247,7 +249,8 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * Returns a path representing the data
      * @param series The data series to draw
      */
-    private Path renderPath(DataSeries series) {
+    @NonNull
+    private Path renderPath(@NonNull DataSeries series) {
         // Construct the path
         path.rewind();
         boolean empty = true;
@@ -300,7 +303,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     /**
      * Called when rendering the plot, must be overridden to draw the grid lines. Implementations may find drawXline() and drawYline() quite useful.
      */
-    public void drawGridlines(Canvas canvas) {
+    public void drawGridlines(@NonNull Canvas canvas) {
         Bounds realBounds = getRealBounds();
         drawXlines(canvas, realBounds);
         drawYlines(canvas, realBounds);
@@ -311,7 +314,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * Default behavior is to draw grid lines for the nearest order of magnitude along the axis
      */
     private static final int MAX_LINES = 80;
-    public void drawXlines(Canvas canvas, Bounds realBounds) {
+    public void drawXlines(@NonNull Canvas canvas, @NonNull Bounds realBounds) {
         final int magnitude_x = (int) Math.log10((realBounds.right - realBounds.left) / x_major_units);
         final double step_x = x_major_units * pow(10, magnitude_x);
         final double start_x = Math.floor(realBounds.left / step_x) * step_x;
@@ -334,7 +337,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
             }
         }
     }
-    public void drawYlines(Canvas canvas, Bounds realBounds) {
+    public void drawYlines(@NonNull Canvas canvas, @NonNull Bounds realBounds) {
         final int magnitude_y = (int) Math.log10((realBounds.top - realBounds.bottom) / y_major_units);
         final double step_y = y_major_units * pow(10, magnitude_y); // grid spacing in plot-space
         final double start_y = Math.floor(realBounds.bottom / step_y) * step_y;
@@ -363,7 +366,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     /**
      * Draws an X grid line (vertical)
      */
-    public void drawXline(Canvas canvas, double x, int color, String label) {
+    public void drawXline(@NonNull Canvas canvas, double x, int color, @Nullable String label) {
         // Screen coordinate
         final int sx = (int) getX(x);
         paint.setColor(color);
@@ -377,7 +380,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     /**
      * Draws a Y grid line (horizontal)
      */
-    public void drawYline(Canvas canvas, double y, int color, String label) {
+    public void drawYline(@NonNull Canvas canvas, double y, int color, @Nullable String label) {
         final int sy = (int) getY(y);
         paint.setColor(color);
         paint.setStrokeWidth(0);
@@ -407,15 +410,18 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
 //    }
 
     // Override this to change how labels are displayed
+    @Nullable
     public String formatX(double x) {
         return null;
     }
+    @Nullable
     public String formatY(double y) {
         return null;
     }
 
     // Returns the bounds in plot-space, including padding
     private final Bounds realBounds = new Bounds();
+    @NonNull
     public Bounds getRealBounds() {
         final double ppm_x = ((right - padding.right) - (left + padding.left)) / (bounds.right - bounds.left); // pixels per meter
         final double rLeft = bounds.left - padding.left / ppm_x; // min x-coordinate in plot-space

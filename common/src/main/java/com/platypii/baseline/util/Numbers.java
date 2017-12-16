@@ -1,12 +1,14 @@
 package com.platypii.baseline.util;
 
+import android.support.annotation.Nullable;
+
 public class Numbers {
 
     public static boolean isReal(double value) {
         return !Double.isNaN(value) && !Double.isInfinite(value);
     }
 
-    public static double parseDouble(String str) {
+    public static double parseDouble(@Nullable String str) {
         if(str == null || str.isEmpty()) {
             return Double.NaN;
         } else {
@@ -19,7 +21,7 @@ public class Numbers {
         }
     }
 
-    public static float parseFloat(String str) {
+    public static float parseFloat(@Nullable String str) {
         if(str == null || str.isEmpty()) {
             return Float.NaN;
         } else {
@@ -32,7 +34,7 @@ public class Numbers {
         }
     }
 
-    public static int parseInt(String str, int defaultValue) {
+    public static int parseInt(@Nullable String str, int defaultValue) {
         if(str == null || str.isEmpty()) {
             return defaultValue;
         } else {

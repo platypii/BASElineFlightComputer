@@ -1,5 +1,6 @@
 package com.platypii.baseline.measurements;
 
+import android.support.annotation.NonNull;
 import java.util.Locale;
 
 /**
@@ -18,6 +19,7 @@ public class MAltitude extends Measurement {
         this.climb = climb;
     }
 
+    @NonNull
     @Override
     public String toRow() {
         return "";

@@ -1,5 +1,7 @@
 package com.platypii.baseline.util;
 
+import android.support.annotation.NonNull;
+
 /**
  * Mutable double bounds.
  * Used by PlotView.
@@ -26,7 +28,7 @@ public class Bounds {
         this.bottom = bottom;
     }
 
-    public void set(Bounds copy) {
+    public void set(@NonNull Bounds copy) {
         this.left = copy.left;
         this.top = copy.top;
         this.right = copy.right;
@@ -53,7 +55,7 @@ public class Bounds {
     /**
      * Clean the bounds (satisfy min/max, no infinities, and width/height span of at least epsilon)
      */
-    public void clean(Bounds min, Bounds max) {
+    public void clean(@NonNull Bounds min, @NonNull Bounds max) {
         // If bounds are NaN, then use smallest legal viewing window
         if(Double.isNaN(left)) left = max.left;
         if(Double.isNaN(top)) top = max.top;
@@ -96,7 +98,7 @@ public class Bounds {
     /**
      * Edits bounds to be the smallest bounds with square aspect ratio containing the old bounds
      */
-    public void squareBounds(int width, int height, IntBounds padding) {
+    public void squareBounds(int width, int height, @NonNull IntBounds padding) {
         final int activeWidth = width - padding.right - padding.left;
         final int activeHeight = height - padding.bottom - padding.top;
         final double aspectCanvas = ((double) activeWidth) / activeHeight;

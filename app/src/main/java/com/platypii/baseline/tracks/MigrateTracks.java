@@ -35,7 +35,8 @@ public class MigrateTracks {
         }
     }
 
-    private static String cacheKey(TrackFile trackFile) {
+    @NonNull
+    private static String cacheKey(@NonNull TrackFile trackFile) {
         return "track." + trackFile.file.getName();
     }
 

@@ -5,6 +5,7 @@ import com.platypii.baseline.events.BluetoothEvent;
 import android.app.ListFragment;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -40,11 +41,11 @@ public class BluetoothDeviceListFragment extends ListFragment {
             // Sort devices to put GPS at top of list
             Collections.sort(devices, new Comparator<BluetoothDevice>() {
                 @Override
-                public int compare(BluetoothDevice device1, BluetoothDevice device2) {
+                public int compare(@NonNull BluetoothDevice device1, @NonNull BluetoothDevice device2) {
                     return score(device2) - score(device1);
                 }
 
-                private int score(BluetoothDevice device) {
+                private int score(@NonNull BluetoothDevice device) {
                     if (device.getName().contains("GPS")) {
                         return 1;
                     } else {
@@ -57,7 +58,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
+    public void onListItemClick(@NonNull ListView l, View v, int position, long id) {
         final BluetoothDevice device = (BluetoothDevice) l.getItemAtPosition(position);
         Log.i(TAG, "Bluetooth device selected: " + device.getName());
         // Save device preference

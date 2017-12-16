@@ -15,6 +15,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -151,7 +152,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         }
     };
 
-    private void setHome(LatLng home) {
+    private void setHome(@Nullable LatLng home) {
         Log.i(TAG, "Setting home location: " + home);
         LandingZone.homeLoc = home;
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MapActivity.this);

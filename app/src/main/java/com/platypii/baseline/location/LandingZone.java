@@ -3,6 +3,7 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
+import android.support.annotation.Nullable;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -14,6 +15,7 @@ public class LandingZone {
     /**
      * Home location is used as the target on the map
      */
+    @Nullable
     public static LatLng homeLoc;
 
     /**

@@ -45,7 +45,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     }
 
     @Override
-    public void drawData(Canvas canvas) {
+    public void drawData(@NonNull Canvas canvas) {
         if(locationService != null) {
             final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
             final MLocation loc = locationService.lastLoc;
@@ -75,7 +75,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     }
 
     private final BlurMaskFilter blurry = new BlurMaskFilter(2 * density, BlurMaskFilter.Blur.NORMAL);
-    private void drawEllipses(Canvas canvas) {
+    private void drawEllipses(@NonNull Canvas canvas) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             paint.setStyle(Paint.Style.FILL);
             paint.setMaskFilter(blurry);
@@ -98,7 +98,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     /**
      * Draw historical points
      */
-    private void drawHistory(Canvas canvas) {
+    private void drawHistory(@NonNull Canvas canvas) {
         final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
         synchronized(history) {
             for(MLocation loc : history) {
@@ -128,7 +128,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     /**
      * Draw the current location, including position, glide slope, and x and y axis ticks.
      */
-    private void drawLocation(Canvas canvas, long millis, double vx, double vy) {
+    private void drawLocation(@NonNull Canvas canvas, long millis, double vx, double vy) {
         // Style point based on freshness
         final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
         final int t = (int) (currentTime - millis);
@@ -143,7 +143,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         drawPoint(canvas, vx, vy, radius, color);
     }
 
-    private void drawSpeedLines(Canvas canvas, double vx, double vy) {
+    private void drawSpeedLines(@NonNull Canvas canvas, double vx, double vy) {
         final double v = Math.sqrt(vx*vx + vy*vy);
         final float sx = getX(vx);
         final float sy = getY(vy);
@@ -168,7 +168,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         canvas.drawLine(cx, cy, sx, sy, paint);
     }
 
-    private void drawSpeedLabels(Canvas canvas, double vx, double vy) {
+    private void drawSpeedLabels(@NonNull Canvas canvas, double vx, double vy) {
         final double v = Math.sqrt(vx*vx + vy*vy);
         final float sx = getX(vx);
         final float sy = getY(vy);
@@ -197,8 +197,9 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 
     // Always keep square aspect ratio
     private final Bounds bounds = new Bounds();
+    @NonNull
     @Override
-    public Bounds getBounds(Bounds dataBounds) {
+    public Bounds getBounds(@NonNull Bounds dataBounds) {
 //        final long currentTime = System.currentTimeMillis();
 //        final MLocation loc = Services.location.lastLoc;
 //        if(loc != null && currentTime - window <= loc.millis) {
@@ -256,7 +257,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 //            return Convert.speed(y_abs, 0, true);
 //    }
 
-    public void start(LocationProvider locationService) {
+    public void start(@NonNull LocationProvider locationService) {
         this.locationService = locationService;
         // Start listening for location updates
         locationService.addListener(this);

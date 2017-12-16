@@ -11,6 +11,7 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
 
     private final BluetoothService bluetooth;
 
+    @NonNull
     @Override
     protected String providerName() {
         return "LocationServiceBluetooth";
@@ -23,7 +24,7 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
 
     /** Listen for GPPWR command */
     @Override
-    protected void handleNmea(long timestamp, String nmea) throws NMEAException {
+    protected void handleNmea(long timestamp, @NonNull String nmea) throws NMEAException {
         // Parse NMEA command
         final String split[] = NMEA.splitNmea(nmea);
         if(split[0].equals("$GPPWR")) {

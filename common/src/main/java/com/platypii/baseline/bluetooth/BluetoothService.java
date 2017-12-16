@@ -76,7 +76,7 @@ public class BluetoothService implements Service {
      * Starts bluetooth in an asynctask.
      * Even though we're mostly just starting the bluetooth thread, calling getAdapter can be slow.
      */
-    private void startAsync(final Activity activity) {
+    private void startAsync(@NonNull final Activity activity) {
         AsyncTask.execute(() -> {
             bluetoothAdapter = getAdapter(activity);
             bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
@@ -89,7 +89,7 @@ public class BluetoothService implements Service {
      * Start the bluetooth service, and connect to gps receiver if selected
      * @return true iff bluetooth service started successfully
      */
-    private BluetoothAdapter getAdapter(Activity activity) {
+    private BluetoothAdapter getAdapter(@NonNull Activity activity) {
         // TODO: Make sure this doesn't take too long
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter == null) {
@@ -134,7 +134,8 @@ public class BluetoothService implements Service {
     /**
      * Return a human-readable string for the bluetooth state
      */
-    public String getStatusMessage(Context context) {
+    @NonNull
+    public String getStatusMessage(@NonNull Context context) {
         if(bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
             // Hardware disabled
             return context.getString(R.string.bluetooth_status_disabled);
@@ -196,7 +197,7 @@ public class BluetoothService implements Service {
      * Restart bluetooth.
      * If bluetooth is stopped, just start it.
      */
-    public synchronized void restart(Activity activity) {
+    public synchronized void restart(@NonNull Activity activity) {
         Log.i(TAG, "Restarting bluetooth service");
         if(bluetoothState == BT_STOPPED) {
             // Just start

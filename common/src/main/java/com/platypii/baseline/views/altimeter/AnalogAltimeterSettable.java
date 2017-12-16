@@ -7,6 +7,7 @@ import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -129,7 +130,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
     private static final int SWIPE_THRESHOLD_VELOCITY = 100;
     private static final float DECELERATION = 6;
     @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, final float velocityY) {
+    public boolean onFling(@NonNull MotionEvent e1, @NonNull MotionEvent e2, float velocityX, final float velocityY) {
         if(groundLevelMode == MODE_SET && Math.abs(e1.getY() - e2.getY()) > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
             // Animate
             velocity = -velocityY / 80;

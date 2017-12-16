@@ -6,6 +6,7 @@ import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.util.SyncedList;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import java.util.Iterator;
 
@@ -44,7 +45,7 @@ public class SensorPlot extends PlotView {
     } 
 
     @Override
-    public void drawData(Canvas canvas) {
+    public void drawData(@NonNull Canvas canvas) {
         if(history != null) {
             xSeries.reset();
             ySeries.reset();
@@ -85,8 +86,9 @@ public class SensorPlot extends PlotView {
     }
 
     private final Bounds bounds = new Bounds();
+    @NonNull
     @Override
-    public Bounds getBounds(Bounds dataBounds) {
+    public Bounds getBounds(@NonNull Bounds dataBounds) {
         // Show last N
         bounds.set(dataBounds);
         bounds.clean(min, max);

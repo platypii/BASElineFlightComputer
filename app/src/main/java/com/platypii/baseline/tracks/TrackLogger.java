@@ -145,7 +145,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, Servic
         return new TrackFile(file);
     }
 
-    private void startFileLogging(File logFile) throws IOException {
+    private void startFileLogging(@NonNull File logFile) throws IOException {
         // Open track file for writing
         log = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(logFile))));
 

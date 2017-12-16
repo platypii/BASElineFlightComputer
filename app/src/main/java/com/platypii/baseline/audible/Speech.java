@@ -2,6 +2,7 @@ package com.platypii.baseline.audible;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ class Speech implements TextToSpeech.OnInitListener {
         tts = new TextToSpeech(context, this);
     }
 
-    void speakNow(String text) {
+    void speakNow(@Nullable String text) {
         if(text != null && text.length() > 0) {
             if(isReady) {
                 Log.i(TAG, "Saying: " + text);
@@ -30,7 +31,7 @@ class Speech implements TextToSpeech.OnInitListener {
         }
     }
 
-    void speakWhenReady(String text) {
+    void speakWhenReady(@Nullable String text) {
         if(text != null && text.length() > 0) {
             if(isReady) {
                 Log.i(TAG, "Saying when ready: " + text);

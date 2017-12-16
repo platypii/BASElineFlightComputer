@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -54,6 +55,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         return account != null;
     }
 
+    @Nullable
     protected String getDisplayName() {
         if(account != null) {
             return account.getDisplayName();

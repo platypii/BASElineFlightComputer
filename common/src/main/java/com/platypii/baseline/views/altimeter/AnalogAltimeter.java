@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -63,7 +64,7 @@ public class AnalogAltimeter extends View {
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
+    public void onDraw(@NonNull Canvas canvas) {
         final int width = getWidth();
         final int height = getHeight();
 

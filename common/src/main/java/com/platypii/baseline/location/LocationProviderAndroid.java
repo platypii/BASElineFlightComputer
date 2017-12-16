@@ -28,6 +28,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     private int satellitesInView = -1;
     private int satellitesUsed = -1;
 
+    @NonNull
     @Override
     protected String providerName() {
         return TAG;
@@ -57,7 +58,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
 
     /** Android location listener */
     @Override
-    public void onLocationChanged(Location loc) {
+    public void onLocationChanged(@NonNull Location loc) {
         // TODO: minsdk26: loc.getVerticalAccuracyMeters();
         // TODO: minsdk26: loc.getSpeedAccuracyMetersPerSecond()
         if (Numbers.isReal(loc.getLatitude()) && Numbers.isReal(loc.getLongitude())) {

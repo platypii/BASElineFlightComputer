@@ -6,6 +6,7 @@ import com.platypii.baseline.audible.modes.NavigationMode;
 import com.platypii.baseline.audible.modes.TotalSpeedMode;
 import com.platypii.baseline.audible.modes.VerticalSpeedMode;
 import com.platypii.baseline.util.Exceptions;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
@@ -20,7 +21,8 @@ class AudibleModes {
     private static final AudibleMode glide_ratio = new GlideRatioMode();
     private static final AudibleMode navigation = new NavigationMode();
 
-    public static AudibleMode get(String audibleMode) {
+    @NonNull
+    public static AudibleMode get(@NonNull String audibleMode) {
         switch(audibleMode) {
             case "horizontal_speed":
                 return horizontal_speed;

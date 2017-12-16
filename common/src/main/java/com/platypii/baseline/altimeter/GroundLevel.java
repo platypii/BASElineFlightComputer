@@ -37,7 +37,7 @@ public class GroundLevel {
     /**
      * Load ground level from preferences
      */
-    void start(SharedPreferences prefs) {
+    void start(@NonNull SharedPreferences prefs) {
         // Load ground level from preferences
         final long groundLevelTime = prefs.getLong("altimeter.groundlevel.time", -1L);
         if(groundLevelTime != -1 && System.currentTimeMillis() - groundLevelTime < GROUND_LEVEL_TTL) {

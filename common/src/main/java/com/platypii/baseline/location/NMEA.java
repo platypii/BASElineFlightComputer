@@ -22,7 +22,7 @@ class NMEA {
      * @param nsew The modifier "N", "S", "E", or "W"
      * @return The latitude or longitude in decimal degrees
      */
-    static double parseDegreesMinutes(String dm, String nsew) {
+    static double parseDegreesMinutes(@NonNull String dm, @NonNull String nsew) {
         if(dm.isEmpty()) {
             return Double.NaN;
         } else {
@@ -149,7 +149,7 @@ class NMEA {
     }
 
     /** Remove junk before and after nmea sentence */
-    static String cleanNmea(String nmea) {
+    static String cleanNmea(@NonNull String nmea) {
         // Remove anything before $
         final int sentenceStart = nmea.indexOf('$');
         if(sentenceStart > 0) {
@@ -160,7 +160,7 @@ class NMEA {
     }
 
     /** Split nmea sentence into columns, no checksum */
-    static String[] splitNmea(String nmea) {
+    static String[] splitNmea(@NonNull String nmea) {
         // Strip checksum
         final int starIndex = nmea.lastIndexOf('*');
         if(0 < starIndex && starIndex < nmea.length()) {

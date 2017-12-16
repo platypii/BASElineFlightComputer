@@ -1,6 +1,7 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.Services;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
 public class TrackDatabase {
     private static final String TAG = "TrackDatabase";
 
+    @Nullable
     public CloudData getCached(String track_id) {
         final List<CloudData> tracks = Services.cloud.listing.cache.list();
         if(tracks != null) {

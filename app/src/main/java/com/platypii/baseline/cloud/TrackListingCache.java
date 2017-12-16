@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import java.util.List;
 import org.json.JSONException;
 
@@ -32,6 +33,7 @@ public class TrackListingCache {
     /**
      * Return track listing from local cache, does NOT request from server, always returns fast.
      */
+    @Nullable
     public List<CloudData> list() {
         if(prefs != null) {
             final String jsonString = prefs.getString(CACHE_TRACK_LIST, null);

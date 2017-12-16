@@ -1,5 +1,6 @@
 package com.platypii.baseline.util;
 
+import android.support.annotation.NonNull;
 import java.util.Locale;
 
 /**
@@ -328,6 +329,7 @@ public class Convert {
      * @param degrees bearing in degrees
      * @return "40° (NE)"
      */
+    @NonNull
     public static String bearing2(double degrees) {
         if(Double.isNaN(degrees)) {
             return "";

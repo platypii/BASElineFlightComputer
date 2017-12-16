@@ -32,9 +32,11 @@ public abstract class AudibleMode {
         this.defaultPrecision = defaultPrecision;
     }
 
+    @NonNull
     public String minimumTitle() {
         return "Minimum " + unitsName;
     }
+    @NonNull
     public String maximumTitle() {
         return "Maximum " + unitsName;
     }

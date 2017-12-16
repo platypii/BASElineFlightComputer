@@ -71,6 +71,7 @@ public class LocationService extends LocationProvider {
         public void onLocationChangedPostExecute() {}
     };
 
+    @NonNull
     @Override
     protected String providerName() {
         return TAG;

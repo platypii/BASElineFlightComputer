@@ -4,6 +4,7 @@ import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.Locale;
@@ -98,14 +99,15 @@ public class MLocation extends Measurement {
         return Math.toDegrees(Math.atan2(vE, vN));
     }
 
+    @NonNull
     public LatLng latLng() {
         return new LatLng(latitude, longitude);
     }
 
-    public double bearingTo(MLocation dest) {
+    public double bearingTo(@NonNull MLocation dest) {
         return bearingTo(latitude, longitude, dest.latitude, dest.longitude);
     }
-    public double bearingTo(LatLng dest) {
+    public double bearingTo(@NonNull LatLng dest) {
         return bearingTo(latitude, longitude, dest.latitude, dest.longitude);
     }
 
@@ -118,10 +120,10 @@ public class MLocation extends Measurement {
         return Math.toDegrees(Math.atan2(y, x));
     }
 
-    public double distanceTo(MLocation dest) {
+    public double distanceTo(@NonNull MLocation dest) {
         return distanceTo(latitude, longitude, dest.latitude, dest.longitude);
     }
-    public double distanceTo(LatLng dest) {
+    public double distanceTo(@NonNull LatLng dest) {
         return distanceTo(latitude, longitude, dest.latitude, dest.longitude);
     }
 
@@ -146,6 +148,7 @@ public class MLocation extends Measurement {
     /**
      * Moves the location along a bearing (degrees) by a given distance (meters)
      */
+    @NonNull
     public LatLng moveDirection(double bearing, double distance) {
         final double d = distance / R;
 
