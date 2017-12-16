@@ -42,36 +42,41 @@ class Notifications implements BaseService {
         final boolean audible = Services.audible.isEnabled();
         if(logging || audible) {
             // Show/update notification
-            final Intent mainIntent = new Intent(context, MainActivity.class);
-            final PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
-            Notification.Builder builder = new Notification.Builder(context)
-                    .setSmallIcon(R.drawable.ws_white)
-                    .setContentTitle(context.getString(R.string.app_name_long))
-                    .setOngoing(true)
-                    .setContentIntent(mainPendingIntent);
-            // Add stop action
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                final Intent stopIntent = new Intent(context, MainActivity.class);
-                stopIntent.setType("baseline/stop");
-                final PendingIntent stopPendingIntent = PendingIntent.getActivity(context, 0, stopIntent, 0);
-                final Notification.Action stopAction = new Notification.Action.Builder(R.drawable.square, "Stop", stopPendingIntent).build();
-                builder = builder.addAction(stopAction);
-            }
-            if(logging && audible) {
-                builder = builder.setUsesChronometer(true).setWhen(Services.logger.getStartTime());
-                builder = builder.setContentText(context.getString(R.string.notify_audible_logging));
-            } else if(logging) {
-                builder = builder.setUsesChronometer(true).setWhen(Services.logger.getStartTime());
-                builder = builder.setContentText(context.getString(R.string.notify_logging));
-            } else {
-                builder = builder.setContentText(context.getString(R.string.notify_audible));
-            }
-            final Notification notification = builder.build();
+            final Notification notification = getNotification(logging, audible);
             notificationManager.notify(notificationId, notification);
         } else {
             // Hide notification
             notificationManager.cancel(notificationId);
         }
+    }
+
+    private Notification getNotification(boolean logging, boolean audible) {
+        // Intent to open MainActivity on stop
+        final Intent mainIntent = new Intent(context, MainActivity.class);
+        final PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
+        Notification.Builder builder = new Notification.Builder(context)
+                .setSmallIcon(R.drawable.ws_white)
+                .setContentTitle(context.getString(R.string.app_name_long))
+                .setOngoing(true)
+                .setContentIntent(mainPendingIntent);
+        // Add stop action
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            final Intent stopIntent = new Intent(context, MainActivity.class);
+            stopIntent.setType("baseline/stop");
+            final PendingIntent stopPendingIntent = PendingIntent.getActivity(context, 0, stopIntent, 0);
+            final Notification.Action stopAction = new Notification.Action.Builder(R.drawable.square, "Stop", stopPendingIntent).build();
+            builder = builder.addAction(stopAction);
+        }
+        if(logging && audible) {
+            builder = builder.setUsesChronometer(true).setWhen(Services.logger.getStartTime());
+            builder = builder.setContentText(context.getString(R.string.notify_audible_logging));
+        } else if(logging) {
+            builder = builder.setUsesChronometer(true).setWhen(Services.logger.getStartTime());
+            builder = builder.setContentText(context.getString(R.string.notify_logging));
+        } else {
+            builder = builder.setContentText(context.getString(R.string.notify_audible));
+        }
+        return builder.build();
     }
 
     // Subscribe to updates
