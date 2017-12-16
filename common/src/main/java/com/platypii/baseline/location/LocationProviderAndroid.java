@@ -45,7 +45,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     @Override
     public void start(@NonNull Context context) throws SecurityException {
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        if(manager.getProvider(LocationManager.GPS_PROVIDER) != null) {
+        if(manager != null && manager.getProvider(LocationManager.GPS_PROVIDER) != null) {
             try {
                 // TODO: Specify looper thread?
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -53,6 +53,8 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
             } catch (Exception e) {
                 Exceptions.report(e);
             }
+        } else {
+            Log.e(TAG, "failed to get android location manager");
         }
     }
 

@@ -57,9 +57,13 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     public void start(@NonNull Context context) throws SecurityException {
         // Start NMEA updates
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        final boolean nmeaSuccess = manager.addNmeaListener(this);
-        if (!nmeaSuccess) {
-            Log.e(TAG, "Failed to start NMEA updates");
+        if (manager != null) {
+            final boolean nmeaSuccess = manager.addNmeaListener(this);
+            if (!nmeaSuccess) {
+                Log.e(TAG, "Failed to start NMEA updates");
+            }
+        } else {
+            Log.e(TAG, "failed to get android location manager");
         }
     }
 

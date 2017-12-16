@@ -47,6 +47,11 @@ public class MySensorManager implements SensorEventListener, BaseService {
         AsyncTask.execute(() -> {
             // Get android sensor manager
             sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+            if (sensorManager == null) {
+                Log.e(TAG, "failed to get sensor manager");
+                return;
+            }
+
             // Find sensors
             final Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             final Sensor gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);

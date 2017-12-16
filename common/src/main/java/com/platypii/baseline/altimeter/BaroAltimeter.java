@@ -58,10 +58,12 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         if(sensorManager == null) {
             // Add sensor listener
             sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-            final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-            if (sensor != null) {
-                // Start sensor updates
-                sensorManager.registerListener(BaroAltimeter.this, sensor, sensorDelay);
+            if (sensorManager != null) {
+                final Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+                if (sensor != null) {
+                    // Start sensor updates
+                    sensorManager.registerListener(BaroAltimeter.this, sensor, sensorDelay);
+                }
             }
         } else {
             Log.e(TAG, "BaroAltimeter already started");

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -18,6 +19,7 @@ import org.greenrobot.eventbus.ThreadMode;
  * Manage notification bars
  */
 class Notifications implements BaseService {
+    private static final String TAG = "Notifications";
     private static final int notificationId = 117;
 
     private Context context;
@@ -31,9 +33,13 @@ class Notifications implements BaseService {
 
     private void update() {
         final NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager == null) {
+            Log.e(TAG, "failed to get notification manager");
+            return;
+        }
+
         final boolean logging = Services.logger.isLogging();
         final boolean audible = Services.audible.isEnabled();
-
         if(logging || audible) {
             // Show/update notification
             final Intent mainIntent = new Intent(context, MainActivity.class);
