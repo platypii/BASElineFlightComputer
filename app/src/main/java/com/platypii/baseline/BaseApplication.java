@@ -3,7 +3,7 @@ package com.platypii.baseline;
 import android.app.Application;
 import org.greenrobot.eventbus.EventBus;
 
-public class BaselineApplication extends Application {
+public class BaseApplication extends Application {
 
     @Override
     public void onCreate() {

@@ -1,6 +1,6 @@
 package com.platypii.baseline.bluetooth;
 
-import com.platypii.baseline.Service;
+import com.platypii.baseline.BaseService;
 import com.platypii.baseline.common.R;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.util.Exceptions;
@@ -23,7 +23,7 @@ import java.util.Set;
  * Class to manage a bluetooth GPS receiver.
  * Note: instantiating this class will not automatically start bluetooth. Call startAsync to connect.
  */
-public class BluetoothService implements Service {
+public class BluetoothService implements BaseService {
     private static final String TAG = "Bluetooth";
 
     private static final int ENABLE_BLUETOOTH_CODE = 13;

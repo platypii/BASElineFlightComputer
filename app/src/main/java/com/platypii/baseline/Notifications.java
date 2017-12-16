@@ -17,7 +17,7 @@ import org.greenrobot.eventbus.ThreadMode;
 /**
  * Manage notification bars
  */
-class Notifications implements Service {
+class Notifications implements BaseService {
     private static final int notificationId = 117;
 
     private Context context;

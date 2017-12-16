@@ -1,10 +1,10 @@
 package com.platypii.baseline.cloud;
 
-import com.platypii.baseline.Service;
+import com.platypii.baseline.BaseService;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-public class BaselineCloud implements Service {
+public class BaselineCloud implements BaseService {
 
     static final String baselineServer = "https://baseline.ws";
     static final String listUrl = BaselineCloud.baselineServer + "/v1/tracks";

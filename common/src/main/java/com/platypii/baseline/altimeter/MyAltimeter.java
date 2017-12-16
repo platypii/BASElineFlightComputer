@@ -1,6 +1,6 @@
 package com.platypii.baseline.altimeter;
 
-import com.platypii.baseline.Service;
+import com.platypii.baseline.BaseService;
 import com.platypii.baseline.location.LocationProvider;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.location.TimeOffset;
@@ -24,7 +24,7 @@ import org.greenrobot.eventbus.ThreadMode;
  *
  * TODO: Correct barometer drift with GPS
  */
-public class MyAltimeter implements Service, MyLocationListener {
+public class MyAltimeter implements BaseService, MyLocationListener {
     private static final String TAG = "MyAltimeter";
 
     private final LocationProvider location;

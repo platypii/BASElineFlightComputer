@@ -1,6 +1,6 @@
 package com.platypii.baseline.audible;
 
-import com.platypii.baseline.Service;
+import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.jarvis.FlightMode;
@@ -17,7 +17,7 @@ import org.greenrobot.eventbus.EventBus;
 /**
  * Periodically gives audio feedback
  */
-public class MyAudible implements Service {
+public class MyAudible implements BaseService {
     private static final String TAG = "Audible";
 
     private SharedPreferences prefs;

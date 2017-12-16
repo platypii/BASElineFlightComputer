@@ -1,6 +1,6 @@
 package com.platypii.baseline.sensors;
 
-import com.platypii.baseline.Service;
+import com.platypii.baseline.BaseService;
 import com.platypii.baseline.measurements.MAccel;
 import com.platypii.baseline.measurements.MGravity;
 import com.platypii.baseline.measurements.MRotation;
@@ -23,7 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * TODO: Do we care about gravity sensor? Or would we be better off with accel + rotation?
  */
-public class MySensorManager implements SensorEventListener, Service {
+public class MySensorManager implements SensorEventListener, BaseService {
     private static final String TAG = "MySensorManager";
 
     private static final int sensorDelay = SensorManager.SENSOR_DELAY_FASTEST; // microseconds

@@ -1,6 +1,6 @@
 package com.platypii.baseline.tracks;
 
-import com.platypii.baseline.Service;
+import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.location.MyLocationListener;
@@ -30,7 +30,7 @@ import java.util.zip.GZIPOutputStream;
  * Logs location, altitude, every scrap of data we can get to a file.
  * AKA- The Black Box flight recorder
  */
-public class TrackLogger implements MyLocationListener, MySensorListener, Service {
+public class TrackLogger implements MyLocationListener, MySensorListener, BaseService {
     private static final String TAG = "TrackLogger";
 
     private boolean logging = false;

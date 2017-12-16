@@ -1,6 +1,6 @@
 package com.platypii.baseline.jarvis;
 
-import com.platypii.baseline.Service;
+import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
@@ -17,7 +17,7 @@ import org.greenrobot.eventbus.ThreadMode;
 /**
  * Situational awareness engine
  */
-public class FlightComputer implements Service, MyLocationListener {
+public class FlightComputer implements BaseService, MyLocationListener {
     private static final String TAG = "FlightComputer";
 
     private final AutoStop autoStop = new AutoStop();

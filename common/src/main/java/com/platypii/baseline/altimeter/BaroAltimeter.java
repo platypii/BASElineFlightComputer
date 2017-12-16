@@ -1,6 +1,6 @@
 package com.platypii.baseline.altimeter;
 
-import com.platypii.baseline.Service;
+import com.platypii.baseline.BaseService;
 import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.util.Exceptions;
@@ -21,7 +21,7 @@ import org.greenrobot.eventbus.EventBus;
  * Altitude is measured AGL. Ground level is set to zero on initialization.
  * Kalman filter is used to smooth barometer data.
  */
-public class BaroAltimeter implements Service, SensorEventListener {
+public class BaroAltimeter implements BaseService, SensorEventListener {
     private static final String TAG = "BaroAltimeter";
 
     private static final int sensorDelay = 100000; // microseconds
