@@ -3,7 +3,7 @@ package com.platypii.baseline.views.altimeter;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.views.BaseActivity;
-import com.platypii.baseline.views.PolarPlot;
+import com.platypii.baseline.views.charts.PolarPlot;
 import com.platypii.baseline.measurements.MAltitude;
 import android.os.Bundle;
 import android.view.Window;

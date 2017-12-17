@@ -1,4 +1,4 @@
-package com.platypii.baseline.views;
+package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
@@ -216,10 +216,8 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         if(series.size() > 0) {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2 * radius * density);
-            Path line = renderPath(series);
-            if(line != null) {
-                canvas.drawPath(line, paint);
-            }
+            final Path line = renderPath(series);
+            canvas.drawPath(line, paint);
         }
     }
 

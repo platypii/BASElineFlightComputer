@@ -9,6 +9,7 @@ import com.platypii.baseline.measurements.MSensor;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.SyncedList;
+import com.platypii.baseline.views.charts.SensorPlot;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;

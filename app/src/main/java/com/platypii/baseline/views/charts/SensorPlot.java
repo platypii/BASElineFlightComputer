@@ -1,4 +1,4 @@
-package com.platypii.baseline.views;
+package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.measurements.MSensor;
 import com.platypii.baseline.util.Bounds;
