@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.charts;
 
+import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.location.LocationProvider;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.location.TimeOffset;
@@ -21,6 +22,10 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     private final SyncedList<MLocation> history = new SyncedList<>();
 
     private LocationProvider locationService = null;
+    private MyAltimeter altimeter = null;
+
+    final Bounds min = new Bounds();
+    final Bounds max = new Bounds();
 
     public PolarPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -54,8 +59,8 @@ public class PolarPlot extends PlotView implements MyLocationListener {
                 drawEllipses(canvas);
 
                 // Draw horizontal, vertical speed
-                final double vx = loc.groundSpeed();
-                final double vy = loc.climb;
+                final double vx = locationService.groundSpeed();
+                final double vy = altimeter.climb;
                 drawSpeedLines(canvas, vx, vy);
 
                 // Draw history
@@ -257,8 +262,9 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 //            return Convert.speed(y_abs, 0, true);
 //    }
 
-    public void start(@NonNull LocationProvider locationService) {
+    public void start(@NonNull LocationProvider locationService, @NonNull MyAltimeter altimeter) {
         this.locationService = locationService;
+        this.altimeter = altimeter;
         // Start listening for location updates
         locationService.addListener(this);
     }

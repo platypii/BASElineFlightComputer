@@ -25,9 +25,11 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     private static final String TAG = "Plot";
 
     // Drawing stuff
-    private final static int axis_color = 0xffee0000;
-    private final static int grid_color = 0xff555555;
-    private final static float font_size = 16;
+    private static final int axis_color = 0xffee0000;
+    private static final int grid_color = 0xff555555;
+    private static final float font_size = 16;
+
+    // The drawing thread will sleep for refreshRateMillis
     private static final long refreshRateMillis = 33; // Approx 30fps
 
     // Padding
@@ -35,10 +37,6 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
 
     double x_major_units = 1;
     double y_major_units = 1;
-
-    // Default bounds
-    final Bounds min = new Bounds(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-    final Bounds max = new Bounds(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
     // Avoid creating new objects unnecessarily
     final Paint paint = new Paint();
@@ -147,7 +145,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         // Get plot-space bounds
         bounds = getBounds(dataBounds);
         // Reset data bounds
-        dataBounds.set(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        dataBounds.reset();
 
         // Plot Area
         canvas.drawColor(0xff000000);
@@ -319,7 +317,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         final double end_x = Math.ceil(realBounds.right / step_x) * step_x;
         final int steps_x = (int)Math.ceil((end_x - start_x) / step_x);
         if (!(start_x < end_x && 0 < step_x)) {
-            Log.e(TAG, "Invalid plot bounds " + start_x + " " + end_x + " " + step_x);
+            Log.e(TAG, "Invalid plot X bounds " + start_x + " " + end_x + " " + step_x);
         }
         for(int n = 0; n < steps_x; n++) {
             final double x = start_x + n * step_x;
@@ -344,7 +342,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         // Log.i(TAG, "bounds = " + bounds + ", realBounds = " + realBounds);
         // Log.i(TAG, "start_y = " + start_y + ", end_y = " + end_y + ", magnitude_y = " + magnitude_y + ", step_y = " + step_y);
         if (!(start_y <= end_y && 0 < step_y)) {
-            Log.e(TAG, "Invalid plot bounds " + start_y + " " + end_y + " " + step_y);
+            Log.e(TAG, "Invalid plot Y bounds " + start_y + " " + end_y + " " + step_y);
         }
         for(int n = 0; n < steps_y; n++) {
             final double y = start_y + n * step_y;

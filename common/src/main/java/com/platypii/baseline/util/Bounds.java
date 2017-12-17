@@ -1,32 +1,21 @@
 package com.platypii.baseline.util;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
+import java.util.Locale;
 
 /**
  * Mutable double bounds.
  * Used by PlotView.
  */
 public class Bounds {
+    private static final String TAG = "Bounds";
 
-    public double left;
-    public double top;
-    public double right;
-    public double bottom;
+    public double left = Double.NaN;
+    public double top = Double.NaN;
+    public double right = Double.NaN;
+    public double bottom = Double.NaN;
     private static final double EPSILON = 0.001;
-
-    public Bounds() {
-        this.left = Double.NaN;
-        this.top = Double.NaN;
-        this.right = Double.NaN;
-        this.bottom = Double.NaN;
-    }
-
-    public Bounds(double left, double top, double right, double bottom) {
-        this.left = left;
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
-    }
 
     public void set(@NonNull Bounds copy) {
         this.left = copy.left;
@@ -36,20 +25,29 @@ public class Bounds {
     }
 
     public void set(double left, double top, double right, double bottom) {
+        if(right < left) Log.e(TAG, "Invalid bounds: left should be less than right");
+        if(top < bottom) Log.e(TAG, "Invalid bounds: bottom should be less than top");
         this.left = left;
         this.top = top;
         this.right = right;
         this.bottom = bottom;
     }
 
+    public void reset() {
+        this.left = Double.NaN;
+        this.top = Double.NaN;
+        this.right = Double.NaN;
+        this.bottom = Double.NaN;
+    }
+
     /**
      * Expands the bounds to include point x,y
      */
     public void expandBounds(double x, double y) {
-        if(x < left) left = x;
-        if(y > top) top = y;
-        if(x > right) right = x;
-        if(y < bottom) bottom = y;
+        if(x < left || Double.isNaN(left)) left = x;
+        if(y > top || Double.isNaN(top)) top = y;
+        if(x > right || Double.isNaN(right)) right = x;
+        if(y < bottom || Double.isNaN(bottom)) bottom = y;
     }
 
     /**
@@ -57,24 +55,24 @@ public class Bounds {
      */
     public void clean(@NonNull Bounds min, @NonNull Bounds max) {
         // If bounds are NaN, then use smallest legal viewing window
-        if(Double.isNaN(left)) left = max.left;
-        if(Double.isNaN(top)) top = max.top;
+        if(Double.isNaN(left)) left = min.left;
+        if(Double.isNaN(top)) top = min.top;
         if(Double.isNaN(right)) right = min.right;
-        if(Double.isNaN(bottom)) bottom = max.bottom;
+        if(Double.isNaN(bottom)) bottom = min.bottom;
         // If we are still infinite, make it 0..1
         if(Double.isInfinite(left)) left = 0;
         if(Double.isInfinite(top)) top = 1;
         if(Double.isInfinite(right)) right = 1;
         if(Double.isInfinite(bottom)) bottom = 0;
         // Fit bounds to min/max
-        if(left < min.left) left = min.left;
-        if(left > max.left) left = max.left;
+        if(left > min.left) left = min.left;
+        if(left < max.left) left = max.left;
         if(top < min.top) top = min.top;
         if(top > max.top) top = max.top;
         if(right < min.right) right = min.right;
         if(right > max.right) right = max.right;
-        if(bottom < min.bottom) bottom = min.bottom;
-        if(bottom > max.bottom) bottom = max.bottom;
+        if(bottom > min.bottom) bottom = min.bottom;
+        if(bottom < max.bottom) bottom = max.bottom;
         if(right < left) {
             final double tmp = right;
             right = left;
@@ -114,5 +112,10 @@ public class Bounds {
             final double delta = (boundsHeight * aspectCanvas - boundsWidth);
             set(left, top, right + delta, bottom);
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.US, "Bounds(%f,%f,%f,%f)", left, top, right, bottom);
     }
 }

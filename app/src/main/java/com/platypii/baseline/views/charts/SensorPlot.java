@@ -18,6 +18,9 @@ public class SensorPlot extends PlotView {
     private final DataSeries ySeries = new DataSeries();
     private final DataSeries zSeries = new DataSeries();
 
+    final Bounds min = new Bounds();
+    final Bounds max = new Bounds();
+
     public SensorPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -100,4 +103,3 @@ public class SensorPlot extends PlotView {
     }
 
 }
-

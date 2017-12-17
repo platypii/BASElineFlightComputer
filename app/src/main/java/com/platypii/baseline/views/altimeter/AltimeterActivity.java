@@ -45,7 +45,7 @@ public class AltimeterActivity extends BaseActivity {
         super.onResume();
         // Start sensor updates
         EventBus.getDefault().register(this);
-        polar.start(Services.location);
+        polar.start(Services.location, Services.alti);
         updateFlightStats();
     }
     @Override
