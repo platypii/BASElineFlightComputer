@@ -10,7 +10,7 @@ import java.util.Locale;
  */
 public class Convert {
 
-    public static boolean metric = false;
+    public static boolean metric = metricDefault();
 
     // Convert to standard metric (1000 * FT = 304.8 * M)
     public static final double FT = 0.3048;
@@ -355,6 +355,15 @@ public class Convert {
             else
                 return bearingStr;
         }
+    }
+
+    /**
+     * Returns true if the system default locale indicates metric
+     */
+    private static boolean metricDefault() {
+        final String country = Locale.getDefault().getCountry();
+        // Everyone except 'merica
+        return !"US".equals(country);
     }
 
 }

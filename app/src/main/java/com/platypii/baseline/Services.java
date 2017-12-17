@@ -219,7 +219,7 @@ public class Services {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         // Metric
-        Convert.metric = prefs.getBoolean("metric_enabled", false);
+        Convert.metric = prefs.getBoolean("metric_enabled", Convert.metric);
 
         // Auto-stop
         AutoStop.preferenceEnabled = prefs.getBoolean("auto_stop_enabled", true);
