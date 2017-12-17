@@ -61,4 +61,17 @@ public class Numbers {
             }
         }
     }
+
+    public static long parseLong(@Nullable String str, long defaultValue) {
+        if(str == null || str.isEmpty()) {
+            return defaultValue;
+        } else {
+            try {
+                return Long.parseLong(str);
+            } catch(NumberFormatException e) {
+                Exceptions.report(e);
+                return defaultValue;
+            }
+        }
+    }
 }

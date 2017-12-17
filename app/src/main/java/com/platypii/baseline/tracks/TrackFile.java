@@ -1,5 +1,6 @@
 package com.platypii.baseline.tracks;
 
+import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Exceptions;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -7,6 +8,7 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -48,6 +50,10 @@ public class TrackFile {
             Exceptions.report(e);
             return null;
         }
+    }
+
+    public List<MLocation> getData() {
+        return TrackFileData.getTrackData(this);
     }
 
     /** Delete local track file */

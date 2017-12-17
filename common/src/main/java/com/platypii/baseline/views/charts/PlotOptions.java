@@ -27,8 +27,8 @@ class PlotOptions {
 
     // Axis options
     static class AxesOptions {
-        final AxisOptions x = new AxisOptions();
-        final AxisOptions y = new AxisOptions();
+        AxisOptions x = new AxisOptions();
+        AxisOptions y = new AxisOptions();
     }
     static class AxisOptions {
         // Major units are the smallest unit that will get a major grid line

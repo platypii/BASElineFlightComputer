@@ -3,6 +3,7 @@ package com.platypii.baseline;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.views.TimeChartActivity;
 import com.platypii.baseline.views.tracks.TrackLocalActivity;
 import com.platypii.baseline.views.tracks.TrackRemoteActivity;
 import android.content.ActivityNotFoundException;
@@ -18,7 +19,7 @@ import android.widget.Toast;
 public class Intents {
     private static final String TAG = "Intents";
 
-    /** Open jump activity */
+    /** Open track activity */
     public static void openTrackLocal(@NonNull Context context, @NonNull TrackFile trackFile) {
         final Intent intent = new Intent(context, TrackLocalActivity.class);
         intent.putExtra(TrackLocalActivity.EXTRA_TRACK_FILE, trackFile.file.getName());
@@ -27,6 +28,13 @@ public class Intents {
     public static void openTrackRemote(@NonNull Context context, @NonNull CloudData track) {
         final Intent intent = new Intent(context, TrackRemoteActivity.class);
         intent.putExtra(TrackRemoteActivity.EXTRA_TRACK_ID, track.track_id);
+        context.startActivity(intent);
+    }
+
+    /** Open track charts */
+    public static void openTimeChart(@NonNull Context context, @NonNull TrackFile trackFile) {
+        final Intent intent = new Intent(context, TimeChartActivity.class);
+        intent.putExtra(TrackLocalActivity.EXTRA_TRACK_FILE, trackFile.file.getName());
         context.startActivity(intent);
     }
 

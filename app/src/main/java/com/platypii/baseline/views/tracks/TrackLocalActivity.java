@@ -49,7 +49,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
         alertLabel = findViewById(R.id.alert_message);
         deleteButton = findViewById(R.id.deleteButton);
 
-        // Load jump from extras
+        // Load track from extras
         final Bundle extras = getIntent().getExtras();
         if(extras != null && extras.getString(EXTRA_TRACK_FILE) != null) {
             final String extraTrackFile = extras.getString(EXTRA_TRACK_FILE);
@@ -66,6 +66,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
 
         findViewById(R.id.exportButton).setOnClickListener(this::clickExport);
         findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+        findViewById(R.id.timeChartButton).setOnClickListener(this::clickTimeChart);
     }
 
     /**
@@ -110,6 +111,11 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
             .setPositiveButton("Delete", this)
             .setNegativeButton("Cancel", null)
             .show();
+    }
+
+    private void clickTimeChart(View v) {
+        // Open time chart activity
+        Intents.openTimeChart(this, trackFile);
     }
 
     /**

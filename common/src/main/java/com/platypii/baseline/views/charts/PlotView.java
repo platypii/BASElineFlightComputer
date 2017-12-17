@@ -29,7 +29,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     final Plot plot = new Plot(options);
 
     // The drawing thread will sleep for refreshRateMillis
-    private static final long refreshRateMillis = 33; // Approx 30fps
+    long refreshRateMillis = 33; // Approx 30fps
 
     // Avoid creating new objects unnecessarily
     final Paint paint = new Paint();
@@ -141,7 +141,8 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     abstract void drawData(Plot plot);
 
     /**
-     * Override this method to set the view bounds
+     * Override this method to set the view bounds in plot-space.
+     * It's okay for subclasses to use bounds as working space, or return dataBounds directly.
      * @param dataBounds the data bounds from the last render pass
      * @return the view bounds, in plot-space
      */
