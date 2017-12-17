@@ -91,6 +91,8 @@
                 android:resource="@xml/file_provider_paths"/>
         </provider>
 
+        <service android:name=".ForegroundService"/>
+
     </application>
 
 </manifest>

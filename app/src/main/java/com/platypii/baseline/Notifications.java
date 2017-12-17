@@ -4,13 +4,11 @@ import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.views.MainActivity;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -20,7 +18,7 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 class Notifications implements BaseService {
     private static final String TAG = "Notifications";
-    private static final int notificationId = 117;
+    static final int notificationId = 117;
 
     private Context context;
 
@@ -28,29 +26,21 @@ class Notifications implements BaseService {
     public void start(@NonNull Context context) {
         this.context = context;
         EventBus.getDefault().register(this);
-        update();
-    }
 
-    private void update() {
-        final NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager == null) {
-            Log.e(TAG, "failed to get notification manager");
-            return;
+        // Update initial state
+        if (Services.logger.isLogging()) {
+            final Intent service = new Intent(context, ForegroundService.class);
+            service.setAction(ForegroundService.ACTION_START_LOGGING);
+            context.startService(service);
         }
-
-        final boolean logging = Services.logger.isLogging();
-        final boolean audible = Services.audible.isEnabled();
-        if(logging || audible) {
-            // Show/update notification
-            final Notification notification = getNotification(logging, audible);
-            notificationManager.notify(notificationId, notification);
-        } else {
-            // Hide notification
-            notificationManager.cancel(notificationId);
+        if (Services.audible.isEnabled()) {
+            final Intent service = new Intent(context, ForegroundService.class);
+            service.setAction(ForegroundService.ACTION_START_AUDIBLE);
+            context.startService(service);
         }
     }
 
-    private Notification getNotification(boolean logging, boolean audible) {
+    static Notification getNotification(@NonNull Context context, boolean logging, boolean audible) {
         // Intent to open MainActivity on stop
         final Intent mainIntent = new Intent(context, MainActivity.class);
         final PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
@@ -82,11 +72,23 @@ class Notifications implements BaseService {
     // Subscribe to updates
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoggingEvent(LoggingEvent event) {
-        update();
+        final Intent service = new Intent(context, ForegroundService.class);
+        if(event.started) {
+            service.setAction(ForegroundService.ACTION_START_LOGGING);
+        } else {
+            service.setAction(ForegroundService.ACTION_STOP_LOGGING);
+        }
+        context.startService(service);
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAudibleEvent(AudibleEvent event) {
-        update();
+        final Intent service = new Intent(context, ForegroundService.class);
+        if(event.started) {
+            service.setAction(ForegroundService.ACTION_START_AUDIBLE);
+        } else {
+            service.setAction(ForegroundService.ACTION_STOP_AUDIBLE);
+        }
+        context.startService(service);
     }
 
     @Override
