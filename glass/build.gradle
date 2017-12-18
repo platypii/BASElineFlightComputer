@@ -9,7 +9,7 @@ repositories {
 
 android {
     compileSdkVersion "Google Inc.:Glass Development Kit Preview:19"
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
 
     defaultConfig {
         applicationId "com.platypii.baseline"
@@ -24,12 +24,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:25.4.0'
     compile project(':common')
+    implementation 'com.android.support:support-annotations:27.0.2'
 }
 
 // Necessary for firebase:

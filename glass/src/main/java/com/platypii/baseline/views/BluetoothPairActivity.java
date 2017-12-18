@@ -1,4 +1,4 @@
-package com.platypii.baseline;
+package com.platypii.baseline.views;
 
 import com.platypii.baseline.bluetooth.BluetoothPairCardAdapter;
 import android.os.Bundle;

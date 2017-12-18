@@ -1,5 +1,7 @@
-package com.platypii.baseline;
+package com.platypii.baseline.views;
 
+import com.platypii.baseline.Services;
+import com.platypii.baseline.views.charts.PolarPlot;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,7 +24,7 @@ public class PolarActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         // Start sensor updates
-        polar.start(Services.location);
+        polar.start(Services.location, Services.alti);
     }
     @Override
     protected void onPause() {

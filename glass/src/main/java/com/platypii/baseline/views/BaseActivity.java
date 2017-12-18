@@ -1,12 +1,13 @@
-package com.platypii.baseline;
+package com.platypii.baseline.views;
 
+import com.platypii.baseline.Services;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 public abstract class BaseActivity extends FragmentActivity {
 
     /* Request codes used to invoke user interactions */
-    static final int RC_LOCATION = 1;
+    public static final int RC_LOCATION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

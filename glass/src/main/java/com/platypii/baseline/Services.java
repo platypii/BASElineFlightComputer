@@ -4,6 +4,7 @@ import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.location.LocationServiceBlue;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.views.BaseActivity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -33,7 +34,7 @@ public class Services {
     private static final int shutdownDelay = 10000;
 
     // Services
-    public static SharedPreferences prefs;
+    private static SharedPreferences prefs;
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final LocationServiceBlue location = new LocationServiceBlue(bluetooth);
     public static final MyAltimeter alti = location.alti;
@@ -42,14 +43,14 @@ public class Services {
      * We want preferences to be available as early as possible.
      * Call this in onCreate
      */
-    static void create(@NonNull Activity activity) {
+    public static void create(@NonNull Activity activity) {
         if(prefs == null) {
             Log.i(TAG, "Loading app preferences");
             loadPreferences(activity.getApplicationContext());
         }
     }
 
-    static void start(@NonNull Activity activity) {
+    public static void start(@NonNull Activity activity) {
         startCount++;
         if(!initialized) {
             initialized = true;
@@ -92,7 +93,7 @@ public class Services {
         }
     }
 
-    static void stop() {
+    public static void stop() {
         startCount--;
         if(startCount == 0) {
             Log.i(TAG, String.format("All activities have stopped. Services will stop in %.3fs", shutdownDelay * 0.001));
@@ -103,12 +104,7 @@ public class Services {
     /**
      * A thread that shuts down services after activity has stopped
      */
-    private static final Runnable stopRunnable = new Runnable() {
-        @Override
-        public void run() {
-            stopIfIdle();
-        }
-    };
+    private static final Runnable stopRunnable = Services::stopIfIdle;
 
     /**
      * Stop services IF nothing is using them

@@ -1,10 +1,9 @@
-package com.platypii.baseline;
+package com.platypii.baseline.views;
 
+import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothCardAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import com.google.android.glass.widget.CardScrollView;

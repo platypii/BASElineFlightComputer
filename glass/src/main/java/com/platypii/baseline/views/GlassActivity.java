@@ -1,8 +1,10 @@
-package com.platypii.baseline;
+package com.platypii.baseline.views;
 
+import com.platypii.baseline.R;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,8 +28,9 @@ public class GlassActivity extends BaseActivity implements AdapterView.OnItemCli
         setContentView(cardScroller);
     }
 
+    @NonNull
     private List<CardBuilder> createCards(Context context) {
-        ArrayList<CardBuilder> cards = new ArrayList<CardBuilder>();
+        final ArrayList<CardBuilder> cards = new ArrayList<>();
 
         // Add cards that demonstrate TEXT layouts.
         cards.add(new CardBuilder(context, CardBuilder.Layout.COLUMNS)
@@ -47,7 +50,7 @@ public class GlassActivity extends BaseActivity implements AdapterView.OnItemCli
         } else if(position == 1) {
             startActivity(new Intent(this, BluetoothActivity.class));
         } else {
-            Log.e(TAG, "Invalid click postition = " + position);
+            Log.e(TAG, "Invalid click position = " + position);
         }
     }
 

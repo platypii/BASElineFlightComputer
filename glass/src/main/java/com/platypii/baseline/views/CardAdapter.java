@@ -1,4 +1,4 @@
-package com.platypii.baseline;
+package com.platypii.baseline.views;
 
 import android.view.View;
 import android.view.ViewGroup;

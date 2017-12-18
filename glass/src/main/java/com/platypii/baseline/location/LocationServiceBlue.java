@@ -5,7 +5,6 @@ import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.measurements.MLocation;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 /**
  * Meta location provider that uses only bluetooth
@@ -36,6 +35,7 @@ public class LocationServiceBlue extends LocationProvider {
         public void onLocationChangedPostExecute() {}
     };
 
+    @NonNull
     @Override
     protected String providerName() {
         return TAG;
