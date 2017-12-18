@@ -8,6 +8,21 @@ public class Numbers {
         return !Double.isNaN(value) && !Double.isInfinite(value);
     }
 
+    /**
+     * Fast integer power x^y
+     */
+    public static int pow(int x, int y) {
+        // base cases
+        if(x == 1 || y == 0) return 1;
+        else if(y == 1) return x;
+        else if(y == 2) return x * x;
+        else if(y == 3) return x * x * x;
+        // divide and conquer
+        final int sqrt = pow(x, y / 2);
+        if(y % 2 == 0) return sqrt * sqrt;
+        else return x * sqrt * sqrt;
+    }
+
     public static double parseDouble(@Nullable String str) {
         if(str == null || str.isEmpty()) {
             return Double.NaN;

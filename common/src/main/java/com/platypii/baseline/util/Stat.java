@@ -22,7 +22,11 @@ public class Stat {
     }
 
     public double mean() {
-        return mean;
+        if (n > 0) {
+            return mean;
+        } else {
+            return Double.NaN;
+        }
     }
 
     public double var() {
@@ -34,7 +38,11 @@ public class Stat {
     }
 
     public String toString() {
-        return String.format(Locale.US, "%.3f ± %.3f", mean, var());
+        if (n > 0) {
+            return String.format(Locale.US, "%.3f ± %.3f", mean, var());
+        } else {
+            return "NaN";
+        }
     }
 
 }

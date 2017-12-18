@@ -5,6 +5,7 @@ import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.util.DataSeries.Point;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IntBounds;
+import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -312,7 +313,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     private static final int MAX_LINES = 80;
     public void drawXlines(@NonNull Canvas canvas, @NonNull Bounds realBounds) {
         final int magnitude_x = (int) Math.log10((realBounds.right - realBounds.left) / x_major_units);
-        final double step_x = x_major_units * pow(10, magnitude_x);
+        final double step_x = x_major_units * Numbers.pow(10, magnitude_x);
         final double start_x = Math.floor(realBounds.left / step_x) * step_x;
         final double end_x = Math.ceil(realBounds.right / step_x) * step_x;
         final int steps_x = (int)Math.ceil((end_x - start_x) / step_x);
@@ -335,7 +336,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     }
     public void drawYlines(@NonNull Canvas canvas, @NonNull Bounds realBounds) {
         final int magnitude_y = (int) Math.log10((realBounds.top - realBounds.bottom) / y_major_units);
-        final double step_y = y_major_units * pow(10, magnitude_y); // grid spacing in plot-space
+        final double step_y = y_major_units * Numbers.pow(10, magnitude_y); // grid spacing in plot-space
         final double start_y = Math.floor(realBounds.bottom / step_y) * step_y;
         final double end_y = Math.ceil(realBounds.top / step_y) * step_y;
         final int steps_y = (int)Math.ceil((end_y - start_y) / step_y);
@@ -427,21 +428,6 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         final double rTop = bounds.bottom - (top - (bottom - padding.bottom)) / ppm_y; // max y-coordinate in plot-space
         realBounds.set(rLeft, rTop, rRight, rBottom);
         return realBounds;
-    }
-
-    /**
-     * Fast integer power x^y
-     */
-    private static int pow(int x, int y) {
-        // base cases
-        if(x == 1 || y == 0) return 1;
-        else if(y == 1) return x;
-        else if(y == 2) return x * x;
-        else if(y == 3) return x * x * x;
-        // divide and conquer
-        final int sqrt = pow(x, y / 2);
-        if(y % 2 == 0) return sqrt * sqrt;
-        else return x * sqrt * sqrt;
     }
 
     /**

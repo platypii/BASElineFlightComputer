@@ -1,7 +1,7 @@
 package com.platypii.baseline.util;
 
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -78,6 +78,9 @@ public class SyncedList<T> implements Iterable<T> {
     @Override
     public String toString() {
         copy();
-        return "SyncedList(" + TextUtils.join(",", values) + ")";
+        // TODO: TextUtils.join works in android but not in testing
+        String str = Arrays.toString(values.toArray());
+        str = str.substring(1, str.length() - 1);
+        return "SyncedList(" + str + ")";
     }
 }

@@ -335,6 +335,7 @@ public class Convert {
             return "";
         } else {
             if(degrees < 0) degrees += 360;
+            if(degrees > 360) degrees -= 360;
             final String bearingStr = ((int) degrees) + "°";
             if(337.5 <= degrees || degrees < 22.5)
                 return bearingStr + " (N)";
