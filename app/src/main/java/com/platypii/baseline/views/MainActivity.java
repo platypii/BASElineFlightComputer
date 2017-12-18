@@ -193,7 +193,6 @@ public class MainActivity extends BaseActivity {
         } else {
             // Start audible
             firebaseAnalytics.logEvent("click_start_audible", null);
-            Toast.makeText(MainActivity.this, "Starting audible", Toast.LENGTH_SHORT).show();
             Services.audible.enableAudible();
         }
         updateUIState();
