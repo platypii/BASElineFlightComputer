@@ -21,10 +21,11 @@ class Plot {
     int width;
     int height;
 
+    // Bounds are indexed per-axis
     // Data bounds get expanded as we see points
-    final Bounds dataBounds = new Bounds();
+    Bounds dataBounds[];
     // Plot bounds get updated once at the beginning of drawPlot
-    final Bounds bounds = new Bounds();
+    Bounds bounds[];
 
     // Avoid creating new objects unnecessarily
     private final Path path = new Path();
@@ -46,15 +47,27 @@ class Plot {
     }
 
     /**
+     * Initialize bounds for a given number of axes
+     */
+    void initBounds(int axes) {
+        bounds = new Bounds[axes];
+        dataBounds = new Bounds[axes];
+        for (int i = 0; i < axes; i++) {
+            bounds[i] = new Bounds();
+            dataBounds[i] = new Bounds();
+        }
+    }
+
+    /**
      * Draws a point (input given in plot-space)
      * @param radius the width of the path
      * @param paint the paintbrush to use
      */
-    void drawPoint(double x, double y, float radius, @NonNull Paint paint) {
-        dataBounds.expandBounds(x, y);
+    void drawPoint(int axis, double x, double y, float radius, @NonNull Paint paint) {
+        dataBounds[axis].expandBounds(x, y);
         // Screen coordinates
-        float sx = getX(x);
-        float sy = getY(y);
+        float sx = getX(axis, x);
+        float sy = getY(axis, y);
         paint.setStyle(Paint.Style.FILL);
         // paint.setStrokeCap(Cap.ROUND); // doesn't work in hardware mode
         // canvas.drawPoint(x, y, paint);
@@ -79,12 +92,12 @@ class Plot {
      * @param series the data series to draw
      * @param radius the width of the path
      */
-    void drawLine(@NonNull DataSeries series, float radius, @NonNull Paint paint) {
+    void drawLine(int axis, @NonNull DataSeries series, float radius, @NonNull Paint paint) {
         if(series.size() > 0) {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2 * radius * options.density);
             // dataBounds will be expanded in renderPath
-            final Path line = renderPath(series);
+            final Path line = renderPath(axis, series);
             canvas.drawPath(line, paint);
         }
     }
@@ -109,15 +122,15 @@ class Plot {
      * @param series the data series to draw
      */
     @NonNull
-    private Path renderPath(@NonNull DataSeries series) {
+    private Path renderPath(int axis, @NonNull DataSeries series) {
         // Construct the path
         path.rewind();
         boolean empty = true;
         for(DataSeries.Point point : series) {
             if(!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
-                dataBounds.expandBounds(point.x, point.y);
-                final float sx = getX(point.x);
-                final float sy = getY(point.y);
+                dataBounds[axis].expandBounds(point.x, point.y);
+                final float sx = getX(axis, point.x);
+                final float sy = getY(axis, point.y);
                 if(empty) {
                     path.moveTo(sx, sy);
                     empty = false;
@@ -162,19 +175,25 @@ class Plot {
     /**
      * Returns the screen-space x coordinate
      */
-    float getX(double x) {
+    float getX(int axis, double x) {
         final IntBounds padding = options.padding;
-        final double ppm_x = (width - padding.right - padding.left) / (bounds.x.max - bounds.x.min); // pixels per meter
-        return (float) (padding.left + (x - bounds.x.min) * ppm_x);
+        final double ppm_x = (width - padding.right - padding.left) / (bounds[axis].x.max - bounds[axis].x.min); // pixels per meter
+        return (float) (padding.left + (x - bounds[axis].x.min) * ppm_x);
+    }
+    float getX(double x) {
+        return getX(0, x);
     }
 
     /**
      * Returns the screen-space y coordinate
      */
-    float getY(double y) {
+    float getY(int axis, double y) {
         final IntBounds padding = options.padding;
-        final double ppm_y = (height - padding.bottom - padding.top) / (bounds.y.max - bounds.y.min); // pixels per meter
-        return (float) (height - padding.bottom - (y - bounds.y.min) * ppm_y);
+        final double ppm_y = (height - padding.bottom - padding.top) / (bounds[axis].y.max - bounds[axis].y.min); // pixels per meter
+        return (float) (height - padding.bottom - (y - bounds[axis].y.min) * ppm_y);
+    }
+    float getY(double y) {
+        return getY(0, y);
     }
 
 }

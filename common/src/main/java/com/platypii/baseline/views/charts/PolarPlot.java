@@ -18,6 +18,9 @@ import android.util.AttributeSet;
 
 public class PolarPlot extends PlotView implements MyLocationListener {
 
+    private static final int AXIS_POLAR = 0;
+    private final Bounds bounds = new Bounds();
+
     private static final long window = 15000; // The size of the view window, in milliseconds
     private final SyncedList<MLocation> history = new SyncedList<>();
 
@@ -125,7 +128,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
                     float radius = 12f * (4000 - t) / 6000;
                     radius = Math.max(3, Math.min(radius, 12));
                     paint.setColor(color);
-                    plot.drawPoint(vx, vy, radius, paint);
+                    plot.drawPoint(AXIS_POLAR, vx, vy, radius, paint);
                 }
             }
         }
@@ -147,7 +150,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         float radius = 16f * (6000 - t) / 8000;
         radius = Math.max(3, Math.min(radius, 16));
         paint.setColor(color);
-        plot.drawPoint(vx, vy, radius, paint);
+        plot.drawPoint(AXIS_POLAR, vx, vy, radius, paint);
     }
 
     private void drawSpeedLines(@NonNull Plot plot, double vx, double vy) {
@@ -203,10 +206,9 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     }
 
     // Always keep square aspect ratio
-    private final Bounds bounds = new Bounds();
     @NonNull
     @Override
-    public Bounds getBounds(@NonNull Bounds dataBounds) {
+    public Bounds getBounds(@NonNull Bounds dataBounds, int axis) {
         bounds.set(dataBounds);
         AdjustBounds.clean(bounds, inner, outer);
         AdjustBounds.squareBounds(bounds, getWidth(), getHeight(), options.padding);

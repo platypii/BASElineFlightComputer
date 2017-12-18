@@ -14,6 +14,9 @@ import android.util.Log;
 class PlotAxes {
     private static final String TAG = "PlotAxes";
 
+    // Draw axes based on axis 0 only
+    private static final int AXIS_DEFAULT = 0;
+
     private final double EPSILON = 0.001;
 
     private final PlotOptions options;
@@ -139,12 +142,13 @@ class PlotAxes {
     @NonNull
     private Bounds getRealBounds(@NonNull Plot plot) {
         final IntBounds padding = options.padding;
-        final double ppm_x = (plot.width - padding.right - padding.left) / (plot.bounds.x.max - plot.bounds.x.min); // pixels per meter
-        final double rLeft = plot.bounds.x.min - padding.left / ppm_x; // min x-coordinate in plot-space
-        final double rRight = plot.bounds.x.min + (plot.width - padding.left) / ppm_x; // max x-coordinate in plot-space
-        final double ppm_y = (plot.height - padding.bottom - padding.top) / (plot.bounds.y.max - plot.bounds.y.min); // pixels per meter
-        final double rBottom = plot.bounds.y.min - padding.bottom / ppm_y; // min y-coordinate in plot-space
-        final double rTop = plot.bounds.y.min + (plot.height - padding.bottom) / ppm_y; // max y-coordinate in plot-space
+        final Bounds bounds = plot.bounds[AXIS_DEFAULT];
+        final double ppm_x = (plot.width - padding.right - padding.left) / (bounds.x.max - bounds.x.min); // pixels per meter
+        final double rLeft = bounds.x.min - padding.left / ppm_x; // min x-coordinate in plot-space
+        final double rRight = bounds.x.min + (plot.width - padding.left) / ppm_x; // max x-coordinate in plot-space
+        final double ppm_y = (plot.height - padding.bottom - padding.top) / (bounds.y.max - bounds.y.min); // pixels per meter
+        final double rBottom = bounds.y.min - padding.bottom / ppm_y; // min y-coordinate in plot-space
+        final double rTop = bounds.y.min + (plot.height - padding.bottom) / ppm_y; // max y-coordinate in plot-space
         realBounds.set(rLeft, rTop, rRight, rBottom);
         return realBounds;
     }

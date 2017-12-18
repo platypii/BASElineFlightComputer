@@ -23,6 +23,9 @@ public class Numbers {
         else return x * sqrt * sqrt;
     }
 
+    /**
+     * Parse a string into a double, but use NaN instead of exceptions
+     */
     public static double parseDouble(@Nullable String str) {
         if(str == null || str.isEmpty()) {
             return Double.NaN;

@@ -13,10 +13,16 @@ import java.util.List;
 
 public class TimeChart extends PlotView {
 
+    private static final int AXIS_ALT = 0;
+    private static final int AXIS_SPEED = 1;
+    private static final int AXIS_GLIDE = 2;
+
     private final TrackFile trackFile;
     private final List<MLocation> trackData;
 
     private final DataSeries altitudeSeries = new DataSeries();
+    private final DataSeries speedSeries = new DataSeries();
+    private final DataSeries glideSeries = new DataSeries();
 
     public TimeChart(Context context, @NonNull TrackFile trackFile) {
         super(context, null);
@@ -42,6 +48,9 @@ public class TimeChart extends PlotView {
         };
         options.axis.x.major_units = 1;
         options.axis.y.major_units = Convert.metric? Convert.KPH : Convert.MPH;
+
+        // Initialize bounds with 3 axes
+        plot.initBounds(3);
     }
 
     @Override
@@ -65,17 +74,21 @@ public class TimeChart extends PlotView {
         altitudeSeries.reset();
         for(MLocation loc : trackData) {
             altitudeSeries.addPoint(loc.millis, loc.altitude_gps);
+            speedSeries.addPoint(loc.millis, loc.totalSpeed());
+            glideSeries.addPoint(loc.millis, loc.glideRatio());
         }
         // Draw data series
         paint.setColor(0xffff0000);
-        drawLine(plot, altitudeSeries, 2, paint);
-//        drawLine(canvas, speedSeries, 2, 0xff0000ff);
-//        drawLine(canvas, glideSeries, 2, 0xff6f00ff);
+        plot.drawLine(AXIS_ALT, altitudeSeries, 2, paint);
+        paint.setColor(0xff0000ff);
+        plot.drawLine(AXIS_SPEED, speedSeries, 2, paint);
+        paint.setColor(0xff6f00ff);
+        plot.drawLine(AXIS_GLIDE, glideSeries, 2, paint);
     }
 
     @NonNull
     @Override
-    public Bounds getBounds(@NonNull Bounds dataBounds) {
+    public Bounds getBounds(@NonNull Bounds dataBounds, int axis) {
         // Scale to match data
         return dataBounds;
     }

@@ -12,6 +12,9 @@ import java.util.Iterator;
 
 public class SensorPlot extends PlotView {
 
+    private static final int AXIS_SENSOR = 0;
+    private final Bounds bounds = new Bounds();
+
     private SyncedList<MSensor> history;
 
     private final DataSeries xSeries = new DataSeries();
@@ -77,18 +80,17 @@ public class SensorPlot extends PlotView {
             // Line plot:
             paint.setStrokeMiter(2);
             paint.setColor(0xffee0000);
-            plot.drawLine(xSeries, 1.5f, paint);
+            plot.drawLine(AXIS_SENSOR, xSeries, 1.5f, paint);
             paint.setColor(0xff00ee00);
-            plot.drawLine(ySeries, 1.5f, paint);
+            plot.drawLine(AXIS_SENSOR, ySeries, 1.5f, paint);
             paint.setColor(0xffee00ee);
-            plot.drawLine(zSeries, 1.5f, paint);
+            plot.drawLine(AXIS_SENSOR, zSeries, 1.5f, paint);
         }
     }
 
-    private final Bounds bounds = new Bounds();
     @NonNull
     @Override
-    public Bounds getBounds(@NonNull Bounds dataBounds) {
+    public Bounds getBounds(@NonNull Bounds dataBounds, int axis) {
         // Show last N
         bounds.set(dataBounds);
         AdjustBounds.clean(bounds, inner, outer);

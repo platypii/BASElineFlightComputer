@@ -45,6 +45,8 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         text.setAntiAlias(true);
         text.setTextSize(options.font_size * options.density);
         text.setColor(0xffcccccc);
+        // Initialize bounds
+        plot.initBounds(1);
     }
 
     // SurfaceView stuff:
@@ -119,10 +121,12 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * Draw the plot (do not override lightly)
      */
     private void drawPlot(@NonNull Plot plot) {
-        // Get plot-space bounds from previous frame's dataBounds
-        plot.bounds.set(getBounds(plot.dataBounds));
-        // Reset data bounds
-        plot.dataBounds.reset();
+        for (int i = 0; i < plot.bounds.length; i++) {
+            // Get plot-space bounds from subclass, and copy to bounds
+            plot.bounds[i].set(getBounds(plot.dataBounds[i], i));
+            // Reset data bounds
+            plot.dataBounds[i].reset();
+        }
 
         // Background
         plot.canvas.drawColor(0xff000000);
@@ -138,7 +142,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * Called when rendering the plot, must be overridden to draw the data.
      * Implementations should call drawPoint() and drawPath() to actually draw the data.
      */
-    abstract void drawData(Plot plot);
+    abstract void drawData(@NonNull Plot plot);
 
     /**
      * Override this method to set the view bounds in plot-space.
@@ -146,6 +150,6 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * @param dataBounds the data bounds from the last render pass
      * @return the view bounds, in plot-space
      */
-    abstract Bounds getBounds(Bounds dataBounds);
+    abstract Bounds getBounds(@NonNull Bounds dataBounds, int axis);
 
 }
