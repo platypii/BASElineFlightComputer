@@ -35,7 +35,7 @@ public class Services {
     private static final int shutdownDelay = 10000;
 
     // Services
-    public static SharedPreferences prefs;
+    private static SharedPreferences prefs;
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final LocationServiceBlue location = new LocationServiceBlue(bluetooth);
     public static final MyAltimeter alti = location.alti;

@@ -3,6 +3,7 @@ package com.platypii.baseline.views;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.views.charts.SpeedChartLive;
 
+import com.platypii.baseline.Services;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;

@@ -32,6 +32,7 @@ public class LocationServiceBlue extends LocationProvider implements Subscriber<
         locationProviderBluetooth = new LocationProviderBluetooth(alti, bluetooth);
     }
 
+    @NonNull
     @Override
     protected String providerName() {
         return TAG;

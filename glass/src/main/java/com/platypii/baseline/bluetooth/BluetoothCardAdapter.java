@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.google.android.glass.widget.CardScrollAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Adapter class that handles list of cards.
@@ -20,7 +21,12 @@ public class BluetoothCardAdapter extends CardScrollAdapter {
 
     public BluetoothCardAdapter(Context context) {
         this.context = context;
-        this.devices = new ArrayList<BluetoothDevice>(Services.bluetooth.getDevices());
+        final Set<BluetoothDevice> deviceSet = Services.bluetooth.getDevices();
+        if (deviceSet != null) {
+            this.devices = new ArrayList<>(deviceSet);
+        } else {
+            this.devices = new ArrayList<>();
+        }
     }
 
     @Override
