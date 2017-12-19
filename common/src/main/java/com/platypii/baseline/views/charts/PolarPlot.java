@@ -5,6 +5,7 @@ import com.platypii.baseline.location.LocationProvider;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.SyncedList;
@@ -224,8 +225,8 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 //            bounds.squareBounds(getWidth(), getHeight());
 //        } else {
         bounds.set(dataBounds);
-        bounds.clean(min, max);
-        bounds.squareBounds(getWidth(), getHeight(), padding);
+        AdjustBounds.clean(bounds, min, max);
+        AdjustBounds.squareBounds(bounds, getWidth(), getHeight(), padding);
         return bounds;
     }
 

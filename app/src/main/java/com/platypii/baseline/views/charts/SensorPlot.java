@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.measurements.MSensor;
+import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.util.SyncedList;
@@ -94,7 +95,7 @@ public class SensorPlot extends PlotView {
     public Bounds getBounds(@NonNull Bounds dataBounds) {
         // Show last N
         bounds.set(dataBounds);
-        bounds.clean(min, max);
+        AdjustBounds.clean(bounds, min, max);
         // Symmetric Y axis
         final double topBottom = Math.max(Math.abs(bounds.top), Math.abs(bounds.bottom));
         bounds.set(bounds.left, topBottom, bounds.right, -topBottom);
