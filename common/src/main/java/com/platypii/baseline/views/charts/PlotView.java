@@ -1,15 +1,12 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.util.Bounds;
-import com.platypii.baseline.util.DataSeries;
-import com.platypii.baseline.util.DataSeries.Point;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IntBounds;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -23,11 +20,14 @@ import android.view.SurfaceView;
  * Override getBounds to determine the mapping from data-space to screen-space.
  */
 public abstract class PlotView extends SurfaceView implements SurfaceHolder.Callback {
-    private static final String TAG = "Plot";
+    private static final String TAG = "PlotView";
 
     // Plot drawing options
     private final float density = getResources().getDisplayMetrics().density;
     final PlotOptions options = new PlotOptions(density);
+
+    // Object to store the plot state and drawing primitives
+    final Plot plot = new Plot(options);
 
     // The drawing thread will sleep for refreshRateMillis
     private static final long refreshRateMillis = 33; // Approx 30fps
@@ -35,14 +35,8 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     // Avoid creating new objects unnecessarily
     final Paint paint = new Paint();
     final Paint text = new Paint();
-    private final Path path = new Path();
 
     final double EPSILON = 0.001;
-
-    // THE FOLLOWING FIELDS ARE ONLY VALID IN THE PLOTVIEW.DRAWPLOT() CONTEXT:
-    // View bounds lag behind data bounds by 1 refresh. Faster.
-    private Bounds bounds; // The current view bounds
-    private final Bounds dataBounds = new Bounds(); // the data bounds from the last draw
 
     public PlotView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -52,7 +46,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         paint.setAntiAlias(true);
         paint.setDither(true);
         text.setAntiAlias(true);
-        text.setTextSize(options.font_size * density);
+        text.setTextSize(options.font_size * options.density);
         text.setColor(0xffcccccc);
     }
 
@@ -72,8 +66,9 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
                 try {
                     canvas = _surfaceHolder.lockCanvas();
                     if(canvas != null) {
+                        plot.setCanvas(canvas);
                         synchronized (_surfaceHolder) {
-                            drawPlot(canvas);
+                            drawPlot(plot);
                         }
                     }
                 } catch(Exception e) {
@@ -123,27 +118,27 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     /**
      * Draw the plot (do not override lightly)
      */
-    private void drawPlot(@NonNull Canvas canvas) {
+    private void drawPlot(@NonNull Plot plot) {
         // Get plot-space bounds from previous frame's dataBounds
-        bounds = getBounds(dataBounds);
+        plot.bounds.set(getBounds(plot.dataBounds));
         // Reset data bounds
-        dataBounds.reset();
+        plot.dataBounds.reset();
 
-        // Plot Area
-        canvas.drawColor(0xff000000);
+        // Background
+        plot.canvas.drawColor(0xff000000);
 
         // Draw grid lines
-        drawGridlines(canvas);
+        drawGridlines(plot);
 
         // Plot the data
-        drawData(canvas);
+        drawData(plot);
     }
 
     /**
      * Called when rendering the plot, must be overridden to draw the data.
      * Implementations should call drawPoint() and drawPath() to actually draw the data.
      */
-    abstract void drawData(Canvas canvas);
+    abstract void drawData(Plot plot);
 
     /**
      * Override this method to set the view bounds
@@ -152,139 +147,14 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      */
     abstract Bounds getBounds(Bounds dataBounds);
 
-    /**
-     * Draws a point (input given in plot space)
-     * @param canvas The canvas to draw on
-     * @param radius The width of the path
-     * @param color The color of the path
-     */
-    public void drawPoint(@NonNull Canvas canvas, double x, double y, float radius, int color) {
-        dataBounds.expandBounds(x, y);
-        // Screen coordinates
-        float sx = getX(x);
-        float sy = getY(y);
-        paint.setColor(color);
-        paint.setStyle(Paint.Style.FILL);
-        // paint.setStrokeCap(Cap.ROUND); // doesn't work in hardware mode
-        // canvas.drawPoint(x, y, paint);
-        canvas.drawCircle(sx, sy, radius * options.density, paint);
-    }
-
-//    /**
-//     * Draws a series of points as dots
-//     * @param canvas The canvas to draw on
-//     * @param series The data series to draw
-//     * @param radius The width of the path
-//     * @param color The color of the path
-//     */
-//    public void drawPoints(Canvas canvas, DataSeries series, float radius, int color) {
-//        paint.setColor(color);
-//        paint.setStyle(Paint.Style.FILL);
-//        for(Point point : series) {
-//            dataBounds.expandBounds(point.x, point.y);
-//            canvas.drawCircle(getX(point.x), getY(point.y), radius * density, paint);
-//        }
-//    }
-
-    /**
-     * Draws a series of points (input given in screen space)
-     * @param canvas The canvas to draw on
-     * @param series The data series to draw
-     * @param radius The width of the path
-     */
-    public void drawLine(@NonNull Canvas canvas, @NonNull DataSeries series, float radius) {
-        if(series.size() > 0) {
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(2 * radius * options.density);
-            final Path line = renderPath(series);
-            canvas.drawPath(line, paint);
-        }
-    }
-
-//    /**
-//     * Draws a series of points (input given in screen space)
-//     * @param canvas The canvas to draw on
-//     * @param series The data series to draw
-//     * @param y_zero The y-origin, in plot-space
-//     * @param radius The width of the path
-//     */
-//    public void drawArea(Canvas canvas, DataSeries series, double y_zero, float radius) {
-//        if(series.size() > 0) {
-//            Path area = renderArea(series, y_zero);
-//            if(area != null) {
-//                paint.setStyle(Paint.Style.FILL);
-//                canvas.drawPath(area, paint);
-//                if(radius > 0) {
-//                    paint.setStyle(Paint.Style.STROKE);
-//                    paint.setStrokeWidth(radius);
-//                    canvas.drawPath(area, paint);
-//                }
-//            }
-//        }
-//    }
-
-    /**
-     * Returns a path representing the data
-     * @param series The data series to draw
-     */
-    @NonNull
-    private Path renderPath(@NonNull DataSeries series) {
-        // Construct the path
-        path.rewind();
-        boolean empty = true;
-        for(Point point : series) {
-            dataBounds.expandBounds(point.x, point.y);
-            if(!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
-                if(empty) {
-                    path.moveTo(getX(point.x), getY(point.y));
-                    empty = false;
-                } else {
-                    path.lineTo(getX(point.x), getY(point.y));
-                }
-            }
-        }
-        return path;
-    }
-
-//    /**
-//     * Returns a filled path representing the data
-//     * @param series The data series to draw
-//     * @param y_zero The y-origin, in plot-space
-//     */
-//    private Path renderArea(DataSeries series, double y_zero) {
-//        // Construct the path
-//        path.rewind();
-//        boolean empty = true;
-//        double x = Double.NaN;
-//        for(Point point : series) {
-//            if(!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
-//                dataBounds.expandBounds(point.x, point.y);
-//                if(empty) {
-//                    path.moveTo(getX(point.x), getY(y_zero));
-//                    empty = false;
-//                }
-//                path.lineTo(getX(point.x), getY(point.y));
-//                x = point.x; // Save last good x for later
-//            }
-//        }
-//        if(!empty) {
-//            // Log.w(TAG, "x=" + getX(x) + ", y_zero=" + getY(y_zero));
-//            path.lineTo(getX(x), getY(y_zero));
-//            path.close();
-//            return path;
-//        } else {
-//            return null;
-//        }
-//    }
-
     // GRID LINES
     /**
      * Called when rendering the plot, must be overridden to draw the grid lines. Implementations may find drawXline() and drawYline() quite useful.
      */
-    public void drawGridlines(@NonNull Canvas canvas) {
-        Bounds realBounds = getRealBounds();
-        drawXlines(canvas, realBounds);
-        drawYlines(canvas, realBounds);
+    public void drawGridlines(@NonNull Plot plot) {
+        Bounds realBounds = getRealBounds(plot);
+        drawXlines(plot, realBounds);
+        drawYlines(plot, realBounds);
     }
 
     /**
@@ -292,7 +162,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * Default behavior is to draw grid lines for the nearest order of magnitude along the axis
      */
     private static final int MAX_LINES = 80;
-    public void drawXlines(@NonNull Canvas canvas, @NonNull Bounds realBounds) {
+    public void drawXlines(@NonNull Plot plot, @NonNull Bounds realBounds) {
         final int magnitude_x = (int) Math.log10((realBounds.x.max - realBounds.x.min) / options.axis.x.major_units);
         final double step_x = options.axis.x.major_units * Numbers.pow(10, magnitude_x);
         final double start_x = Math.floor(realBounds.x.min / step_x) * step_x;
@@ -304,9 +174,9 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         for(int n = 0; n < steps_x; n++) {
             final double x = start_x + n * step_x;
             if(Math.abs(x) < EPSILON) {
-                drawXline(canvas, x, options.axis_color, formatX(x));
+                drawXline(plot, x, options.axis_color, options.axis.x.format(x));
             } else {
-                drawXline(canvas, x, options.grid_color, formatX(x));
+                drawXline(plot, x, options.grid_color, options.axis.x.format(x));
             }
 
             if(n > MAX_LINES) {
@@ -315,7 +185,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
             }
         }
     }
-    public void drawYlines(@NonNull Canvas canvas, @NonNull Bounds realBounds) {
+    public void drawYlines(@NonNull Plot plot, @NonNull Bounds realBounds) {
         final int magnitude_y = (int) Math.log10((realBounds.y.max - realBounds.y.min) / options.axis.y.major_units);
         final double step_y = options.axis.y.major_units * Numbers.pow(10, magnitude_y); // grid spacing in plot-space
         final double start_y = Math.floor(realBounds.y.min / step_y) * step_y;
@@ -329,9 +199,9 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         for(int n = 0; n < steps_y; n++) {
             final double y = start_y + n * step_y;
             if(Math.abs(y) < EPSILON) {
-                drawYline(canvas, y, options.axis_color, formatY(y));
+                drawYline(plot, y, options.axis_color, options.axis.y.format(y));
             } else {
-                drawYline(canvas, y, options.grid_color, formatY(y));
+                drawYline(plot, y, options.grid_color, options.axis.y.format(y));
             }
 
             if(n > MAX_LINES) {
@@ -344,28 +214,28 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     /**
      * Draws an X grid line (vertical)
      */
-    public void drawXline(@NonNull Canvas canvas, double x, int color, @Nullable String label) {
+    public void drawXline(@NonNull Plot plot, double x, int color, @Nullable String label) {
         // Screen coordinate
-        final int sx = (int) getX(x);
+        final int sx = (int) plot.getX(x);
         paint.setColor(color);
         paint.setStrokeWidth(0);
-        canvas.drawLine(sx, 0, sx, getHeight(), paint);
+        plot.canvas.drawLine(sx, 0, sx, getHeight(), paint);
         if(label != null) {
             text.setTextAlign(Paint.Align.LEFT);
-            canvas.drawText(label, sx + 2 * options.density, 10 * options.density, text);
+            plot.canvas.drawText(label, sx + 2 * options.density, 10 * options.density, text);
         }
     }
     /**
      * Draws a Y grid line (horizontal)
      */
-    public void drawYline(@NonNull Canvas canvas, double y, int color, @Nullable String label) {
-        final int sy = (int) getY(y);
+    public void drawYline(@NonNull Plot plot, double y, int color, @Nullable String label) {
+        final int sy = (int) plot.getY(y);
         paint.setColor(color);
         paint.setStrokeWidth(0);
-        canvas.drawLine(0, sy, getWidth(), sy, paint);
+        plot.canvas.drawLine(0, sy, getWidth(), sy, paint);
         if(label != null) {
             // Left align
-            canvas.drawText(label, 2 * options.density, sy - 2 * options.density, text);
+            plot.canvas.drawText(label, 2 * options.density, sy - 2 * options.density, text);
             // Right align
             // text.setTextAlign(Paint.Align.RIGHT);
             // canvas.drawText(label, right - 2 * density, sy - 2 * density, text);
@@ -387,47 +257,19 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
 //        canvas.drawText(label, sx + 7 * density, sy + 6 * density, text);
 //    }
 
-    // Override this to change how labels are displayed
-    @Nullable
-    public String formatX(double x) {
-        return null;
-    }
-    @Nullable
-    public String formatY(double y) {
-        return null;
-    }
-
     // Returns the bounds in plot-space, including padding
     private final Bounds realBounds = new Bounds();
     @NonNull
-    public Bounds getRealBounds() {
+    private Bounds getRealBounds(Plot plot) {
         final IntBounds padding = options.padding;
-        final double ppm_x = (getWidth() - padding.right - padding.left) / (bounds.x.max - bounds.x.min); // pixels per meter
-        final double rLeft = bounds.x.min - padding.left / ppm_x; // min x-coordinate in plot-space
-        final double rRight = bounds.x.min + (getWidth() - padding.left) / ppm_x; // max x-coordinate in plot-space
-        final double ppm_y = (getHeight() - padding.bottom - padding.top) / (bounds.y.max - bounds.y.min); // pixels per meter
-        final double rBottom = bounds.y.min - padding.bottom / ppm_y; // min y-coordinate in plot-space
-        final double rTop = bounds.y.min + (getHeight() - padding.bottom) / ppm_y; // max y-coordinate in plot-space
+        final double ppm_x = (getWidth() - padding.right - padding.left) / (plot.bounds.x.max - plot.bounds.x.min); // pixels per meter
+        final double rLeft = plot.bounds.x.min - padding.left / ppm_x; // min x-coordinate in plot-space
+        final double rRight = plot.bounds.x.min + (getWidth() - padding.left) / ppm_x; // max x-coordinate in plot-space
+        final double ppm_y = (getHeight() - padding.bottom - padding.top) / (plot.bounds.y.max - plot.bounds.y.min); // pixels per meter
+        final double rBottom = plot.bounds.y.min - padding.bottom / ppm_y; // min y-coordinate in plot-space
+        final double rTop = plot.bounds.y.min + (getHeight() - padding.bottom) / ppm_y; // max y-coordinate in plot-space
         realBounds.set(rLeft, rTop, rRight, rBottom);
         return realBounds;
-    }
-
-    /**
-     * Returns the screen-space x coordinate
-     */
-    float getX(double x) {
-        final IntBounds padding = options.padding;
-        final double ppm_x = (getWidth() - padding.right - padding.left) / (bounds.x.max - bounds.x.min); // pixels per meter
-        return (float) (padding.left + (x - bounds.x.min) * ppm_x);
-    }
-
-    /**
-     * Returns the screen-space y coordinate
-     */
-    float getY(double y) {
-        final IntBounds padding = options.padding;
-        final double ppm_y = (getHeight() - padding.bottom - padding.top) / (bounds.y.max - bounds.y.min); // pixels per meter
-        return (float) (getHeight() - padding.bottom - (y - bounds.y.min) * ppm_y);
     }
 
 }

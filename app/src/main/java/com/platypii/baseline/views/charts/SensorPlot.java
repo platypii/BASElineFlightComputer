@@ -6,7 +6,6 @@ import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.util.SyncedList;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import java.util.Iterator;
@@ -31,9 +30,9 @@ public class SensorPlot extends PlotView {
         options.padding.left = (int) (2 * density);
         options.padding.right = (int) (6 * density);
 
-        inner.x.min = 0;
+        inner.x.min = outer.x.min = 0;
         inner.x.max = 100;
-        outer.y.min = -1;
+        inner.y.min = -1;
         inner.y.max = 1;
     }
 
@@ -46,7 +45,7 @@ public class SensorPlot extends PlotView {
     } 
 
     @Override
-    public void drawData(@NonNull Canvas canvas) {
+    public void drawData(@NonNull Plot plot) {
         if(history != null) {
             xSeries.reset();
             ySeries.reset();
@@ -78,11 +77,11 @@ public class SensorPlot extends PlotView {
             // Line plot:
             paint.setStrokeMiter(2);
             paint.setColor(0xffee0000);
-            drawLine(canvas, xSeries, 1.5f);
+            plot.drawLine(xSeries, 1.5f, paint);
             paint.setColor(0xff00ee00);
-            drawLine(canvas, ySeries, 1.5f);
+            plot.drawLine(ySeries, 1.5f, paint);
             paint.setColor(0xffee00ee);
-            drawLine(canvas, zSeries, 1.5f);
+            plot.drawLine(zSeries, 1.5f, paint);
         }
     }
 

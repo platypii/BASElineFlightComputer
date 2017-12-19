@@ -11,7 +11,6 @@ import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.SyncedList;
 import android.content.Context;
 import android.graphics.BlurMaskFilter;
-import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -51,52 +50,52 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     }
 
     @Override
-    public void drawData(@NonNull Canvas canvas) {
+    public void drawData(@NonNull Plot plot) {
         if(locationService != null) {
             final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
             final MLocation loc = locationService.lastLoc;
             if(loc != null && currentTime - loc.millis <= window) {
                 // Draw background ellipses
-                drawEllipses(canvas);
+                drawEllipses(plot);
 
                 // Draw horizontal, vertical speed
                 final double vx = locationService.groundSpeed();
                 final double vy = altimeter.climb;
-                drawSpeedLines(canvas, vx, vy);
+                drawSpeedLines(plot, vx, vy);
 
                 // Draw history
-                drawHistory(canvas);
+                drawHistory(plot);
 
                 // Draw horizontal, vertical speed labels
-                drawSpeedLabels(canvas, vx, vy);
+                drawSpeedLabels(plot, vx, vy);
 
                 // Draw current location
-                drawLocation(canvas, loc.millis, vx, vy);
+                drawLocation(plot, loc.millis, vx, vy);
             } else {
                 // Draw "no gps signal"
                 text.setTextAlign(Paint.Align.CENTER);
-                canvas.drawText("no gps signal", canvas.getWidth() / 2, canvas.getHeight() / 2, text);
+                plot.canvas.drawText("no gps signal", plot.width / 2, plot.height / 2, text);
             }
         }
     }
 
     private final BlurMaskFilter blurry = new BlurMaskFilter(2 * options.density, BlurMaskFilter.Blur.NORMAL);
-    private void drawEllipses(@NonNull Canvas canvas) {
+    private void drawEllipses(@NonNull Plot plot) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             paint.setStyle(Paint.Style.FILL);
             paint.setMaskFilter(blurry);
             // Draw canopy ellipse
             paint.setColor(0x2244ee44);
-            canvas.save();
-            canvas.rotate(9, getX(11), getY(-5.5));
-            canvas.drawOval(getX(1), getY(-1), getX(21), getY(-10), paint);
-            canvas.restore();
+            plot.canvas.save();
+            plot.canvas.rotate(9, plot.getX(11), plot.getY(-5.5));
+            plot.canvas.drawOval(plot.getX(1), plot.getY(-1), plot.getX(21), plot.getY(-10), paint);
+            plot.canvas.restore();
             // Draw wingsuit ellipse
             paint.setColor(0x229e62f2);
-            canvas.save();
-            canvas.rotate(35, getX(38), getY(-21));
-            canvas.drawOval(getX(20), getY(-10), getX(56), getY(-32), paint);
-            canvas.restore();
+            plot.canvas.save();
+            plot.canvas.rotate(35, plot.getX(38), plot.getY(-21));
+            plot.canvas.drawOval(plot.getX(20), plot.getY(-10), plot.getX(56), plot.getY(-32), paint);
+            plot.canvas.restore();
             paint.setMaskFilter(null);
         }
     }
@@ -104,7 +103,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     /**
      * Draw historical points
      */
-    private void drawHistory(@NonNull Canvas canvas) {
+    private void drawHistory(@NonNull Plot plot) {
         final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
         synchronized(history) {
             for(MLocation loc : history) {
@@ -125,7 +124,8 @@ public class PolarPlot extends PlotView implements MyLocationListener {
                     // Draw point
                     float radius = 12f * (4000 - t) / 6000;
                     radius = Math.max(3, Math.min(radius, 12));
-                    drawPoint(canvas, vx, vy, radius, color);
+                    paint.setColor(color);
+                    plot.drawPoint(vx, vy, radius, paint);
                 }
             }
         }
@@ -134,7 +134,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     /**
      * Draw the current location, including position, glide slope, and x and y axis ticks.
      */
-    private void drawLocation(@NonNull Canvas canvas, long millis, double vx, double vy) {
+    private void drawLocation(@NonNull Plot plot, long millis, double vx, double vy) {
         // Style point based on freshness
         final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
         final int t = (int) (currentTime - millis);
@@ -146,59 +146,60 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         // Draw point
         float radius = 16f * (6000 - t) / 8000;
         radius = Math.max(3, Math.min(radius, 16));
-        drawPoint(canvas, vx, vy, radius, color);
+        paint.setColor(color);
+        plot.drawPoint(vx, vy, radius, paint);
     }
 
-    private void drawSpeedLines(@NonNull Canvas canvas, double vx, double vy) {
+    private void drawSpeedLines(@NonNull Plot plot, double vx, double vy) {
         final double v = Math.sqrt(vx*vx + vy*vy);
-        final float sx = getX(vx);
-        final float sy = getY(vy);
-        final float cx = getX(0);
-        final float cy = getY(0);
+        final float sx = plot.getX(vx);
+        final float sy = plot.getY(vy);
+        final float cx = plot.getX(0);
+        final float cy = plot.getY(0);
 
         // Draw horizontal and vertical speed lines
         paint.setStrokeWidth(options.density);
         paint.setColor(0xff666666);
-        canvas.drawLine(cx, (int) sy, sx, (int) sy, paint); // Horizontal
-        canvas.drawLine((int) sx, cy, (int) sx, sy, paint); // Vertical
+        plot.canvas.drawLine(cx, (int) sy, sx, (int) sy, paint); // Horizontal
+        plot.canvas.drawLine((int) sx, cy, (int) sx, sy, paint); // Vertical
 
         // Draw total speed circle
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(0xff444444);
-        final float r = Math.abs(getX(v) - cx);
-        canvas.drawCircle(cx, cy, r, paint);
+        final float r = Math.abs(plot.getX(v) - cx);
+        plot.canvas.drawCircle(cx, cy, r, paint);
 
         // Draw glide line
         paint.setColor(0xff999999);
         paint.setStrokeCap(Paint.Cap.ROUND);
-        canvas.drawLine(cx, cy, sx, sy, paint);
+        plot.canvas.drawLine(cx, cy, sx, sy, paint);
     }
 
-    private void drawSpeedLabels(@NonNull Canvas canvas, double vx, double vy) {
+    private void drawSpeedLabels(@NonNull Plot plot, double vx, double vy) {
         final double v = Math.sqrt(vx*vx + vy*vy);
-        final float sx = getX(vx);
-        final float sy = getY(vy);
-        final float cx = getX(0);
-        final float cy = getY(0);
+        final float sx = plot.getX(vx);
+        final float sy = plot.getY(vy);
+        final float cx = plot.getX(0);
+        final float cy = plot.getY(0);
 
         // Draw horizontal and vertical speed labels (unless near axis)
         text.setColor(0xff888888);
         if(sy - cy < -44 * options.density || 18 * options.density < sy - cy) {
             // Horizontal speed label
-            canvas.drawText(Convert.speed(vx, 0, true), sx + 3 * options.density, cy + 16 * options.density, text);
+            plot.canvas.drawText(Convert.speed(vx, 0, true), sx + 3 * options.density, cy + 16 * options.density, text);
         }
         if(42 * options.density < sx - cx) {
             // Vertical speed label
-            canvas.drawText(Convert.speed(Math.abs(vy), 0, true), cx + 3 * options.density, sy + 16 * options.density, text);
+            plot.canvas.drawText(Convert.speed(Math.abs(vy), 0, true), cx + 3 * options.density, sy + 16 * options.density, text);
         }
 
         // Draw total speed label
         text.setColor(0xffcccccc);
         text.setTextAlign(Paint.Align.LEFT);
         final String totalSpeed = Convert.speed(v);
-        canvas.drawText(totalSpeed, sx + 6 * options.density, sy + 22 * options.density, text);
+        plot.canvas.drawText(totalSpeed, sx + 6 * options.density, sy + 22 * options.density, text);
         final String glideRatio = Convert.glide2(vx, vy, 2, true);
-        canvas.drawText(glideRatio, sx + 6 * options.density, sy + 40 * options.density, text);
+        plot.canvas.drawText(glideRatio, sx + 6 * options.density, sy + 40 * options.density, text);
     }
 
     // Always keep square aspect ratio
@@ -206,24 +207,6 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     @NonNull
     @Override
     public Bounds getBounds(@NonNull Bounds dataBounds) {
-//        final long currentTime = System.currentTimeMillis();
-//        final MLocation loc = Services.location.lastLoc;
-//        if(loc != null && currentTime - window <= loc.millis) {
-//            // Fixed left boundary at ground speed = 0
-//            final double l = 0;
-//            // Right boundary is at least 80mph
-//            double r = Math.max(80 * Convert.MPH, loc.groundSpeed());
-//            // Determine top/bottom bounds
-//            double b = -1;
-//            double t = 1;
-//            if(loc.climb > t) {
-//                t = Math.max(t, loc.climb);
-//            } else {
-//                b = Math.min(b, loc.climb);
-//            }
-//            bounds.set(l, t, r, b);
-//            AdjustBounds.squareBounds(bounds, getWidth(), getHeight(), padding);
-//        } else {
         bounds.set(dataBounds);
         AdjustBounds.clean(bounds, inner, outer);
         AdjustBounds.squareBounds(bounds, getWidth(), getHeight(), options.padding);
