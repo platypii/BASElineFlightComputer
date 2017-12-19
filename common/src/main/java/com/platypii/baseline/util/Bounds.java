@@ -11,46 +11,47 @@ import java.util.Locale;
 public class Bounds {
     private static final String TAG = "Bounds";
 
-    public double left = Double.NaN;
-    public double top = Double.NaN;
-    public double right = Double.NaN;
-    public double bottom = Double.NaN;
+    public Range x = new Range();
+    public Range y = new Range();
+
+//    public double left = Double.NaN;
+//    public double top = Double.NaN;
+//    public double right = Double.NaN;
+//    public double bottom = Double.NaN;
 
     public void set(@NonNull Bounds copy) {
-        this.left = copy.left;
-        this.top = copy.top;
-        this.right = copy.right;
-        this.bottom = copy.bottom;
+        this.x.min = copy.x.min;
+        this.x.max = copy.x.max;
+        this.y.min = copy.y.min;
+        this.y.max = copy.y.max;
     }
 
     public void set(double left, double top, double right, double bottom) {
         if(right < left) Log.e(TAG, "Invalid bounds: left should be less than right");
         if(top < bottom) Log.e(TAG, "Invalid bounds: bottom should be less than top");
-        this.left = left;
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
+        this.x.min = left;
+        this.x.max = right;
+        this.y.min = bottom;
+        this.y.max = top;
     }
 
     public void reset() {
-        this.left = Double.NaN;
-        this.top = Double.NaN;
-        this.right = Double.NaN;
-        this.bottom = Double.NaN;
+        this.x.min = Double.NaN;
+        this.x.max = Double.NaN;
+        this.y.min = Double.NaN;
+        this.y.max = Double.NaN;
     }
 
     /**
      * Expands the bounds to include point x,y
      */
-    public void expandBounds(double x, double y) {
-        if(x < left || Double.isNaN(left)) left = x;
-        if(y > top || Double.isNaN(top)) top = y;
-        if(x > right || Double.isNaN(right)) right = x;
-        if(y < bottom || Double.isNaN(bottom)) bottom = y;
+    public void expandBounds(double x0, double y0) {
+        x.expand(x0);
+        y.expand(y0);
     }
 
     @Override
     public String toString() {
-        return String.format(Locale.US, "Bounds(%f,%f,%f,%f)", left, top, right, bottom);
+        return String.format(Locale.US, "Bounds(%f,%f,%f,%f)", x.min, y.max, x.max, y.min);
     }
 }

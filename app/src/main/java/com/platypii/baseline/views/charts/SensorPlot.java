@@ -19,8 +19,8 @@ public class SensorPlot extends PlotView {
     private final DataSeries ySeries = new DataSeries();
     private final DataSeries zSeries = new DataSeries();
 
-    final Bounds min = new Bounds();
-    final Bounds max = new Bounds();
+    final Bounds inner = new Bounds();
+    final Bounds outer = new Bounds();
 
     public SensorPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -31,10 +31,10 @@ public class SensorPlot extends PlotView {
         padding.left = (int) (2 * density);
         padding.right = (int) (6 * density);
 
-        min.left = 0;
-        min.right = 100;
-        max.bottom = -1;
-        min.top = 1;
+        inner.x.min = 0;
+        inner.x.max = 100;
+        outer.y.min = -1;
+        inner.y.max = 1;
 
         x_major_units = 1;
         y_major_units = 1;
@@ -95,11 +95,10 @@ public class SensorPlot extends PlotView {
     public Bounds getBounds(@NonNull Bounds dataBounds) {
         // Show last N
         bounds.set(dataBounds);
-        AdjustBounds.clean(bounds, min, max);
+        AdjustBounds.clean(bounds, inner, outer);
         // Symmetric Y axis
-        final double topBottom = Math.max(Math.abs(bounds.top), Math.abs(bounds.bottom));
-        bounds.set(bounds.left, topBottom, bounds.right, -topBottom);
-        // bounds.set(bounds.right - N, topBottom, bounds.right, -topBottom);
+        final double topBottom = Math.max(Math.abs(bounds.y.max), Math.abs(bounds.y.min));
+        bounds.set(bounds.x.min, topBottom, bounds.x.max, -topBottom);
         return bounds;
     }
 

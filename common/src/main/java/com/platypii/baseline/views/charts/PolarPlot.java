@@ -25,8 +25,8 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     private LocationProvider locationService = null;
     private MyAltimeter altimeter = null;
 
-    final Bounds min = new Bounds();
-    final Bounds max = new Bounds();
+    final Bounds inner = new Bounds();
+    final Bounds outer = new Bounds();
 
     public PolarPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -36,15 +36,15 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         padding.bottom = (int) (42 * density);
         padding.left = (int) (density);
         padding.right = (int) (76 * density);
-        
-        min.left = max.left = 0;
-        min.right = 9 * Convert.MPH;
-        max.right = 160 * Convert.MPH;
-        min.bottom = -160 * Convert.MPH;
-        max.bottom = -2 * Convert.MPH;
-        min.top = 2 * Convert.MPH;
-        max.top = 28 * Convert.MPH;
-        
+
+        inner.x.min = outer.x.min = 0;
+        inner.x.max = 9 * Convert.MPH;
+        outer.x.max = 160 * Convert.MPH;
+        inner.y.min = -160 * Convert.MPH;
+        outer.y.min = -2 * Convert.MPH;
+        inner.y.max = 2 * Convert.MPH;
+        outer.y.max = 28 * Convert.MPH;
+
         x_major_units = y_major_units = Convert.metric? Convert.KPH : Convert.MPH;
 
         history.setMaxSize(300);
@@ -222,10 +222,10 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 //                b = Math.min(b, loc.climb);
 //            }
 //            bounds.set(l, t, r, b);
-//            bounds.squareBounds(getWidth(), getHeight());
+//            AdjustBounds.squareBounds(bounds, getWidth(), getHeight(), padding);
 //        } else {
         bounds.set(dataBounds);
-        AdjustBounds.clean(bounds, min, max);
+        AdjustBounds.clean(bounds, inner, outer);
         AdjustBounds.squareBounds(bounds, getWidth(), getHeight(), padding);
         return bounds;
     }

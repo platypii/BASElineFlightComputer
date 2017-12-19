@@ -312,10 +312,10 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      */
     private static final int MAX_LINES = 80;
     public void drawXlines(@NonNull Canvas canvas, @NonNull Bounds realBounds) {
-        final int magnitude_x = (int) Math.log10((realBounds.right - realBounds.left) / x_major_units);
+        final int magnitude_x = (int) Math.log10((realBounds.x.max - realBounds.x.min) / x_major_units);
         final double step_x = x_major_units * Numbers.pow(10, magnitude_x);
-        final double start_x = Math.floor(realBounds.left / step_x) * step_x;
-        final double end_x = Math.ceil(realBounds.right / step_x) * step_x;
+        final double start_x = Math.floor(realBounds.x.min / step_x) * step_x;
+        final double end_x = Math.ceil(realBounds.x.max / step_x) * step_x;
         final int steps_x = (int)Math.ceil((end_x - start_x) / step_x);
         if (!(start_x < end_x && 0 < step_x)) {
             Log.e(TAG, "Invalid plot X bounds " + start_x + " " + end_x + " " + step_x);
@@ -335,10 +335,10 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         }
     }
     public void drawYlines(@NonNull Canvas canvas, @NonNull Bounds realBounds) {
-        final int magnitude_y = (int) Math.log10((realBounds.top - realBounds.bottom) / y_major_units);
+        final int magnitude_y = (int) Math.log10((realBounds.y.max - realBounds.y.min) / y_major_units);
         final double step_y = y_major_units * Numbers.pow(10, magnitude_y); // grid spacing in plot-space
-        final double start_y = Math.floor(realBounds.bottom / step_y) * step_y;
-        final double end_y = Math.ceil(realBounds.top / step_y) * step_y;
+        final double start_y = Math.floor(realBounds.y.min / step_y) * step_y;
+        final double end_y = Math.ceil(realBounds.y.max / step_y) * step_y;
         final int steps_y = (int)Math.ceil((end_y - start_y) / step_y);
         // Log.i(TAG, "bounds = " + bounds + ", realBounds = " + realBounds);
         // Log.i(TAG, "start_y = " + start_y + ", end_y = " + end_y + ", magnitude_y = " + magnitude_y + ", step_y = " + step_y);
@@ -420,12 +420,12 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     private final Bounds realBounds = new Bounds();
     @NonNull
     public Bounds getRealBounds() {
-        final double ppm_x = ((right - padding.right) - (left + padding.left)) / (bounds.right - bounds.left); // pixels per meter
-        final double rLeft = bounds.left - padding.left / ppm_x; // min x-coordinate in plot-space
-        final double rRight = bounds.left + (right - (left + padding.left)) / ppm_x; // max x-coordinate in plot-space
-        final double ppm_y = ((bottom - padding.bottom) - (top + padding.top)) / (bounds.top - bounds.bottom); // pixels per meter
-        final double rBottom = bounds.bottom - padding.bottom / ppm_y; // min y-coordinate in plot-space
-        final double rTop = bounds.bottom - (top - (bottom - padding.bottom)) / ppm_y; // max y-coordinate in plot-space
+        final double ppm_x = ((right - padding.right) - (left + padding.left)) / (bounds.x.max - bounds.x.min); // pixels per meter
+        final double rLeft = bounds.x.min - padding.left / ppm_x; // min x-coordinate in plot-space
+        final double rRight = bounds.x.min + (right - (left + padding.left)) / ppm_x; // max x-coordinate in plot-space
+        final double ppm_y = ((bottom - padding.bottom) - (top + padding.top)) / (bounds.y.max - bounds.y.min); // pixels per meter
+        final double rBottom = bounds.y.min - padding.bottom / ppm_y; // min y-coordinate in plot-space
+        final double rTop = bounds.y.min - (top - (bottom - padding.bottom)) / ppm_y; // max y-coordinate in plot-space
         realBounds.set(rLeft, rTop, rRight, rBottom);
         return realBounds;
     }
@@ -434,16 +434,16 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * Returns the screen-space x coordinate
      */
     float getX(double x) {
-        final double ppm_x = ((right - padding.right) - (left + padding.left)) / (bounds.right - bounds.left); // pixels per meter
-        return (float) (left + padding.left + (x - bounds.left) * ppm_x);
+        final double ppm_x = ((right - padding.right) - (left + padding.left)) / (bounds.x.max - bounds.x.min); // pixels per meter
+        return (float) (left + padding.left + (x - bounds.x.min) * ppm_x);
     }
 
     /**
      * Returns the screen-space y coordinate
      */
     float getY(double y) {
-        final double ppm_y = ((bottom - top - padding.bottom) - (top + padding.top)) / (bounds.top - bounds.bottom); // pixels per meter
-        return (float) (bottom - padding.bottom - (y - bounds.bottom) * ppm_y);
+        final double ppm_y = ((bottom - top - padding.bottom) - (top + padding.top)) / (bounds.y.max - bounds.y.min); // pixels per meter
+        return (float) (bottom - padding.bottom - (y - bounds.y.min) * ppm_y);
     }
 
 }
