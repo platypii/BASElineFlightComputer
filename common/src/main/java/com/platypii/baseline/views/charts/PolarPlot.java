@@ -32,10 +32,10 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         super(context, attrs);
 
         final float density = getResources().getDisplayMetrics().density;
-        padding.top = (int) (12 * density);
-        padding.bottom = (int) (42 * density);
-        padding.left = (int) (density);
-        padding.right = (int) (76 * density);
+        options.padding.top = (int) (12 * density);
+        options.padding.bottom = (int) (42 * density);
+        options.padding.left = (int) (density);
+        options.padding.right = (int) (76 * density);
 
         inner.x.min = outer.x.min = 0;
         inner.x.max = 9 * Convert.MPH;
@@ -45,7 +45,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         inner.y.max = 2 * Convert.MPH;
         outer.y.max = 28 * Convert.MPH;
 
-        x_major_units = y_major_units = Convert.metric? Convert.KPH : Convert.MPH;
+        options.axis.x.major_units = options.axis.y.major_units = Convert.metric? Convert.KPH : Convert.MPH;
 
         history.setMaxSize(300);
     }
@@ -75,12 +75,12 @@ public class PolarPlot extends PlotView implements MyLocationListener {
             } else {
                 // Draw "no gps signal"
                 text.setTextAlign(Paint.Align.CENTER);
-                canvas.drawText("no gps signal", (left + right) / 2, (top + bottom) / 2, text);
+                canvas.drawText("no gps signal", canvas.getWidth() / 2, canvas.getHeight() / 2, text);
             }
         }
     }
 
-    private final BlurMaskFilter blurry = new BlurMaskFilter(2 * density, BlurMaskFilter.Blur.NORMAL);
+    private final BlurMaskFilter blurry = new BlurMaskFilter(2 * options.density, BlurMaskFilter.Blur.NORMAL);
     private void drawEllipses(@NonNull Canvas canvas) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             paint.setStyle(Paint.Style.FILL);
@@ -157,7 +157,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         final float cy = getY(0);
 
         // Draw horizontal and vertical speed lines
-        paint.setStrokeWidth(density);
+        paint.setStrokeWidth(options.density);
         paint.setColor(0xff666666);
         canvas.drawLine(cx, (int) sy, sx, (int) sy, paint); // Horizontal
         canvas.drawLine((int) sx, cy, (int) sx, sy, paint); // Vertical
@@ -183,22 +183,22 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 
         // Draw horizontal and vertical speed labels (unless near axis)
         text.setColor(0xff888888);
-        if(sy - cy < -44 * density || 18 * density < sy - cy) {
+        if(sy - cy < -44 * options.density || 18 * options.density < sy - cy) {
             // Horizontal speed label
-            canvas.drawText(Convert.speed(vx, 0, true), sx + 3 * density, cy + 16 * density, text);
+            canvas.drawText(Convert.speed(vx, 0, true), sx + 3 * options.density, cy + 16 * options.density, text);
         }
-        if(42 * density < sx - cx) {
+        if(42 * options.density < sx - cx) {
             // Vertical speed label
-            canvas.drawText(Convert.speed(Math.abs(vy), 0, true), cx + 3 * density, sy + 16 * density, text);
+            canvas.drawText(Convert.speed(Math.abs(vy), 0, true), cx + 3 * options.density, sy + 16 * options.density, text);
         }
 
         // Draw total speed label
         text.setColor(0xffcccccc);
         text.setTextAlign(Paint.Align.LEFT);
         final String totalSpeed = Convert.speed(v);
-        canvas.drawText(totalSpeed, sx + 6 * density, sy + 22 * density, text);
+        canvas.drawText(totalSpeed, sx + 6 * options.density, sy + 22 * options.density, text);
         final String glideRatio = Convert.glide2(vx, vy, 2, true);
-        canvas.drawText(glideRatio, sx + 6 * density, sy + 40 * density, text);
+        canvas.drawText(glideRatio, sx + 6 * options.density, sy + 40 * options.density, text);
     }
 
     // Always keep square aspect ratio
@@ -226,7 +226,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 //        } else {
         bounds.set(dataBounds);
         AdjustBounds.clean(bounds, inner, outer);
-        AdjustBounds.squareBounds(bounds, getWidth(), getHeight(), padding);
+        AdjustBounds.squareBounds(bounds, getWidth(), getHeight(), options.padding);
         return bounds;
     }
 

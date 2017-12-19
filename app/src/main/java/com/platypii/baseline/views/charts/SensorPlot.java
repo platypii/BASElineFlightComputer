@@ -26,18 +26,15 @@ public class SensorPlot extends PlotView {
         super(context, attrs);
 
         final float density = getResources().getDisplayMetrics().density;
-        padding.top = (int)(6 * density);
-        padding.bottom = (int) (6 * density);
-        padding.left = (int) (2 * density);
-        padding.right = (int) (6 * density);
+        options.padding.top = (int)(6 * density);
+        options.padding.bottom = (int) (6 * density);
+        options.padding.left = (int) (2 * density);
+        options.padding.right = (int) (6 * density);
 
         inner.x.min = 0;
         inner.x.max = 100;
         outer.y.min = -1;
         inner.y.max = 1;
-
-        x_major_units = 1;
-        y_major_units = 1;
     }
 
     /**

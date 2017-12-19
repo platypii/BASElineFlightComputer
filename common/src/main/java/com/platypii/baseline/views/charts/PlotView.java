@@ -25,38 +25,24 @@ import android.view.SurfaceView;
 public abstract class PlotView extends SurfaceView implements SurfaceHolder.Callback {
     private static final String TAG = "Plot";
 
-    // Drawing stuff
-    private static final int axis_color = 0xffee0000;
-    private static final int grid_color = 0xff555555;
-    private static final float font_size = 16;
+    // Plot drawing options
+    private final float density = getResources().getDisplayMetrics().density;
+    final PlotOptions options = new PlotOptions(density);
 
     // The drawing thread will sleep for refreshRateMillis
     private static final long refreshRateMillis = 33; // Approx 30fps
-
-    // Padding
-    final IntBounds padding = new IntBounds();
-
-    double x_major_units = 1;
-    double y_major_units = 1;
 
     // Avoid creating new objects unnecessarily
     final Paint paint = new Paint();
     final Paint text = new Paint();
     private final Path path = new Path();
 
-    final float density = getResources().getDisplayMetrics().density;
     final double EPSILON = 0.001;
 
     // THE FOLLOWING FIELDS ARE ONLY VALID IN THE PLOTVIEW.DRAWPLOT() CONTEXT:
     // View bounds lag behind data bounds by 1 refresh. Faster.
     private Bounds bounds; // The current view bounds
     private final Bounds dataBounds = new Bounds(); // the data bounds from the last draw
-
-    // The current view bounds (in screen space)
-    int bottom = 100;
-    int top = 0;
-    int left = 0;
-    int right = 200;
 
     public PlotView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -66,7 +52,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         paint.setAntiAlias(true);
         paint.setDither(true);
         text.setAntiAlias(true);
-        text.setTextSize(font_size * density);
+        text.setTextSize(options.font_size * density);
         text.setColor(0xffcccccc);
     }
 
@@ -138,12 +124,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * Draw the plot (do not override lightly)
      */
     private void drawPlot(@NonNull Canvas canvas) {
-        bottom = getHeight();
-        top = 0;
-        left = 0;
-        right = getWidth();
-
-        // Get plot-space bounds
+        // Get plot-space bounds from previous frame's dataBounds
         bounds = getBounds(dataBounds);
         // Reset data bounds
         dataBounds.reset();
@@ -186,7 +167,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         paint.setStyle(Paint.Style.FILL);
         // paint.setStrokeCap(Cap.ROUND); // doesn't work in hardware mode
         // canvas.drawPoint(x, y, paint);
-        canvas.drawCircle(sx, sy, radius * density, paint);
+        canvas.drawCircle(sx, sy, radius * options.density, paint);
     }
 
 //    /**
@@ -214,7 +195,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     public void drawLine(@NonNull Canvas canvas, @NonNull DataSeries series, float radius) {
         if(series.size() > 0) {
             paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(2 * radius * density);
+            paint.setStrokeWidth(2 * radius * options.density);
             final Path line = renderPath(series);
             canvas.drawPath(line, paint);
         }
@@ -312,8 +293,8 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      */
     private static final int MAX_LINES = 80;
     public void drawXlines(@NonNull Canvas canvas, @NonNull Bounds realBounds) {
-        final int magnitude_x = (int) Math.log10((realBounds.x.max - realBounds.x.min) / x_major_units);
-        final double step_x = x_major_units * Numbers.pow(10, magnitude_x);
+        final int magnitude_x = (int) Math.log10((realBounds.x.max - realBounds.x.min) / options.axis.x.major_units);
+        final double step_x = options.axis.x.major_units * Numbers.pow(10, magnitude_x);
         final double start_x = Math.floor(realBounds.x.min / step_x) * step_x;
         final double end_x = Math.ceil(realBounds.x.max / step_x) * step_x;
         final int steps_x = (int)Math.ceil((end_x - start_x) / step_x);
@@ -323,9 +304,9 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         for(int n = 0; n < steps_x; n++) {
             final double x = start_x + n * step_x;
             if(Math.abs(x) < EPSILON) {
-                drawXline(canvas, x, axis_color, formatX(x));
+                drawXline(canvas, x, options.axis_color, formatX(x));
             } else {
-                drawXline(canvas, x, grid_color, formatX(x));
+                drawXline(canvas, x, options.grid_color, formatX(x));
             }
 
             if(n > MAX_LINES) {
@@ -335,8 +316,8 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         }
     }
     public void drawYlines(@NonNull Canvas canvas, @NonNull Bounds realBounds) {
-        final int magnitude_y = (int) Math.log10((realBounds.y.max - realBounds.y.min) / y_major_units);
-        final double step_y = y_major_units * Numbers.pow(10, magnitude_y); // grid spacing in plot-space
+        final int magnitude_y = (int) Math.log10((realBounds.y.max - realBounds.y.min) / options.axis.y.major_units);
+        final double step_y = options.axis.y.major_units * Numbers.pow(10, magnitude_y); // grid spacing in plot-space
         final double start_y = Math.floor(realBounds.y.min / step_y) * step_y;
         final double end_y = Math.ceil(realBounds.y.max / step_y) * step_y;
         final int steps_y = (int)Math.ceil((end_y - start_y) / step_y);
@@ -348,9 +329,9 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         for(int n = 0; n < steps_y; n++) {
             final double y = start_y + n * step_y;
             if(Math.abs(y) < EPSILON) {
-                drawYline(canvas, y, axis_color, formatY(y));
+                drawYline(canvas, y, options.axis_color, formatY(y));
             } else {
-                drawYline(canvas, y, grid_color, formatY(y));
+                drawYline(canvas, y, options.grid_color, formatY(y));
             }
 
             if(n > MAX_LINES) {
@@ -368,10 +349,10 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         final int sx = (int) getX(x);
         paint.setColor(color);
         paint.setStrokeWidth(0);
-        canvas.drawLine(sx, top, sx, bottom, paint);
+        canvas.drawLine(sx, 0, sx, getHeight(), paint);
         if(label != null) {
             text.setTextAlign(Paint.Align.LEFT);
-            canvas.drawText(label, sx + 2 * density, top + 10 * density, text);
+            canvas.drawText(label, sx + 2 * options.density, 10 * options.density, text);
         }
     }
     /**
@@ -381,10 +362,10 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         final int sy = (int) getY(y);
         paint.setColor(color);
         paint.setStrokeWidth(0);
-        canvas.drawLine(left, sy, right, sy, paint);
+        canvas.drawLine(0, sy, getWidth(), sy, paint);
         if(label != null) {
             // Left align
-            canvas.drawText(label, left + 2 * density, sy - 2 * density, text);
+            canvas.drawText(label, 2 * options.density, sy - 2 * options.density, text);
             // Right align
             // text.setTextAlign(Paint.Align.RIGHT);
             // canvas.drawText(label, right - 2 * density, sy - 2 * density, text);
@@ -420,12 +401,13 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     private final Bounds realBounds = new Bounds();
     @NonNull
     public Bounds getRealBounds() {
-        final double ppm_x = ((right - padding.right) - (left + padding.left)) / (bounds.x.max - bounds.x.min); // pixels per meter
+        final IntBounds padding = options.padding;
+        final double ppm_x = (getWidth() - padding.right - padding.left) / (bounds.x.max - bounds.x.min); // pixels per meter
         final double rLeft = bounds.x.min - padding.left / ppm_x; // min x-coordinate in plot-space
-        final double rRight = bounds.x.min + (right - (left + padding.left)) / ppm_x; // max x-coordinate in plot-space
-        final double ppm_y = ((bottom - padding.bottom) - (top + padding.top)) / (bounds.y.max - bounds.y.min); // pixels per meter
+        final double rRight = bounds.x.min + (getWidth() - padding.left) / ppm_x; // max x-coordinate in plot-space
+        final double ppm_y = (getHeight() - padding.bottom - padding.top) / (bounds.y.max - bounds.y.min); // pixels per meter
         final double rBottom = bounds.y.min - padding.bottom / ppm_y; // min y-coordinate in plot-space
-        final double rTop = bounds.y.min - (top - (bottom - padding.bottom)) / ppm_y; // max y-coordinate in plot-space
+        final double rTop = bounds.y.min + (getHeight() - padding.bottom) / ppm_y; // max y-coordinate in plot-space
         realBounds.set(rLeft, rTop, rRight, rBottom);
         return realBounds;
     }
@@ -434,16 +416,18 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
      * Returns the screen-space x coordinate
      */
     float getX(double x) {
-        final double ppm_x = ((right - padding.right) - (left + padding.left)) / (bounds.x.max - bounds.x.min); // pixels per meter
-        return (float) (left + padding.left + (x - bounds.x.min) * ppm_x);
+        final IntBounds padding = options.padding;
+        final double ppm_x = (getWidth() - padding.right - padding.left) / (bounds.x.max - bounds.x.min); // pixels per meter
+        return (float) (padding.left + (x - bounds.x.min) * ppm_x);
     }
 
     /**
      * Returns the screen-space y coordinate
      */
     float getY(double y) {
-        final double ppm_y = ((bottom - top - padding.bottom) - (top + padding.top)) / (bounds.y.max - bounds.y.min); // pixels per meter
-        return (float) (bottom - padding.bottom - (y - bounds.y.min) * ppm_y);
+        final IntBounds padding = options.padding;
+        final double ppm_y = (getHeight() - padding.bottom - padding.top) / (bounds.y.max - bounds.y.min); // pixels per meter
+        return (float) (getHeight() - padding.bottom - (y - bounds.y.min) * ppm_y);
     }
 
 }
