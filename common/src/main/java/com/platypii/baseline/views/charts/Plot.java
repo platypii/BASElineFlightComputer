@@ -13,9 +13,10 @@ import android.support.annotation.NonNull;
  */
 class Plot {
 
+    // Drawing options
     private final PlotOptions options;
 
-    // Canvas is potentially updated often
+    // Drawing surface
     Canvas canvas;
     int width;
     int height;
@@ -49,7 +50,7 @@ class Plot {
      * @param radius the width of the path
      * @param paint the paintbrush to use
      */
-    void drawPoint(double x, double y, float radius, Paint paint) {
+    void drawPoint(double x, double y, float radius, @NonNull Paint paint) {
         dataBounds.expandBounds(x, y);
         // Screen coordinates
         float sx = getX(x);
@@ -62,10 +63,8 @@ class Plot {
 
 //    /**
 //     * Draws a series of points as dots
-//     * @param canvas The canvas to draw on
-//     * @param series The data series to draw
-//     * @param radius The width of the path
-//     * @param color The color of the path
+//     * @param series the data series to draw
+//     * @param radius the width of the path
 //     */
 //    void drawPoints(@NonNull DataSeries series, float radius, Paint paint) {
 //        paint.setStyle(Paint.Style.FILL);
@@ -80,7 +79,7 @@ class Plot {
      * @param series the data series to draw
      * @param radius the width of the path
      */
-    void drawLine(@NonNull DataSeries series, float radius, Paint paint) {
+    void drawLine(@NonNull DataSeries series, float radius, @NonNull Paint paint) {
         if(series.size() > 0) {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2 * radius * options.density);
@@ -92,10 +91,8 @@ class Plot {
 
 //    /**
 //     * Draws a series of points (input given in screen-space)
-//     * @param canvas the canvas to draw on
 //     * @param series the data series to draw
 //     * @param y_zero the y-origin, in plot-space
-//     * @param radius the width of the path
 //     */
 //    void drawArea(@NonNull DataSeries series, double y_zero, Paint paint) {
 //        if(series.size() > 0) {
