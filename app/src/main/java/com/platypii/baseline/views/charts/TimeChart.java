@@ -9,6 +9,7 @@ import com.platypii.baseline.util.Dates;
 import android.content.Context;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
+import android.util.AttributeSet;
 import java.util.List;
 
 public class TimeChart extends PlotView {
@@ -17,15 +18,15 @@ public class TimeChart extends PlotView {
     private static final int AXIS_SPEED = 1;
     private static final int AXIS_GLIDE = 2;
 
-    private final TrackFile trackFile;
-    private final List<MLocation> trackData;
+    private TrackFile trackFile;
+    private List<MLocation> trackData;
 
     private final DataSeries altitudeSeries = new DataSeries();
     private final DataSeries speedSeries = new DataSeries();
     private final DataSeries glideSeries = new DataSeries();
 
-    public TimeChart(Context context, @NonNull TrackFile trackFile) {
-        super(context, null);
+    public TimeChart(Context context, AttributeSet attrs) {
+        super(context, attrs);
 
         // Slower refresh rate
         refreshRateMillis = 200;
@@ -51,6 +52,11 @@ public class TimeChart extends PlotView {
 
         // Initialize bounds with 3 axes
         plot.initBounds(3);
+    }
+
+    public void loadTrack(TrackFile trackFile) {
+        this.trackFile = trackFile;
+        trackData = trackFile.getData();
     }
 
     @Override

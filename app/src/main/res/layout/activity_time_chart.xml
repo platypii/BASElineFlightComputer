@@ -1,0 +1,48 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.platypii.baseline.views.tracks.TrackLocalActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="Altitude"
+            android:textColor="#dd1111" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="Speed"
+            android:textColor="#1111ee" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="Glide"
+            android:textColor="#6f00ff" />
+
+    </LinearLayout>
+
+    <com.platypii.baseline.views.charts.TimeChart
+        android:id="@+id/timeChart"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"/>
+
+</LinearLayout>
