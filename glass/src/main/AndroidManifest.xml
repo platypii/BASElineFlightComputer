@@ -32,6 +32,9 @@
                        android:resource="@xml/polar_voice_trigger" />
         </activity>
         <activity
+            android:name=".views.NavActivity"
+            android:label="@string/action_nav"/>
+        <activity
             android:name=".views.BluetoothActivity"
             android:label="@string/action_bluetooth"/>
         <activity
