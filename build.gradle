@@ -24,6 +24,9 @@ allprojects {
         google()
         jcenter()
     }
+    configurations.all {
+        resolutionStrategy.force "com.android.support:support-v4:25.4.0"
+    }
 }
 
 task clean(type: Delete) {

@@ -31,8 +31,6 @@ public class LocationServiceBlue extends LocationProvider {
                 updateLocation(loc);
             }
         }
-        @Override
-        public void onLocationChangedPostExecute() {}
     };
 
     @NonNull
