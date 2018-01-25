@@ -3,6 +3,7 @@ package com.platypii.baseline;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.location.LocationServiceBlue;
+import com.platypii.baseline.places.Places;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.BaseActivity;
 
@@ -39,6 +40,7 @@ public class Services {
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final LocationServiceBlue location = new LocationServiceBlue(bluetooth);
     public static final MyAltimeter alti = location.alti;
+    public static final Places places = new Places();
 
     /**
      * We want preferences to be available as early as possible.
@@ -84,6 +86,9 @@ public class Services {
 
             Log.i(TAG, "Starting altimeter");
             alti.start(appContext);
+
+            Log.i(TAG, "Starting place database");
+            places.start(appContext);
 
             Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
         } else if(startCount > 2) {

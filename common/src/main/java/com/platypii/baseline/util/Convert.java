@@ -169,6 +169,41 @@ public class Convert {
     }
 
     /**
+     * Shortened distance intended to be displayed on heads up display
+     * @param m meters
+     */
+    public static String distanceShort(double m) {
+        if(Double.isNaN(m)) {
+            return "";
+        } else if(Double.isInfinite(m)) {
+            return Double.toString(m);
+        } else {
+            String unitString;
+            String localValue;
+            if(metric) {
+                if(m >= 1000) {
+                    unitString = "km";
+                    localValue = ConvertUtil.formatDouble(m * 0.001, 1);
+                } else {
+                    unitString = "m";
+                    localValue = Long.toString(Math.round(m));
+                }
+            } else {
+                if(m >= MILE) {
+                    // Need max because of float error
+                    final double miles = Math.max(1, m * 0.000621371192);
+                    unitString = "mi";
+                    localValue = ConvertUtil.formatDouble(miles, 1);
+                } else {
+                    unitString = "ft";
+                    localValue = Long.toString(Math.round(m * 3.2808399));
+                }
+            }
+            return localValue + " " + unitString;
+        }
+    }
+
+    /**
      * Convert meters/second to local units
      *
      * @param mps meters per second

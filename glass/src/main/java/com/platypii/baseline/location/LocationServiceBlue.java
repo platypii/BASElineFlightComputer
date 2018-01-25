@@ -2,8 +2,6 @@ package com.platypii.baseline.location;
 
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.util.PubSub.Subscriber;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,7 +9,7 @@ import android.support.annotation.NonNull;
 /**
  * Meta location provider that uses only bluetooth
  */
-public class LocationServiceBlue extends LocationProvider implements Subscriber<MLocation> {
+public class LocationServiceBlue extends LocationProvider {
     private static final String TAG = "LocationService";
 
     private final BluetoothService bluetooth;
