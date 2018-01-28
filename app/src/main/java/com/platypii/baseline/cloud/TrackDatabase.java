@@ -1,6 +1,7 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.Services;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import java.util.List;
@@ -11,8 +12,11 @@ import java.util.List;
 public class TrackDatabase {
     private static final String TAG = "TrackDatabase";
 
+    /**
+     * Return the most recent track data available
+     */
     @Nullable
-    public CloudData getCached(String track_id) {
+    public CloudData getCached(@NonNull String track_id) {
         final List<CloudData> tracks = Services.cloud.listing.cache.list();
         if(tracks != null) {
             for(CloudData track : tracks) {
@@ -24,7 +28,11 @@ public class TrackDatabase {
         return null;
     }
 
-    void addTrackData(CloudData trackData) {
+    /**
+     * Add track to list of synced tracks.
+     * This is called when an upload succeeds, so that the track shows up immediately.
+     */
+    void addTrackData(@NonNull CloudData trackData) {
         // Update track list cache, if it exists
         final List<CloudData> trackList = Services.cloud.listing.cache.list();
         if(trackList != null) {
