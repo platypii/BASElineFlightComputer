@@ -1,15 +1,8 @@
 package com.platypii.baseline.tracks;
 
-import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.util.Exceptions;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Represents a track file on the local device (pre-upload)
@@ -35,25 +28,6 @@ public class TrackFile {
     public String getSize() {
         final long size = file.length() / 1024;
         return size + "kb";
-    }
-
-    /**
-     * Parse date from filename
-     */
-    private Date getDate() {
-        final String dateString = getName().replaceAll("track ", "");
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH.mm.ss", Locale.US);
-        try {
-            return format.parse(dateString);
-        } catch (ParseException e) {
-            Log.e(TAG, "Failed to parse date from filename", e);
-            Exceptions.report(e);
-            return null;
-        }
-    }
-
-    public List<MLocation> getData() {
-        return TrackFileData.getTrackData(this);
     }
 
     /** Delete local track file */
@@ -82,8 +56,7 @@ public class TrackFile {
 
     @Override
     public String toString() {
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-        return format.format(getDate());
+        return file.getName();
     }
 
     @Override

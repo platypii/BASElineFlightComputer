@@ -1,7 +1,7 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackFileData;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.DataSeries;
@@ -10,6 +10,7 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import java.io.File;
 import java.util.List;
 
 public class TimeChart extends PlotView {
@@ -18,7 +19,7 @@ public class TimeChart extends PlotView {
     private static final int AXIS_SPEED = 1;
     private static final int AXIS_GLIDE = 2;
 
-    private TrackFile trackFile;
+    private File trackFile;
     private List<MLocation> trackData;
 
     private final DataSeries altitudeSeries = new DataSeries();
@@ -30,10 +31,6 @@ public class TimeChart extends PlotView {
 
         // Slower refresh rate
         refreshRateMillis = 200;
-
-        // Get track data
-        this.trackFile = trackFile;
-        trackData = trackFile.getData();
 
         final float density = getResources().getDisplayMetrics().density;
         options.padding.top = (int) (12 * density);
@@ -54,9 +51,9 @@ public class TimeChart extends PlotView {
         plot.initBounds(3);
     }
 
-    public void loadTrack(TrackFile trackFile) {
+    public void loadTrack(File trackFile) {
         this.trackFile = trackFile;
-        trackData = trackFile.getData();
+        trackData = TrackFileData.getTrackData(trackFile);
     }
 
     @Override

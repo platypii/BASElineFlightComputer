@@ -1,7 +1,10 @@
 package com.platypii.baseline.cloud;
 
+import com.platypii.baseline.tracks.TrackFiles;
 import com.platypii.baseline.util.Exceptions;
+import android.content.Context;
 import android.support.annotation.NonNull;
+import java.io.File;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,6 +26,14 @@ public class CloudData {
         this.trackUrl = trackUrl;
         this.trackKml = trackKml;
         this.location = location;
+    }
+
+    /**
+     * Returns the file location of the local track data file
+     */
+    public File localFile(@NonNull Context context) {
+        final File trackDir = TrackFiles.getTrackDirectory(context);
+        return new File(trackDir, "tracks/" + track_id + "/track.csv.gz");
     }
 
     @NonNull

@@ -35,23 +35,29 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track_remote);
 
-        // Load jump from extras
+        // Load track from extras
+        loadTrack();
+
+        findViewById(R.id.chartsButton).setOnClickListener(this::clickCharts);
+        findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
+        findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
+        findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+    }
+
+    private void loadTrack() {
+        // Load track id from extras
         final Bundle extras = getIntent().getExtras();
         if(extras != null && extras.getString(EXTRA_TRACK_ID) != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
             track = Services.cloud.tracks.getCached(track_id);
             if(track == null) {
                 Exceptions.report(new IllegalStateException("Failed to load track from cache"));
-                // TODO: finish activity?
+                finish();
             }
         } else {
             Exceptions.report(new IllegalStateException("Failed to load track_id from extras"));
-            // TODO: finish activity?
+            finish();
         }
-
-        findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
-        findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
-        findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
     }
 
     /**
@@ -105,6 +111,11 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
             .setPositiveButton("Delete", this)
             .setNegativeButton("Cancel", null)
             .show();
+    }
+
+    private void clickCharts(View v) {
+        // Open time chart activity
+        Intents.openCharts(this, track);
     }
 
     /**

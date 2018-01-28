@@ -17,7 +17,7 @@
     <string name="action_map">Map</string>
     <string name="action_delete">Delete</string>
     <string name="action_export">Export</string>
-    <string name="action_time_chart">Time Chart</string>
+    <string name="action_charts">Charts</string>
 
     <string name="upload_waiting">Waiting for upload…</string>
     <string name="uploading">Uploading…</string>

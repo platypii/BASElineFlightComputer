@@ -27,7 +27,7 @@
             android:textStyle="bold"
             android:gravity="center"
             android:text="Speed"
-            android:textColor="#1111ee" />
+            android:textColor="#2222ee" />
 
         <TextView
             android:layout_width="0dp"
@@ -36,7 +36,7 @@
             android:textStyle="bold"
             android:gravity="center"
             android:text="Glide"
-            android:textColor="#6f00ff" />
+            android:textColor="#8f00ff" />
 
     </LinearLayout>
 

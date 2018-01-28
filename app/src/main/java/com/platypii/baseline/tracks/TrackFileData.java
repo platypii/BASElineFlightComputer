@@ -4,6 +4,7 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import android.util.Log;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,14 +15,14 @@ import java.util.zip.GZIPInputStream;
 /**
  * Parse location data from track file
  */
-class TrackFileData {
+public class TrackFileData {
     private static final String TAG = "TrackFileData";
 
-    static List<MLocation> getTrackData(TrackFile trackFile) {
+    public static List<MLocation> getTrackData(File trackFile) {
         final List<MLocation> data = new ArrayList<>();
         // Read file line by line
         // TODO minsdk19: InputStreamReader(,StandardCharsets.UTF_8)
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(trackFile.file))))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(trackFile))))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.contains(",gps,")) {

@@ -81,7 +81,9 @@
             android:name=".views.SensorActivity"
             android:label="@string/app_name"/>
         <activity
-            android:name=".views.TimeChartActivity"/>
+            android:name=".views.tracks.TrackDownloadActivity"/>
+        <activity
+            android:name=".views.tracks.ChartsActivity"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

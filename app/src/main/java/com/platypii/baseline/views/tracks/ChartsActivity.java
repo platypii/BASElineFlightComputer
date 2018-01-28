@@ -1,24 +1,21 @@
-package com.platypii.baseline.views;
+package com.platypii.baseline.views.tracks;
 
 import com.platypii.baseline.R;
-import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.tracks.TrackFiles;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.charts.TimeChart;
-import com.platypii.baseline.views.tracks.TrackLocalActivity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import java.io.File;
 
-public class TimeChartActivity extends Activity {
+public class ChartsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_time_chart);
+        setContentView(R.layout.activity_track_charts);
 
         // Load track from extras
-        final TrackFile trackFile = getTrackFile();
+        final File trackFile = getTrackFile();
         if (trackFile != null) {
             final TimeChart timeChart = findViewById(R.id.timeChart);
             timeChart.loadTrack(trackFile);
@@ -33,16 +30,11 @@ public class TimeChartActivity extends Activity {
      * Gets the track file from activity extras
      */
     @Nullable
-    private TrackFile getTrackFile() {
+    private File getTrackFile() {
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
             final String extraTrackFile = extras.getString(TrackLocalActivity.EXTRA_TRACK_FILE);
-            if (extraTrackFile != null) {
-                final File trackDir = TrackFiles.getTrackDirectory(getApplicationContext());
-                return new TrackFile(new File(trackDir, extraTrackFile));
-            } else {
-                return null;
-            }
+            return new File(extraTrackFile);
         } else {
             return null;
         }
