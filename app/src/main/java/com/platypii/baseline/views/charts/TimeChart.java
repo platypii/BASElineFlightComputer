@@ -30,7 +30,7 @@ public class TimeChart extends PlotView {
         super(context, attrs);
 
         // Slower refresh rate
-        refreshRateMillis = 200;
+        refreshRateMillis = 1000;
 
         final float density = getResources().getDisplayMetrics().density;
         options.padding.top = (int) (12 * density);
@@ -85,7 +85,7 @@ public class TimeChart extends PlotView {
         plot.drawLine(AXIS_ALT, altitudeSeries, 2, paint);
         paint.setColor(0xff0000ff);
         plot.drawLine(AXIS_SPEED, speedSeries, 2, paint);
-        paint.setColor(0xff6f00ff);
+        paint.setColor(0xff7f00ff);
         plot.drawLine(AXIS_GLIDE, glideSeries, 2, paint);
     }
 

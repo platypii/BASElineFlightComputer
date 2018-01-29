@@ -38,7 +38,7 @@ public class DownloadTask implements Runnable {
     @Override
     public void run() {
         Log.i(TAG, "Downloading track " + track.track_id);
-        // TODO: Check if file exists
+        // Check if file exists
         if (file.exists()) {
             Log.e(TAG, "Overwriting existing track file " + file);
         }
@@ -51,7 +51,7 @@ public class DownloadTask implements Runnable {
             downloadTrack(authToken);
             // TODO: Check file hash?
             Log.i(TAG, "Download successful, track " + track.track_id);
-            EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(track.track_id));
+            EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(track.track_id, file));
         } catch(AuthException e) {
             Log.e(TAG, "Failed to download file - auth error", e);
             if(networkAvailable) {
@@ -89,7 +89,7 @@ public class DownloadTask implements Runnable {
             if(status == 200) {
                 // Read body
                 final InputStream is = conn.getInputStream();
-                copy(track.track_id, is, file);
+                copy(track.track_id, is, file, conn.getContentLength());
                 Log.i(TAG, "Track download successful");
             } else if(status == 401) {
                 throw new AuthException(auth);
@@ -104,7 +104,7 @@ public class DownloadTask implements Runnable {
     /**
      * Copy bytes from input stream to file, and update download progress
      */
-    private static void copy(@NonNull String track_id, @NonNull InputStream is, @NonNull File file) throws IOException {
+    private static void copy(@NonNull String track_id, @NonNull InputStream is, @NonNull File file, int contentLength) throws IOException {
         // Make parent directory if needed
         final File parent = file.getParentFile();
         if (!parent.exists()) {
@@ -120,7 +120,7 @@ public class DownloadTask implements Runnable {
             bytesCopied += bytesRead;
 
             // Update download progress state
-            EventBus.getDefault().post(new DownloadEvent.DownloadProgress(track_id, bytesCopied));
+            EventBus.getDefault().post(new DownloadEvent.DownloadProgress(track_id, bytesCopied, contentLength));
         }
         is.close();
         os.close();

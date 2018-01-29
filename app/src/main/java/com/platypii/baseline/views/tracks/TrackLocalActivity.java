@@ -149,7 +149,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUploadSuccess(@NonNull SyncEvent.UploadSuccess event) {
-        if(event.trackFile.getName().equals(trackFile.getName())) {
+        if (event.trackFile.getName().equals(trackFile.getName())) {
             // Track uploaded, open TrackRemoteActivity
             Toast.makeText(getApplicationContext(), "Track sync success", Toast.LENGTH_SHORT).show();
             Intents.openTrackRemote(this, event.cloudData);
@@ -158,7 +158,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUploadFailure(@NonNull SyncEvent.UploadFailure event) {
-        if(event.trackFile.getName().equals(trackFile.getName())) {
+        if (event.trackFile.getName().equals(trackFile.getName())) {
             Log.e(TAG, "Failed to upload track: " + event.error);
             Toast.makeText(getApplicationContext(), "Track sync failed", Toast.LENGTH_LONG).show();
             updateViews();
@@ -166,7 +166,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUploadProgress(@NonNull SyncEvent.UploadProgress event) {
-        if(event.trackFile.getName().equals(trackFile.getName())) {
+        if (event.trackFile.getName().equals(trackFile.getName())) {
             updateViews();
         }
     }

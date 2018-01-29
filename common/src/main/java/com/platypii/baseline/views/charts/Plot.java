@@ -93,7 +93,7 @@ class Plot {
      * @param radius the width of the path
      */
     void drawLine(int axis, @NonNull DataSeries series, float radius, @NonNull Paint paint) {
-        if(series.size() > 0) {
+        if (series.size() > 0) {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2 * radius * options.density);
             // dataBounds will be expanded in renderPath
@@ -108,9 +108,9 @@ class Plot {
 //     * @param y_zero the y-origin, in plot-space
 //     */
 //    void drawArea(@NonNull DataSeries series, double y_zero, Paint paint) {
-//        if(series.size() > 0) {
+//        if (series.size() > 0) {
 //            Path area = renderArea(series, y_zero);
-//            if(area != null) {
+//            if (area != null) {
 //                paint.setStyle(Paint.Style.FILL);
 //                canvas.drawPath(area, paint);
 //            }
@@ -125,18 +125,21 @@ class Plot {
     private Path renderPath(int axis, @NonNull DataSeries series) {
         // Construct the path
         path.rewind();
-        boolean empty = true;
-        for(DataSeries.Point point : series) {
-            if(!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
+        // restart is true if we should start a new line at the next point
+        boolean restart = true;
+        for (DataSeries.Point point : series) {
+            if (!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
                 dataBounds[axis].expandBounds(point.x, point.y);
                 final float sx = getX(axis, point.x);
                 final float sy = getY(axis, point.y);
-                if(empty) {
+                if (restart) {
                     path.moveTo(sx, sy);
-                    empty = false;
+                    restart = false;
                 } else {
                     path.lineTo(sx, sy);
                 }
+            } else {
+                restart = true;
             }
         }
         return path;
@@ -153,8 +156,8 @@ class Plot {
 //        boolean empty = true;
 //        double x = Double.NaN;
 //        for(DataSeries.Point point : series) {
-//            if(!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
-//                if(empty) {
+//            if (!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
+//                if (empty) {
 //                    path.moveTo(getX(point.x), getY(y_zero));
 //                    empty = false;
 //                }
@@ -162,7 +165,7 @@ class Plot {
 //                x = point.x; // Save last good x for later
 //            }
 //        }
-//        if(!empty) {
+//        if (!empty) {
 //            // Log.w(TAG, "x=" + getX(x) + ", y_zero=" + getY(y_zero));
 //            path.lineTo(getX(x), getY(y_zero));
 //            path.close();

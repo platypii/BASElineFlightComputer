@@ -1,7 +1,6 @@
 package com.platypii.baseline.util;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -14,14 +13,18 @@ public class DataSeries implements Iterable<DataSeries.Point> {
     private static final String TAG = "DataSeries";
 
     private final ArrayList<Point> points = new ArrayList<>();
+    private Point lastPoint;
     private int n = 0;
 
-    public class Point {
+    public static class Point {
         public double x;
         public double y;
         Point(double x, double y) {
             this.x = x;
             this.y = y;
+        }
+        boolean isNaN() {
+            return Double.isNaN(x) || Double.isInfinite(x) || Double.isNaN(y) || Double.isInfinite(y);
         }
         @Override
         public String toString() {
@@ -30,17 +33,19 @@ public class DataSeries implements Iterable<DataSeries.Point> {
     }
 
     public void addPoint(double x, double y) {
-        if(!Numbers.isReal(x) || !Numbers.isReal(y)) {
-            Log.w(TAG, "Invalid point added to data series " + x + " " + y);
+        final boolean isNaN = Double.isNaN(x) || Double.isInfinite(x) || Double.isNaN(y) || Double.isInfinite(y);
+        // Skip double NaN
+        if (lastPoint == null || !lastPoint.isNaN() || !isNaN) {
+            if (n < points.size()) {
+                lastPoint = points.get(n);
+                lastPoint.x = x;
+                lastPoint.y = y;
+            } else {
+                lastPoint = new Point(x,y);
+                points.add(lastPoint);
+            }
+            n++;
         }
-        if(n < points.size()) {
-            Point point = points.get(n);
-            point.x = x;
-            point.y = y;
-        } else {
-            points.add(new Point(x,y));
-        }
-        n++;
     }
 
     public int size() {
@@ -62,7 +67,7 @@ public class DataSeries implements Iterable<DataSeries.Point> {
                 return i < n;
             }
             public Point next() {
-                if(i < n)
+                if (i < n)
                     return points.get(i++);
                 else
                     throw new NoSuchElementException();
