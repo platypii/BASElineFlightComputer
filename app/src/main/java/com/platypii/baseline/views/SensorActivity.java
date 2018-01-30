@@ -139,7 +139,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
 
         // Start GPS updates
         Services.location.addListener(this);
-        updateGPS(Services.location.lastLoc);
+        updateGPS();
 
         // Start altitude updates
         EventBus.getDefault().register(this);
@@ -204,7 +204,8 @@ public class SensorActivity extends Activity implements MyLocationListener {
         else return "none";
     }
 
-    private void updateGPS(MLocation loc) {
+    private void updateGPS() {
+        final MLocation loc = Services.location.lastLoc;
         if(loc != null) {
             satelliteLabel.setText("Satellites: " + loc.satellitesUsed + " used in fix, " + loc.satellitesInView + " visible");
             if (Numbers.isReal(loc.latitude)) {
@@ -289,10 +290,8 @@ public class SensorActivity extends Activity implements MyLocationListener {
 
     // Listeners
     @Override
-    public void onLocationChanged(@NonNull MLocation loc) {}
-    @Override
-    public void onLocationChangedPostExecute() {
-        updateGPS(Services.location.lastLoc);
+    public void onLocationChanged(@NonNull MLocation loc) {
+        runOnUiThread(this::updateGPS);
     }
 
     /**

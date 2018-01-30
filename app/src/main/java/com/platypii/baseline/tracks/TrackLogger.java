@@ -203,8 +203,6 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
             logLine(measure.toRow());
         }
     }
-    @Override
-    public void onLocationChangedPostExecute() {}
 
     /**
      * Listen for sensor updates

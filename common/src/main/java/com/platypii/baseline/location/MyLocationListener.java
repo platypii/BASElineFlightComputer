@@ -13,10 +13,4 @@ public interface MyLocationListener {
      */
     void onLocationChanged(@NonNull MLocation loc);
 
-    /**
-     * Process the new location on the UI thread
-     * PostExecute doesn't get a parameter, because UI threads should just pull the latest data
-     */
-    void onLocationChangedPostExecute();
-
 }

@@ -46,8 +46,6 @@ public class FlightComputer implements BaseService, MyLocationListener {
         // Update autostop
         autoStop.update(loc);
     }
-    @Override
-    public void onLocationChangedPostExecute() {}
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onAudibleEvent(@NonNull AudibleEvent audible) {

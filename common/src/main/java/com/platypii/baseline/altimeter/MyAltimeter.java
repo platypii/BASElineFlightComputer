@@ -98,8 +98,6 @@ public class MyAltimeter implements BaseService, MyLocationListener {
     public void onLocationChanged(@NonNull MLocation loc) {
         updateGPS(loc);
     }
-    @Override
-    public void onLocationChangedPostExecute() {}
 
     /**
      * Process new barometer reading

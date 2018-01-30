@@ -67,7 +67,7 @@ public class Services {
      * Call this in onCreate
      */
     public static void create(@NonNull Activity activity) {
-        if(!created) {
+        if (!created) {
             Log.i(TAG, "Loading app preferences");
             loadPreferences(activity);
             created = true;
@@ -77,13 +77,13 @@ public class Services {
 
     public static void start(@NonNull Activity activity) {
         final boolean shouldStart = inc();
-        if(shouldStart && initialized) {
+        if (shouldStart && initialized) {
             // This happens when services are started again before the shutdown delay
             Log.i(TAG, "Services still alive");
             // Even without this line, stopRunnable would notice that startCount > 0.
             // But why waste the cycles? Might as well remove the stop runnable.
             handler.removeCallbacks(stopRunnable);
-        } else if(shouldStart) {
+        } else if (shouldStart) {
             initialized = true;
             final long startTime = System.currentTimeMillis();
             Log.i(TAG, "Starting services");
@@ -92,7 +92,7 @@ public class Services {
             // Start the various services
 
             Log.i(TAG, "Starting bluetooth service");
-            if(bluetooth.preferences.preferenceEnabled) {
+            if (bluetooth.preferences.preferenceEnabled) {
                 bluetooth.start(activity);
             }
 
@@ -125,7 +125,7 @@ public class Services {
             flightComputer.start(appContext);
 
             // TTS is prerequisite for audible
-            if(ttsLoaded) {
+            if (ttsLoaded) {
                 Log.i(TAG, "Text-to-speech data already loaded, starting audible");
                 audible.start(appContext);
             } else {
@@ -152,10 +152,10 @@ public class Services {
     public static void onTtsLoaded(@NonNull Activity context) {
         // TTS loaded, start the audible
         Exceptions.log("onTtsLoaded from " + context.getLocalClassName());
-        if(!ttsLoaded) {
+        if (!ttsLoaded) {
             Log.i(TAG, "Text-to-speech data loaded, starting audible");
             ttsLoaded = true;
-            if(initialized) {
+            if (initialized) {
                 audible.start(context.getApplicationContext());
             }
         } else {
@@ -178,7 +178,7 @@ public class Services {
     }
 
     public static void stop() {
-        if(dec()) {
+        if (dec()) {
             Log.i(TAG, String.format("All activities have stopped. Services will stop in %.3fs", shutdownDelay * 0.001));
             handler.postDelayed(stopRunnable, shutdownDelay);
         }
@@ -188,8 +188,8 @@ public class Services {
      * Stop services IF nothing is using them
      */
     private static synchronized void stopIfIdle() {
-        if(initialized && startCount == 0) {
-            if(!logger.isLogging() && !audible.isEnabled()) {
+        if (initialized && startCount == 0) {
+            if (!logger.isLogging() && !audible.isEnabled()) {
                 Log.i(TAG, "All activities have stopped. Stopping services.");
                 // Stop services
                 cloud.stop();
@@ -203,10 +203,10 @@ public class Services {
                 bluetooth.stop();
                 initialized = false;
             } else {
-                if(logger.isLogging()) {
+                if (logger.isLogging()) {
                     Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
                 }
-                if(audible.isEnabled()) {
+                if (audible.isEnabled()) {
                     Log.w(TAG, "All activities have stopped, but audible still active. Leaving services running.");
                 }
                 // Try again periodically
@@ -230,7 +230,7 @@ public class Services {
         // Home location
         final double home_latitude = Numbers.parseDouble(prefs.getString("home_latitude", null));
         final double home_longitude = Numbers.parseDouble(prefs.getString("home_longitude", null));
-        if(Numbers.isReal(home_latitude) && Numbers.isReal(home_longitude)) {
+        if (Numbers.isReal(home_latitude) && Numbers.isReal(home_longitude)) {
             // Set home location
             LandingZone.homeLoc = new LatLng(home_latitude, home_longitude);
         }

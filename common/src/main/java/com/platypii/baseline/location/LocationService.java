@@ -32,12 +32,10 @@ public class LocationService extends LocationProvider {
     private final MyLocationListener nmeaListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
-            if(!bluetooth.preferences.preferenceEnabled) {
+            if (!bluetooth.preferences.preferenceEnabled) {
                 updateLocation(loc);
             }
         }
-        @Override
-        public void onLocationChangedPostExecute() {}
     };
     private final MyLocationListener androidListener = new MyLocationListener() {
         private int overrideCount = 0;
@@ -45,10 +43,10 @@ public class LocationService extends LocationProvider {
         public void onLocationChanged(@NonNull MLocation loc) {
             // Only use android location if we aren't getting NMEA
             // TODO: Remove the android location listener if every phone provides NMEA
-            if(!bluetooth.preferences.preferenceEnabled && !locationProviderNMEA.nmeaReceived) {
+            if (!bluetooth.preferences.preferenceEnabled && !locationProviderNMEA.nmeaReceived) {
                 // Log on powers of 2
                 overrideCount++;
-                if(overrideCount > 1 && isPower2(overrideCount)) {
+                if (overrideCount > 1 && isPower2(overrideCount)) {
                     Exceptions.report(new IllegalStateException("No NMEA data, falling back to android loc #"+overrideCount+": " + loc));
                 }
                 updateLocation(loc);
@@ -57,18 +55,14 @@ public class LocationService extends LocationProvider {
         private boolean isPower2(int n) {
             return (n & (n - 1)) == 0;
         }
-        @Override
-        public void onLocationChangedPostExecute() {}
     };
     private final MyLocationListener bluetoothListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
-            if(bluetooth.preferences.preferenceEnabled) {
+            if (bluetooth.preferences.preferenceEnabled) {
                 updateLocation(loc);
             }
         }
-        @Override
-        public void onLocationChangedPostExecute() {}
     };
 
     @NonNull

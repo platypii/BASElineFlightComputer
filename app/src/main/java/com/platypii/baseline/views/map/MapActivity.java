@@ -230,9 +230,11 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     @Override
-    public void onLocationChanged(@NonNull MLocation loc) {}
-    @Override
-    public void onLocationChangedPostExecute() {
+    public void onLocationChanged(@NonNull MLocation loc) {
+        runOnUiThread(this::updateLocation);
+    }
+
+    private void updateLocation() {
         updateFlightStats();
         if(ready) {
             final LatLng currentLoc = Services.location.lastLoc.latLng();
@@ -351,7 +353,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         EventBus.getDefault().register(this);
         // Recenter on last location
         if(Services.location.lastLoc != null) {
-            onLocationChangedPostExecute();
+            updateLocation();
         }
         updateFlightStats();
     }

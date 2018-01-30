@@ -262,7 +262,5 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     public void onLocationChanged(@NonNull MLocation loc) {
         history.append(loc);
     }
-    @Override
-    public void onLocationChangedPostExecute() {}
 
 }

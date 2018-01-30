@@ -41,9 +41,9 @@ public abstract class LocationProvider implements BaseService {
      * Returns the number of milliseconds since the last fix
      */
     public long lastFixDuration() {
-        if(lastLoc != null && lastLoc.millis > 0) {
+        if (lastLoc != null && lastLoc.millis > 0) {
             final long duration = System.currentTimeMillis() - (lastLoc.millis + TimeOffset.phoneOffsetMillis);
-            if(duration < 0) {
+            if (duration < 0) {
                 Log.w(providerName(), "Time since last fix should never be negative");
             }
             return duration;
@@ -113,21 +113,11 @@ public abstract class LocationProvider implements BaseService {
         }
 
         // Notify listeners (using AsyncTask so the manager never blocks!)
-        new AsyncTask<MLocation, Void, Void>() {
-            @Override
-            protected Void doInBackground(MLocation... params) {
-                for (MyLocationListener listener : listeners) {
-                    listener.onLocationChanged(params[0]);
-                }
-                return null;
+        AsyncTask.execute(() -> {
+            for (MyLocationListener listener : listeners) {
+                listener.onLocationChanged(lastLoc);
             }
-            @Override
-            protected void onPostExecute(Void result) {
-                for(MyLocationListener listener : listeners) {
-                    listener.onLocationChangedPostExecute();
-                }
-            }
-        }.execute(lastLoc);
+        });
     }
 
     /**
@@ -136,16 +126,16 @@ public abstract class LocationProvider implements BaseService {
      * This should be used for display of the latest groundspeed, but not for logging.
      */
     public double groundSpeed() {
-        if(isFresh()) {
+        if (isFresh()) {
             final double lastGroundSpeed = lastLoc.groundSpeed();
-            if(Numbers.isReal(lastGroundSpeed)) {
+            if (Numbers.isReal(lastGroundSpeed)) {
                 return lastGroundSpeed;
             } else {
                 // Compute ground speed from previous location
                 if(prevLoc != null) {
                     final double dist = prevLoc.distanceTo(lastLoc);
                     final double dt = (lastLoc.millis - prevLoc.millis) * 0.001;
-                    if(dt > 0) {
+                    if (dt > 0) {
                         return dist / dt;
                     }
                 }
@@ -160,7 +150,7 @@ public abstract class LocationProvider implements BaseService {
      * This should be used for display of the latest total speed, but not for logging.
      */
     public double totalSpeed() {
-        if(isFresh()) {
+        if (isFresh()) {
             return lastLoc.totalSpeed();
         } else {
             return Double.NaN;
@@ -173,13 +163,13 @@ public abstract class LocationProvider implements BaseService {
      * This should be used for display of the latest groundspeed, but not for logging.
      */
     public double bearing() {
-        if(isFresh()) {
+        if (isFresh()) {
             final double lastBearing = lastLoc.bearing();
-            if(Numbers.isReal(lastBearing)) {
+            if (Numbers.isReal(lastBearing)) {
                 return lastBearing;
             } else {
                 // Compute ground speed from previous location
-                if(prevLoc != null) {
+                if (prevLoc != null) {
                     return prevLoc.bearingTo(lastLoc);
                 }
             }
@@ -193,7 +183,7 @@ public abstract class LocationProvider implements BaseService {
      * This should be used for display of the latest total speed, but not for logging.
      */
     public double glideRatio() {
-        if(isFresh()) {
+        if (isFresh()) {
             return lastLoc.glideRatio();
         }
         return Double.NaN;
@@ -201,7 +191,7 @@ public abstract class LocationProvider implements BaseService {
 
     @Override
     public void stop() {
-        if(!listeners.isEmpty()) {
+        if (!listeners.isEmpty()) {
             Log.e(providerName(), "Stopping location service, but listeners are still listening");
         }
     }
