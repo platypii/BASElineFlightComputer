@@ -6,12 +6,20 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 /**
  * Meta location provider that uses bluetooth, nmea, or android location source
  */
 public class LocationService extends LocationProvider {
     private static final String TAG = "LocationService";
+
+    // What data source to pull from
+    // TODO: Separate android / nmea
+    private static final int LOCATION_NONE = 0;
+    private static final int LOCATION_ANDROID = 1;
+    private static final int LOCATION_BLUETOOTH = 2;
+    private int locationMode = LOCATION_NONE;
 
     private final BluetoothService bluetooth;
 
@@ -73,23 +81,45 @@ public class LocationService extends LocationProvider {
 
     @Override
     public void start(@NonNull Context context) {
-        locationProviderNMEA.start(context);
-        locationProviderNMEA.addListener(nmeaListener);
-        locationProviderAndroid.start(context);
-        locationProviderAndroid.addListener(androidListener);
-        locationProviderBluetooth.start(context);
-        locationProviderBluetooth.addListener(bluetoothListener);
+        if (bluetooth.preferences.preferenceEnabled) {
+            Log.i(TAG, "Starting location service in bluetooth mode");
+            locationMode = LOCATION_BLUETOOTH;
+            locationProviderBluetooth.start(context);
+            locationProviderBluetooth.addListener(bluetoothListener);
+        } else {
+            Log.i(TAG, "Starting location service in android mode");
+            locationMode = LOCATION_ANDROID;
+            locationProviderNMEA.start(context);
+            locationProviderNMEA.addListener(nmeaListener);
+            locationProviderAndroid.start(context);
+            locationProviderAndroid.addListener(androidListener);
+        }
+    }
+
+    /**
+     * Stops and then starts location services, such as when switch bluetooth on or off.
+     */
+    public void restart(@NonNull Context context) {
+        Log.i(TAG, "Restarting location service");
+        stop();
+        start(context);
     }
 
     @Override
     public void stop() {
+        if (locationMode == LOCATION_ANDROID) {
+            Log.i(TAG, "Stopping android location service");
+            locationProviderNMEA.removeListener(nmeaListener);
+            locationProviderNMEA.stop();
+            locationProviderAndroid.removeListener(androidListener);
+            locationProviderAndroid.stop();
+        } else if (locationMode == LOCATION_BLUETOOTH) {
+            Log.i(TAG, "Stopping bluetooth location service");
+            locationProviderBluetooth.removeListener(bluetoothListener);
+            locationProviderBluetooth.stop();
+        }
+        locationMode = LOCATION_NONE;
         super.stop();
-        locationProviderNMEA.removeListener(nmeaListener);
-        locationProviderNMEA.stop();
-        locationProviderAndroid.removeListener(androidListener);
-        locationProviderAndroid.stop();
-        locationProviderBluetooth.removeListener(bluetoothListener);
-        locationProviderBluetooth.stop();
     }
 
 }

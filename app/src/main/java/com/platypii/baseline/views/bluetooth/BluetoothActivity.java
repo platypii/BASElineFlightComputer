@@ -53,6 +53,8 @@ public class BluetoothActivity extends BaseActivity {
             firebaseAnalytics.logEvent("bluetooth_disabled", null);
             Services.bluetooth.stop();
         }
+        // Switch location source
+        Services.location.restart(this);
         updateViews();
     }
 

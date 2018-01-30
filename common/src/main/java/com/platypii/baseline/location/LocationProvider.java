@@ -132,7 +132,7 @@ public abstract class LocationProvider implements BaseService {
                 return lastGroundSpeed;
             } else {
                 // Compute ground speed from previous location
-                if(prevLoc != null) {
+                if (prevLoc != null) {
                     final double dist = prevLoc.distanceTo(lastLoc);
                     final double dt = (lastLoc.millis - prevLoc.millis) * 0.001;
                     if (dt > 0) {
@@ -192,7 +192,7 @@ public abstract class LocationProvider implements BaseService {
     @Override
     public void stop() {
         if (!listeners.isEmpty()) {
-            Log.e(providerName(), "Stopping location service, but listeners are still listening");
+            Log.w(providerName(), "Stopping location service, but listeners are still listening");
         }
     }
 }

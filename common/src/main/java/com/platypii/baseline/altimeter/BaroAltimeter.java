@@ -55,7 +55,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
     @Override
     public void start(@NonNull final Context context) {
         // Get a new preference manager
-        if(sensorManager == null) {
+        if (sensorManager == null) {
             // Add sensor listener
             sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
             if (sensorManager != null) {
@@ -79,11 +79,11 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
 
         // Sanity checks
         // assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
-        if(event.values.length == 0 || Double.isNaN(event.values[0])) {
+        if (event.values.length == 0 || Double.isNaN(event.values[0])) {
             Log.e(TAG, "Invalid update: " + Arrays.toString(event.values));
             return;
         }
-        if(lastFixNano >= event.timestamp) {
+        if (lastFixNano >= event.timestamp) {
             Log.e(TAG, "Double update: " + lastFixNano);
             return;
         }
@@ -99,9 +99,9 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         pressure_altitude_raw = pressureToAltitude(pressure);
 
         // Barometer refresh rate
-        if(deltaTime > 0) {
+        if (deltaTime > 0) {
             final float newRefreshRate = 1E9f / (float) (deltaTime); // Refresh rate based on last 2 samples
-            if(refreshRate == 0) {
+            if (refreshRate == 0) {
                 refreshRate = newRefreshRate;
             } else {
                 refreshRate += (newRefreshRate - refreshRate) * 0.5f; // Moving average
@@ -119,7 +119,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         climb = filter.v;
 
         // Altitude should never be null:
-        if(!Numbers.isReal(pressure_altitude_filtered)) {
+        if (!Numbers.isReal(pressure_altitude_filtered)) {
             Exceptions.report(new IllegalArgumentException("Invalid pressure altitude: " + pressure + " -> " + pressure_altitude_filtered));
             return;
         }
@@ -158,7 +158,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
 
     @Override
     public void stop() {
-        if(sensorManager != null) {
+        if (sensorManager != null) {
             sensorManager.unregisterListener(this);
             sensorManager = null;
         } else {

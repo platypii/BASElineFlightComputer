@@ -187,6 +187,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
 
     @Override
     public void stop() {
+        baro.stop();
         location.removeListener(this);
         EventBus.getDefault().unregister(this);
         if (started) {
