@@ -13,7 +13,7 @@
     <string name="action_settings">Settings</string>
 
     <!-- Track Activity -->
-    <string name="action_open">Details</string>
+    <string name="action_open">baseline.ws</string>
     <string name="action_map">Map</string>
     <string name="action_delete">Delete</string>
     <string name="action_export">Export</string>

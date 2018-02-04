@@ -51,7 +51,6 @@ public class Intents {
             intent.putExtra(TrackDownloadActivity.EXTRA_TRACK_ID, track.track_id);
             context.startActivity(intent);
         }
-
     }
 
     /** Open track url in browser */

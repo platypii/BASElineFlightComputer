@@ -13,7 +13,7 @@
     <string name="action_settings">Einstellungen</string>
 
     <!-- Track Activity -->
-    <string name="action_open">Öffnen</string>
+    <string name="action_open">baseline.ws</string>
     <string name="action_map">Karte</string>
     <string name="action_delete">Löschen</string>
     <string name="action_export">Export</string>
