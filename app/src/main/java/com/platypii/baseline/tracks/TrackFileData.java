@@ -7,12 +7,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -104,15 +106,26 @@ public class TrackFileData {
 
     private static SimpleDateFormat df;
     private static long getColumnDate(String[] row, Map<String, Integer> columns, String columnName) {
-        // Lazy init
-        if (df == null) {
-            df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSZ", Locale.US);
-        }
         try {
             final String dateString = row[columns.get(columnName)];
-            return df.parse(dateString).getTime();
+            return parseFlySightDate(dateString);
         } catch (Exception e) {
             return -1L;
         }
+    }
+    static long parseFlySightDate(String dateString) throws ParseException {
+        // Lazy init
+        if (df == null) {
+            // 2018-01-25T11:48:09.80Z
+            df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        }
+        // Handle milliseconds separately
+        long millis = 0;
+        final int len = dateString.length();
+        if (dateString.charAt(len - 4) == '.') {
+            millis = 10 * Long.parseLong(dateString.substring(len - 3, len - 1));
+        }
+        return df.parse(dateString).getTime() + millis;
     }
 }
