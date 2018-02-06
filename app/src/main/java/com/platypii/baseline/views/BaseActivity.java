@@ -274,11 +274,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
             if(grantResults.length == 1 &&
                     permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION) &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                try {
-                    Services.location.start(getApplication());
-                } catch(SecurityException e) {
-                    Log.e(TAG, "Error enabling location services", e);
-                }
+                Services.location.start(getApplication());
             }
         }
     }

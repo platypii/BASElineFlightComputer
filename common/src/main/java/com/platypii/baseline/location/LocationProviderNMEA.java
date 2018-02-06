@@ -58,9 +58,13 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         // Start NMEA updates
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (manager != null) {
-            final boolean nmeaSuccess = manager.addNmeaListener(this);
-            if (!nmeaSuccess) {
-                Log.e(TAG, "Failed to start NMEA updates");
+            try {
+                final boolean nmeaSuccess = manager.addNmeaListener(this);
+                if (!nmeaSuccess) {
+                    Log.e(TAG, "Failed to start NMEA updates");
+                }
+            } catch (SecurityException e) {
+                Log.e(TAG, "Failed to start NMEA location service, permission denied");
             }
         } else {
             Log.e(TAG, "failed to get android location manager");
@@ -87,17 +91,17 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         // Log.v(NMEA_TAG, "[" + timestamp + "] " + nmea.trim()); // Trim because logcat fails on trailing \0
 
         nmea = NMEA.cleanNmea(nmea);
-        if(nmea.length() < 8) {
+        if (nmea.length() < 8) {
             return;
         }
 
         // Check for missing line breaks
-        if(nmea.indexOf('$', 1) > 0) {
+        if (nmea.indexOf('$', 1) > 0) {
             Log.w(TAG, "Splitting multiple NMEA sentences: " + nmea);
             final String[] split = nmea.split("\\$");
             // Recurse on split sentences
-            for(String str : split) {
-                if(!str.isEmpty()) {
+            for (String str : split) {
+                if (!str.isEmpty()) {
                     onNmeaReceived(timestamp, "$" + str);
                 }
             }
@@ -113,7 +117,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             NMEA.validate(nmea);
 
             handleNmea(timestamp, nmea);
-        } catch(Exception e) {
+        } catch (Exception e) {
             Exceptions.report(new NMEAException("Exception while handling NMEA: " + nmea, e));
         }
     }
@@ -124,7 +128,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         final String command = split[0].substring(3);
         switch (command) {
             case "GGA":
-                if(split.length < 11) {
+                if (split.length < 11) {
                     throw new NMEAException("Invalid GGA command");
                 }
 
@@ -135,7 +139,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 satellitesUsed = Numbers.parseInt(split[7], -1);
                 hdop = Numbers.parseFloat(split[8]);
                 if (!split[9].isEmpty()) {
-                    if(!split[10].equals("M")) {
+                    if (!split[10].equals("M")) {
                         Exceptions.report(new NMEAException("Expected meters, was " + split[10] + " in nmea: " + nmea));
                     }
                     altitude_gps = Numbers.parseDouble(split[9]);
@@ -150,7 +154,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // 2) System.currentTime(), depends on how long execution takes to this point
                 // 3) GPS time, most accurate, but must be parsed carefully, since we only get milliseconds since midnight GMT
                 // split[1]: Time: 123456 = 12:34:56 UTC
-                // if(dateTime == 0 || split[1].isEmpty())
+                // if (dateTime == 0 || split[1].isEmpty())
                 //   lastFixMillis = timestamp; // Alt: System.currentTimeMillis();
                 // else
                 //   lastFixMillis = dateTime + parseTime(split[1]);
@@ -161,7 +165,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // This is the NMEA command that we use as the "keyframe" of the NMEA stream.
                 // When we receive a valid RMC command, we issue an updateLocation() to listeners.
 
-                if(split.length < 10) {
+                if (split.length < 10) {
                     throw new NMEAException("Invalid RMC command");
                 }
 
@@ -185,7 +189,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
                 // Sanity checks
                 final int locationError = LocationCheck.validate(latitude, longitude);
-                if(locationError != LocationCheck.INVALID_NAN) {
+                if (locationError != LocationCheck.INVALID_NAN) {
                     if (locationError == LocationCheck.INVALID_ZERO) {
                         // So common we don't even need to report it
                         Log.e(NMEA_TAG, LocationCheck.message[locationError] + ": " + latitude + "," + longitude);
@@ -197,7 +201,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                             // Unlikely location, but still update
                             Exceptions.report(new NMEAException(LocationCheck.message[locationError] + ": " + latitude + "," + longitude));
                         }
-                        if(lastFixMillis <= 0) {
+                        if (lastFixMillis <= 0) {
                             Log.w(NMEA_TAG, "Invalid timestamp " + lastFixMillis + ", nmea: " + nmea);
                         }
                         // Update the official location!
@@ -248,6 +252,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "AMCLK":
                 // Samsung SM-G390F
                 // $PSAMCLK,1955,40841247,0,9690613,-2232227,408412467
+            case "AMDLOK":
+                // $PSAMDLOK,30,0x 0,0x3FF*2F
             case "AMID":
                 // $PSAMID,SLL_2.0.0_B14_ls18.J,
             case "ATT":
@@ -302,11 +308,15 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "TKAGC":
                 // Asus ZenFone 3
                 // $PMTKAGC,165141.000,2897,3107,80,0*4A
+            case "TKCLK":
+                // $PMTKCLK,115719.000,-342.0*54
             case "TKGALM":
             case "TKGEPH":
                 // Infinix HOT 4
                 // $PMTKGALM,31,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
                 // $PMTKGEPH,13,0,1,1,0,1,1,1,0,1,0,0,0,1,0,2,0,1,0,1,0,0,0,1,0,0,0,0,1,0,1,0,0
+            case "TKSUPL":
+                // $PMTKSUPL,185321.000,tPEf,EPO*7B
             case "TKTSX1":
                 // ZVI
                 // $PMTKTSX1,181512,0.000,0.293,44.717,4af30000,-3.324382,0.000099,-0.000850,-0.207713,0.386944*40
@@ -331,7 +341,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     @Override
     public void stop() {
         super.stop();
-        if(manager != null) {
+        if (manager != null) {
             manager.removeNmeaListener(this);
             manager = null;
         }

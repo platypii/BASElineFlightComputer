@@ -255,7 +255,6 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     public void stop() {
         // Stop listening for location updates
         locationService.removeListener(this);
-        locationService = null;
     }
 
     @Override

@@ -35,8 +35,6 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
     final Paint paint = new Paint();
     final Paint text = new Paint();
 
-    final double EPSILON = 0.001;
-
     public PlotView(Context context, AttributeSet attrs) {
         super(context, attrs);
         final SurfaceHolder holder = getHolder();
@@ -60,21 +58,24 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         }
         @Override
         public void run() {
-            while(running) {
+            while (running) {
                 Canvas canvas = null;
                 try {
                     canvas = _surfaceHolder.lockCanvas();
-                    if(canvas != null) {
+                    if (canvas != null) {
                         plot.setCanvas(canvas);
                         synchronized (_surfaceHolder) {
                             drawPlot(plot);
                         }
                     }
                 } catch(Exception e) {
-                    Exceptions.report(e);
+                    // Sometimes surface can be destroyed during slow drawing
+                    if (running) {
+                        Exceptions.report(e);
+                    }
                 } finally {
                     // do this in a finally so that if an exception is thrown, we don't leave the Surface in an inconsistent state
-                    if(canvas != null) {
+                    if (canvas != null) {
                         try {
                             _surfaceHolder.unlockCanvasAndPost(canvas);
                         } catch(Exception e) {
@@ -104,7 +105,7 @@ public abstract class PlotView extends SurfaceView implements SurfaceHolder.Call
         // it might touch the Surface after we return and explode
         boolean retry = true;
         drawingThread.running = false;
-        while(retry) {
+        while (retry) {
             try {
                 drawingThread.join();
                 retry = false;

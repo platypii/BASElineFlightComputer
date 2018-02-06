@@ -45,16 +45,22 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     @Override
     public void start(@NonNull Context context) throws SecurityException {
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        if(manager != null && manager.getProvider(LocationManager.GPS_PROVIDER) != null) {
+        if (manager != null) {
             try {
-                // TODO: Specify looper thread?
-                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                manager.addGpsStatusListener(this);
+                if (manager.getProvider(LocationManager.GPS_PROVIDER) != null) {
+                    // TODO: Specify looper thread?
+                    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                    manager.addGpsStatusListener(this);
+                } else {
+                    Log.e(TAG, "Failed to get android location provider");
+                }
+            } catch (SecurityException e) {
+                Log.e(TAG, "Failed to start android location service, permission denied");
             } catch (Exception e) {
                 Exceptions.report(e);
             }
         } else {
-            Log.e(TAG, "failed to get android location manager");
+            Log.e(TAG, "Failed to get android location manager");
         }
     }
 
@@ -94,7 +100,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
 
             final double vN;
             final double vE;
-            if(Numbers.isReal(groundSpeed) && Numbers.isReal(bearing)) {
+            if (Numbers.isReal(groundSpeed) && Numbers.isReal(bearing)) {
                 vN = groundSpeed * Math.cos(Math.toRadians(bearing));
                 vE = groundSpeed * Math.sin(Math.toRadians(bearing));
             } else {
@@ -131,7 +137,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
                 Log.i(TAG, "GPS first fix");
                 break;
             case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-                if(manager != null) {
+                if (manager != null) {
                     try {
                         gpsStatus = manager.getGpsStatus(gpsStatus);
                         final Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
@@ -143,7 +149,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
                                 used++;
                             }
                         }
-                        // if(satellitesInView != count || satellitesUsed != used) {
+                        // if (satellitesInView != count || satellitesUsed != used) {
                         //     Log.v(TAG, "Satellite Status: " + satellitesUsed + "/" + satellitesInView);
                         // }
                         satellitesInView = count;
@@ -158,7 +164,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     @Override
     public void stop() {
         super.stop();
-        if(manager != null) {
+        if (manager != null) {
             manager.removeGpsStatusListener(this);
             try {
                 manager.removeUpdates(this);

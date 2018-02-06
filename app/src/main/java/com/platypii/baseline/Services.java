@@ -104,11 +104,7 @@ public class Services {
             // Note: Activity.checkSelfPermission added in minsdk 23
             if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 // Enable location services
-                try {
-                    location.start(appContext);
-                } catch (SecurityException e) {
-                    Log.e(TAG, "Failed to start location service", e);
-                }
+                location.start(appContext);
             } else {
                 // Request the missing permissions
                 final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
