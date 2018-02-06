@@ -5,7 +5,7 @@ import android.util.Log;
 import java.util.Locale;
 
 /**
- * Mutable double bounds.
+ * Mutable finite double bounds.
  * Used by PlotView.
  */
 public class Bounds {
@@ -46,8 +46,13 @@ public class Bounds {
      * Expands the bounds to include point x,y
      */
     public void expandBounds(double x0, double y0) {
-        x.expand(x0);
-        y.expand(y0);
+        // Make sure it is finite, but NaN will be handled by Range
+        if (!Double.isInfinite(x0)) {
+            x.expand(x0);
+        }
+        if (!Double.isInfinite(y0)) {
+            y.expand(y0);
+        }
     }
 
     @Override

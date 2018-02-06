@@ -27,7 +27,7 @@
             android:textStyle="bold"
             android:gravity="center"
             android:text="Speed"
-            android:textColor="#2222ee" />
+            android:textColor="#2222ff" />
 
         <TextView
             android:layout_width="0dp"
@@ -43,6 +43,6 @@
     <com.platypii.baseline.views.charts.TimeChart
         android:id="@+id/timeChart"
         android:layout_width="match_parent"
-        android:layout_height="120dp"/>
+        android:layout_height="140dp"/>
 
 </LinearLayout>

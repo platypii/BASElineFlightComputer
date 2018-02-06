@@ -14,6 +14,7 @@ public class ChartsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track_charts);
 
+        // TODO: Load async
         // Load track from extras
         final File trackFile = getTrackFile();
         if (trackFile != null) {
@@ -34,9 +35,10 @@ public class ChartsActivity extends Activity {
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
             final String extraTrackFile = extras.getString(TrackLocalActivity.EXTRA_TRACK_FILE);
-            return new File(extraTrackFile);
-        } else {
-            return null;
+            if (extraTrackFile != null) {
+                return new File(extraTrackFile);
+            }
         }
+        return null;
     }
 }

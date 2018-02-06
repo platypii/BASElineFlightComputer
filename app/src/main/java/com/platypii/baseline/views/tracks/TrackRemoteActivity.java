@@ -51,7 +51,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
             final String track_id = extras.getString(EXTRA_TRACK_ID);
             track = Services.cloud.tracks.getCached(track_id);
             if(track == null) {
-                Exceptions.report(new IllegalStateException("Failed to load track from cache"));
+                Exceptions.report(new IllegalStateException("Failed to load track " + track_id + " from cache"));
                 finish();
             }
         } else {
