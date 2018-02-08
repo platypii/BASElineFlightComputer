@@ -16,7 +16,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 
-public class PolarPlot extends PlotView implements MyLocationListener {
+public class PolarPlotLive extends PlotSurface implements MyLocationListener {
 
     private static final int AXIS_POLAR = 0;
     private final Bounds bounds = new Bounds();
@@ -30,7 +30,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     final Bounds inner = new Bounds();
     final Bounds outer = new Bounds();
 
-    public PolarPlot(Context context, AttributeSet attrs) {
+    public PolarPlotLive(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         final float density = getResources().getDisplayMetrics().density;
@@ -47,17 +47,17 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         inner.y.max = 2 * Convert.MPH;
         outer.y.max = 28 * Convert.MPH;
 
-        options.axis.x.major_units = options.axis.y.major_units = Convert.metric? Convert.KPH : Convert.MPH;
+        options.axis.x = options.axis.y = PlotOptions.axisSpeed();
 
         history.setMaxSize(300);
     }
 
     @Override
     public void drawData(@NonNull Plot plot) {
-        if(locationService != null) {
+        if (locationService != null) {
             final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
             final MLocation loc = locationService.lastLoc;
-            if(loc != null && currentTime - loc.millis <= window) {
+            if (loc != null && currentTime - loc.millis <= window) {
                 // Draw background ellipses
                 drawEllipses(plot);
 
@@ -84,7 +84,7 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 
     private final BlurMaskFilter blurry = new BlurMaskFilter(2 * options.density, BlurMaskFilter.Blur.NORMAL);
     private void drawEllipses(@NonNull Plot plot) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             paint.setStyle(Paint.Style.FILL);
             paint.setMaskFilter(blurry);
             // Draw canopy ellipse
@@ -109,9 +109,9 @@ public class PolarPlot extends PlotView implements MyLocationListener {
     private void drawHistory(@NonNull Plot plot) {
         final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
         synchronized(history) {
-            for(MLocation loc : history) {
+            for (MLocation loc : history) {
                 final int t = (int) (currentTime - loc.millis);
-                if(t <= window) {
+                if (t <= window) {
                     final double vx = loc.groundSpeed();
                     final double vy = loc.climb;
 
@@ -187,11 +187,11 @@ public class PolarPlot extends PlotView implements MyLocationListener {
 
         // Draw horizontal and vertical speed labels (unless near axis)
         text.setColor(0xff888888);
-        if(sy - cy < -44 * options.density || 18 * options.density < sy - cy) {
+        if (sy - cy < -44 * options.density || 18 * options.density < sy - cy) {
             // Horizontal speed label
             plot.canvas.drawText(Convert.speed(vx, 0, true), sx + 3 * options.density, cy + 16 * options.density, text);
         }
-        if(42 * options.density < sx - cx) {
+        if (42 * options.density < sx - cx) {
             // Vertical speed label
             plot.canvas.drawText(Convert.speed(Math.abs(vy), 0, true), cx + 3 * options.density, sy + 16 * options.density, text);
         }
@@ -231,22 +231,6 @@ public class PolarPlot extends PlotView implements MyLocationListener {
         b = b * factor >> 8;
         return (a << 24) + (r << 16) + (g << 8) + b;
     }
-
-//    @Override
-//    public String formatX(double x) {
-//        if(Math.abs(x) < EPSILON)
-//            return "";
-//        else
-//            return Convert.speed(x, 0, true);
-//    }
-//    @Override
-//    public String formatY(double y) {
-//        final double y_abs = Math.abs(y);
-//        if(y_abs < EPSILON)
-//            return "";
-//        else
-//            return Convert.speed(y_abs, 0, true);
-//    }
 
     public void start(@NonNull LocationProvider locationService, @NonNull MyAltimeter altimeter) {
         this.locationService = locationService;

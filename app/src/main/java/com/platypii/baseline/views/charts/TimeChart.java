@@ -1,16 +1,12 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.tracks.TrackFileData;
 import com.platypii.baseline.util.Bounds;
-import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.DataSeries;
-import com.platypii.baseline.util.Dates;
 import android.content.Context;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import java.io.File;
 import java.util.List;
 
 public class TimeChart extends PlotView {
@@ -19,7 +15,7 @@ public class TimeChart extends PlotView {
     private static final int AXIS_SPEED = 1;
     private static final int AXIS_GLIDE = 2;
 
-    private File trackFile;
+    private List<MLocation> trackData;
 
     private final DataSeries altitudeSeries = new DataSeries();
     private final DataSeries speedSeries = new DataSeries();
@@ -28,30 +24,19 @@ public class TimeChart extends PlotView {
     public TimeChart(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        // Slower refresh rate
-        refreshRateMillis = 1000;
-
         final float density = getResources().getDisplayMetrics().density;
         options.padding.top = (int) (4 * density);
         options.padding.bottom = (int) (4 * density);
 
-        options.axis.x = new PlotOptions.AxisOptions() {
-            @Override
-            public String format(double value) {
-                return Dates.chartDate((long) value);
-            }
-        };
-        options.axis.x.major_units = 1;
-        options.axis.y.major_units = Convert.metric? Convert.KPH : Convert.MPH;
+        options.axis.x = PlotOptions.axisTime();
+        options.axis.y = PlotOptions.axisSpeed();
 
         // Initialize bounds with 3 axes
         plot.initBounds(3);
     }
 
-    public void loadTrack(File trackFile) {
-        // Load track data from file
-        this.trackFile = trackFile;
-        final List<MLocation> trackData = TrackFileData.getTrackData(trackFile);
+    public void loadTrack(List<MLocation> trackData) {
+        this.trackData = trackData;
 
         // Load track data into individual time series
         altitudeSeries.reset();
@@ -66,13 +51,12 @@ public class TimeChart extends PlotView {
 
     @Override
     public void drawData(@NonNull Plot plot) {
-        if (trackFile != null) {
+        if (trackData != null) {
             // Draw track data
             drawTrackData(plot);
         } else {
-            // Draw "no track file"
             text.setTextAlign(Paint.Align.CENTER);
-            plot.canvas.drawText("no track file", plot.width / 2, plot.height / 2, text);
+            plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, text);
         }
     }
 

@@ -6,7 +6,7 @@
              android:background="#ff111111"
              tools:context="com.platypii.baseline.views.altimeter.AltimeterActivity">
 
-    <com.platypii.baseline.views.charts.PolarPlot
+    <com.platypii.baseline.views.charts.PolarPlotLive
         android:id="@+id/polar"
         android:layout_width="180dp"
         android:layout_height="180dp"

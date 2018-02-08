@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.charts;
 
+import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.IntBounds;
 import android.support.annotation.Nullable;
 
@@ -40,6 +41,30 @@ class PlotOptions {
         public String format(double value) {
             return null;
         }
+    }
+
+    static AxisOptions axisTime() {
+        return new PlotOptions.AxisOptions() {
+            {
+                major_units = Convert.metric? Convert.KPH : Convert.MPH;
+            }
+            @Override
+            public String format(double value) {
+                return Math.abs(value) < 0.1 ? "" : Convert.speed(value, 0, true);
+            }
+        };
+    }
+
+    static AxisOptions axisSpeed() {
+        return new PlotOptions.AxisOptions() {
+            {
+                major_units = Convert.metric? Convert.KPH : Convert.MPH;
+            }
+            @Override
+            public String format(double value) {
+                return Math.abs(value) < 0.1 ? "" : Convert.speed(value, 0, true);
+            }
+        };
     }
 
 }

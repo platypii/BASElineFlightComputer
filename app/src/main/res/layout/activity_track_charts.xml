@@ -43,6 +43,11 @@
     <com.platypii.baseline.views.charts.TimeChart
         android:id="@+id/timeChart"
         android:layout_width="match_parent"
-        android:layout_height="140dp"/>
+        android:layout_height="160dp"/>
+
+    <com.platypii.baseline.views.charts.PolarPlot
+        android:id="@+id/polarChart"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"/>
 
 </LinearLayout>

@@ -10,7 +10,7 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import java.util.Iterator;
 
-public class SensorPlot extends PlotView {
+public class SensorPlot extends PlotSurface {
 
     private static final int AXIS_SENSOR = 0;
     private final Bounds bounds = new Bounds();
