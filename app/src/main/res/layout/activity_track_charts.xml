@@ -45,6 +45,11 @@
         android:layout_width="match_parent"
         android:layout_height="160dp"/>
 
+    <com.platypii.baseline.views.charts.FlightProfile
+        android:id="@+id/flightProfile"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"/>
+
     <com.platypii.baseline.views.charts.PolarPlot
         android:id="@+id/polarChart"
         android:layout_width="match_parent"

@@ -42,7 +42,7 @@ public class TimeChart extends PlotView {
         altitudeSeries.reset();
         speedSeries.reset();
         glideSeries.reset();
-        for(MLocation loc : trackData) {
+        for (MLocation loc : trackData) {
             altitudeSeries.addPoint(loc.millis, loc.altitude_gps);
             speedSeries.addPoint(loc.millis, loc.totalSpeed());
             glideSeries.addPoint(loc.millis, loc.glideRatio());
