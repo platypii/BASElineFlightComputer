@@ -118,7 +118,7 @@ class NMEA {
         }
         final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1), 16);
         if(checksum1 != checksum2) {
-            throw new NMEAException(String.format(Locale.US, "Invalid NMEA checksum: %02X != %02X for sentence: %s", checksum1, checksum2, nmea));
+            throw new NMEAChecksumException(String.format(Locale.US, "Invalid NMEA checksum: %02X != %02X for sentence: %s", checksum1, checksum2, nmea));
         }
     }
 
