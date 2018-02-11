@@ -67,7 +67,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
     @Override
     public void start(@NonNull final Context context) {
         AsyncTask.execute(() -> {
-            if(!started) {
+            if (!started) {
                 // Start barometer
                 started = true;
                 EventBus.getDefault().register(MyAltimeter.this);
@@ -78,7 +78,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
                 groundLevel.start(prefs);
 
                 // Start GPS updates
-                if(location != null) {
+                if (location != null) {
                     location.addListener(MyAltimeter.this);
                 } else {
                     Log.e(TAG, "Location services should be initialized before altimeter");
@@ -122,8 +122,8 @@ public class MyAltimeter implements BaseService, MyLocationListener {
      */
     private void updateGPS(@NonNull MLocation loc) {
         // Log.d(TAG, "GPS Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + loc.millis);
-        if(!Double.isNaN(loc.altitude_gps)) {
-            if(baro_sample_count > 0) {
+        if (!Double.isNaN(loc.altitude_gps)) {
+            if (baro_sample_count > 0) {
                 // GPS correction for altitude AMSL
                 if (gps_sample_count == 0) {
                     // First altitude reading. Calibrate ground level.
@@ -138,16 +138,16 @@ public class MyAltimeter implements BaseService, MyLocationListener {
             }
 
             // Update gps kalman filter
-            if(lastLoc != null) {
+            if (lastLoc != null) {
                 final long deltaTime = loc.millis - lastLoc.millis; // time since last gps altitude
                 gpsFilter.update(loc.altitude_gps, deltaTime * 0.001);
             } else {
-                gpsFilter.update(loc.altitude_gps, 0);
+                gpsFilter.init(loc.altitude_gps, 0);
             }
             lastLoc = loc;
 
             // Use gps for altitude instead of barometer
-            if(baro_sample_count == 0) {
+            if (baro_sample_count == 0) {
                 // No barometer use gps
                 lastFixMillis = loc.millis;
                 // Update the official altitude
@@ -170,7 +170,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
      */
     private void updateAltitude() {
         // Log.d(TAG, "Altimeter Update Time: " + System.currentTimeMillis() + " " + System.nanoTime() + " " + lastFixMillis + " " + lastFixNano);
-        if(Double.isNaN(altitude)) {
+        if (Double.isNaN(altitude)) {
             Log.e(TAG, "Altitude should not be NaN: altitude = " + altitude);
         }
         // Create the measurement

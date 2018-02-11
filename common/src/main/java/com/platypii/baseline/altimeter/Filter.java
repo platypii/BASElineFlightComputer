@@ -12,9 +12,16 @@ public abstract class Filter {
     // public double a = Double.NaN; // TODO: Vertical acceleration
 
     /**
+     * Initial values for the filter
+     * @param z the initial measurement
+     * @param v the initial velocity
+     */
+    public abstract void init(double z, double v);
+
+    /**
      * Process a new measurement
-     * @param z The measurement
-     * @param dt The change in time since the last measurement. 0 for first reading.
+     * @param z the measurement
+     * @param dt the change in time since the last measurement. 0 for first reading.
      */
     public abstract void update(double z, double dt);
 

@@ -14,7 +14,7 @@ public class KalmanTest {
         Filter filter = new FilterKalman();
 
         // Add first sample
-        filter.update(10, 0);
+        filter.init(10, 0);
 
         assertEquals(10, filter.x, .1);
         assertEquals(0, filter.v, .1);
@@ -25,7 +25,7 @@ public class KalmanTest {
         Filter filter = new FilterKalman();
 
         // Add samples
-        filter.update(10, 0);
+        filter.init(10, 0);
         filter.update(20, 1);
         filter.update(30, 1);
         filter.update(40, 1);
@@ -44,7 +44,7 @@ public class KalmanTest {
         Filter filter = new FilterKalman();
 
         // Add samples
-        filter.update(10, 0);
+        filter.init(10, 0);
         filter.update(20, 1);
         filter.update(30, 1);
         filter.update(40, 1);

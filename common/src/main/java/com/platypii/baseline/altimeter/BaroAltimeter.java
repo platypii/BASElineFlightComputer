@@ -83,8 +83,15 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
             Log.e(TAG, "Invalid update: " + Arrays.toString(event.values));
             return;
         }
-        if (lastFixNano >= event.timestamp) {
+        if (event.timestamp == lastFixNano) {
             Log.e(TAG, "Double update: " + lastFixNano);
+            return;
+        }
+        if (event.timestamp < lastFixNano) {
+            Log.e(TAG, "Negative time update: " + lastFixNano + " - " + event.timestamp + " = ");
+            // Update lastFixNano and return
+            // If we didn't update lastfix, altimeter would halt on one rogue future timestamp
+            lastFixNano = event.timestamp;
             return;
         }
 
@@ -92,7 +99,6 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         final long lastFixMillis = millis - TimeOffset.phoneOffsetMillis;
         // Compute time since last sample in nanoseconds
         final long deltaTime = (lastFixNano == 0)? 0 : (event.timestamp - lastFixNano);
-        lastFixNano = event.timestamp;
 
         // Convert pressure to altitude
         pressure = event.values[0];
@@ -114,7 +120,11 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         }
 
         // Apply kalman filter to pressure altitude, to produce smooth barometric pressure altitude.
-        filter.update(pressure_altitude_raw, deltaTime * 1E-9);
+        if (lastFixNano <= 0) {
+            filter.init(pressure_altitude_raw, 0);
+        } else {
+            filter.update(pressure_altitude_raw, deltaTime * 1E-9);
+        }
         pressure_altitude_filtered = filter.x;
         climb = filter.v;
 
@@ -126,6 +136,9 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
 
         // Compute model error
         model_error.addSample(pressure_altitude_filtered - pressure_altitude_raw);
+
+        // Update last fix
+        lastFixNano = event.timestamp;
 
         // Publish official altitude measurement
         final MPressure myPressure = new MPressure(lastFixMillis, lastFixNano, pressure_altitude_filtered, climb, pressure);
