@@ -87,6 +87,11 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             signInPreference.setSummary(R.string.pref_sign_in_description);
         }
         // Update bluetooth status
+        if (Services.bluetooth.preferences.preferenceEnabled) {
+            bluetoothPreference.setWidgetLayoutResource(R.layout.icon_bluetooth_on);
+        } else {
+            bluetoothPreference.setWidgetLayoutResource(R.layout.icon_bluetooth);
+        }
         bluetoothPreference.setSummary(Services.bluetooth.getStatusMessage(activity));
     }
 
