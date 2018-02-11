@@ -86,7 +86,7 @@ public class TrackFileData {
                         gpsAltitudeFilter.update(alt_gps, dt);
                     }
                     gpsLastMillis = millis;
-                    // CLimb from baro or gps
+                    // Climb rate from baro or gps
                     final double climb;
                     if (Double.isNaN(baroAltitudeFilter.v)) {
                         climb = gpsAltitudeFilter.v;
@@ -148,6 +148,7 @@ public class TrackFileData {
             return -1L;
         }
     }
+
     static long parseFlySightDate(String dateString) throws ParseException {
         // Lazy init
         if (df == null) {

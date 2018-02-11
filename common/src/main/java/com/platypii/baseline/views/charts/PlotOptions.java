@@ -46,7 +46,7 @@ class PlotOptions {
     static AxisOptions axisTime() {
         return new PlotOptions.AxisOptions() {
             {
-                major_units = Convert.metric? Convert.KPH : Convert.MPH;
+                major_units = 60000; // 1 Minute
             }
             @Override
             public String format(double value) {
