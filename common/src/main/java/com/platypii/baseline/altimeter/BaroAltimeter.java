@@ -164,7 +164,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
      * @param pressure Pressure in hPa
      * @return The pressure altitude in meters
      */
-    private static double pressureToAltitude(double pressure) {
+    public static double pressureToAltitude(double pressure) {
         // Barometric formula
         return SCALE * (1 - Math.pow(pressure / pressure0, EXP));
     }

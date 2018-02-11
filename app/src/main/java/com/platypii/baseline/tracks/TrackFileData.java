@@ -1,5 +1,8 @@
 package com.platypii.baseline.tracks;
 
+import com.platypii.baseline.altimeter.BaroAltimeter;
+import com.platypii.baseline.altimeter.Filter;
+import com.platypii.baseline.altimeter.FilterKalman;
 import com.platypii.baseline.measurements.MLocation;
 import android.util.Log;
 import java.io.BufferedReader;
@@ -24,7 +27,15 @@ public class TrackFileData {
     private static final String TAG = "TrackFileData";
 
     public static List<MLocation> getTrackData(File trackFile) {
+        // Altitude kalman filters
+        final Filter baroAltitudeFilter = new FilterKalman();
+        final Filter gpsAltitudeFilter = new FilterKalman();
+
+        long baroLastNano = -1L;
+        long gpsLastMillis = -1L;
+
         final List<MLocation> data = new ArrayList<>();
+
         // Read file line by line
         // TODO minsdk19: InputStreamReader(,StandardCharsets.UTF_8)
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(trackFile))))) {
@@ -65,15 +76,39 @@ public class TrackFileData {
                     final double lat = getColumnDouble(row, columns, "lat");
                     final double lon = getColumnDouble(row, columns, "lon");
                     final double alt_gps = getColumnDouble(row, columns, "hMSL");
-                    final double climb = -getColumnDouble(row, columns, "velD");
                     final double vN = getColumnDouble(row, columns, "velN");
                     final double vE = getColumnDouble(row, columns, "velE");
+                    // Update gps altitude filter
+                    if (gpsLastMillis < 0) {
+                        gpsAltitudeFilter.init(alt_gps, 0);
+                    } else {
+                        final double dt = (millis - gpsLastMillis) * 0.001;
+                        gpsAltitudeFilter.update(alt_gps, dt);
+                    }
+                    gpsLastMillis = millis;
+                    // CLimb from baro or gps
+                    final double climb;
+                    if (Double.isNaN(baroAltitudeFilter.v)) {
+                        climb = gpsAltitudeFilter.v;
+                    } else {
+                        climb = baroAltitudeFilter.v;
+                    }
                     if (!Double.isNaN(lat) && !Double.isNaN(lon)) {
                         final MLocation loc = new MLocation(millis, lat, lon, alt_gps, climb, vN, vE, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 0, 0);
                         data.add(loc);
                     }
-                } else if (columns.containsKey("sensor") && row[columns.get("sensor")].equals("gps")) {
-                    // TODO: Handle alti measurement
+                } else if (columns.containsKey("sensor") && row[columns.get("sensor")].equals("alt")) {
+                    // BASEline alti measurement
+                    final long nano = getColumnLong(row, columns, "nano");
+                    final double pressure = getColumnDouble(row, columns, "pressure");
+                    final double pressureAltitude = BaroAltimeter.pressureToAltitude(pressure);
+                    if (baroLastNano < 0) {
+                        baroAltitudeFilter.init(pressureAltitude, 0);
+                    } else {
+                        final double dt = (nano - baroLastNano) * 1E-9;
+                        baroAltitudeFilter.update(pressureAltitude, dt);
+                    }
+                    baroLastNano = nano;
                 }
             }
         } catch (IOException e) {
