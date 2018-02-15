@@ -23,7 +23,8 @@ public class ChartsActivity extends Activity {
         // Load track from extras
         final File trackFile = getTrackFile();
         if (trackFile != null) {
-            final List<MLocation> trackData = TrackFileData.getTrackData(trackFile);
+            final List<MLocation> trackDataRaw = TrackFileData.getTrackData(trackFile);
+            final List<MLocation> trackData = TrackFileData.autoTrim(trackDataRaw);
             final TimeChart timeChart = findViewById(R.id.timeChart);
             final FlightProfile flightProfile = findViewById(R.id.flightProfile);
             final PolarPlot polarChart = findViewById(R.id.polarChart);
