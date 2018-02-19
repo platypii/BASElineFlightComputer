@@ -58,15 +58,17 @@ public class PolarPlot extends PlotView {
     @Override
     public void drawData(@NonNull Plot plot) {
         if (trackData != null) {
-            // Draw background ellipses
-            drawEllipses(plot);
+            if (trackData.isEmpty()) {
+                text.setTextAlign(Paint.Align.CENTER);
+                plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, text);
+            } else {
+                // Draw background ellipses
+                drawEllipses(plot);
 
-            // Draw data
-            paint.setColor(0xff7f00ff);
-            plot.drawLine(AXIS_POLAR, speedSeries, 1.5f, paint);
-        } else {
-            text.setTextAlign(Paint.Align.CENTER);
-            plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, text);
+                // Draw data
+                paint.setColor(0xff7f00ff);
+                plot.drawLine(AXIS_POLAR, speedSeries, 1.5f, paint);
+            }
         }
     }
 

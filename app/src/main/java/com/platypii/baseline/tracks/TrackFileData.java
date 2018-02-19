@@ -4,8 +4,10 @@ import com.platypii.baseline.altimeter.BaroAltimeter;
 import com.platypii.baseline.altimeter.Filter;
 import com.platypii.baseline.altimeter.FilterKalman;
 import com.platypii.baseline.measurements.MLocation;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,7 +28,24 @@ import java.util.zip.GZIPInputStream;
 public class TrackFileData {
     private static final String TAG = "TrackFileData";
 
+    @Nullable
     public static List<MLocation> getTrackData(File trackFile) {
+        // Try and parse file
+        try {
+            final List<MLocation> trackData = readTrackFile(trackFile);
+            // Trim plane and ground
+            final List<MLocation> trimmed = autoTrim(trackData);
+            return trimmed;
+        } catch (IOException e) {
+            Log.e(TAG, "Exception while reading track file", e);
+            return null;
+        }
+    }
+
+    /**
+     * Load track data from file into location data
+     */
+    private static List<MLocation> readTrackFile(File trackFile) throws IOException {
         // Altitude kalman filters
         final Filter baroAltitudeFilter = new FilterKalman();
         final Filter gpsAltitudeFilter = new FilterKalman();
@@ -111,8 +130,11 @@ public class TrackFileData {
                     baroLastNano = nano;
                 }
             }
+        } catch (EOFException e) {
+            // Still error but less verbose
+            Log.e(TAG, "Premature end of gzip track file " + trackFile + "\n" + e);
         } catch (IOException e) {
-            Log.e(TAG, "Error getting track data from " + trackFile, e);
+            Log.e(TAG, "Error reading track data from " + trackFile, e);
         }
         return data;
     }
@@ -120,8 +142,10 @@ public class TrackFileData {
     /**
      * Trim plane ride and ground from track data
      */
-    public static List<MLocation> autoTrim(List<MLocation> points) {
-        final int margin_size = 50; // Number of data points on either side of the jump
+    private static List<MLocation> autoTrim(List<MLocation> points) {
+        // Margin size is the number of data points on either side of the jump
+        // TODO: Use time instead of samples
+        final int margin_size = 50;
         final int n = points.size();
         // Scan data
         int index_start = 0;
@@ -138,7 +162,7 @@ public class TrackFileData {
         // Conform to list bounds
         index_start = index_start - margin_size < 0 ? 0 : index_start - margin_size;
         index_end = index_end + margin_size > n ? n : index_end + margin_size;
-        return points.subList(index_start, index_end + margin_size);
+        return points.subList(index_start, index_end);
     }
 
     private static void addMapping(Map<String,Integer> columns, String from, String to) {

@@ -52,11 +52,13 @@ public class TimeChart extends PlotView {
     @Override
     public void drawData(@NonNull Plot plot) {
         if (trackData != null) {
-            // Draw track data
-            drawTrackData(plot);
-        } else {
-            text.setTextAlign(Paint.Align.CENTER);
-            plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, text);
+            if (trackData.isEmpty()) {
+                text.setTextAlign(Paint.Align.CENTER);
+                plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, text);
+            } else {
+                // Draw track data
+                drawTrackData(plot);
+            }
         }
     }
 

@@ -61,12 +61,14 @@ public class FlightProfile extends PlotView {
     @Override
     public void drawData(@NonNull Plot plot) {
         if (trackData != null) {
-            // Draw data
-            paint.setColor(0xff7f00ff);
-            plot.drawLine(AXIS_PROFILE, profileSeries, 1.5f, paint);
-        } else {
-            text.setTextAlign(Paint.Align.CENTER);
-            plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, text);
+            if (trackData.isEmpty()) {
+                text.setTextAlign(Paint.Align.CENTER);
+                plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, text);
+            } else {
+                // Draw data
+                paint.setColor(0xff7f00ff);
+                plot.drawLine(AXIS_PROFILE, profileSeries, 1.5f, paint);
+            }
         }
     }
 
