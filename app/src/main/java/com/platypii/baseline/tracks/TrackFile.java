@@ -36,24 +36,6 @@ public class TrackFile {
         return file.delete();
     }
 
-    /**
-     * Move the track file to synced directory
-     */
-    public void archive() {
-        Log.i(TAG, "Archiving track file " + file.getName());
-        // Ensure synced directory exists
-        final File syncedDir = new File(file.getParentFile(), "synced");
-        if(!syncedDir.exists()) {
-            syncedDir.mkdir();
-        }
-        // Move track file to synced directory
-        final File destination = new File(syncedDir, file.getName());
-        if(file.renameTo(destination)) {
-            // Move succeeded
-            file = destination;
-        }
-    }
-
     @Override
     public String toString() {
         return file.getName();

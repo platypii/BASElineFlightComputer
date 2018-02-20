@@ -188,7 +188,7 @@ public class TrackFileData {
     }
 
     private static SimpleDateFormat df;
-    private static long getColumnDate(String[] row, Map<String, Integer> columns, String columnName) {
+    private static long getColumnDate(String[] row, Map<String,Integer> columns, String columnName) {
         try {
             final String dateString = row[columns.get(columnName)];
             return parseFlySightDate(dateString);

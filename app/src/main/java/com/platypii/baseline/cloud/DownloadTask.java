@@ -31,7 +31,7 @@ public class DownloadTask implements Runnable {
     public DownloadTask(@NonNull Context context, @NonNull CloudData track) {
         this.context = context;
         this.track = track;
-        this.trackUrl = "https://baseline.ws/tracks/" + track.track_id + "/baseline-track.csv";
+        this.trackUrl = "https://baseline.ws/tracks/" + track.track_id + "/baseline-track.csv.gz";
         this.file = track.localFile(context);
     }
 
@@ -52,21 +52,21 @@ public class DownloadTask implements Runnable {
             // TODO: Check file hash?
             Log.i(TAG, "Download successful, track " + track.track_id);
             EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(track.track_id, file));
-        } catch(AuthException e) {
+        } catch (AuthException e) {
             Log.e(TAG, "Failed to download file - auth error", e);
-            if(networkAvailable) {
+            if (networkAvailable) {
                 Exceptions.report(e);
             }
             EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, "auth error"));
-        } catch(IOException e) {
+        } catch (IOException e) {
             Log.e(TAG, "Failed to download file", e);
-            if(networkAvailable) {
+            if (networkAvailable) {
                 Exceptions.report(e);
             }
             EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, e.getMessage()));
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
-            if(networkAvailable) {
+            if (networkAvailable) {
                 Exceptions.report(e);
             }
             EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, "invalid response from server"));
@@ -80,22 +80,26 @@ public class DownloadTask implements Runnable {
         final URL url = new URL(trackUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", auth);
-        conn.setRequestProperty("Accept-Encoding", "gzip");
         conn.setRequestProperty("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME);
-        // Log.d(TAG, "Uploading file with size " + contentLength);
         try {
             // Read response
             final int status = conn.getResponseCode();
-            if(status == 200) {
+            if (status == 200) {
                 // Read body
                 final InputStream is = conn.getInputStream();
                 copy(track.track_id, is, file, conn.getContentLength());
                 Log.i(TAG, "Track download successful");
-            } else if(status == 401) {
+            } else if (status == 401) {
                 throw new AuthException(auth);
             } else {
                 throw new IOException("http status code " + status);
             }
+        } catch (IOException e) {
+            Log.e(TAG, "Exception while downloading track " + trackUrl, e);
+            // Remove partial file so that download will retry
+            file.delete();
+            // Delete parent directory if it's empty
+            file.getParentFile().delete();
         } finally {
             conn.disconnect();
         }
@@ -115,7 +119,7 @@ public class DownloadTask implements Runnable {
         final byte buffer[] = new byte[1024];
         int bytesRead;
         int bytesCopied = 0;
-        while((bytesRead = is.read(buffer)) != -1) {
+        while ((bytesRead = is.read(buffer)) != -1) {
             os.write(buffer, 0, bytesRead);
             bytesCopied += bytesRead;
 

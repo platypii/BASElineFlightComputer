@@ -11,6 +11,7 @@ import com.platypii.baseline.util.Network;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import java.io.File;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,28 +50,28 @@ class UploadTask implements Runnable {
             // Make HTTP request
             final CloudData trackData = postTrack(trackFile, authToken);
             // Move track to synced directory
-            trackFile.archive();
+            archive(trackData);
             // Add to cache
             Services.cloud.tracks.addTrackData(trackData);
             // Update track listing
             Services.cloud.listing.listAsync(authToken, true);
             Log.i(TAG, "Upload successful, track " + trackData.track_id);
             EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, trackData));
-        } catch(AuthException e) {
+        } catch (AuthException e) {
             Log.e(TAG, "Failed to upload file - auth error", e);
-            if(networkAvailable) {
+            if (networkAvailable) {
                 Exceptions.report(e);
             }
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "auth error"));
-        } catch(IOException e) {
+        } catch (IOException e) {
             Log.e(TAG, "Failed to upload file", e);
-            if(networkAvailable) {
+            if (networkAvailable) {
                 Exceptions.report(e);
             }
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
-            if(networkAvailable) {
+            if (networkAvailable) {
                 Exceptions.report(e);
             }
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "invalid response from server"));
@@ -81,7 +82,7 @@ class UploadTask implements Runnable {
      * HTTP post track to baseline, parse response as CloudData
      */
     @NonNull
-    private static CloudData postTrack(@NonNull TrackFile trackFile, String auth) throws IOException, JSONException {
+    private CloudData postTrack(@NonNull TrackFile trackFile, String auth) throws IOException, JSONException {
         final long contentLength = trackFile.file.length();
         final String md5 = MD5.md5(trackFile.file);
         final URL url = new URL(postUrl);
@@ -94,7 +95,7 @@ class UploadTask implements Runnable {
         try {
             conn.setDoOutput(true);
             // Write to OutputStream
-            if(contentLength > Integer.MAX_VALUE) {
+            if (contentLength > Integer.MAX_VALUE) {
                 conn.setChunkedStreamingMode(0);
             } else {
                 conn.setFixedLengthStreamingMode((int) contentLength);
@@ -104,18 +105,38 @@ class UploadTask implements Runnable {
             os.close();
             // Read response
             final int status = conn.getResponseCode();
-            if(status == 200) {
+            if (status == 200) {
                 // Read body
                 final String body = IOUtil.toString(conn.getInputStream());
                 final JSONObject jsonObject = new JSONObject(body);
                 return CloudData.fromJson(jsonObject);
-            } else if(status == 401) {
+            } else if (status == 401) {
                 throw new AuthException(auth);
             } else {
                 throw new IOException("http status code " + status);
             }
         } finally {
             conn.disconnect();
+        }
+    }
+
+    /**
+     * Move the track file to track directory
+     */
+    private void archive(CloudData trackData) {
+        Log.i(TAG, "Archiving track file " + trackFile.getName() + " to " + trackData.track_id);
+        // Move form source to destination
+        final File source = trackFile.file;
+        final File destination = trackData.localFile(context);
+        // Ensure track directory exists
+        final File trackDir = destination.getParentFile();
+        if (!trackDir.exists()) {
+            trackDir.mkdir();
+        }
+        // Move track file to track directory
+        if (source.renameTo(destination)) {
+            // Move succeeded
+            trackFile.file = destination;
         }
     }
 
@@ -127,7 +148,7 @@ class UploadTask implements Runnable {
         final byte buffer[] = new byte[1024];
         int bytesRead;
         int bytesCopied = 0;
-        while((bytesRead = is.read(buffer)) != -1) {
+        while ((bytesRead = is.read(buffer)) != -1) {
             output.write(buffer, 0, bytesRead);
             bytesCopied += bytesRead;
 
