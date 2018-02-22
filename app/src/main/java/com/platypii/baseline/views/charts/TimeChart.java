@@ -15,7 +15,7 @@ public class TimeChart extends PlotView {
     private static final int AXIS_SPEED = 1;
     private static final int AXIS_GLIDE = 2;
 
-    private List<MLocation> trackData;
+    List<MLocation> trackData;
 
     private final DataSeries altitudeSeries = new DataSeries();
     private final DataSeries speedSeries = new DataSeries();

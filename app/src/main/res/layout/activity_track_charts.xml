@@ -1,45 +1,51 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.platypii.baseline.views.tracks.TrackLocalActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="0dp">
+    android:padding="0dp"
+    tools:context="com.platypii.baseline.views.tracks.TrackLocalActivity">
+
+    <include
+        layout="@layout/chart_stats"/>
 
     <!-- Legend -->
     <LinearLayout
         android:id="@+id/legend"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/chartStats">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textStyle="bold"
             android:gravity="center"
             android:text="Altitude"
-            android:textColor="#dd1111" />
+            android:textColor="#dd1111"
+            android:textStyle="bold"/>
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textStyle="bold"
             android:gravity="center"
             android:text="Speed"
-            android:textColor="#2222ff" />
+            android:textColor="#2222ff"
+            android:textStyle="bold"/>
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textStyle="bold"
             android:gravity="center"
             android:text="Glide"
-            android:textColor="#8f00ff" />
+            android:textColor="#8f00ff"
+            android:textStyle="bold"/>
 
     </LinearLayout>
 
-    <com.platypii.baseline.views.charts.TimeChart
+    <com.platypii.baseline.views.charts.TimeChartTouchable
         android:id="@+id/timeChart"
         android:layout_width="match_parent"
         android:layout_height="160dp"
@@ -49,10 +55,11 @@
         android:id="@+id/flightProfileLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_below="@id/timeChart"
-        android:textStyle="bold"
-        android:text="Flight Profile" />
+        android:layout_marginTop="8dp"
+        android:text="Flight Profile"
+        android:textStyle="bold"/>
+
     <com.platypii.baseline.views.charts.FlightProfile
         android:id="@+id/flightProfile"
         android:layout_width="match_parent"
@@ -63,10 +70,11 @@
         android:id="@+id/polarLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_below="@id/flightProfile"
-        android:textStyle="bold"
-        android:text="Polar"/>
+        android:layout_marginTop="8dp"
+        android:text="Polar"
+        android:textStyle="bold"/>
+
     <com.platypii.baseline.views.charts.PolarPlot
         android:id="@+id/polarChart"
         android:layout_width="match_parent"

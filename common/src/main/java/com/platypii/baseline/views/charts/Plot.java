@@ -188,6 +188,15 @@ class Plot {
     }
 
     /**
+     * Returns the data-space x coordinate from a screen-space x coordinate
+     */
+    double getXinverse(int axis, double sx) {
+        final IntBounds padding = options.padding;
+        final double ppm_x = (width - padding.right - padding.left) / (bounds[axis].x.max - bounds[axis].x.min); // pixels per meter
+        return (sx - padding.left) / ppm_x + bounds[axis].x.min;
+    }
+
+    /**
      * Returns the screen-space y coordinate
      */
     float getY(int axis, double y) {
