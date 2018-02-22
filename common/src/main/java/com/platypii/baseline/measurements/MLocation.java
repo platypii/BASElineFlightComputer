@@ -10,7 +10,7 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.Locale;
 
-public class MLocation extends Measurement {
+public class MLocation extends Measurement implements Comparable<MLocation> {
     private static final String TAG = "MLocation";
 
     // GPS
@@ -125,6 +125,38 @@ public class MLocation extends Measurement {
     @NonNull
     public LatLng moveDirection(double bearing, double distance) {
         return Geo.moveDirection(latitude, longitude, bearing, distance);
+    }
+
+    /**
+     * Implement natural ordering on millis
+     */
+    @Override
+    public int compareTo(@NonNull MLocation loc) {
+        if (millis < loc.millis) {
+            return -1;
+        } else if (loc.millis == millis) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    /**
+     * Dummy constructor, useful for binary search
+     */
+    public MLocation() {
+        this.millis = -1L;
+        this.latitude = Double.NaN;
+        this.longitude = Double.NaN;
+        this.altitude_gps = Double.NaN;
+        this.climb = Double.NaN;
+        this.vN = Double.NaN;
+        this.vE = Double.NaN;
+        this.pdop = Float.NaN;
+        this.hdop = Float.NaN;
+        this.vdop = Float.NaN;
+        this.satellitesUsed = 0;
+        this.satellitesInView = 0;
     }
 
 }

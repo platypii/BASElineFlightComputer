@@ -116,7 +116,7 @@ public class ChartsActivity extends Activity {
             Log.i(TAG, "Focus " + location);
             // TODO: Date should have timezone
             timeLabel.setText("time: " + new Date(location.millis).toString());
-            altitudeLabel.setText("alt: " + Convert.altitude(location.altitude_gps));
+            altitudeLabel.setText("alt: " + Convert.distance(location.altitude_gps));
             speedLabel.setText("speed: " + Convert.speed(location.totalSpeed()));
             glideLabel.setText("glide: " + Convert.glide(location.groundSpeed(), location.climb, 1, true));
         } else {
