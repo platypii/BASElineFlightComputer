@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.charts;
 
+import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
@@ -8,6 +9,7 @@ import com.platypii.baseline.util.DataSeries;
 import android.content.Context;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import java.util.List;
 
@@ -17,11 +19,14 @@ public class FlightProfile extends PlotView {
     private final Bounds bounds = new Bounds();
 
     private List<MLocation> trackData;
+    private MLocation start;
 
     private final DataSeries profileSeries = new DataSeries();
 
     final Bounds inner = new Bounds();
     final Bounds outer = new Bounds();
+
+    private ChartFocusEvent focus;
 
     public FlightProfile(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -49,13 +54,18 @@ public class FlightProfile extends PlotView {
         // Load track data into time series
         profileSeries.reset();
         if (!trackData.isEmpty()) {
-            final MLocation start = trackData.get(0);
+            start = trackData.get(0);
             for (MLocation loc : trackData) {
                 final double x = start.distanceTo(loc);
                 final double y = loc.altitude_gps - start.altitude_gps;
                 profileSeries.addPoint(x, y);
             }
         }
+    }
+
+    public void onFocus(@Nullable ChartFocusEvent event) {
+        this.focus = event;
+        invalidate();
     }
 
     @Override
@@ -69,6 +79,14 @@ public class FlightProfile extends PlotView {
                 paint.setColor(0xff7f00ff);
                 plot.drawLine(AXIS_PROFILE, profileSeries, 1.5f, paint);
             }
+        }
+        // Draw focus
+        if (focus != null) {
+            final double x = start.distanceTo(focus.location);
+            final double y = focus.location.altitude_gps - start.altitude_gps;
+            paint.setColor(0xddeeeeee);
+            paint.setStyle(Paint.Style.STROKE);
+            plot.drawPoint(0, x, y, 8f, paint);
         }
     }
 

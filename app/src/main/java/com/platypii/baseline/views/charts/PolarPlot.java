@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.charts;
 
+import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
@@ -10,6 +11,7 @@ import android.graphics.BlurMaskFilter;
 import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import java.util.List;
 
@@ -24,6 +26,8 @@ public class PolarPlot extends PlotView {
 
     final Bounds inner = new Bounds();
     final Bounds outer = new Bounds();
+
+    private ChartFocusEvent focus;
 
     public PolarPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,6 +59,11 @@ public class PolarPlot extends PlotView {
         }
     }
 
+    public void onFocus(@Nullable ChartFocusEvent event) {
+        this.focus = event;
+        invalidate();
+    }
+
     @Override
     public void drawData(@NonNull Plot plot) {
         if (trackData != null) {
@@ -69,6 +78,14 @@ public class PolarPlot extends PlotView {
                 paint.setColor(0xff7f00ff);
                 plot.drawLine(AXIS_POLAR, speedSeries, 1.5f, paint);
             }
+        }
+        // Draw focus
+        if (focus != null) {
+            final double x = focus.location.groundSpeed();
+            final double y = focus.location.climb;
+            paint.setColor(0xddeeeeee);
+            paint.setStyle(Paint.Style.STROKE);
+            plot.drawPoint(0, x, y, 8f, paint);
         }
     }
 

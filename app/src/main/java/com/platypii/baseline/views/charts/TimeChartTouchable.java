@@ -3,7 +3,6 @@ package com.platypii.baseline.views.charts;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import java.util.Collections;
@@ -39,12 +38,6 @@ public class TimeChartTouchable extends TimeChart {
         if (closest_index < 0) closest_index = -closest_index;
         if (closest_index == trackData.size()) closest_index--;
         return trackData.get(closest_index);
-    }
-
-    @Override
-    public void drawData(@NonNull Plot plot) {
-        super.drawData(plot);
-        // TODO: Draw focus line
     }
 
 }

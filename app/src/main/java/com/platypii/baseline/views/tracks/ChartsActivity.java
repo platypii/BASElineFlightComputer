@@ -31,6 +31,8 @@ public class ChartsActivity extends Activity {
 
     private TextView timeLabel;
     private TextView altitudeLabel;
+    private TextView horizontalSpeedLabel;
+    private TextView verticalSpeedLabel;
     private TextView speedLabel;
     private TextView glideLabel;
 
@@ -50,6 +52,8 @@ public class ChartsActivity extends Activity {
 
         timeLabel = findViewById(R.id.timeLabel);
         altitudeLabel = findViewById(R.id.altitudeLabel);
+        horizontalSpeedLabel = findViewById(R.id.hSpeedLabel);
+        verticalSpeedLabel = findViewById(R.id.vSpeedLabel);
         speedLabel = findViewById(R.id.speedLabel);
         glideLabel = findViewById(R.id.glideLabel);
 
@@ -110,19 +114,30 @@ public class ChartsActivity extends Activity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onChartFocus(@Nullable ChartFocusEvent event) {
-        // Update chart stats
+        updateChartStats(event);
+        // Notify child views
+        timeChart.onFocus(event);
+        flightProfile.onFocus(event);
+        polarChart.onFocus(event);
+    }
+
+    private void updateChartStats(@Nullable ChartFocusEvent event) {
         if (event != null && event.location != null) {
             final MLocation location = event.location;
             Log.i(TAG, "Focus " + location);
             // TODO: Date should have timezone
             timeLabel.setText("time: " + new Date(location.millis).toString());
             altitudeLabel.setText("alt: " + Convert.distance(location.altitude_gps));
+            horizontalSpeedLabel.setText("h-speed: " + Convert.speed(location.groundSpeed()));
+            verticalSpeedLabel.setText("v-speed: " + Convert.speed(location.climb));
             speedLabel.setText("speed: " + Convert.speed(location.totalSpeed()));
             glideLabel.setText("glide: " + Convert.glide(location.groundSpeed(), location.climb, 1, true));
         } else {
             Log.i(TAG, "Clear focus");
             timeLabel.setText("time: ");
             altitudeLabel.setText("alt: ");
+            horizontalSpeedLabel.setText("h-speed: ");
+            verticalSpeedLabel.setText("v-speed: ");
             speedLabel.setText("speed: ");
             glideLabel.setText("glide: ");
         }

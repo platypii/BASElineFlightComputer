@@ -1,11 +1,13 @@
 package com.platypii.baseline.views.charts;
 
+import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
 import android.content.Context;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import java.util.List;
 
@@ -20,6 +22,8 @@ public class TimeChart extends PlotView {
     private final DataSeries altitudeSeries = new DataSeries();
     private final DataSeries speedSeries = new DataSeries();
     private final DataSeries glideSeries = new DataSeries();
+
+    private ChartFocusEvent focus;
 
     public TimeChart(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -49,6 +53,11 @@ public class TimeChart extends PlotView {
         }
     }
 
+    public void onFocus(@Nullable ChartFocusEvent event) {
+        this.focus = event;
+        invalidate();
+    }
+
     @Override
     public void drawData(@NonNull Plot plot) {
         if (trackData != null) {
@@ -59,6 +68,13 @@ public class TimeChart extends PlotView {
                 // Draw track data
                 drawTrackData(plot);
             }
+        }
+        // Draw focus line
+        if (focus != null) {
+            final float sx = plot.getX(0, focus.location.millis);
+            paint.setColor(0xddeeeeee);
+            paint.setStrokeWidth(3f);
+            plot.canvas.drawLine(sx, 0, sx, getHeight(), paint);
         }
     }
 
