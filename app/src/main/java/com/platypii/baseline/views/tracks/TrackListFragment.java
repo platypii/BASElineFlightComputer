@@ -56,12 +56,13 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
 
     private void updateList() {
         // Update list from track cache
+        final List<TrackFile> updatedTracks = TrackFiles.getTracks(getActivity());
         trackList.clear();
-        trackList.addAll(TrackFiles.getTracks(getActivity()));
+        trackList.addAll(updatedTracks);
         listAdapter.notifyDataSetChanged();
 
         // Handle no-tracks case
-        if(listAdapter.isEmpty()) {
+        if (listAdapter.isEmpty()) {
             tracksEmptyLabel.setVisibility(View.VISIBLE);
         } else {
             tracksEmptyLabel.setVisibility(View.GONE);
@@ -72,9 +73,6 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         listAdapter.clickItem(position, getActivity());
     }
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-    }
 
     @Override
     public void onPause() {
@@ -84,7 +82,7 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(SyncEvent event) {
-        if(event instanceof SyncEvent.UploadProgress) {
+        if (event instanceof SyncEvent.UploadProgress) {
             // Don't change track list, just re-draw progress bar
             listAdapter.notifyDataSetChanged();
         } else {

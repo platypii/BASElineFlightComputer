@@ -17,6 +17,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Track adapter renders a list of tracks, both local and remote
+ */
 class TrackAdapter extends BaseAdapter {
 
     // Item types
@@ -39,7 +42,7 @@ class TrackAdapter extends BaseAdapter {
     private static List<ListItem> populateItems(@NonNull List<TrackFile> trackFiles) {
         final List<ListItem> items = new ArrayList<>();
         // Add Unsynced tracks
-        if(!trackFiles.isEmpty()) {
+        if (!trackFiles.isEmpty()) {
             items.add(new ListHeader("Not synced"));
             for (TrackFile trackFile : trackFiles) {
                 items.add(new ListTrackFile(trackFile));
@@ -47,9 +50,9 @@ class TrackAdapter extends BaseAdapter {
         }
         // Add cloud tracks
         final List<CloudData> trackList = Services.cloud.listing.cache.list();
-        if(trackList != null && !trackList.isEmpty()) {
+        if (trackList != null && !trackList.isEmpty()) {
             items.add(new ListHeader("Synced"));
-            for(CloudData trackData : trackList) {
+            for (CloudData trackData : trackList) {
                 items.add(new ListTrackData(trackData));
             }
         }
@@ -62,8 +65,8 @@ class TrackAdapter extends BaseAdapter {
         final ListItem item = getItem(position);
         final int itemType = item.getType();
 
-        if(convertView == null) {
-            switch(itemType) {
+        if (convertView == null) {
+            switch (itemType) {
                 case TYPE_HEADER:
                     convertView = inflater.inflate(R.layout.track_list_header, parent, false);
                     break;
@@ -75,7 +78,7 @@ class TrackAdapter extends BaseAdapter {
         }
 
         // Update views
-        switch(itemType) {
+        switch (itemType) {
             case TYPE_HEADER:
                 final ListHeader header = (ListHeader) item;
                 final TextView headerNameView = convertView.findViewById(R.id.list_header_name);
@@ -86,12 +89,12 @@ class TrackAdapter extends BaseAdapter {
                 final TextView itemNameView = convertView.findViewById(R.id.list_item_name);
                 final TextView itemSizeView = convertView.findViewById(R.id.list_item_subtitle);
                 final ProgressBar itemSpinner = convertView.findViewById(R.id.list_spinner);
-                itemNameView.setText(trackFile.toString());
+                itemNameView.setText(trackFile.getName());
                 itemSizeView.setText(trackFile.getSize());
 
                 // Update based on logging and sync state
                 final int trackState = Services.trackState.getState(trackFile);
-                if(trackState == TrackState.UPLOADING) {
+                if (trackState == TrackState.UPLOADING) {
                     // Show upload progress
                     final int progress = Services.trackState.getUploadProgress(trackFile);
                     final int filesize = (int) trackFile.file.length();
@@ -130,7 +133,7 @@ class TrackAdapter extends BaseAdapter {
     public void clickItem(int position, @NonNull Context context) {
         final ListItem item = items.get(position);
         final int itemType = item.getType();
-        switch(itemType) {
+        switch (itemType) {
             case TYPE_TRACK_LOCAL:
                 final TrackFile trackFile = ((ListTrackFile) item).track;
                 Intents.openTrackLocal(context, trackFile);

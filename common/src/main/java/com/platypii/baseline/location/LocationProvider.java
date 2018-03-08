@@ -42,9 +42,9 @@ public abstract class LocationProvider implements BaseService {
      */
     public long lastFixDuration() {
         if (lastLoc != null && lastLoc.millis > 0) {
-            final long duration = System.currentTimeMillis() - (lastLoc.millis + TimeOffset.phoneOffsetMillis);
+            final long duration = System.currentTimeMillis() - lastLoc.millis - TimeOffset.phoneOffsetMillis;
             if (duration < 0) {
-                Log.w(providerName(), "Time since last fix should never be negative");
+                Log.w(providerName(), "Time since last fix should never be negative delta = " + duration + "ms");
             }
             return duration;
         } else {

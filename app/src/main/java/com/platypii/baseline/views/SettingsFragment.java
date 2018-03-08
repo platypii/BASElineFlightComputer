@@ -53,7 +53,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     @Override
     public boolean onPreferenceChange(@NonNull Preference preference, Object value) {
-        switch(preference.getKey()) {
+        switch (preference.getKey()) {
             case "metric_enabled":
                 Log.i(TAG, "Setting metric mode: " + value);
                 Convert.metric = (Boolean) value;
@@ -69,18 +69,23 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     private void updateViews() {
         // Update metric views
-        if(Convert.metric) {
+        if (Convert.metric) {
             metricPreference.setSummary("Current units: metric");
         } else {
             metricPreference.setSummary("Current units: imperial");
         }
         // Update sign in views
         final SettingsActivity activity = (SettingsActivity) getActivity();
-        if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {
+        if (BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {
             // Change to sign out state
             signInPreference.setTitle(R.string.pref_sign_out);
             final String name = activity.getDisplayName();
-            signInPreference.setSummary(getString(R.string.pref_sign_out_description) + " " + name);
+            // TODO: Name should never be null
+            if (name != null) {
+                signInPreference.setSummary(getString(R.string.pref_sign_out_description) + " " + name);
+            } else {
+                signInPreference.setSummary(R.string.pref_sign_out_description);
+            }
         } else {
             // Change to sign in state
             signInPreference.setTitle(R.string.pref_sign_in);
@@ -97,28 +102,28 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     @Override
     public boolean onPreferenceClick(@NonNull Preference preference) {
-        if(preference.getKey().equals("audible_settings")) {
+        if (preference.getKey().equals("audible_settings")) {
             // Open audible settings activity
             firebaseAnalytics.logEvent("click_audible_settings", null);
             startActivity(new Intent(getActivity(), AudibleSettingsActivity.class));
-        } else if(preference.getKey().equals("bluetooth_settings")) {
+        } else if (preference.getKey().equals("bluetooth_settings")) {
             // Open bluetooth settings activity
             firebaseAnalytics.logEvent("click_bluetooth_settings", null);
             startActivity(new Intent(getActivity(), BluetoothActivity.class));
-        } else if(preference.getKey().equals("sensor_info")) {
+        } else if (preference.getKey().equals("sensor_info")) {
             // Open sensor activity
             firebaseAnalytics.logEvent("click_sensors", null);
             startActivity(new Intent(getActivity(), SensorActivity.class));
-        } else if(preference.getKey().equals("sign_in")) {
+        } else if (preference.getKey().equals("sign_in")) {
             // Handle sign in click
             final BaseActivity activity = (BaseActivity) getActivity();
             // Ignore click if state is signing in
-            if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {
+            if (BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {
                 activity.clickSignOut();
-            } else if(BaseActivity.currentAuthState == AuthEvent.SIGNED_OUT) {
+            } else if (BaseActivity.currentAuthState == AuthEvent.SIGNED_OUT) {
                 activity.clickSignIn();
             }
-        } else if(preference.getKey().equals("help_page")) {
+        } else if (preference.getKey().equals("help_page")) {
             // Handle help page click
             firebaseAnalytics.logEvent("click_help", null);
             Intents.openHelpUrl(getActivity());
