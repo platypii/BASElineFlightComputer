@@ -49,7 +49,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
     }
 
     public synchronized void startLogging() {
-        if(!logging && logDir != null) {
+        if (!logging && logDir != null) {
             Log.i(TAG, "Starting logging");
             logging = true;
             startTimeMillis = System.currentTimeMillis();
@@ -61,7 +61,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
 
                 // Update state before first byte is written
                 // Otherwise user can browse to it, and uploader might upload it
-                Services.trackState.setState(trackFile, TrackState.RECORDING);
+                Services.trackStore.setRecording(trackFile);
 
                 // Start recording
                 startFileLogging(trackFile.file);
@@ -71,7 +71,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
             } catch(IOException e) {
                 Log.e(TAG, "Error starting logging", e);
             }
-        } else if(logDir == null) {
+        } else if (logDir == null) {
             Log.e(TAG, "startLogging() called before start()");
         } else {
             Log.e(TAG, "startLogging() called when database already logging");
@@ -82,13 +82,13 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
      * Stop data logging, and return track data
      */
     public synchronized void stopLogging() {
-        if(logging) {
+        if (logging) {
             logging = false;
             Log.i(TAG, "Stopping logging");
             final TrackFile trackFile = stopFileLogging();
-            if(trackFile != null) {
+            if (trackFile != null) {
                 // Update state before notifying listeners (such as upload manager)
-                Services.trackState.setState(trackFile, TrackState.NOT_UPLOADED);
+                Services.trackStore.setNotUploaded(trackFile);
                 EventBus.getDefault().post(new LoggingEvent(false, trackFile));
             } else {
                 Exceptions.report(new IllegalStateException("Result of stopFileLogging should not be null"));
@@ -103,7 +103,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
     }
 
     public long getStartTime() {
-        if(logging) {
+        if (logging) {
             return startTimeMillis;
         } else {
             return 0;
@@ -114,7 +114,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
      * Returns the amount of time we've been logging, as a nice string 0:00.000
      */
     public String getLogTime() {
-        if(logging) {
+        if (logging) {
             long nanoTime;
             if (stopTimeNano == -1) {
                 nanoTime = System.nanoTime() - startTimeNano;
@@ -138,7 +138,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
         // gzipped CSV log file
         File file = new File(logDir, "track_" + timestamp + ".csv.gz");
         // Avoid filename conflicts
-        for(int i = 2; file.exists(); i++) {
+        for (int i = 2; file.exists(); i++) {
             file = new File(logDir, "track_" + timestamp + "_" + i + ".csv.gz");
         }
 
@@ -189,7 +189,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
      */
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onAltitudeEvent(@NonNull MPressure alt) {
-        if(!Double.isNaN(alt.pressure)) {
+        if (!Double.isNaN(alt.pressure)) {
             logLine(alt.toRow());
         }
     }
@@ -199,7 +199,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
      */
     @Override
     public void onLocationChanged(@NonNull MLocation measure) {
-        if(!Double.isNaN(measure.latitude) && !Double.isNaN(measure.longitude)) {
+        if (!Double.isNaN(measure.latitude) && !Double.isNaN(measure.longitude)) {
             logLine(measure.toRow());
         }
     }
@@ -217,7 +217,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
      * @param line the measurement to store
      */
     private synchronized void logLine(@NonNull String line) {
-        if(logging) {
+        if (logging) {
             try {
                 log.write(line);
                 log.write('\n');
@@ -232,7 +232,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
 
     @Override
     public void stop() {
-        if(logging) {
+        if (logging) {
             Log.e(TAG, "TrackLogger.stop() called, but still logging");
         }
     }

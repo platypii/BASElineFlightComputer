@@ -5,7 +5,6 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.tracks.TrackState;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -93,10 +92,9 @@ class TrackAdapter extends BaseAdapter {
                 itemSizeView.setText(trackFile.getSize());
 
                 // Update based on logging and sync state
-                final int trackState = Services.trackState.getState(trackFile);
-                if (trackState == TrackState.UPLOADING) {
+                if (Services.trackStore.isUploading(trackFile)) {
                     // Show upload progress
-                    final int progress = Services.trackState.getUploadProgress(trackFile);
+                    final int progress = Services.trackStore.getUploadProgress(trackFile);
                     final int filesize = (int) trackFile.file.length();
                     itemSpinner.setProgress(progress);
                     itemSpinner.setMax(filesize);
@@ -130,7 +128,7 @@ class TrackAdapter extends BaseAdapter {
         return items.get(position);
     }
 
-    public void clickItem(int position, @NonNull Context context) {
+    void clickItem(int position, @NonNull Context context) {
         final ListItem item = items.get(position);
         final int itemType = item.getType();
         switch (itemType) {

@@ -8,7 +8,6 @@ import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackFiles;
-import com.platypii.baseline.tracks.TrackState;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.BaseActivity;
 import android.app.AlertDialog;
@@ -74,8 +73,21 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
      */
     private void updateViews() {
         if (trackFile != null) {
-            final int uploadState = Services.trackState.getState(trackFile);
-            if (uploadState == TrackState.NOT_UPLOADED) {
+            // Check if upload completed
+            final CloudData cloudData = Services.trackStore.getCloudData(trackFile);
+            if (cloudData != null) {
+                // Track uploaded, open TrackRemoteActivity
+                Intents.openTrackRemote(this, cloudData);
+                finish();
+            } else if (Services.trackStore.isUploading(trackFile)) {
+                uploadProgress.setProgress(Services.trackStore.getUploadProgress(trackFile));
+                uploadProgress.setMax((int) trackFile.file.length());
+                uploadProgress.setVisibility(View.VISIBLE);
+                alertLabel.setText(R.string.uploading);
+                alertLabel.setVisibility(View.VISIBLE);
+                deleteButton.setEnabled(false);
+            } else {
+                // Not uploaded
                 uploadProgress.setVisibility(View.GONE);
                 if (currentAuthState == AuthEvent.SIGNED_IN) {
                     alertLabel.setText(R.string.upload_waiting);
@@ -84,20 +96,6 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
                     alertLabel.setVisibility(View.GONE);
                 }
                 deleteButton.setEnabled(true);
-            } else if (uploadState == TrackState.RECORDING) {
-                Exceptions.report(new IllegalStateException("TrackLocalActivity should never open an actively logging track"));
-            } else if (uploadState == TrackState.UPLOADING) {
-                uploadProgress.setProgress(Services.trackState.getUploadProgress(trackFile));
-                uploadProgress.setMax((int) trackFile.file.length());
-                uploadProgress.setVisibility(View.VISIBLE);
-                alertLabel.setText(R.string.uploading);
-                alertLabel.setVisibility(View.VISIBLE);
-                deleteButton.setEnabled(false);
-            } else if (uploadState == TrackState.UPLOADED) {
-                // Track uploaded, open TrackRemoteActivity
-                final CloudData cloudData = Services.cloud.uploads.getCompleted(trackFile);
-                Intents.openTrackRemote(this, cloudData);
-                finish();
             }
         }
     }

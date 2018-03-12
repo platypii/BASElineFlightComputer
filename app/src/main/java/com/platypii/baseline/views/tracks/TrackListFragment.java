@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.tracks;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackFiles;
@@ -55,7 +56,7 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
 
     private void updateList() {
         // Update list from track cache
-        final List<TrackFile> updatedTracks = TrackFiles.getTracks(getActivity());
+        final List<TrackFile> updatedTracks = Services.trackStore.getLocalTracks();
         trackList.clear();
         trackList.addAll(updatedTracks);
         listAdapter.notifyDataSetChanged();

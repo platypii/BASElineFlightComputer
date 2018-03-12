@@ -1,6 +1,5 @@
 package com.platypii.baseline.tracks;
 
-import com.platypii.baseline.Services;
 import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -20,20 +19,18 @@ public class TrackFiles {
     private static final String TAG = "TrackFiles";
 
     @NonNull
-    public static List<TrackFile> getTracks(@NonNull Context context) {
+    static List<TrackFile> getTracks(@NonNull Context context) {
         final List<TrackFile> tracks = new ArrayList<>();
         // Load jumps from disk
         final File logDir = getTrackDirectory(context);
-        if(logDir != null) {
+        if (logDir != null) {
             final File[] files = logDir.listFiles();
             for (File file : files) {
                 final String filename = file.getName();
                 final TrackFile trackFile = new TrackFile(file);
                 // Tracks look like "track_(yyyy-MM-dd_HH-mm-ss).csv.gz"
                 final boolean matchesFilenamePattern = filename.startsWith("track_") && filename.endsWith(".csv.gz");
-                // Track is not actively logging
-                final boolean isLogging = Services.trackState.getState(trackFile) == TrackState.RECORDING;
-                if(matchesFilenamePattern && !isLogging) {
+                if (matchesFilenamePattern) {
                     tracks.add(trackFile);
                 }
             }

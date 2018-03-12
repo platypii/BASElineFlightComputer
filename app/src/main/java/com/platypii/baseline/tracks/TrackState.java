@@ -1,45 +1,35 @@
 package com.platypii.baseline.tracks;
 
+import com.platypii.baseline.cloud.CloudData;
 import android.support.annotation.NonNull;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Manages track state: recording, not uploaded, uploading, uploaded
  */
-public class TrackState {
+class TrackState {
 
-    // Upload state for each track file
-    public static final int NOT_UPLOADED = 0;
-    public static final int RECORDING = 1;
-    public static final int UPLOADING = 2;
-    public static final int UPLOADED = 3;
+    static class TrackRecording extends TrackState {}
+    static class TrackNotUploaded extends TrackState {
+        final TrackFile trackFile;
 
-    private final Map<TrackFile,Integer> syncState = new HashMap<>();
-
-    // Upload progress per track file
-    private final Map<TrackFile,Integer> uploadProgress = new HashMap<>();
-
-    public int getState(@NonNull TrackFile trackFile) {
-        if(syncState.containsKey(trackFile)) {
-            return syncState.get(trackFile);
-        } else {
-            return NOT_UPLOADED;
+        TrackNotUploaded(@NonNull TrackFile trackFile) {
+            this.trackFile = trackFile;
         }
     }
+    static class TrackUploading extends TrackState {
+        final TrackFile trackFile;
+        int progress = 0;
 
-    public void setState(@NonNull TrackFile trackFile, int state) {
-        syncState.put(trackFile, state);
+        TrackUploading(@NonNull TrackFile trackFile) {
+            this.trackFile = trackFile;
+        }
     }
+    static class TrackUploaded extends TrackState {
+        final CloudData cloudData;
 
-    public int getUploadProgress(@NonNull TrackFile trackFile) {
-        final Integer progress = uploadProgress.get(trackFile);
-        if(progress != null) return uploadProgress.get(trackFile);
-        else return 0;
-    }
-
-    public void setUploadProgress(@NonNull TrackFile trackFile, int progress) {
-        uploadProgress.put(trackFile, progress);
+        TrackUploaded(@NonNull CloudData cloudData) {
+            this.cloudData = cloudData;
+        }
     }
 
 }

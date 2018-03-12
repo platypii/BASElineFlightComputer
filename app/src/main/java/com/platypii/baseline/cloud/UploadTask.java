@@ -152,7 +152,7 @@ class UploadTask implements Runnable {
             bytesCopied += bytesRead;
 
             // Update upload progress state
-            Services.trackState.setUploadProgress(trackFile, bytesCopied);
+            Services.trackStore.setUploadProgress(trackFile, bytesCopied);
             EventBus.getDefault().post(new SyncEvent.UploadProgress(trackFile, bytesCopied));
         }
         is.close();
