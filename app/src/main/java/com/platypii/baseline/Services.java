@@ -10,7 +10,6 @@ import com.platypii.baseline.jarvis.FlightComputer;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.sensors.MySensorManager;
-import com.platypii.baseline.tracks.MigrateTracks;
 import com.platypii.baseline.tracks.TrackLogger;
 import com.platypii.baseline.tracks.TrackState;
 import com.platypii.baseline.util.Convert;
@@ -134,9 +133,6 @@ public class Services {
 
             Log.i(TAG, "Starting cloud services");
             cloud.start(appContext);
-
-            // Check if migration is necessary
-            MigrateTracks.migrate(appContext);
 
             Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
         }
