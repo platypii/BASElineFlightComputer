@@ -17,6 +17,7 @@
     <string name="action_map">Carte</string>
     <string name="action_delete">Supprimer</string>
     <string name="action_export">Exporter</string>
+    <string name="action_charts">Graphiques</string>
 
     <string name="upload_waiting">En attente de téléchargement</string>
     <string name="uploading">Téléchargement…</string>
@@ -90,6 +91,8 @@
     <string name="pref_metric_description">Utiliser des unités métriques</string>
     <string name="pref_auto_stop">Arrêter automatiquement</string>
     <string name="pref_auto_stop_description">Arrêtez l\'enregistrement et audible lors de l\'atterrissage</string>
+    <string name="pref_barometer">Baromètre</string>
+    <string name="pref_barometer_description">Utilisez altimètre barométrique</string>
     <string name="pref_audible_settings">Paramètres audibles</string>
     <string name="pref_audible_settings_description">Configurer les options audibles</string>
     <string name="pref_sensor_info">Informations du capteur</string>

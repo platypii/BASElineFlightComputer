@@ -131,12 +131,13 @@ class UploadTask implements Runnable {
         // Ensure track directory exists
         final File trackDir = destination.getParentFile();
         if (!trackDir.exists()) {
-            trackDir.mkdir();
+            if (!trackDir.mkdirs()) {
+                Log.e(TAG, "Failed to make track directory " + trackDir);
+            }
         }
         // Move track file to track directory
-        if (source.renameTo(destination)) {
-            // Move succeeded
-            trackFile.file = destination;
+        if (!source.renameTo(destination)) {
+            Log.e(TAG, "Failed to move track file " + source + " to " + destination);
         }
     }
 
