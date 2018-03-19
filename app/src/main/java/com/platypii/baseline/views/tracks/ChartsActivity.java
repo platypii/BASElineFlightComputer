@@ -4,6 +4,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackFileData;
+import com.platypii.baseline.tracks.TrackStats;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.charts.FlightProfile;
@@ -11,6 +12,7 @@ import com.platypii.baseline.views.charts.PolarPlot;
 import com.platypii.baseline.views.charts.TimeChart;
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +43,7 @@ public class ChartsActivity extends Activity {
     private PolarPlot polarChart;
 
     private File trackFile;
+    private TrackStats stats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +65,7 @@ public class ChartsActivity extends Activity {
         polarChart = findViewById(R.id.polarChart);
 
         // Init chart stats
-        onChartFocus(null);
+        updateChartFocus(null);
 
         // Load track from extras
         trackFile = getTrackFile();
@@ -97,6 +100,7 @@ public class ChartsActivity extends Activity {
             @Override
             protected Void doInBackground(Void... voids) {
                 final List<MLocation> trackData = TrackFileData.getTrackData(trackFile);
+                stats = new TrackStats(trackData);
                 timeChart.loadTrack(trackData);
                 flightProfile.loadTrack(trackData);
                 polarChart.loadTrack(trackData);
@@ -104,6 +108,7 @@ public class ChartsActivity extends Activity {
             }
             @Override
             protected void onPostExecute(Void v) {
+                updateChartFocus(null);
                 timeChart.invalidate();
                 flightProfile.invalidate();
                 polarChart.invalidate();
@@ -113,33 +118,46 @@ public class ChartsActivity extends Activity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onChartFocus(@Nullable ChartFocusEvent event) {
-        updateChartStats(event);
+    public void onChartFocus(@NonNull ChartFocusEvent event) {
+        updateChartFocus(event.location);
         // Notify child views
-        timeChart.onFocus(event);
-        flightProfile.onFocus(event);
-        polarChart.onFocus(event);
+        timeChart.onFocus(event.location);
+        flightProfile.onFocus(event.location);
+        polarChart.onFocus(event.location);
     }
 
-    private void updateChartStats(@Nullable ChartFocusEvent event) {
-        if (event != null && event.location != null) {
-            final MLocation location = event.location;
-            Log.i(TAG, "Focus " + location);
+    /**
+     * Update views for focus event
+     */
+    private void updateChartFocus(@Nullable MLocation focus) {
+        if (focus != null) {
             // TODO: Date should have timezone
-            timeLabel.setText("time: " + new Date(location.millis).toString());
-            altitudeLabel.setText("alt: " + Convert.distance(location.altitude_gps));
-            horizontalSpeedLabel.setText("h-speed: " + Convert.speed(location.groundSpeed()));
-            verticalSpeedLabel.setText("v-speed: " + Convert.speed(location.climb));
-            speedLabel.setText("speed: " + Convert.speed(location.totalSpeed()));
-            glideLabel.setText("glide: " + Convert.glide(location.groundSpeed(), location.climb, 1, true));
+            timeLabel.setText(new Date(focus.millis).toString());
+            altitudeLabel.setText(Convert.distance(focus.altitude_gps) + " MSL");
+            horizontalSpeedLabel.setText(Convert.speed(focus.groundSpeed()));
+            verticalSpeedLabel.setText(Convert.speed(focus.climb));
+            speedLabel.setText(Convert.speed(focus.totalSpeed()));
+            glideLabel.setText(Convert.glide(focus.groundSpeed(), focus.climb, 1, true));
         } else {
-            Log.i(TAG, "Clear focus");
-            timeLabel.setText("time: ");
-            altitudeLabel.setText("alt: ");
-            horizontalSpeedLabel.setText("h-speed: ");
-            verticalSpeedLabel.setText("v-speed: ");
-            speedLabel.setText("speed: ");
-            glideLabel.setText("glide: ");
+            if (stats != null) {
+                if (stats.exit != null) {
+                    timeLabel.setText(new Date(stats.exit.millis).toString());
+                } else {
+                    timeLabel.setText("");
+                }
+                if (!stats.altitude.isEmpty()) {
+                    altitudeLabel.setText(Convert.distance(stats.altitude.max - stats.altitude.min));
+                } else {
+                    altitudeLabel.setText("");
+                }
+            } else {
+                timeLabel.setText("");
+                altitudeLabel.setText("");
+            }
+            horizontalSpeedLabel.setText("");
+            verticalSpeedLabel.setText("");
+            speedLabel.setText("");
+            glideLabel.setText("");
         }
     }
 

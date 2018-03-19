@@ -1,10 +1,8 @@
 package com.platypii.baseline.views.charts;
 
-import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
-import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.DataSeries;
 import android.content.Context;
 import android.graphics.Paint;
@@ -26,7 +24,7 @@ public class FlightProfile extends PlotView {
     final Bounds inner = new Bounds();
     final Bounds outer = new Bounds();
 
-    private ChartFocusEvent focus;
+    private MLocation focus;
 
     public FlightProfile(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -46,6 +44,8 @@ public class FlightProfile extends PlotView {
         outer.y.max = 100;
 
         options.axis.x = options.axis.y = PlotOptions.axisSpeed();
+
+        paint.setStrokeJoin(Paint.Join.ROUND);
     }
 
     public void loadTrack(List<MLocation> trackData) {
@@ -63,8 +63,8 @@ public class FlightProfile extends PlotView {
         }
     }
 
-    public void onFocus(@Nullable ChartFocusEvent event) {
-        this.focus = event;
+    public void onFocus(@Nullable MLocation focus) {
+        this.focus = focus;
         invalidate();
     }
 
@@ -82,9 +82,9 @@ public class FlightProfile extends PlotView {
         }
         // Draw focus
         if (focus != null) {
-            final double x = start.distanceTo(focus.location);
-            final double y = focus.location.altitude_gps - start.altitude_gps;
-            paint.setColor(0xddeeeeee);
+            final double x = start.distanceTo(focus);
+            final double y = focus.altitude_gps - start.altitude_gps;
+            paint.setColor(0xcceeeeee);
             paint.setStyle(Paint.Style.STROKE);
             plot.drawPoint(0, x, y, 8f, paint);
         }

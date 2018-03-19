@@ -13,9 +13,13 @@ public class Range {
     /**
      * Expands the range to include new point
      */
-    void expand(double value) {
+    public void expand(double value) {
         if(value < min || Double.isNaN(min)) min = value;
         if(value > max || Double.isNaN(max)) max = value;
+    }
+
+    public boolean isEmpty() {
+        return Double.isNaN(min);
     }
 
     @Override

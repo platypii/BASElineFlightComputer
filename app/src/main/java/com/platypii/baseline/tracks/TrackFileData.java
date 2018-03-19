@@ -34,8 +34,7 @@ public class TrackFileData {
         try {
             final List<MLocation> trackData = readTrackFile(trackFile);
             // Trim plane and ground
-            final List<MLocation> trimmed = autoTrim(trackData);
-            return trimmed;
+            return autoTrim(trackData);
         } catch (IOException e) {
             Log.e(TAG, "Exception while reading track file", e);
             return null;

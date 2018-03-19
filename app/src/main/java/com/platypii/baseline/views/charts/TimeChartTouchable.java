@@ -5,6 +5,7 @@ import com.platypii.baseline.measurements.MLocation;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import java.util.Collections;
 import org.greenrobot.eventbus.EventBus;
@@ -24,6 +25,9 @@ public class TimeChartTouchable extends TimeChart {
             final MLocation closest = findClosest(millis);
             // Emit chart focus event
             EventBus.getDefault().post(new ChartFocusEvent(closest));
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            // Clear chart focus event
+            EventBus.getDefault().post(new ChartFocusEvent(null));
         }
         return true; // if the event was handled
     }

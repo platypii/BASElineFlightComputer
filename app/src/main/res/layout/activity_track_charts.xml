@@ -48,7 +48,7 @@
     <com.platypii.baseline.views.charts.TimeChartTouchable
         android:id="@+id/timeChart"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="140dp"
         android:layout_below="@id/legend"/>
 
     <TextView

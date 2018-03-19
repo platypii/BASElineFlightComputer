@@ -1,6 +1,5 @@
 package com.platypii.baseline.views.charts;
 
-import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
@@ -23,7 +22,7 @@ public class TimeChart extends PlotView {
     private final DataSeries speedSeries = new DataSeries();
     private final DataSeries glideSeries = new DataSeries();
 
-    private ChartFocusEvent focus;
+    private MLocation focus;
 
     public TimeChart(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -34,6 +33,8 @@ public class TimeChart extends PlotView {
 
         options.axis.x = PlotOptions.axisTime();
         options.axis.y = PlotOptions.axisSpeed();
+
+        paint.setStrokeJoin(Paint.Join.ROUND);
 
         // Initialize bounds with 3 axes
         plot.initBounds(3);
@@ -53,8 +54,8 @@ public class TimeChart extends PlotView {
         }
     }
 
-    public void onFocus(@Nullable ChartFocusEvent event) {
-        this.focus = event;
+    public void onFocus(@Nullable MLocation focus) {
+        this.focus = focus;
         invalidate();
     }
 
@@ -71,7 +72,7 @@ public class TimeChart extends PlotView {
         }
         // Draw focus line
         if (focus != null) {
-            final float sx = plot.getX(0, focus.location.millis);
+            final float sx = plot.getX(0, focus.millis);
             paint.setColor(0xddeeeeee);
             paint.setStrokeWidth(3f);
             plot.canvas.drawLine(sx, 0, sx, getHeight(), paint);
