@@ -36,7 +36,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
     private void updateDeviceList() {
         devices.clear();
         final Set<BluetoothDevice> updatedDevices = Services.bluetooth.getDevices();
-        if(updatedDevices != null) {
+        if (updatedDevices != null) {
             devices.addAll(updatedDevices);
             // Sort devices to put GPS at top of list
             Collections.sort(devices, new Comparator<BluetoothDevice>() {

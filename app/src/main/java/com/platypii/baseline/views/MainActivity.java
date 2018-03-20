@@ -58,7 +58,7 @@ public class MainActivity extends BaseActivity {
         clock = findViewById(R.id.clock);
         signalStatus = findViewById(R.id.signalStatus);
 
-        if(audibleButton != null) {
+        if (audibleButton != null) {
             audibleButton.setOnLongClickListener(audibleLongClickListener);
         }
 
@@ -74,11 +74,11 @@ public class MainActivity extends BaseActivity {
 
     private void handleIntent(@NonNull Intent intent) {
         final String intentType = intent.getType();
-        if("baseline/stop".equals(intentType)) {
+        if ("baseline/stop".equals(intentType)) {
             // Stop audible and logging
             Services.logger.stopLogging();
             Services.audible.disableAudible();
-        } else if(intentType != null) {
+        } else if (intentType != null) {
             Log.w(TAG, "Unknown intent type: " + intentType);
         }
     }
@@ -91,7 +91,7 @@ public class MainActivity extends BaseActivity {
         updateUIState();
 
         // Start signal updates
-        if(signalRunnable == null) {
+        if (signalRunnable == null) {
             signalRunnable = new Runnable() {
                 public void run() {
                     updateSignal();
@@ -124,11 +124,11 @@ public class MainActivity extends BaseActivity {
 
     public void clickRecord(View v) {
         final Bundle bundle = new Bundle();
-        if(Services.location.lastLoc != null) {
+        if (Services.location.lastLoc != null) {
             bundle.putFloat("lat", (float) Services.location.lastLoc.latitude);
             bundle.putFloat("lon", (float) Services.location.lastLoc.longitude);
         }
-        if(!Services.logger.isLogging()) {
+        if (!Services.logger.isLogging()) {
             firebaseAnalytics.logEvent("click_logging_start", bundle);
             Services.logger.startLogging();
         } else {
@@ -139,12 +139,12 @@ public class MainActivity extends BaseActivity {
 
     // Enables buttons and clock
     private void updateUIState() {
-        if(Services.logger.isLogging()) {
+        if (Services.logger.isLogging()) {
             recordButton.setText(R.string.action_stop);
             recordButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.square, 0, 0);
 
             // Start clock updates
-            if(clockRunnable == null) {
+            if (clockRunnable == null) {
                 clockRunnable = new Runnable() {
                     public void run() {
                         updateClock();
@@ -161,13 +161,13 @@ public class MainActivity extends BaseActivity {
             clock.setText("");
 
             // Stop clock updates
-            if(clockRunnable != null) {
+            if (clockRunnable != null) {
                 handler.removeCallbacks(clockRunnable);
                 clockRunnable = null;
             }
         }
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if(prefs.getBoolean("audible_enabled", false)) {
+        if (prefs.getBoolean("audible_enabled", false)) {
             audibleButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio_on, 0, 0);
         } else {
             audibleButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio, 0, 0);
@@ -218,7 +218,7 @@ public class MainActivity extends BaseActivity {
      * Update the text view for timer
      */
     private void updateClock() {
-        if(Services.logger.isLogging()) {
+        if (Services.logger.isLogging()) {
             clock.setText(Services.logger.getLogTime());
         } else {
             clock.setText("");
@@ -245,9 +245,9 @@ public class MainActivity extends BaseActivity {
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(SyncEvent event) {
-        if(event instanceof SyncEvent.UploadSuccess) {
+        if (event instanceof SyncEvent.UploadSuccess) {
             Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
-        } else if(event instanceof SyncEvent.UploadFailure) {
+        } else if (event instanceof SyncEvent.UploadFailure) {
             final SyncEvent.UploadFailure uploadFailure = (SyncEvent.UploadFailure) event;
             Toast.makeText(MainActivity.this, "Track sync failed: " + uploadFailure.error, Toast.LENGTH_SHORT).show();
         }
@@ -256,11 +256,11 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(clockRunnable != null) {
+        if (clockRunnable != null) {
             handler.removeCallbacks(clockRunnable);
             clockRunnable = null;
         }
-        if(signalRunnable != null) {
+        if (signalRunnable != null) {
             handler.removeCallbacks(signalRunnable);
             signalRunnable = null;
         }

@@ -6,6 +6,7 @@ import com.platypii.baseline.audible.AudibleMinMaxPreference;
 import com.platypii.baseline.audible.AudibleMode;
 import com.platypii.baseline.audible.AudibleSettings;
 import com.platypii.baseline.util.Numbers;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -13,6 +14,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
+import android.view.View;
 import android.widget.Toast;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Locale;
@@ -60,6 +62,12 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
         updateViews();
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.setBackgroundColor(Color.BLACK);
+    }
+
     /**
      * Set summaries and adjust defaults
      */
@@ -71,7 +79,7 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
         maxPreference.setTitle(mode.maximumTitle());
         minPreference.setSummary(mode.renderDisplay(AudibleSettings.min, precision));
         maxPreference.setSummary(mode.renderDisplay(AudibleSettings.max, precision));
-        if(precision <= 0) {
+        if (precision <= 0) {
             precisionPreference.setSummary(String.format(Locale.getDefault(), "%d decimal places", precision));
         } else {
             precisionPreference.setSummary(String.format(Locale.getDefault(), "%."+precision+"f decimal places", (float) precision));
@@ -83,10 +91,10 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
     @Override
     public boolean onPreferenceChange(@NonNull Preference preference, Object value) {
         final String key = preference.getKey();
-        switch(key) {
+        switch (key) {
             case "audible_enabled":
                 final boolean audibleEnabled = (Boolean) value;
-                if(audibleEnabled) {
+                if (audibleEnabled) {
                     firebaseAnalytics.logEvent("pref_start_audible", null);
                     Services.audible.enableAudible();
                 } else {
@@ -100,36 +108,36 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
             case "audible_mode":
                 final String audibleMode = (String) value;
                 final String previousAudibleMode = modePreference.getValue();
-                if(!audibleMode.equals(previousAudibleMode)) {
+                if (!audibleMode.equals(previousAudibleMode)) {
                     AudibleSettings.setAudibleMode(audibleMode);
                     minPreference.setValue(AudibleSettings.mode.defaultMin);
                     maxPreference.setValue(AudibleSettings.mode.defaultMax);
                     precisionPreference.setText(null);
                     precisionPreference.setDefaultValue(AudibleSettings.mode.defaultPrecision);
                     updateViews();
-                    if(Services.audible.isEnabled()) {
+                    if (Services.audible.isEnabled()) {
                         Services.audible.speakNow(AudibleSettings.mode.name);
                     }
                 }
                 break;
             case "audible_min":
                 final float min = (Float) value;
-                if(!Numbers.isReal(min)) return false;
+                if (!Numbers.isReal(min)) return false;
                 AudibleSettings.min = min;
                 updateViews();
                 break;
             case "audible_max":
                 final float max = (Float) value;
-                if(!Numbers.isReal(max)) return false;
+                if (!Numbers.isReal(max)) return false;
                 AudibleSettings.max = max;
                 updateViews();
                 break;
             case "audible_precision":
                 final int precision = Numbers.parseInt((String) value, 1);
-                if(precision < 0) {
+                if (precision < 0) {
                     Toast.makeText(getActivity(), "Precision cannot be negative", Toast.LENGTH_SHORT).show();
                     return false;
-                } else if(8 < precision) {
+                } else if (8 < precision) {
                     Toast.makeText(getActivity(), "Precision cannot be greater than 8", Toast.LENGTH_SHORT).show();
                     return false;
                 }
@@ -138,13 +146,13 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
                 break;
             case "audible_interval":
                 final float speechInterval = Numbers.parseFloat((String) value);
-                if(!Numbers.isReal(speechInterval)) return false;
+                if (!Numbers.isReal(speechInterval)) return false;
                 AudibleSettings.speechInterval = speechInterval;
                 updateViews();
                 break;
             case "audible_rate":
                 final float speechRate = Numbers.parseFloat((String) value);
-                if(!Numbers.isReal(speechRate)) return false;
+                if (!Numbers.isReal(speechRate)) return false;
                 AudibleSettings.speechRate = speechRate;
                 updateViews();
                 break;

@@ -44,7 +44,7 @@ public class BluetoothActivity extends BaseActivity {
         final boolean enable = !Services.bluetooth.preferences.preferenceEnabled;
         Services.bluetooth.preferences.save(this, enable, Services.bluetooth.preferences.preferenceDeviceId, Services.bluetooth.preferences.preferenceDeviceName);
         // Start or stop bluetooth
-        if(enable) {
+        if (enable) {
             Log.i(TAG, "User clicked bluetooth enable");
             firebaseAnalytics.logEvent("bluetooth_enabled", null);
             Services.bluetooth.start(this);

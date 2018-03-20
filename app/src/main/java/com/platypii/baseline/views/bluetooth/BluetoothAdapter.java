@@ -28,7 +28,7 @@ class BluetoothAdapter extends BaseAdapter {
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         final BluetoothDevice device = devices.get(position);
 
-        if(convertView == null) {
+        if (convertView == null) {
             convertView = inflater.inflate(R.layout.bluetooth_list_item, parent, false);
         }
 
@@ -38,7 +38,7 @@ class BluetoothAdapter extends BaseAdapter {
         final ImageView checkedView = convertView.findViewById(R.id.bluetooth_checked);
         nameView.setText(device.getName());
         addressView.setText(device.getAddress());
-        if(device.getAddress().equals(Services.bluetooth.preferences.preferenceDeviceId)) {
+        if (device.getAddress().equals(Services.bluetooth.preferences.preferenceDeviceId)) {
             checkedView.setVisibility(View.VISIBLE);
         } else {
             checkedView.setVisibility(View.GONE);

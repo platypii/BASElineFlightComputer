@@ -51,7 +51,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
 
         // Load track from extras
         final Bundle extras = getIntent().getExtras();
-        if(extras != null && extras.getString(EXTRA_TRACK_FILE) != null) {
+        if (extras != null && extras.getString(EXTRA_TRACK_FILE) != null) {
             final String extraTrackFile = extras.getString(EXTRA_TRACK_FILE);
             final File trackDir = TrackFiles.getTrackDirectory(getApplicationContext());
             trackFile = new TrackFile(new File(trackDir, extraTrackFile));
@@ -73,27 +73,27 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
      * Update view states (except for auth state)
      */
     private void updateViews() {
-        if(trackFile != null) {
+        if (trackFile != null) {
             final int uploadState = Services.trackState.getState(trackFile);
-            if(uploadState == TrackState.NOT_UPLOADED) {
+            if (uploadState == TrackState.NOT_UPLOADED) {
                 uploadProgress.setVisibility(View.GONE);
-                if(currentAuthState == AuthEvent.SIGNED_IN) {
+                if (currentAuthState == AuthEvent.SIGNED_IN) {
                     alertLabel.setText(R.string.upload_waiting);
                     alertLabel.setVisibility(View.VISIBLE);
                 } else {
                     alertLabel.setVisibility(View.GONE);
                 }
                 deleteButton.setEnabled(true);
-            } else if(uploadState == TrackState.RECORDING) {
+            } else if (uploadState == TrackState.RECORDING) {
                 Exceptions.report(new IllegalStateException("TrackLocalActivity should never open an actively logging track"));
-            } else if(uploadState == TrackState.UPLOADING) {
+            } else if (uploadState == TrackState.UPLOADING) {
                 uploadProgress.setProgress(Services.trackState.getUploadProgress(trackFile));
                 uploadProgress.setMax((int) trackFile.file.length());
                 uploadProgress.setVisibility(View.VISIBLE);
                 alertLabel.setText(R.string.uploading);
                 alertLabel.setVisibility(View.VISIBLE);
                 deleteButton.setEnabled(false);
-            } else if(uploadState == TrackState.UPLOADED) {
+            } else if (uploadState == TrackState.UPLOADED) {
                 // Track uploaded, open TrackRemoteActivity
                 final CloudData cloudData = Services.cloud.uploads.getCompleted(trackFile);
                 Intents.openTrackRemote(this, cloudData);
@@ -123,7 +123,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
      */
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        if(which == DialogInterface.BUTTON_POSITIVE) {
+        if (which == DialogInterface.BUTTON_POSITIVE) {
             // Delete track
             firebaseAnalytics.logEvent("click_track_delete_local_2", null);
             deleteLocal();
@@ -131,7 +131,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
     }
 
     private void deleteLocal() {
-        if(trackFile.delete()) {
+        if (trackFile.delete()) {
             // Notify user
             Toast.makeText(getApplicationContext(), "Deleted " + trackFile.getName(), Toast.LENGTH_LONG).show();
             // Exit activity
@@ -194,7 +194,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
     protected void onStop() {
         super.onStop();
         // Dismiss alert to prevent context leak
-        if(alertDialog != null) {
+        if (alertDialog != null) {
             alertDialog.dismiss();
             alertDialog = null;
         }

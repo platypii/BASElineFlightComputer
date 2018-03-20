@@ -109,11 +109,11 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         this.map = map;
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         // Center priority: current location, home location, default location
-        if(Services.location.lastLoc != null) {
+        if (Services.location.lastLoc != null) {
             final LatLng center = Services.location.lastLoc.latLng();
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(center, MapOptions.getZoom()));
             Log.i(TAG, "Centering map on " + center);
-        } else if(LandingZone.homeLoc != null) {
+        } else if (LandingZone.homeLoc != null) {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(LandingZone.homeLoc, MapOptions.defaultZoom));
             Log.w(TAG, "Centering map on home " + LandingZone.homeLoc);
         } else {
@@ -139,9 +139,9 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     private final View.OnClickListener homeButtonListener = new View.OnClickListener() {
         public void onClick(View arg0) {
-            if(map != null) {
+            if (map != null) {
                 final LatLng center = map.getCameraPosition().target;
-                if(center.equals(LandingZone.homeLoc)) {
+                if (center.equals(LandingZone.homeLoc)) {
                     // Dropped pin on exact same location, delete home
                     setHome(null);
                 } else {
@@ -157,7 +157,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         LandingZone.homeLoc = home;
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MapActivity.this);
         final SharedPreferences.Editor editor = prefs.edit();
-        if(home != null) {
+        if (home != null) {
             editor.putString("home_latitude", Double.toString(home.latitude));
             editor.putString("home_longitude", Double.toString(home.longitude));
         } else {
@@ -214,7 +214,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     @Override
     public void onCameraMoveStarted(int reason) {
-        if(reason == REASON_GESTURE) {
+        if (reason == REASON_GESTURE) {
             dragged = true;
             crosshair.setVisibility(View.VISIBLE);
             homeButton.setVisibility(View.VISIBLE);
@@ -223,7 +223,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     @Override
     public void onCameraIdle() {
-        if(dragged) {
+        if (dragged) {
             Log.d(TAG, "Camera idle after drag");
             lastDrag = System.currentTimeMillis();
         }
@@ -236,7 +236,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     private void updateLocation() {
         updateFlightStats();
-        if(ready) {
+        if (ready) {
             final LatLng currentLoc = Services.location.lastLoc.latLng();
 
             // Update markers and overlays
@@ -245,7 +245,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
             updateLanding();
 
             // Center map on user's location
-            if(dragged && lastDrag > 0 && System.currentTimeMillis() - lastDrag > MapOptions.SNAP_BACK_TIME) {
+            if (dragged && lastDrag > 0 && System.currentTimeMillis() - lastDrag > MapOptions.SNAP_BACK_TIME) {
                 Log.i(TAG, "Snapping back to current location");
                 // Snap back to point
                 dragged = false;
@@ -256,7 +256,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
                 // Zoom based on altitude
                 final float zoom = MapOptions.getZoom();
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), MapOptions.zoomDuration(), null);
-            } else if(!dragged) {
+            } else if (!dragged) {
                 // Alternate behavior: jump to point
                 // map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
@@ -276,10 +276,10 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     private void updateHome() {
-        if(LandingZone.homeLoc != null) {
+        if (LandingZone.homeLoc != null) {
             homeMarker.setPosition(LandingZone.homeLoc);
             homeMarker.setVisible(true);
-            if(Services.location.lastLoc != null) {
+            if (Services.location.lastLoc != null) {
                 final LatLng currentLoc = Services.location.lastLoc.latLng();
                 homePoints.clear();
                 homePoints.add(currentLoc);
@@ -295,7 +295,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     private void updateLanding() {
         final LatLng landingLocation = LandingZone.getLandingLocation();
-        if(landingLocation != null) {
+        if (landingLocation != null) {
             final LatLng currentLoc = Services.location.lastLoc.latLng();
             landingMarker.setPosition(landingLocation);
             landingMarker.setVisible(true);
@@ -312,7 +312,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     private void updateFlightStats() {
         analogAltimeter.setAltitude(Services.alti.altitudeAGL());
-        if(Services.alti.climb < 0) {
+        if (Services.alti.climb < 0) {
             flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp,0,0,0);
             flightStatsVario.setText(Convert.speed(-Services.alti.climb));
         } else {
@@ -320,7 +320,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
             flightStatsVario.setText(Convert.speed(Services.alti.climb));
         }
         final double groundSpeed = Services.location.groundSpeed();
-        if(Numbers.isReal(groundSpeed)) {
+        if (Numbers.isReal(groundSpeed)) {
             flightStatsSpeed.setText(Convert.speed(groundSpeed));
             flightStatsGlide.setText(Convert.glide(groundSpeed, Services.alti.climb, 2, true));
         } else {
@@ -330,12 +330,12 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     private void updateMyPosition() {
-        if(Services.location.isFresh()) {
+        if (Services.location.isFresh()) {
             myPositionMarker.setVisible(true);
             myPositionMarker.setPosition(Services.location.lastLoc.latLng());
             final double groundSpeed = Services.location.groundSpeed();
             final double bearing = Services.location.bearing();
-            if(Numbers.isReal(bearing) && groundSpeed > 0.1) {
+            if (Numbers.isReal(bearing) && groundSpeed > 0.1) {
                 // Speed > 0.2mph
                 myPositionMarker.setIcon(myposition1);
                 myPositionMarker.setRotation((float) bearing);
@@ -352,7 +352,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         Services.location.addListener(this);
         EventBus.getDefault().register(this);
         // Recenter on last location
-        if(Services.location.lastLoc != null) {
+        if (Services.location.lastLoc != null) {
             updateLocation();
         }
         updateFlightStats();

@@ -33,13 +33,13 @@ class MapOptions {
         // Find which linear segment altitude lies in
         // when loop completes, alts[index] <= altitude < alts[index+1]
         int index = -1;
-        while(index < alts.length - 1 && alts[index+1] <= altitude) {
+        while (index < alts.length - 1 && alts[index+1] <= altitude) {
             index++;
         }
 
-        if(index == -1) {
+        if (index == -1) {
             return zooms[0];
-        } else if(index < alts.length - 1) {
+        } else if (index < alts.length - 1) {
             // Linear interpolation
             return zooms[index+1] - (float) ((alts[index+1] - altitude) * (zooms[index+1] - zooms[index]) / (alts[index+1] - alts[index]));
         } else {
@@ -52,7 +52,7 @@ class MapOptions {
      * @return the zoom duration in milliseconds
      */
     static int zoomDuration() {
-        if(Numbers.isReal(Services.location.refreshRate) && Services.location.refreshRate > 0) {
+        if (Numbers.isReal(Services.location.refreshRate) && Services.location.refreshRate > 0) {
             final int gpsUpdateDuration = (int) (1000f / Services.location.refreshRate);
             return Math.min(gpsUpdateDuration, MAX_ANIMATION_DURATION);
         } else {

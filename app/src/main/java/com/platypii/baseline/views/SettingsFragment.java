@@ -8,12 +8,14 @@ import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.util.Convert;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -53,6 +55,12 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         signInPreference = findPreference("sign_in");
         signInPreference.setOnPreferenceClickListener(this);
         findPreference("help_page").setOnPreferenceClickListener(this);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        view.setBackgroundColor(Color.BLACK);
     }
 
     @Override

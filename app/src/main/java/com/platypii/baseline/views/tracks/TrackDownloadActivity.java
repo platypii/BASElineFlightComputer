@@ -52,7 +52,7 @@ public class TrackDownloadActivity extends BaseActivity {
     private void loadTrack() {
         // Load track from extras
         final Bundle extras = getIntent().getExtras();
-        if(extras != null && extras.getString(EXTRA_TRACK_ID) != null) {
+        if (extras != null && extras.getString(EXTRA_TRACK_ID) != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
             track = Services.cloud.tracks.getCached(track_id);
         }

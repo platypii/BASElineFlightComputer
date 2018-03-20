@@ -1,0 +1,10 @@
+<resources>
+
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="@style/Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:navigationBarColor">#000000</item>
+    </style>
+
+</resources>

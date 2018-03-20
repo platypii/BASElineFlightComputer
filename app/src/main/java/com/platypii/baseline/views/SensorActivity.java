@@ -112,10 +112,10 @@ public class SensorActivity extends Activity implements MyLocationListener {
         // TextView sensorsLabel = (TextView)findViewById(R.id.sensorsLabel);
         // sensorsLabel.setText("Sensors: \n" + MySensorManager.getSensorsString());
         
-        if(Services.sensors.gravity != null) {
+        if (Services.sensors.gravity != null) {
             addPlot("Gravity", Services.sensors.gravity);
         }
-        if(Services.sensors.rotation != null) {
+        if (Services.sensors.rotation != null) {
             addPlot("Rotation", Services.sensors.rotation);
         }
 
@@ -166,7 +166,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
     }
 
     private void addPlot(String label, SyncedList<MSensor> history) {
-        if(history != null) {
+        if (history != null) {
             final TextView textView = new TextView(this);
             textView.setText(label);
             sensorLayout.addView(textView);
@@ -187,7 +187,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
 
         pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate));
         pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(Services.alti.baro.pressure_altitude_raw, 2, true));
-        if(Double.isNaN(Services.alti.baro.pressure_altitude_filtered)) {
+        if (Double.isNaN(Services.alti.baro.pressure_altitude_filtered)) {
             pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: ");
         } else {
             pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(Services.alti.baro.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(Services.alti.baro.model_error.var()), 2, true));
@@ -198,15 +198,15 @@ public class SensorActivity extends Activity implements MyLocationListener {
     private String altimeterSource() {
         final boolean hasBaro = Services.alti.baro_sample_count > 0;
         final boolean hasGps = Services.alti.gps_sample_count > 0;
-        if(hasBaro && hasGps) return "GPS + baro";
-        else if(hasBaro) return "baro";
-        else if(hasGps) return "GPS";
+        if (hasBaro && hasGps) return "GPS + baro";
+        else if (hasBaro) return "baro";
+        else if (hasGps) return "GPS";
         else return "none";
     }
 
     private void updateGPS() {
         final MLocation loc = Services.location.lastLoc;
-        if(loc != null) {
+        if (loc != null) {
             satelliteLabel.setText("Satellites: " + loc.satellitesUsed + " used in fix, " + loc.satellitesInView + " visible");
             if (Numbers.isReal(loc.latitude)) {
                 latitudeLabel.setText(String.format(Locale.getDefault(), "Lat: %.6f", loc.latitude));
@@ -236,15 +236,15 @@ public class SensorActivity extends Activity implements MyLocationListener {
     /** Updates the UI that refresh continuously, such as sample rates */
     private void update() {
         // Bluetooth battery level needs to be continuously updated
-        if(Services.bluetooth.preferences.preferenceEnabled) {
+        if (Services.bluetooth.preferences.preferenceEnabled) {
             gpsSourceLabel.setText("Data source: Bluetooth GPS");
-            if(Services.bluetooth.preferences.preferenceDeviceName == null) {
+            if (Services.bluetooth.preferences.preferenceDeviceName == null) {
                 bluetoothStatusLabel.setText("Bluetooth: (not selected)");
             } else {
                 String status = "Bluetooth: " + Services.bluetooth.preferences.preferenceDeviceName; // TODO: Model name
-                if(Services.bluetooth.charging) {
+                if (Services.bluetooth.charging) {
                     status += " charging";
-                } else if(!Float.isNaN(Services.bluetooth.powerLevel)) {
+                } else if (!Float.isNaN(Services.bluetooth.powerLevel)) {
                     final int powerLevel = (int) (Services.bluetooth.powerLevel * 100);
                     status += " " + powerLevel + "%";
                 }
@@ -257,9 +257,9 @@ public class SensorActivity extends Activity implements MyLocationListener {
         }
         // Last fix needs to be updated continuously since it shows time since last fix
         final long lastFixDuration = Services.location.lastFixDuration();
-        if(lastFixDuration >= 0) {
+        if (lastFixDuration >= 0) {
             // Set text color
-            if(lastFixDuration > 2000) {
+            if (lastFixDuration > 2000) {
                 // Fade from white to red linearly from 2 -> 5 seconds since last fix
                 float frac = (5000f - lastFixDuration) / (3000f);
                 frac = Math.max(0, Math.min(frac, 1));
@@ -270,7 +270,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
                 lastFixLabel.setTextColor(0xffb0b0b0);
             }
             String lastFix = (lastFixDuration / 1000) + "s";
-            if(Services.location.refreshRate > 0) {
+            if (Services.location.refreshRate > 0) {
                 lastFix += String.format(Locale.getDefault(), " (%.2fHz)", Services.location.refreshRate);
             }
             lastFixLabel.setText("Last fix: " + lastFix);

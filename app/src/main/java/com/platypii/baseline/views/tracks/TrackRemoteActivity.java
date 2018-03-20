@@ -47,10 +47,10 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     private void loadTrack() {
         // Load track id from extras
         final Bundle extras = getIntent().getExtras();
-        if(extras != null && extras.getString(EXTRA_TRACK_ID) != null) {
+        if (extras != null && extras.getString(EXTRA_TRACK_ID) != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
             track = Services.cloud.tracks.getCached(track_id);
-            if(track == null) {
+            if (track == null) {
                 Exceptions.report(new IllegalStateException("Failed to load track " + track_id + " from cache"));
                 finish();
             }
@@ -64,7 +64,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
      * Update view states (except for auth state)
      */
     private void updateViews() {
-        if(track != null) {
+        if (track != null) {
             // Find views
             final TextView trackDate = findViewById(R.id.trackDate);
             final TextView trackLocation = findViewById(R.id.trackLocation);
@@ -80,7 +80,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         bundle.putString("track_id", track.track_id);
         firebaseAnalytics.logEvent("click_track_open", bundle);
         // Open web app
-        if(track.trackUrl != null) {
+        if (track.trackUrl != null) {
             Intents.openTrackUrl(this, track.trackUrl);
         }
     }
@@ -90,7 +90,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         final Bundle bundle = new Bundle();
         bundle.putString("track_id", track.track_id);
         firebaseAnalytics.logEvent("click_track_kml", bundle);
-        if(track != null) {
+        if (track != null) {
             // Open google earth
             Intents.openTrackKml(this, track.trackKml);
         } else {
@@ -136,7 +136,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     }
 
     private void deleteRemote() {
-        if(isSignedIn()) {
+        if (isSignedIn()) {
             // Begin automatic upload
             getAuthToken(new Callback<String>() {
                 @Override
@@ -157,7 +157,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     // Listen for deletion of this track
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDeleteSuccess(@NonNull SyncEvent.DeleteSuccess event) {
-        if(event.track_id.equals(track.track_id)) {
+        if (event.track_id.equals(track.track_id)) {
             // Notify user
             Toast.makeText(getApplicationContext(), "Deleted track", Toast.LENGTH_LONG).show();
             // Exit activity
@@ -166,7 +166,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDeleteFailure(@NonNull SyncEvent.DeleteFailure event) {
-        if(event.track_id.equals(track.track_id)) {
+        if (event.track_id.equals(track.track_id)) {
             findViewById(R.id.deleteButton).setEnabled(true);
             // Notify user
             Toast.makeText(getApplicationContext(), "Track delete failed", Toast.LENGTH_SHORT).show();
@@ -175,7 +175,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAuthEvent(@NonNull AuthEvent event) {
         // If user gets signed out, close the track activity
-        if(event == AuthEvent.SIGNED_OUT) {
+        if (event == AuthEvent.SIGNED_OUT) {
             Log.i(TAG, "User signed out, closing cloud track");
             finish();
         }
@@ -199,7 +199,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     protected void onStop() {
         super.onStop();
         // Dismiss alert to prevent context leak
-        if(alertDialog != null) {
+        if (alertDialog != null) {
             alertDialog.dismiss();
             alertDialog = null;
         }

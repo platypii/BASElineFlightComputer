@@ -3,9 +3,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="@style/Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@android:color/black</item>
-        <item name="android:colorBackground">#ff111111</item>
-        <item name="android:colorForeground">#ffeeeeee</item>
+        <!--<item name="android:windowBackground">@android:color/black</item>-->
+        <!--<item name="android:colorBackground">#111111</item>-->
+        <!--<item name="android:colorForeground">#eeeeee</item>-->
         <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless</item>
     </style>
 
