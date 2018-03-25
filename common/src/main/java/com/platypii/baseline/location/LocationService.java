@@ -15,11 +15,14 @@ public class LocationService extends LocationProvider {
     private static final String TAG = "LocationService";
 
     // What data source to pull from
-    // TODO: Separate android / nmea
     private static final int LOCATION_NONE = 0;
     private static final int LOCATION_ANDROID = 1;
     private static final int LOCATION_BLUETOOTH = 2;
     private int locationMode = LOCATION_NONE;
+
+    // Set to true on first android NMEA location
+    // If we are getting NMEA, we can disable android location provider
+    private boolean nmeaReceived = false;
 
     private final BluetoothService bluetooth;
 
@@ -40,6 +43,7 @@ public class LocationService extends LocationProvider {
     private final MyLocationListener nmeaListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
+            nmeaReceived = true;
             if (!bluetooth.preferences.preferenceEnabled) {
                 updateLocation(loc);
             }
@@ -51,7 +55,7 @@ public class LocationService extends LocationProvider {
         public void onLocationChanged(@NonNull MLocation loc) {
             // Only use android location if we aren't getting NMEA
             // TODO: Remove the android location listener if every phone provides NMEA
-            if (!bluetooth.preferences.preferenceEnabled && !locationProviderNMEA.nmeaReceived) {
+            if (!bluetooth.preferences.preferenceEnabled && !nmeaReceived) {
                 // Log on powers of 2
                 overrideCount++;
                 if (overrideCount > 1 && isPower2(overrideCount)) {
@@ -81,6 +85,9 @@ public class LocationService extends LocationProvider {
 
     @Override
     public void start(@NonNull Context context) {
+        if (locationMode != LOCATION_NONE) {
+            Log.e(TAG, "Location service already started");
+        }
         if (bluetooth.preferences.preferenceEnabled) {
             Log.i(TAG, "Starting location service in bluetooth mode");
             locationMode = LOCATION_BLUETOOTH;

@@ -17,8 +17,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
     private final MyAltimeter alti;
 
-    boolean nmeaReceived = false;
-
     // Most recent data
     private long lastFixMillis = -1;
     private double latitude = Double.NaN;
@@ -105,11 +103,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                     onNmeaReceived(timestamp, "$" + str);
                 }
             }
-        }
-
-        if (!nmeaReceived) {
-            Log.d(NMEA_TAG, "First NMEA string received");
-            nmeaReceived = true;
         }
 
         try {
