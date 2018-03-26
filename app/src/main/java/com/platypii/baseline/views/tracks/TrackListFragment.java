@@ -22,11 +22,13 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
     private List<TrackFile> trackList;
     private TrackAdapter listAdapter;
 
+    private View searchBox;
     private View tracksEmptyLabel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.track_list, container, false);
+        searchBox = view.findViewById(R.id.track_search);
         tracksEmptyLabel = view.findViewById(R.id.tracks_empty);
         return view;
     }
@@ -62,8 +64,10 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
         // Handle no-tracks case
         if (listAdapter.isEmpty()) {
             tracksEmptyLabel.setVisibility(View.VISIBLE);
+            searchBox.setEnabled(false);
         } else {
             tracksEmptyLabel.setVisibility(View.GONE);
+            searchBox.setEnabled(true);
         }
     }
 
