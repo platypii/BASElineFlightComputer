@@ -81,6 +81,7 @@ public class DownloadTask implements Runnable {
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", auth);
         conn.setRequestProperty("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME);
+        conn.addRequestProperty("Accept-Encoding", "identity"); // Without this, okhttp gets confused about gzip
         try {
             // Read response
             final int status = conn.getResponseCode();
