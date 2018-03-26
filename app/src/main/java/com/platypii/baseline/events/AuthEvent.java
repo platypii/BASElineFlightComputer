@@ -1,7 +1,10 @@
 package com.platypii.baseline.events;
 
 /**
- * Indicates that sign in or sign out status has changed
+ * Indicates that sign in or sign out status has changed.
+ *
+ * The constructor is private, so only available class instances are the three static ones.
+ * That means it is safe to use == equality.
  */
 public class AuthEvent {
 
@@ -15,11 +18,11 @@ public class AuthEvent {
     }
 
     public static AuthEvent fromString(String state) {
-        if(SIGNED_OUT.state.equals(state)) {
+        if (SIGNED_OUT.state.equals(state)) {
             return SIGNED_OUT;
-        } else if(SIGNING_IN.state.equals(state)) {
+        } else if (SIGNING_IN.state.equals(state)) {
             return SIGNING_IN;
-        } else if(SIGNED_IN.state.equals(state)) {
+        } else if (SIGNED_IN.state.equals(state)) {
             return SIGNED_IN;
         } else {
             return null;

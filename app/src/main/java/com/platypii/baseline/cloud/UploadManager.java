@@ -46,7 +46,7 @@ public class UploadManager {
     }
 
     private void uploadAll() {
-        if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {
+        if (BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {
             for(TrackFile trackFile : TrackFiles.getTracks(context)) {
                 Log.i(TAG, "Auto syncing track " + trackFile);
                 upload(trackFile);
@@ -56,7 +56,7 @@ public class UploadManager {
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onLoggingEvent(@NonNull LoggingEvent event) {
-        if(BaseActivity.currentAuthState == AuthEvent.SIGNED_IN && !event.started) {
+        if (BaseActivity.currentAuthState == AuthEvent.SIGNED_IN && !event.started) {
             Log.i(TAG, "Auto syncing track " + event.trackFile);
             Exceptions.log("Logging stopped, autosyncing track " + event.trackFile);
             upload(event.trackFile);
@@ -70,6 +70,13 @@ public class UploadManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUploadFailure(@NonNull SyncEvent.UploadFailure event) {
         Services.trackState.setState(event.trackFile, TrackState.NOT_UPLOADED);
+    }
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onSignIn(@NonNull AuthEvent event) {
+        if (event == AuthEvent.SIGNED_IN) {
+            Log.i(TAG, "User signed in, uploading all tracks");
+            uploadAll();
+        }
     }
 
     public CloudData getCompleted(TrackFile trackFile) {
