@@ -58,22 +58,20 @@ class UploadTask implements Runnable {
             Log.i(TAG, "Upload successful, track " + trackData.track_id);
             EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, trackData));
         } catch (AuthException e) {
-            Log.e(TAG, "Failed to upload file - auth error", e);
-            if (networkAvailable) {
-                Exceptions.report(e);
-            }
+            Log.e(TAG, "Failed to upload file: auth error", e);
+            Exceptions.report(e);
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "auth error"));
         } catch (IOException e) {
-            Log.e(TAG, "Failed to upload file", e);
             if (networkAvailable) {
+                Log.e(TAG, "Failed to upload file", e);
                 Exceptions.report(e);
+            } else {
+                Log.w(TAG, "Failed to upload file, network not available", e);
             }
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
-            if (networkAvailable) {
-                Exceptions.report(e);
-            }
+            Exceptions.report(e);
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "invalid response from server"));
         }
     }

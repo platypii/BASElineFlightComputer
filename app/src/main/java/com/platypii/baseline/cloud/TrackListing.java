@@ -4,6 +4,7 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
+import com.platypii.baseline.util.Network;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -24,8 +25,10 @@ public class TrackListing {
     private static final String TAG = "TrackListing";
 
     public final TrackListingCache cache = new TrackListingCache();
+    private Context context;
 
     void start(Context context) {
+        this.context = context;
         cache.start(context);
     }
 
@@ -33,7 +36,7 @@ public class TrackListing {
      * Query baseline server for track listing asynchronously
      */
     public void listAsync(final String auth, boolean force) {
-        if(auth != null) {
+        if (auth != null) {
             if (force || cache.shouldRequest()) {
                 cache.request();
                 // Update the track listing in a thread
@@ -54,6 +57,8 @@ public class TrackListing {
      * Notify listeners and handle exceptions
      */
     private void listTracks(String auth) {
+        // Check for network availability. Still try to upload anyway, but don't report to firebase
+        final boolean networkAvailable = Network.isAvailable(context);
         try {
             // Make HTTP request
             final List<CloudData> trackList = listRemote(auth);
@@ -63,10 +68,14 @@ public class TrackListing {
             EventBus.getDefault().post(new SyncEvent.ListingSuccess());
 
             Log.i(TAG, "Listing successful: " + trackList.size() + " tracks");
-        } catch(IOException e) {
-            Log.e(TAG, "Failed to list tracks", e);
-            Exceptions.report(e);
-        } catch(JSONException e) {
+        } catch (IOException e) {
+            if (networkAvailable) {
+                Log.e(TAG, "Failed to list tracks", e);
+                Exceptions.report(e);
+            } else {
+                Log.w(TAG, "Failed to list tracks, network not available", e);
+            }
+        } catch (JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
             Exceptions.report(e);
         }
@@ -83,11 +92,11 @@ public class TrackListing {
         try {
             // Read response
             final int status = conn.getResponseCode();
-            if(status == 200) {
+            if (status == 200) {
                 // Read body
                 final String body = IOUtil.toString(conn.getInputStream());
                 return fromJson(body);
-            } else if(status == 401) {
+            } else if (status == 401) {
                 throw new AuthException(auth);
             } else {
                 throw new IOException("http status code " + status);

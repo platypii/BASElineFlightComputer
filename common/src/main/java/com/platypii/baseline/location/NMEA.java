@@ -23,7 +23,7 @@ class NMEA {
      * @return The latitude or longitude in decimal degrees
      */
     static double parseDegreesMinutes(@NonNull String dm, @NonNull String nsew) {
-        if(dm.isEmpty()) {
+        if (dm.isEmpty()) {
             return Double.NaN;
         } else {
             final int index = dm.indexOf('.') - 2;
@@ -54,16 +54,16 @@ class NMEA {
      * Parse DDMMYY into milliseconds since epoch
      */
     static long parseDate(String date) {
-        if(date == null || date.isEmpty()) {
+        if (date == null || date.isEmpty()) {
             return 0;
         } else {
-            if(date.length() != 6) {
+            if (date.length() != 6) {
                 Log.e(TAG, "Date format error " + date);
             }
             final int day = Integer.parseInt(date.substring(0, 2));
             final int month = Integer.parseInt(date.substring(2, 4)) - 1; // january is 0 not 1
             int year = 1900 + Integer.parseInt(date.substring(4, 6));
-            if(year < 1970) year += 100;
+            if (year < 1970) year += 100;
             cal.set(Calendar.MILLISECOND, 0);
             cal.set(year, month, day, 0, 0, 0);
             return cal.getTime().getTime();
@@ -74,11 +74,11 @@ class NMEA {
      * Parse HHMMSS.SS UTC time into milliseconds since midnight
      */
     static long parseTime(String time) {
-        if(time == null || time.isEmpty()) {
+        if (time == null || time.isEmpty()) {
             return 0;
         } else {
             try {
-                if(time.indexOf('.') != 6) {
+                if (time.indexOf('.') != 6) {
                     Log.e(TAG, "Time format error " + time);
                 }
                 final long hour = Integer.parseInt(time.substring(0, 2));
@@ -102,13 +102,17 @@ class NMEA {
         // - starts with $
         // - ends with checksum
         // Could use regex ^\\$.*\\*[0-9a-fA-F]{2} but this is faster:
-        if(length < 8 || nmea.charAt(0) != '$' || starIndex != length - 3) {
-            if(nmea.startsWith("$PGLOR,") || nmea.startsWith("$AIDSTAT,")) {
+        if (length < 8 || nmea.charAt(0) != '$' || starIndex != length - 3) {
+            if (nmea.startsWith("$PGLOR,") || nmea.startsWith("$AIDSTAT,")) {
                 // Some commands omit or truncate checksum, no need to report it
                 return;
             } else {
                 throw new NMEAException("Invalid NMEA sentence: " + nmea);
             }
+        }
+        // Special case for AIDSTAT
+        if (nmea.startsWith("$AIDSTAT") && nmea.endsWith("*00")) {
+            return;
         }
 
         // Compute checksum
@@ -117,7 +121,7 @@ class NMEA {
             checksum1 ^= nmea.charAt(i);
         }
         final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1), 16);
-        if(checksum1 != checksum2) {
+        if (checksum1 != checksum2) {
             throw new NMEAChecksumException(String.format(Locale.US, "Invalid NMEA checksum: %02X != %02X for sentence: %s", checksum1, checksum2, nmea));
         }
     }
@@ -132,7 +136,7 @@ class NMEA {
      * $GPPWR,0501,1,0,1,1,00,0,0,97, 1 9 ,S00 // charging
      */
     static float parsePowerLevel(String split[]) {
-        if(!"$GPPWR".equals(split[0])) {
+        if (!"$GPPWR".equals(split[0])) {
             Exceptions.report(new IllegalStateException("Parse power level should only be called on GPPWR"));
         }
         try {
@@ -152,7 +156,7 @@ class NMEA {
     static String cleanNmea(@NonNull String nmea) {
         // Remove anything before $
         final int sentenceStart = nmea.indexOf('$');
-        if(sentenceStart > 0) {
+        if (sentenceStart > 0) {
             nmea = nmea.substring(sentenceStart);
         }
         // Trim whitespace and \0
@@ -163,7 +167,7 @@ class NMEA {
     static String[] splitNmea(@NonNull String nmea) {
         // Strip checksum
         final int starIndex = nmea.lastIndexOf('*');
-        if(0 < starIndex && starIndex < nmea.length()) {
+        if (0 < starIndex && starIndex < nmea.length()) {
             nmea = nmea.substring(0, starIndex);
         }
         // Split on comma, -1 preserves trailing columns
