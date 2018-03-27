@@ -27,17 +27,19 @@ public class ConvertTest {
 
     @Test
     public void convertDistance2() {
-        assertEquals("3200 feet", Convert.distance2(1000, 2, true));
-        assertEquals("3280 feet", Convert.distance2(1000, 3, true));
-        assertEquals("1.0 miles", Convert.distance2(1609.34, 2, true));
+        assertEquals("3200 feet", Convert.distance2(1000, 2));
+        assertEquals("3280 feet", Convert.distance2(1000, 3));
+        assertEquals("1 mile", Convert.distance2(1609.34, 1));
+        assertEquals("1.0 miles", Convert.distance2(1609.34, 2));
     }
 
     @Test
     public void convertDistance2Metric() {
         Convert.metric = true;
-        assertEquals("1.0 kilometers", Convert.distance2(1000, 2, true));
-        assertEquals("990 meters", Convert.distance2(999, 2, true));
-        assertEquals("999 meters", Convert.distance2(999, 3, true));
+        assertEquals("990 meters", Convert.distance2(999, 2));
+        assertEquals("999 meters", Convert.distance2(999, 3));
+        assertEquals("1 kilometer", Convert.distance2(1000, 1));
+        assertEquals("1.0 kilometers", Convert.distance2(1000, 2));
     }
 
     @Test

@@ -15,7 +15,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
 
 /**
  * Download a track file from the cloud
@@ -64,19 +63,13 @@ public class DownloadTask implements Runnable {
                 Exceptions.report(e);
             }
             EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, e.getMessage()));
-        } catch (JSONException e) {
-            Log.e(TAG, "Failed to parse response", e);
-            if (networkAvailable) {
-                Exceptions.report(e);
-            }
-            EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, "invalid response from server"));
         }
     }
 
     /**
      * HTTP get track from baseline
      */
-    private void downloadTrack(@NonNull String auth) throws IOException, JSONException {
+    private void downloadTrack(@NonNull String auth) throws IOException {
         final URL url = new URL(trackUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", auth);

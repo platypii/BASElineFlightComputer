@@ -132,13 +132,7 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
      */
     @Override
     public int compareTo(@NonNull MLocation loc) {
-        if (millis < loc.millis) {
-            return -1;
-        } else if (loc.millis == millis) {
-            return 0;
-        } else {
-            return 1;
-        }
+        return Long.compare(millis, loc.millis);
     }
 
     /**

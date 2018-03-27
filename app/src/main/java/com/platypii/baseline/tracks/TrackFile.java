@@ -11,7 +11,7 @@ public class TrackFile {
     private static final String TAG = "TrackFile";
 
     // TrackFile info
-    public File file;
+    public final File file;
 
     public TrackFile(File file) {
         this.file = file;

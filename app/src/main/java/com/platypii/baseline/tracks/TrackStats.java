@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class TrackStats {
 
-    public Range altitude = new Range();
+    public final Range altitude = new Range();
     public MLocation exit;
 
     public TrackStats(@NonNull List<MLocation> trackData) {

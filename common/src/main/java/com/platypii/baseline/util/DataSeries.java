@@ -10,7 +10,6 @@ import java.util.NoSuchElementException;
  * Represent a series of data points to be plotted.
  */
 public class DataSeries implements Iterable<DataSeries.Point> {
-    private static final String TAG = "DataSeries";
 
     private final ArrayList<Point> points = new ArrayList<>();
     private Point lastPoint;

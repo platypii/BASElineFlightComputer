@@ -79,11 +79,9 @@
     <string name="title_activity_bluetooth">Bluetooth</string>
     <string name="pref_bluetooth">GPS bluetooth</string>
     <string name="pref_bluetooth_description">Configurer le périphérique bluetooth</string>
-    <string name="pref_bluetooth_disabled">GPS bluetooth est désactivé</string>
     <string name="bluetooth_enabled">Utilisez le GPS bluetooth?</string>
     <string name="bluetooth_devices">Périphériques Bluetooth</string>
     <string name="bluetooth_pair">Appairage</string>
-    <string name="error_bluetooth_intent">Impossible d\'ouvrir les paramètres Bluetooth</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Paramètres</string>

@@ -14,12 +14,12 @@ class ConvertUtil {
      */
     static String formatDouble(double value, int precision) {
         // Switch negative, so that we floor toward zero
-        if(value < 0) return "-" + formatDouble(-value, precision);
+        if (value < 0) return "-" + formatDouble(-value, precision);
         // Check for special values
-        if(Double.isNaN(value) || Double.isInfinite(value)) return Double.toString(value);
-        if(value == 0.0) return "0";
+        if (Double.isNaN(value) || Double.isInfinite(value)) return Double.toString(value);
+        if (value == 0.0) return "0";
         // Precision must be at least 1
-        if(precision <= 0) precision = 1;
+        if (precision <= 0) precision = 1;
         // Find magnitude of value
         final int mag = (int) Math.floor(Math.log10(value));
         // Significant digits as an int (9300 -> 93, 9.3 -> 93, 0.093 -> 93)
@@ -31,7 +31,7 @@ class ConvertUtil {
             final char[] zeros = new char[-decimalPlaces];
             Arrays.fill(zeros, '0');
             return digits + new String(zeros);
-        } else if(precision < decimalPlaces) {
+        } else if (precision < decimalPlaces) {
             // Add leading zeros .093
             final char[] zeros = new char[decimalPlaces - precision];
             Arrays.fill(zeros, '0');
@@ -48,13 +48,13 @@ class ConvertUtil {
     /** Truncate to at most 2 int digits */
     static String formatInt(double value, int precision) {
         // Switch negative, so that we floor toward zero
-        if(value < 0) return "-" + formatInt(-value, precision);
+        if (value < 0) return "-" + formatInt(-value, precision);
         // Precision must be at least 1
-        if(precision <= 0) precision = 1;
+        if (precision <= 0) precision = 1;
         // Convert to int
         final int valueInt = (int) Math.floor(value);
         final int mag = (int) Math.floor(Math.log10(value));
-        if(mag < precision) {
+        if (mag < precision) {
             // No need to truncate
             return Integer.toString(valueInt);
         } else {

@@ -11,8 +11,8 @@ import java.util.Locale;
 public class Bounds {
     private static final String TAG = "Bounds";
 
-    public Range x = new Range();
-    public Range y = new Range();
+    public final Range x = new Range();
+    public final Range y = new Range();
 
 //    public double left = Double.NaN;
 //    public double top = Double.NaN;
@@ -27,8 +27,8 @@ public class Bounds {
     }
 
     public void set(double left, double top, double right, double bottom) {
-        if(right < left) Log.e(TAG, "Invalid bounds: left should be less than right");
-        if(top < bottom) Log.e(TAG, "Invalid bounds: bottom should be less than top");
+        if (right < left) Log.e(TAG, "Invalid bounds: left should be less than right");
+        if (top < bottom) Log.e(TAG, "Invalid bounds: bottom should be less than top");
         this.x.min = left;
         this.x.max = right;
         this.y.min = bottom;

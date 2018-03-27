@@ -41,14 +41,14 @@ public class Convert {
      * 12.4 kft, 486 ft, 3.2 km
      */
     public static String altitude(double m) {
-        if(Double.isNaN(m)) {
+        if (Double.isNaN(m)) {
             return "";
-        } else if(Double.isInfinite(m)) {
+        } else if (Double.isInfinite(m)) {
             return Double.toString(m);
         } else {
             final String localUnits = metric? "m" : "ft";
             final double localValue = metric? m : m * 3.2808399;
-            if(localValue < 999.5) {
+            if (localValue < 999.5) {
                 return Math.round(localValue) + " " + localUnits;
             } else {
                 return String.format(Locale.getDefault(), "%.1f k%s", localValue * 0.001, localUnits);
@@ -72,14 +72,14 @@ public class Convert {
      * @return distance string in local units
      */
     public static String distance(double m, int precision, boolean units) {
-        if(Double.isNaN(m)) {
+        if (Double.isNaN(m)) {
             return "";
-        } else if(Double.isInfinite(m)) {
+        } else if (Double.isInfinite(m)) {
             return Double.toString(m);
         } else {
             final String unitString = units? (metric? " m" : " ft") : "";
             final double localValue = metric? m : m * 3.2808399;
-            if(precision == 0) {
+            if (precision == 0) {
                 // Faster special case for integers
                 return Math.round(localValue) + unitString;
             } else {
@@ -89,42 +89,42 @@ public class Convert {
     }
 
     /**
-     * Shortened distance intended to be spoken
+     * Shortened distance intended to be spoken, with units
      * @param m meters
      * @param precision number of decimal places
-     * @param units show the units?
      */
-    public static String distance2(double m, int precision, boolean units) {
-        if(Double.isNaN(m)) {
+    public static String distance2(double m, int precision) {
+        if (Double.isNaN(m)) {
             return "";
-        } else if(Double.isInfinite(m)) {
+        } else if (Double.isInfinite(m)) {
             return Double.toString(m);
         } else {
-            String unitString;
-            String localValue;
-            if(metric) {
-                if(m >= 1000) {
-                    unitString = "kilometers";
-                    localValue = ConvertUtil.formatDouble(m * 0.001, precision);
+            if (metric) {
+                if (m >= 1000) {
+                    final String localValue = ConvertUtil.formatDouble(m * 0.001, precision);
+                    // Special case for singular units
+                    if (localValue.equals("1")) {
+                        return "1 kilometer";
+                    } else {
+                        return localValue + " kilometers";
+                    }
                 } else {
-                    unitString = "meters";
-                    localValue = ConvertUtil.formatInt(m, precision);
+                    return ConvertUtil.formatInt(m, precision) + " meters";
                 }
             } else {
-                if(m >= MILE) {
+                if (m >= MILE) {
                     // Need max because of float error
                     final double miles = Math.max(1, m * 0.000621371192);
-                    unitString = "miles";
-                    localValue = ConvertUtil.formatDouble(miles, precision);
+                    final String localValue = ConvertUtil.formatDouble(miles, precision);
+                    // Special case for singular units
+                    if (localValue.equals("1")) {
+                        return "1 mile";
+                    } else {
+                        return localValue + " miles";
+                    }
                 } else {
-                    unitString = "feet";
-                    localValue = ConvertUtil.formatInt(m * 3.2808399, precision);
+                    return ConvertUtil.formatInt(m * 3.2808399, precision) + " feet";
                 }
-            }
-            if(units) {
-                return localValue + " " + unitString;
-            } else {
-                return localValue;
             }
         }
     }
@@ -145,14 +145,14 @@ public class Convert {
      * @return speed string in local units
      */
     public static String speed(double mps, int precision, boolean units) {
-        if(Double.isNaN(mps)) {
+        if (Double.isNaN(mps)) {
             return "";
-        } else if(Double.isInfinite(mps)) {
+        } else if (Double.isInfinite(mps)) {
             return Double.toString(mps);
         } else {
             final String unitString = units? (metric? " km/h" : " mph") : "";
             final double localValue = metric? mps * 3.6 : mps * 2.23693629;
-            if(precision == 0) {
+            if (precision == 0) {
                 // Faster special case for integers
                 return Math.round(localValue) + unitString;
             } else {
@@ -162,18 +162,18 @@ public class Convert {
     }
 
     public static String glide(double glideRatio, int precision, boolean units) {
-        if(Double.isNaN(glideRatio)) {
+        if (Double.isNaN(glideRatio)) {
             return "";
-        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 40) {
+        } else if (Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 40) {
             return GLIDE_LEVEL;
         } else {
             final String value;
-            if(glideRatio < 0) {
+            if (glideRatio < 0) {
                 value = String.format("+%." + precision + "f", -glideRatio);
             } else {
                 value = String.format("%." + precision + "f", glideRatio);
             }
-            if(units) {
+            if (units) {
                 return value + " : 1";
             } else {
                 return value;
@@ -183,22 +183,22 @@ public class Convert {
 
     public static String glide(double groundSpeed, double climb, int precision, boolean units) {
         final double glideRatio = -groundSpeed / climb;
-        if(Double.isNaN(glideRatio)) {
+        if (Double.isNaN(glideRatio)) {
             return "";
-        } else if(groundSpeed + Math.abs(climb) < 0.5) { // ~1 mph
+        } else if (groundSpeed + Math.abs(climb) < 0.5) { // ~1 mph
             return Convert.GLIDE_STATIONARY;
-        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 30) {
+        } else if (Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 30) {
             return Convert.GLIDE_LEVEL;
-        } else if(groundSpeed < 0.5 && Math.abs(climb) > 0.5) {
+        } else if (groundSpeed < 0.5 && Math.abs(climb) > 0.5) {
             return Convert.GLIDE_VERTICAL;
         } else {
             final String value;
-            if(glideRatio < 0) {
+            if (glideRatio < 0) {
                 value = String.format("+%." + precision + "f", -glideRatio);
             } else {
                 value = String.format("%." + precision + "f", glideRatio);
             }
-            if(units) {
+            if (units) {
                 return value + " : 1";
             } else {
                 return value;
@@ -211,22 +211,22 @@ public class Convert {
      */
     public static String glide2(double groundSpeed, double climb, int precision, boolean units) {
         final double glideRatio = -groundSpeed / climb;
-        if(Double.isNaN(glideRatio)) {
+        if (Double.isNaN(glideRatio)) {
             return "";
-        } else if(groundSpeed + Math.abs(climb) < 0.5) { // ~1 mph
+        } else if (groundSpeed + Math.abs(climb) < 0.5) { // ~1 mph
             return ""; // Stationary
-        } else if(Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 30) {
+        } else if (Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 30) {
             return ""; // Level
-        } else if(groundSpeed < 0.5 && Math.abs(climb) > 0.5) {
+        } else if (groundSpeed < 0.5 && Math.abs(climb) > 0.5) {
             return ""; // Vertical
         } else {
             final String value;
-            if(glideRatio < 0) {
+            if (glideRatio < 0) {
                 value = String.format("+%." + precision + "f", -glideRatio);
             } else {
                 value = String.format("%." + precision + "f", glideRatio);
             }
-            if(units) {
+            if (units) {
                 return value + " : 1";
             } else {
                 return value;
@@ -235,7 +235,7 @@ public class Convert {
     }
 
     public static String pressure(double hPa) {
-        if(Double.isNaN(hPa))
+        if (Double.isNaN(hPa))
             return "";
         else
             return String.format(Locale.US, "%.2f hPa", hPa);
@@ -252,11 +252,11 @@ public class Convert {
 //        final long sec = (ms / 1000) % 60;
 //        String str;
 //        // m:ss
-//        if(sec < 10) str = min + ":0" + sec;
+//        if (sec < 10) str = min + ":0" + sec;
 //        else str = min + ":" + sec;
 //        // h:mm:ss
-//        if(hour > 0) {
-//            if(min < 10) str = hour + ":0" + str;
+//        if (hour > 0) {
+//            if (min < 10) str = hour + ":0" + str;
 //            else str = hour + ":" + str;
 //        }
 //        return str;
@@ -269,7 +269,7 @@ public class Convert {
      */
     public static String angle(double degrees) {
         // Check for non numbers
-        if(Double.isNaN(degrees) || Double.isInfinite(degrees)) return "";
+        if (Double.isNaN(degrees) || Double.isInfinite(degrees)) return "";
         // Faster special case for integers
         final int degreesInt = (int) Math.floor(degrees);
         return degreesInt + "°";
@@ -283,11 +283,11 @@ public class Convert {
     public static String angle2(double degrees) {
         // Adjust range to -180..180
         degrees = (degrees + 540) % 360 - 180;
-        if(degrees < 0)
+        if (degrees < 0)
             return ConvertUtil.formatInt(-degrees, 2) + " left";
-        else if(degrees == 0)
+        else if (degrees == 0)
             return "straight";
-        else if(degrees > 0)
+        else if (degrees > 0)
             return ConvertUtil.formatInt(degrees, 2) + " right";
         else
             return "";
@@ -299,25 +299,25 @@ public class Convert {
 //     * @return "40° (NE)"
 //     */
 //    public static String bearing(double degrees) {
-//        if(Double.isNaN(degrees)) {
+//        if (Double.isNaN(degrees)) {
 //            return "";
 //        } else {
-//            if(degrees < 0) degrees += 360;
-//            if(337.5 <= degrees || degrees < 22.5)
+//            if (degrees < 0) degrees += 360;
+//            if (337.5 <= degrees || degrees < 22.5)
 //                return "North";
-//            else if(22.5 <= degrees && degrees < 67.5)
+//            else if (22.5 <= degrees && degrees < 67.5)
 //                return "Northeast";
-//            else if(67.5 <= degrees && degrees < 112.5)
+//            else if (67.5 <= degrees && degrees < 112.5)
 //                return "East";
-//            else if(112.5 <= degrees && degrees < 157.5)
+//            else if (112.5 <= degrees && degrees < 157.5)
 //                return "Southeast";
-//            else if(157.5 <= degrees && degrees < 202.5)
+//            else if (157.5 <= degrees && degrees < 202.5)
 //                return "South";
-//            else if(202.5 <= degrees && degrees < 247.5)
+//            else if (202.5 <= degrees && degrees < 247.5)
 //                return "Southwest";
-//            else if(247.5 <= degrees && degrees < 292.5)
+//            else if (247.5 <= degrees && degrees < 292.5)
 //                return "West";
-//            else if(292.5 <= degrees && degrees < 337.5)
+//            else if (292.5 <= degrees && degrees < 337.5)
 //                return "Northwest";
 //            else
 //                return "";
@@ -331,27 +331,27 @@ public class Convert {
      */
     @NonNull
     public static String bearing2(double degrees) {
-        if(Double.isNaN(degrees)) {
+        if (Double.isNaN(degrees)) {
             return "";
         } else {
-            if(degrees < 0) degrees += 360;
-            if(degrees > 360) degrees -= 360;
+            if (degrees < 0) degrees += 360;
+            if (degrees > 360) degrees -= 360;
             final String bearingStr = ((int) degrees) + "°";
-            if(337.5 <= degrees || degrees < 22.5)
+            if (337.5 <= degrees || degrees < 22.5)
                 return bearingStr + " (N)";
-            else if(22.5 <= degrees && degrees < 67.5)
+            else if (22.5 <= degrees && degrees < 67.5)
                 return bearingStr + " (NE)";
-            else if(67.5 <= degrees && degrees < 112.5)
+            else if (67.5 <= degrees && degrees < 112.5)
                 return bearingStr + " (E)";
-            else if(112.5 <= degrees && degrees < 157.5)
+            else if (112.5 <= degrees && degrees < 157.5)
                 return bearingStr + " (SE)";
-            else if(157.5 <= degrees && degrees < 202.5)
+            else if (157.5 <= degrees && degrees < 202.5)
                 return bearingStr + " (S)";
-            else if(202.5 <= degrees && degrees < 247.5)
+            else if (202.5 <= degrees && degrees < 247.5)
                 return bearingStr + " (SW)";
-            else if(247.5 <= degrees && degrees < 292.5)
+            else if (247.5 <= degrees && degrees < 292.5)
                 return bearingStr + " (W)";
-            else if(292.5 <= degrees && degrees < 337.5)
+            else if (292.5 <= degrees && degrees < 337.5)
                 return bearingStr + " (NW)";
             else
                 return bearingStr;

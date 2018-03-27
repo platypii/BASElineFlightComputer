@@ -30,18 +30,18 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:27.1.0'
-    compile 'com.android.support:support-v4:27.1.0'
-    compile 'com.google.android.gms:play-services-auth:11.8.0'
-    compile 'com.google.android.gms:play-services-maps:11.8.0'
-    compile 'org.greenrobot:eventbus:3.1.1'
-    testCompile 'junit:junit:4.12'
-    androidTestCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support:support-annotations:27.1.0'
-    androidTestCompile 'com.android.support.test:runner:1.0.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:27.1.0'
+    implementation 'com.android.support:support-v4:27.1.0'
     implementation 'com.android.support:support-annotations:27.1.0'
-    compile project(':common')
+    implementation 'com.google.android.gms:play-services-auth:12.0.0'
+    implementation 'com.google.android.gms:play-services-maps:12.0.0'
+    implementation 'org.greenrobot:eventbus:3.1.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support:support-annotations:27.1.0'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    implementation project(':common')
 }
 
 // Necessary for firebase:

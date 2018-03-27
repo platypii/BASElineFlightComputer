@@ -117,7 +117,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         }
     }
 
-    protected void handleNmea(long timestamp, @NonNull String nmea) throws NMEAException {
+    void handleNmea(long timestamp, @NonNull String nmea) throws NMEAException {
         // Parse NMEA command
         final String split[] = NMEA.splitNmea(nmea);
         final String command = split[0].substring(3);

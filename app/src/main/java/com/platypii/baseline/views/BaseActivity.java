@@ -56,8 +56,8 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     }
 
     @Nullable
-    protected String getDisplayName() {
-        if(account != null) {
+    String getDisplayName() {
+        if (account != null) {
             return account.getDisplayName();
         } else {
             return null;
@@ -72,7 +72,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         // Notify listeners
         EventBus.getDefault().post(event);
         // Update sign in panel state
-        if(signInPanel != null) {
+        if (signInPanel != null) {
             if (event == AuthEvent.SIGNED_IN) {
                 signInPanel.setVisibility(View.GONE);
             } else if (event == AuthEvent.SIGNING_IN) {
@@ -84,9 +84,9 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
             }
         }
         // Show toasts
-        if(userClickedSignIn && event == AuthEvent.SIGNED_IN) {
+        if (userClickedSignIn && event == AuthEvent.SIGNED_IN) {
             Toast.makeText(this, R.string.signin_success, Toast.LENGTH_LONG).show();
-        } else if(userClickedSignIn && event == AuthEvent.SIGNED_OUT) {
+        } else if (userClickedSignIn && event == AuthEvent.SIGNED_OUT) {
             Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
         }
         // Save to preferences
@@ -106,7 +106,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         Services.create(this);
 
         // Load previous auth state
-        if(currentAuthState == null) {
+        if (currentAuthState == null) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             currentAuthState = AuthEvent.fromString(prefs.getString(PREF_AUTH_STATE, null));
         }
@@ -140,12 +140,12 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         signInPanel = findViewById(R.id.sign_in_panel);
         signInSpinner = findViewById(R.id.sign_in_spinner);
         final View signInButton = findViewById(R.id.sign_in_button);
-        if(signInButton != null) {
+        if (signInButton != null) {
             signInButton.setOnClickListener(signInClickListener);
         }
         // If we know that we are signed out, then show the panel
-        if(signInPanel != null) {
-            if(currentAuthState == AuthEvent.SIGNED_OUT) {
+        if (signInPanel != null) {
+            if (currentAuthState == AuthEvent.SIGNED_OUT) {
                 signInPanel.setVisibility(View.VISIBLE);
             } else {
                 signInPanel.setVisibility(View.GONE);
@@ -153,7 +153,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         }
     }
     private final View.OnClickListener signInClickListener = v -> {
-        if(v.getId() == R.id.sign_in_button) {
+        if (v.getId() == R.id.sign_in_button) {
             clickSignIn();
         }
     };
@@ -161,7 +161,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     /**
      * Start user sign in flow
      */
-    protected void clickSignIn() {
+    void clickSignIn() {
         Log.i(TAG, "User clicked sign in");
         firebaseAnalytics.logEvent("click_sign_in", null);
         userClickedSignIn = true;
@@ -173,7 +173,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    protected void clickSignOut() {
+    void clickSignOut() {
         Log.i(TAG, "User clicked sign out");
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(status -> {
                     Log.d(TAG, "Signed out: " + status);
@@ -192,8 +192,8 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         if (requestCode == RC_SIGN_IN) {
             final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-        } else if(requestCode == RC_TTS_DATA) {
-            if(resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+        } else if (requestCode == RC_TTS_DATA) {
+            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 // Notify services that TTS is ready
                 Services.onTtsLoaded(this);
             } else {
@@ -211,7 +211,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             account = result.getSignInAccount();
-            if(account != null) {
+            if (account != null) {
                 Log.i(TAG, "Sign in successful for user " + account.getDisplayName());
 
                 // final String authCode = account.getServerAuthCode();
@@ -227,7 +227,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
             // Notify listeners
             updateAuthState(AuthEvent.SIGNED_IN);
         } else {
-            if(result.getStatus().getStatusCode() == ConnectionResult.NETWORK_ERROR) {
+            if (result.getStatus().getStatusCode() == ConnectionResult.NETWORK_ERROR) {
                 // Don't sign out for network errors, base jumpers often have poor signal
                 Log.w(TAG, "Sign in failed due to network error");
             } else {
@@ -254,10 +254,10 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     }
 
     /** Get google auth token and return asynchronously via callback */
-    public void getAuthToken(@NonNull Callback<String> callback) {
-        if(account != null) {
+    protected void getAuthToken(@NonNull Callback<String> callback) {
+        if (account != null) {
             final String token = account.getIdToken();
-            if(token != null) {
+            if (token != null) {
                 Log.i(TAG, "Got auth token " + token);
                 callback.apply(token);
             } else {
@@ -270,8 +270,8 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == RC_LOCATION) {
-            if(grantResults.length == 1 &&
+        if (requestCode == RC_LOCATION) {
+            if (grantResults.length == 1 &&
                     permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION) &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Services.location.start(getApplication());

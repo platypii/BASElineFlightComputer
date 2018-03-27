@@ -29,7 +29,7 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
     final Plot plot = new Plot(options);
 
     // The drawing thread will sleep for refreshRateMillis
-    long refreshRateMillis = 33; // Approx 30fps
+    final long refreshRateMillis = 33; // Approx 30fps
 
     // Avoid creating new objects unnecessarily
     final Paint paint = new Paint();

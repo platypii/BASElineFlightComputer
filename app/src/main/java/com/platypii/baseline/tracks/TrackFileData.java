@@ -4,7 +4,7 @@ import com.platypii.baseline.altimeter.BaroAltimeter;
 import com.platypii.baseline.altimeter.Filter;
 import com.platypii.baseline.altimeter.FilterKalman;
 import com.platypii.baseline.measurements.MLocation;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import java.io.BufferedReader;
 import java.io.EOFException;
@@ -28,23 +28,19 @@ import java.util.zip.GZIPInputStream;
 public class TrackFileData {
     private static final String TAG = "TrackFileData";
 
-    @Nullable
+    @NonNull
     public static List<MLocation> getTrackData(File trackFile) {
         // Try and parse file
-        try {
-            final List<MLocation> trackData = readTrackFile(trackFile);
-            // Trim plane and ground
-            return autoTrim(trackData);
-        } catch (IOException e) {
-            Log.e(TAG, "Exception while reading track file", e);
-            return null;
-        }
+        final List<MLocation> trackData = readTrackFile(trackFile);
+        // Trim plane and ground
+        return autoTrim(trackData);
     }
 
     /**
      * Load track data from file into location data
      */
-    private static List<MLocation> readTrackFile(File trackFile) throws IOException {
+    @NonNull
+    private static List<MLocation> readTrackFile(File trackFile) {
         // Altitude kalman filters
         final Filter baroAltitudeFilter = new FilterKalman();
         final Filter gpsAltitudeFilter = new FilterKalman();
@@ -141,7 +137,8 @@ public class TrackFileData {
     /**
      * Trim plane ride and ground from track data
      */
-    private static List<MLocation> autoTrim(List<MLocation> points) {
+    @NonNull
+    private static List<MLocation> autoTrim(@NonNull List<MLocation> points) {
         // Margin size is the number of data points on either side of the jump
         // TODO: Use time instead of samples
         final int margin_size = 50;
