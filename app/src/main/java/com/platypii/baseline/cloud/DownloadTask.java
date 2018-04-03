@@ -53,9 +53,7 @@ public class DownloadTask implements Runnable {
             EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(track.track_id, file));
         } catch (AuthException e) {
             Log.e(TAG, "Failed to download file - auth error", e);
-            if (networkAvailable) {
-                Exceptions.report(e);
-            }
+            Exceptions.report(e);
             EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, "auth error"));
         } catch (IOException e) {
             Log.e(TAG, "Failed to download file", e);
@@ -91,9 +89,15 @@ public class DownloadTask implements Runnable {
         } catch (IOException e) {
             Log.e(TAG, "Exception while downloading track " + trackUrl, e);
             // Remove partial file so that download will retry
-            file.delete();
+            if (!file.delete()) {
+                Log.e(TAG, "Failed to delete file for failed track download");
+            }
             // Delete parent directory if it's empty
-            file.getParentFile().delete();
+            if (!file.getParentFile().delete()) {
+                Log.w(TAG, "Failed to delete track folder for failed track download");
+            }
+            // Rethrow exception
+            throw e;
         } finally {
             conn.disconnect();
         }

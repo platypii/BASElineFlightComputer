@@ -70,7 +70,7 @@ public class TrackDownloadActivity extends BaseActivity {
     public void onDownloadFailure(@NonNull DownloadEvent.DownloadFailure event) {
         if (event.track_id.equals(track.track_id)) {
             Log.e(TAG, "Failed to upload track: " + event.error);
-            Toast.makeText(getApplicationContext(), "Track sync failed", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Track download failed", Toast.LENGTH_LONG).show();
             finish();
         }
     }
