@@ -19,7 +19,7 @@ public class CloudData {
     public final String trackKml;
     public final String location;
 
-    private CloudData(String track_id, long date, String date_string, String trackUrl, String trackKml, String location) {
+    CloudData(String track_id, long date, String date_string, String trackUrl, String trackKml, String location) {
         this.track_id = track_id;
         this.date = date;
         this.date_string = date_string;
