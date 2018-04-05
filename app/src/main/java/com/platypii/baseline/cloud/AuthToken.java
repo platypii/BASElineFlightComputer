@@ -28,9 +28,9 @@ class AuthToken {
             if (result.isSuccess()) {
                 final GoogleSignInResult googleSignInResult = Auth.GoogleSignInApi.silentSignIn(googleApiClient).await();
                 final GoogleSignInAccount account = googleSignInResult.getSignInAccount();
-                if(account != null) {
+                if (account != null) {
                     final String authToken = account.getIdToken();
-                    if(authToken != null) {
+                    if (authToken != null) {
                         Log.i(TAG, "Got auth token in " + (System.currentTimeMillis() - startTime) + " ms");
                         return authToken;
                     } else {

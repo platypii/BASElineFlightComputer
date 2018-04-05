@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,8 +33,6 @@ public class TrackFiles {
                     tracks.add(trackFile);
                 }
             }
-            // Sort by date descending
-            Collections.sort(tracks, (track1, track2) -> -track1.getName().compareTo(track2.getName()));
             return tracks;
         } else {
             Log.e(TAG, "Track storage directory not available");

@@ -95,7 +95,9 @@ public class Services {
                 bluetooth.start(activity);
             }
 
-            // Initialize track logger
+            Log.i(TAG, "Starting track store service");
+            trackStore.start(appContext);
+
             Log.i(TAG, "Starting logger service");
             logger.start(appContext);
 
@@ -192,6 +194,7 @@ public class Services {
                 sensors.stop();
                 location.stop();
                 logger.stop();
+                trackStore.stop();
                 bluetooth.stop();
                 initialized = false;
             } else {
