@@ -10,8 +10,7 @@ public class BaselineCloud implements BaseService {
     static final String listUrl = BaselineCloud.baselineServer + "/v1/tracks";
 
     public final TrackListing listing = new TrackListing();
-    public final TrackDatabase tracks = new TrackDatabase();
-    public final UploadManager uploads = new UploadManager();
+    private final UploadManager uploads = new UploadManager();
 
     /**
      * Clear the track list cache (for when user signs out)

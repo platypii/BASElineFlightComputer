@@ -52,7 +52,7 @@ class UploadTask implements Runnable {
             // Move track to synced directory
             archive(trackData);
             // Add to cache
-            Services.cloud.tracks.addTrackData(trackData);
+            Services.cloud.listing.cache.addTrack(trackData);
             // Update track listing
             Services.cloud.listing.listAsync(authToken, true);
             Log.i(TAG, "Upload successful, track " + trackData.track_id);

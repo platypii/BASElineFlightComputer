@@ -51,10 +51,6 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     public static AuthEvent currentAuthState = null;
     private static final String PREF_AUTH_STATE = "auth_state";
 
-    protected boolean isSignedIn() {
-        return account != null;
-    }
-
     @Nullable
     String getDisplayName() {
         if (account != null) {

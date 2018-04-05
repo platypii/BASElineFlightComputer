@@ -83,9 +83,9 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
      */
     public synchronized void stopLogging() {
         if (logging) {
-            logging = false;
             Log.i(TAG, "Stopping logging");
             final TrackFile trackFile = stopFileLogging();
+            logging = false;
             if (trackFile != null) {
                 // Update state before notifying listeners (such as upload manager)
                 Services.trackStore.setNotUploaded(trackFile);

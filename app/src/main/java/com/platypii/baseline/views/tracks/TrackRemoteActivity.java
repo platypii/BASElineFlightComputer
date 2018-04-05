@@ -38,25 +38,25 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         // Load track from extras
         loadTrack();
 
-        findViewById(R.id.chartsButton).setOnClickListener(this::clickCharts);
-        findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
-        findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
-        findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+        if (track != null) {
+            findViewById(R.id.chartsButton).setOnClickListener(this::clickCharts);
+            findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
+            findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
+            findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+        } else {
+            Exceptions.report(new IllegalStateException("Failed to load track from extras"));
+            finish();
+        }
     }
 
     private void loadTrack() {
         // Load track id from extras
         final Bundle extras = getIntent().getExtras();
-        if (extras != null && extras.getString(EXTRA_TRACK_ID) != null) {
+        if (extras != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
-            track = Services.cloud.tracks.getCached(track_id);
-            if (track == null) {
-                Exceptions.report(new IllegalStateException("Failed to load track " + track_id + " from cache"));
-                finish();
+            if (track_id != null) {
+                track = Services.cloud.listing.cache.getTrack(track_id);
             }
-        } else {
-            Exceptions.report(new IllegalStateException("Failed to load track_id from extras"));
-            finish();
         }
     }
 
@@ -123,7 +123,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
      */
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        if(which == DialogInterface.BUTTON_POSITIVE) {
+        if (which == DialogInterface.BUTTON_POSITIVE) {
             // Analytics
             final Bundle bundle = new Bundle();
             bundle.putString("track_id", track.track_id);
@@ -136,22 +136,17 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     }
 
     private void deleteRemote() {
-        if (isSignedIn()) {
-            // Begin automatic upload
-            getAuthToken(new Callback<String>() {
-                @Override
-                public void apply(@NonNull String authToken) {
-                    Services.cloud.deleteTrack(track, authToken);
-                }
-                @Override
-                public void error(String error) {
-                    Toast.makeText(getApplicationContext(), "Track delete failed: " + error, Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            // This can happen between onResume and AuthEvent
-            Log.w(TAG, "Track delete failed: not signed in");
-        }
+        // Begin automatic upload
+        getAuthToken(new Callback<String>() {
+            @Override
+            public void apply(@NonNull String authToken) {
+                Services.cloud.deleteTrack(track, authToken);
+            }
+            @Override
+            public void error(String error) {
+                Toast.makeText(getApplicationContext(), "Track delete failed: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // Listen for deletion of this track

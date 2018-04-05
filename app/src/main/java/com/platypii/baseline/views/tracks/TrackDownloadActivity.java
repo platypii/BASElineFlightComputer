@@ -40,9 +40,6 @@ public class TrackDownloadActivity extends BaseActivity {
         if (track != null) {
             // Start download
             AsyncTask.execute(new DownloadTask(this, track));
-
-            // TODO: Listen for updates
-            // TODO: Open charts activity when done
         } else {
             Exceptions.report(new IllegalStateException("Failed to load track from extras"));
             finish();
@@ -52,9 +49,11 @@ public class TrackDownloadActivity extends BaseActivity {
     private void loadTrack() {
         // Load track from extras
         final Bundle extras = getIntent().getExtras();
-        if (extras != null && extras.getString(EXTRA_TRACK_ID) != null) {
+        if (extras != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
-            track = Services.cloud.tracks.getCached(track_id);
+            if (track_id != null) {
+                track = Services.cloud.listing.cache.getTrack(track_id);
+            }
         }
     }
 
