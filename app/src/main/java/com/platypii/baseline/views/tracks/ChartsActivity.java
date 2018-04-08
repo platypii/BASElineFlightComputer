@@ -7,10 +7,10 @@ import com.platypii.baseline.tracks.TrackFileData;
 import com.platypii.baseline.tracks.TrackStats;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.FlightProfile;
 import com.platypii.baseline.views.charts.PolarPlot;
 import com.platypii.baseline.views.charts.TimeChart;
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,7 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class ChartsActivity extends Activity {
+public class ChartsActivity extends BaseActivity {
     private static final String TAG = "Charts";
 
     private ProgressBar progress;
@@ -108,6 +108,7 @@ public class ChartsActivity extends Activity {
         protected Void doInBackground(Void... voids) {
             final ChartsActivity activity = activityRef.get();
             if (activity != null && !activity.isFinishing()) {
+                Log.i(TAG, "Loading track data from " + trackFile);
                 final List<MLocation> trackData = TrackFileData.getTrackData(trackFile);
                 activity.loadData(trackData);
             }

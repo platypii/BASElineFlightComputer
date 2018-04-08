@@ -41,6 +41,30 @@ public class TrackFileData {
      */
     @NonNull
     private static List<MLocation> readTrackFile(File trackFile) {
+        // Read file line by line
+        // TODO minsdk19: InputStreamReader(,StandardCharsets.UTF_8)
+        if (trackFile.getName().endsWith(".gz")) {
+            // GZipped track file
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(trackFile))))) {
+                return readTrackReader(br);
+            } catch (EOFException e) {
+                // Still error but less verbose
+                Log.e(TAG, "Premature end of gzip track file " + trackFile + "\n" + e);
+            } catch (IOException e) {
+                Log.e(TAG, "Error reading track data from " + trackFile, e);
+            }
+        } else {
+            // Uncompressed CSV file
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(trackFile)))) {
+                return readTrackReader(br);
+            } catch (IOException e) {
+                Log.e(TAG, "Error reading track data from " + trackFile, e);
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    private static List<MLocation> readTrackReader(BufferedReader br) throws IOException {
         // Altitude kalman filters
         final Filter baroAltitudeFilter = new FilterKalman();
         final Filter gpsAltitudeFilter = new FilterKalman();
@@ -50,87 +74,79 @@ public class TrackFileData {
 
         final List<MLocation> data = new ArrayList<>();
 
-        // Read file line by line
-        // TODO minsdk19: InputStreamReader(,StandardCharsets.UTF_8)
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(trackFile))))) {
-            // Parse header column
-            String line = br.readLine();
-            final Map<String,Integer> columns = new HashMap<>();
-            final String[] header = line.split(",");
-            for (int i = 0; i < header.length; i++) {
-                columns.put(header[i], i);
-            }
-            // Add column aliases
-            addMapping(columns, "timeMillis", "millis");
-            // Handle old files that were not FlySight compatible
-            addMapping(columns, "latitude", "lat");
-            addMapping(columns, "longitude", "lon");
-            addMapping(columns, "altitude_gps", "hMSL");
-
-            // Parse data rows
-            while ((line = br.readLine()) != null) {
-                final String[] row = line.split(",");
-                final Integer sensorIndex = columns.get("sensor");
-                if (sensorIndex == null) {
-                    // FlySight
-                    final long millis = getColumnDate(row, columns, "time");
-                    final double lat = getColumnDouble(row, columns, "lat");
-                    final double lon = getColumnDouble(row, columns, "lon");
-                    final double alt_gps = getColumnDouble(row, columns, "hMSL");
-                    final double climb = -getColumnDouble(row, columns, "velD");
-                    final double vN = getColumnDouble(row, columns, "velN");
-                    final double vE = getColumnDouble(row, columns, "velE");
-                    if (!Double.isNaN(lat) && !Double.isNaN(lon)) {
-                        final MLocation loc = new MLocation(millis, lat, lon, alt_gps, climb, vN, vE, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 0, 0);
-                        data.add(loc);
-                    }
-                } else if (row[sensorIndex].equals("gps")) {
-                    // BASEline GPS measurement
-                    final long millis = getColumnLong(row, columns, "millis");
-                    final double lat = getColumnDouble(row, columns, "lat");
-                    final double lon = getColumnDouble(row, columns, "lon");
-                    final double alt_gps = getColumnDouble(row, columns, "hMSL");
-                    final double vN = getColumnDouble(row, columns, "velN");
-                    final double vE = getColumnDouble(row, columns, "velE");
-                    // Update gps altitude filter
-                    if (gpsLastMillis < 0) {
-                        gpsAltitudeFilter.init(alt_gps, 0);
-                    } else {
-                        final double dt = (millis - gpsLastMillis) * 0.001;
-                        gpsAltitudeFilter.update(alt_gps, dt);
-                    }
-                    gpsLastMillis = millis;
-                    // Climb rate from baro or gps
-                    final double climb;
-                    if (Double.isNaN(baroAltitudeFilter.v)) {
-                        climb = gpsAltitudeFilter.v;
-                    } else {
-                        climb = baroAltitudeFilter.v;
-                    }
-                    if (!Double.isNaN(lat) && !Double.isNaN(lon)) {
-                        final MLocation loc = new MLocation(millis, lat, lon, alt_gps, climb, vN, vE, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 0, 0);
-                        data.add(loc);
-                    }
-                } else if (columns.containsKey("sensor") && row[columns.get("sensor")].equals("alt")) {
-                    // BASEline alti measurement
-                    final long nano = getColumnLong(row, columns, "nano");
-                    final double pressure = getColumnDouble(row, columns, "pressure");
-                    final double pressureAltitude = BaroAltimeter.pressureToAltitude(pressure);
-                    if (baroLastNano < 0) {
-                        baroAltitudeFilter.init(pressureAltitude, 0);
-                    } else {
-                        final double dt = (nano - baroLastNano) * 1E-9;
-                        baroAltitudeFilter.update(pressureAltitude, dt);
-                    }
-                    baroLastNano = nano;
-                }
-            }
-        } catch (EOFException e) {
-            // Still error but less verbose
-            Log.e(TAG, "Premature end of gzip track file " + trackFile + "\n" + e);
-        } catch (IOException e) {
-            Log.e(TAG, "Error reading track data from " + trackFile, e);
+        // Parse header column
+        String line = br.readLine();
+        final Map<String,Integer> columns = new HashMap<>();
+        final String[] header = line.split(",");
+        for (int i = 0; i < header.length; i++) {
+            columns.put(header[i], i);
         }
+        // Add column aliases
+        addMapping(columns, "timeMillis", "millis");
+        // Handle old files that were not FlySight compatible
+        addMapping(columns, "latitude", "lat");
+        addMapping(columns, "longitude", "lon");
+        addMapping(columns, "altitude_gps", "hMSL");
+
+        // Parse data rows
+        while ((line = br.readLine()) != null) {
+            final String[] row = line.split(",");
+            final Integer sensorIndex = columns.get("sensor");
+            if (sensorIndex == null) {
+                // FlySight
+                final long millis = getColumnDate(row, columns, "time");
+                final double lat = getColumnDouble(row, columns, "lat");
+                final double lon = getColumnDouble(row, columns, "lon");
+                final double alt_gps = getColumnDouble(row, columns, "hMSL");
+                final double climb = -getColumnDouble(row, columns, "velD");
+                final double vN = getColumnDouble(row, columns, "velN");
+                final double vE = getColumnDouble(row, columns, "velE");
+                if (!Double.isNaN(lat) && !Double.isNaN(lon)) {
+                    final MLocation loc = new MLocation(millis, lat, lon, alt_gps, climb, vN, vE, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 0, 0);
+                    data.add(loc);
+                }
+            } else if (row[sensorIndex].equals("gps")) {
+                // BASEline GPS measurement
+                final long millis = getColumnLong(row, columns, "millis");
+                final double lat = getColumnDouble(row, columns, "lat");
+                final double lon = getColumnDouble(row, columns, "lon");
+                final double alt_gps = getColumnDouble(row, columns, "hMSL");
+                final double vN = getColumnDouble(row, columns, "velN");
+                final double vE = getColumnDouble(row, columns, "velE");
+                // Update gps altitude filter
+                if (gpsLastMillis < 0) {
+                    gpsAltitudeFilter.init(alt_gps, 0);
+                } else {
+                    final double dt = (millis - gpsLastMillis) * 0.001;
+                    gpsAltitudeFilter.update(alt_gps, dt);
+                }
+                gpsLastMillis = millis;
+                // Climb rate from baro or gps
+                final double climb;
+                if (Double.isNaN(baroAltitudeFilter.v)) {
+                    climb = gpsAltitudeFilter.v;
+                } else {
+                    climb = baroAltitudeFilter.v;
+                }
+                if (!Double.isNaN(lat) && !Double.isNaN(lon)) {
+                    final MLocation loc = new MLocation(millis, lat, lon, alt_gps, climb, vN, vE, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 0, 0);
+                    data.add(loc);
+                }
+            } else if (columns.containsKey("sensor") && row[columns.get("sensor")].equals("alt")) {
+                // BASEline alti measurement
+                final long nano = getColumnLong(row, columns, "nano");
+                final double pressure = getColumnDouble(row, columns, "pressure");
+                final double pressureAltitude = BaroAltimeter.pressureToAltitude(pressure);
+                if (baroLastNano < 0) {
+                    baroAltitudeFilter.init(pressureAltitude, 0);
+                } else {
+                    final double dt = (nano - baroLastNano) * 1E-9;
+                    baroAltitudeFilter.update(pressureAltitude, dt);
+                }
+                baroLastNano = nano;
+            }
+        }
+
         return data;
     }
 

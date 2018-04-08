@@ -2,6 +2,7 @@ package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.events.DownloadEvent;
+import com.platypii.baseline.tracks.TrackAbbrv;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Network;
 import android.content.Context;
@@ -25,32 +26,40 @@ public class DownloadTask implements Runnable {
     private final Context context;
     private final CloudData track;
     private final String trackUrl;
-    private final File file;
+    private final File trackFile;
+    private final File abbrvFile;
 
     public DownloadTask(@NonNull Context context, @NonNull CloudData track) {
         this.context = context;
         this.track = track;
         this.trackUrl = "https://baseline.ws/tracks/" + track.track_id + "/baseline-track.csv.gz";
-        this.file = track.localFile(context);
+        this.trackFile = track.localFile(context);
+        this.abbrvFile = track.abbrvFile(context);
     }
 
     @Override
     public void run() {
         Log.i(TAG, "Downloading track " + track.track_id);
         // Check if file exists
-        if (file.exists()) {
-            Log.e(TAG, "Overwriting existing track file " + file);
+        if (trackFile.exists()) {
+            Log.e(TAG, "Overwriting existing track file " + trackFile);
         }
         // Check for network availability. Still try to download anyway, but don't report to firebase
         final boolean networkAvailable = Network.isAvailable(context);
         try {
-            // Get auth token
-            final String authToken = AuthToken.getAuthToken(context);
-            // Make HTTP request
-            downloadTrack(authToken);
-            // TODO: Check file hash?
-            Log.i(TAG, "Download successful, track " + track.track_id);
-            EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(track.track_id, file));
+            if (!trackFile.exists()) {
+                // Get auth token
+                final String authToken = AuthToken.getAuthToken(context);
+                // Make HTTP request
+                downloadTrack(authToken);
+                // TODO: Check file hash?
+                Log.i(TAG, "Download successful, track " + track.track_id);
+            }
+            if (!abbrvFile.exists()) {
+                // Make abbrv file
+                TrackAbbrv.abbreviate(trackFile, track.abbrvFile(context));
+            }
+            EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(track.track_id, trackFile));
         } catch (AuthException e) {
             Log.e(TAG, "Failed to download file - auth error", e);
             Exceptions.report(e);
@@ -79,7 +88,7 @@ public class DownloadTask implements Runnable {
             if (status == 200) {
                 // Read body
                 final InputStream is = conn.getInputStream();
-                copy(track.track_id, is, file, conn.getContentLength());
+                copy(track.track_id, is, trackFile, conn.getContentLength());
                 Log.i(TAG, "Track download successful");
             } else if (status == 401) {
                 throw new AuthException(auth);
@@ -89,11 +98,11 @@ public class DownloadTask implements Runnable {
         } catch (IOException e) {
             Log.e(TAG, "Exception while downloading track " + trackUrl, e);
             // Remove partial file so that download will retry
-            if (!file.delete()) {
+            if (!trackFile.delete()) {
                 Log.e(TAG, "Failed to delete file for failed track download");
             }
             // Delete parent directory if it's empty
-            if (!file.getParentFile().delete()) {
+            if (!trackFile.getParentFile().delete()) {
                 Log.w(TAG, "Failed to delete track folder for failed track download");
             }
             // Rethrow exception

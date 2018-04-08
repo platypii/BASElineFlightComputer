@@ -41,7 +41,7 @@ public class Intents {
     }
     public static void openCharts(@NonNull Context context, @NonNull CloudData track) {
         // Check if track data file exists
-        final File trackFile = track.localFile(context);
+        final File trackFile = track.abbrvFile(context);
         if (trackFile.exists()) {
             // File exists, open charts activity directly
             openCharts(context, trackFile);

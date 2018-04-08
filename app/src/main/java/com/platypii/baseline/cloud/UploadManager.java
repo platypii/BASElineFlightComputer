@@ -107,7 +107,7 @@ public class UploadManager {
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onSignIn(@NonNull AuthEvent event) {
         if (event == AuthEvent.SIGNED_IN) {
-            Log.i(TAG, "User signed in, uploading queued tracks");
+            Log.d(TAG, "User signed in, uploading queued tracks");
             uploadAll();
         }
     }

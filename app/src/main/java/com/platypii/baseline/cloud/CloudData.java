@@ -36,6 +36,14 @@ public class CloudData {
         return new File(trackDir, "tracks/" + track_id + "/track.csv.gz");
     }
 
+    /**
+     * Returns the file location of the local abbreviated (gps only) track data file
+     */
+    public File abbrvFile(@NonNull Context context) {
+        final File trackDir = TrackFiles.getTrackDirectory(context);
+        return new File(trackDir, "tracks/" + track_id + "/track-abbrv.csv");
+    }
+
     @NonNull
     static CloudData fromJson(@NonNull JSONObject json) throws JSONException {
         final String track_id = json.getString("track_id");
