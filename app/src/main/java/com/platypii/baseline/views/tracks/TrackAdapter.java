@@ -31,6 +31,8 @@ class TrackAdapter extends BaseAdapter {
     private final LayoutInflater inflater;
     private List<ListItem> items;
 
+    private String filter = "";
+
     TrackAdapter(@NonNull Context context, @NonNull List<TrackFile> tracks) {
         this.tracks = tracks;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -38,7 +40,7 @@ class TrackAdapter extends BaseAdapter {
     }
 
     @NonNull
-    private static List<ListItem> populateItems(@NonNull List<TrackFile> trackFiles) {
+    private List<ListItem> populateItems(@NonNull List<TrackFile> trackFiles) {
         final List<ListItem> items = new ArrayList<>();
         // Add Unsynced tracks
         if (!trackFiles.isEmpty()) {
@@ -52,10 +54,17 @@ class TrackAdapter extends BaseAdapter {
         if (trackList != null && !trackList.isEmpty()) {
             items.add(new ListHeader("Synced"));
             for (CloudData trackData : trackList) {
-                items.add(new ListTrackData(trackData));
+                if (trackData.location.toLowerCase().contains(filter)) {
+                    items.add(new ListTrackData(trackData));
+                }
             }
         }
         return items;
+    }
+
+    void setFilter(@NonNull String filter) {
+        this.filter = filter;
+        notifyDataSetChanged();
     }
 
     @NonNull

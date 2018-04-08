@@ -7,10 +7,13 @@ import com.platypii.baseline.tracks.TrackFile;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -22,7 +25,7 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
     private List<TrackFile> trackList;
     private TrackAdapter listAdapter;
 
-    private View searchBox;
+    private EditText searchBox;
     private View tracksEmptyLabel;
 
     @Override
@@ -30,6 +33,19 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
         final View view = inflater.inflate(R.layout.track_list, container, false);
         searchBox = view.findViewById(R.id.track_search);
         tracksEmptyLabel = view.findViewById(R.id.tracks_empty);
+
+        searchBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                final String filter = searchBox.getText().toString().toLowerCase();
+                listAdapter.setFilter(filter);
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
         return view;
     }
 
