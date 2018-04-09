@@ -86,7 +86,10 @@ public class PolarPlot extends PlotView {
             final double y = focus.climb;
             paint.setColor(0xcceeeeee);
             paint.setStyle(Paint.Style.STROKE);
-            plot.drawPoint(0, x, y, 8f, paint);
+            paint.setStrokeWidth(options.density);
+            plot.drawPoint(0, x, y, 2 * options.density, paint);
+            paint.setStyle(Paint.Style.FILL);
+            plot.drawPoint(0, x, y, options.density, paint);
         }
     }
 

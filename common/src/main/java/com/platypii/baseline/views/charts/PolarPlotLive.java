@@ -109,6 +109,7 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
     private void drawHistory(@NonNull Plot plot) {
         final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
         synchronized(history) {
+            paint.setStyle(Paint.Style.FILL);
             for (MLocation loc : history) {
                 final int t = (int) (currentTime - loc.millis);
                 if (t <= window) {
@@ -150,6 +151,7 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
         float radius = 16f * (6000 - t) / 8000;
         radius = Math.max(3, Math.min(radius, 16));
         paint.setColor(color);
+        paint.setStyle(Paint.Style.FILL);
         plot.drawPoint(AXIS_POLAR, vx, vy, radius, paint);
     }
 

@@ -68,8 +68,6 @@ class Plot {
         // Screen coordinates
         float sx = getX(axis, x);
         float sy = getY(axis, y);
-        paint.setStyle(Paint.Style.FILL);
-        // paint.setStrokeCap(Cap.ROUND); // doesn't work in hardware mode
         // canvas.drawPoint(x, y, paint);
         canvas.drawCircle(sx, sy, radius * options.density, paint);
     }

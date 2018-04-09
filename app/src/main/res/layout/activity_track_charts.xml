@@ -23,8 +23,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Altitude"
-            android:textColor="#dd1111"
-            android:textStyle="bold"/>
+            android:textColor="#dd1111"/>
 
         <TextView
             android:layout_width="0dp"
@@ -32,8 +31,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Speed"
-            android:textColor="#2222ff"
-            android:textStyle="bold"/>
+            android:textColor="#2222ff"/>
 
         <TextView
             android:layout_width="0dp"
@@ -41,15 +39,14 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Glide"
-            android:textColor="#8f00ff"
-            android:textStyle="bold"/>
+            android:textColor="#8f00ff"/>
 
     </LinearLayout>
 
     <com.platypii.baseline.views.charts.TimeChartTouchable
         android:id="@+id/timeChart"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="80dp"
         android:layout_below="@id/legend"/>
 
     <TextView
@@ -58,13 +55,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/timeChart"
         android:layout_marginTop="8dp"
-        android:text="Flight Profile"
-        android:textStyle="bold"/>
+        android:text="Flight Profile"/>
 
     <com.platypii.baseline.views.charts.FlightProfile
         android:id="@+id/flightProfile"
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="200dp"
         android:layout_below="@id/flightProfileLabel"/>
 
     <TextView
@@ -73,13 +69,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/flightProfile"
         android:layout_marginTop="8dp"
-        android:text="Polar"
-        android:textStyle="bold"/>
+        android:text="Polar"/>
 
     <com.platypii.baseline.views.charts.PolarPlot
         android:id="@+id/polarChart"
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="200dp"
         android:layout_below="@id/polarLabel"/>
 
     <ProgressBar
