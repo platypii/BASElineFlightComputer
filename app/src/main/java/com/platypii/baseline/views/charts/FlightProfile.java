@@ -43,7 +43,7 @@ public class FlightProfile extends PlotView {
         inner.y.max = 0;
         outer.y.max = 100;
 
-        options.axis.x = options.axis.y = PlotOptions.axisSpeed();
+        options.axis.x = options.axis.y = PlotOptions.axisDistance();
 
         paint.setStrokeJoin(Paint.Join.ROUND);
     }

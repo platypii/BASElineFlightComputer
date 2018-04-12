@@ -22,10 +22,11 @@ class PlotAxes {
     private final PlotOptions options;
 
     private final Paint paint = new Paint();
-    private final Paint text = new Paint();
 
     PlotAxes(PlotOptions options) {
         this.options = options;
+        paint.setStrokeWidth(0);
+        paint.setTextSize(20);
     }
 
     /**
@@ -51,15 +52,15 @@ class PlotAxes {
         if (!(start_x < end_x && 0 < step_x)) {
             Log.e(TAG, "Invalid plot X bounds " + start_x + " " + end_x + " " + step_x);
         }
-        for(int n = 0; n < steps_x; n++) {
+        for (int n = 0; n < steps_x; n++) {
             final double x = start_x + n * step_x;
-            if(Math.abs(x) < EPSILON) {
+            if (Math.abs(x) < EPSILON) {
                 drawXline(plot, x, options.axis_color, options.axis.x.format(x));
             } else {
                 drawXline(plot, x, options.grid_color, options.axis.x.format(x));
             }
 
-            if(n > MAX_LINES) {
+            if (n > MAX_LINES) {
                 Log.e(TAG, "Too many X grid lines!");
                 break;
             }
@@ -76,15 +77,15 @@ class PlotAxes {
         if (!(start_y <= end_y && 0 < step_y)) {
             Log.e(TAG, "Invalid plot Y bounds " + start_y + " " + end_y + " " + step_y);
         }
-        for(int n = 0; n < steps_y; n++) {
+        for (int n = 0; n < steps_y; n++) {
             final double y = start_y + n * step_y;
-            if(Math.abs(y) < EPSILON) {
+            if (Math.abs(y) < EPSILON) {
                 drawYline(plot, y, options.axis_color, options.axis.y.format(y));
             } else {
                 drawYline(plot, y, options.grid_color, options.axis.y.format(y));
             }
 
-            if(n > MAX_LINES) {
+            if (n > MAX_LINES) {
                 Log.e(TAG, "Too many Y grid lines!");
                 break;
             }
@@ -98,11 +99,10 @@ class PlotAxes {
         // Screen coordinate
         final int sx = (int) plot.getX(x);
         paint.setColor(color);
-        paint.setStrokeWidth(0);
         plot.canvas.drawLine(sx, 0, sx, plot.height, paint);
-        if(label != null) {
-            text.setTextAlign(Paint.Align.LEFT);
-            plot.canvas.drawText(label, sx + 2 * options.density, 10 * options.density, text);
+        if (label != null) {
+            paint.setTextAlign(Paint.Align.LEFT);
+            plot.canvas.drawText(label, sx + 2 * options.density, 10 * options.density, paint);
         }
     }
     /**
@@ -111,11 +111,10 @@ class PlotAxes {
     private void drawYline(@NonNull Plot plot, double y, int color, @Nullable String label) {
         final int sy = (int) plot.getY(y);
         paint.setColor(color);
-        paint.setStrokeWidth(0);
         plot.canvas.drawLine(0, sy, plot.width, sy, paint);
-        if(label != null) {
+        if (label != null) {
             // Left align
-            plot.canvas.drawText(label, 2 * options.density, sy - 2 * options.density, text);
+            plot.canvas.drawText(label, 2 * options.density, sy - 2 * options.density, paint);
             // Right align
             // text.setTextAlign(Paint.Align.RIGHT);
             // canvas.drawText(label, right - 2 * density, sy - 2 * density, text);

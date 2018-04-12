@@ -3,6 +3,8 @@ package com.platypii.baseline.views.charts;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.IntBounds;
 import android.support.annotation.Nullable;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Used by PlotView to represent screen padding, etc.
@@ -43,14 +45,27 @@ class PlotOptions {
         }
     }
 
+    static AxisOptions axisDistance() {
+        return new PlotOptions.AxisOptions() {
+            {
+                major_units = Convert.metric? 1 : Convert.FT;
+            }
+            @Override
+            public String format(double value) {
+                return Math.abs(value) < 0.1 ? "" : Convert.distance(value, 0, true);
+            }
+        };
+    }
+
     static AxisOptions axisTime() {
         return new PlotOptions.AxisOptions() {
+            private final SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.US);
             {
                 major_units = 60000; // 1 Minute
             }
             @Override
             public String format(double value) {
-                return Math.abs(value) < 0.1 ? "" : Convert.speed(value, 0, true);
+                return format.format((long) value);
             }
         };
     }
@@ -62,7 +77,8 @@ class PlotOptions {
             }
             @Override
             public String format(double value) {
-                return Math.abs(value) < 0.1 ? "" : Convert.speed(value, 0, true);
+                final double absValue = Math.abs(value);
+                return absValue < 0.1 ? "" : Convert.speed(absValue, 0, true);
             }
         };
     }

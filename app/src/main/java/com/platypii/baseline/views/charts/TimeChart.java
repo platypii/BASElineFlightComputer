@@ -32,7 +32,7 @@ public class TimeChart extends PlotView {
         options.padding.bottom = (int) (4 * density);
 
         options.axis.x = PlotOptions.axisTime();
-        options.axis.y = PlotOptions.axisSpeed();
+        options.axis.y = PlotOptions.axisDistance();
 
         paint.setStrokeJoin(Paint.Join.ROUND);
 
