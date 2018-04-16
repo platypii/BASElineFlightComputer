@@ -43,7 +43,7 @@ public class MyAudible implements BaseService {
     @Override
     public void start(@NonNull Context context) {
         Log.i(TAG, "Initializing audible");
-        if(!isInitialized) {
+        if (!isInitialized) {
             isInitialized = true;
             startAsync(context);
         } else {
@@ -69,8 +69,9 @@ public class MyAudible implements BaseService {
 
     public void enableAudible() {
         Log.i(TAG, "Starting audible");
-        if(isInitialized) {
-            if(!audibleThread.isRunning()) {
+        if (isInitialized) {
+            if (!audibleThread.isRunning()) {
+                boundaryState = STATE_INSIDE;
                 audibleThread.start();
 
                 // Say audible mode
@@ -85,7 +86,7 @@ public class MyAudible implements BaseService {
             Log.e(TAG, "Failed to start audible: audible not initialized");
         }
         isEnabled = true;
-        if(prefs != null) {
+        if (prefs != null) {
             final SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("audible_enabled", true);
             editor.apply();
@@ -94,7 +95,7 @@ public class MyAudible implements BaseService {
     }
 
     public void disableAudible() {
-        if(isInitialized) {
+        if (isInitialized) {
             speech.stopAll();
             audibleThread.stop();
             speech.speakWhenReady("Goodbye");
@@ -102,7 +103,7 @@ public class MyAudible implements BaseService {
             Log.e(TAG, "Failed to stop audible: audible not initialized");
         }
         isEnabled = false;
-        if(prefs != null) {
+        if (prefs != null) {
             final SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("audible_enabled", false);
             editor.apply();
@@ -114,7 +115,7 @@ public class MyAudible implements BaseService {
      * Announce the current audible mode
      */
     private void speakModeWhenReady() {
-        if(speech != null) {
+        if (speech != null) {
             speech.speakWhenReady(AudibleSettings.mode.name);
         } else {
             Log.e(TAG, "speakModeWhenReady called but speech is null");
@@ -125,11 +126,11 @@ public class MyAudible implements BaseService {
      * Make a special announcement
      */
     public void speakNow(String text) {
-        if(!isEnabled) {
+        if (!isEnabled) {
             Log.e(TAG, "Should never speak when audible is disabled");
             Exceptions.report(new IllegalStateException("MyAudible.speakNow should never speak when audible is disabled"));
         }
-        if(speech != null) {
+        if (speech != null) {
             speech.speakNow(text);
         } else {
             Log.e(TAG, "speakNow called but speech is null");
@@ -138,14 +139,14 @@ public class MyAudible implements BaseService {
 
     void speak() {
         final String measurement = getMeasurement();
-        if(speech != null && !measurement.isEmpty()) {
+        if (speech != null && !measurement.isEmpty()) {
             speech.speakNow(measurement);
         }
     }
 
     private void speakWhenReady() {
         final String measurement = getMeasurement();
-        if(speech != null && !measurement.isEmpty()) {
+        if (speech != null && !measurement.isEmpty()) {
             speech.speakWhenReady(measurement);
         }
     }
@@ -156,10 +157,10 @@ public class MyAudible implements BaseService {
      */
     private @NonNull String getMeasurement() {
         // First, check for airplane mode
-        if(preferenceQuiet && Services.flightComputer.flightMode == FlightMode.MODE_PLANE) {
+        if (preferenceQuiet && Services.flightComputer.flightMode == FlightMode.MODE_PLANE) {
             // Announce every N seconds
             final long delta = System.currentTimeMillis() - airplaneAnnounceTime;
-            if(AIRPLANE_ANNOUNCE_INTERVAL < delta) {
+            if (AIRPLANE_ANNOUNCE_INTERVAL < delta) {
                 // Announce airplane mode
                 Log.i(TAG, "Airplane mode");
                 airplaneAnnounceTime = System.currentTimeMillis();
@@ -180,19 +181,19 @@ public class MyAudible implements BaseService {
     private @NonNull String getMeasurementSample() {
         final AudibleSample sample = AudibleSettings.mode.currentSample(AudibleSettings.precision);
         // Check for fresh signal (not applicable to vertical speed)
-        if(AudibleSettings.mode.id.equals("vertical_speed") || goodGpsFix()) {
+        if (AudibleSettings.mode.id.equals("vertical_speed") || goodGpsFix()) {
             // Check for real valued sample
-            if(Numbers.isReal(sample.value)) {
-                if(sample.value < AudibleSettings.min) {
-                    if(boundaryState != STATE_MIN) {
+            if (Numbers.isReal(sample.value)) {
+                if (sample.value < AudibleSettings.min) {
+                    if (boundaryState != STATE_MIN) {
                         boundaryState = STATE_MIN;
                         return "min";
                     } else {
                         Log.i(TAG, "Not speaking: min, mode = " + AudibleSettings.mode.id + " sample = " + sample);
                         return "";
                     }
-                } else if(AudibleSettings.max < sample.value) {
-                    if(boundaryState != STATE_MAX) {
+                } else if (AudibleSettings.max < sample.value) {
+                    if (boundaryState != STATE_MAX) {
                         boundaryState = STATE_MAX;
                         return "max";
                     } else {
@@ -221,15 +222,15 @@ public class MyAudible implements BaseService {
      * Return true if GPS signal is fresh
      */
     private boolean goodGpsFix() {
-        if(Services.location.lastLoc != null && Services.location.lastFixDuration() < 3500) {
+        if (Services.location.lastLoc != null && Services.location.lastFixDuration() < 3500) {
             gpsFix = true;
         } else {
-            if(Services.location.lastLoc == null) {
+            if (Services.location.lastLoc == null) {
                 Log.w(TAG, "No GPS signal");
             } else {
                 Log.w(TAG, "Stale GPS signal");
             }
-            if(gpsFix) {
+            if (gpsFix) {
                 speech.speakNow("Signal lost");
             }
             gpsFix = false;
@@ -244,8 +245,8 @@ public class MyAudible implements BaseService {
      */
     @Override
     public void stop() {
-        if(isInitialized) {
-            if(isEnabled) {
+        if (isInitialized) {
+            if (isEnabled) {
                 disableAudible();
             }
             audibleThread = null;
