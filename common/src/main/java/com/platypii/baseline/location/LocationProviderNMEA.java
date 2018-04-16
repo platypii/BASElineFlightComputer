@@ -247,6 +247,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "AMCLK":
                 // Samsung SM-G390F
                 // $PSAMCLK,1955,40841247,0,9690613,-2232227,408412467
+            case "AMDLERR":
+                // $PSAMDLERR,11,1,0x37F*55
             case "AMDLOK":
                 // $PSAMDLOK,30,0x 0,0x3FF*2F
             case "AMID":
@@ -315,6 +317,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "TKTSX1":
                 // ZVI
                 // $PMTKTSX1,181512,0.000,0.293,44.717,4af30000,-3.324382,0.000099,-0.000850,-0.207713,0.386944*40
+            case "TKVER":
+                // $PMTKVER,AXN_3.70,1312,MNL_VER_16092901ALPS05_3.70_20,df54,116,MNLfn_ver,03,HAL_ver,0.2,MNLD_ver,0.4*62
             case "TIS":
                 // Samsung Note7
                 // $PSTIS,*61
