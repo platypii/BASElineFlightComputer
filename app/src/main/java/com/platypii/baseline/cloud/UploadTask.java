@@ -12,6 +12,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import java.io.File;
+import java.net.SocketException;
+import javax.net.ssl.SSLException;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,6 +68,9 @@ class UploadTask implements Runnable {
                 Log.w(TAG, "Failed to upload file: auth error", e);
             }
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "auth error"));
+        } catch (SocketException | SSLException e) {
+            Log.e(TAG, "Failed to upload file, network exception, network = " + networkAvailable, e);
+            EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
         } catch (IOException e) {
             if (networkAvailable) {
                 Log.e(TAG, "Failed to upload file", e);

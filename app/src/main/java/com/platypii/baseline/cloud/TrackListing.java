@@ -71,7 +71,6 @@ public class TrackListing {
         } catch (IOException e) {
             if (networkAvailable) {
                 Log.e(TAG, "Failed to list tracks", e);
-                Exceptions.report(e);
             } else {
                 Log.w(TAG, "Failed to list tracks, network not available", e);
             }
