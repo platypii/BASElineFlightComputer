@@ -36,27 +36,38 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         setContentView(R.layout.activity_track_remote);
 
         // Load track from extras
-        loadTrack();
+        try {
+            track = loadTrack();
 
-        if (track != null) {
+            // Setup button listeners
             findViewById(R.id.chartsButton).setOnClickListener(this::clickCharts);
             findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
             findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
             findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
-        } else {
-            Exceptions.report(new IllegalStateException("Failed to load track from extras"));
+        } catch (IllegalStateException e) {
+            Exceptions.report(e);
             finish();
         }
     }
 
-    private void loadTrack() {
+    @NonNull
+    private CloudData loadTrack() throws IllegalStateException {
         // Load track id from extras
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
             if (track_id != null) {
-                track = Services.cloud.listing.cache.getTrack(track_id);
+                final CloudData track = Services.cloud.listing.cache.getTrack(track_id);
+                if (track != null) {
+                    return track;
+                } else {
+                    throw new IllegalStateException("Failed to load track from track_id");
+                }
+            } else {
+                throw new IllegalStateException("Failed to load track_id from extras");
             }
+        } else {
+            throw new IllegalStateException("Failed to load extras");
         }
     }
 
