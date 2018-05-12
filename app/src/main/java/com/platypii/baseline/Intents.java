@@ -137,9 +137,12 @@ public class Intents {
             intent.setComponent(cn);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
+        } catch(ActivityNotFoundException e) {
+            Log.w(TAG, "Failed to open android bluetooth settings", e);
+            Toast.makeText(context, R.string.error_bluetooth_intent, Toast.LENGTH_SHORT).show();
         } catch(Exception e) {
             Log.e(TAG, "Failed to open android bluetooth settings", e);
-            Toast.makeText(context, R.string.error_export_intent, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.error_bluetooth_intent, Toast.LENGTH_SHORT).show();
             Exceptions.report(e);
         }
     }

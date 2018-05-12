@@ -21,6 +21,8 @@
 
     <string name="upload_waiting">Warten bis zum Hochladen</string>
     <string name="uploading">Hochladen…</string>
+    <string name="downloading">Wird heruntergeladen…</string>
+    <string name="search">Suchen…</string>
 
     <string name="delete_local">Möchten sie diese Daten wirklich von diesem Geraet löschen? Die Daten wurden noch nicht online synchronisiert.</string>
     <string name="delete_remote">Möchten sie diese Daten wirklich von diesem BASEline löschen?</string>
@@ -82,6 +84,7 @@
     <string name="bluetooth_enabled">Verwenden Sie Bluetooth GPS?</string>
     <string name="bluetooth_devices">Bluetooth-Geräte</string>
     <string name="bluetooth_pair">Bluetooth-Paar</string>
+    <string name="error_bluetooth_intent">Fehlgeschlagen Bluetooth-Einstellungen öffnen</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Einstellungen</string>

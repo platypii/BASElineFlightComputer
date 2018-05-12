@@ -19,7 +19,7 @@ import org.greenrobot.eventbus.ThreadMode;
  * Manages track uploads.
  * This includes queueing finished tracks, and retrying in the future.
  */
-public class UploadManager {
+class UploadManager {
     private static final String TAG = "UploadManager";
 
     private Context context;

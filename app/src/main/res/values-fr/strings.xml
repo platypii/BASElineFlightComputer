@@ -21,6 +21,8 @@
 
     <string name="upload_waiting">En attente de téléchargement</string>
     <string name="uploading">Téléchargement…</string>
+    <string name="downloading">Téléchargement…</string>
+    <string name="search">Recherche…</string>
 
     <string name="delete_local">Voulez-vous vraiment supprimer cette piste?</string>
     <string name="delete_remote">Voulez-vous vraiment supprimer cette piste?</string>
@@ -82,6 +84,7 @@
     <string name="bluetooth_enabled">Utilisez le GPS bluetooth?</string>
     <string name="bluetooth_devices">Périphériques Bluetooth</string>
     <string name="bluetooth_pair">Appairage</string>
+    <string name="error_bluetooth_intent">Impossible d\'ouvrir les paramètres Bluetooth</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Paramètres</string>

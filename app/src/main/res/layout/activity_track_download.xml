@@ -1,7 +1,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.platypii.baseline.views.tracks.TrackLocalActivity"
+    tools:context="com.platypii.baseline.views.tracks.TrackDownloadActivity"
     android:background="#000000"
     android:gravity="center"
     android:layout_width="match_parent"
@@ -20,6 +20,6 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:gravity="center"
-        android:text="Downloading..." />
+        android:text="@string/downloading" />
 
 </LinearLayout>

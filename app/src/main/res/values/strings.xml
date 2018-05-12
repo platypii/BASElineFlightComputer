@@ -21,6 +21,8 @@
 
     <string name="upload_waiting">Waiting for upload…</string>
     <string name="uploading">Uploading…</string>
+    <string name="downloading">Downloading…</string>
+    <string name="search">Search…</string>
 
     <string name="delete_local">Are you sure you want to delete this track from the local device? It has not been synced online yet.</string>
     <string name="delete_remote">Are you sure you want to delete this track from BASEline?</string>
@@ -82,6 +84,7 @@
     <string name="bluetooth_enabled">Use bluetooth GPS?</string>
     <string name="bluetooth_devices">Devices</string>
     <string name="bluetooth_pair">Pair</string>
+    <string name="error_bluetooth_intent">Failed to open bluetooth settings</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Settings</string>

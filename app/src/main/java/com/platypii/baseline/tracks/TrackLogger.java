@@ -226,7 +226,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
                 Exceptions.report(e);
             }
         } else {
-            Exceptions.report(new IllegalStateException("Attempted to log after closing file"));
+            Exceptions.report(new IllegalStateException("Attempted to log after closing file: " + line));
         }
     }
 
