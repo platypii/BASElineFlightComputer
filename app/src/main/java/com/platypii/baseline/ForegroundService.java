@@ -14,6 +14,7 @@ public class ForegroundService extends Service {
     static final String ACTION_START_AUDIBLE = "start_audible";
     static final String ACTION_STOP_LOGGING = "stop_logging";
     static final String ACTION_STOP_AUDIBLE = "stop_audible";
+    static final String ACTION_CLICK_STOP = "click_stop";
 
     private boolean logging = false;
     private boolean audible = false;
@@ -37,6 +38,11 @@ public class ForegroundService extends Service {
             Log.i(TAG, "Received stop audible action");
             audible = false;
             updateNotification();
+        } else if (ACTION_CLICK_STOP.equals(action)) {
+            Log.i(TAG, "User clicked notification stop action");
+            // Stop audible and logging
+            Services.logger.stopLogging();
+            Services.audible.disableAudible();
         } else {
             Log.e(TAG, "unexpected action: " + action);
         }

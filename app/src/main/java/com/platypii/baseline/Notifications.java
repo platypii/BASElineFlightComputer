@@ -79,9 +79,9 @@ class Notifications implements BaseService {
         final Intent mainIntent = new Intent(context, MainActivity.class);
         final PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
         // Intent to stop logging and audible
-        final Intent stopIntent = new Intent(context, MainActivity.class);
-        stopIntent.setType("baseline/stop");
-        final PendingIntent stopPendingIntent = PendingIntent.getActivity(context, 0, stopIntent, 0);
+        final Intent stopIntent = new Intent(context, ForegroundService.class);
+        stopIntent.setAction(ForegroundService.ACTION_CLICK_STOP);
+        final PendingIntent stopPendingIntent = PendingIntent.getService(context, 0, stopIntent, 0);
         final NotificationCompat.Action stopAction = new NotificationCompat.Action.Builder(R.drawable.square, "Stop", stopPendingIntent).build();
         // Build the notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
@@ -89,15 +89,16 @@ class Notifications implements BaseService {
                 .setContentTitle(context.getString(R.string.app_name_long))
                 .setOngoing(true)
                 .setContentIntent(mainPendingIntent)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .addAction(stopAction);
         // Log timer
-        if(logging) {
+        if (logging) {
             builder = builder.setUsesChronometer(true).setWhen(Services.logger.getStartTime());
         }
         // Caption
-        if(logging && audible) {
+        if (logging && audible) {
             builder = builder.setContentText(context.getString(R.string.notify_audible_logging));
-        } else if(logging) {
+        } else if (logging) {
             builder = builder.setContentText(context.getString(R.string.notify_logging));
         } else {
             builder = builder.setContentText(context.getString(R.string.notify_audible));
@@ -109,7 +110,7 @@ class Notifications implements BaseService {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoggingEvent(LoggingEvent event) {
         final Intent service = new Intent(context, ForegroundService.class);
-        if(event.started) {
+        if (event.started) {
             service.setAction(ForegroundService.ACTION_START_LOGGING);
         } else {
             service.setAction(ForegroundService.ACTION_STOP_LOGGING);
@@ -119,7 +120,7 @@ class Notifications implements BaseService {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAudibleEvent(AudibleEvent event) {
         final Intent service = new Intent(context, ForegroundService.class);
-        if(event.started) {
+        if (event.started) {
             service.setAction(ForegroundService.ACTION_START_AUDIBLE);
         } else {
             service.setAction(ForegroundService.ACTION_STOP_AUDIBLE);

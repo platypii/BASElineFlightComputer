@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -60,26 +59,6 @@ public class MainActivity extends BaseActivity {
 
         if (audibleButton != null) {
             audibleButton.setOnLongClickListener(audibleLongClickListener);
-        }
-
-        // Handle intents
-        handleIntent(getIntent());
-    }
-
-    @Override
-    protected void onNewIntent(@NonNull Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
-    }
-
-    private void handleIntent(@NonNull Intent intent) {
-        final String intentType = intent.getType();
-        if ("baseline/stop".equals(intentType)) {
-            // Stop audible and logging
-            Services.logger.stopLogging();
-            Services.audible.disableAudible();
-        } else if (intentType != null) {
-            Log.w(TAG, "Unknown intent type: " + intentType);
         }
     }
 
