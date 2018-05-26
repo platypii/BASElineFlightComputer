@@ -24,14 +24,18 @@ public class TrackFiles {
         final File logDir = getTrackDirectory(context);
         if (logDir != null) {
             final File[] files = logDir.listFiles();
-            for (File file : files) {
-                final String filename = file.getName();
-                final TrackFile trackFile = new TrackFile(file);
-                // Tracks look like "track_(yyyy-MM-dd_HH-mm-ss).csv.gz"
-                final boolean matchesFilenamePattern = filename.startsWith("track_") && filename.endsWith(".csv.gz");
-                if (matchesFilenamePattern) {
-                    tracks.add(trackFile);
+            if (files != null) {
+                for (File file : files) {
+                    final String filename = file.getName();
+                    final TrackFile trackFile = new TrackFile(file);
+                    // Tracks look like "track_(yyyy-MM-dd_HH-mm-ss).csv.gz"
+                    final boolean matchesFilenamePattern = filename.startsWith("track_") && filename.endsWith(".csv.gz");
+                    if (matchesFilenamePattern) {
+                        tracks.add(trackFile);
+                    }
                 }
+            } else {
+                Log.e(TAG, "Failed to list track files: " + logDir + " " + logDir.exists());
             }
             return tracks;
         } else {

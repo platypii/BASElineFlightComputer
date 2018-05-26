@@ -41,7 +41,7 @@ public class TimeChartTouchable extends TimeChart {
         if (trackData != null && !trackData.isEmpty()) {
             touchLocation.millis = millis;
             int closest_index = Collections.binarySearch(trackData, touchLocation);
-            if (closest_index < 0) closest_index = -closest_index;
+            if (closest_index < 0) closest_index = -closest_index - 1;
             if (closest_index == trackData.size()) closest_index--;
             return trackData.get(closest_index);
         } else {
