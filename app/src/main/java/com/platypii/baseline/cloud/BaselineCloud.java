@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 public class BaselineCloud implements BaseService {
 
     static final String baselineServer = "https://baseline.ws";
-    static final String listUrl = BaselineCloud.baselineServer + "/v1/tracks";
+    static final String listUrl = baselineServer + "/v1/tracks";
 
     public final TrackListing listing = new TrackListing();
     private final UploadManager uploads = new UploadManager();

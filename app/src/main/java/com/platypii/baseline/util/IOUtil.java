@@ -1,19 +1,22 @@
 package com.platypii.baseline.util;
 
 import android.support.annotation.NonNull;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class IOUtil {
 
     public static String toString(@NonNull InputStream input) throws IOException {
-        final StringBuilder builder = new StringBuilder();
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final byte buffer[] = new byte[1024];
         int bytesRead;
         while((bytesRead = input.read(buffer)) != -1) {
-            builder.append(new String(buffer, 0, bytesRead));
+            output.write(buffer, 0, bytesRead);
         }
-        return builder.toString();
+        input.close();
+        return output.toString("UTF-8"); // minsdk19 (StandardCharsets.UTF_8.name());
     }
 
 }

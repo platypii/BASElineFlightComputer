@@ -32,7 +32,7 @@ public class DownloadTask implements Runnable {
     public DownloadTask(@NonNull Context context, @NonNull CloudData track) {
         this.context = context;
         this.track = track;
-        this.trackUrl = "https://baseline.ws/tracks/" + track.track_id + "/baseline-track.csv.gz";
+        this.trackUrl = BaselineCloud.baselineServer + "/tracks/" + track.track_id + "/baseline-track.csv.gz";
         this.trackFile = track.localFile(context);
         this.abbrvFile = track.abbrvFile(context);
     }
