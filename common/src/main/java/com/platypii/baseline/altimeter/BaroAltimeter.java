@@ -100,6 +100,10 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         // Compute time since last sample in nanoseconds
         final long deltaTime = (lastFixNano == 0)? 0 : (event.timestamp - lastFixNano);
 
+        if (lastFixNano > 0 && deltaTime <= 0) {
+            Log.e(TAG, "Non-monotonic time delta: " + event.timestamp + " - " + lastFixNano + " = " + deltaTime + " ns");
+        }
+
         // Convert pressure to altitude
         pressure = event.values[0];
         pressure_altitude_raw = pressureToAltitude(pressure);

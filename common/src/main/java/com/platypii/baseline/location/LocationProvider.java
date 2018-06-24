@@ -62,22 +62,32 @@ public abstract class LocationProvider implements BaseService {
     /**
      * Add a new listener to be notified of location updates
      */
-    public void addListener(MyLocationListener listener) {
+    public void addListener(@NonNull MyLocationListener listener) {
         listeners.add(listener);
     }
 
     /**
      * Remove a listener from location updates
      */
-    public void removeListener(MyLocationListener listener) {
+    public void removeListener(@NonNull MyLocationListener listener) {
         listeners.remove(listener);
     }
 
     /**
      * Children should call updateLocation() when they have new location information
      */
-    void updateLocation(MLocation loc) {
-        // Log.v(providerName(), "MyLocationManager.updateLocation(" + loc + ")");
+    void updateLocation(@NonNull MLocation loc) {
+//        Log.v(providerName(), "LocationProvider.updateLocation(" + loc + ")");
+
+        // Check for duplicate
+        if (lastLoc != null && lastLoc.equals(loc)) {
+            Log.w(providerName(), "Skipping duplicate location " + loc);
+            return;
+        }
+        // Check for negative time delta between locations
+        if (lastLoc != null && loc.millis < lastLoc.millis) {
+            Log.e(providerName(), "Non-monotonic time delta: " + loc.millis + " - " + lastLoc.millis + " = " + (loc.millis - lastLoc.millis) + " ms");
+        }
 
         // Store location
         prevLoc = lastLoc;

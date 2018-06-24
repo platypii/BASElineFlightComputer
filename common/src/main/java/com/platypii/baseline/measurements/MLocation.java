@@ -38,7 +38,7 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
 
         // Sanity checks
         final int locationError = LocationCheck.validate(latitude, longitude);
-        if(locationError != LocationCheck.VALID) {
+        if (locationError != LocationCheck.VALID) {
             final String locationErrorMessage = LocationCheck.message[locationError] + ": " + latitude + "," + longitude;
             Log.e(TAG, locationErrorMessage);
             Exceptions.report(new NMEAException(locationErrorMessage));
@@ -80,7 +80,7 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
     }
 
     public double totalSpeed() {
-        if(!Double.isNaN(climb)) {
+        if (!Double.isNaN(climb)) {
             return Math.sqrt(vN * vN + vE * vE + climb * climb);
         } else {
             // If we don't have altimeter data, fall back to ground speed
@@ -133,6 +133,10 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
     @Override
     public int compareTo(@NonNull MLocation loc) {
         return Long.compare(millis, loc.millis);
+    }
+
+    public boolean equals(@NonNull MLocation loc) {
+        return loc.millis == millis && loc.latitude == latitude && loc.longitude == longitude && loc.vN == vN && loc.vE == vE;
     }
 
     /**
