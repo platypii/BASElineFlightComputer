@@ -70,7 +70,7 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
                             drawPlot(plot);
                         }
                     }
-                } catch(Exception e) {
+                } catch (Exception e) {
                     // Sometimes surface can be destroyed during slow drawing
                     if (running) {
                         Exceptions.report(e);
@@ -80,7 +80,7 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
                     if (canvas != null) {
                         try {
                             _surfaceHolder.unlockCanvasAndPost(canvas);
-                        } catch(Exception e) {
+                        } catch (Exception e) {
                             // _surfaceHolder.getSurface().isValid()?
                             Exceptions.report(new Exception("Crash while unlocking canvas: " + canvas, e));
                         }

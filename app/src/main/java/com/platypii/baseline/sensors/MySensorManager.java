@@ -74,26 +74,26 @@ public class MySensorManager implements SensorEventListener, BaseService {
         final float z = event.values[2];
         MSensor measurement = null;
         // Update sensor histories
-        switch(event.sensor.getType()) {
+        switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                measurement = new MAccel(t, (float)Math.sqrt(x*x + y*y + z*z));
+                measurement = new MAccel(t, (float) Math.sqrt(x*x + y*y + z*z));
                 accel.append(measurement);
                 break;
             case Sensor.TYPE_GRAVITY:
-                measurement = new MRotation(t,x,y,z);
+                measurement = new MRotation(t, x, y, z);
                 gravity.append(measurement);
                 break;
             case Sensor.TYPE_ROTATION_VECTOR:
             case Sensor.TYPE_MAGNETIC_FIELD:
-                measurement = new MGravity(t,x,y,z);
+                measurement = new MGravity(t, x, y, z);
                 rotation.append(measurement);
                 break;
             default:
                 Log.e("MySensorManager", "Received unexpected sensor event");
         }
         // Notify listeners
-        if(measurement != null) {
-            for(MySensorListener listener : listeners) {
+        if (measurement != null) {
+            for (MySensorListener listener : listeners) {
                 listener.onSensorChanged(measurement);
             }
         }
@@ -105,7 +105,7 @@ public class MySensorManager implements SensorEventListener, BaseService {
 //    public CharSequence getSensorsString() {
 //        final StringBuffer buffer = new StringBuffer();
 //        final List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
-//        for(Sensor sensor : sensors) {
+//        for (Sensor sensor : sensors) {
 //            buffer.append(sensor.getVendor());
 //            buffer.append(" - ");
 //            buffer.append(sensor.getName());
@@ -116,13 +116,13 @@ public class MySensorManager implements SensorEventListener, BaseService {
 
     @Override
     public void stop() {
-        if(sensorManager != null) {
+        if (sensorManager != null) {
             sensorManager.unregisterListener(this);
             sensorManager = null;
         } else {
             Log.e(TAG, "Sensor manager already stopped");
         }
-        if(!listeners.isEmpty()) {
+        if (!listeners.isEmpty()) {
             Log.e(TAG, "Stopping sensor service, but listeners are still listening");
         }
     }

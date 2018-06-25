@@ -108,7 +108,7 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
      */
     private void drawHistory(@NonNull Plot plot) {
         final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
-        synchronized(history) {
+        synchronized (history) {
             paint.setStyle(Paint.Style.FILL);
             for (MLocation loc : history) {
                 final int t = (int) (currentTime - loc.millis);

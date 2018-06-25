@@ -25,19 +25,19 @@ public class LocationCheck {
      * Returns null if seems valid
      */
     public static int validate(double latitude, double longitude) {
-        if(Numbers.isReal(latitude) && Numbers.isReal(longitude)) {
+        if (Numbers.isReal(latitude) && Numbers.isReal(longitude)) {
             final double latitude_abs = Math.abs(latitude);
             final double longitude_abs = Math.abs(longitude);
-            if(latitude_abs < 0.1 && longitude_abs < 0.1) {
+            if (latitude_abs < 0.1 && longitude_abs < 0.1) {
                 // If lat,lon == 0,0 assume bad data (there's no BASE off the coast of Africa)
                 return INVALID_ZERO;
-            } else if(latitude_abs > 180.0 || longitude_abs > 180.0) {
+            } else if (latitude_abs > 180.0 || longitude_abs > 180.0) {
                 // Lat/lon out of bounds. Likely parsing error.
                 return INVALID_RANGE;
-            } else if(latitude_abs < 0.1) {
+            } else if (latitude_abs < 0.1) {
                 // No BASE jumps on the equator?
                 return UNLIKELY_LAT;
-            } else if(longitude_abs < 0.1 && latitude < 4) {
+            } else if (longitude_abs < 0.1 && latitude < 4) {
                 // There is no landmass south of 4 degrees latitude on the prime meridian
                 return UNLIKELY_LON;
             } else {

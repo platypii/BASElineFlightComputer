@@ -116,12 +116,12 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         firebaseAnalytics.logEvent("click_track_delete_remote_1", bundle);
         // Prompt user for confirmation
         alertDialog = new AlertDialog.Builder(this)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .setTitle("Delete this track?")
-            .setMessage(R.string.delete_remote)
-            .setPositiveButton("Delete", this)
-            .setNegativeButton("Cancel", null)
-            .show();
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Delete this track?")
+                .setMessage(R.string.delete_remote)
+                .setPositiveButton("Delete", this)
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void clickCharts(View v) {
@@ -153,6 +153,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
             public void apply(@NonNull String authToken) {
                 Services.cloud.deleteTrack(track, authToken);
             }
+
             @Override
             public void error(String error) {
                 Toast.makeText(getApplicationContext(), "Track delete failed: " + error, Toast.LENGTH_SHORT).show();
@@ -170,6 +171,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
             finish();
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDeleteFailure(@NonNull SyncEvent.DeleteFailure event) {
         if (event.track_id.equals(track.track_id)) {
@@ -178,6 +180,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
             Toast.makeText(getApplicationContext(), "Track delete failed", Toast.LENGTH_SHORT).show();
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAuthEvent(@NonNull AuthEvent event) {
         // If user gets signed out, close the track activity

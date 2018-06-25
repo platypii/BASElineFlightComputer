@@ -9,7 +9,6 @@ import com.platypii.baseline.measurements.MLocation;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -64,17 +63,17 @@ public class FlightComputer implements BaseService, MyLocationListener {
      * @param started whether the audible/logger is starting or stopping
      */
     private synchronized void updateAutoStop(boolean started) {
-        if(started) {
+        if (started) {
             startCount++;
-            if(startCount == 1) {
+            if (startCount == 1) {
                 autoStop.start();
             }
         } else {
             startCount--;
-            if(startCount < 0) {
+            if (startCount < 0) {
                 Log.e(TAG, "startCount should never be negative");
             }
-            if(startCount == 0) {
+            if (startCount == 0) {
                 autoStop.stop();
             }
         }

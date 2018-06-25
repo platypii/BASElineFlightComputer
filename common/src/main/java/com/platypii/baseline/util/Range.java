@@ -14,8 +14,8 @@ public class Range {
      * Expands the range to include new point
      */
     public void expand(double value) {
-        if(value < min || Double.isNaN(min)) min = value;
-        if(value > max || Double.isNaN(max)) max = value;
+        if (value < min || Double.isNaN(min)) min = value;
+        if (value > max || Double.isNaN(max)) max = value;
     }
 
     public boolean isEmpty() {

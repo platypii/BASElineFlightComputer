@@ -148,6 +148,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
             }
         }
     }
+
     private final View.OnClickListener signInClickListener = v -> {
         if (v.getId() == R.id.sign_in_button) {
             clickSignIn();
@@ -249,7 +250,9 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         Log.i(TAG, "Not signed in - connection failed");
     }
 
-    /** Get google auth token and return asynchronously via callback */
+    /**
+     * Get google auth token and return asynchronously via callback
+     */
     protected void getAuthToken(@NonNull Callback<String> callback) {
         if (account != null) {
             final String token = account.getIdToken();

@@ -63,9 +63,9 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
 
     @Override
     public String toRow() {
-        final String sat_str = (satellitesUsed != -1)? Integer.toString(satellitesUsed) : "";
-        final String vN_str = Numbers.isReal(vN)? Double.toString(vN) : "";
-        final String vE_str = Numbers.isReal(vE)? Double.toString(vE) : "";
+        final String sat_str = (satellitesUsed != -1) ? Integer.toString(satellitesUsed) : "";
+        final String vN_str = Numbers.isReal(vN) ? Double.toString(vN) : "";
+        final String vE_str = Numbers.isReal(vE) ? Double.toString(vE) : "";
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
         return String.format(Locale.US, "%d,,gps,,%f,%f,%f,%s,%s,%s", millis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
     }

@@ -33,7 +33,7 @@ class MapOptions {
         // Find which linear segment altitude lies in
         // when loop completes, alts[index] <= altitude < alts[index+1]
         int index = -1;
-        while (index < alts.length - 1 && alts[index+1] <= altitude) {
+        while (index < alts.length - 1 && alts[index + 1] <= altitude) {
             index++;
         }
 

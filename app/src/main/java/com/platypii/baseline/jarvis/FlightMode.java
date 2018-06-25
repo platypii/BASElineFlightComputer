@@ -20,7 +20,7 @@ public class FlightMode {
      * Human readable mode strings
      */
     private static final String[] modeString = {
-            "", "Ground","Plane","Wingsuit","Freefall","Canopy"
+            "", "Ground", "Plane", "Wingsuit", "Freefall", "Canopy"
     };
 
     /**
@@ -32,19 +32,19 @@ public class FlightMode {
         final double groundSpeed = loc.groundSpeed();
         final double climb = loc.climb;
 
-        if(-5 < climb && 35 < groundSpeed) {
+        if (-5 < climb && 35 < groundSpeed) {
             // Speed at least 80mph
             return MODE_PLANE;
-        } else if(climb < -10 && 32 < groundSpeed) {
+        } else if (climb < -10 && 32 < groundSpeed) {
             // Falling at least 20 mph, speed at least 50 mph
             return MODE_WINGSUIT;
-        } else if(climb < -13) {
+        } else if (climb < -13) {
             // Falling at least 30 mph
             return MODE_FREEFALL;
-        } else if(-9 < climb && climb < -1.1 && groundSpeed < 25) {
+        } else if (-9 < climb && climb < -1.1 && groundSpeed < 25) {
             // Descending at least 2-20mph, speed less than 55mph
             return MODE_CANOPY;
-        } else if(-1.1 < climb && climb < 1.1 && groundSpeed < 32) {
+        } else if (-1.1 < climb && climb < 1.1 && groundSpeed < 32) {
             // Ground speed no greater than 50 mph
             return MODE_GROUND;
         } else {

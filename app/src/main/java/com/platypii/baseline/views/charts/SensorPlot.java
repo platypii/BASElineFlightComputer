@@ -28,7 +28,7 @@ public class SensorPlot extends PlotSurface {
         super(context, attrs);
 
         final float density = getResources().getDisplayMetrics().density;
-        options.padding.top = (int)(6 * density);
+        options.padding.top = (int) (6 * density);
         options.padding.bottom = (int) (6 * density);
         options.padding.left = (int) (2 * density);
         options.padding.right = (int) (6 * density);
@@ -45,18 +45,18 @@ public class SensorPlot extends PlotSurface {
      */
     public void loadHistory(SyncedList<MSensor> history) {
         this.history = history;
-    } 
+    }
 
     @Override
     public void drawData(@NonNull Plot plot) {
-        if(history != null) {
+        if (history != null) {
             xSeries.reset();
             ySeries.reset();
             zSeries.reset();
             // Copy values to data series (so that we don't block while drawing circles)
-            synchronized(history) {
+            synchronized (history) {
                 final Iterator<MSensor> it = history.iterator();
-                for(int i = 0; it.hasNext(); i++) {
+                for (int i = 0; it.hasNext(); i++) {
                     MSensor event = it.next();
                     xSeries.addPoint(i, event.x());
                     ySeries.addPoint(i, event.y());

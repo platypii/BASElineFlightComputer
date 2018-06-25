@@ -40,7 +40,7 @@ public class DataSeries implements Iterable<DataSeries.Point> {
                 lastPoint.x = x;
                 lastPoint.y = y;
             } else {
-                lastPoint = new Point(x,y);
+                lastPoint = new Point(x, y);
                 points.add(lastPoint);
             }
             n++;

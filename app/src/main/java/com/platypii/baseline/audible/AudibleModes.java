@@ -7,13 +7,11 @@ import com.platypii.baseline.audible.modes.TotalSpeedMode;
 import com.platypii.baseline.audible.modes.VerticalSpeedMode;
 import com.platypii.baseline.util.Exceptions;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 /**
  * Contains the default audible modes
  */
 class AudibleModes {
-    private static final String TAG = "AudibleMode";
 
     private static final AudibleMode horizontal_speed = new HorizontalSpeedMode();
     private static final AudibleMode vertical_speed = new VerticalSpeedMode();
@@ -23,7 +21,7 @@ class AudibleModes {
 
     @NonNull
     public static AudibleMode get(@NonNull String audibleMode) {
-        switch(audibleMode) {
+        switch (audibleMode) {
             case "horizontal_speed":
                 return horizontal_speed;
             case "vertical_speed":
@@ -35,7 +33,6 @@ class AudibleModes {
             case "navigation":
                 return navigation;
             default:
-                Log.e(TAG, "Invalid audible mode " + audibleMode);
                 Exceptions.report(new IllegalStateException("Invalid audible mode " + audibleMode));
                 return horizontal_speed;
         }

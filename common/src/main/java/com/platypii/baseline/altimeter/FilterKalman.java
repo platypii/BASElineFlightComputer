@@ -45,7 +45,7 @@ public class FilterKalman extends Filter {
             return;
         }
         if (Double.isNaN(x) || Double.isNaN(v)) {
-            Log.w(TAG,"Invalid kalman state: x = " + x + " v = " + v);
+            Log.w(TAG, "Invalid kalman state: x = " + x + " v = " + v);
         }
 
         // Estimated state

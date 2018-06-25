@@ -14,10 +14,10 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Class to manage a bluetooth GPS receiver.
@@ -55,7 +55,7 @@ public class BluetoothService implements BaseService {
 
     @Override
     public void start(@NonNull Context context) {
-        if(!(context instanceof Activity)) {
+        if (!(context instanceof Activity)) {
             Exceptions.report(new ClassCastException("Bluetooth context must be an activity"));
             return;
         }
@@ -63,7 +63,7 @@ public class BluetoothService implements BaseService {
         if (bluetoothState == BT_STOPPED) {
             setState(BT_STARTING);
             // Start bluetooth thread
-            if(bluetoothRunnable != null) {
+            if (bluetoothRunnable != null) {
                 Log.e(TAG, "Bluetooth thread already started");
             }
             startAsync(activity);
@@ -92,10 +92,10 @@ public class BluetoothService implements BaseService {
     private BluetoothAdapter getAdapter(@NonNull Activity activity) {
         // TODO: Make sure this doesn't take too long
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(bluetoothAdapter == null) {
+        if (bluetoothAdapter == null) {
             // Device not supported
             Log.e(TAG, "Bluetooth not supported");
-        } else if(!bluetoothAdapter.isEnabled()) {
+        } else if (!bluetoothAdapter.isEnabled()) {
             // Turn on bluetooth
             // TODO: Handle result?
             final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -107,7 +107,7 @@ public class BluetoothService implements BaseService {
     @Nullable
     public Set<BluetoothDevice> getDevices() {
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(bluetoothAdapter != null) {
+        if (bluetoothAdapter != null) {
             return bluetoothAdapter.getBondedDevices();
         } else {
             Log.w(TAG, "Tried to get devices, but bluetooth is not enabled");
@@ -120,10 +120,10 @@ public class BluetoothService implements BaseService {
     }
 
     void setState(int state) {
-        if(bluetoothState == BT_STOPPING && state == BT_CONNECTING) {
+        if (bluetoothState == BT_STOPPING && state == BT_CONNECTING) {
             Log.e(TAG, "Invalid bluetooth state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         }
-        if(bluetoothState == state) {
+        if (bluetoothState == state) {
             Log.e(TAG, "Null state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         }
         Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
@@ -136,13 +136,13 @@ public class BluetoothService implements BaseService {
      */
     @NonNull
     public String getStatusMessage(@NonNull Context context) {
-        if(bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
+        if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
             // Hardware disabled
             return context.getString(R.string.bluetooth_status_disabled);
-        } else if(!preferences.preferenceEnabled) {
+        } else if (!preferences.preferenceEnabled) {
             // Bluetooth preference disabled
             return context.getString(R.string.bluetooth_status_disabled);
-        } else if(preferences.preferenceDeviceId == null) {
+        } else if (preferences.preferenceDeviceId == null) {
             // Bluetooth preference enabled, but device not selected
             return context.getString(R.string.bluetooth_status_not_selected);
         } else {
@@ -167,7 +167,7 @@ public class BluetoothService implements BaseService {
 
     @Override
     public synchronized void stop() {
-        if(bluetoothState != BT_STOPPED) {
+        if (bluetoothState != BT_STOPPED) {
             Log.i(TAG, "Stopping bluetooth service");
             // Stop thread
             if (bluetoothRunnable != null) {
@@ -178,7 +178,7 @@ public class BluetoothService implements BaseService {
                     // Thread is dead, clean up
                     bluetoothRunnable = null;
                     bluetoothThread = null;
-                    if(bluetoothState != BT_STOPPED) {
+                    if (bluetoothState != BT_STOPPED) {
                         Log.e(TAG, "Unexpected bluetooth state: state should be STOPPED when thread has stopped");
                     }
                 } catch (InterruptedException e) {
@@ -199,13 +199,13 @@ public class BluetoothService implements BaseService {
      */
     public synchronized void restart(@NonNull Activity activity) {
         Log.i(TAG, "Restarting bluetooth service");
-        if(bluetoothState == BT_STOPPED) {
+        if (bluetoothState == BT_STOPPED) {
             // Just start
             start(activity);
         } else {
             // Stop and start
             stop();
-            if(bluetoothState != BT_STOPPED) {
+            if (bluetoothState != BT_STOPPED) {
                 Exceptions.report(new IllegalStateException("Error restarting bluetooth: not stopped: " + BT_STATES[bluetoothState]));
             }
             start(activity);

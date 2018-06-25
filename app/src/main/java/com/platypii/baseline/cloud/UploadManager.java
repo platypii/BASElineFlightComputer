@@ -1,12 +1,12 @@
 package com.platypii.baseline.cloud;
 
-import com.platypii.baseline.util.Network;
-import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.util.Network;
+import com.platypii.baseline.views.BaseActivity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;

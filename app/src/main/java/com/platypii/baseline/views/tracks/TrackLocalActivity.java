@@ -20,10 +20,10 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.io.File;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import java.io.File;
 
 public class TrackLocalActivity extends BaseActivity implements DialogInterface.OnClickListener {
     private static final String TAG = "TrackLocalActivity";
@@ -103,12 +103,12 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
     private void clickDelete(View v) {
         firebaseAnalytics.logEvent("click_track_delete_local_1", null);
         alertDialog = new AlertDialog.Builder(this)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .setTitle("Delete this track?")
-            .setMessage(R.string.delete_local)
-            .setPositiveButton("Delete", this)
-            .setNegativeButton("Cancel", null)
-            .show();
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Delete this track?")
+                .setMessage(R.string.delete_local)
+                .setPositiveButton("Delete", this)
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void clickCharts(View v) {
@@ -154,6 +154,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
             finish();
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUploadFailure(@NonNull SyncEvent.UploadFailure event) {
         if (event.trackFile.getName().equals(trackFile.getName())) {
@@ -162,6 +163,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
             updateViews();
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUploadProgress(@NonNull SyncEvent.UploadProgress event) {
         if (event.trackFile.getName().equals(trackFile.getName())) {

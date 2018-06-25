@@ -46,8 +46,8 @@ public class Convert {
         } else if (Double.isInfinite(m)) {
             return Double.toString(m);
         } else {
-            final String localUnits = metric? "m" : "ft";
-            final double localValue = metric? m : m * 3.2808399;
+            final String localUnits = metric ? "m" : "ft";
+            final double localValue = metric ? m : m * 3.2808399;
             if (localValue < 999.5) {
                 return Math.round(localValue) + " " + localUnits;
             } else {
@@ -77,8 +77,8 @@ public class Convert {
         } else if (Double.isInfinite(m)) {
             return Double.toString(m);
         } else {
-            final String unitString = units? (metric? " m" : " ft") : "";
-            final double localValue = metric? m : m * 3.2808399;
+            final String unitString = units ? (metric ? " m" : " ft") : "";
+            final double localValue = metric ? m : m * 3.2808399;
             if (precision == 0) {
                 // Faster special case for integers
                 return Math.round(localValue) + unitString;
@@ -150,8 +150,8 @@ public class Convert {
         } else if (Double.isInfinite(mps)) {
             return Double.toString(mps);
         } else {
-            final String unitString = units? (metric? " km/h" : " mph") : "";
-            final double localValue = metric? mps * 3.6 : mps * 2.23693629;
+            final String unitString = units ? (metric ? " km/h" : " mph") : "";
+            final double localValue = metric ? mps * 3.6 : mps * 2.23693629;
             if (precision == 0) {
                 // Faster special case for integers
                 return Math.round(localValue) + unitString;

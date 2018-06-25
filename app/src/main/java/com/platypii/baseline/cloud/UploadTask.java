@@ -11,19 +11,19 @@ import com.platypii.baseline.util.Network;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import java.io.File;
-import java.net.SocketException;
-import javax.net.ssl.SSLException;
-import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
+import javax.net.ssl.SSLException;
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Upload to the cloud

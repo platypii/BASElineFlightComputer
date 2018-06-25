@@ -13,7 +13,7 @@ public class LoggingEvent {
     public LoggingEvent(boolean started, TrackFile trackFile) {
         this.started = started;
         this.trackFile = trackFile;
-        if(started ^ trackFile == null) {
+        if (started ^ trackFile == null) {
             throw new IllegalStateException("Invalid logging event " + started + " " + trackFile);
         }
     }

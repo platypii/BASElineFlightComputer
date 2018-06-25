@@ -2,7 +2,9 @@ package com.platypii.baseline.measurements;
 
 import java.util.Locale;
 
-/** Copies an android SensorEvent */
+/**
+ * Copies an android SensorEvent
+ */
 public abstract class MSensor extends Measurement {
 
     // Sensors
@@ -18,15 +20,15 @@ public abstract class MSensor extends Measurement {
 //        // Store sensor data
 //        this.millis = event.timeMillis;
 //        // this.accuracy = event.accuracy;
-//        if(event.sensor == Sensor.TYPE_ACCELEROMETER) {
+//        if (event.sensor == Sensor.TYPE_ACCELEROMETER) {
 //            this.sensor = "Acc";
 //            this.acc = event.x * event.x + event.y * event.y + event.z + event.z;
-//        } else if(event.sensor == Sensor.TYPE_GRAVITY) {
+//        } else if (event.sensor == Sensor.TYPE_GRAVITY) {
 //            this.sensor = "Grv";
 //            this.gX = event.x;
 //            this.gY = event.y;
 //            this.gZ = event.z;
-//        } else if(event.sensor == Sensor.TYPE_ROTATION_VECTOR) {
+//        } else if (event.sensor == Sensor.TYPE_ROTATION_VECTOR) {
 //            this.sensor = "Rot";
 //            this.rotX = event.x;
 //            this.rotY = event.y;

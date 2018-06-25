@@ -8,15 +8,15 @@ import com.platypii.baseline.util.Network;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import org.greenrobot.eventbus.EventBus;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * List tracks from the cloud
@@ -112,7 +112,7 @@ public class TrackListing {
     static List<CloudData> fromJson(String json) throws JSONException {
         final ArrayList<CloudData> listing = new ArrayList<>();
         final JSONArray arr = new JSONArray(json);
-        for(int i = 0; i < arr.length(); i++) {
+        for (int i = 0; i < arr.length(); i++) {
             final JSONObject jsonObject = arr.getJSONObject(i);
             final CloudData cloudData = CloudData.fromJson(jsonObject);
             listing.add(cloudData);
@@ -125,7 +125,7 @@ public class TrackListing {
      */
     static String toJson(@NonNull List<CloudData> trackList) {
         final JSONArray arr = new JSONArray();
-        for(CloudData track : trackList) {
+        for (CloudData track : trackList) {
             final JSONObject trackObj = track.toJson();
             arr.put(trackObj);
         }

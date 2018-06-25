@@ -98,7 +98,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         // Convert system time to GPS time
         final long lastFixMillis = millis - TimeOffset.phoneOffsetMillis;
         // Compute time since last sample in nanoseconds
-        final long deltaTime = (lastFixNano == 0)? 0 : (event.timestamp - lastFixNano);
+        final long deltaTime = (lastFixNano == 0) ? 0 : (event.timestamp - lastFixNano);
 
         if (lastFixNano > 0 && deltaTime <= 0) {
             Log.e(TAG, "Non-monotonic time delta: " + event.timestamp + " - " + lastFixNano + " = " + deltaTime + " ns");
@@ -117,7 +117,6 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
                 refreshRate += (newRefreshRate - refreshRate) * 0.5f; // Moving average
             }
             if (Double.isNaN(refreshRate)) {
-                Log.e(TAG, "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + newRefreshRate);
                 Exceptions.report(new Exception("Refresh rate is NaN, deltaTime = " + deltaTime + " newRefreshRate = " + newRefreshRate));
                 refreshRate = 0;
             }

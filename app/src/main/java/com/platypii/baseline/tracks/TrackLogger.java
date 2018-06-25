@@ -13,9 +13,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,6 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.zip.GZIPOutputStream;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Logs location, altitude, every scrap of data we can get to a file.
@@ -68,7 +68,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
 
                 // Notify listeners that recording has started
                 EventBus.getDefault().post(new LoggingEvent(true, null));
-            } catch(IOException e) {
+            } catch (IOException e) {
                 Log.e(TAG, "Error starting logging", e);
             }
         } else if (logDir == null) {

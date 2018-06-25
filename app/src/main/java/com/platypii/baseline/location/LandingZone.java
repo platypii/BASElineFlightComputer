@@ -24,7 +24,7 @@ public class LandingZone {
     public static LatLng getLandingLocation() {
         // Compute time to ground
         final double timeToGround = timeToGround();
-        if(Numbers.isReal(timeToGround) && Services.location.isFresh()) {
+        if (Numbers.isReal(timeToGround) && Services.location.isFresh()) {
 
             // Compute horizontal distance traveled at current velocity for timeToGround seconds
             final double groundDistance = timeToGround * Services.location.groundSpeed();
@@ -43,7 +43,7 @@ public class LandingZone {
      */
     private static double timeToGround() {
         final double timeToGround = -Services.alti.altitudeAGL() / Services.alti.climb;
-        if(!Numbers.isReal(timeToGround) || timeToGround < 0.01 || Math.abs(Services.alti.climb) < 0.05 || 24 * 60 * 60 < timeToGround) {
+        if (!Numbers.isReal(timeToGround) || timeToGround < 0.01 || Math.abs(Services.alti.climb) < 0.05 || 24 * 60 * 60 < timeToGround) {
             // return NaN if we don't have an accurate landing location (climbing, very close to ground, very long estimate, etc)
             return Double.NaN;
         } else {

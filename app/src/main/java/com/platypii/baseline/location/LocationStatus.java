@@ -30,10 +30,10 @@ public class LocationStatus {
         int icon;
 
         // GPS signal status
-        if(Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothService.BT_CONNECTED) {
+        if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothService.BT_CONNECTED) {
             // Bluetooth enabled, but not connected
             icon = R.drawable.warning;
-            switch(Services.bluetooth.getState()) {
+            switch (Services.bluetooth.getState()) {
                 case BluetoothService.BT_CONNECTING:
                     message = "GPS bluetooth connecting...";
                     break;
@@ -46,7 +46,7 @@ public class LocationStatus {
             }
         } else {
             // Internal GPS, or bluetooth connected:
-            if(Services.location.lastFixDuration() < 0) {
+            if (Services.location.lastFixDuration() < 0) {
                 // No fix yet
                 message = "GPS searching...";
                 icon = R.drawable.status_red;

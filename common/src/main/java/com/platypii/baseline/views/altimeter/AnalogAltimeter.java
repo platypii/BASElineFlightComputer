@@ -43,7 +43,7 @@ public class AnalogAltimeter extends View {
         // Software layer required for hand path, and inner blur
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
-        if(Convert.metric) {
+        if (Convert.metric) {
             options = AnalogAltimeterOptions.metric;
         } else {
             options = AnalogAltimeterOptions.imperial;
@@ -78,7 +78,7 @@ public class AnalogAltimeter extends View {
         final float scale_factor = radius / 200;
 
         // Draw face
-        if(overlay) {
+        if (overlay) {
             paint.setColor(0xccdddddd);
             paint.setStyle(Paint.Style.FILL);
             canvas.drawCircle(center_x, center_y, radius, paint);
@@ -113,7 +113,7 @@ public class AnalogAltimeter extends View {
         paint.setTextSize(32 * scale_factor);
         paint.setTextAlign(Paint.Align.CENTER);
         int major_i = 0;
-        for(double theta = 0; theta < 2 * Math.PI; theta += options.major_angle) {
+        for (double theta = 0; theta < 2 * Math.PI; theta += options.major_angle) {
             double r = radius * 0.86;
             float x = (float)(center_x + r * Math.sin(theta));
             float y = (float)(center_y - r * Math.cos(theta)) + 9 * scale_factor;
@@ -130,7 +130,7 @@ public class AnalogAltimeter extends View {
         // Draw tick marks
         // Major
         paint.setStrokeWidth(5 * scale_factor);
-        for(double theta = 0; theta < 2 * Math.PI; theta += options.major_angle) {
+        for (double theta = 0; theta < 2 * Math.PI; theta += options.major_angle) {
             final double r1 = radius * 0.60;
             final double r2 = radius * 0.75;
             final float x1 = (float)(center_x + r1 * Math.sin(theta));
@@ -142,7 +142,7 @@ public class AnalogAltimeter extends View {
 
         // Minor
         paint.setStrokeWidth(3 * scale_factor);
-        for(double theta = options.major_angle / 2; theta < 2 * Math.PI; theta += options.major_angle) {
+        for (double theta = options.major_angle / 2; theta < 2 * Math.PI; theta += options.major_angle) {
             final double r1 = radius * 0.65;
             final double r2 = radius * 0.71;
             final float x1 = (float)(center_x + r1 * Math.sin(theta));
@@ -154,7 +154,7 @@ public class AnalogAltimeter extends View {
 
         // 1/2 Minor
         paint.setStrokeWidth(2 * scale_factor);
-        for(double theta = options.major_angle / 4; theta < 2 * Math.PI; theta += options.major_angle / 2) {
+        for (double theta = options.major_angle / 4; theta < 2 * Math.PI; theta += options.major_angle / 2) {
             final double r1 = radius * 0.65;
             final double r2 = radius * 0.68;
             final float x1 = (float)(center_x + r1 * Math.sin(theta));
@@ -167,7 +167,7 @@ public class AnalogAltimeter extends View {
         // Hand
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(0xff111111);
-        if(!Double.isNaN(altitude)) {
+        if (!Double.isNaN(altitude)) {
             canvas.save();
             final float theta360 = (float) (360 * altitude / options.max_altitude);
             final float scale = (float) (radius * 0.90);

@@ -1,8 +1,8 @@
 package com.platypii.baseline.audible;
 
-import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.R;
 import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.views.BaseActivity;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;

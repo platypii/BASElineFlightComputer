@@ -38,38 +38,38 @@ public class AutoStop {
     void update(@NonNull MLocation loc) {
         final double alt = loc.altitude_gps;
         // Update altitude range
-        if(!Double.isNaN(alt)) {
-            if(!(altMin < alt)) altMin = alt;
-            if(!(alt < altMax)) altMax = alt;
+        if (!Double.isNaN(alt)) {
+            if (!(altMin < alt)) altMin = alt;
+            if (!(alt < altMax)) altMax = alt;
         }
         // Update state
-        if(state == STATE_STARTED) {
+        if (state == STATE_STARTED) {
             // Look for flight / freefall
-            if(loc.climb < -15 && altMax - alt > minHeight) {
+            if (loc.climb < -15 && altMax - alt > minHeight) {
                 prExited += (1 - prExited) * 0.6;
-            } else if(FlightMode.getMode(loc) == FlightMode.MODE_CANOPY && altMax - alt > minHeight) {
+            } else if (FlightMode.getMode(loc) == FlightMode.MODE_CANOPY && altMax - alt > minHeight) {
                 prExited += (1 - prExited) * 0.2;
             } else {
                 prExited -= prExited * 0.6;
             }
-            if(prExited > 0.85) {
+            if (prExited > 0.85) {
                 Log.i(TAG, "Exit detected");
                 state = STATE_EXITED;
             }
-        } else if(state == STATE_EXITED) {
+        } else if (state == STATE_EXITED) {
             // Look for landing
             final double altNormalized = (alt - altMin) / (altMax - altMin);
-            if(FlightMode.getMode(loc) == FlightMode.MODE_GROUND && altMax - altMin > minHeight && altNormalized < 0.1) {
+            if (FlightMode.getMode(loc) == FlightMode.MODE_GROUND && altMax - altMin > minHeight && altNormalized < 0.1) {
                 prLanded += (1 - prLanded) * 0.2;
             }
-            if(prLanded > 0.99) {
+            if (prLanded > 0.99) {
                 landed(landing_message);
             }
         }
     }
 
     void start() {
-        if(state == STATE_STOPPED) {
+        if (state == STATE_STOPPED) {
             // Reset state
             state = STATE_STARTED;
             prExited = 0;
@@ -85,7 +85,7 @@ public class AutoStop {
     }
 
     void stop() {
-        if(state != STATE_STOPPED) {
+        if (state != STATE_STOPPED) {
             state = STATE_STOPPED;
             // Stop timeout thread
             handler.removeCallbacks(stopRunnable);
@@ -98,14 +98,14 @@ public class AutoStop {
         Log.i(TAG, "Auto-stop landing detected: " + msg);
         state = STATE_STOPPED;
         // If audible enabled, say landing detected
-        if(preferenceEnabled) {
+        if (preferenceEnabled) {
             // If audible enabled, disable
-            if(Services.audible.isEnabled()) {
+            if (Services.audible.isEnabled()) {
                 Services.audible.speakNow(msg);
                 Services.audible.disableAudible();
             }
             // If logging enabled, disable
-            if(Services.logger.isLogging()) {
+            if (Services.logger.isLogging()) {
                 Services.logger.stopLogging();
             } else {
                 Log.e(TAG, "Landing detected, but logger not logging");

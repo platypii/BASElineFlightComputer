@@ -20,10 +20,10 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import java.util.Locale;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import java.util.Locale;
 
 @SuppressLint("SetTextI18n")
 public class SensorActivity extends Activity implements MyLocationListener {
@@ -111,7 +111,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
         sensorLayout = findViewById(R.id.sensorLayout);
         // TextView sensorsLabel = (TextView)findViewById(R.id.sensorsLabel);
         // sensorsLabel.setText("Sensors: \n" + MySensorManager.getSensorsString());
-        
+
         if (Services.sensors.gravity != null) {
             addPlot("Gravity", Services.sensors.gravity);
         }
@@ -233,7 +233,9 @@ public class SensorActivity extends Activity implements MyLocationListener {
         }
     }
 
-    /** Updates the UI that refresh continuously, such as sample rates */
+    /**
+     * Updates the UI that refresh continuously, such as sample rates
+     */
     private void update() {
         // Bluetooth battery level needs to be continuously updated
         if (Services.bluetooth.preferences.preferenceEnabled) {
@@ -263,7 +265,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
                 // Fade from white to red linearly from 2 -> 5 seconds since last fix
                 float frac = (5000f - lastFixDuration) / (3000f);
                 frac = Math.max(0, Math.min(frac, 1));
-                final int b = (int)(0xb0 * frac); // blue
+                final int b = (int) (0xb0 * frac); // blue
                 final int gb = b + 0x100 * b; // blue + green
                 lastFixLabel.setTextColor(0xffb00000 + gb);
             } else {
@@ -308,6 +310,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
         // Start flight services
         Services.start(this);
     }
+
     @Override
     protected void onStop() {
         super.onStop();

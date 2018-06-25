@@ -48,7 +48,7 @@ class PlotOptions {
     static AxisOptions axisDistance() {
         return new PlotOptions.AxisOptions() {
             {
-                major_units = Convert.metric? 1 : Convert.FT;
+                major_units = Convert.metric ? 1 : Convert.FT;
             }
             @Override
             public String format(double value) {
@@ -73,7 +73,7 @@ class PlotOptions {
     static AxisOptions axisSpeed() {
         return new PlotOptions.AxisOptions() {
             {
-                major_units = Convert.metric? Convert.KPH : Convert.MPH;
+                major_units = Convert.metric ? Convert.KPH : Convert.MPH;
             }
             @Override
             public String format(double value) {

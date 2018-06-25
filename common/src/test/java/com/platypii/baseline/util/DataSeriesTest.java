@@ -49,7 +49,7 @@ public class DataSeriesTest {
         series.addPoint(2,3);
 
         int count = 0;
-        for(DataSeries.Point point : series) {
+        for (DataSeries.Point point : series) {
             count++;
         }
         assertEquals(2, count);

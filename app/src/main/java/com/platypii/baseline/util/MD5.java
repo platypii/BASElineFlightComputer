@@ -14,13 +14,15 @@ import java.security.NoSuchAlgorithmException;
 public class MD5 {
     private static final String TAG = "MD5";
 
-    /** Compute MD5 hash of a file */
+    /**
+     * Compute MD5 hash of a file
+     */
     public static String md5(@NonNull File file) {
         try {
             final MessageDigest md = MessageDigest.getInstance("MD5");
             final InputStream inputStream = new DigestInputStream(new FileInputStream(file), md);
             final byte[] buffer = new byte[1024];
-            while(inputStream.read(buffer) != -1) {
+            while (inputStream.read(buffer) != -1) {
                 // Do nothing
             }
             inputStream.close();

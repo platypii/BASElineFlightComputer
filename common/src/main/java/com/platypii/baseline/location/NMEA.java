@@ -28,7 +28,6 @@ class NMEA {
         } else {
             final int index = dm.indexOf('.') - 2;
             if (index < 0) {
-                Log.e(TAG, "Lat/lon parse error missing decimal: " + dm + " " + nsew);
                 Exceptions.report(new NMEAException("NMEA lat/lon parse error missing decimal: " + dm + " " + nsew));
                 return Double.NaN;
             } else {
@@ -41,8 +40,7 @@ class NMEA {
                         return -degrees;
                     else
                         return degrees;
-                } catch(Exception e) {
-                    Log.e(TAG, "Lat/lon parse error: " + dm + " " + nsew);
+                } catch (Exception e) {
                     Exceptions.report(new NMEAException("NMEA lat/lon parse error: " + dm + " " + nsew));
                     return Double.NaN;
                 }
@@ -85,15 +83,17 @@ class NMEA {
                 final long min = Integer.parseInt(time.substring(2, 4));
                 // double sec = Double.parseDouble(utc.substring(4));
                 final long sec = Integer.parseInt(time.substring(4, 6));
-                final long ms = time.length() <= 6? 0 : (long) (1000 * Double.parseDouble(time.substring(6)));
+                final long ms = time.length() <= 6 ? 0 : (long) (1000 * Double.parseDouble(time.substring(6)));
                 return hour * 3600000 + min * 60000 + sec * 1000 + ms;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return 0;
             }
         }
     }
 
-    /** Returns true if the checksum is valid */
+    /**
+     * Returns true if the checksum is valid
+     */
     static void validate(@NonNull String nmea) throws NMEAException {
         final int starIndex = nmea.lastIndexOf('*');
         final int length = nmea.length();
@@ -117,7 +117,7 @@ class NMEA {
 
         // Compute checksum
         short checksum1 = 0;
-        for(int i = 1; i < starIndex; i++) {
+        for (int i = 1; i < starIndex; i++) {
             checksum1 ^= nmea.charAt(i);
         }
         final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1), 16);
@@ -146,13 +146,15 @@ class NMEA {
             final float batteryLevel = (voltage - 1091) / (1280f - 1091f);
             // Restrict range from 0 to 100%
             return Math.max(0f, Math.min(batteryLevel, 1f));
-        } catch(Exception e) {
+        } catch (Exception e) {
             Exceptions.report(e);
             return Float.NaN;
         }
     }
 
-    /** Remove junk before and after nmea sentence */
+    /**
+     * Remove junk before and after nmea sentence
+     */
     static String cleanNmea(@NonNull String nmea) {
         // Remove anything before $
         final int sentenceStart = nmea.indexOf('$');
@@ -163,7 +165,9 @@ class NMEA {
         return nmea.trim();
     }
 
-    /** Split nmea sentence into columns, no checksum */
+    /**
+     * Split nmea sentence into columns, no checksum
+     */
     static String[] splitNmea(@NonNull String nmea) {
         // Strip checksum
         final int starIndex = nmea.lastIndexOf('*');

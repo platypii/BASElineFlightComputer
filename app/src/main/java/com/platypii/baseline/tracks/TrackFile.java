@@ -30,7 +30,9 @@ public class TrackFile {
         return size + "kb";
     }
 
-    /** Delete local track file */
+    /**
+     * Delete local track file
+     */
     public boolean delete() {
         Log.w(TAG, "Deleting track file " + file);
         return file.delete();
@@ -45,6 +47,7 @@ public class TrackFile {
     public boolean equals(Object obj) {
         return obj instanceof TrackFile && file.equals(((TrackFile) obj).file);
     }
+
     @Override
     public int hashCode() {
         return file.hashCode();

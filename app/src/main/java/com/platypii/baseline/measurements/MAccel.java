@@ -2,7 +2,9 @@ package com.platypii.baseline.measurements;
 
 import java.util.Locale;
 
-/** Copies an android SensorEvent */
+/**
+ * Copies an android SensorEvent
+ */
 public class MAccel extends MSensor {
 
     public MAccel(long nano, float a) {

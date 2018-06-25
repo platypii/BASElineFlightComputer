@@ -2,7 +2,6 @@ package com.platypii.baseline.views.map;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.views.altimeter.AnalogAltimeterSettable;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MAltitude;
@@ -10,6 +9,7 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.BaseActivity;
+import com.platypii.baseline.views.altimeter.AnalogAltimeterSettable;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -34,11 +34,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
+import java.util.ArrayList;
+import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
     private static final String TAG = "Map";
@@ -173,35 +173,35 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
         // Add home location pin
         homeMarker = map.addMarker(new MarkerOptions()
-                        .position(home)
-                        .visible(false)
-                        .title("home")
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin))
-                        .anchor(0.5f, 1.0f)
+                .position(home)
+                .visible(false)
+                .title("home")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin))
+                .anchor(0.5f, 1.0f)
         );
         // Add line to home
         homePath = map.addPolyline(new PolylineOptions()
-                        .visible(false)
-                        .width(10)
-                        .color(0x66ffffff)
-                        .startCap(new RoundCap())
-                        .endCap(new RoundCap())
+                .visible(false)
+                .width(10)
+                .color(0x66ffffff)
+                .startCap(new RoundCap())
+                .endCap(new RoundCap())
         );
         // Add projected landing zone
         landingMarker = map.addMarker(new MarkerOptions()
-                        .position(home)
-                        .visible(false)
-                        .title("landing")
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_target))
-                        .anchor(0.5f, 0.5f)
+                .position(home)
+                .visible(false)
+                .title("landing")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_target))
+                .anchor(0.5f, 0.5f)
         );
         // Add line to projected landing zone
         landingPath = map.addPolyline(new PolylineOptions()
-                        .visible(false)
-                        .width(10)
-                        .color(0x66ff0000)
-                        .startCap(new RoundCap())
-                        .endCap(new RoundCap())
+                .visible(false)
+                .width(10)
+                .color(0x66ff0000)
+                .startCap(new RoundCap())
+                .endCap(new RoundCap())
         );
         myPositionMarker = map.addMarker(new MarkerOptions()
                 .position(home)
@@ -313,10 +313,10 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private void updateFlightStats() {
         analogAltimeter.setAltitude(Services.alti.altitudeAGL());
         if (Services.alti.climb < 0) {
-            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp,0,0,0);
+            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp, 0, 0, 0);
             flightStatsVario.setText(Convert.speed(-Services.alti.climb));
         } else {
-            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward_white_24dp,0,0,0);
+            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward_white_24dp, 0, 0, 0);
             flightStatsVario.setText(Convert.speed(Services.alti.climb));
         }
         final double groundSpeed = Services.location.groundSpeed();

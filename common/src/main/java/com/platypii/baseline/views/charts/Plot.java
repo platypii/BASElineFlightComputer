@@ -79,7 +79,7 @@ class Plot {
 //     */
 //    void drawPoints(@NonNull DataSeries series, float radius, Paint paint) {
 //        paint.setStyle(Paint.Style.FILL);
-//        for(DataSeries.Point point : series) {
+//        for (DataSeries.Point point : series) {
 //            dataBounds.expandBounds(point.x, point.y);
 //            canvas.drawCircle(getX(point.x), getY(point.y), radius * options.density, paint);
 //        }
@@ -153,7 +153,7 @@ class Plot {
 //        path.rewind();
 //        boolean empty = true;
 //        double x = Double.NaN;
-//        for(DataSeries.Point point : series) {
+//        for (DataSeries.Point point : series) {
 //            if (!Double.isNaN(point.x) && !Double.isNaN(point.y)) {
 //                if (empty) {
 //                    path.moveTo(getX(point.x), getY(y_zero));

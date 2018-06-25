@@ -56,7 +56,7 @@ public class TouchableMapFragment extends MapFragment {
 
         @Override
         public boolean dispatchTouchEvent(MotionEvent ev) {
-            for(OnTouchListener listener : listeners) {
+            for (OnTouchListener listener : listeners) {
                 listener.onTouch(originalContentView, ev);
             }
 

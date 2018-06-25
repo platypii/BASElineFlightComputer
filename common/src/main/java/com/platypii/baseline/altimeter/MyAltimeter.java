@@ -94,7 +94,9 @@ public class MyAltimeter implements BaseService, MyLocationListener {
         return groundLevel.altitudeAGL();
     }
 
-    /** Location Listener */
+    /**
+     * Location Listener
+     */
     @Override
     public void onLocationChanged(@NonNull MLocation loc) {
         updateGPS(loc);

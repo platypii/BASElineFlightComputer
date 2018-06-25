@@ -74,14 +74,14 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
 
     @Override
     protected String getLabelText() {
-        if(groundLevelMode == MODE_ALTI) {
+        if (groundLevelMode == MODE_ALTI) {
             paint.setColor(0xffeeeeee);
         } else {
             paint.setColor(0xffee1111);
         }
-        if(groundLevelMode == MODE_ALTI) {
+        if (groundLevelMode == MODE_ALTI) {
             return super.getLabelText();
-        } else if(groundLevelMode == MODE_PROMPT) {
+        } else if (groundLevelMode == MODE_PROMPT) {
             return getContext().getString(R.string.set_altitude);
         } else {
             final double altitude = trueAltitude + altitudeOffset;
@@ -111,7 +111,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
     }
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        if(groundLevelMode == MODE_SET) {
+        if (groundLevelMode == MODE_SET) {
             // Scroll (drag) gesture
             velocity = 0;
             adjustOffset(distanceY);
@@ -131,7 +131,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
     private static final float DECELERATION = 6;
     @Override
     public boolean onFling(@NonNull MotionEvent e1, @NonNull MotionEvent e2, float velocityX, final float velocityY) {
-        if(groundLevelMode == MODE_SET && Math.abs(e1.getY() - e2.getY()) > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+        if (groundLevelMode == MODE_SET && Math.abs(e1.getY() - e2.getY()) > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
             // Animate
             velocity = -velocityY / 80;
             handler.removeCallbacks(flinger);
@@ -141,7 +141,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
     }
     private final Runnable flinger = new Runnable() {
         public void run() {
-            if(groundLevelMode == MODE_SET) {
+            if (groundLevelMode == MODE_SET) {
                 adjustOffset(velocity);
                 if (Math.abs(DECELERATION) < Math.abs(velocity)) {
                     if (velocity < 0)
@@ -160,15 +160,15 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
 
     @Override
     public void onLongPress(MotionEvent e) {
-        if(Double.isNaN(trueAltitude)) {
+        if (Double.isNaN(trueAltitude)) {
             return;
         }
-        if(groundLevelMode == MODE_ALTI) {
+        if (groundLevelMode == MODE_ALTI) {
             Log.i(TAG, "Ground level adjustment prompt");
             setGroundLevelMode(MODE_PROMPT);
             // Start a delayed thread to revert to alti mode
             handler.postDelayed(reaper, MODE_PROMPT_TIMEOUT);
-        } else if(groundLevelMode == MODE_PROMPT) {
+        } else if (groundLevelMode == MODE_PROMPT) {
             Log.i(TAG, "Ground level adjustment start");
             setGroundLevelMode(MODE_SET);
             // Start a delayed thread to revert to alti mode
@@ -179,7 +179,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
             handler.removeCallbacks(reaper);
             setGroundLevelMode(MODE_ALTI);
             // Save ground level adjustment
-            if(alti != null) {
+            if (alti != null) {
                 alti.groundLevel.setCurrentAltitudeAGL(trueAltitude + altitudeOffset);
             } else {
                 Exceptions.report(new IllegalStateException("AnalogAltimeterSettable requires call to setAlti()"));
@@ -188,7 +188,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
         altitudeOffset = 0;
     }
     private final Runnable reaper = () -> {
-        if(groundLevelMode != MODE_ALTI) {
+        if (groundLevelMode != MODE_ALTI) {
             setGroundLevelMode(MODE_ALTI);
             altitudeOffset = 0;
             update();

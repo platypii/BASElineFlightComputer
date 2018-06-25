@@ -3,7 +3,6 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.util.Numbers;
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -22,12 +21,14 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
         this.bluetooth = bluetooth;
     }
 
-    /** Listen for GPPWR command */
+    /**
+     * Listen for GPPWR command
+     */
     @Override
     protected void handleNmea(long timestamp, @NonNull String nmea) throws NMEAException {
         // Parse NMEA command
         final String split[] = NMEA.splitNmea(nmea);
-        if(split[0].equals("$GPPWR")) {
+        if (split[0].equals("$GPPWR")) {
             bluetooth.powerLevel = NMEA.parsePowerLevel(split);
             bluetooth.charging = Numbers.parseInt(split[5], 0) == 1;
         }

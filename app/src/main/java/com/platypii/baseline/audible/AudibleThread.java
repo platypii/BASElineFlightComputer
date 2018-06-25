@@ -24,7 +24,7 @@ class AudibleThread {
     };
 
     public void start() {
-        if(!isRunning) {
+        if (!isRunning) {
             Log.i(TAG, "Starting audible");
             final int delay = (int) (AudibleSettings.speechInterval * 1000);
             handler.postDelayed(audibleThread, delay);
@@ -36,7 +36,7 @@ class AudibleThread {
     }
 
     public void stop() {
-        if(isRunning) {
+        if (isRunning) {
             Log.i(TAG, "Stopping audible");
             handler.removeCallbacks(audibleThread);
             // TODO: Block until stopped?

@@ -21,7 +21,9 @@ import java.io.File;
 public class Intents {
     private static final String TAG = "Intents";
 
-    /** Open track activity */
+    /**
+     * Open track activity
+     */
     public static void openTrackLocal(@NonNull Context context, @NonNull TrackFile trackFile) {
         final Intent intent = new Intent(context, TrackLocalActivity.class);
         intent.putExtra(TrackLocalActivity.EXTRA_TRACK_FILE, trackFile.file.getName());
@@ -33,7 +35,9 @@ public class Intents {
         context.startActivity(intent);
     }
 
-    /** Open track charts */
+    /**
+     * Open track charts
+     */
     public static void openCharts(@NonNull Context context, @NonNull File trackFile) {
         final Intent intent = new Intent(context, ChartsActivity.class);
         intent.putExtra(TrackLocalActivity.EXTRA_TRACK_FILE, trackFile.getAbsolutePath());
@@ -53,10 +57,12 @@ public class Intents {
         }
     }
 
-    /** Open track url in browser */
+    /**
+     * Open track url in browser
+     */
     public static void openTrackUrl(@NonNull Context context, @NonNull String url) {
         // Add mobile flag
-        if(!url.contains("?")) {
+        if (!url.contains("?")) {
             url += "?mobile";
         }
         Log.i(TAG, "Opening track url " + url);
@@ -64,14 +70,16 @@ public class Intents {
         context.startActivity(intent);
     }
 
-    /** Open track as KML in google earth */
+    /**
+     * Open track as KML in google earth
+     */
     public static void openTrackKml(@NonNull Context context, String urlKml) {
         try {
             openTrackGoogleEarth(context, urlKml);
-        } catch(ActivityNotFoundException e) {
+        } catch (ActivityNotFoundException e) {
             Log.e(TAG, "Failed to open KML file in google earth", e);
             Toast.makeText(context, R.string.error_map_intent, Toast.LENGTH_SHORT).show();
-        } catch(Exception e) {
+        } catch (Exception e) {
             Exceptions.report(e);
             Log.e(TAG, "Failed to open KML file in google earth", e);
             Toast.makeText(context, R.string.error_map_intent, Toast.LENGTH_SHORT).show();
@@ -88,7 +96,7 @@ public class Intents {
 //    /** Share link to baseline.ws */
 //    public static void shareTrack(@NonNull Context context, TrackFile trackFile) {
 //        final CloudData cloudData = trackFile.getCloudData();
-//        if(cloudData != null) {
+//        if (cloudData != null) {
 //            final SimpleDateFormat format = new SimpleDateFormat("EEE MMM d yyyy, h:mma z", Locale.US);
 //            final String date = format.format(trackFile.getDate());
 //
@@ -103,7 +111,9 @@ public class Intents {
 //        }
 //    }
 
-    /** Share track data file */
+    /**
+     * Share track data file
+     */
     public static void exportTrackFile(@NonNull Context context, @NonNull TrackFile trackFile) {
         try {
             final Uri trackFileUri = FileProvider.getUriForFile(context, "com.platypii.baseline.provider", trackFile.file);
@@ -114,14 +124,16 @@ public class Intents {
             intent.putExtra(Intent.EXTRA_STREAM, trackFileUri);
             intent.setType("application/csv");
             context.startActivity(intent);
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, "Failed to export track file", e);
             Toast.makeText(context, R.string.error_export_intent, Toast.LENGTH_SHORT).show();
             Exceptions.report(e);
         }
     }
 
-    /** Open help page in browser */
+    /**
+     * Open help page in browser
+     */
     public static void openHelpUrl(@NonNull Context context) {
         final Uri uri = Uri.parse("https://baseline.ws/help/app");
         Log.i(TAG, "Opening help url " + uri);
@@ -137,10 +149,10 @@ public class Intents {
             intent.setComponent(cn);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
-        } catch(ActivityNotFoundException e) {
+        } catch (ActivityNotFoundException e) {
             Log.w(TAG, "Failed to open android bluetooth settings", e);
             Toast.makeText(context, R.string.error_bluetooth_intent, Toast.LENGTH_SHORT).show();
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, "Failed to open android bluetooth settings", e);
             Toast.makeText(context, R.string.error_bluetooth_intent, Toast.LENGTH_SHORT).show();
             Exceptions.report(e);

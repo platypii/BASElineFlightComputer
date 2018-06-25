@@ -1,10 +1,10 @@
 package com.platypii.baseline.views.bluetooth;
 
-import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.views.BaseActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;

@@ -11,7 +11,7 @@ abstract class SpeedMode extends AudibleMode {
 
     @Override
     public float units() {
-        return Convert.metric? Convert.KPHf : Convert.MPHf;
+        return Convert.metric ? Convert.KPHf : Convert.MPHf;
     }
 
     @Override
@@ -24,7 +24,7 @@ abstract class SpeedMode extends AudibleMode {
      * Shortens 0.00 to 0
      */
     static String shortSpeed(double speed, int precision) {
-        if(Math.abs(speed) < Math.pow(.1, precision) / 2) {
+        if (Math.abs(speed) < Math.pow(.1, precision) / 2) {
             return "0";
         } else {
             return Convert.speed(speed, precision, false);

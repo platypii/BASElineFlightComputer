@@ -51,7 +51,7 @@ public class NavigationMode extends AudibleMode {
 
     @Override
     public float units() {
-        return Convert.metric? 1f : (float) Convert.FT;
+        return Convert.metric ? 1f : (float) Convert.FT;
     }
 
     @Override

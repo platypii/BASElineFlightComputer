@@ -46,7 +46,7 @@ public class AudibleMinMaxPreference extends DialogPreference {
         mEditText = view.findViewById(R.id.minmax_input);
 
         final float value = getValue();
-        if(Numbers.isReal(value)) {
+        if (Numbers.isReal(value)) {
             final float valueLocalUnits = value / getMode().units();
             mEditText.setText(Float.toString(valueLocalUnits));
         } else {
@@ -57,13 +57,13 @@ public class AudibleMinMaxPreference extends DialogPreference {
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
-        if(positiveResult) {
+        if (positiveResult) {
             // Convert mEditText into value
             final String valueString = mEditText.getText().toString();
-            if(!valueString.isEmpty()) {
+            if (!valueString.isEmpty()) {
                 final float valueLocalUnits = Numbers.parseFloat(valueString);
                 final float value = valueLocalUnits * getMode().units();
-                if(Numbers.isReal(value)) {
+                if (Numbers.isReal(value)) {
                     persistString(Float.toString(value));
                     callChangeListener(value);
                 }

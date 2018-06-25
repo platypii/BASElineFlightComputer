@@ -20,8 +20,8 @@ class Speech implements TextToSpeech.OnInitListener {
     }
 
     void speakNow(@Nullable String text) {
-        if(text != null && text.length() > 0) {
-            if(isReady) {
+        if (text != null && text.length() > 0) {
+            if (isReady) {
                 Log.i(TAG, "Saying: " + text);
                 tts.setSpeechRate(AudibleSettings.speechRate);
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
@@ -32,8 +32,8 @@ class Speech implements TextToSpeech.OnInitListener {
     }
 
     void speakWhenReady(@Nullable String text) {
-        if(text != null && text.length() > 0) {
-            if(isReady) {
+        if (text != null && text.length() > 0) {
+            if (isReady) {
                 Log.i(TAG, "Saying when ready: " + text);
                 tts.setSpeechRate(AudibleSettings.speechRate);
                 tts.speak(text, TextToSpeech.QUEUE_ADD, null);
@@ -48,7 +48,7 @@ class Speech implements TextToSpeech.OnInitListener {
     }
 
     void stopAll() {
-        if(queue != null) {
+        if (queue != null) {
             queue.clear();
         }
         tts.stop();
@@ -60,8 +60,8 @@ class Speech implements TextToSpeech.OnInitListener {
         isReady = true;
 
         // Play queued speech
-        if(queue != null) {
-            for(String text : queue) {
+        if (queue != null) {
+            for (String text : queue) {
                 speakWhenReady(text);
             }
             queue = null;

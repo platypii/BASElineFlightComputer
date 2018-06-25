@@ -64,7 +64,9 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
         }
     }
 
-    /** Android location listener */
+    /**
+     * Android location listener
+     */
     @Override
     public void onLocationChanged(@NonNull Location loc) {
         // TODO: minsdk26: loc.getVerticalAccuracyMeters();
@@ -154,7 +156,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
                         // }
                         satellitesInView = count;
                         satellitesUsed = used;
-                    } catch(SecurityException e) {
+                    } catch (SecurityException e) {
                         Exceptions.report(e);
                     }
                 }
@@ -168,7 +170,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
             manager.removeGpsStatusListener(this);
             try {
                 manager.removeUpdates(this);
-            } catch(SecurityException e) {
+            } catch (SecurityException e) {
                 Log.w(TAG, "Exception while stopping android location updates", e);
             }
             manager = null;

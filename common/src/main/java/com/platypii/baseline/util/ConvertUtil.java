@@ -45,7 +45,9 @@ class ConvertUtil {
         }
     }
 
-    /** Truncate to at most 2 int digits */
+    /**
+     * Truncate to at most 2 int digits
+     */
     static String formatInt(double value, int precision) {
         // Switch negative, so that we floor toward zero
         if (value < 0) return "-" + formatInt(-value, precision);

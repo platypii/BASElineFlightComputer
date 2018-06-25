@@ -10,7 +10,7 @@ public class Exceptions {
         try {
             Log.e(TAG, "Crash report exception", e);
             Crashlytics.logException(e);
-        } catch(Exception e2) {
+        } catch (Exception e2) {
             Log.e(TAG, "Exception while reporting exception", e2);
         }
     }
@@ -18,7 +18,7 @@ public class Exceptions {
     public static void log(String msg) {
         try {
             Crashlytics.log(msg);
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, "Exception while logging", e);
         }
     }

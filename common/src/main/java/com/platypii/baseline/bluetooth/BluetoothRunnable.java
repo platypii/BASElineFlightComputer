@@ -37,18 +37,18 @@ class BluetoothRunnable implements Runnable {
         Log.i(TAG, "Bluetooth thread starting");
 
         // Reconnect loop
-        while(bluetooth.getState() != BluetoothService.BT_STOPPING) {
+        while (bluetooth.getState() != BluetoothService.BT_STOPPING) {
             // Connect to bluetooth GPS
             bluetooth.setState(BluetoothService.BT_CONNECTING);
             final boolean isConnected = connect();
-            if(bluetooth.getState() == BluetoothService.BT_CONNECTING && isConnected) {
+            if (bluetooth.getState() == BluetoothService.BT_CONNECTING && isConnected) {
                 bluetooth.setState(BluetoothService.BT_CONNECTED);
 
                 // Start processing NMEA sentences
                 processSentences();
             }
             // Are we restarting or stopping?
-            if(bluetooth.getState() != BluetoothService.BT_STOPPING) {
+            if (bluetooth.getState() != BluetoothService.BT_STOPPING) {
                 bluetooth.setState(BluetoothService.BT_DISCONNECTED);
                 // Sleep before reconnect
                 try {
@@ -72,10 +72,10 @@ class BluetoothRunnable implements Runnable {
      * @return true iff bluetooth socket was connect successfully
      */
     private boolean connect() {
-        if(!bluetoothAdapter.isEnabled()) {
+        if (!bluetoothAdapter.isEnabled()) {
             Log.w(TAG, "Bluetooth is not enabled");
             return false;
-        } else if(bluetooth.preferences.preferenceDeviceId == null) {
+        } else if (bluetooth.preferences.preferenceDeviceId == null) {
             Log.w(TAG, "Cannot connect: bluetooth device not selected");
             return false;
         }
@@ -83,7 +83,7 @@ class BluetoothRunnable implements Runnable {
         final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(bluetooth.preferences.preferenceDeviceId);
         UUID uuid = DEFAULT_UUID;
         final ParcelUuid[] uuids = bluetoothDevice.getUuids();
-        if(uuids != null && uuids.length > 0) {
+        if (uuids != null && uuids.length > 0) {
             uuid = uuids[0].getUuid();
         }
         // Connect to bluetooth device
@@ -94,7 +94,7 @@ class BluetoothRunnable implements Runnable {
 
             // Connected to bluetooth device
             return true;
-        } catch(IOException e) {
+        } catch (IOException e) {
             Log.e(TAG, "Failed to connect to bluetooth device: " + e.getMessage());
             return false;
         }
@@ -108,16 +108,16 @@ class BluetoothRunnable implements Runnable {
             final InputStream is = bluetoothSocket.getInputStream();
             final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String line;
-            while(bluetooth.getState() == BluetoothService.BT_CONNECTED && (line = reader.readLine()) != null) {
+            while (bluetooth.getState() == BluetoothService.BT_CONNECTED && (line = reader.readLine()) != null) {
                 final String nmea = line.trim();
                 // Log.v(TAG, "Got line: " + nmea);
                 // Update listeners
-                for(GpsStatus.NmeaListener listener : bluetooth.listeners) {
+                for (GpsStatus.NmeaListener listener : bluetooth.listeners) {
                     listener.onNmeaReceived(System.currentTimeMillis(), nmea);
                 }
             }
         } catch (IOException e) {
-            if(bluetooth.getState() == BluetoothService.BT_CONNECTED) {
+            if (bluetooth.getState() == BluetoothService.BT_CONNECTED) {
                 Log.e(TAG, "Error reading from bluetooth socket", e);
             }
         } finally {
@@ -129,7 +129,7 @@ class BluetoothRunnable implements Runnable {
         bluetooth.setState(BluetoothService.BT_STOPPING);
 
         // Close bluetooth socket
-        if(bluetoothSocket != null) {
+        if (bluetoothSocket != null) {
             try {
                 bluetoothSocket.close();
             } catch (IOException e) {

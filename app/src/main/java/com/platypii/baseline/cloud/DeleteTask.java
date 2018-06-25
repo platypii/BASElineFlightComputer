@@ -5,10 +5,10 @@ import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Exceptions;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Delete tracks from the cloud
@@ -38,7 +38,7 @@ class DeleteTask implements Runnable {
             Services.cloud.listing.listAsync(auth, true);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteSuccess(track.track_id));
-        } catch(IOException e) {
+        } catch (IOException e) {
             Log.e(TAG, "Failed to delete track " + track.track_id, e);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteFailure(track.track_id, "failed to delete track"));
@@ -58,7 +58,7 @@ class DeleteTask implements Runnable {
         try {
             // Read response
             final int status = conn.getResponseCode();
-            if(status != 200) {
+            if (status != 200) {
                 if (status == 401) {
                     throw new AuthException(auth);
                 } else {

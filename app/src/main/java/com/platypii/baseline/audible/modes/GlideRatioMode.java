@@ -21,8 +21,8 @@ public class GlideRatioMode extends AudibleMode {
     AudibleSample currentSample(int precision) {
         final double glideRatio = Services.location.glideRatio();
         String glideRatioString = Convert.glide(Services.location.groundSpeed(), Services.alti.climb, AudibleSettings.precision, false);
-        if(glideRatioString.equals(Convert.GLIDE_STATIONARY)) {
-            if(stationary) {
+        if (glideRatioString.equals(Convert.GLIDE_STATIONARY)) {
+            if (stationary) {
                 // Only say stationary once
                 glideRatioString = "";
             }

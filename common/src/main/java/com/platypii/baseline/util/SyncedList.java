@@ -23,7 +23,7 @@ public class SyncedList<T> implements Iterable<T> {
      * @param value the new value to add
      */
     public void append(T value) {
-        if(maxSize > 0) {
+        if (maxSize > 0) {
             synchronized (toCopy) {
                 toCopy.addLast(value);
                 // Trim toCopy
@@ -46,7 +46,7 @@ public class SyncedList<T> implements Iterable<T> {
      * Move from the toCopy list to the values list
      */
     private void copy() {
-        if(maxSize > 0) {
+        if (maxSize > 0) {
             synchronized (toCopy) {
                 values.addAll(toCopy);
                 toCopy.clear();

@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 
 public class IOUtil {
 
@@ -12,7 +11,7 @@ public class IOUtil {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final byte buffer[] = new byte[1024];
         int bytesRead;
-        while((bytesRead = input.read(buffer)) != -1) {
+        while ((bytesRead = input.read(buffer)) != -1) {
             output.write(buffer, 0, bytesRead);
         }
         input.close();
