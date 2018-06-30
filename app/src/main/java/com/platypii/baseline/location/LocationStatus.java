@@ -3,9 +3,8 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothService;
-import android.support.annotation.NonNull;
+import com.platypii.baseline.util.StringBufferUtil;
 import android.util.Log;
-import java.util.Locale;
 
 /**
  * Represents the current state of GPS, including bluetooth info
@@ -13,22 +12,16 @@ import java.util.Locale;
 public class LocationStatus {
     private static final String TAG = "LocationStatus";
 
-    public final String message;
-    public final int icon;
+    public static CharSequence message;
+    public static int icon;
 
-    private LocationStatus(String message, int icon) {
-        this.message = message;
-        this.icon = icon;
-    }
+    // A buffer to be used for formatted strings, to avoid allocation
+    private static StringBuffer buffer = new StringBuffer();
 
     /**
      * Get GPS status info from services
      */
-    @NonNull
-    public static LocationStatus getStatus() {
-        String message;
-        int icon;
-
+    public static void updateStatus() {
         // GPS signal status
         if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothService.BT_CONNECTED) {
             // Bluetooth enabled, but not connected
@@ -56,27 +49,31 @@ public class LocationStatus {
                 // Take into account acc and dop
                 // How many of the last X expected fixes have we missed?
                 if (lastFixDuration > 10000) {
-                    message = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
+                    message = "GPS last fix " + lastFixDuration / 1000L + "s";
                     icon = R.drawable.status_red;
                 } else if (lastFixDuration > 2000) {
-                    message = String.format(Locale.getDefault(), "GPS last fix %ds", lastFixDuration / 1000L);
+                    message = "GPS last fix " + lastFixDuration / 1000L + "s";
                     icon = R.drawable.status_yellow;
-                } else if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() == BluetoothService.BT_CONNECTED) {
-                    message = String.format(Locale.getDefault(), "GPS bluetooth %.2fHz", Services.location.refreshRate);
-                    icon = R.drawable.status_blue;
                 } else {
-                    message = String.format(Locale.getDefault(), "GPS %.2fHz", Services.location.refreshRate);
-                    icon = R.drawable.status_green;
+                    buffer.setLength(0);
+                    if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() == BluetoothService.BT_CONNECTED) {
+                        buffer.append("GPS bluetooth ");
+                        icon = R.drawable.status_blue;
+                    } else {
+                        buffer.append("GPS ");
+                        icon = R.drawable.status_green;
+                    }
+                    StringBufferUtil.format2f(buffer, Services.location.refreshRate);
+                    buffer.append("Hz");
+                    message = buffer;
                 }
             }
         }
 
         // Barometer status
-        if (Services.alti.barometerEnabled && Services.alti.baro_sample_count == 0) {
-            message += " (no baro)";
+        if (!Services.bluetooth.preferences.preferenceEnabled && Services.alti.barometerEnabled && Services.alti.baro_sample_count == 0) {
+            message = message + " (no baro)";
         }
-
-        return new LocationStatus(message, icon);
     }
 
 }

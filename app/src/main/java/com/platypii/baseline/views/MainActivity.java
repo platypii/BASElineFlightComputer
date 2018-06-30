@@ -38,7 +38,7 @@ public class MainActivity extends BaseActivity {
 
     // Periodic UI updates
     private final Handler handler = new Handler();
-    private final int clockUpdateInterval = 32; // milliseconds
+    private final int clockUpdateInterval = 48; // milliseconds
     private final int signalUpdateInterval = 200; // milliseconds
 
     private Runnable clockRunnable;
@@ -198,19 +198,21 @@ public class MainActivity extends BaseActivity {
      */
     private void updateClock() {
         if (Services.logger.isLogging()) {
-            clock.setText(Services.logger.getLogTime());
+            Services.logger.getLogTime(clockBuffer);
+            clock.setText(clockBuffer);
         } else {
             clock.setText("");
         }
     }
+    private StringBuffer clockBuffer = new StringBuffer();
 
     /**
      * Update the views for GPS signal strength
      */
     private void updateSignal() {
-        final LocationStatus status = LocationStatus.getStatus();
-        signalStatus.setCompoundDrawablesWithIntrinsicBounds(status.icon, 0, 0, 0);
-        signalStatus.setText(status.message);
+        LocationStatus.updateStatus();
+        signalStatus.setCompoundDrawablesWithIntrinsicBounds(LocationStatus.icon, 0, 0, 0);
+        signalStatus.setText(LocationStatus.message);
     }
 
     // Listen for events
