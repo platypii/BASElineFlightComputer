@@ -26,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class MySensorManager implements SensorEventListener, BaseService {
     private static final String TAG = "MySensorManager";
 
-    private static final int sensorDelay = SensorManager.SENSOR_DELAY_FASTEST; // microseconds
+    private static final int sensorDelay = 100000; // microseconds
     private SensorManager sensorManager;
 
     // History

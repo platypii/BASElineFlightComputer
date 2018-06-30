@@ -24,7 +24,7 @@ public class MPressure extends Measurement {
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return String.format(Locale.US, "%d,%d,alt,%f", millis, nano, pressure);
+        return millis + "," + nano + ",alt," + pressure;
     }
 
     @Override

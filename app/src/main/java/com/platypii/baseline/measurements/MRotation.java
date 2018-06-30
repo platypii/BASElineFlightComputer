@@ -1,7 +1,5 @@
 package com.platypii.baseline.measurements;
 
-import java.util.Locale;
-
 /**
  * Copies an android SensorEvent
  */
@@ -28,7 +26,7 @@ public class MRotation extends MSensor {
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return String.format(Locale.US, ",%d,rot,,,,,,,,,,,%f,%f,%f", nano, rotX, rotY, rotZ);
+        return "," + nano + ",rot,,,,,,,,,,," + rotX + "," + rotY + "," + rotZ;
     }
 
 }
