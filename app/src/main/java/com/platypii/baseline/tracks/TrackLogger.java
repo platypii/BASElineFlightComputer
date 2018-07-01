@@ -9,7 +9,7 @@ import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.measurements.Measurement;
 import com.platypii.baseline.sensors.MySensorListener;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.util.StringBufferUtil;
+import com.platypii.baseline.util.StringBuilderUtil;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -114,8 +114,8 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
     /**
      * Returns the amount of time we've been logging, as a nice string 0:00.000
      */
-    public void getLogTime(StringBuffer buffer) {
-        buffer.setLength(0);
+    public void getLogTime(StringBuilder sb) {
+        sb.setLength(0);
         if (logging) {
             long nanoTime;
             if (stopTimeNano == -1) {
@@ -126,11 +126,11 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
             final long millis = (nanoTime / 1000000L) % 1000;
             final long seconds = (nanoTime / 1000000000L) % 60;
             final long minutes = nanoTime / 60000000000L;
-            buffer.append(minutes);
-            buffer.append(':');
-            StringBufferUtil.format2d(buffer, seconds);
-            buffer.append('.');
-            StringBufferUtil.format3d(buffer, millis);
+            sb.append(minutes);
+            sb.append(':');
+            StringBuilderUtil.format2d(sb, seconds);
+            sb.append('.');
+            StringBuilderUtil.format3d(sb, millis);
         }
     }
 

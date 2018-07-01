@@ -1,5 +1,7 @@
 package com.platypii.baseline.measurements;
 
+import com.platypii.baseline.util.Numbers;
+
 /**
  * Copies an android SensorEvent
  */
@@ -24,7 +26,7 @@ public class MAccel extends MSensor {
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return "," + nano + ",acc,,,,,,,,,,,,,," + acc;
+        return "," + nano + ",acc,,,,,,,,,,,,,," + Numbers.format6.format(acc);
     }
 
 }

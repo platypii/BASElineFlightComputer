@@ -1,5 +1,7 @@
 package com.platypii.baseline.measurements;
 
+import com.platypii.baseline.util.Numbers;
+
 /**
  * Copies an android SensorEvent
  */
@@ -26,7 +28,7 @@ public class MGravity extends MSensor {
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return "," + nano + ",grv,,,,,,,," + gX + "," + gY + "," + gZ;
+        return "," + nano + ",grv,,,,,,,," + Numbers.format6.format(gX) + "," + Numbers.format6.format(gY) + "," + Numbers.format6.format(gZ);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.platypii.baseline.util;
 
 import android.support.annotation.Nullable;
+import java.text.DecimalFormat;
 
 public class Numbers {
 
@@ -64,5 +65,9 @@ public class Numbers {
             }
         }
     }
+
+    public static DecimalFormat format2 = new DecimalFormat("#.##");
+    public static DecimalFormat format3 = new DecimalFormat("#.###");
+    public static DecimalFormat format6 = new DecimalFormat("#.######");
 
 }

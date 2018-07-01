@@ -3,7 +3,7 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.util.StringBufferUtil;
+import com.platypii.baseline.util.StringBuilderUtil;
 import android.util.Log;
 
 /**
@@ -16,7 +16,7 @@ public class LocationStatus {
     public static int icon;
 
     // A buffer to be used for formatted strings, to avoid allocation
-    private static StringBuffer buffer = new StringBuffer();
+    private static StringBuilder sb = new StringBuilder();
 
     /**
      * Get GPS status info from services
@@ -55,17 +55,17 @@ public class LocationStatus {
                     message = "GPS last fix " + lastFixDuration / 1000L + "s";
                     icon = R.drawable.status_yellow;
                 } else {
-                    buffer.setLength(0);
+                    sb.setLength(0);
                     if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() == BluetoothService.BT_CONNECTED) {
-                        buffer.append("GPS bluetooth ");
+                        sb.append("GPS bluetooth ");
                         icon = R.drawable.status_blue;
                     } else {
-                        buffer.append("GPS ");
+                        sb.append("GPS ");
                         icon = R.drawable.status_green;
                     }
-                    StringBufferUtil.format2f(buffer, Services.location.refreshRate);
-                    buffer.append("Hz");
-                    message = buffer;
+                    StringBuilderUtil.format2f(sb, Services.location.refreshRate);
+                    sb.append("Hz");
+                    message = sb;
                 }
             }
         }

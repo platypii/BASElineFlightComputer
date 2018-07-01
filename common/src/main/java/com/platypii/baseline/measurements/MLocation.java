@@ -5,7 +5,6 @@ import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
-import com.platypii.baseline.util.StringBufferUtil;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
@@ -65,31 +64,28 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        synchronized (buffer) {
-            buffer.setLength(0);
-            buffer.append(millis);
-            buffer.append(",,gps,,");
-            buffer.append(latitude);
-            buffer.append(',');
-            buffer.append(longitude);
-            buffer.append(',');
-            StringBufferUtil.format3f(buffer, altitude_gps);
-            buffer.append(',');
-            if (Numbers.isReal(vN)) {
-                StringBufferUtil.format2f(buffer, vN);
-            }
-            buffer.append(',');
-            if (Numbers.isReal(vE)) {
-                StringBufferUtil.format2f(buffer, vE);
-            }
-            buffer.append(',');
-            if (satellitesUsed != -1) {
-                buffer.append(satellitesUsed);
-            }
-            return buffer.toString();
+        final StringBuilder sb = new StringBuilder();
+        sb.append(millis);
+        sb.append(",,gps,,");
+        sb.append(Numbers.format6.format(latitude));
+        sb.append(',');
+        sb.append(Numbers.format6.format(longitude));
+        sb.append(',');
+        sb.append(Numbers.format3.format(altitude_gps));
+        sb.append(',');
+        if (Numbers.isReal(vN)) {
+            sb.append(Numbers.format2.format(vN));
         }
+        sb.append(',');
+        if (Numbers.isReal(vE)) {
+            sb.append(Numbers.format2.format(vE));
+        }
+        sb.append(',');
+        if (satellitesUsed != -1) {
+            sb.append(satellitesUsed);
+        }
+        return sb.toString();
     }
-    private static final StringBuffer buffer = new StringBuffer();
 
     @Override
     public String toString() {

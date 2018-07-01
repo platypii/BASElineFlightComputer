@@ -103,15 +103,15 @@ public class MySensorManager implements SensorEventListener, BaseService {
 //     * Returns a string representation of all available sensors
 //     */
 //    public CharSequence getSensorsString() {
-//        final StringBuffer buffer = new StringBuffer();
+//        final StringBuilder sb = new StringBuilder();
 //        final List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
 //        for (Sensor sensor : sensors) {
-//            buffer.append(sensor.getVendor());
-//            buffer.append(" - ");
-//            buffer.append(sensor.getName());
-//            buffer.append('\n');
+//            sb.append(sensor.getVendor());
+//            sb.append(" - ");
+//            sb.append(sensor.getName());
+//            sb.append('\n');
 //        }
-//        return buffer;
+//        return sb;
 //    }
 
     @Override

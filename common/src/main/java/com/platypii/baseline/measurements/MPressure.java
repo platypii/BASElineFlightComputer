@@ -1,5 +1,6 @@
 package com.platypii.baseline.measurements;
 
+import com.platypii.baseline.util.Numbers;
 import java.util.Locale;
 
 /**
@@ -24,7 +25,7 @@ public class MPressure extends Measurement {
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return millis + "," + nano + ",alt," + pressure;
+        return millis + "," + nano + ",alt," + Numbers.format3.format(pressure);
     }
 
     @Override

@@ -198,13 +198,13 @@ public class MainActivity extends BaseActivity {
      */
     private void updateClock() {
         if (Services.logger.isLogging()) {
-            Services.logger.getLogTime(clockBuffer);
-            clock.setText(clockBuffer);
+            Services.logger.getLogTime(clockBuilder);
+            clock.setText(clockBuilder);
         } else {
             clock.setText("");
         }
     }
-    private StringBuffer clockBuffer = new StringBuffer();
+    private StringBuilder clockBuilder = new StringBuilder();
 
     /**
      * Update the views for GPS signal strength
