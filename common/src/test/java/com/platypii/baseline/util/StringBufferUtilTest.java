@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class StringBufferUtilTest {
 
+    private final double[] testDoubles = {-1, 0, 0.1, 0.5, 0.9, 0.99, 0.995, 0.999, 1, 1.1, 2, 9.8, 10};
     private final float[] testFloats = {-1f, 0f, 0.1f, 0.5f, 0.9f, 0.99f, 0.995f, 0.999f, 1f, 1.1f, 2f, 9.8f, 10f};
     private final long[] testLongs = {0, 1, 2, 9, 10, 11, 100, 101, 1000};
 
@@ -23,6 +24,20 @@ public class StringBufferUtilTest {
             buffer.setLength(0);
             StringBufferUtil.format2f(buffer, value);
             assertEquals(String.format("%.2f", value), buffer.toString());
+        }
+    }
+
+    /**
+     * Check that StringBufferUtil.format3f(buf, x) == String.format("%.3f", x)
+     */
+    @Test
+    public void format3f() {
+        StringBuffer buffer = new StringBuffer();
+
+        for (double value : testDoubles) {
+            buffer.setLength(0);
+            StringBufferUtil.format3f(buffer, value);
+            assertEquals(String.format("%.3f", value), buffer.toString());
         }
     }
 

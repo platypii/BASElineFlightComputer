@@ -5,6 +5,7 @@ import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.util.StringBufferUtil;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
@@ -63,12 +64,32 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
 
     @Override
     public String toRow() {
-        final String sat_str = (satellitesUsed != -1) ? Integer.toString(satellitesUsed) : "";
-        final String vN_str = Numbers.isReal(vN) ? Double.toString(vN) : "";
-        final String vE_str = Numbers.isReal(vE) ? Double.toString(vE) : "";
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc
-        return String.format(Locale.US, "%d,,gps,,%f,%f,%f,%s,%s,%s", millis, latitude, longitude, altitude_gps, vN_str, vE_str, sat_str);
+        synchronized (buffer) {
+            buffer.setLength(0);
+            buffer.append(millis);
+            buffer.append(",,gps,,");
+            buffer.append(latitude);
+            buffer.append(',');
+            buffer.append(longitude);
+            buffer.append(',');
+            StringBufferUtil.format3f(buffer, altitude_gps);
+            buffer.append(',');
+            if (Numbers.isReal(vN)) {
+                StringBufferUtil.format2f(buffer, vN);
+            }
+            buffer.append(',');
+            if (Numbers.isReal(vE)) {
+                StringBufferUtil.format2f(buffer, vE);
+            }
+            buffer.append(',');
+            if (satellitesUsed != -1) {
+                buffer.append(satellitesUsed);
+            }
+            return buffer.toString();
+        }
     }
+    private static final StringBuffer buffer = new StringBuffer();
 
     @Override
     public String toString() {

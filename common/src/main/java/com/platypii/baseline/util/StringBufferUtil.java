@@ -16,6 +16,30 @@ public class StringBufferUtil {
         buffer.append(hundredths);
     }
 
+    public static void format2f(StringBuffer buffer, double x) {
+        final long x100 = Math.round(x * 100);
+        final long whole = x100 / 100;
+        final long tenths = x100 / 10 % 10;
+        final long hundredths = x100 % 10;
+        buffer.append(whole);
+        buffer.append(".");
+        buffer.append(tenths);
+        buffer.append(hundredths);
+    }
+
+    public static void format3f(StringBuffer buffer, double x) {
+        final long x1000 = Math.round(x * 1000);
+        final long whole = x1000 / 1000;
+        final long tenths = x1000 / 100 % 10;
+        final long hundredths = x1000 / 10 % 10;
+        final long thousandths = x1000 % 10;
+        buffer.append(whole);
+        buffer.append(".");
+        buffer.append(tenths);
+        buffer.append(hundredths);
+        buffer.append(thousandths);
+    }
+
     /**
      * Acts like StringBuffer.append(String.format("%02d", x)) but avoids allocating any memory.
      */
