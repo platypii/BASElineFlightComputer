@@ -129,7 +129,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
     }
 
     private void deleteLocal() {
-        if (trackFile.delete()) {
+        if (Services.trackStore.delete(trackFile)) {
             // Notify user
             Toast.makeText(getApplicationContext(), "Deleted " + trackFile.getName(), Toast.LENGTH_LONG).show();
             // Exit activity

@@ -1,14 +1,12 @@
 package com.platypii.baseline.tracks;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 import java.io.File;
 
 /**
  * Represents a track file on the local device (pre-upload)
  */
 public class TrackFile {
-    private static final String TAG = "TrackFile";
 
     // TrackFile info
     public final File file;
@@ -28,14 +26,6 @@ public class TrackFile {
     public String getSize() {
         final long size = file.length() / 1024;
         return size + "kb";
-    }
-
-    /**
-     * Delete local track file
-     */
-    public boolean delete() {
-        Log.w(TAG, "Deleting track file " + file);
-        return file.delete();
     }
 
     @Override

@@ -147,13 +147,12 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     }
 
     private void deleteRemote() {
-        // Begin automatic upload
+        // Delete on baseline server
         getAuthToken(new Callback<String>() {
             @Override
             public void apply(@NonNull String authToken) {
                 Services.cloud.deleteTrack(track, authToken);
             }
-
             @Override
             public void error(String error) {
                 Toast.makeText(getApplicationContext(), "Track delete failed: " + error, Toast.LENGTH_SHORT).show();

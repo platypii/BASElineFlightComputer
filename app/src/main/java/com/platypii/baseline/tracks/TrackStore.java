@@ -2,10 +2,12 @@ package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -112,6 +114,26 @@ public class TrackStore implements BaseService {
             return ((TrackState.TrackUploaded) state).cloudData;
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Delete local track file
+     * @return true if track is deleted
+     */
+    public boolean delete(@NonNull TrackFile trackFile) {
+        Log.w(TAG, "Deleting track file " + trackFile);
+        if (!trackFile.file.exists()) {
+            Exceptions.report(new FileNotFoundException("Trying to delete missing track file"));
+            return true;
+        }
+        // Delete file on disk
+        if (trackFile.file.delete()) {
+            // Remove from store
+            trackState.remove(trackFile);
+            return true;
+        } else {
+            return false;
         }
     }
 
