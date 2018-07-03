@@ -50,15 +50,17 @@ class UploadTask implements Runnable {
             // Get auth token
             final String authToken = AuthToken.getAuthToken(context);
             // Make HTTP request
-            final CloudData trackData = postTrack(trackFile, authToken);
+            final CloudData track = postTrack(trackFile, authToken);
+            // Remove from track store
+            Services.trackStore.setUploadSuccess(trackFile, track);
             // Move track to synced directory
-            archive(trackData);
-            // Add to cache
-            Services.cloud.listing.cache.addTrack(trackData);
+            archive(track);
+            // Add to cloud cache
+            Services.cloud.listing.cache.addTrack(track);
             // Update track listing
             Services.cloud.listing.listAsync(authToken, true);
-            Log.i(TAG, "Upload successful, track " + trackData.track_id);
-            EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, trackData));
+            Log.i(TAG, "Upload successful, track " + track.track_id);
+            EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, track));
         } catch (AuthException e) {
             // getAuthToken fails if network is unavailable
             if (networkAvailable) {
@@ -67,10 +69,10 @@ class UploadTask implements Runnable {
             } else {
                 Log.w(TAG, "Failed to upload file: auth error", e);
             }
-            EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "auth error"));
+            uploadFailed(new SyncEvent.UploadFailure(trackFile, "auth error"));
         } catch (SocketException | SSLException e) {
             Log.e(TAG, "Failed to upload file, network exception, network = " + networkAvailable, e);
-            EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
+            uploadFailed(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
         } catch (IOException e) {
             if (networkAvailable) {
                 Log.e(TAG, "Failed to upload file", e);
@@ -78,12 +80,19 @@ class UploadTask implements Runnable {
             } else {
                 Log.w(TAG, "Failed to upload file, network not available", e);
             }
-            EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
+            uploadFailed(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse response", e);
             Exceptions.report(e);
-            EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, "invalid response from server"));
+            uploadFailed(new SyncEvent.UploadFailure(trackFile, "invalid response from server"));
         }
+    }
+
+    private void uploadFailed(SyncEvent.UploadFailure event) {
+        // Update track store
+        Services.trackStore.setNotUploaded(event.trackFile);
+        // Notify listeners
+        EventBus.getDefault().post(event);
     }
 
     /**

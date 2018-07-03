@@ -1,12 +1,14 @@
 package com.platypii.baseline.tracks;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import java.io.File;
 
 /**
  * Represents a track file on the local device (pre-upload)
  */
 public class TrackFile {
+    private static final String TAG = "TrackFile";
 
     // TrackFile info
     public final File file;
@@ -24,6 +26,11 @@ public class TrackFile {
 
     @NonNull
     public String getSize() {
+        if (!file.exists()) {
+            Log.e(TAG, "Missing file in TrackFile.getSize()");
+        } else if (file.length() == 0) {
+            Log.e(TAG, "Zero length file in TrackFile.getSize()");
+        }
         final long size = file.length() / 1024;
         return size + "kb";
     }

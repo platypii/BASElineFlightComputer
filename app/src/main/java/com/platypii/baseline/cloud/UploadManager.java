@@ -80,7 +80,6 @@ class UploadManager {
     }
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onUploadSuccess(@NonNull SyncEvent.UploadSuccess event) {
-        Services.trackStore.setUploadSuccess(event.trackFile, event.cloudData);
         if (event.trackFile == uploadingTrack) {
             uploading = false;
             uploadingTrack = null;
@@ -92,7 +91,6 @@ class UploadManager {
     }
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onUploadFailure(@NonNull SyncEvent.UploadFailure event) {
-        Services.trackStore.setNotUploaded(event.trackFile);
         if (event.trackFile == uploadingTrack) {
             uploading = false;
             uploadingTrack = null;
