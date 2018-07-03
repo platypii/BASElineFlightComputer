@@ -58,6 +58,9 @@ public class TrackListingCache {
         editor.apply();
     }
 
+    /**
+     * Add track to track listing, and save to preferences
+     */
     void addTrack(@NonNull CloudData trackData) {
         List<CloudData> trackList = list();
         if (trackList == null) {
@@ -81,6 +84,18 @@ public class TrackListingCache {
             }
         }
         return null;
+    }
+
+    /**
+     * Add track to track listing, and save to preferences
+     */
+    void removeTrack(@NonNull CloudData track) {
+        final List<CloudData> tracks = list();
+        if (tracks != null) {
+            if (tracks.remove(track)) {
+                update(tracks);
+            }
+        }
     }
 
     /**

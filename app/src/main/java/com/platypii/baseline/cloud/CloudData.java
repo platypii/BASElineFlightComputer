@@ -71,4 +71,9 @@ public class CloudData {
         }
     }
 
+    @Override
+    public boolean equals(Object cd) {
+        return cd instanceof CloudData && ((CloudData) cd).track_id.equals(track_id);
+    }
+
 }
