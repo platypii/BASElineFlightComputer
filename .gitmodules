@@ -1,0 +1,3 @@
+[submodule "tools/gpxpy"]
+	path = tools/gpxpy
+	url = https://github.com/tkrajina/gpxpy
