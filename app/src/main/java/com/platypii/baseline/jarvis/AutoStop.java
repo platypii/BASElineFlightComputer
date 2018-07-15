@@ -20,9 +20,6 @@ public class AutoStop {
     private static final int STATE_EXITED = 2;
     private int state = STATE_STOPPED;
 
-    private static final String landing_message = "Landing detected";
-    private static final String timeout_message = "Jump timeout";
-
     // When auto stop is enabled, if we haven't detected landing in 1 hour, stop recording
     private final static Handler handler = new Handler();
     private static final long autoTimeout = 3600000; // 1 hour
@@ -32,10 +29,22 @@ public class AutoStop {
     private double prExited = 0;
     private double prLanded = 0;
 
+    // Stats
+    private long lastMillis = 0;
     private double altMin = Double.NaN;
     private double altMax = Double.NaN;
 
     void update(@NonNull MLocation loc) {
+        if (loc.millis - lastMillis >= 1000) {
+            lastMillis = loc.millis;
+            update1hz(loc);
+        }
+    }
+
+    /**
+     * Update to be called at most once per second
+     */
+    private void update1hz(@NonNull MLocation loc) {
         final double alt = loc.altitude_gps;
         // Update altitude range
         if (!Double.isNaN(alt)) {
@@ -63,7 +72,8 @@ public class AutoStop {
                 prLanded += (1 - prLanded) * 0.2;
             }
             if (prLanded > 0.99) {
-                landed(landing_message);
+                Log.i(TAG, "Landing detected");
+                landed();
             }
         }
     }
@@ -94,14 +104,12 @@ public class AutoStop {
         }
     }
 
-    private void landed(String msg) {
-        Log.i(TAG, "Auto-stop landing detected: " + msg);
+    private void landed() {
         state = STATE_STOPPED;
         // If audible enabled, say landing detected
         if (preferenceEnabled) {
             // If audible enabled, disable
             if (Services.audible.isEnabled()) {
-                Services.audible.speakNow(msg);
                 Services.audible.disableAudible();
             }
             // If logging enabled, disable
@@ -118,7 +126,7 @@ public class AutoStop {
      */
     private final Runnable stopRunnable = () -> {
         Log.i(TAG, "Auto-stop timeout");
-        landed(timeout_message);
+        landed();
     };
 
 }
