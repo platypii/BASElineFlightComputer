@@ -37,10 +37,6 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
     // Pressure altitude kalman filter
     private final Filter filter = new FilterKalman(); // Unfiltered(), AlphaBeta(), MovingAverage(), etc
 
-    // Official altitude data
-    public double climb = Double.NaN; // Rate of climb m/s
-    // public static double verticalAcceleration = Double.NaN;
-
     // Stats
     // Model error is the difference between our filtered output and the raw pressure altitude
     // Model error should approximate the sensor variance, even when in motion
@@ -129,7 +125,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
             filter.update(pressure_altitude_raw, deltaTime * 1E-9);
         }
         pressure_altitude_filtered = filter.x;
-        climb = filter.v;
+        final double climb = filter.v;
 
         // Altitude should never be null:
         if (!Numbers.isReal(pressure_altitude_filtered)) {

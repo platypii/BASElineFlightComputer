@@ -5,10 +5,7 @@ package com.platypii.baseline.events;
  */
 public class BluetoothEvent {
 
-    public final int bluetoothState;
-
-    public BluetoothEvent(int bluetoothState) {
-        this.bluetoothState = bluetoothState;
-    }
+    // Bluetooth event doens't carry state, because it just notifies UI to pull state
+    public BluetoothEvent() {}
 
 }

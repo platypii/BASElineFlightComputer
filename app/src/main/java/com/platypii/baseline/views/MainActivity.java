@@ -204,7 +204,7 @@ public class MainActivity extends BaseActivity {
             clock.setText("");
         }
     }
-    private StringBuilder clockBuilder = new StringBuilder();
+    private final StringBuilder clockBuilder = new StringBuilder();
 
     /**
      * Update the views for GPS signal strength

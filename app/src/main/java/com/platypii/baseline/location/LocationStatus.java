@@ -16,7 +16,7 @@ public class LocationStatus {
     public static int icon;
 
     // A buffer to be used for formatted strings, to avoid allocation
-    private static StringBuilder sb = new StringBuilder();
+    private static final StringBuilder sb = new StringBuilder();
 
     /**
      * Get GPS status info from services

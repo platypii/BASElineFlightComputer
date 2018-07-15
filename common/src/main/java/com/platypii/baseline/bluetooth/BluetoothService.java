@@ -128,7 +128,7 @@ public class BluetoothService implements BaseService {
         }
         Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         bluetoothState = state;
-        EventBus.getDefault().post(new BluetoothEvent(bluetoothState));
+        EventBus.getDefault().post(new BluetoothEvent());
     }
 
     /**

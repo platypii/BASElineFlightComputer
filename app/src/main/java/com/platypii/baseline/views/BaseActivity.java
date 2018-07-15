@@ -188,7 +188,9 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
+            if (result != null) {
+                handleSignInResult(result);
+            }
         } else if (requestCode == RC_TTS_DATA) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 // Notify services that TTS is ready

@@ -119,7 +119,9 @@ public class DownloadTask implements Runnable {
         // Make parent directory if needed
         final File parent = file.getParentFile();
         if (!parent.exists()) {
-            parent.mkdirs();
+            if (!parent.mkdirs()) {
+                Log.e(TAG, "Failed to make track directory " + parent);
+            }
         }
         // Copy input stream to output stream
         final OutputStream os = new FileOutputStream(file);
