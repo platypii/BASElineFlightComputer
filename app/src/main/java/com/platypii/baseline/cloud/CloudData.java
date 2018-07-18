@@ -47,7 +47,7 @@ public class CloudData {
     @NonNull
     static CloudData fromJson(@NonNull JSONObject json) throws JSONException {
         final String track_id = json.getString("track_id");
-        final long date = json.getLong("date");
+        final long date = json.optLong("date");
         final String date_string = json.optString("date_string");
         final String trackUrl = json.optString("trackUrl");
         final String trackKml = json.optString("trackKml");

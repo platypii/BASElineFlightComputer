@@ -3,7 +3,6 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -54,12 +53,12 @@ public class LocationService extends LocationProvider {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
             // Only use android location if we aren't getting NMEA
-            // TODO: Remove the android location listener if every phone provides NMEA
+            // This happens on some random phones and inside the android emulator
             if (!bluetooth.preferences.preferenceEnabled && !nmeaReceived) {
                 // Log on powers of 2
                 overrideCount++;
-                if (overrideCount > 1 && isPower2(overrideCount)) {
-                    Exceptions.report(new IllegalStateException("No NMEA data, falling back to android loc #"+overrideCount+": " + loc));
+                if (overrideCount > 2 && isPower2(overrideCount)) {
+                    Log.w(TAG, "No NMEA data, falling back to android loc #" + overrideCount + ": " + loc);
                 }
                 updateLocation(loc);
             }

@@ -61,7 +61,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
                 if (track != null) {
                     return track;
                 } else {
-                    throw new IllegalStateException("Failed to load track from track_id");
+                    throw new IllegalStateException("Failed to load track from track_id " + track_id);
                 }
             } else {
                 throw new IllegalStateException("Failed to load track_id from extras");

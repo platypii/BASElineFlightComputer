@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import javax.net.ssl.SSLException;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -70,7 +71,7 @@ class UploadTask implements Runnable {
                 Log.w(TAG, "Failed to upload file: auth error", e);
             }
             uploadFailed(new SyncEvent.UploadFailure(trackFile, "auth error"));
-        } catch (SocketException | SSLException e) {
+        } catch (SocketException | SSLException | UnknownHostException e) {
             Log.e(TAG, "Failed to upload file, network exception, network = " + networkAvailable, e);
             uploadFailed(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
         } catch (IOException e) {
