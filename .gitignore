@@ -15,5 +15,8 @@ build/
 /.idea
 *.iml
 
+# Android files
+/app/release
+
 # Misc
 .DS_Store
