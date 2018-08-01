@@ -26,40 +26,37 @@ class TrackAdapter extends BaseAdapter {
     private static final int TYPE_TRACK_LOCAL = 1;
     private static final int TYPE_TRACK_REMOTE = 2;
 
-    private final List<TrackFile> tracks;
-
     private final LayoutInflater inflater;
     private List<ListItem> items;
 
     private String filter = "";
 
-    TrackAdapter(@NonNull Context context, @NonNull List<TrackFile> tracks) {
-        this.tracks = tracks;
+    TrackAdapter(@NonNull Context context) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        items = populateItems(tracks);
+        populateItems();
     }
 
-    @NonNull
-    private List<ListItem> populateItems(@NonNull List<TrackFile> trackFiles) {
-        final List<ListItem> items = new ArrayList<>();
-        // Add Unsynced tracks
-        if (!trackFiles.isEmpty()) {
-            items.add(new ListHeader("Not synced"));
-            for (TrackFile trackFile : trackFiles) {
-                items.add(new ListTrackFile(trackFile));
+    private void populateItems() {
+        final List<ListItem> updated = new ArrayList<>();
+        // Add local tracks
+        final List<TrackFile> localTracks = Services.trackStore.getLocalTracks();
+        if (!localTracks.isEmpty()) {
+            updated.add(new ListHeader("Not synced"));
+            for (TrackFile track : localTracks) {
+                updated.add(new ListTrackFile(track));
             }
         }
         // Add cloud tracks
-        final List<CloudData> trackList = Services.cloud.listing.cache.list();
-        if (trackList != null && !trackList.isEmpty()) {
-            items.add(new ListHeader("Synced"));
-            for (CloudData trackData : trackList) {
-                if (trackData.location.toLowerCase().contains(filter)) {
-                    items.add(new ListTrackData(trackData));
+        final List<CloudData> cloudTracks = Services.cloud.listing.cache.list();
+        if (cloudTracks != null && !cloudTracks.isEmpty()) {
+            updated.add(new ListHeader("Synced"));
+            for (CloudData track : cloudTracks) {
+                if (track.location.toLowerCase().contains(filter)) {
+                    updated.add(new ListTrackData(track));
                 }
             }
         }
-        return items;
+        items = updated;
     }
 
     void setFilter(@NonNull String filter) {
@@ -128,7 +125,7 @@ class TrackAdapter extends BaseAdapter {
 
     @Override
     public void notifyDataSetChanged() {
-        items = populateItems(tracks);
+        populateItems();
         super.notifyDataSetChanged();
     }
 

@@ -1,9 +1,7 @@
 package com.platypii.baseline.views.tracks;
 
 import com.platypii.baseline.R;
-import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
-import com.platypii.baseline.tracks.TrackFile;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,15 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import java.util.ArrayList;
-import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class TrackListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
-    private List<TrackFile> trackList;
     private TrackAdapter listAdapter;
 
     private EditText searchBox;
@@ -53,8 +48,7 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
-        trackList = new ArrayList<>();
-        listAdapter = new TrackAdapter(getActivity(), trackList);
+        listAdapter = new TrackAdapter(getActivity());
         setListAdapter(listAdapter);
         getListView().setOnItemClickListener(this);
     }
@@ -72,9 +66,6 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
 
     private void updateList() {
         // Update list from track cache
-        final List<TrackFile> updatedTracks = Services.trackStore.getLocalTracks();
-        trackList.clear();
-        trackList.addAll(updatedTracks);
         listAdapter.notifyDataSetChanged();
 
         // Handle no-tracks case
@@ -100,12 +91,7 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(SyncEvent event) {
-        if (event instanceof SyncEvent.UploadProgress) {
-            // Don't change track list, just re-draw progress bar
-            listAdapter.notifyDataSetChanged();
-        } else {
-            updateList();
-        }
+        listAdapter.notifyDataSetChanged();
     }
 
 }

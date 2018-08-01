@@ -66,7 +66,7 @@ public class TrackListingCache {
         if (trackList == null) {
             trackList = new ArrayList<>();
         }
-        trackList.add(trackData);
+        trackList.add(0, trackData);
         update(trackList);
     }
 
