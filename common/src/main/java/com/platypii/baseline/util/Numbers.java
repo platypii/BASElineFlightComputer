@@ -2,6 +2,8 @@ package com.platypii.baseline.util;
 
 import android.support.annotation.Nullable;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class Numbers {
 
@@ -66,8 +68,9 @@ public class Numbers {
         }
     }
 
-    public static final DecimalFormat format2 = new DecimalFormat("#.##");
-    public static final DecimalFormat format3 = new DecimalFormat("#.###");
-    public static final DecimalFormat format6 = new DecimalFormat("#.######");
+    private static final DecimalFormatSymbols formatSymbols = DecimalFormatSymbols.getInstance(Locale.US);
+    public static final DecimalFormat format2 = new DecimalFormat("#.##", formatSymbols);
+    public static final DecimalFormat format3 = new DecimalFormat("#.###", formatSymbols);
+    public static final DecimalFormat format6 = new DecimalFormat("#.######", formatSymbols);
 
 }
