@@ -18,13 +18,14 @@ public class TimeChartTouchable extends TimeChart {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
-        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+        final int action = event.getAction();
+        if (action == MotionEvent.ACTION_MOVE) {
             final long millis = (long) plot.getXinverse(0, event.getX());
             // Find nearest data point
             final MLocation closest = findClosest(millis);
             // Emit chart focus event
             EventBus.getDefault().post(new ChartFocusEvent(closest));
-        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+        } else if (action == MotionEvent.ACTION_UP) {
             // Clear chart focus event
             EventBus.getDefault().post(new ChartFocusEvent(null));
         }

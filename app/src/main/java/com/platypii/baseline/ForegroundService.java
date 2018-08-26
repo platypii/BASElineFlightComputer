@@ -20,8 +20,8 @@ public class ForegroundService extends Service {
     private boolean audible = false;
 
     @Override
-    public int onStartCommand(@NonNull Intent intent, int flags, int startId) {
-        final String action = intent.getAction();
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        final String action = intent == null ? null : intent.getAction();
         if (ACTION_START_LOGGING.equals(action)) {
             Log.i(TAG, "Received start logging action");
             logging = true;
