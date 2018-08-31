@@ -26,8 +26,23 @@ public class AnalogAltimeter extends View {
     private final RectF circ = new RectF();
     private final BlurMaskFilter blurMask;
     private final RectF digitalAltiBox = new RectF();
-    private final static Path hand = new Path();
-    static {
+    private final Path hand = makeHand();
+
+    public AnalogAltimeter(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        // Software layer required for hand path, and inner blur
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+        // Set units
+        options = Convert.metric ? AnalogAltimeterOptions.metric : AnalogAltimeterOptions.imperial;
+
+        final float density = getResources().getDisplayMetrics().density;
+        blurMask = new BlurMaskFilter(8 * density, Blur.INNER);
+        paint.setAntiAlias(true);
+    }
+
+    private Path makeHand() {
+        final Path hand = new Path();
         final float w1 = 0.025f; // The radius of the dot
         final float w2 = 0.056f; // The width of the arrow
         hand.setLastPoint(-w1, 0);
@@ -36,22 +51,7 @@ public class AnalogAltimeter extends View {
         hand.lineTo(w2, -0.8f);
         hand.lineTo(w1, 0);
         hand.arcTo(new RectF(-w1, -w1, w1, w1), 0, 180);
-    }
-
-    public AnalogAltimeter(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        // Software layer required for hand path, and inner blur
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-
-        if (Convert.metric) {
-            options = AnalogAltimeterOptions.metric;
-        } else {
-            options = AnalogAltimeterOptions.imperial;
-        }
-
-        final float density = getResources().getDisplayMetrics().density;
-        blurMask = new BlurMaskFilter(8 * density, Blur.INNER);
-        paint.setAntiAlias(true);
+        return hand;
     }
 
     public void setOverlay(boolean overlay) {

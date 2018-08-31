@@ -21,7 +21,7 @@ public class AutoStop {
     private int state = STATE_STOPPED;
 
     // When auto stop is enabled, if we haven't detected landing in 1 hour, stop recording
-    private final static Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private static final long autoTimeout = 3600000; // 1 hour
 
     private static final double minHeight = 60;

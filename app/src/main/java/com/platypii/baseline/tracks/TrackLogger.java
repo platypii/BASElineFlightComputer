@@ -230,6 +230,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
                 Exceptions.report(e);
             }
         } else {
+            // TODO: Figure out why gps sometimes does this
             Exceptions.report(new IllegalStateException("Attempted to log after closing file: " + line));
         }
     }

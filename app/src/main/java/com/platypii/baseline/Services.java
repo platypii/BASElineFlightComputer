@@ -42,7 +42,7 @@ public class Services {
     private static boolean initialized = false;
 
     /** A handler to shut down services after activity has stopped */
-    private final static Handler handler = new Handler();
+    private static final Handler handler = new Handler();
     private static final int shutdownDelay = 10000;
     private static final Runnable stopRunnable = Services::stopIfIdle;
 
