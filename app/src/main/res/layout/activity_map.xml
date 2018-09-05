@@ -17,8 +17,11 @@
         android:layout_height="160dp"
         android:layout_gravity="right|bottom" />
 
-    <include
-        layout="@layout/flight_stats" />
+    <fragment
+        android:name="com.platypii.baseline.views.map.FlightStatsFragment"
+        android:layout_width="155dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
 
     <ImageButton
         android:id="@+id/homeButton"

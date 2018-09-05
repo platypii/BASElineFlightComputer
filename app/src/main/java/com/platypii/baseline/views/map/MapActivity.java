@@ -6,8 +6,6 @@ import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.altimeter.AnalogAltimeterSettable;
 import android.content.pm.ActivityInfo;
@@ -20,7 +18,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,9 +32,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private static final String TAG = "Map";
 
     private AnalogAltimeterSettable analogAltimeter;
-    private TextView flightStatsVario;
-    private TextView flightStatsSpeed;
-    private TextView flightStatsGlide;
     private ImageButton homeButton;
     private ImageView crosshair;
 
@@ -67,9 +61,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         analogAltimeter = findViewById(R.id.analogAltimeter);
-        flightStatsVario = findViewById(R.id.flightStatsVario);
-        flightStatsSpeed = findViewById(R.id.flightStatsSpeed);
-        flightStatsGlide = findViewById(R.id.flightStatsGlide);
         homeButton = findViewById(R.id.homeButton);
         crosshair = findViewById(R.id.crosshair);
 
@@ -174,7 +165,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     private void updateLocation() {
-        updateFlightStats();
         if (ready) {
             final LatLng currentLoc = Services.location.lastLoc.latLng();
 
@@ -209,26 +199,11 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAltitudeEvent(MAltitude alt) {
-        updateFlightStats();
+        updateAltimeter();
     }
 
-    private void updateFlightStats() {
+    private void updateAltimeter() {
         analogAltimeter.setAltitude(Services.alti.altitudeAGL());
-        if (Services.alti.climb < 0) {
-            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp, 0, 0, 0);
-            flightStatsVario.setText(Convert.speed(-Services.alti.climb));
-        } else {
-            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward_white_24dp, 0, 0, 0);
-            flightStatsVario.setText(Convert.speed(Services.alti.climb));
-        }
-        final double groundSpeed = Services.location.groundSpeed();
-        if (Numbers.isReal(groundSpeed)) {
-            flightStatsSpeed.setText(Convert.speed(groundSpeed));
-            flightStatsGlide.setText(Convert.glide(groundSpeed, Services.alti.climb, 2, true));
-        } else {
-            flightStatsSpeed.setText("");
-            flightStatsGlide.setText("");
-        }
     }
 
     @Override
@@ -241,9 +216,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         if (Services.location.lastLoc != null) {
             updateLocation();
         }
-        updateFlightStats();
+        updateAltimeter();
     }
-
 
     @Override
     protected void onPause() {
