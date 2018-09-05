@@ -29,9 +29,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.RoundCap;
 import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -55,9 +52,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private final List<MapLayer> layers = new ArrayList<>();
 
     // Markers
-    private Marker homeMarker;
-    private Polyline homePath;
-    private final List<LatLng> homePoints = new ArrayList<>();
     private Marker myPositionMarker;
     private BitmapDescriptor myposition1;
     private BitmapDescriptor myposition2;
@@ -124,7 +118,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
         // Add ui elements
         addMarkers();
-        updateHome();
+        updateLayers();
         updateMyPosition();
 
         // Drag listener
@@ -153,28 +147,13 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private void setHome(@Nullable LatLng home) {
         Log.i(TAG, "Setting home location: " + home);
         LandingZone.setHomeLocation(this, home);
-        updateHome();
+        updateLayers();
     }
 
     private void addMarkers() {
         final LatLng home = new LatLng(47.239, -123.143); // Kpow
 
-        // Add home location pin
-        homeMarker = map.addMarker(new MarkerOptions()
-                .position(home)
-                .visible(false)
-                .title("home")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pin))
-                .anchor(0.5f, 1.0f)
-        );
-        // Add line to home
-        homePath = map.addPolyline(new PolylineOptions()
-                .visible(false)
-                .width(10)
-                .color(0x66ffffff)
-                .startCap(new RoundCap())
-                .endCap(new RoundCap())
-        );
+        addLayer(new HomeLayer(map));
         addLayer(new LandingLayer(map));
         myPositionMarker = map.addMarker(new MarkerOptions()
                 .position(home)
@@ -224,7 +203,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
             // Update markers and overlays
             updateMyPosition();
-            updateHome();
             updateLayers();
 
             // Center map on user's location
@@ -256,25 +234,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAltitudeEvent(MAltitude alt) {
         updateFlightStats();
-    }
-
-    private void updateHome() {
-        final LatLng home = LandingZone.homeLoc;
-        if (home != null) {
-            homeMarker.setPosition(home);
-            homeMarker.setVisible(true);
-            if (Services.location.lastLoc != null) {
-                final LatLng currentLoc = Services.location.lastLoc.latLng();
-                homePoints.clear();
-                homePoints.add(currentLoc);
-                homePoints.add(LandingZone.homeLoc);
-                homePath.setPoints(homePoints);
-                homePath.setVisible(true);
-            }
-        } else {
-            homeMarker.setVisible(false);
-            homePath.setVisible(false);
-        }
     }
 
     private void updateFlightStats() {
