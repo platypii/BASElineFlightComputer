@@ -51,13 +51,13 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private TouchableMapFragment mapFragment;
     private GoogleMap map; // Might be null if Google Play services APK is not available
 
+    // Layers
+    private final List<MapLayer> layers = new ArrayList<>();
+
     // Markers
     private Marker homeMarker;
     private Polyline homePath;
     private final List<LatLng> homePoints = new ArrayList<>();
-    private Marker landingMarker;
-    private Polyline landingPath;
-    private final List<LatLng> landingPoints = new ArrayList<>();
     private Marker myPositionMarker;
     private BitmapDescriptor myposition1;
     private BitmapDescriptor myposition2;
@@ -175,22 +175,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
                 .startCap(new RoundCap())
                 .endCap(new RoundCap())
         );
-        // Add projected landing zone
-        landingMarker = map.addMarker(new MarkerOptions()
-                .position(home)
-                .visible(false)
-                .title("landing")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_target))
-                .anchor(0.5f, 0.5f)
-        );
-        // Add line to projected landing zone
-        landingPath = map.addPolyline(new PolylineOptions()
-                .visible(false)
-                .width(10)
-                .color(0x66ff0000)
-                .startCap(new RoundCap())
-                .endCap(new RoundCap())
-        );
+        addLayer(new LandingLayer(map));
         myPositionMarker = map.addMarker(new MarkerOptions()
                 .position(home)
                 .visible(false)
@@ -198,6 +183,10 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
                 .anchor(0.5f, 0.5f)
                 .flat(true)
         );
+    }
+
+    private void addLayer(MapLayer layer) {
+        layers.add(layer);
     }
 
     @Override
@@ -222,6 +211,12 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         runOnUiThread(this::updateLocation);
     }
 
+    private void updateLayers() {
+        for (MapLayer layer : layers) {
+            layer.update();
+        }
+    }
+
     private void updateLocation() {
         updateFlightStats();
         if (ready) {
@@ -230,7 +225,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
             // Update markers and overlays
             updateMyPosition();
             updateHome();
-            updateLanding();
+            updateLayers();
 
             // Center map on user's location
             if (dragged && lastDrag > 0 && System.currentTimeMillis() - lastDrag > MapOptions.SNAP_BACK_TIME) {
@@ -279,23 +274,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         } else {
             homeMarker.setVisible(false);
             homePath.setVisible(false);
-        }
-    }
-
-    private void updateLanding() {
-        final LatLng landingLocation = LandingZone.getLandingLocation();
-        if (landingLocation != null) {
-            final LatLng currentLoc = Services.location.lastLoc.latLng();
-            landingMarker.setPosition(landingLocation);
-            landingMarker.setVisible(true);
-            landingPoints.clear();
-            landingPoints.add(currentLoc);
-            landingPoints.add(landingLocation);
-            landingPath.setPoints(landingPoints);
-            landingPath.setVisible(true);
-        } else {
-            landingMarker.setVisible(false);
-            landingPath.setVisible(false);
         }
     }
 
