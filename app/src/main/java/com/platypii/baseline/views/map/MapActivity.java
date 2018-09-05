@@ -24,11 +24,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -52,9 +48,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private final List<MapLayer> layers = new ArrayList<>();
 
     // Markers
-    private Marker myPositionMarker;
-    private BitmapDescriptor myposition1;
-    private BitmapDescriptor myposition2;
 
     // Activity state
     private boolean ready = false;
@@ -113,13 +106,9 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
             Log.w(TAG, "Centering map on default " + MapOptions.defaultLatLng);
         }
 
-        myposition1 = BitmapDescriptorFactory.fromResource(R.drawable.myposition1);
-        myposition2 = BitmapDescriptorFactory.fromResource(R.drawable.myposition2);
-
-        // Add ui elements
-        addMarkers();
+        // Add map layers
+        addLayers();
         updateLayers();
-        updateMyPosition();
 
         // Drag listener
         map.setOnCameraMoveStartedListener(this);
@@ -150,22 +139,10 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         updateLayers();
     }
 
-    private void addMarkers() {
-        final LatLng home = new LatLng(47.239, -123.143); // Kpow
-
-        addLayer(new HomeLayer(map));
-        addLayer(new LandingLayer(map));
-        myPositionMarker = map.addMarker(new MarkerOptions()
-                .position(home)
-                .visible(false)
-                .icon(myposition2)
-                .anchor(0.5f, 0.5f)
-                .flat(true)
-        );
-    }
-
-    private void addLayer(MapLayer layer) {
-        layers.add(layer);
+    private void addLayers() {
+        layers.add(new HomeLayer(map));
+        layers.add(new LandingLayer(map));
+        layers.add(new MyPositionLayer(map));
     }
 
     @Override
@@ -202,7 +179,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
             final LatLng currentLoc = Services.location.lastLoc.latLng();
 
             // Update markers and overlays
-            updateMyPosition();
             updateLayers();
 
             // Center map on user's location
@@ -252,22 +228,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         } else {
             flightStatsSpeed.setText("");
             flightStatsGlide.setText("");
-        }
-    }
-
-    private void updateMyPosition() {
-        if (Services.location.isFresh()) {
-            myPositionMarker.setVisible(true);
-            myPositionMarker.setPosition(Services.location.lastLoc.latLng());
-            final double groundSpeed = Services.location.groundSpeed();
-            final double bearing = Services.location.bearing();
-            if (Numbers.isReal(bearing) && groundSpeed > 0.1) {
-                // Speed > 0.2mph
-                myPositionMarker.setIcon(myposition1);
-                myPositionMarker.setRotation((float) bearing);
-            } else {
-                myPositionMarker.setIcon(myposition2);
-            }
         }
     }
 
