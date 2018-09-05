@@ -10,10 +10,8 @@ import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.altimeter.AnalogAltimeterSettable;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -154,17 +152,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     private void setHome(@Nullable LatLng home) {
         Log.i(TAG, "Setting home location: " + home);
-        LandingZone.homeLoc = home;
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MapActivity.this);
-        final SharedPreferences.Editor editor = prefs.edit();
-        if (home != null) {
-            editor.putString("home_latitude", Double.toString(home.latitude));
-            editor.putString("home_longitude", Double.toString(home.longitude));
-        } else {
-            editor.putString("home_latitude", null);
-            editor.putString("home_longitude", null);
-        }
-        editor.apply();
+        LandingZone.setHomeLocation(this, home);
         updateHome();
     }
 
@@ -276,8 +264,9 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     private void updateHome() {
-        if (LandingZone.homeLoc != null) {
-            homeMarker.setPosition(LandingZone.homeLoc);
+        final LatLng home = LandingZone.homeLoc;
+        if (home != null) {
+            homeMarker.setPosition(home);
             homeMarker.setVisible(true);
             if (Services.location.lastLoc != null) {
                 final LatLng currentLoc = Services.location.lastLoc.latLng();

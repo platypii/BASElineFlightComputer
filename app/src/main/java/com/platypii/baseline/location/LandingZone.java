@@ -3,6 +3,9 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -49,6 +52,20 @@ public class LandingZone {
         } else {
             return timeToGround;
         }
+    }
+
+    public static void setHomeLocation(Context context, LatLng home) {
+        LandingZone.homeLoc = home;
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences.Editor editor = prefs.edit();
+        if (home != null) {
+            editor.putString("home_latitude", Double.toString(home.latitude));
+            editor.putString("home_longitude", Double.toString(home.longitude));
+        } else {
+            editor.putString("home_latitude", null);
+            editor.putString("home_longitude", null);
+        }
+        editor.apply();
     }
 
 }
