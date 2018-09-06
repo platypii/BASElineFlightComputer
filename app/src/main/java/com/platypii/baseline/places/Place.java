@@ -1,5 +1,7 @@
 package com.platypii.baseline.places;
 
+import com.platypii.baseline.views.map.PlaceIcons;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -31,4 +33,16 @@ public class Place {
     public LatLng latLng() {
         return new LatLng(latitude, longitude);
     }
+
+    public BitmapDescriptor icon() {
+        switch (objectType) {
+            case "B": return PlaceIcons.b;
+            case "A": return PlaceIcons.a;
+            case "S": return PlaceIcons.s;
+            case "E": return PlaceIcons.e;
+            case "DZ": return PlaceIcons.dz;
+            default: return PlaceIcons.other;
+        }
+    }
+
 }

@@ -15,6 +15,7 @@ class PlacesLayer implements MapLayer {
         placeMarker = map.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))
                 .visible(false)
+                .alpha(0.5f)
                 .anchor(0.5f, 0.5f)
                 .flat(true)
         );
@@ -27,6 +28,7 @@ class PlacesLayer implements MapLayer {
             if (place != null) {
                 placeMarker.setVisible(true);
                 placeMarker.setPosition(place.latLng());
+                placeMarker.setIcon(place.icon());
             }
         }
     }

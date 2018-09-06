@@ -28,7 +28,7 @@ import java.util.Map;
 public class Places {
     private static final String TAG = "Places";
 
-    private static final String placesUrl = "https://baseline.ws/assets/dropzones.csv";
+    private static final String placesUrl = "https://baseline.ws/places.csv";
     private static final long updateDuration = 24 * 60 * 60 * 1000; // Update if data is older than 1 day
 
     private File placeFile;
