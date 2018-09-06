@@ -131,6 +131,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     private void addLayers() {
+        layers.add(new PlacesLayer(map));
         layers.add(new HomeLayer(map));
         layers.add(new LandingLayer(map));
         layers.add(new MyPositionLayer(map));

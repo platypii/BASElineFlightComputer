@@ -1,5 +1,7 @@
 package com.platypii.baseline.places;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Represents a known jumping location
  */
@@ -24,5 +26,9 @@ public class Place {
         this.longitude = longitude;
         this.altitude = altitude;
         this.objectType = objectType;
+    }
+
+    public LatLng latLng() {
+        return new LatLng(latitude, longitude);
     }
 }
