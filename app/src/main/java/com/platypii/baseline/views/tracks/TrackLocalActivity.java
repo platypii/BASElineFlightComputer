@@ -49,23 +49,38 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
         deleteButton = findViewById(R.id.deleteButton);
 
         // Load track from extras
-        final Bundle extras = getIntent().getExtras();
-        if (extras != null && extras.getString(EXTRA_TRACK_FILE) != null) {
-            final String extraTrackFile = extras.getString(EXTRA_TRACK_FILE);
-            final File trackDir = TrackFiles.getTrackDirectory(getApplicationContext());
-            trackFile = new TrackFile(new File(trackDir, extraTrackFile));
+        try {
+            trackFile = loadTrack();
 
             // Update views
             filenameLabel.setText(trackFile.getName());
             filesizeLabel.setText(trackFile.getSize());
-        } else {
-            Exceptions.report(new IllegalStateException("Failed to load track file from extras"));
-            // TODO: finish activity?
-        }
 
-        findViewById(R.id.exportButton).setOnClickListener(this::clickExport);
-        findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
-        findViewById(R.id.chartsButton).setOnClickListener(this::clickCharts);
+            // Setup button listeners
+            findViewById(R.id.exportButton).setOnClickListener(this::clickExport);
+            findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+            findViewById(R.id.chartsButton).setOnClickListener(this::clickCharts);
+        } catch (IllegalStateException e) {
+            Exceptions.report(e);
+            finish();
+        }
+    }
+
+    @NonNull
+    private TrackFile loadTrack() throws IllegalStateException {
+        // Load track from extras
+        final Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            final String extraTrackFile = extras.getString(EXTRA_TRACK_FILE);
+            if (extraTrackFile != null) {
+                final File trackDir = TrackFiles.getTrackDirectory(getApplicationContext());
+                return new TrackFile(new File(trackDir, extraTrackFile));
+            } else {
+                throw new IllegalStateException("Failed to load track file from extras");
+            }
+        } else {
+            throw new IllegalStateException("Failed to load extras");
+        }
     }
 
     /**
