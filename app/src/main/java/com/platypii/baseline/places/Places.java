@@ -2,7 +2,6 @@ package com.platypii.baseline.places;
 
 import com.platypii.baseline.location.Geo;
 import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.util.IOUtil;
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -11,12 +10,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +23,6 @@ import java.util.Map;
 public class Places {
     private static final String TAG = "Places";
 
-    private static final String placesUrl = "https://baseline.ws/places.csv";
     private static final long updateDuration = 24 * 60 * 60 * 1000; // Update if data is older than 1 day
 
     private File placeFile;
@@ -44,7 +38,7 @@ public class Places {
             // Fetch places from server, if we need to
             if (!placeFile.exists() || placeFile.lastModified() < System.currentTimeMillis() - updateDuration) {
                 try {
-                    fetchPlaces(placeFile);
+                    FetchPlaces.get(placeFile);
                 } catch (IOException e) {
                     Log.e(TAG, "Failed to fetch places", e);
                 }
@@ -118,31 +112,6 @@ public class Places {
         }
         Log.i(TAG, "Loaded " + places.size() + " places");
         return places;
-    }
-
-    /**
-     * Fetch places from BASEline server and saves it as a file
-     */
-    private static void fetchPlaces(File placeFile) throws IOException {
-        Log.i(TAG, "Downloading places");
-        final URL url = new URL(placesUrl);
-        final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        try {
-            // Read response
-            final int status = conn.getResponseCode();
-            if(status == 200) {
-                // Make places directory
-                placeFile.getParentFile().mkdir();
-                // Read body to place file
-                final OutputStream os = new FileOutputStream(placeFile);
-                IOUtil.copy(conn.getInputStream(), os);
-                Log.i(TAG, "Place file download successful");
-            } else {
-                throw new IOException("http status code " + status);
-            }
-        } finally {
-            conn.disconnect();
-        }
     }
 
 }
