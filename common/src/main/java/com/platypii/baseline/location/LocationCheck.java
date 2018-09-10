@@ -31,14 +31,15 @@ public class LocationCheck {
             if (latitude_abs < 0.1 && longitude_abs < 0.1) {
                 // If lat,lon == 0,0 assume bad data (there's no BASE off the coast of Africa)
                 return INVALID_ZERO;
-            } else if (latitude_abs > 180.0 || longitude_abs > 180.0) {
+            } else if (latitude_abs > 90.0 || longitude_abs > 180.0) {
                 // Lat/lon out of bounds. Likely parsing error.
                 return INVALID_RANGE;
             } else if (latitude_abs < 0.1) {
                 // No BASE jumps on the equator?
                 return UNLIKELY_LAT;
-            } else if (longitude_abs < 0.1 && latitude < 4) {
+            } else if (longitude_abs < 0.1 && (latitude < 4 || 55 < latitude)) {
                 // There is no landmass south of 4 degrees latitude on the prime meridian
+                // There is no landmass north of 55 degrees latitude on the prime meridian
                 return UNLIKELY_LON;
             } else {
                 return VALID;
