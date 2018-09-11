@@ -20,7 +20,7 @@ import java.util.zip.GZIPInputStream;
 class PlaceFile {
     private static final String TAG = "ParsePlaces";
 
-    private static final String placeFilename = "places/places.csv";
+    private static final String placeFilename = "places/places.csv.gz";
 
     static File placeFile(Context context) {
         return new File(context.getFilesDir(), placeFilename);
