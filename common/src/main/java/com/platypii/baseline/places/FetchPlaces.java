@@ -43,7 +43,7 @@ public class FetchPlaces {
                 // Read body to place file
                 final OutputStream os = new FileOutputStream(placeFile);
                 IOUtil.copy(conn.getInputStream(), os);
-                Log.i(TAG, "Place file download successful");
+                Log.i(TAG, "Places downloaded to file " + placeFile);
             } else if (status == 304) {
                 Log.e(TAG, "Places file not modified");
             } else {

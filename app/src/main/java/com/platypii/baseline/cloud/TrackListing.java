@@ -1,5 +1,6 @@
 package com.platypii.baseline.cloud;
 
+import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Exceptions;
@@ -21,13 +22,14 @@ import org.json.JSONObject;
 /**
  * List tracks from the cloud
  */
-public class TrackListing {
+public class TrackListing implements BaseService {
     private static final String TAG = "TrackListing";
 
     public final TrackListingCache cache = new TrackListingCache();
     private Context context;
 
-    void start(Context context) {
+    @Override
+    public void start(@NonNull Context context) {
         this.context = context;
         cache.start(context);
     }
@@ -130,6 +132,11 @@ public class TrackListing {
             arr.put(trackObj);
         }
         return arr.toString();
+    }
+
+    @Override
+    public void stop() {
+        context = null;
     }
 
 }

@@ -34,6 +34,7 @@ public class BaselineCloud implements BaseService {
     @Override
     public void stop() {
         uploads.stop();
+        listing.stop();
     }
 
 }

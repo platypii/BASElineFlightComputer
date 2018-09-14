@@ -1,5 +1,6 @@
 package com.platypii.baseline.places;
 
+import com.platypii.baseline.BaseService;
 import com.platypii.baseline.location.Geo;
 import com.platypii.baseline.measurements.MLocation;
 import android.content.Context;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * Manages the place database
  */
-public class Places {
+public class Places implements BaseService {
     private static final String TAG = "Places";
 
     private static final long updateDuration = 24 * 60 * 60 * 1000; // Update if data is older than 1 day
@@ -24,6 +25,7 @@ public class Places {
     // In-memory cache of places, lazy loaded on first call to getNearestPlace()
     private List<Place> places = null;
 
+    @Override
     public void start(@NonNull Context context) {
         // Update places in background
         AsyncTask.execute(() -> {
@@ -36,6 +38,8 @@ public class Places {
                 } catch (IOException e) {
                     Log.e(TAG, "Failed to fetch places", e);
                 }
+            } else {
+                Log.i(TAG, "Places file already fresh");
             }
         });
     }
@@ -69,5 +73,8 @@ public class Places {
             return null;
         }
     }
+
+    @Override
+    public void stop() {}
 
 }

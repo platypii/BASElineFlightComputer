@@ -28,7 +28,7 @@ class PlacesLayer implements MapLayer {
             if (place != null) {
                 placeMarker.setVisible(true);
                 placeMarker.setPosition(place.latLng());
-                placeMarker.setIcon(place.icon());
+                placeMarker.setIcon(PlaceIcons.icon(place.objectType));
             }
         }
     }

@@ -191,6 +191,7 @@ public class Services {
             if (!logger.isLogging() && !audible.isEnabled()) {
                 Log.i(TAG, "All activities have stopped. Stopping services.");
                 // Stop services
+                places.stop();
                 cloud.stop();
                 notifications.stop();
                 audible.stop();
