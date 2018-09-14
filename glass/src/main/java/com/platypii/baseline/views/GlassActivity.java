@@ -43,18 +43,23 @@ public class GlassActivity extends BaseActivity implements AdapterView.OnItemCli
         cards.add(new CardBuilder(context, CardBuilder.Layout.COLUMNS)
                 .setIcon(R.drawable.bluetooth)
                 .setText(R.string.action_bluetooth));
+        cards.add(new CardBuilder(context, CardBuilder.Layout.COLUMNS)
+                .setIcon(R.drawable.bluetooth)
+                .setText(R.string.action_bluetooth_pair));
 
         return cards;
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if(position == 0) {
+        if (position == 0) {
             startActivity(new Intent(this, PolarActivity.class));
-        } else if(position == 1) {
+        } else if (position == 1) {
             startActivity(new Intent(this, NavActivity.class));
-        } else if(position == 2) {
+        } else if (position == 2) {
             startActivity(new Intent(this, BluetoothActivity.class));
+        } else if (position == 3) {
+            startActivity(new Intent(this, BluetoothPairActivity.class));
         } else {
             Log.e(TAG, "Invalid click position = " + position);
         }
