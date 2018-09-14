@@ -2,8 +2,8 @@ package com.platypii.baseline.views;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.events.AuthEvent;
-import com.platypii.baseline.util.Callback;
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,7 +37,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     protected FirebaseAnalytics firebaseAnalytics;
 
     /* Client used to interact with Google APIs */
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient signInClient;
     private GoogleSignInAccount account;
 
     // If user didn't click, don't show sign in/out toast
@@ -108,14 +108,13 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         }
 
         // Initialize Google sign in
-        final String serverClientId = getString(R.string.server_client_id);
         final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(serverClientId)
+                .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail()
                 .build();
 
         // Build a GoogleApiClient with access to the Google Sign-In API and the options specified by gso
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        signInClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
@@ -129,7 +128,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         // Log.d(TAG, getClass().getSimpleName() + " starting, starting services");
         Services.start(this);
 
-        Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient)
+        Auth.GoogleSignInApi.silentSignIn(signInClient)
                 .setResultCallback(this::handleSignInResult);
 
         // Bind sign in panel
@@ -167,13 +166,13 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         // Notify sign in listeners
         updateAuthState(AuthEvent.SIGNING_IN);
 
-        final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(signInClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     void clickSignOut() {
         Log.i(TAG, "User clicked sign out");
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(status -> {
+        Auth.GoogleSignInApi.signOut(signInClient).setResultCallback(status -> {
                     Log.d(TAG, "Signed out: " + status);
                     Toast.makeText(BaseActivity.this, R.string.signout_success, Toast.LENGTH_LONG).show();
                     signedOut();
@@ -214,12 +213,6 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
             if (account != null) {
                 Log.i(TAG, "Sign in successful for user " + account.getDisplayName());
 
-                // final String authCode = account.getServerAuthCode();
-                // Log.d(TAG, "Got auth code " + authCode);
-
-                // final String idToken = account.getIdToken();
-                // Log.d(TAG, "Got id token " + idToken);
-
                 // Update track listing
                 Services.cloud.listing.listAsync(account.getIdToken(), false);
             }
@@ -254,19 +247,19 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     }
 
     /**
-     * Get google auth token and return asynchronously via callback
+     * Get google auth token for currently signed in account
      */
-    protected void getAuthToken(@NonNull Callback<String> callback) {
+    protected String getAuthToken() throws AuthException {
         if (account != null) {
             final String token = account.getIdToken();
             if (token != null) {
                 Log.i(TAG, "Got auth token " + token);
-                callback.apply(token);
+                return token;
             } else {
-                callback.error("Failed to get auth token");
+                throw new AuthException("Failed to get auth token");
             }
         } else {
-            callback.error("Not signed in");
+            throw new AuthException("Not signed in");
         }
     }
 

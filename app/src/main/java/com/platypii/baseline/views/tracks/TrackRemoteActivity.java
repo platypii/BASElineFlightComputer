@@ -3,10 +3,10 @@ package com.platypii.baseline.views.tracks;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
-import com.platypii.baseline.util.Callback;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.BaseActivity;
 import android.app.AlertDialog;
@@ -150,16 +150,12 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
 
     private void deleteRemote() {
         // Delete on baseline server
-        getAuthToken(new Callback<String>() {
-            @Override
-            public void apply(@NonNull String authToken) {
-                Services.cloud.deleteTrack(track, authToken);
-            }
-            @Override
-            public void error(String error) {
-                Toast.makeText(getApplicationContext(), "Track delete failed: " + error, Toast.LENGTH_SHORT).show();
-            }
-        });
+        try {
+            final String authToken = getAuthToken();
+            Services.cloud.deleteTrack(track, authToken);
+        } catch (AuthException e) {
+            Toast.makeText(getApplicationContext(), "Track delete failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Listen for deletion of this track
