@@ -1,15 +1,12 @@
 package com.platypii.baseline.bluetooth;
 
-import com.platypii.baseline.Services;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.google.android.glass.widget.CardScrollAdapter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Adapter class that handles list of cards.
@@ -19,14 +16,9 @@ public class BluetoothCardAdapter extends CardScrollAdapter {
     private final Context context;
     private final List<BluetoothDevice> devices;
 
-    public BluetoothCardAdapter(Context context) {
+    public BluetoothCardAdapter(Context context, List<BluetoothDevice> devices) {
         this.context = context;
-        final Set<BluetoothDevice> deviceSet = Services.bluetooth.getDevices();
-        if (deviceSet != null) {
-            this.devices = new ArrayList<>(deviceSet);
-        } else {
-            this.devices = new ArrayList<>();
-        }
+        this.devices = devices;
     }
 
     @Override
@@ -41,7 +33,7 @@ public class BluetoothCardAdapter extends CardScrollAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if(convertView == null) {
+        if (convertView == null) {
             convertView = new TextView(context);
         }
         final BluetoothDevice device = (BluetoothDevice) getItem(position);

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import com.google.android.glass.widget.CardScrollView;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BluetoothActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
@@ -15,8 +17,9 @@ public class BluetoothActivity extends BaseActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+        final List<BluetoothDevice> devices = new ArrayList<>(Services.bluetooth.getDevices());
         cardScroller = new CardScrollView(this);
-        cardScroller.setAdapter(new BluetoothCardAdapter(this));
+        cardScroller.setAdapter(new BluetoothCardAdapter(this, devices));
         setContentView(cardScroller);
         cardScroller.setOnItemClickListener(this);
     }

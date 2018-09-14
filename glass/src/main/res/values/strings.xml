@@ -8,6 +8,7 @@
     <!-- Settings -->
     <string name="action_settings">Settings</string>
     <string name="action_bluetooth">Bluetooth</string>
+    <string name="action_bluetooth_pair">Pair Bluetooth</string>
     <string name="no_bluetooth_devices">No bluetooth devices</string>
 
 </resources>
