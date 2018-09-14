@@ -12,9 +12,9 @@ import android.content.Intent;
 import android.location.GpsStatus;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.greenrobot.eventbus.EventBus;
@@ -104,14 +104,20 @@ public class BluetoothService implements BaseService {
         return bluetoothAdapter;
     }
 
-    @Nullable
-    public Set<BluetoothDevice> getDevices() {
+    /**
+     * Return list of bonded devices, with GPS devices first
+     */
+    @NonNull
+    public List<BluetoothDevice> getDevices() {
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null) {
-            return bluetoothAdapter.getBondedDevices();
+            final Set<BluetoothDevice> deviceSet = bluetoothAdapter.getBondedDevices();
+            final List<BluetoothDevice> devices = new ArrayList<>(deviceSet);
+            Collections.sort(devices, new BluetoothDeviceComparator());
+            return devices;
         } else {
             Log.w(TAG, "Tried to get devices, but bluetooth is not enabled");
-            return null;
+            return new ArrayList<>();
         }
     }
 

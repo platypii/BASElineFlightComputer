@@ -7,7 +7,7 @@ import java.util.Comparator;
 /**
  * Used to put GPS at top of device list
  */
-public class BluetoothDeviceComparator implements Comparator<BluetoothDevice> {
+class BluetoothDeviceComparator implements Comparator<BluetoothDevice> {
     @Override
     public int compare(@NonNull BluetoothDevice device1, @NonNull BluetoothDevice device2) {
         return score(device2) - score(device1);

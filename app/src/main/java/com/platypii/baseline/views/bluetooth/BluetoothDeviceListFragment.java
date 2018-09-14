@@ -1,7 +1,6 @@
 package com.platypii.baseline.views.bluetooth;
 
 import com.platypii.baseline.Services;
-import com.platypii.baseline.bluetooth.BluetoothDeviceComparator;
 import com.platypii.baseline.events.BluetoothEvent;
 import android.app.ListFragment;
 import android.bluetooth.BluetoothDevice;
@@ -11,9 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -35,12 +32,8 @@ public class BluetoothDeviceListFragment extends ListFragment {
 
     private void updateDeviceList() {
         devices.clear();
-        final Set<BluetoothDevice> updatedDevices = Services.bluetooth.getDevices();
-        if (updatedDevices != null) {
-            devices.addAll(updatedDevices);
-            // Sort devices to put GPS at top of list
-            Collections.sort(devices, new BluetoothDeviceComparator());
-        }
+        final List<BluetoothDevice> updatedDevices = Services.bluetooth.getDevices();
+        devices.addAll(updatedDevices);
         bluetoothAdapter.notifyDataSetChanged();
     }
 
