@@ -2,6 +2,7 @@ package com.platypii.baseline.places;
 
 import com.platypii.baseline.util.Numbers;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,19 +22,30 @@ class PlaceFile {
     private static final String TAG = "ParsePlaces";
 
     private static final String placeFilename = "places/places.csv.gz";
+    private static final long ttl = 24 * 60 * 60 * 1000; // Update if data is older than 1 day
 
-    static File placeFile(Context context) {
-        return new File(context.getFilesDir(), placeFilename);
+    File file;
+
+    PlaceFile(@NonNull Context context) {
+        file = new File(context.getFilesDir(), placeFilename);
+    }
+
+    boolean exists() {
+        return file.exists();
+    }
+
+    boolean isFresh() {
+        return file.exists() && System.currentTimeMillis() < file.lastModified() + ttl;
     }
 
     /**
-     * Load places from local file
+     * Parse places from local file into list of Places
      */
-    static List<Place> load(File placeFile) throws IOException {
-        Log.i(TAG, "Loading places from file (" + (placeFile.length() / 1024) + "KiB)");
+    List<Place> parse() throws IOException {
+        Log.i(TAG, "Loading places from file (" + (file.length() / 1024) + "KiB)");
         final List<Place> places = new ArrayList<>();
         // Read place file csv (gzipped)
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(placeFile))))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))))) {
             // Parse header column
             String line = br.readLine();
             final Map<String,Integer> columns = new HashMap<>();

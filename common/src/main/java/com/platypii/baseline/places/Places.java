@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -18,9 +17,7 @@ import java.util.List;
 public class Places implements BaseService {
     private static final String TAG = "Places";
 
-    private static final long updateDuration = 24 * 60 * 60 * 1000; // Update if data is older than 1 day
-
-    private File placeFile;
+    private PlaceFile placeFile;
 
     // In-memory cache of places, lazy loaded on first call to getNearestPlace()
     private List<Place> places = null;
@@ -30,16 +27,16 @@ public class Places implements BaseService {
         // Update places in background
         AsyncTask.execute(() -> {
             // Place file is stored on internal storage
-            placeFile = PlaceFile.placeFile(context);
+            placeFile = new PlaceFile(context);
             // Fetch places from server, if we need to
-            if (!placeFile.exists() || placeFile.lastModified() < System.currentTimeMillis() - updateDuration) {
+            if (!placeFile.isFresh()) {
                 try {
-                    FetchPlaces.get(placeFile);
+                    FetchPlaces.get(placeFile.file);
                 } catch (IOException e) {
                     Log.e(TAG, "Failed to fetch places", e);
                 }
             } else {
-                Log.i(TAG, "Places file already fresh");
+                Log.i(TAG, "Places file is already fresh");
             }
         });
     }
@@ -52,7 +49,7 @@ public class Places implements BaseService {
         // Load from place file, if necessary
         if (places == null && placeFile != null && placeFile.exists()) {
             try {
-                places = PlaceFile.load(placeFile);
+                places = placeFile.parse();
             } catch (IOException e) {
                 Log.e(TAG, "Error loading places", e);
             }
