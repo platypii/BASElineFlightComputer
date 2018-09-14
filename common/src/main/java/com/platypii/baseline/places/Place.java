@@ -18,7 +18,7 @@ public class Place {
     // B,A,S,E,DZ
     public String objectType;
 
-    public Place(String name, String region, String country, double latitude, double longitude, double altitude, String objectType) {
+    Place(String name, String region, String country, double latitude, double longitude, double altitude, String objectType) {
         this.name = name;
         this.region = region;
         this.country = country;
@@ -28,8 +28,12 @@ public class Place {
         this.objectType = objectType;
     }
 
+    private LatLng lazyLatLng = null;
     public LatLng latLng() {
-        return new LatLng(latitude, longitude);
+        if (lazyLatLng == null) {
+            lazyLatLng = new LatLng(latitude, longitude);
+        }
+        return lazyLatLng;
     }
 
     @Override
