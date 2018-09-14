@@ -31,7 +31,7 @@ public class TrackFile {
         } else if (file.length() == 0) {
             Log.e(TAG, "Zero length file in TrackFile.getSize()");
         }
-        final long size = file.length() / 1024;
+        final long size = file.length() >> 10;
         return size + "kb";
     }
 

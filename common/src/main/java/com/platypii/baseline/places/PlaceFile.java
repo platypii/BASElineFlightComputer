@@ -22,7 +22,7 @@ class PlaceFile {
     private static final String TAG = "ParsePlaces";
 
     private static final String placeFilename = "places/places.csv.gz";
-    private static final long ttl = 24 * 60 * 60 * 1000; // Update if data is older than 1 day
+    private static final long ttl = 60 * 1000; // Update if data is older than 1 day
 
     File file;
 
@@ -42,7 +42,7 @@ class PlaceFile {
      * Parse places from local file into list of Places
      */
     List<Place> parse() throws IOException {
-        Log.i(TAG, "Loading places from file (" + (file.length() / 1024) + "KiB)");
+        Log.i(TAG, "Loading places from file (" + (file.length()>>10) + " KiB)");
         final List<Place> places = new ArrayList<>();
         // Read place file csv (gzipped)
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))))) {
