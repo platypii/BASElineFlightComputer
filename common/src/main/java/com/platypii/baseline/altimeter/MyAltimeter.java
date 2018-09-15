@@ -159,7 +159,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
                 altitude = loc.altitude_gps;
                 // Use kalman filter to compute climb rate
                 // We don't use kalman for altitude, since gps probably already smoothing
-                climb = gpsFilter.v;
+                climb = gpsFilter.v();
                 // Only update official altitude if we are relying solely on GPS for altitude
                 updateAltitude();
             }
@@ -187,7 +187,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
      * GPS climb rate
      */
     public double gpsClimb() {
-        return gpsFilter.v;
+        return gpsFilter.v();
     }
 
     @Override

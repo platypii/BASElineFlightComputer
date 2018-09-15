@@ -124,8 +124,8 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         } else {
             filter.update(pressure_altitude_raw, deltaTime * 1E-9);
         }
-        pressure_altitude_filtered = filter.x;
-        final double climb = filter.v;
+        pressure_altitude_filtered = filter.x();
+        final double climb = filter.v();
 
         // Altitude should never be null:
         if (!Numbers.isReal(pressure_altitude_filtered)) {

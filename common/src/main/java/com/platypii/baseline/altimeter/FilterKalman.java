@@ -15,6 +15,8 @@ public class FilterKalman extends Filter {
     private static final double sensorVariance = 600; // measurement variance ("r" in typical kalman notation)
     private static final double accelerationVariance = 8; // acceleration variance
 
+    private double x = Double.NaN;
+    private double v = Double.NaN;
     private double p11 = 1;
     private double p12 = 0;
     private double p21 = 0;
@@ -75,6 +77,16 @@ public class FilterKalman extends Filter {
         p12 = p12 * (1. - k1);
         p21 = -p11 * k2 + p21;
         p22 = -p12 * k2 + p22;
+    }
+
+    @Override
+    public double x() {
+        return x;
+    }
+
+    @Override
+    public double v() {
+        return v;
     }
 
 }

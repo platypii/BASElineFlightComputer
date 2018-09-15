@@ -95,4 +95,14 @@ public class FilterKalman2 extends Filter {
         );
     }
 
+    @Override
+    public double x() {
+        return x.p1;
+    }
+
+    @Override
+    public double v() {
+        return x.p2;
+    }
+
 }

@@ -122,11 +122,9 @@ public class TrackFileData {
                 }
                 gpsLastMillis = millis;
                 // Climb rate from baro or gps
-                final double climb;
-                if (Double.isNaN(baroAltitudeFilter.v)) {
-                    climb = gpsAltitudeFilter.v;
-                } else {
-                    climb = baroAltitudeFilter.v;
+                double climb = baroAltitudeFilter.v();
+                if (Double.isNaN(climb)) {
+                    climb = gpsAltitudeFilter.v();
                 }
                 if (!Double.isNaN(lat) && !Double.isNaN(lon)) {
                     final MLocation loc = new MLocation(millis, lat, lon, alt_gps, climb, vN, vE, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 0, 0);
@@ -199,7 +197,6 @@ public class TrackFileData {
         }
     }
 
-    private static SimpleDateFormat df;
     private static long getColumnDate(String[] row, Map<String,Integer> columns, String columnName) {
         try {
             final String dateString = row[columns.get(columnName)];
@@ -209,6 +206,7 @@ public class TrackFileData {
         }
     }
 
+    private static SimpleDateFormat df;
     static long parseFlySightDate(String dateString) throws ParseException {
         // Lazy init
         if (df == null) {

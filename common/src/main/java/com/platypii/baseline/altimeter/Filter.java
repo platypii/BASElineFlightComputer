@@ -7,8 +7,8 @@ package com.platypii.baseline.altimeter;
 public abstract class Filter {
 
     // Official altitude data
-    public double x = Double.NaN; // Meters AGL
-    public double v = Double.NaN; // Rate of climb m/s
+    public abstract double x(); // Meters AGL
+    public abstract double v(); // Rate of climb m/s
     // public double a = Double.NaN; // TODO: Vertical acceleration
 
     /**
