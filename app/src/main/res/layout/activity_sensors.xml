@@ -229,10 +229,16 @@
             android:text="Bearing: " />
 
         <TextView
-            android:id="@+id/flightModeLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Flight mode: " />
+                android:id="@+id/flightModeLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Flight mode: " />
+
+        <TextView
+                android:id="@+id/placeLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Location: " />
 
         <TextView
             android:layout_width="match_parent"

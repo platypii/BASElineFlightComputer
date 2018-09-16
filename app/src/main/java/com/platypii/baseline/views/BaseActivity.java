@@ -132,15 +132,16 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient)
                 .setResultCallback(this::handleSignInResult);
 
-        // Listen for sign in button click
+        // Bind sign in panel
         signInPanel = findViewById(R.id.sign_in_panel);
-        signInSpinner = findViewById(R.id.sign_in_spinner);
-        final View signInButton = findViewById(R.id.sign_in_button);
-        if (signInButton != null) {
-            signInButton.setOnClickListener(signInClickListener);
-        }
-        // If we know that we are signed out, then show the panel
         if (signInPanel != null) {
+            signInSpinner = findViewById(R.id.sign_in_spinner);
+            // Listen for sign in button click
+            final View signInButton = findViewById(R.id.sign_in_button);
+            if (signInButton != null) {
+                signInButton.setOnClickListener(signInClickListener);
+            }
+            // If we know that we are signed out, then show the panel
             if (currentAuthState == AuthEvent.SIGNED_OUT) {
                 signInPanel.setVisibility(View.VISIBLE);
             } else {

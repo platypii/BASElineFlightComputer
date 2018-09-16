@@ -130,6 +130,34 @@ public class Convert {
     }
 
     /**
+     * Shortened distance intended to be displayed, with units
+     * @param m meters
+     */
+    public static String distance3(double m) {
+        if (Double.isNaN(m)) {
+            return "";
+        } else if (Double.isInfinite(m)) {
+            return Double.toString(m);
+        } else {
+            if (metric) {
+                if (m >= 1000) {
+                    return Math.round(m * 0.001) + " km";
+                } else {
+                    return Math.round(m) + " m";
+                }
+            } else {
+                if (m >= MILE) {
+                    // Need max because of float error
+                    final double miles = Math.max(1, m * 0.000621371192);
+                    return Math.round(miles) + " mi";
+                } else {
+                    return Math.round(m * 3.2808399) + " ft";
+                }
+            }
+        }
+    }
+
+    /**
      * Convert meters/second to local units
      * @param mps meters per second
      * @return speed string in local units

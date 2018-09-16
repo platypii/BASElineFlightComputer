@@ -11,7 +11,6 @@ import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.SyncedList;
 import com.platypii.baseline.views.charts.SensorPlot;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,7 +25,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 @SuppressLint("SetTextI18n")
-public class SensorActivity extends Activity implements MyLocationListener {
+public class SensorActivity extends BaseActivity implements MyLocationListener {
 
     // Altimeter
     private TextView altiSourceLabel;
@@ -57,10 +56,10 @@ public class SensorActivity extends Activity implements MyLocationListener {
     private TextView bearingLabel;
     // Misc
     private TextView flightModeLabel;
+    private TextView placeLabel;
 
     // Sensors
     private LinearLayout sensorLayout;
-    // private final ArrayList<SensorPlot> plots = new ArrayList<>();
 
     // Periodic UI updates    
     private final Handler handler = new Handler();
@@ -106,31 +105,22 @@ public class SensorActivity extends Activity implements MyLocationListener {
 
         // Misc
         flightModeLabel = findViewById(R.id.flightModeLabel);
+        placeLabel = findViewById(R.id.placeLabel);
 
         // Sensors
         sensorLayout = findViewById(R.id.sensorLayout);
         // TextView sensorsLabel = (TextView)findViewById(R.id.sensorsLabel);
         // sensorsLabel.setText("Sensors: \n" + MySensorManager.getSensorsString());
 
-        if (Services.sensors.gravity != null) {
+        if (Services.sensors.isEnabled()) {
+            // Add plots
             addPlot("Gravity", Services.sensors.gravity);
-        }
-        if (Services.sensors.rotation != null) {
             addPlot("Rotation", Services.sensors.rotation);
+
+            // Increase buffer size
+            Services.sensors.gravity.setMaxSize(300);
+            Services.sensors.rotation.setMaxSize(300);
         }
-
-        // addPlot("Magnetic", MySensorManager.getHistory(Sensor.TYPE_MAGNETIC_FIELD));
-        // addPlot("Accelerometer", MySensorManager.history.get(Sensor.TYPE_ACCELEROMETER));
-        // addPlot("Gyro", MySensorManager.gyroHistory, 0, 10, 100);
-        // addPlot("Gyro (int)", MySensorManager.gyroHistory, 1, 10, 100);
-        // addPlot("Linear Acceleration", MySensorManager.linearAccelHistory, 0, 10, 100); // Linear Acceleration = Accel - Gravity
-        // addPlot("Linear Velocity", MySensorManager.linearAccelHistory, 1, 20, 100);
-        // addPlot("Linear Position", MySensorManager.linearAccelHistory, 2, 90, 120);
-
-        // Set up sensor logging
-        Services.sensors.accel.setMaxSize(300);
-        Services.sensors.gravity.setMaxSize(300);
-        Services.sensors.rotation.setMaxSize(300);
     }
 
     @Override
@@ -176,7 +166,6 @@ public class SensorActivity extends Activity implements MyLocationListener {
             plot.loadHistory(history);
 
             sensorLayout.addView(plot);
-            // plots.add(plot);
         }
     }
 
@@ -230,6 +219,7 @@ public class SensorActivity extends Activity implements MyLocationListener {
             glideAngleLabel.setText("Glide angle: " + Convert.angle(loc.glideAngle()));
             bearingLabel.setText("Bearing: " + Convert.bearing2(loc.bearing()));
             flightModeLabel.setText("Flight mode: " + Services.flightComputer.getModeString());
+            placeLabel.setText("Location: " + Services.places.getNearestPlaceString(loc));
         }
     }
 
@@ -287,7 +277,8 @@ public class SensorActivity extends Activity implements MyLocationListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Services.sensors.accel.setMaxSize(0);
+        Services.sensors.gravity.setMaxSize(0);
+        Services.sensors.rotation.setMaxSize(0);
     }
 
     // Listeners
@@ -304,17 +295,4 @@ public class SensorActivity extends Activity implements MyLocationListener {
         updateAltimeter();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Start flight services
-        Services.start(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // Stop flight services
-        Services.stop();
-    }
 }

@@ -3,6 +3,7 @@ package com.platypii.baseline.places;
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.location.Geo;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Convert;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -68,6 +69,16 @@ public class Places implements BaseService {
             return best;
         } else {
             return null;
+        }
+    }
+
+    public String getNearestPlaceString(@NonNull MLocation loc) {
+        final Place place = getNearestPlace(loc);
+        if (place != null) {
+            final double distance = Geo.distance(loc.latitude, loc.longitude, place.latitude, place.longitude);
+            return String.format("%s (%s)", place, Convert.distance3(distance));
+        } else {
+            return "";
         }
     }
 

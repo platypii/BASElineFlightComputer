@@ -20,17 +20,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Service to manage orientation sensors, and listeners
  * accelerometer, gravity, gyro, linear accel, magnetic, pressure, humidity, rotation, temp
- *
- * TODO: Do we care about gravity sensor? Or would we be better off with accel + rotation?
  */
 public class MySensorManager implements SensorEventListener, BaseService {
     private static final String TAG = "MySensorManager";
 
     private static final int sensorDelay = 100000; // microseconds
     private SensorManager sensorManager;
+    private boolean enabled = false;
 
     // History
-    public final SyncedList<MSensor> accel = new SyncedList<>();
     public final SyncedList<MSensor> gravity = new SyncedList<>();
     public final SyncedList<MSensor> rotation = new SyncedList<>();
 
@@ -77,22 +75,22 @@ public class MySensorManager implements SensorEventListener, BaseService {
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
                 measurement = new MAccel(t, (float) Math.sqrt(x*x + y*y + z*z));
-                accel.append(measurement);
                 break;
             case Sensor.TYPE_GRAVITY:
-                measurement = new MRotation(t, x, y, z);
+                measurement = new MGravity(t, x, y, z);
                 gravity.append(measurement);
                 break;
             case Sensor.TYPE_ROTATION_VECTOR:
             case Sensor.TYPE_MAGNETIC_FIELD:
-                measurement = new MGravity(t, x, y, z);
+                measurement = new MRotation(t, x, y, z);
                 rotation.append(measurement);
                 break;
             default:
-                Log.e("MySensorManager", "Received unexpected sensor event");
+                Log.e(TAG, "Received unexpected sensor event");
         }
         // Notify listeners
         if (measurement != null) {
+            enabled = true;
             for (MySensorListener listener : listeners) {
                 listener.onSensorChanged(measurement);
             }
@@ -113,6 +111,10 @@ public class MySensorManager implements SensorEventListener, BaseService {
 //        }
 //        return sb;
 //    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
 
     @Override
     public void stop() {
