@@ -22,7 +22,7 @@ class PlaceFile {
     private static final String TAG = "ParsePlaces";
 
     private static final String placeFilename = "places/places.csv.gz";
-    private static final long ttl = 60 * 1000; // Update if data is older than 1 day
+    private static final long ttl = 24 * 60 * 60 * 1000; // Update if data is older than 1 day
 
     File file;
 
@@ -65,7 +65,8 @@ class PlaceFile {
                         final double longitude = Numbers.parseDouble(row[columns.get("longitude")]);
                         final double altitude = Numbers.parseDouble(row[columns.get("altitude")]);
                         final String objectType = row[columns.get("type")];
-                        places.add(new Place(name, region, country, latitude, longitude, altitude, objectType));
+                        final double radius = Numbers.parseDouble(row[columns.get("radius")]);
+                        places.add(new Place(name, region, country, latitude, longitude, altitude, objectType, radius));
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing place file", e);
                     }

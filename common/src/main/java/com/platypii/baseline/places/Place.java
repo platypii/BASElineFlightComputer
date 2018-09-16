@@ -7,18 +7,20 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class Place {
 
-    public String name;
-    public String region;
-    public String country;
+    public final String name;
+    public final String region;
+    public final String country;
 
-    public double latitude;
-    public double longitude;
-    public double altitude;
+    public final double latitude;
+    public final double longitude;
+    public final double altitude;
 
     // B,A,S,E,DZ
-    public String objectType;
+    public final String objectType;
 
-    Place(String name, String region, String country, double latitude, double longitude, double altitude, String objectType) {
+    public final double radius;
+
+    Place(String name, String region, String country, double latitude, double longitude, double altitude, String objectType, double radius) {
         this.name = name;
         this.region = region;
         this.country = country;
@@ -26,6 +28,7 @@ public class Place {
         this.longitude = longitude;
         this.altitude = altitude;
         this.objectType = objectType;
+        this.radius = radius;
     }
 
     private LatLng lazyLatLng = null;

@@ -57,13 +57,13 @@ public class Places implements BaseService {
         }
         if (places != null) {
             Place best = null;
-            double best_distance = Double.NaN;
+            double bestDistance = Double.NaN;
             // Find closest place
             for (Place place : places) {
                 final double distance = Geo.distance(loc.latitude, loc.longitude, place.latitude, place.longitude);
-                if (Double.isNaN(best_distance) || distance < best_distance) {
+                if (Double.isNaN(bestDistance) || (distance < bestDistance && distance < place.radius)) {
                     best = place;
-                    best_distance = distance;
+                    bestDistance = distance;
                 }
             }
             return best;
