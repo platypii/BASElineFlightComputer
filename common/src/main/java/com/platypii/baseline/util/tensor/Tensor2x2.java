@@ -1,5 +1,7 @@
 package com.platypii.baseline.util.tensor;
 
+import java.util.Locale;
+
 /**
  * Represents a fast 2x2 matrix
  *
@@ -73,6 +75,11 @@ public class Tensor2x2 {
         p12 *= factor;
         p21 *= factor;
         p22 *= factor;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.US, "[[%f,%f],[%f,%f]]", p11 ,p12, p21, p22);
     }
 
 }

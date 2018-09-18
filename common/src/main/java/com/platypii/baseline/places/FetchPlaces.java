@@ -29,6 +29,7 @@ public class FetchPlaces {
         final URL url = new URL(placesUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Accept-Encoding", "gzip");
+//        conn.setRequestProperty("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME); // Doesn't work in common lib
         // Send If-Modified-Since header to help with caching
         if (placeFile.exists()) {
             final String dateString = httpDateString(placeFile.lastModified());

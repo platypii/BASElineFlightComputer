@@ -5,7 +5,6 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.events.SyncEvent;
-import com.platypii.baseline.location.LocationStatus;
 import com.platypii.baseline.views.altimeter.AltimeterActivity;
 import com.platypii.baseline.views.map.MapActivity;
 import com.platypii.baseline.views.tracks.TrackListActivity;
@@ -15,7 +14,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,7 +23,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class MainActivity extends BaseActivity {
-    private static final String TAG = "Main";
 
     // app start time
     // public static final long startTimeMillis = System.currentTimeMillis();
@@ -34,15 +31,11 @@ public class MainActivity extends BaseActivity {
     private Button recordButton;
     private Button audibleButton;
     private TextView clock;
-    private TextView signalStatus;
 
     // Periodic UI updates
     private final Handler handler = new Handler();
     private final int clockUpdateInterval = 48; // milliseconds
-    private final int signalUpdateInterval = 200; // milliseconds
-
     private Runnable clockRunnable;
-    private Runnable signalRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +48,6 @@ public class MainActivity extends BaseActivity {
         recordButton = findViewById(R.id.recordButton);
         audibleButton = findViewById(R.id.audibleButton);
         clock = findViewById(R.id.clock);
-        signalStatus = findViewById(R.id.signalStatus);
 
         if (audibleButton != null) {
             audibleButton.setOnLongClickListener(audibleLongClickListener);
@@ -68,19 +60,6 @@ public class MainActivity extends BaseActivity {
 
         // Restore start/stop state
         updateUIState();
-
-        // Start signal updates
-        if (signalRunnable == null) {
-            signalRunnable = new Runnable() {
-                public void run() {
-                    updateSignal();
-                    handler.postDelayed(this, signalUpdateInterval);
-                }
-            };
-            handler.post(signalRunnable);
-        } else {
-            Log.e(TAG, "Signal updates already started");
-        }
 
         // Listen for event updates
         EventBus.getDefault().register(this);
@@ -206,15 +185,6 @@ public class MainActivity extends BaseActivity {
     }
     private final StringBuilder clockBuilder = new StringBuilder();
 
-    /**
-     * Update the views for GPS signal strength
-     */
-    private void updateSignal() {
-        LocationStatus.updateStatus();
-        signalStatus.setCompoundDrawablesWithIntrinsicBounds(LocationStatus.icon, 0, 0, 0);
-        signalStatus.setText(LocationStatus.message);
-    }
-
     // Listen for events
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoggingEvent(LoggingEvent event) {
@@ -240,10 +210,6 @@ public class MainActivity extends BaseActivity {
         if (clockRunnable != null) {
             handler.removeCallbacks(clockRunnable);
             clockRunnable = null;
-        }
-        if (signalRunnable != null) {
-            handler.removeCallbacks(signalRunnable);
-            signalRunnable = null;
         }
         EventBus.getDefault().unregister(this);
     }

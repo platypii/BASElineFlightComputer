@@ -62,6 +62,7 @@ public class FilterKalman2 extends Filter {
         final double dt2 = dt * dt;
         final double dt3 = dt2 * dt;
         final double dt4 = dt2 * dt2;
+
         // Estimated covariance
         q.set(0.25 * dt4, 0.5 * dt3, 0.5 * dt3, dt2);
         q.scale(accelerationVariance);

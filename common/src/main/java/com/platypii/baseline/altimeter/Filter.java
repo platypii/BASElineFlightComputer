@@ -9,7 +9,7 @@ public abstract class Filter {
     // Official altitude data
     public abstract double x(); // Meters AGL
     public abstract double v(); // Rate of climb m/s
-    // public double a = Double.NaN; // TODO: Vertical acceleration
+    // public abstract double a(); // TODO: Vertical acceleration
 
     /**
      * Initial values for the filter
