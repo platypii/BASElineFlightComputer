@@ -3,6 +3,7 @@ package com.platypii.baseline.views;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AuthEvent;
+import com.platypii.baseline.util.Exceptions;
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,17 +17,18 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
 
-public abstract class BaseActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = "BaseActivity";
+public abstract class BaseActivity extends FragmentActivity {
+    private final String TAG = getClass().getSimpleName();
 
     /* Request codes used to invoke user interactions */
     private static final int RC_SIGN_IN = 0;
@@ -36,7 +38,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     protected FirebaseAnalytics firebaseAnalytics;
 
     /* Client used to interact with Google APIs */
-    private GoogleApiClient signInClient;
+    private GoogleSignInClient signInClient;
     private GoogleSignInAccount account;
 
     // If user didn't click, don't show sign in/out toast
@@ -111,12 +113,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail()
                 .build();
-
-        // Build a GoogleApiClient with access to the Google Sign-In API and the options specified by gso
-        signInClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+        signInClient = GoogleSignIn.getClient(this, gso);
     }
 
     @Override
@@ -124,11 +121,9 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         super.onStart();
 
         // Start flight services
-        // Log.d(TAG, getClass().getSimpleName() + " starting, starting services");
         Services.start(this);
 
-        Auth.GoogleSignInApi.silentSignIn(signInClient)
-                .setResultCallback(this::handleSignInResult);
+        signInClient.silentSignIn().addOnCompleteListener(this::onSignInComplete);
 
         // Bind sign in panel
         signInPanel = findViewById(R.id.sign_in_panel);
@@ -165,31 +160,28 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         // Notify sign in listeners
         updateAuthState(AuthEvent.SIGNING_IN);
 
-        final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(signInClient);
+        final Intent signInIntent = signInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     void clickSignOut() {
         Log.i(TAG, "User clicked sign out");
-        Auth.GoogleSignInApi.signOut(signInClient).setResultCallback(status -> {
-                    Log.d(TAG, "Signed out: " + status);
+        signInClient.signOut()
+                .addOnSuccessListener(aVoid -> {
+                    Log.i(TAG, "Signed out");
                     Toast.makeText(BaseActivity.this, R.string.signout_success, Toast.LENGTH_LONG).show();
                     signedOut();
-                }
-        );
+                });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result != null) {
-                handleSignInResult(result);
-            }
+            final Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            task.addOnCompleteListener(this::onSignInComplete);
         } else if (requestCode == RC_TTS_DATA) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 // Notify services that TTS is ready
@@ -204,30 +196,43 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
 
     }
 
-    private void handleSignInResult(@NonNull GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult " + result.getStatus());
-        if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            account = result.getSignInAccount();
-            if (account != null) {
-                Log.i(TAG, "Sign in successful for user " + account.getDisplayName());
-
-                // Update track listing
-                Services.cloud.listing.listAsync(account.getIdToken(), false);
-            }
-
-            // Notify listeners
-            updateAuthState(AuthEvent.SIGNED_IN);
-        } else {
-            if (result.getStatus().getStatusCode() == ConnectionResult.NETWORK_ERROR) {
-                // Don't sign out for network errors, base jumpers often have poor signal
-                Log.w(TAG, "Sign in failed due to network error");
-            } else {
-                Log.w(TAG, "Sign in failed: " + result.getStatus());
-                signedOut();
-            }
+    private void onSignInComplete(Task<GoogleSignInAccount> task) {
+        try {
+            account = task.getResult(ApiException.class);
+            onSignInSuccess();
+        } catch (ApiException e) {
+            onSignInFailure(e);
         }
         userClickedSignIn = false;
+    }
+    private void onSignInSuccess() {
+        // Signed in successfully, show authenticated UI.
+        if (account != null) {
+            Log.i(TAG, "Sign in successful for user " + account.getDisplayName());
+
+            // Update track listing
+            Services.cloud.listing.listAsync(account.getIdToken(), false);
+        } else {
+            Exceptions.report(new NullPointerException("Sign in success, but null account"));
+        }
+
+        // Notify listeners
+        updateAuthState(AuthEvent.SIGNED_IN);
+    }
+    private void onSignInFailure(@NonNull ApiException e) {
+        if (e.getStatusCode() == CommonStatusCodes.NETWORK_ERROR) {
+            // Don't sign out for network errors, base jumpers often have poor signal
+            Log.w(TAG, "Sign in failed due to network error");
+            if (userClickedSignIn) {
+                signedOut();
+            }
+        } else if (e.getStatusCode() == CommonStatusCodes.SIGN_IN_REQUIRED) {
+            Log.i(TAG, "Sign in required (user is not signed in)");
+            signedOut();
+        } else {
+            Log.w(TAG, "Sign in failed: " + CommonStatusCodes.getStatusCodeString(e.getStatusCode()));
+            signedOut();
+        }
     }
 
     private void signedOut() {
@@ -237,12 +242,6 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         Services.cloud.signOut();
         // Notify listeners
         updateAuthState(AuthEvent.SIGNED_OUT);
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // Log.d(TAG, "onConnectionFailed:" + connectionResult);
-        Log.i(TAG, "Not signed in - connection failed");
     }
 
     @Override
@@ -261,7 +260,6 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
         super.onStop();
 
         // If track is still recording, services will wait
-        // Log.d(TAG, getClass().getSimpleName() + " stopping, stopping services");
         Services.stop();
     }
 

@@ -91,7 +91,7 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(SyncEvent event) {
-        listAdapter.notifyDataSetChanged();
+        updateList();
     }
 
 }
