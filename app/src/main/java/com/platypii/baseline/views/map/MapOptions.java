@@ -1,7 +1,6 @@
 package com.platypii.baseline.views.map;
 
 import com.platypii.baseline.Services;
-import com.platypii.baseline.util.Numbers;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -52,8 +51,9 @@ class MapOptions {
      * @return the zoom duration in milliseconds
      */
     static int zoomDuration() {
-        if (Numbers.isReal(Services.location.refreshRate) && Services.location.refreshRate > 0) {
-            final int gpsUpdateDuration = (int) (1000f / Services.location.refreshRate);
+        final float refreshRate = Services.location.refreshRate.refreshRate;
+        if (refreshRate > 0) {
+            final int gpsUpdateDuration = (int) (1000f / refreshRate);
             return Math.min(gpsUpdateDuration, MAX_ANIMATION_DURATION);
         } else {
             return MAX_ANIMATION_DURATION;

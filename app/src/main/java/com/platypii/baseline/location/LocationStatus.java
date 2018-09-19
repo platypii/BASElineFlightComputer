@@ -63,7 +63,7 @@ public class LocationStatus {
                         sb.append("GPS ");
                         icon = R.drawable.status_green;
                     }
-                    StringBuilderUtil.format2f(sb, Services.location.refreshRate);
+                    StringBuilderUtil.format2f(sb, Services.location.refreshRate.refreshRate);
                     sb.append("Hz");
                     message = sb;
                 }

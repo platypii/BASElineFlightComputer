@@ -5,6 +5,7 @@ import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.util.RefreshRateEstimator;
 import com.platypii.baseline.util.Stat;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -41,7 +42,8 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
     // Model error is the difference between our filtered output and the raw pressure altitude
     // Model error should approximate the sensor variance, even when in motion
     public final Stat model_error = new Stat();
-    public float refreshRate = 0; // Moving average of refresh rate in Hz
+    // Moving average of refresh rate in Hz
+    public final RefreshRateEstimator refreshRate = new RefreshRateEstimator();
 
     /**
      * Initializes altimeter services, if not already running.
@@ -105,18 +107,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         pressure_altitude_raw = pressureToAltitude(pressure);
 
         // Barometer refresh rate
-        if (deltaTime > 0) {
-            final float newRefreshRate = 1E9f / (float) (deltaTime); // Refresh rate based on last 2 samples
-            if (refreshRate == 0) {
-                refreshRate = newRefreshRate;
-            } else {
-                refreshRate += (newRefreshRate - refreshRate) * 0.5f; // Moving average
-            }
-            if (Double.isNaN(refreshRate)) {
-                Exceptions.report(new Exception("Refresh rate is NaN, deltaTime = " + deltaTime + " newRefreshRate = " + newRefreshRate));
-                refreshRate = 0;
-            }
-        }
+        refreshRate.addSample(event.timestamp / 1000000L);
 
         // Apply kalman filter to pressure altitude, to produce smooth barometric pressure altitude.
         if (lastFixNano <= 0) {

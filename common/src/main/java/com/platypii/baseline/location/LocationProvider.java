@@ -3,6 +3,8 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.util.RefreshRateEstimator;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -17,9 +19,8 @@ public abstract class LocationProvider implements BaseService {
     // Listeners
     private final List<MyLocationListener> listeners = new CopyOnWriteArrayList<>();
 
-    // GPS status
-    // TODO: Include time from last sample until now if > refreshTime
-    public float refreshRate = 0; // Moving average of refresh rate in Hz
+    // Moving average of refresh rate in Hz
+    public final RefreshRateEstimator refreshRate = new RefreshRateEstimator();
 
     // History
     public MLocation lastLoc; // last location received
@@ -104,23 +105,7 @@ public abstract class LocationProvider implements BaseService {
         }
         TimeOffset.phoneOffsetMillis = clockOffset;
 
-        if (prevLoc != null) {
-            final long deltaTime = lastLoc.millis - prevLoc.millis; // time since last refresh
-
-            // GPS sample refresh rate
-            if (deltaTime > 0) {
-                final float newRefreshRate = 1000f / deltaTime; // Refresh rate based on last 2 samples
-                if (refreshRate == 0) {
-                    refreshRate = newRefreshRate;
-                } else {
-                    refreshRate += (newRefreshRate - refreshRate) * 0.5f; // Moving average
-                }
-                if (Double.isNaN(refreshRate)) {
-                    Log.e(providerName(), "Refresh rate is NaN, deltaTime = " + deltaTime + " refreshTime = " + newRefreshRate);
-                    refreshRate = 0;
-                }
-            }
-        }
+        refreshRate.addSample(lastLoc.millis);
 
         // Notify listeners (using AsyncTask so the manager never blocks!)
         AsyncTask.execute(() -> {

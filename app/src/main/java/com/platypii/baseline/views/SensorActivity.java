@@ -262,8 +262,9 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
                 lastFixLabel.setTextColor(0xffb0b0b0);
             }
             String lastFix = (lastFixDuration / 1000) + "s";
-            if (Services.location.refreshRate > 0) {
-                lastFix += String.format(Locale.getDefault(), " (%.2fHz)", Services.location.refreshRate);
+            final float refreshRate = Services.location.refreshRate.refreshRate;
+            if (refreshRate > 0) {
+                lastFix += String.format(Locale.getDefault(), " (%.2fHz)", refreshRate);
             }
             lastFixLabel.setText("Last fix: " + lastFix);
         } else {
