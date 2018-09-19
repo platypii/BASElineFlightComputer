@@ -48,11 +48,7 @@ class PlaceFile {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))))) {
             // Parse header column
             String line = br.readLine();
-            final Map<String,Integer> columns = new HashMap<>();
-            final String[] header = line.split(",");
-            for (int i = 0; i < header.length; i++) {
-                columns.put(header[i], i);
-            }
+            final Map<String,Integer> columns = getColumns(line);
             // Parse data rows
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
@@ -61,11 +57,11 @@ class PlaceFile {
                         final String name = row[columns.get("name")];
                         final String region = row[columns.get("region")];
                         final String country = row[columns.get("country")];
-                        final double latitude = Numbers.parseDouble(row[columns.get("latitude")]);
-                        final double longitude = Numbers.parseDouble(row[columns.get("longitude")]);
-                        final double altitude = Numbers.parseDouble(row[columns.get("altitude")]);
+                        final double latitude = getColumnDouble(row, columns, "latitude");
+                        final double longitude = getColumnDouble(row, columns, "longitude");
+                        final double altitude = getColumnDouble(row, columns, "altitude");
                         final String objectType = row[columns.get("type")];
-                        final double radius = Numbers.parseDouble(row[columns.get("radius")]);
+                        final double radius = getColumnDouble(row, columns, "radius");
                         places.add(new Place(name, region, country, latitude, longitude, altitude, objectType, radius));
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing place file", e);
@@ -75,6 +71,23 @@ class PlaceFile {
         }
         Log.i(TAG, "Loaded " + places.size() + " places");
         return places;
+    }
+
+    private static Map<String,Integer> getColumns(String header) {
+        final Map<String,Integer> columns = new HashMap<>();
+        final String[] headers = header.split(",");
+        for (int i = 0; i < headers.length; i++) {
+            columns.put(headers[i], i);
+        }
+        return columns;
+    }
+
+    private static double getColumnDouble(String[] row, Map<String,Integer> columns, String columnName) {
+        try {
+            return Numbers.parseDouble(row[columns.get(columnName)]);
+        } catch (Exception e) {
+            return Double.NaN;
+        }
     }
 
 }

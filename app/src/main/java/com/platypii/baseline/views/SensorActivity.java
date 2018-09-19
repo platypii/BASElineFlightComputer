@@ -174,7 +174,7 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
         altitudeLabel.setText("Altitude MSL: " + Convert.distance(Services.alti.altitude, 2, true));
         altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(Services.alti.altitudeAGL(), 2, true) + " AGL");
 
-        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate));
+        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate.refreshRate));
         pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(Services.alti.baro.pressure_altitude_raw, 2, true));
         if (Double.isNaN(Services.alti.baro.pressure_altitude_filtered)) {
             pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: ");
@@ -272,7 +272,7 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
             lastFixLabel.setText("Last fix: ");
         }
         // Altitude refresh rate
-        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate));
+        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate.refreshRate));
     }
 
     @Override

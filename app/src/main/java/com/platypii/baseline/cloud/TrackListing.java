@@ -1,6 +1,7 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.BaseService;
+import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Exceptions;
@@ -90,6 +91,7 @@ public class TrackListing implements BaseService {
         final URL url = new URL(BaselineCloud.listUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", auth);
+        conn.setRequestProperty("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME);
         try {
             // Read response
             final int status = conn.getResponseCode();

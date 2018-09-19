@@ -8,6 +8,7 @@ import com.platypii.baseline.views.BaseActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -20,6 +21,7 @@ public class BluetoothActivity extends BaseActivity {
 
     private FirebaseAnalytics firebaseAnalytics;
 
+    private ImageView bluetoothPhoto;
     private Switch bluetoothSwitch;
     private TextView bluetoothStatus;
 
@@ -30,11 +32,17 @@ public class BluetoothActivity extends BaseActivity {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        bluetoothPhoto = findViewById(R.id.bluetooth_photo);
         bluetoothSwitch = findViewById(R.id.bluetooth_switch);
         bluetoothStatus = findViewById(R.id.bluetooth_status);
     }
 
     private void updateViews() {
+        if (Services.bluetooth.preferences.preferenceDeviceName.startsWith("XGPS160")) {
+            bluetoothPhoto.setVisibility(View.VISIBLE);
+        } else {
+            bluetoothPhoto.setVisibility(View.GONE);
+        }
         bluetoothSwitch.setChecked(Services.bluetooth.preferences.preferenceEnabled);
         bluetoothStatus.setText(Services.bluetooth.getStatusMessage(this));
     }
