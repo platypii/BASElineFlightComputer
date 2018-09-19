@@ -43,7 +43,7 @@ public abstract class LocationProvider implements BaseService {
      */
     public long lastFixDuration() {
         if (lastLoc != null && lastLoc.millis > 0) {
-            final long duration = System.currentTimeMillis() - lastLoc.millis - TimeOffset.phoneOffsetMillis;
+            final long duration = System.currentTimeMillis() - TimeOffset.gpsToPhoneTime(lastLoc.millis);
             if (duration < 0) {
                 Log.w(providerName(), "Time since last fix should never be negative delta = " + duration + "ms");
             }
@@ -95,15 +95,8 @@ public abstract class LocationProvider implements BaseService {
         lastLoc = loc;
 
         // Update gps time offset
-        final long clockOffset = System.currentTimeMillis() - lastLoc.millis;
-        if (Math.abs(TimeOffset.phoneOffsetMillis - clockOffset) > 1000) {
-            if (clockOffset < 0) {
-                Log.w(providerName(), "Adjusting clock: phone behind gps by " + (-clockOffset) + "ms");
-            } else {
-                Log.w(providerName(), "Adjusting clock: phone ahead of gps by " + clockOffset + "ms");
-            }
-        }
-        TimeOffset.phoneOffsetMillis = clockOffset;
+        // TODO: What if there are multiple GPS devices giving different times?
+        TimeOffset.update(providerName(), lastLoc.millis);
 
         refreshRate.addSample(lastLoc.millis);
 

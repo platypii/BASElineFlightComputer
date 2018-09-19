@@ -55,7 +55,7 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
     @Override
     public void drawData(@NonNull Plot plot) {
         if (locationService != null) {
-            final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
+            final long currentTime = TimeOffset.phoneToGpsTime(System.currentTimeMillis());
             final MLocation loc = locationService.lastLoc;
             if (loc != null && currentTime - loc.millis <= window) {
                 // Draw background ellipses
@@ -107,7 +107,7 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
      * Draw historical points
      */
     private void drawHistory(@NonNull Plot plot) {
-        final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
+        final long currentTime = TimeOffset.phoneToGpsTime(System.currentTimeMillis());
         synchronized (history) {
             paint.setStyle(Paint.Style.FILL);
             for (MLocation loc : history) {
@@ -140,7 +140,7 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
      */
     private void drawLocation(@NonNull Plot plot, long millis, double vx, double vy) {
         // Style point based on freshness
-        final long currentTime = System.currentTimeMillis() - TimeOffset.phoneOffsetMillis;
+        final long currentTime = TimeOffset.phoneToGpsTime(System.currentTimeMillis());
         final int t = (int) (currentTime - millis);
         final int rgb = 0x5500ff;
         int alpha = 0xff * (30000 - t) / (30000 - 10000);

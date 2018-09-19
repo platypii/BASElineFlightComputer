@@ -94,7 +94,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         }
 
         // Convert system time to GPS time
-        final long lastFixMillis = millis - TimeOffset.phoneOffsetMillis;
+        final long lastFixMillis = TimeOffset.phoneToGpsTime(millis);
         // Compute time since last sample in nanoseconds
         final long deltaTime = (lastFixNano == 0) ? 0 : (event.timestamp - lastFixNano);
 

@@ -109,7 +109,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
     public void onPressureEvent(@NonNull MPressure pressure) {
         if (!barometerEnabled) return;
 
-        lastFixMillis = pressure.millis - TimeOffset.phoneOffsetMillis; // Convert to GPS time
+        lastFixMillis = TimeOffset.phoneToGpsTime(pressure.millis); // Convert to GPS time
 
         // Compute GPS corrected altitude AMSL
         altitude = baro.pressure_altitude_filtered - altitude_offset;
