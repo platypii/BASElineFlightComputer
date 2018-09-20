@@ -5,7 +5,6 @@ import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.util.Network;
 import com.platypii.baseline.views.BaseActivity;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -37,7 +36,7 @@ class UploadManager {
     }
 
     private void upload(@NonNull TrackFile trackFile) {
-        final boolean networkAvailable = Network.isAvailable(context);
+        final boolean networkAvailable = Services.cloud.isNetworkAvailable();
         if (!networkAvailable) {
             Log.w(TAG, "Skipping upload, network unavailable");
             return;

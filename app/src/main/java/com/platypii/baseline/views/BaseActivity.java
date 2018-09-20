@@ -30,7 +30,7 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     private static final String TAG = "BaseActivity";
 
     /* Request codes used to invoke user interactions */
-    static final int RC_SIGN_IN = 0;
+    private static final int RC_SIGN_IN = 0;
     public static final int RC_LOCATION = 1;
     public static final int RC_TTS_DATA = 2;
 

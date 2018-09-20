@@ -7,7 +7,6 @@ import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
 import com.platypii.baseline.util.MD5;
-import com.platypii.baseline.util.Network;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -46,7 +45,7 @@ class UploadTask implements Runnable {
     public void run() {
         Log.i(TAG, "Uploading track " + trackFile);
         // Check for network availability. Still try to upload anyway, but don't report to firebase
-        final boolean networkAvailable = Network.isAvailable(context);
+        final boolean networkAvailable = Services.cloud.isNetworkAvailable();
         try {
             // Get auth token
             final String authToken = AuthToken.getAuthToken(context);

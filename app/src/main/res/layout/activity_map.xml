@@ -18,6 +18,7 @@
         android:layout_gravity="right|bottom" />
 
     <fragment
+        android:id="@+id/flightStatsFragment"
         android:name="com.platypii.baseline.views.map.FlightStatsFragment"
         android:layout_width="155dp"
         android:layout_height="wrap_content"

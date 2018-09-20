@@ -6,7 +6,6 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
-import com.platypii.baseline.util.Network;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -27,11 +26,9 @@ public class TrackListing implements BaseService {
     private static final String TAG = "TrackListing";
 
     public final TrackListingCache cache = new TrackListingCache();
-    private Context context;
 
     @Override
     public void start(@NonNull Context context) {
-        this.context = context;
         cache.start(context);
     }
 
@@ -61,7 +58,7 @@ public class TrackListing implements BaseService {
      */
     private void listTracks(String auth) {
         // Check for network availability. Still try to upload anyway, but don't report to firebase
-        final boolean networkAvailable = Network.isAvailable(context);
+        final boolean networkAvailable = Services.cloud.isNetworkAvailable();
         try {
             // Make HTTP request
             final List<CloudData> trackList = listRemote(auth);
@@ -137,8 +134,6 @@ public class TrackListing implements BaseService {
     }
 
     @Override
-    public void stop() {
-        context = null;
-    }
+    public void stop() {}
 
 }

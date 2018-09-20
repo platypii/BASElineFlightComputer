@@ -23,8 +23,8 @@ public class PolarPlot extends PlotView {
 
     private final DataSeries speedSeries = new DataSeries();
 
-    final Bounds inner = new Bounds();
-    final Bounds outer = new Bounds();
+    private final Bounds inner = new Bounds();
+    private final Bounds outer = new Bounds();
 
     private MLocation focus;
 

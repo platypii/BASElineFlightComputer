@@ -1,10 +1,10 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.BuildConfig;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.events.DownloadEvent;
 import com.platypii.baseline.tracks.TrackAbbrv;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.util.Network;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -45,7 +45,7 @@ public class DownloadTask implements Runnable {
             Log.e(TAG, "Overwriting existing track file " + trackFile);
         }
         // Check for network availability. Still try to download anyway, but don't report to firebase
-        final boolean networkAvailable = Network.isAvailable(context);
+        final boolean networkAvailable = Services.cloud.isNetworkAvailable();
         try {
             if (!trackFile.exists()) {
                 // Get auth token

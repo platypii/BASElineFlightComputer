@@ -25,7 +25,7 @@ public class AudibleMinMaxPreference extends DialogPreference {
         setDialogLayoutResource(R.layout.audible_minmax_dialog);
     }
 
-    public float getValue() {
+    private float getValue() {
         return Numbers.parseFloat(getPersistedString(null));
     }
 

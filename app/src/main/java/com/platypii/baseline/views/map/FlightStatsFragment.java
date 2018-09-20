@@ -33,7 +33,7 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener 
         return view;
     }
 
-    void update() {
+    private void update() {
         if (Services.alti.climb < 0) {
             flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp, 0, 0, 0);
             flightStatsVario.setText(Convert.speed(-Services.alti.climb));

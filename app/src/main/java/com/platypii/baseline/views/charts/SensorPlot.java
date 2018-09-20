@@ -21,8 +21,8 @@ public class SensorPlot extends PlotSurface {
     private final DataSeries ySeries = new DataSeries();
     private final DataSeries zSeries = new DataSeries();
 
-    final Bounds inner = new Bounds();
-    final Bounds outer = new Bounds();
+    private final Bounds inner = new Bounds();
+    private final Bounds outer = new Bounds();
 
     public SensorPlot(Context context, AttributeSet attrs) {
         super(context, attrs);

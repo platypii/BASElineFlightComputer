@@ -30,6 +30,8 @@ class DeleteTask implements Runnable {
     @Override
     public void run() {
         Log.i(TAG, "Deleting track " + track.track_id);
+        // Check for network availability. Still try to delete anyway, but don't report to firebase
+        final boolean networkAvailable = Services.cloud.isNetworkAvailable();
         try {
             // Make HTTP request
             deleteRemote(auth, track.trackUrl);
@@ -44,8 +46,9 @@ class DeleteTask implements Runnable {
             Log.e(TAG, "Failed to delete track " + track.track_id, e);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteFailure(track.track_id, "failed to delete track"));
-            // Report error
-            Exceptions.report(e);
+            if (networkAvailable) {
+                Exceptions.report(e);
+            }
         }
     }
 

@@ -23,7 +23,7 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
     // Periodic UI updates
     private static final int signalUpdateInterval = 200; // milliseconds
     private final Handler handler = new Handler();
-    private Runnable signalRunnable = new Runnable() {
+    private final Runnable signalRunnable = new Runnable() {
         public void run() {
             update();
             handler.postDelayed(this, signalUpdateInterval);

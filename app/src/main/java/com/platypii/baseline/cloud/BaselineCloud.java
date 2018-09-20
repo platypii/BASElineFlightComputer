@@ -1,7 +1,9 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.BaseService;
+import com.platypii.baseline.util.Network;
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
 
 public class BaselineCloud implements BaseService {
@@ -9,6 +11,7 @@ public class BaselineCloud implements BaseService {
     static final String baselineServer = "https://baseline.ws";
     static final String listUrl = baselineServer + "/v1/tracks";
 
+    private ConnectivityManager connectivityManager;
     public final TrackListing listing = new TrackListing();
     private final UploadManager uploads = new UploadManager();
 
@@ -24,8 +27,14 @@ public class BaselineCloud implements BaseService {
         new Thread(new DeleteTask(auth, track)).start();
     }
 
+    boolean isNetworkAvailable() {
+        return Network.isAvailable(connectivityManager);
+    }
+
     @Override
     public void start(@NonNull Context context) {
+        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
         // Start cloud services
         listing.start(context);
         uploads.start(context);
