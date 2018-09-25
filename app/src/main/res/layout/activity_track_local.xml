@@ -65,6 +65,16 @@
             android:text="@string/action_charts"
             style="@style/Widget.AppCompat.Button.Borderless" />
 
+        <Button
+            android:id="@+id/augmentedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:drawableTop="@drawable/button_eye"
+            android:text="@string/action_augmented"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+
     </LinearLayout>
 
     <ProgressBar

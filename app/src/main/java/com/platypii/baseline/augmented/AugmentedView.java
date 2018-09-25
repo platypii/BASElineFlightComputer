@@ -1,9 +1,9 @@
 package com.platypii.baseline.augmented;
 
+import com.platypii.baseline.measurements.MLocation;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.location.Location;
 import android.util.AttributeSet;
 import android.view.View;
 import java.util.List;
@@ -26,11 +26,10 @@ public class AugmentedView extends View {
     private final float density = getResources().getDisplayMetrics().density;
 
     // Current location from GPS
-    private Location currentLocation;
-    private final Location tempLocation = new Location("l");
+    private MLocation currentLocation;
 
     // Geo points to draw as a path
-    private List<Location> points;
+    private List<MLocation> points;
 
     public AugmentedView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,8 +54,8 @@ public class AugmentedView extends View {
         drawHorizonPoint(canvas, 180, "S", 0xffdddddd);
         drawHorizonPoint(canvas, 270, "W", 0xffdddddd);
 
-        if(currentLocation != null) {
-            if(points != null) {
+        if (currentLocation != null) {
+            if (points != null) {
                 paint.setColor(0xff5b00ff);
                 paint.setStrokeWidth(3 * density);
                 drawPath(canvas, points);
@@ -73,7 +72,7 @@ public class AugmentedView extends View {
     private float getX(int canvasWidth, double targetBearing) {
         // Translate, but normalize for the FOV of the camera -- basically, pixels per degree, times degrees == pixels
         final double relativeBearing = (Math.toDegrees(yaw) - targetBearing + 540.0) % 360.0 - 180.0;
-        if(-90 < relativeBearing && relativeBearing < 90) {
+        if (-90 < relativeBearing && relativeBearing < 90) {
             return (float) ( (-canvasWidth / h_fov) * relativeBearing);
         } else {
             // Don't return x value for points behind us
@@ -114,20 +113,20 @@ public class AugmentedView extends View {
         canvas.drawCircle(dx, dy, 10.0f, paint);
     }
 
-    private void drawPath(Canvas canvas, List<Location> points) {
+    private void drawPath(Canvas canvas, List<MLocation> points) {
         boolean first = true;
         float prevX = 0;
         float prevY = 0;
 
-        for(Location point : points) {
+        for (MLocation point : points) {
             // Compute bearing from current location to object
             final double bearing = currentLocation.bearingTo(point);
             final double distance = currentLocation.distanceTo(point);
-            final double height = point.getAltitude() - currentLocation.getAltitude(); // meters
+            final double height = point.altitude_gps - currentLocation.altitude_gps;
             final float x = getX(canvas.getWidth(), bearing);
             final float y = getY(canvas.getHeight(), distance, height);
 
-            if(first) {
+            if (first) {
                 first = false;
             } else {
                 canvas.drawLine(prevX,prevY,x,y,paint);
@@ -144,13 +143,13 @@ public class AugmentedView extends View {
         invalidate();
     }
 
-    public void updateLocation(Location location) {
+    public void updateLocation(MLocation location) {
         currentLocation = location;
         invalidate();
     }
 
     /** Display track geo data as a path */
-    public void updateTrackData(List<Location> points) {
+    public void updateTrackData(List<MLocation> points) {
         this.points = points;
     }
 }

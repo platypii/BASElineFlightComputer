@@ -44,6 +44,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
             findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
             findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
             findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+            findViewById(R.id.augmentedButton).setOnClickListener(this::clickAugmented);
         } catch (IllegalStateException e) {
             Exceptions.report(e);
             finish();
@@ -127,6 +128,11 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     private void clickCharts(View v) {
         // Open time chart activity
         Intents.openCharts(this, track);
+    }
+
+    private void clickAugmented(View v) {
+        // Open time chart activity
+        Intents.openAugmented(this, track);
     }
 
     /**

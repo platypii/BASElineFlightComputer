@@ -59,6 +59,28 @@ public class Intents {
     }
 
     /**
+     * Open augmented reality view
+     */
+    public static void openAugmented(@NonNull Context context, @NonNull File trackFile) {
+        final Intent intent = new Intent(context, AugmentedActivity.class);
+        intent.putExtra(TrackLocalActivity.EXTRA_TRACK_FILE, trackFile.getAbsolutePath());
+        context.startActivity(intent);
+    }
+    public static void openAugmented(@NonNull Context context, @NonNull CloudData track) {
+        // Check if track data file exists
+        final File trackFile = track.abbrvFile(context);
+        if (trackFile.exists()) {
+            // File exists, open charts activity directly
+            openAugmented(context, trackFile);
+        } else {
+            // File not downloaded to device, start TrackDownloadActivity
+            final Intent intent = new Intent(context, TrackDownloadActivity.class);
+            intent.putExtra(TrackDownloadActivity.EXTRA_TRACK_ID, track.track_id);
+            context.startActivity(intent);
+        }
+    }
+
+    /**
      * Open track url in browser
      */
     public static void openTrackUrl(@NonNull Context context, @NonNull String url) {

@@ -60,6 +60,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
             findViewById(R.id.exportButton).setOnClickListener(this::clickExport);
             findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
             findViewById(R.id.chartsButton).setOnClickListener(this::clickCharts);
+            findViewById(R.id.augmentedButton).setOnClickListener(this::clickAugmented);
         } catch (IllegalStateException e) {
             Exceptions.report(e);
             finish();
@@ -129,6 +130,11 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
     private void clickCharts(View v) {
         // Open track charts activity
         Intents.openCharts(this, trackFile.file);
+    }
+
+    private void clickAugmented(View v) {
+        // Open time chart activity
+        Intents.openAugmented(this, trackFile.file);
     }
 
     /**

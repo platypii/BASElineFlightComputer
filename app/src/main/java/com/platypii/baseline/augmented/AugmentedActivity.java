@@ -1,30 +1,35 @@
 package com.platypii.baseline.augmented;
 
 import com.platypii.baseline.R;
-import com.platypii.baseline.util.Callback;
+import com.platypii.baseline.Services;
+import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.tracks.TrackFileData;
+import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.views.BaseActivity;
+import com.platypii.baseline.views.tracks.TrackLocalActivity;
 import android.Manifest;
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 import com.google.android.cameraview.CameraView;
+import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
-public class AugmentedActivity extends Activity implements SensorEventListener, LocationListener {
+public class AugmentedActivity extends BaseActivity implements SensorEventListener, MyLocationListener {
     private static final String TAG = "AR";
 
     public static final String EXTRA_TRACK_ID = "TRACK_ID";
@@ -34,6 +39,8 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
     private CameraView cameraView;
     private AugmentedView augmentedView;
     private ProgressBar spinner;
+
+    private List<MLocation> trackData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +53,16 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
         augmentedView = findViewById(R.id.augmentedView);
         spinner = findViewById(R.id.augmentedSpinner);
 
-        // Get track id from extras
-        final Bundle extras = getIntent().getExtras();
-        if(extras != null) {
-            final String track_id = extras.getString(EXTRA_TRACK_ID);
-            if(track_id != null) {
-                fetchGeoData(track_id);
-            }
+        // Load track from extras
+        final File trackFile = getTrackFile();
+        if (trackFile != null) {
+            Log.i(TAG, "Loading track data");
+            // Load async
+            new LoadTask(trackFile, this).execute();
+        } else {
+            Exceptions.report(new IllegalStateException("Failed to load track file from extras"));
+            // Finish activity
+            finish();
         }
     }
 
@@ -62,36 +72,61 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
 
         // Start orientation listener
         final SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        final Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
-
-        // Start location listener
-        // TODO: Use BASEline location manager
-        final LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        } else {
-            Log.e(TAG, "Location permission not granted");
+        if (sensorManager != null) {
+            final Sensor rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
         }
 
+        // Start location listener
+        Services.location.addListener(this);
     }
 
-    /** Fetch track geo data */
-    private void fetchGeoData(String track_id) {
-        spinner.setVisibility(View.VISIBLE);
-        new GeoDataTask(track_id, new Callback<List<Location>>() {
-            @Override
-            public void apply(List<Location> points) {
-                Log.i(TAG, "Got geo data");
-                augmentedView.updateTrackData(points);
+    /**
+     * Gets the track file from activity extras
+     */
+    @Nullable
+    private File getTrackFile() {
+        final Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            final String extraTrackFile = extras.getString(TrackLocalActivity.EXTRA_TRACK_FILE);
+            if (extraTrackFile != null) {
+                return new File(extraTrackFile);
+            }
+        }
+        return null;
+    }
+
+    private class LoadTask extends AsyncTask<Void,Void,Void> {
+        private final File trackFile;
+        private final WeakReference<AugmentedActivity> activityRef;
+
+        private LoadTask(File trackFile, AugmentedActivity activity) {
+            this.trackFile = trackFile;
+            this.activityRef = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            spinner.setVisibility(View.VISIBLE);
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            final AugmentedActivity activity = activityRef.get();
+            if (activity != null && !activity.isFinishing()) {
+                Log.i(TAG, "Loading track data from " + trackFile);
+                trackData = TrackFileData.getTrackData(trackFile);
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void v) {
+            final AugmentedActivity activity = activityRef.get();
+            if (activity != null && !activity.isFinishing()) {
+                Log.i(TAG, "Loaded track data with " + trackData.size() + " points");
+                augmentedView.updateTrackData(trackData);
                 spinner.setVisibility(View.GONE);
             }
-            @Override
-            public void error(String error) {
-                Log.e(TAG, "Error fetching geo data: " + error);
-                Toast.makeText(AugmentedActivity.this, "Error fetching geo data: " + error, Toast.LENGTH_LONG).show();
-            }
-        }).execute();
+        }
     }
 
     @Override
@@ -121,23 +156,17 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
                 augmentedView.updateOrientation(orientation);
                 break;
             default:
-                Log.e("MySensorManager", "Received unexpected sensor event");
+                Log.e(TAG, "Received unexpected sensor event");
         }
     }
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(@NonNull MLocation location) {
         // Update location
         augmentedView.updateLocation(location);
     }
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
-    @Override
-    public void onProviderEnabled(String provider) {}
-    @Override
-    public void onProviderDisabled(String provider) {}
 
     @Override
     protected void onResume() {
@@ -161,14 +190,11 @@ public class AugmentedActivity extends Activity implements SensorEventListener, 
         super.onStop();
         // Stop sensor updates
         final SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        sensorManager.unregisterListener(this);
-        // Stop location updates
-        final LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        try {
-            locationManager.removeUpdates(this);
-        } catch(SecurityException e) {
-            Log.w(TAG, "Exception while stopping android location updates", e);
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(this);
         }
+        // Stop location updates
+        Services.location.removeListener(this);
     }
 
 }
