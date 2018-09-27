@@ -24,28 +24,25 @@ public class FlightMode {
     };
 
     /**
-     * Heuristic to determine flight mode based on horizontal and vertical velocity
-     * TODO: Optimize parameters
-     * TODO: Use machine learning model
+     * Predict flight mode based on instantaneous horizontal and vertical velocity.
      */
     static int getMode(@NonNull MLocation loc) {
         final double groundSpeed = loc.groundSpeed();
         final double climb = loc.climb;
 
-        if (-5 < climb && 35 < groundSpeed) {
-            // Speed at least 80mph
+        if (-0.3 * groundSpeed + 7 < climb && 33 < groundSpeed) {
             return MODE_PLANE;
-        } else if (climb < -10 && 32 < groundSpeed) {
-            // Falling at least 20 mph, speed at least 50 mph
-            return MODE_WINGSUIT;
-        } else if (climb < -13) {
-            // Falling at least 30 mph
+        } else if (climb < -13 && climb < -groundSpeed - 10 && groundSpeed < 19) {
             return MODE_FREEFALL;
-        } else if (-9 < climb && climb < -1.1 && groundSpeed < 25) {
-            // Descending at least 2-20mph, speed less than 55mph
+        } else if (climb < groundSpeed - 32 && climb < -0.3 * groundSpeed + 5.5) {
+            return MODE_WINGSUIT;
+        } else if (climb < -17) {
+            return MODE_WINGSUIT;
+        } else if (-11.5 < climb && climb < -1.1 && groundSpeed - 31 < climb && climb < groundSpeed - 4 && 1.1 < groundSpeed && groundSpeed < 23.5 && climb < -groundSpeed + 20) {
             return MODE_CANOPY;
-        } else if (-1.1 < climb && climb < 1.1 && groundSpeed < 32) {
-            // Ground speed no greater than 50 mph
+        } else if (groundSpeed + Math.abs(climb - 1) < 5) {
+            return MODE_GROUND;
+        } else if (-1 < climb && climb < 2 && !(groundSpeed > 10)) {
             return MODE_GROUND;
         } else {
             return MODE_UNKNOWN;

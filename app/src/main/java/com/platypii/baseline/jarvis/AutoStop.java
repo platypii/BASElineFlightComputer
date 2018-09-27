@@ -12,6 +12,12 @@ import android.util.Log;
 public class AutoStop {
     private static final String TAG = "AutoStop";
 
+    // Detection parameters
+    private static final double alpha1 = 0.6; // Freefall param
+    private static final double alpha2 = 0.02; // Canopy param
+    private static final double beta = 0.5; // Landing param
+    private static final double minHeight = 60; // meters
+
     public static boolean preferenceEnabled = true;
 
     // Jump detection state
@@ -23,8 +29,6 @@ public class AutoStop {
     // When auto stop is enabled, if we haven't detected landing in 1 hour, stop recording
     private final Handler handler = new Handler();
     private static final long autoTimeout = 3600000; // 1 hour
-
-    private static final double minHeight = 60;
 
     private double prExited = 0;
     private double prLanded = 0;
@@ -55,11 +59,11 @@ public class AutoStop {
         if (state == STATE_STARTED) {
             // Look for flight / freefall
             if (loc.climb < -15 && altMax - alt > minHeight) {
-                prExited += (1 - prExited) * 0.6;
+                prExited += (1 - prExited) * alpha1;
             } else if (FlightMode.getMode(loc) == FlightMode.MODE_CANOPY && altMax - alt > minHeight) {
-                prExited += (1 - prExited) * 0.2;
+                prExited += (1 - prExited) * alpha2;
             } else {
-                prExited -= prExited * 0.6;
+                prExited -= prExited * alpha1;
             }
             if (prExited > 0.85) {
                 Log.i(TAG, "Exit detected");
@@ -68,10 +72,12 @@ public class AutoStop {
         } else if (state == STATE_EXITED) {
             // Look for landing
             final double altNormalized = (alt - altMin) / (altMax - altMin);
-            if (FlightMode.getMode(loc) == FlightMode.MODE_GROUND && altMax - altMin > minHeight && altNormalized < 0.1) {
-                prLanded += (1 - prLanded) * 0.2;
+            if (FlightMode.getMode(loc) == FlightMode.MODE_GROUND && !(loc.groundSpeed() > 5) && altMax - altMin > minHeight && altNormalized < 0.1) {
+                prLanded += (1 - prLanded) * beta;
+            } else {
+                prLanded += (1 - prLanded) * 0.25;
             }
-            if (prLanded > 0.99) {
+            if (prLanded > 0.95) {
                 Log.i(TAG, "Landing detected");
                 landed();
             }
