@@ -75,7 +75,7 @@ public class AutoStop {
             if (FlightMode.getMode(loc) == FlightMode.MODE_GROUND && !(loc.groundSpeed() > 5) && altMax - altMin > minHeight && altNormalized < 0.1) {
                 prLanded += (1 - prLanded) * beta;
             } else {
-                prLanded += (1 - prLanded) * 0.25;
+                prLanded -= (1 - prLanded) * 0.25;
             }
             if (prLanded > 0.95) {
                 Log.i(TAG, "Landing detected");
