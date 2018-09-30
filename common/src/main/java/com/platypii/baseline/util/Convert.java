@@ -173,15 +173,15 @@ public class Convert {
      * @param m meters
      */
     public static String distanceShort(double m) {
-        if(Double.isNaN(m)) {
+        if (Double.isNaN(m)) {
             return "";
-        } else if(Double.isInfinite(m)) {
+        } else if (Double.isInfinite(m)) {
             return Double.toString(m);
         } else {
             String unitString;
             String localValue;
-            if(metric) {
-                if(m >= 1000) {
+            if (metric) {
+                if (m >= 1000) {
                     unitString = "km";
                     localValue = ConvertUtil.formatDouble(m * 0.001, 1);
                 } else {
@@ -189,11 +189,11 @@ public class Convert {
                     localValue = Long.toString(Math.round(m));
                 }
             } else {
-                if(m >= MILE) {
+                if (m >= MILE) {
                     // Need max because of float error
                     final double miles = Math.max(1, m * 0.000621371192);
                     unitString = "mi";
-                    localValue = ConvertUtil.formatDouble(miles, 1);
+                    localValue = ConvertUtil.formatDouble(miles, 2);
                 } else {
                     unitString = "ft";
                     localValue = Long.toString(Math.round(m * 3.2808399));

@@ -1,9 +1,7 @@
 package com.platypii.baseline.views;
 
 import com.platypii.baseline.Services;
-import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.location.Geo;
-import com.platypii.baseline.location.LocationProvider;
 import com.platypii.baseline.places.Place;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
@@ -16,8 +14,9 @@ import android.graphics.Path;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
+import java.util.List;
 
-// TODO: On tap, prompt to set home location?
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 
 public class NavView extends View implements Subscriber<MLocation> {
 
@@ -42,11 +41,11 @@ public class NavView extends View implements Subscriber<MLocation> {
         final int width = getWidth();
         final int height = getHeight();
 
-        final float center_x = width / 2.0f;
-        final float center_y = height / 2.0f;
+        final float center_x = width * 0.5f;
+        final float center_y = height * 0.5f;
 
-        final MLocation currentLocation = Services.location.lastLoc;
-        if (currentLocation != null) { // TODO: Check for freshness?
+        if (Services.location.isFresh()) {
+            final MLocation currentLocation = Services.location.lastLoc;
             // Nearest place
             final Place place = Services.places.nearestPlace.cached(currentLocation);
             if (place != null) {
@@ -81,27 +80,28 @@ public class NavView extends View implements Subscriber<MLocation> {
                     canvas.drawPath(arrow, paint);
                     canvas.restore();
                 }
+            } else {
+                paint.setColor(0xffeeeeee);
+                paint.setTextSize(24 * density);
+                final List<Place> places = Services.places.getPlaces();
+                if (places == null || places.isEmpty()) {
+                    canvas.drawText("no places", center_x, center_y, paint);
+                } else {
+                    canvas.drawText("no target", center_x, center_y, paint);
+                }
             }
+        } else if (Services.bluetooth.getState() != BT_CONNECTED) {
+            paint.setColor(0xffeeeeee);
+            paint.setTextSize(24 * density);
+            canvas.drawText("not connected", center_x, center_y, paint);
         } else {
+            paint.setColor(0xffeeeeee);
+            paint.setTextSize(24 * density);
             canvas.drawText("no signal", center_x, center_y, paint);
         }
-
-//        // Hand
-//        paint.setStyle(Paint.Style.FILL);
-//        paint.setColor(0xff111111);
-//        if(!Double.isNaN(altitude)) {
-//            canvas.save();
-//            final float theta360 = (float) (360 * altitude / options.max_altitude);
-//            final float scale = (float) (radius * 0.90);
-//            canvas.translate(center_x, center_y);
-//            canvas.rotate(theta360, 0, 0);
-//            canvas.scale(scale, scale);
-//            canvas.drawPath(hand, paint);
-//            canvas.restore();
-//        }
     }
 
-    public void start(@NonNull LocationProvider locationService, @NonNull MyAltimeter altimeter) {
+    public void start() {
         // Start listening for location updates
         Services.location.locationUpdates.subscribe(this);
     }
