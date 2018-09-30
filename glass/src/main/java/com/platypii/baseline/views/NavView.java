@@ -1,9 +1,7 @@
 package com.platypii.baseline.views;
 
 import com.platypii.baseline.Services;
-import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.location.Geo;
-import com.platypii.baseline.location.LocationProvider;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.places.Place;
 import com.platypii.baseline.measurements.MLocation;
@@ -15,8 +13,7 @@ import android.graphics.Path;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
-
-// TODO: On tap, prompt to set home location?
+import java.util.List;
 
 public class NavView extends View implements MyLocationListener {
 
@@ -41,21 +38,21 @@ public class NavView extends View implements MyLocationListener {
         final int width = getWidth();
         final int height = getHeight();
 
-        final float center_x = width / 2.0f;
-        final float center_y = height / 2.0f;
+        final float center_x = width * 0.5f;
+        final float center_y = height * 0.5f;
 
         final MLocation currentLocation = Services.location.lastLoc;
         if (currentLocation != null) { // TODO: Check for freshness?
             // Nearest place
-            final Place place = Services.places.getNearestPlace(currentLocation);
+            final Place place = Services.places.nearestPlace.cached(currentLocation);
             if (place != null) {
                 // Bearing from here to place
-                final double absoluteBearing = Geo.bearing(currentLocation.latitude, currentLocation.longitude, place.latitude, place.longitude);
+                final double absoluteBearing = Geo.bearing(currentLocation.latitude, currentLocation.longitude, place.lat, place.lng);
                 // Bearing relative to flight path
                 final double bearing = absoluteBearing - Services.location.bearing();
 
                 // Distance to place
-                final double distance = Geo.distance(currentLocation.latitude, currentLocation.longitude, place.latitude, place.longitude);
+                final double distance = Geo.distance(currentLocation.latitude, currentLocation.longitude, place.lat, place.lng);
 
                 // Draw location label
                 paint.setColor(0xffaaaaaa);
@@ -80,27 +77,24 @@ public class NavView extends View implements MyLocationListener {
                     canvas.drawPath(arrow, paint);
                     canvas.restore();
                 }
+            } else {
+                paint.setColor(0xffeeeeee);
+                paint.setTextSize(24 * density);
+                final List<Place> places = Services.places.getPlaces();
+                if (places == null || places.isEmpty()) {
+                    canvas.drawText("no places", center_x, center_y, paint);
+                } else {
+                    canvas.drawText("no target", center_x, center_y, paint);
+                }
             }
         } else {
+            paint.setColor(0xffeeeeee);
+            paint.setTextSize(24 * density);
             canvas.drawText("no signal", center_x, center_y, paint);
         }
-
-//        // Hand
-//        paint.setStyle(Paint.Style.FILL);
-//        paint.setColor(0xff111111);
-//        if(!Double.isNaN(altitude)) {
-//            canvas.save();
-//            final float theta360 = (float) (360 * altitude / options.max_altitude);
-//            final float scale = (float) (radius * 0.90);
-//            canvas.translate(center_x, center_y);
-//            canvas.rotate(theta360, 0, 0);
-//            canvas.scale(scale, scale);
-//            canvas.drawPath(hand, paint);
-//            canvas.restore();
-//        }
     }
 
-    public void start(@NonNull LocationProvider locationService, @NonNull MyAltimeter altimeter) {
+    public void start() {
         // Start listening for location updates
         Services.location.addListener(this);
     }

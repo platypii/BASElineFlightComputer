@@ -46,7 +46,7 @@ public class Services {
      * Call this in onCreate
      */
     public static void create(@NonNull Activity activity) {
-        if(prefs == null) {
+        if (prefs == null) {
             Log.i(TAG, "Loading app preferences");
             loadPreferences(activity.getApplicationContext());
         }
@@ -54,7 +54,7 @@ public class Services {
 
     public static void start(@NonNull Activity activity) {
         startCount++;
-        if(!initialized) {
+        if (!initialized) {
             initialized = true;
             final long startTime = System.currentTimeMillis();
             Log.i(TAG, "Starting services");
@@ -64,7 +64,7 @@ public class Services {
             // Start the various services
 
             Log.i(TAG, "Starting bluetooth service");
-            if(bluetooth.preferences.preferenceEnabled) {
+            if (bluetooth.preferences.preferenceEnabled) {
                 bluetooth.start(activity);
             }
 
@@ -90,7 +90,7 @@ public class Services {
             places.start(appContext);
 
             Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
-        } else if(startCount > 2) {
+        } else if (startCount > 2) {
             // Activity lifecycles can overlap
             Log.w(TAG, "Services started more than twice");
         } else {
@@ -100,7 +100,7 @@ public class Services {
 
     public static void stop() {
         startCount--;
-        if(startCount == 0) {
+        if (startCount == 0) {
             Log.i(TAG, String.format("All activities have stopped. Services will stop in %.3fs", shutdownDelay * 0.001));
             handler.postDelayed(stopRunnable, shutdownDelay);
         }
@@ -115,7 +115,7 @@ public class Services {
      * Stop services IF nothing is using them
      */
     private static synchronized void stopIfIdle() {
-        if(initialized && startCount == 0) {
+        if (initialized && startCount == 0) {
             Log.i(TAG, "All activities have stopped. Stopping services.");
             // Stop services
             alti.stop();

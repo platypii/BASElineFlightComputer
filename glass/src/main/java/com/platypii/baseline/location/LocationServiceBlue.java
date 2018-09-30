@@ -27,7 +27,7 @@ public class LocationServiceBlue extends LocationProvider {
     private final MyLocationListener bluetoothListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
-            if(bluetooth.preferences.preferenceEnabled) {
+            if (bluetooth.preferences.preferenceEnabled) {
                 updateLocation(loc);
             }
         }

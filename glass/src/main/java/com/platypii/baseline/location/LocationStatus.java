@@ -2,7 +2,7 @@ package com.platypii.baseline.location;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.bluetooth.BluetoothState;
 import android.util.Log;
 import java.util.Locale;
 
@@ -28,14 +28,14 @@ public class LocationStatus {
         int icon;
 
         // GPS signal status
-        if(Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothService.BT_CONNECTED) {
+        if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothState.BT_CONNECTED) {
             // Bluetooth enabled, but not connected
             icon = R.drawable.warning;
-            switch(Services.bluetooth.getState()) {
-                case BluetoothService.BT_CONNECTING:
+            switch (Services.bluetooth.getState()) {
+                case BluetoothState.BT_CONNECTING:
                     message = "BT connecting...";
                     break;
-                case BluetoothService.BT_DISCONNECTED:
+                case BluetoothState.BT_DISCONNECTED:
                     message = "BT not connected";
                     break;
                 default:
@@ -44,7 +44,7 @@ public class LocationStatus {
             }
         } else {
             // Internal GPS, or bluetooth connected:
-            if(Services.location.lastFixDuration() < 0) {
+            if (Services.location.lastFixDuration() < 0) {
                 // No fix yet
                 message = "Searching...";
                 icon = R.drawable.status_red;
@@ -59,7 +59,7 @@ public class LocationStatus {
                 } else if (lastFixDuration > 2000) {
                     message = String.format(Locale.getDefault(), "Last fix %ds", lastFixDuration / 1000L);
                     icon = R.drawable.status_yellow;
-                } else if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() == BluetoothService.BT_CONNECTED) {
+                } else if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() == BluetoothState.BT_CONNECTED) {
                     message = String.format(Locale.getDefault(), "GPS %.2fHz", Services.location.refreshRate);
                     icon = R.drawable.status_blue;
                 } else {

@@ -2,12 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion "Google Inc.:Glass Development Kit Preview:19"
-    buildToolsVersion "28.0.2"
 
     defaultConfig {
         applicationId "com.platypii.baseline"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
@@ -25,8 +24,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.android.support:support-annotations:27.1.1'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation project(':common')
 }

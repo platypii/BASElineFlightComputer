@@ -1,6 +1,5 @@
 package com.platypii.baseline.views;
 
-import com.platypii.baseline.Services;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -23,7 +22,7 @@ public class NavActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         // Start sensor updates
-        nav.start(Services.location, Services.alti);
+        nav.start();
     }
     @Override
     protected void onPause() {
