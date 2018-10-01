@@ -38,7 +38,7 @@ public class BluetoothActivity extends BaseActivity {
     }
 
     private void updateViews() {
-        if (Services.bluetooth.preferences.preferenceDeviceName.startsWith("XGPS160")) {
+        if (Services.bluetooth.preferences.preferenceDeviceName != null && Services.bluetooth.preferences.preferenceDeviceName.startsWith("XGPS160")) {
             bluetoothPhoto.setVisibility(View.VISIBLE);
         } else {
             bluetoothPhoto.setVisibility(View.GONE);
