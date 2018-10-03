@@ -41,6 +41,7 @@ public class AnalogAltimeter extends View {
         paint.setAntiAlias(true);
     }
 
+    @NonNull
     private Path makeHand() {
         final Path hand = new Path();
         final float w1 = 0.025f; // The radius of the dot

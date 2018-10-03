@@ -8,7 +8,7 @@ import java.io.OutputStream;
 
 public class IOUtil {
 
-    public static void copy(InputStream input, OutputStream output) throws IOException {
+    public static void copy(InputStream input, @NonNull OutputStream output) throws IOException {
         final byte buffer[] = new byte[1024];
         int bytesRead;
         while ((bytesRead = input.read(buffer)) != -1) {

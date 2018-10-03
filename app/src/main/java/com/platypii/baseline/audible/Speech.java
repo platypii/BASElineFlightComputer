@@ -2,6 +2,7 @@ package com.platypii.baseline.audible;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import java.util.ArrayList;
@@ -11,8 +12,11 @@ class Speech implements TextToSpeech.OnInitListener {
     private static final String TAG = "Speech";
 
     private boolean isReady = false;
+
+    @NonNull
     private final TextToSpeech tts;
 
+    @Nullable
     private List<String> queue;
 
     Speech(Context context) {

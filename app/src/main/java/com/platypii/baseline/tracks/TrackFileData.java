@@ -29,7 +29,7 @@ public class TrackFileData {
     private static final String TAG = "TrackFileData";
 
     @NonNull
-    public static List<MLocation> getTrackData(File trackFile) {
+    public static List<MLocation> getTrackData(@NonNull File trackFile) {
         // Try and parse file
         final List<MLocation> trackData = readTrackFile(trackFile);
         // Trim plane and ground
@@ -64,6 +64,7 @@ public class TrackFileData {
         return new ArrayList<>();
     }
 
+    @NonNull
     private static List<MLocation> readTrackReader(BufferedReader br) throws IOException {
         // Altitude kalman filters
         final Filter baroAltitudeFilter = new FilterKalman();
@@ -181,7 +182,7 @@ public class TrackFileData {
         }
     }
 
-    private static double getColumnDouble(String[] row, Map<String,Integer> columns, String columnName) {
+    private static double getColumnDouble(String[] row, @NonNull Map<String,Integer> columns, String columnName) {
         try {
             return Double.parseDouble(row[columns.get(columnName)]);
         } catch (Exception e) {
@@ -189,7 +190,7 @@ public class TrackFileData {
         }
     }
 
-    private static long getColumnLong(String[] row, Map<String,Integer> columns, String columnName) {
+    private static long getColumnLong(String[] row, @NonNull Map<String,Integer> columns, String columnName) {
         try {
             return Long.parseLong(row[columns.get(columnName)]);
         } catch (Exception e) {
@@ -197,7 +198,7 @@ public class TrackFileData {
         }
     }
 
-    private static long getColumnDate(String[] row, Map<String,Integer> columns, String columnName) {
+    private static long getColumnDate(String[] row, @NonNull Map<String,Integer> columns, String columnName) {
         try {
             final String dateString = row[columns.get(columnName)];
             return parseFlySightDate(dateString);
@@ -207,7 +208,7 @@ public class TrackFileData {
     }
 
     private static SimpleDateFormat df;
-    static long parseFlySightDate(String dateString) throws ParseException {
+    static long parseFlySightDate(@NonNull String dateString) throws ParseException {
         // Lazy init
         if (df == null) {
             // 2018-01-25T11:48:09.80Z

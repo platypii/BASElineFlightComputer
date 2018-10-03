@@ -17,6 +17,7 @@ public class TrackFile {
         this.file = file;
     }
 
+    @NonNull
     public String getName() {
         return file.getName()
                 .replaceAll(".csv.gz", "")

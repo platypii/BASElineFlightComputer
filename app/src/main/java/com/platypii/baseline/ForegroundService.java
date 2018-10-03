@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 public class ForegroundService extends Service {
@@ -19,7 +20,7 @@ public class ForegroundService extends Service {
     private boolean audible = false;
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         final String action = intent == null ? null : intent.getAction();
         if (ACTION_START_LOGGING.equals(action)) {
             Log.i(TAG, "Received start logging action");

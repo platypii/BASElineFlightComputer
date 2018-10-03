@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 public class AudibleSettings {
 
     // Defaults
+    @NonNull
     public static AudibleMode mode = AudibleModes.get("horizontal_speed");
     public static double min = mode.defaultMin;
     public static double max = mode.defaultMax;

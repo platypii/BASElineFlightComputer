@@ -41,6 +41,7 @@ public class TrackStore implements BaseService {
      * Return non-uploaded and non-recording tracks.
      * In other words, the things we should list in track listing view.
      */
+    @NonNull
     public List<TrackFile> getLocalTracks() {
         if (!initialized) {
             Log.e(TAG, "Track store not initialized");
@@ -72,7 +73,7 @@ public class TrackStore implements BaseService {
 
     public void setUploading(@NonNull TrackFile trackFile) {
         final TrackState state = trackState.get(trackFile);
-        if (state != null && state instanceof TrackState.TrackNotUploaded) {
+        if (state instanceof TrackState.TrackNotUploaded) {
             trackState.put(trackFile, new TrackState.TrackUploading(trackFile));
         } else {
             Log.e(TAG, "Invalid track state transition: " + state + " -> uploading");
@@ -85,7 +86,7 @@ public class TrackStore implements BaseService {
 
     public int getUploadProgress(@NonNull TrackFile trackFile) {
         final TrackState state = trackState.get(trackFile);
-        if (state != null && state instanceof TrackState.TrackUploading) {
+        if (state instanceof TrackState.TrackUploading) {
             return ((TrackState.TrackUploading) state).progress;
         } else {
             Log.e(TAG, "Invalid track state: cannot get upload progress in state " + state);
@@ -95,7 +96,7 @@ public class TrackStore implements BaseService {
 
     public void setUploadProgress(@NonNull TrackFile trackFile, int bytesCopied) {
         final TrackState state = trackState.get(trackFile);
-        if (state != null && state instanceof TrackState.TrackUploading) {
+        if (state instanceof TrackState.TrackUploading) {
             ((TrackState.TrackUploading) state).progress = bytesCopied;
         } else {
             Log.e(TAG, "Invalid track state: upload progress in state " + state);
@@ -104,13 +105,13 @@ public class TrackStore implements BaseService {
 
     public boolean isUploading(@NonNull TrackFile trackFile) {
         final TrackState state = trackState.get(trackFile);
-        return state != null && state instanceof TrackState.TrackUploading;
+        return state instanceof TrackState.TrackUploading;
     }
 
     @Nullable
     public CloudData getCloudData(@NonNull TrackFile trackFile) {
         final TrackState state = trackState.get(trackFile);
-        if (state != null && state instanceof TrackState.TrackUploaded) {
+        if (state instanceof TrackState.TrackUploaded) {
             return ((TrackState.TrackUploaded) state).cloudData;
         } else {
             return null;

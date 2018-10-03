@@ -1,5 +1,7 @@
 package com.platypii.baseline.util;
 
+import android.support.annotation.NonNull;
+
 public class StringBuilderUtil {
 
     /**
@@ -32,7 +34,7 @@ public class StringBuilderUtil {
     /**
      * Acts like StringBuilder.append(String.format("%02d", x)) but avoids allocating any memory.
      */
-    public static void format2d(StringBuilder sb, long x) {
+    public static void format2d(@NonNull StringBuilder sb, long x) {
         if (x < 10) {
             sb.append('0');
         }
@@ -42,7 +44,7 @@ public class StringBuilderUtil {
     /**
      * Acts like StringBuilder.append(String.format("%03d", x)) but avoids allocating any memory.
      */
-    public static void format3d(StringBuilder sb, long x) {
+    public static void format3d(@NonNull StringBuilder sb, long x) {
         if (x < 10) {
             sb.append("00");
         } else if (x < 100) {

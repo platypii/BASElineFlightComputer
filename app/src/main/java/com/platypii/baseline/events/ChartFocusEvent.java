@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
  */
 public class ChartFocusEvent {
 
+    @Nullable
     public final MLocation location;
 
     public ChartFocusEvent(@Nullable MLocation location) {

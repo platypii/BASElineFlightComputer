@@ -3,6 +3,7 @@ package com.platypii.baseline.views.map;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.util.Numbers;
+import android.support.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -13,7 +14,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 class MyPositionLayer implements MapLayer {
 
     private final Marker myPositionMarker;
+    @NonNull
     private final BitmapDescriptor myposition1;
+    @NonNull
     private final BitmapDescriptor myposition2;
 
     MyPositionLayer(GoogleMap map) {

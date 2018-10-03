@@ -22,11 +22,11 @@ public class FilterKalman2 extends Filter {
     private static final double sensorVariance = 600; // measurement variance ("r" in typical kalman notation)
     private static final double accelerationVariance = 8; // acceleration variance
 
-    private Tensor2x1 x = new Tensor2x1(); // State estimate
-    private Tensor2x1 k = new Tensor2x1(); // Kalman gain
-    private Tensor2x2 p = new Tensor2x2();
-    private Tensor2x2 q = new Tensor2x2(); // Estimated covariance
-    private Tensor2x2 a = new Tensor2x2(); // dt adjustment
+    private final Tensor2x1 x = new Tensor2x1(); // State estimate
+    private final Tensor2x1 k = new Tensor2x1(); // Kalman gain
+    private final Tensor2x2 p = new Tensor2x2();
+    private final Tensor2x2 q = new Tensor2x2(); // Estimated covariance
+    private final Tensor2x2 a = new Tensor2x2(); // dt adjustment
 
     private boolean initialized = false;
 

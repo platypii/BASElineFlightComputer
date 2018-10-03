@@ -24,7 +24,7 @@ class PlaceFile {
     private static final String placeFilename = "places/places.csv.gz";
     private static final long ttl = 24 * 60 * 60 * 1000; // Update if data is older than 1 day
 
-    File file;
+    final File file;
 
     PlaceFile(@NonNull Context context) {
         file = new File(context.getFilesDir(), placeFilename);
@@ -41,6 +41,7 @@ class PlaceFile {
     /**
      * Parse places from local file into list of Places
      */
+    @NonNull
     List<Place> parse() throws IOException {
         Log.i(TAG, "Loading places from file (" + (file.length()>>10) + " KiB)");
         final List<Place> places = new ArrayList<>();
@@ -73,6 +74,7 @@ class PlaceFile {
         return places;
     }
 
+    @NonNull
     private static Map<String,Integer> getColumns(String header) {
         final Map<String,Integer> columns = new HashMap<>();
         final String[] headers = header.split(",");
@@ -82,7 +84,7 @@ class PlaceFile {
         return columns;
     }
 
-    private static double getColumnDouble(String[] row, Map<String,Integer> columns, String columnName) {
+    private static double getColumnDouble(String[] row, @NonNull Map<String,Integer> columns, String columnName) {
         try {
             return Numbers.parseDouble(row[columns.get(columnName)]);
         } catch (Exception e) {

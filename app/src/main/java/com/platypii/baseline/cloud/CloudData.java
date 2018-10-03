@@ -1,7 +1,6 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.tracks.TrackFiles;
-import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import java.io.File;
@@ -31,6 +30,7 @@ public class CloudData {
     /**
      * Returns the file location of the local track data file
      */
+    @NonNull
     public File localFile(@NonNull Context context) {
         final File trackDir = TrackFiles.getTrackDirectory(context);
         return new File(trackDir, "tracks/" + track_id + "/track.csv.gz");
@@ -39,6 +39,7 @@ public class CloudData {
     /**
      * Returns the file location of the local abbreviated (gps only) track data file
      */
+    @NonNull
     public File abbrvFile(@NonNull Context context) {
         final File trackDir = TrackFiles.getTrackDirectory(context);
         return new File(trackDir, "tracks/" + track_id + "/track-abbrv.csv");
@@ -55,6 +56,7 @@ public class CloudData {
         return new CloudData(track_id, date, date_string, trackUrl, trackKml, location);
     }
 
+    @NonNull
     JSONObject toJson() {
         final JSONObject obj = new JSONObject();
         try {
@@ -64,11 +66,8 @@ public class CloudData {
             obj.put("trackUrl", trackUrl);
             obj.put("trackKml", trackKml);
             obj.put("location", location);
-            return obj;
-        } catch (JSONException e) {
-            Exceptions.report(e);
-            return null;
-        }
+        } catch (JSONException ignored) {}
+        return obj;
     }
 
     @Override

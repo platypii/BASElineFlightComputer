@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import org.greenrobot.eventbus.EventBus;
 
@@ -22,7 +23,9 @@ public class MyAudible implements BaseService {
 
     private SharedPreferences prefs;
 
+    @Nullable
     private Speech speech;
+    @Nullable
     private AudibleThread audibleThread;
 
     private boolean isInitialized = false;

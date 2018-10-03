@@ -13,6 +13,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -24,9 +25,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class MySensorManager implements SensorEventListener, BaseService {
     private static final String TAG = "MySensorManager";
 
-    private static final int sensorDelay = 100000; // microseconds
+    @Nullable
     private SensorManager sensorManager;
     private boolean enabled = false;
+
+    private static final int sensorDelay = 100000; // microseconds
 
     // History
     public final SyncedList<MSensor> gravity = new SyncedList<>();

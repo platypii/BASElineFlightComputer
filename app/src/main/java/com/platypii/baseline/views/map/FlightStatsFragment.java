@@ -25,7 +25,7 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener 
     private TextView flightStatsGlide;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.flight_stats, container, false);
         flightStatsVario = view.findViewById(R.id.flightStatsVario);
         flightStatsSpeed = view.findViewById(R.id.flightStatsSpeed);

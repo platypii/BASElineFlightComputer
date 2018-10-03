@@ -26,6 +26,7 @@ public class PolarPlot extends PlotView {
     private final Bounds inner = new Bounds();
     private final Bounds outer = new Bounds();
 
+    @Nullable
     private MLocation focus;
 
     public PolarPlot(Context context, AttributeSet attrs) {
@@ -50,7 +51,7 @@ public class PolarPlot extends PlotView {
         paint.setStrokeJoin(Paint.Join.ROUND);
     }
 
-    public void loadTrack(List<MLocation> trackData) {
+    public void loadTrack(@NonNull List<MLocation> trackData) {
         this.trackData = trackData;
 
         // Load track data into time series

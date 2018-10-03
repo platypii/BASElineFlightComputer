@@ -127,8 +127,7 @@ public class TrackListing implements BaseService {
     static String toJson(@NonNull List<CloudData> trackList) {
         final JSONArray arr = new JSONArray();
         for (CloudData track : trackList) {
-            final JSONObject trackObj = track.toJson();
-            arr.put(trackObj);
+            arr.put(track.toJson());
         }
         return arr.toString();
     }

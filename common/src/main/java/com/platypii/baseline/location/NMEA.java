@@ -2,6 +2,7 @@ package com.platypii.baseline.location;
 
 import com.platypii.baseline.util.Exceptions;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -51,7 +52,7 @@ class NMEA {
     /**
      * Parse DDMMYY into milliseconds since epoch
      */
-    static long parseDate(String date) {
+    static long parseDate(@Nullable String date) {
         if (date == null || date.isEmpty()) {
             return 0;
         } else {
@@ -71,7 +72,7 @@ class NMEA {
     /**
      * Parse HHMMSS.SS UTC time into milliseconds since midnight
      */
-    static long parseTime(String time) {
+    static long parseTime(@Nullable String time) {
         if (time == null || time.isEmpty()) {
             return 0;
         } else {

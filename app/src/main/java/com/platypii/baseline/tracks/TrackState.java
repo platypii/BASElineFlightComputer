@@ -10,6 +10,7 @@ class TrackState {
 
     static class TrackRecording extends TrackState {}
     static class TrackNotUploaded extends TrackState {
+        @NonNull
         final TrackFile trackFile;
 
         TrackNotUploaded(@NonNull TrackFile trackFile) {
@@ -17,6 +18,7 @@ class TrackState {
         }
     }
     static class TrackUploading extends TrackState {
+        @NonNull
         final TrackFile trackFile;
         int progress = 0;
 
@@ -25,6 +27,7 @@ class TrackState {
         }
     }
     static class TrackUploaded extends TrackState {
+        @NonNull
         final CloudData cloudData;
 
         TrackUploaded(@NonNull CloudData cloudData) {

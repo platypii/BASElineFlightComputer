@@ -96,8 +96,9 @@ public class ChartsActivity extends BaseActivity {
     }
 
     private static class LoadTask extends AsyncTask<Void,Void,Void> {
-        private final File trackFile;
+        @NonNull
         private final WeakReference<ChartsActivity> activityRef;
+        private final File trackFile;
 
         private LoadTask(File trackFile, ChartsActivity activity) {
             this.trackFile = trackFile;
@@ -126,7 +127,7 @@ public class ChartsActivity extends BaseActivity {
     /**
      * Load data into charts, called from LoadTask in background thread
      */
-    private void loadData(List<MLocation> trackData) {
+    private void loadData(@NonNull List<MLocation> trackData) {
         stats = new TrackStats(trackData);
         timeChart.loadTrack(trackData);
         flightProfile.loadTrack(trackData);

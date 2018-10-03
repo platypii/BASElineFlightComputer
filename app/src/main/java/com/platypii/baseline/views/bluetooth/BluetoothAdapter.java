@@ -15,6 +15,7 @@ import java.util.List;
 
 class BluetoothAdapter extends BaseAdapter {
 
+    @NonNull
     private final List<BluetoothDevice> devices;
 
     private final LayoutInflater inflater;

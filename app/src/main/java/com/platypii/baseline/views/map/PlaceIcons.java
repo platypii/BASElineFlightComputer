@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.map;
 
 import com.platypii.baseline.R;
+import android.support.annotation.NonNull;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
@@ -13,6 +14,7 @@ public class PlaceIcons {
     public static final BitmapDescriptor dz = BitmapDescriptorFactory.fromResource(R.drawable.ic_pin);
     public static final BitmapDescriptor other = BitmapDescriptorFactory.fromResource(R.drawable.ic_pin);
 
+    @NonNull
     public static BitmapDescriptor icon(String objectType) {
         switch (objectType) {
             case "B": return PlaceIcons.b;

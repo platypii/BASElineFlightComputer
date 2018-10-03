@@ -21,6 +21,7 @@ public class Places implements BaseService {
     private PlaceFile placeFile;
 
     // In-memory cache of places, lazy loaded on first call to getNearestPlace()
+    @Nullable
     private List<Place> places = null;
 
     @Override

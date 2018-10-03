@@ -85,6 +85,7 @@ public abstract class PlotView extends View {
      * @param dataBounds the data bounds from the last render pass
      * @return the view bounds, in plot-space
      */
+    @NonNull
     abstract Bounds getBounds(@NonNull Bounds dataBounds, int axis);
 
 }

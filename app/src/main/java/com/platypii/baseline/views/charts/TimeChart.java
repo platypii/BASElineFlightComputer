@@ -22,6 +22,7 @@ public class TimeChart extends PlotView {
     private final DataSeries speedSeries = new DataSeries();
     private final DataSeries glideSeries = new DataSeries();
 
+    @Nullable
     private MLocation focus;
 
     public TimeChart(Context context, AttributeSet attrs) {
@@ -40,7 +41,7 @@ public class TimeChart extends PlotView {
         plot.initBounds(3);
     }
 
-    public void loadTrack(List<MLocation> trackData) {
+    public void loadTrack(@NonNull List<MLocation> trackData) {
         this.trackData = trackData;
 
         // Load track data into individual time series

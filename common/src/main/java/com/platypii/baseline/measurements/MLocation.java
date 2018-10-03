@@ -61,6 +61,7 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
         this.satellitesInView = satellitesInView;
     }
 
+    @NonNull
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc

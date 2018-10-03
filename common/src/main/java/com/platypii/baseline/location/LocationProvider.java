@@ -29,6 +29,7 @@ public abstract class LocationProvider implements BaseService {
     /**
      * Give a useful name to the inherited provider
      */
+    @NonNull
     protected abstract String providerName();
 
     /**

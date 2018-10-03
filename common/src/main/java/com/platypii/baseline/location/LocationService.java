@@ -28,8 +28,11 @@ public class LocationService extends LocationProvider {
     // LocationService owns the alti, because it solved the circular dependency problem
     public final MyAltimeter alti = new MyAltimeter(this);
 
+    @NonNull
     private final LocationProviderNMEA locationProviderNMEA;
+    @NonNull
     private final LocationProviderAndroid locationProviderAndroid;
+    @NonNull
     private final LocationProviderBluetooth locationProviderBluetooth;
 
     public LocationService(BluetoothService bluetooth) {

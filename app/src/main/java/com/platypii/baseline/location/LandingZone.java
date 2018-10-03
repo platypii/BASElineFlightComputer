@@ -54,7 +54,7 @@ public class LandingZone {
         }
     }
 
-    public static void setHomeLocation(Context context, LatLng home) {
+    public static void setHomeLocation(Context context, @Nullable LatLng home) {
         LandingZone.homeLoc = home;
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final SharedPreferences.Editor editor = prefs.edit();

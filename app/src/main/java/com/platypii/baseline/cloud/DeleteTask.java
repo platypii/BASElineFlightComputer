@@ -16,10 +16,12 @@ import org.greenrobot.eventbus.EventBus;
 class DeleteTask implements Runnable {
     private static final String TAG = "DeleteTask";
 
+    @NonNull
     private final String auth;
+    @NonNull
     private final CloudData track;
 
-    DeleteTask(@NonNull String auth, CloudData track) {
+    DeleteTask(@NonNull String auth, @NonNull CloudData track) {
         this.auth = auth;
         this.track = track;
     }

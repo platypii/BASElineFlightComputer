@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,6 +25,7 @@ class Notifications implements BaseService {
     static final int notificationId = 117;
     private static final String channelId = "baseline_active_channel_01";
 
+    @Nullable
     private Context context;
 
     @Override
@@ -108,7 +110,7 @@ class Notifications implements BaseService {
 
     // Subscribe to updates
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoggingEvent(LoggingEvent event) {
+    public void onLoggingEvent(@NonNull LoggingEvent event) {
         final Intent service = new Intent(context, ForegroundService.class);
         if (event.started) {
             service.setAction(ForegroundService.ACTION_START_LOGGING);
@@ -118,7 +120,7 @@ class Notifications implements BaseService {
         context.startService(service);
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAudibleEvent(AudibleEvent event) {
+    public void onAudibleEvent(@NonNull AudibleEvent event) {
         final Intent service = new Intent(context, ForegroundService.class);
         if (event.started) {
             service.setAction(ForegroundService.ACTION_START_AUDIBLE);

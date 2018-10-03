@@ -1,6 +1,7 @@
 package com.platypii.baseline.measurements;
 
 import com.platypii.baseline.util.Numbers;
+import android.support.annotation.NonNull;
 
 /**
  * Copies an android SensorEvent
@@ -25,6 +26,7 @@ public class MRotation extends MSensor {
         return rotZ;
     }
 
+    @NonNull
     @Override
     public String toRow() {
         // millis,nano,sensor,pressure,lat,lon,hMSL,velN,velE,numSV,gX,gY,gZ,rotX,rotY,rotZ,acc

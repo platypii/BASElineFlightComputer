@@ -23,10 +23,15 @@ import org.greenrobot.eventbus.EventBus;
 public class DownloadTask implements Runnable {
     private static final String TAG = "DownloadTask";
 
+    @NonNull
     private final Context context;
+    @NonNull
     private final CloudData track;
+    @NonNull
     private final String trackUrl;
+    @NonNull
     private final File trackFile;
+    @NonNull
     private final File abbrvFile;
 
     public DownloadTask(@NonNull Context context, @NonNull CloudData track) {

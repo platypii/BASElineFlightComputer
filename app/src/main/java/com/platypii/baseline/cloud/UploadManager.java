@@ -8,6 +8,7 @@ import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.views.BaseActivity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -25,6 +26,7 @@ class UploadManager {
 
     // Used inside the uploadAll loop
     private boolean uploading = false;
+    @Nullable
     private TrackFile uploadingTrack = null;
 
     public void start(Context context) {

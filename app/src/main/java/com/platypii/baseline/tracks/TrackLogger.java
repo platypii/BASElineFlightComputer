@@ -114,7 +114,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
     /**
      * Returns the amount of time we've been logging, as a nice string 0:00.000
      */
-    public void getLogTime(StringBuilder sb) {
+    public void getLogTime(@NonNull StringBuilder sb) {
         sb.setLength(0);
         if (logging) {
             long nanoTime;

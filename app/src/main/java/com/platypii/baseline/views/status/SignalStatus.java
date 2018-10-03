@@ -31,7 +31,7 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
     };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.status_panel, container, false);
         signalStatus = view.findViewById(R.id.signalStatus);
         return view;

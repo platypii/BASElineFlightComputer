@@ -2,6 +2,7 @@ package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.IntBounds;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -30,7 +31,9 @@ class PlotOptions {
 
     // Axis options
     static class AxesOptions {
+        @NonNull
         AxisOptions x = new AxisOptions();
+        @NonNull
         AxisOptions y = new AxisOptions();
     }
     static class AxisOptions {

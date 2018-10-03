@@ -38,6 +38,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     // Android Location manager
     private static LocationManager manager;
 
+    @NonNull
     @Override
     protected String providerName() {
         return TAG;
@@ -322,6 +323,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "TIS":
                 // Samsung Note7
                 // $PSTIS,*61
+            case "TXT":
+                // $GNTXT,01,01,02,ANTSTATUS=INIT*3B
             case "ZCD":
                 // Rockchip 3GR
                 // $GNGST,183132.000,6.1,15,11,76,11,15,32

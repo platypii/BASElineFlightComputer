@@ -1,5 +1,6 @@
 package com.platypii.baseline.util.tensor;
 
+import android.support.annotation.NonNull;
 import java.util.Locale;
 
 /**
@@ -29,7 +30,7 @@ public class Tensor2x2 {
      * @param mat the matrix to dot against
      * @param output matrix to store the output in (this okay)
      */
-    public void plus(Tensor2x2 mat, Tensor2x2 output) {
+    public void plus(@NonNull Tensor2x2 mat, @NonNull Tensor2x2 output) {
         output.p11 = p11 + mat.p11;
         output.p12 = p12 + mat.p12;
         output.p21 = p21 + mat.p21;
@@ -42,7 +43,7 @@ public class Tensor2x2 {
      * @param mat the matrix to dot against
      * @param output matrix to store the output in (this okay)
      */
-    public void dot(Tensor2x2 mat, Tensor2x2 output) {
+    public void dot(@NonNull Tensor2x2 mat, @NonNull Tensor2x2 output) {
         final double q11 = p11 * mat.p11 + p12 * mat.p21;
         final double q12 = p11 * mat.p12 + p12 * mat.p22;
         final double q21 = p21 * mat.p11 + p22 * mat.p21;
@@ -59,7 +60,7 @@ public class Tensor2x2 {
      * @param mat the matrix to dot against
      * @param output matrix to store the output in (this okay)
      */
-    public void dotTranspose(Tensor2x2 mat, Tensor2x2 output) {
+    public void dotTranspose(@NonNull Tensor2x2 mat, @NonNull Tensor2x2 output) {
         final double q11 = p11 * mat.p11 + p12 * mat.p12;
         final double q12 = p11 * mat.p21 + p12 * mat.p22;
         final double q21 = p21 * mat.p11 + p22 * mat.p12;
