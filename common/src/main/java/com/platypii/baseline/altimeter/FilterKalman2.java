@@ -18,17 +18,24 @@ public class FilterKalman2 extends Filter {
     // TODO: Acceleration
     // TODO: Determine sensor variance from model error
 
-    // Kalman filter to update altitude and climb
-    private static final double sensorVariance = 600; // measurement variance ("r" in typical kalman notation)
-    private static final double accelerationVariance = 8; // acceleration variance
+    private final double sensorVariance; // measurement variance ("r" in typical kalman notation)
+    private final double accelerationVariance; // acceleration variance
 
     private final Tensor2x1 x = new Tensor2x1(); // State estimate
     private final Tensor2x1 k = new Tensor2x1(); // Kalman gain
-    private final Tensor2x2 p = new Tensor2x2();
-    private final Tensor2x2 q = new Tensor2x2(); // Estimated covariance
+    private final Tensor2x2 p = new Tensor2x2(); // Error covariance
+    private final Tensor2x2 q = new Tensor2x2(); // Process noise covariance
     private final Tensor2x2 a = new Tensor2x2(); // dt adjustment
 
     private boolean initialized = false;
+
+    public FilterKalman2() {
+        this(600, 8); // Defaults
+    }
+    private FilterKalman2(double sensorVariance, double accelerationVariance) {
+        this.sensorVariance = sensorVariance;
+        this.accelerationVariance = accelerationVariance;
+    }
 
     @Override
     public void init(double z, double v) {
@@ -69,6 +76,8 @@ public class FilterKalman2 extends Filter {
         // A = [1 dt]
         //     [0  1]
         a.p12 = dt;
+
+        // Estimated error covariance
         // P = A * P * A^T + Q
         a.dot(p, p);
         p.dotTranspose(a, p);
@@ -76,23 +85,23 @@ public class FilterKalman2 extends Filter {
 
         // Kalman gain
         k.set(
-            p.p11 / (p.p11 + sensorVariance),
-            p.p21 / (p.p11 + sensorVariance)
+                p.p11 / (p.p11 + sensorVariance),
+                p.p21 / (p.p11 + sensorVariance)
         );
 
         // Update state
         final double residual = z - predicted_altitude;
         x.set(
-            predicted_altitude + k.p1 * residual,
-            x.p2 + k.p2 * residual
+                predicted_altitude + k.p1 * residual,
+                x.p2 + k.p2 * residual
         );
 
-        // Update covariance
+        // Update error covariance
         p.set(
-            p.p11 * (1. - k.p1),
-            p.p12 * (1. - k.p1),
-            -p.p11 * k.p2 + p.p21,
-            -p.p12 * k.p2 + p.p22
+                p.p11 * (1. - k.p1),
+                p.p12 * (1. - k.p1),
+                -p.p11 * k.p2 + p.p21,
+                -p.p12 * k.p2 + p.p22
         );
     }
 
