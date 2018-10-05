@@ -27,7 +27,10 @@ public class FilterKalman2 extends Filter {
     private final Tensor2x2 q = new Tensor2x2(); // Process noise covariance
     private final Tensor2x2 a = new Tensor2x2(); // dt adjustment
 
-    private boolean initialized = false;
+    private static final int INIT0 = 0; // No samples
+    private static final int INIT1 = 1; // First sample, x initialized
+    private static final int READY = 2; // Second sample, v initialized
+    private int filterState = INIT0;
 
     public FilterKalman2() {
         this(600, 8); // Defaults
@@ -37,17 +40,20 @@ public class FilterKalman2 extends Filter {
         this.accelerationVariance = accelerationVariance;
     }
 
-    public void init(double z, double v) {
-        x.set(z, v);
-        // TODO: Reset params?
-        initialized = true;
-    }
-
     @Override
     public void update(double z, double dt) {
-        if (!initialized) {
+        // Filter initialization
+        if (filterState == INIT0) {
+            if (dt != 0) {
+                Log.e(TAG, "Invalid initial update: dt = " + dt);
+            }
             x.set(z, 0);
-            initialized = true;
+            filterState = INIT1;
+            return;
+        } else if (filterState == INIT1) {
+            final double v = (z - x.p1) / dt;
+            x.set(z, v);
+            filterState = READY;
             return;
         }
 

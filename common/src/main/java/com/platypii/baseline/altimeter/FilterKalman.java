@@ -1,5 +1,6 @@
 package com.platypii.baseline.altimeter;
 
+import com.platypii.baseline.util.tensor.Tensor1x2;
 import com.platypii.baseline.util.tensor.Tensor2x1;
 import com.platypii.baseline.util.tensor.Tensor2x2;
 import android.util.Log;
@@ -21,6 +22,9 @@ public class FilterKalman extends Filter {
     private final Tensor2x2 p = new Tensor2x2(); // Error covariance
     private final Tensor2x2 q = new Tensor2x2(); // Process noise covariance
     private final Tensor2x2 a = new Tensor2x2(); // dt adjustment
+
+    private final Tensor1x2 h = new Tensor1x2(); // Identity
+    private final Tensor2x2 p2 = new Tensor2x2(); // Temp error covariance
 
     private static final int INIT0 = 0; // No samples
     private static final int INIT1 = 1; // First sample, x initialized
@@ -100,12 +104,11 @@ public class FilterKalman extends Filter {
         );
 
         // Update error covariance
-        p.set(
-                p.p11 * (1. - k.p1),
-                p.p12 * (1. - k.p1),
-                -p.p11 * k.p2 + p.p21,
-                -p.p12 * k.p2 + p.p22
-        );
+        // P = (1 - K * H) * P = P - K * H * P
+        k.dot(h, p2);
+        p2.dot(p, p2);
+        p2.scale(-1);
+        p.plus(p2, p);
     }
 
     @Override

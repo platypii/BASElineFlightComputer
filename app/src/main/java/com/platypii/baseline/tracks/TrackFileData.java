@@ -116,7 +116,7 @@ public class TrackFileData {
                 final double vE = getColumnDouble(row, columns, "velE");
                 // Update gps altitude filter
                 if (gpsLastMillis < 0) {
-                    gpsAltitudeFilter.init(alt_gps, 0);
+                    gpsAltitudeFilter.update(alt_gps, 0);
                 } else {
                     final double dt = (millis - gpsLastMillis) * 0.001;
                     gpsAltitudeFilter.update(alt_gps, dt);
@@ -137,7 +137,7 @@ public class TrackFileData {
                 final double pressure = getColumnDouble(row, columns, "pressure");
                 final double pressureAltitude = BaroAltimeter.pressureToAltitude(pressure);
                 if (baroLastNano < 0) {
-                    baroAltitudeFilter.init(pressureAltitude, 0);
+                    baroAltitudeFilter.update(pressureAltitude, 0);
                 } else {
                     final double dt = (nano - baroLastNano) * 1E-9;
                     baroAltitudeFilter.update(pressureAltitude, dt);

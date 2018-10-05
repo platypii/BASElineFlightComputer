@@ -18,16 +18,16 @@ public class KalmanTest2 extends FilterTest {
     @Test
     public void sameSame() {
         Filter filter1 = new FilterKalman();
-        FilterKalman2 filter2 = new FilterKalman2();
+        Filter filter2 = new FilterKalman2();
         Random rand = new Random(2010);
 
         // Add first sample
         filter1.update(10, 0);
         filter1.update(10, 1);
-        filter2.init(10, 0);
+        filter2.update(10, 0);
         filter2.update(10, 1);
 
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100000; i++) {
             double z = rand.nextDouble() * 20;
             filter1.update(z, 1);
             filter2.update(z, 1);
