@@ -22,7 +22,10 @@ public class FilterKalman extends Filter {
     private final Tensor2x2 q = new Tensor2x2(); // Process noise covariance
     private final Tensor2x2 a = new Tensor2x2(); // dt adjustment
 
-    private boolean initialized = false;
+    private static final int INIT0 = 0; // No samples
+    private static final int INIT1 = 1; // First sample, x initialized
+    private static final int READY = 2; // Second sample, v initialized
+    private int filterState = INIT0;
 
     public FilterKalman() {
         this(600, 8); // Defaults
@@ -33,18 +36,23 @@ public class FilterKalman extends Filter {
     }
 
     @Override
-    public void init(double z, double v) {
-        x.set(z, v);
-        // TODO: Reset params?
-        initialized = true;
-    }
-
-    @Override
     public void update(double z, double dt) {
-        // Check for exceptions
-        if (!initialized) {
-            Log.e(TAG, "Invalid update: not initialized");
+        // Filter initialization
+        if (filterState == INIT0) {
+            if (dt != 0) {
+                Log.e(TAG, "Invalid initial update: dt = " + dt);
+            }
+            x.set(z, 0);
+            filterState = INIT1;
+            return;
+        } else if (filterState == INIT1) {
+            final double v = (z - x.p1) / dt;
+            x.set(z, v);
+            filterState = READY;
+            return;
         }
+
+        // Check for exceptions
         if (Double.isNaN(z)) {
             Log.e(TAG, "Invalid update: z = NaN");
             return;

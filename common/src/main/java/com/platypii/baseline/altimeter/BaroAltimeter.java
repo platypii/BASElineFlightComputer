@@ -111,7 +111,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
 
         // Apply kalman filter to pressure altitude, to produce smooth barometric pressure altitude.
         if (lastFixNano <= 0) {
-            filter.init(pressure_altitude_raw, 0);
+            filter.update(pressure_altitude_raw, 0);
         } else {
             filter.update(pressure_altitude_raw, deltaTime * 1E-9);
         }

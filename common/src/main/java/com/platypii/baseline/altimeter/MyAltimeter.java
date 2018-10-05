@@ -145,7 +145,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
             // Update gps kalman filter
             if (lastLoc == null) {
                 // Initial update
-                gpsFilter.init(loc.altitude_gps, 0);
+                gpsFilter.update(loc.altitude_gps, 0);
             } else {
                 final long deltaTime = loc.millis - lastLoc.millis; // time since last gps altitude
                 gpsFilter.update(loc.altitude_gps, deltaTime * 0.001);

@@ -37,7 +37,6 @@ public class FilterKalman2 extends Filter {
         this.accelerationVariance = accelerationVariance;
     }
 
-    @Override
     public void init(double z, double v) {
         x.set(z, v);
         // TODO: Reset params?
@@ -46,10 +45,13 @@ public class FilterKalman2 extends Filter {
 
     @Override
     public void update(double z, double dt) {
-        // Check for exceptions
         if (!initialized) {
-            Log.e(TAG, "Invalid update: not initialized");
+            x.set(z, 0);
+            initialized = true;
+            return;
         }
+
+        // Check for exceptions
         if (Double.isNaN(z)) {
             Log.e(TAG, "Invalid update: z = NaN");
             return;
