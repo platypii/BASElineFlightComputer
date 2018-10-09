@@ -7,6 +7,9 @@ import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
+import com.platypii.baseline.util.kalman.Filter;
+import com.platypii.baseline.util.kalman.FilterKalman;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;

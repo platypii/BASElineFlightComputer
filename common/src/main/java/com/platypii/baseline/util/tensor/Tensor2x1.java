@@ -31,7 +31,7 @@ public class Tensor2x1 {
      * this dot mat -> output
      * Writes to an output tensor because we want to avoid allocating memory.
      * @param mat the matrix to dot against
-     * @param output matrix to store the output in
+     * @param output matrix to store the output
      */
     public void dot(@NonNull Tensor1x2 mat, @NonNull Tensor2x2 output) {
         output.set(

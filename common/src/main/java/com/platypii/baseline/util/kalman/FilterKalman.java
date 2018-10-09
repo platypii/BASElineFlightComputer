@@ -1,19 +1,15 @@
-package com.platypii.baseline.altimeter;
+package com.platypii.baseline.util.kalman;
 
+import com.platypii.baseline.util.tensor.Tensor1x2;
 import com.platypii.baseline.util.tensor.Tensor2x1;
 import com.platypii.baseline.util.tensor.Tensor2x2;
 import android.util.Log;
 
 /**
  * Implements a Kalman Filter
- *
- * X_k = current estimate
- * K_k = kalman gain
- * Z_k = measured value
- * X_k = K_k Z_k + (1 - K_k) X_{k-1}
  */
-public class FilterKalman2 extends Filter {
-    private static final String TAG = "Kalman2";
+public class FilterKalman implements Filter {
+    private static final String TAG = "Kalman";
 
     // TODO: Acceleration
     // TODO: Determine sensor variance from model error
@@ -27,15 +23,18 @@ public class FilterKalman2 extends Filter {
     private final Tensor2x2 q = new Tensor2x2(); // Process noise covariance
     private final Tensor2x2 a = new Tensor2x2(); // dt adjustment
 
+    private final Tensor1x2 h = new Tensor1x2(); // Identity
+    private final Tensor2x2 temp = new Tensor2x2(); // Scratch space
+
     private static final int INIT0 = 0; // No samples
     private static final int INIT1 = 1; // First sample, x initialized
     private static final int READY = 2; // Second sample, v initialized
     private int filterState = INIT0;
 
-    public FilterKalman2() {
+    public FilterKalman() {
         this(600, 8); // Defaults
     }
-    private FilterKalman2(double sensorVariance, double accelerationVariance) {
+    private FilterKalman(double sensorVariance, double accelerationVariance) {
         this.sensorVariance = sensorVariance;
         this.accelerationVariance = accelerationVariance;
     }
@@ -70,20 +69,22 @@ public class FilterKalman2 extends Filter {
             Log.w(TAG, "Invalid kalman state: x = " + x);
         }
 
-        // Estimated state
-        final double predicted_altitude = x.p1 + x.p2 * dt;
-
         // dt^2, dt^3, dt^4
         final double dt2 = dt * dt;
         final double dt3 = dt2 * dt;
         final double dt4 = dt2 * dt2;
 
-        // Estimated covariance
-        q.set(0.25 * dt4, 0.5 * dt3, 0.5 * dt3, dt2);
-        q.scale(accelerationVariance);
         // A = [1 dt]
         //     [0  1]
         a.p12 = dt;
+
+        // Estimated state
+        // X = A X
+        a.dot(x, x);
+
+        // Estimated covariance
+        q.set(0.25 * dt4, 0.5 * dt3, 0.5 * dt3, dt2);
+        q.scale(accelerationVariance);
 
         // Estimated error covariance
         // P = A * P * A^T + Q
@@ -98,19 +99,18 @@ public class FilterKalman2 extends Filter {
         );
 
         // Update state
-        final double residual = z - predicted_altitude;
+        final double residual = z - x.p1;
         x.set(
-                predicted_altitude + k.p1 * residual,
+                x.p1 + k.p1 * residual,
                 x.p2 + k.p2 * residual
         );
 
         // Update error covariance
-        p.set(
-                p.p11 * (1. - k.p1),
-                p.p12 * (1. - k.p1),
-                -p.p11 * k.p2 + p.p21,
-                -p.p12 * k.p2 + p.p22
-        );
+        // P = (1 - K * H) * P = P - K * H * P
+        k.dot(h, temp);
+        temp.dot(p, temp);
+        temp.scale(-1);
+        p.plus(temp, p);
     }
 
     @Override

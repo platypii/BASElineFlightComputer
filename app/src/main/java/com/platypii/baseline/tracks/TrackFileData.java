@@ -1,8 +1,8 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.altimeter.BaroAltimeter;
-import com.platypii.baseline.altimeter.Filter;
-import com.platypii.baseline.altimeter.FilterKalman;
+import com.platypii.baseline.util.kalman.Filter;
+import com.platypii.baseline.util.kalman.FilterKalman;
 import com.platypii.baseline.measurements.MLocation;
 import android.support.annotation.NonNull;
 import android.util.Log;

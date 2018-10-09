@@ -1,14 +1,14 @@
-package com.platypii.baseline.altimeter;
+package com.platypii.baseline.util.kalman;
 
 /**
  * Abstract representation of a filter (eg- Low pass, high pass, moving average, kalman, etc)
  * Models a 1 dimensional physical process with position and velocity
  */
-public abstract class Filter {
+public interface Filter {
 
     // Official altitude data
-    public abstract double x(); // Meters AGL
-    public abstract double v(); // Rate of climb m/s
+    double x(); // Meters AGL
+    double v(); // Rate of climb m/s
     // public abstract double a(); // TODO: Vertical acceleration
 
     /**
@@ -16,6 +16,6 @@ public abstract class Filter {
      * @param z the measurement
      * @param dt the change in time since the last measurement. 0 for first reading.
      */
-    public abstract void update(double z, double dt);
+    void update(double z, double dt);
 
 }

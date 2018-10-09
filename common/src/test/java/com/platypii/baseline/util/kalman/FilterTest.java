@@ -1,4 +1,4 @@
-package com.platypii.baseline.altimeter;
+package com.platypii.baseline.util.kalman;
 
 import java.util.Random;
 import org.junit.Test;

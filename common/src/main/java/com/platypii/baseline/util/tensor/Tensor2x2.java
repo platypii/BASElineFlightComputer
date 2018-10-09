@@ -28,7 +28,7 @@ public class Tensor2x2 {
      * this plus mat -> output
      * Writes to an output tensor because we want to avoid allocating memory. Self is ok.
      * @param mat the matrix to dot against
-     * @param output matrix to store the output in (this okay)
+     * @param output matrix to store the output (this okay)
      */
     public void plus(@NonNull Tensor2x2 mat, @NonNull Tensor2x2 output) {
         output.p11 = p11 + mat.p11;
@@ -41,7 +41,19 @@ public class Tensor2x2 {
      * this dot mat -> output
      * Writes to an output tensor because we want to avoid allocating memory. Self is ok.
      * @param mat the matrix to dot against
-     * @param output matrix to store the output in (this okay)
+     * @param output matrix to store the output (this okay)
+     */
+    public void dot(Tensor2x1 mat, Tensor2x1 output) {
+        final double q1 = p11 * mat.p1 + p12 * mat.p2;
+        final double q2 = p21 * mat.p1 + p22 * mat.p2;
+        output.set(q1, q2);
+    }
+
+    /**
+     * this dot mat -> output
+     * Writes to an output tensor because we want to avoid allocating memory. Self is ok.
+     * @param mat the matrix to dot against
+     * @param output matrix to store the output (this okay)
      */
     public void dot(@NonNull Tensor2x2 mat, @NonNull Tensor2x2 output) {
         final double q11 = p11 * mat.p11 + p12 * mat.p21;
@@ -58,7 +70,7 @@ public class Tensor2x2 {
      * this dot mat^T -> output
      * Writes to an output tensor because we want to avoid allocating memory. Self is ok.
      * @param mat the matrix to dot against
-     * @param output matrix to store the output in (this okay)
+     * @param output matrix to store the output (this okay)
      */
     public void dotTranspose(@NonNull Tensor2x2 mat, @NonNull Tensor2x2 output) {
         final double q11 = p11 * mat.p11 + p12 * mat.p12;

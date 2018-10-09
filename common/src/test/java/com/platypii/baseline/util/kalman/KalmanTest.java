@@ -1,4 +1,4 @@
-package com.platypii.baseline.altimeter;
+package com.platypii.baseline.util.kalman;
 
 /**
  * Sanity checks for kalman filter
