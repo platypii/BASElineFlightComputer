@@ -93,12 +93,14 @@ public class FilterKalman implements Filter {
         p.plus(q, p);
 
         // Kalman gain
+        // K = P H^T (H P H^T + R)^-1 = P / (p1 + R)
         k.set(
                 p.p11 / (p.p11 + sensorVariance),
                 p.p21 / (p.p11 + sensorVariance)
         );
 
         // Update state
+        // X = X + K (z - H X)
         final double residual = z - x.p1;
         x.set(
                 x.p1 + k.p1 * residual,

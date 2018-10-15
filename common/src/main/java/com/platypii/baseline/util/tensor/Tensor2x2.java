@@ -92,7 +92,7 @@ public class Tensor2x2 {
 
     @Override
     public String toString() {
-        return String.format(Locale.US, "[[%f,%f],[%f,%f]]", p11 ,p12, p21, p22);
+        return String.format(Locale.US, "[[%f,%f],[%f,%f]]", p11, p12, p21, p22);
     }
 
 }
