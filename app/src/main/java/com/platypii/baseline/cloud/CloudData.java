@@ -31,7 +31,7 @@ public class CloudData {
      * Returns the file location of the local track data file
      */
     @NonNull
-    public File localFile(@NonNull Context context) {
+    File localFile(@NonNull Context context) {
         final File trackDir = TrackFiles.getTrackDirectory(context);
         return new File(trackDir, "tracks/" + track_id + "/track.csv.gz");
     }

@@ -13,7 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone"
-        android:src="@drawable/skypro"/>
+        android:src="@drawable/skypro"
+        android:contentDescription="@string/pref_bluetooth"/>
 
     <TextView
         android:id="@+id/bluetooth_status"

@@ -26,10 +26,10 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
     private final PlotAxes axes = new PlotAxes(options);
 
     // Object to store the plot state and drawing primitives
-    final Plot plot = new Plot(options);
+    private final Plot plot = new Plot(options);
 
     // The drawing thread will sleep for refreshRateMillis
-    final long refreshRateMillis = 33; // Approx 30fps
+    private static final long refreshRateMillis = 33; // Approx 30fps
 
     // Avoid creating new objects unnecessarily
     final Paint paint = new Paint();

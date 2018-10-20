@@ -27,8 +27,8 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
     private LocationProvider locationService = null;
     private MyAltimeter altimeter = null;
 
-    final Bounds inner = new Bounds();
-    final Bounds outer = new Bounds();
+    private final Bounds inner = new Bounds();
+    private final Bounds outer = new Bounds();
 
     public PolarPlotLive(Context context, AttributeSet attrs) {
         super(context, attrs);
