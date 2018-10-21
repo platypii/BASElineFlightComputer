@@ -21,8 +21,7 @@ public class TrackFile {
     public String getName() {
         return file.getName()
                 .replaceAll(".csv.gz", "")
-                .replaceAll("_", " ")
-                .replaceAll("-", ".");
+                .replaceAll("_", " ");
     }
 
     @NonNull
@@ -33,7 +32,7 @@ public class TrackFile {
             Log.e(TAG, "Zero length file in TrackFile.getSize()");
         }
         final long size = file.length() >> 10;
-        return size + "kb";
+        return size + " kb";
     }
 
     @Override

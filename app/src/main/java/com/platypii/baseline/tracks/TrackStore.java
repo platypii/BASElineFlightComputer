@@ -22,8 +22,6 @@ import java.util.Map;
 public class TrackStore implements BaseService {
     private static final String TAG = "TrackStore";
 
-    File logDir;
-
     // Local track files
     private final Map<TrackFile,TrackState> trackState = new HashMap<>();
     private boolean initialized = false;
@@ -34,7 +32,7 @@ public class TrackStore implements BaseService {
             // Load in background
             AsyncTask.execute(() -> {
                 // Get log directory
-                logDir = TrackFiles.getTrackDirectory(context);
+                final File logDir = TrackFiles.getTrackDirectory(context);
                 // Load from disk
                 final List<TrackFile> trackFiles = TrackFiles.getTracks(logDir);
                 for (TrackFile trackFile : trackFiles) {

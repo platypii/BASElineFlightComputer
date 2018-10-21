@@ -48,7 +48,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         // Import CSV if app was opened from file browser
-        ImportCSV.importIntent(this, getIntent());
+        doImport(getIntent());
 
         // Find views
         recordButton = findViewById(R.id.recordButton);
@@ -63,7 +63,13 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        ImportCSV.importIntent(this, intent);
+        doImport(intent);
+    }
+    private void doImport(Intent intent) {
+        final boolean importing = ImportCSV.importIntent(this, intent);
+        if (importing) {
+            Toast.makeText(this, "Importing CSV file", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

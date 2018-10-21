@@ -30,9 +30,8 @@ public class TrackFiles {
                 for (File file : files) {
                     final String filename = file.getName();
                     final TrackFile trackFile = new TrackFile(file);
-                    // Tracks look like "track_(yyyy-MM-dd_HH-mm-ss).csv.gz"
-                    final boolean matchesFilenamePattern = filename.startsWith("track_") && filename.endsWith(".csv.gz");
-                    if (matchesFilenamePattern) {
+                    // Tracks look like track_yyyy-MM-dd_HH-mm-ss.csv.gz
+                    if (filename.endsWith(".csv.gz")) {
                         tracks.add(trackFile);
                     }
                 }
@@ -56,20 +55,46 @@ public class TrackFiles {
         }
     }
 
+    /**
+     * Generate new track file based on current timestamp
+     */
     @NonNull
     static TrackFile newTrackFile(File logDir) {
         // Name file based on current timestamp
         final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
         final String timestamp = dt.format(new Date());
 
-        // gzipped CSV log file
-        File file = new File(logDir, "track_" + timestamp + ".csv.gz");
+        final File file = makeUnique(logDir, "track_" + timestamp, "csv.gz");
+        return new TrackFile(file);
+    }
+
+    /**
+     * When importing an existing CSV, generate filename based on source file
+     */
+    @NonNull
+    static TrackFile newTrackFile(File logDir, String sourceFilename) {
+        if (sourceFilename == null) {
+            return newTrackFile(logDir);
+        } else {
+            final File file = makeUnique(logDir, sourceFilename, "csv.gz");
+            return new TrackFile(file);
+        }
+    }
+
+
+    /**
+     * Generate a unique file that doesn't yet exist.
+     * If logdir/prefix.ext exists, generate logdir/prefix_2.ext
+     */
+    private static File makeUnique(File logDir, String prefix, String ext) {
+        File file = new File(logDir, prefix + "." + ext);
+
         // Avoid filename conflicts
         for (int i = 2; file.exists(); i++) {
-            file = new File(logDir, "track_" + timestamp + "_" + i + ".csv.gz");
+            file = new File(logDir, prefix + "_" + i + "." + ext);
         }
 
-        return new TrackFile(file);
+        return file;
     }
 
 }
