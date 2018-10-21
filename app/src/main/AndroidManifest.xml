@@ -52,6 +52,16 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.CATEGORY_OPENABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:mimeType="text/comma-separated-values" />
+                <data android:mimeType="text/csv" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".views.altimeter.AltimeterActivity"

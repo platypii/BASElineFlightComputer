@@ -58,7 +58,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
             stopTimeNano = -1;
             try {
                 // Pick a log file
-                trackFile = newTrackFile();
+                trackFile = TrackFiles.newTrackFile(logDir);
 
                 // Update state before first byte is written
                 // Otherwise user can browse to it, and uploader might upload it
@@ -132,21 +132,6 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
             sb.append('.');
             StringBuilderUtil.format3d(sb, millis);
         }
-    }
-
-    private TrackFile newTrackFile() {
-        // Name file based on current timestamp
-        final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
-        final String timestamp = dt.format(new Date());
-
-        // gzipped CSV log file
-        File file = new File(logDir, "track_" + timestamp + ".csv.gz");
-        // Avoid filename conflicts
-        for (int i = 2; file.exists(); i++) {
-            file = new File(logDir, "track_" + timestamp + "_" + i + ".csv.gz");
-        }
-
-        return new TrackFile(file);
     }
 
     private void startFileLogging(@NonNull File logFile) throws IOException {

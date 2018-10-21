@@ -5,8 +5,11 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Manage track files on the device.
@@ -18,10 +21,9 @@ public class TrackFiles {
     private static final String TAG = "TrackFiles";
 
     @NonNull
-    static List<TrackFile> getTracks(@NonNull Context context) {
+    static List<TrackFile> getTracks(File logDir) {
         final List<TrackFile> tracks = new ArrayList<>();
         // Load jumps from disk
-        final File logDir = getTrackDirectory(context);
         if (logDir != null) {
             final File[] files = logDir.listFiles();
             if (files != null) {
@@ -52,6 +54,22 @@ public class TrackFiles {
             Log.w(TAG, "External storage directory not available, falling back to internal storage");
             return context.getFilesDir();
         }
+    }
+
+    @NonNull
+    static TrackFile newTrackFile(File logDir) {
+        // Name file based on current timestamp
+        final SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US);
+        final String timestamp = dt.format(new Date());
+
+        // gzipped CSV log file
+        File file = new File(logDir, "track_" + timestamp + ".csv.gz");
+        // Avoid filename conflicts
+        for (int i = 2; file.exists(); i++) {
+            file = new File(logDir, "track_" + timestamp + "_" + i + ".csv.gz");
+        }
+
+        return new TrackFile(file);
     }
 
 }

@@ -4,9 +4,11 @@ import com.platypii.baseline.BaseService;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +22,8 @@ import java.util.Map;
 public class TrackStore implements BaseService {
     private static final String TAG = "TrackStore";
 
+    File logDir;
+
     // Local track files
     private final Map<TrackFile,TrackState> trackState = new HashMap<>();
     private boolean initialized = false;
@@ -27,13 +31,16 @@ public class TrackStore implements BaseService {
     public void start(@NonNull Context context) {
         if (!initialized) {
             initialized = true;
-            // Load from disk
-            final List<TrackFile> trackFiles = TrackFiles.getTracks(context);
-            for (TrackFile trackFile : trackFiles) {
-                trackState.put(trackFile, new TrackState.TrackNotUploaded(trackFile));
-            }
-        } else {
-            // TODO: Reload? But don't lose uploading state
+            // Load in background
+            AsyncTask.execute(() -> {
+                // Get log directory
+                logDir = TrackFiles.getTrackDirectory(context);
+                // Load from disk
+                final List<TrackFile> trackFiles = TrackFiles.getTracks(logDir);
+                for (TrackFile trackFile : trackFiles) {
+                    trackState.put(trackFile, new TrackState.TrackNotUploaded(trackFile));
+                }
+            });
         }
     }
 

@@ -5,6 +5,7 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.ImportCSV;
 import com.platypii.baseline.views.altimeter.AltimeterActivity;
 import com.platypii.baseline.views.map.MapActivity;
 import com.platypii.baseline.views.tracks.TrackListActivity;
@@ -46,6 +47,9 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Import CSV if app was opened from file browser
+        ImportCSV.importIntent(this, getIntent());
+
         // Find views
         recordButton = findViewById(R.id.recordButton);
         audibleButton = findViewById(R.id.audibleButton);
@@ -54,6 +58,12 @@ public class MainActivity extends BaseActivity {
         if (audibleButton != null) {
             audibleButton.setOnLongClickListener(audibleLongClickListener);
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        ImportCSV.importIntent(this, intent);
     }
 
     @Override
