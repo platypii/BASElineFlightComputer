@@ -7,9 +7,10 @@ import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
-import android.app.Fragment;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +62,10 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener 
 
     @Override
     public void onLocationChanged(@NonNull MLocation loc) {
-        getActivity().runOnUiThread(this::update);
+        final Activity activity = getActivity();
+        if (activity != null) {
+            activity.runOnUiThread(this::update);
+        }
     }
 
     @Override

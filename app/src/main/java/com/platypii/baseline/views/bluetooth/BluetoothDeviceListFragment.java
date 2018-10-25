@@ -2,10 +2,10 @@ package com.platypii.baseline.views.bluetooth;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.BluetoothEvent;
-import android.app.ListFragment;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
