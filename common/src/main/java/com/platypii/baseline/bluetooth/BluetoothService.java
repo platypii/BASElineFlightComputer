@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.location.GpsStatus;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -79,9 +80,11 @@ public class BluetoothService implements BaseService {
     private void startAsync(@NonNull final Activity activity) {
         AsyncTask.execute(() -> {
             bluetoothAdapter = getAdapter(activity);
-            bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
-            bluetoothThread = new Thread(bluetoothRunnable);
-            bluetoothThread.start();
+            if (bluetoothAdapter != null) {
+                bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
+                bluetoothThread = new Thread(bluetoothRunnable);
+                bluetoothThread.start();
+            }
         });
     }
 
@@ -89,6 +92,7 @@ public class BluetoothService implements BaseService {
      * Start the bluetooth service, and connect to gps receiver if selected
      * @return true iff bluetooth service started successfully
      */
+    @Nullable
     private BluetoothAdapter getAdapter(@NonNull Activity activity) {
         // TODO: Make sure this doesn't take too long
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
