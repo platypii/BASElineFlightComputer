@@ -138,8 +138,8 @@ public class Services {
             Log.i(TAG, "Starting cloud services");
             cloud.start(appContext);
 
-//            Log.i(TAG, "Starting place database");
-//            places.start(appContext);
+            Log.i(TAG, "Starting place database");
+            places.start(appContext);
 
             Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
         }
