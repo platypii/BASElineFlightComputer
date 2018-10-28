@@ -68,6 +68,7 @@ public class MainActivity extends BaseActivity {
     private void doImport(Intent intent) {
         final boolean importing = ImportCSV.importIntent(this, intent);
         if (importing) {
+            firebaseAnalytics.logEvent("import_csv", null);
             Toast.makeText(this, "Importing CSV file", Toast.LENGTH_SHORT).show();
         }
     }

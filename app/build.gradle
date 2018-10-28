@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
 
 android {
@@ -36,6 +38,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation 'com.google.firebase:firebase-core:16.0.4'
+    implementation 'com.google.firebase:firebase-perf:16.2.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'junit:junit:4.12'
@@ -43,6 +46,3 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     implementation project(':common')
 }
-
-// Necessary for firebase:
-apply plugin: 'com.google.gms.google-services'
