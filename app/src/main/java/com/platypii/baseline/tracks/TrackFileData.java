@@ -98,15 +98,17 @@ public class TrackFileData {
             if (sensorIndex == null) {
                 // FlySight
                 final long millis = getColumnDate(row, columns, "time");
-                final double lat = getColumnDouble(row, columns, "lat");
-                final double lon = getColumnDouble(row, columns, "lon");
-                final double alt_gps = getColumnDouble(row, columns, "hMSL");
-                final double climb = -getColumnDouble(row, columns, "velD");
-                final double vN = getColumnDouble(row, columns, "velN");
-                final double vE = getColumnDouble(row, columns, "velE");
-                if (!Double.isNaN(lat) && !Double.isNaN(lon)) {
-                    final MLocation loc = new MLocation(millis, lat, lon, alt_gps, climb, vN, vE, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 0, 0);
-                    data.add(loc);
+                if (millis > 0) {
+                    final double lat = getColumnDouble(row, columns, "lat");
+                    final double lon = getColumnDouble(row, columns, "lon");
+                    final double alt_gps = getColumnDouble(row, columns, "hMSL");
+                    final double climb = -getColumnDouble(row, columns, "velD");
+                    final double vN = getColumnDouble(row, columns, "velN");
+                    final double vE = getColumnDouble(row, columns, "velE");
+                    if (!Double.isNaN(lat) && !Double.isNaN(lon)) {
+                        final MLocation loc = new MLocation(millis, lat, lon, alt_gps, climb, vN, vE, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 0, 0);
+                        data.add(loc);
+                    }
                 }
             } else if (row[sensorIndex].equals("gps")) {
                 // BASEline GPS measurement
@@ -126,14 +128,14 @@ public class TrackFileData {
                 gpsLastMillis = millis;
                 // Climb rate from baro or gps
                 double climb = baroAltitudeFilter.v();
-                if (Double.isNaN(climb)) {
+                if (baroLastNano < 0 || Double.isNaN(climb)) {
                     climb = gpsAltitudeFilter.v();
                 }
                 if (!Double.isNaN(lat) && !Double.isNaN(lon)) {
                     final MLocation loc = new MLocation(millis, lat, lon, alt_gps, climb, vN, vE, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 0, 0);
                     data.add(loc);
                 }
-            } else if (columns.containsKey("sensor") && row[columns.get("sensor")].equals("alt")) {
+            } else if (row[sensorIndex].equals("alt")) {
                 // BASEline alti measurement
                 final long nano = getColumnLong(row, columns, "nano");
                 final double pressure = getColumnDouble(row, columns, "pressure");
