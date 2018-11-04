@@ -44,24 +44,32 @@ public class Places implements BaseService {
     }
 
     /**
+     * Load from place file, if necessary
+     */
+    private void loadPlaces() {
+        if (places == null && placeFile != null && placeFile.exists()) {
+            try {
+                places = placeFile.parse();
+                Log.i(TAG, "Loaded " + places.size() + " places");
+            } catch (IOException e) {
+                Log.e(TAG, "Error loading places", e);
+            }
+        }
+    }
+
+    /**
      * Find the closest place to the given location
      */
     @Nullable
     public Place getNearestPlace(@NonNull MLocation loc) {
         // Load from place file, if necessary
-        if (places == null && placeFile != null && placeFile.exists()) {
-            try {
-                places = placeFile.parse();
-            } catch (IOException e) {
-                Log.e(TAG, "Error loading places", e);
-            }
-        }
+        loadPlaces();
         if (places != null) {
             Place best = null;
             double bestDistance = Double.NaN;
             // Find closest place
             for (Place place : places) {
-                final double distance = Geo.distance(loc.latitude, loc.longitude, place.latitude, place.longitude);
+                final double distance = Geo.fastDistance(loc.latitude, loc.longitude, place.latitude, place.longitude);
                 if (Double.isNaN(bestDistance) || (distance < bestDistance && distance < place.radius)) {
                     best = place;
                     bestDistance = distance;
