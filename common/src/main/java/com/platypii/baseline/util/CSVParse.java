@@ -59,7 +59,7 @@ public class CSVParse {
     }
 
     private static SimpleDateFormat df;
-    private static long parseFlySightDate(@NonNull String dateString) throws ParseException {
+    static long parseFlySightDate(@NonNull String dateString) throws ParseException {
         // Lazy init
         if (df == null) {
             // 2018-01-25T11:48:09.80Z

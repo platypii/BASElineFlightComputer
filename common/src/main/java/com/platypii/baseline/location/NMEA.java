@@ -56,16 +56,18 @@ class NMEA {
         if (date == null || date.isEmpty()) {
             return 0;
         } else {
-            if (date.length() != 6) {
+            if (date.length() == 6) {
+                final int day = Integer.parseInt(date.substring(0, 2));
+                final int month = Integer.parseInt(date.substring(2, 4)) - 1; // january is 0 not 1
+                int year = 1900 + Integer.parseInt(date.substring(4, 6));
+                if (year < 1970) year += 100;
+                cal.set(Calendar.MILLISECOND, 0);
+                cal.set(year, month, day, 0, 0, 0);
+                return cal.getTime().getTime();
+            } else {
                 Log.e(TAG, "Date format error " + date);
+                return 0;
             }
-            final int day = Integer.parseInt(date.substring(0, 2));
-            final int month = Integer.parseInt(date.substring(2, 4)) - 1; // january is 0 not 1
-            int year = 1900 + Integer.parseInt(date.substring(4, 6));
-            if (year < 1970) year += 100;
-            cal.set(Calendar.MILLISECOND, 0);
-            cal.set(year, month, day, 0, 0, 0);
-            return cal.getTime().getTime();
         }
     }
 
