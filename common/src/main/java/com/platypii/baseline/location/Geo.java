@@ -12,28 +12,47 @@ public class Geo {
 
     /**
      * Computes the distance between two points
+     *
      * @return the distance in meters
      */
     public static double distance(double lat1, double lon1, double lat2, double lon2) {
-        final double φ1 = Math.toRadians(lat1);
-        final double φ2 = Math.toRadians(lat2);
-        final double Δφ = Math.toRadians(lat2 - lat1);
-        final double Δλ = Math.toRadians(lon2 - lon1);
+        final double lat1r = Math.toRadians(lat1);
+        final double lat2r = Math.toRadians(lat2);
+        final double delta_lat = lat2r - lat1r;
+        final double delta_lon = Math.toRadians(lon2 - lon1);
 
-        final double sin_φ = Math.sin(Δφ/2);
-        final double sin_λ = Math.sin(Δλ/2);
+        final double sin_lat = Math.sin(delta_lat / 2);
+        final double sin_lon = Math.sin(delta_lon / 2);
 
         // Haversine formula
-        final double a = sin_φ * sin_φ +
-                Math.cos(φ1) * Math.cos(φ2) *
-                        sin_λ * sin_λ;
-        final double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        final double a = sin_lat * sin_lat + Math.cos(lat1r) * Math.cos(lat2r) * sin_lon * sin_lon;
+        final double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         return R * c;
     }
 
     /**
+     * Computes the approximate distance between two points.
+     * Assumes equirectangular earth, adjusted by latitude.
+     * Much faster to compute than haversine.
+     *
+     * @return the distance in meters
+     */
+    public static double fastDistance(double lat1, double lon1, double lat2, double lon2) {
+        final double lat1r = Math.toRadians(lat1);
+        final double lat2r = Math.toRadians(lat2);
+        final double delta_lat = lat2r - lat1r;
+        final double delta_lon = Math.toRadians(lon2 - lon1);
+
+        final double x = delta_lon * Math.cos((lat1r + lat2r) / 2);
+        final double y = delta_lat;
+
+        return R * Math.sqrt(x * x + y * y);
+    }
+
+    /**
      * Computes the bearing from location1 to location2
+     *
      * @return the bearing in degrees (relative to true north, not magnetic)
      */
     public static double bearing(double lat1, double lon1, double lat2, double lon2) {
@@ -76,9 +95,11 @@ public class Geo {
     private static double radians(double degrees) {
         return degrees * Math.PI / 180.0;
     }
+
     private static double degrees(double radians) {
         return radians * 180.0 / Math.PI;
     }
+
     private static double mod360(double degrees) {
         return ((degrees + 540) % 360) - 180;
     }
