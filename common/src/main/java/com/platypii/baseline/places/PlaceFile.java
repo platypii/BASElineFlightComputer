@@ -1,6 +1,6 @@
 package com.platypii.baseline.places;
 
-import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.util.CSVHeader;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -10,10 +10,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.GZIPInputStream;
+
+import static com.platypii.baseline.util.CSVParse.getColumnDouble;
 
 /**
  * Loads places from gzipped CSV
@@ -49,7 +49,7 @@ class PlaceFile {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))))) {
             // Parse header column
             String line = br.readLine();
-            final Map<String,Integer> columns = getColumns(line);
+            final CSVHeader columns = new CSVHeader(line);
             // Parse data rows
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
@@ -72,24 +72,6 @@ class PlaceFile {
         }
         Log.i(TAG, "Loaded " + places.size() + " places");
         return places;
-    }
-
-    @NonNull
-    private static Map<String,Integer> getColumns(String header) {
-        final Map<String,Integer> columns = new HashMap<>();
-        final String[] headers = header.split(",");
-        for (int i = 0; i < headers.length; i++) {
-            columns.put(headers[i], i);
-        }
-        return columns;
-    }
-
-    private static double getColumnDouble(String[] row, @NonNull Map<String,Integer> columns, String columnName) {
-        try {
-            return Numbers.parseDouble(row[columns.get(columnName)]);
-        } catch (Exception e) {
-            return Double.NaN;
-        }
     }
 
 }

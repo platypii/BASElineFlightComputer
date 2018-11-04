@@ -1,6 +1,7 @@
 package com.platypii.baseline.places;
 
 import com.platypii.baseline.util.IOUtil;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,7 +17,7 @@ import java.util.Locale;
  * Downloads the place database.
  * Uses if-modified-since header and 304 to save bandwidth.
  */
-public class FetchPlaces {
+class FetchPlaces {
     private static final String TAG = "FetchPlaces";
 
     private static final String placesUrl = "https://baseline.ws/places.csv";
@@ -24,7 +25,7 @@ public class FetchPlaces {
     /**
      * Fetch places from BASEline server and saves it as a file
      */
-    static void get(File placeFile) throws IOException {
+    static void get(@NonNull File placeFile) throws IOException {
         Log.i(TAG, "Downloading places");
         final URL url = new URL(placesUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();

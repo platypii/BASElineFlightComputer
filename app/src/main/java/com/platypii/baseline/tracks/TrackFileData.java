@@ -1,6 +1,7 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.altimeter.BaroAltimeter;
+import com.platypii.baseline.util.CSVHeader;
 import com.platypii.baseline.util.kalman.Filter;
 import com.platypii.baseline.util.kalman.FilterKalman;
 import com.platypii.baseline.measurements.MLocation;
@@ -14,15 +15,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-import static com.platypii.baseline.tracks.CSVParse.addMapping;
-import static com.platypii.baseline.tracks.CSVParse.getColumnDate;
-import static com.platypii.baseline.tracks.CSVParse.getColumnDouble;
-import static com.platypii.baseline.tracks.CSVParse.getColumnLong;
+import static com.platypii.baseline.util.CSVParse.getColumnDate;
+import static com.platypii.baseline.util.CSVParse.getColumnDouble;
+import static com.platypii.baseline.util.CSVParse.getColumnLong;
 
 /**
  * Parse location data from track file
@@ -75,21 +73,19 @@ public class TrackFileData {
         long baroLastNano = -1L;
         long gpsLastMillis = -1L;
 
+        double baroOffset = 0;
+
         final List<MLocation> data = new ArrayList<>();
 
         // Parse header column
         String line = br.readLine();
-        final Map<String, Integer> columns = new HashMap<>();
-        final String[] header = line.split(",");
-        for (int i = 0; i < header.length; i++) {
-            columns.put(header[i], i);
-        }
+        final CSVHeader columns = new CSVHeader(line);
         // Add column aliases
-        addMapping(columns, "timeMillis", "millis");
+        columns.addMapping("timeMillis", "millis");
         // Handle old files that were not FlySight compatible
-        addMapping(columns, "latitude", "lat");
-        addMapping(columns, "longitude", "lon");
-        addMapping(columns, "altitude_gps", "hMSL");
+        columns.addMapping("latitude", "lat");
+        columns.addMapping("longitude", "lon");
+        columns.addMapping("altitude_gps", "hMSL");
 
         // Parse data rows
         while ((line = br.readLine()) != null) {
