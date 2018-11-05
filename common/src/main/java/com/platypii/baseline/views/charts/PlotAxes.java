@@ -48,7 +48,7 @@ class PlotAxes {
         final double step_x = options.axis.x.major_units * Numbers.pow(10, magnitude_x);
         final double start_x = Math.floor(realBounds.x.min / step_x) * step_x;
         final double end_x = Math.ceil(realBounds.x.max / step_x) * step_x;
-        final int steps_x = (int)Math.ceil((end_x - start_x) / step_x);
+        final int steps_x = (int) Math.ceil((end_x - start_x) / step_x);
         if (!(start_x < end_x && 0 < step_x)) {
             Log.e(TAG, "Invalid plot X bounds " + start_x + " " + end_x + " " + step_x);
         }

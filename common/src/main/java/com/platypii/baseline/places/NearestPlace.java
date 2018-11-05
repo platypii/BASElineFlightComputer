@@ -26,7 +26,7 @@ public class NearestPlace {
     }
 
     @Nullable
-    public Place cached(MLocation current) {
+    public Place cached(@NonNull MLocation current) {
         if (System.currentTimeMillis() - lastQuery > ttl) {
             lastQuery = System.currentTimeMillis();
             lastPlace = get(current);

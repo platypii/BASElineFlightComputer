@@ -367,22 +367,20 @@ public class Convert {
             final String bearingStr = ((int) degrees) + "°";
             if (337.5 <= degrees || degrees < 22.5)
                 return bearingStr + " (N)";
-            else if (22.5 <= degrees && degrees < 67.5)
+            else if (degrees < 67.5)
                 return bearingStr + " (NE)";
-            else if (67.5 <= degrees && degrees < 112.5)
+            else if (degrees < 112.5)
                 return bearingStr + " (E)";
-            else if (112.5 <= degrees && degrees < 157.5)
+            else if (degrees < 157.5)
                 return bearingStr + " (SE)";
-            else if (157.5 <= degrees && degrees < 202.5)
+            else if (degrees < 202.5)
                 return bearingStr + " (S)";
-            else if (202.5 <= degrees && degrees < 247.5)
+            else if (degrees < 247.5)
                 return bearingStr + " (SW)";
-            else if (247.5 <= degrees && degrees < 292.5)
+            else if (degrees < 292.5)
                 return bearingStr + " (W)";
-            else if (292.5 <= degrees && degrees < 337.5)
-                return bearingStr + " (NW)";
             else
-                return bearingStr;
+                return bearingStr + " (NW)";
         }
     }
 

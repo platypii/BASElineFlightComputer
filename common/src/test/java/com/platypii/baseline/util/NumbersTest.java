@@ -46,7 +46,7 @@ public class NumbersTest {
         assertEquals(-1, Numbers.parseInt("", -1));
 //        assertEquals(-1, Numbers.parseInt("0.0", -1));
 //        assertEquals(-1, Numbers.parseInt("0.1", -1));
-//        assertEquals(-1, Numbers.parseInt("X", -1));
+        assertEquals(-1, Numbers.parseInt("X", -1));
         assertEquals(-1, Numbers.parseInt(null, -1));
     }
 
@@ -60,7 +60,7 @@ public class NumbersTest {
         assertEquals(Float.NaN, Numbers.parseFloat(""), 0.1);
         assertEquals(0.0, Numbers.parseFloat("0.0"), 0.1);
         assertEquals(0.1, Numbers.parseFloat("0.1"), 0.1);
-//        assertEquals(Float.NaN, Numbers.parseFloat("X"), 0.1);
+        assertEquals(Float.NaN, Numbers.parseFloat("X"), 0.1);
         assertEquals(Float.NaN, Numbers.parseFloat("NaN"), 0.1);
         assertEquals(Float.NaN, Numbers.parseFloat(null), 0.1);
     }
@@ -75,7 +75,7 @@ public class NumbersTest {
         assertEquals(Double.NaN, Numbers.parseDouble(""), 0.1);
         assertEquals(0.0, Numbers.parseDouble("0.0"), 0.1);
         assertEquals(0.1, Numbers.parseDouble("0.1"), 0.1);
-//        assertEquals(Double.NaN, Numbers.parseDouble("X"), 0.1);
+        assertEquals(Double.NaN, Numbers.parseDouble("X"), 0.1);
         assertEquals(Double.NaN, Numbers.parseDouble("NaN"), 0.1);
         assertEquals(Double.NaN, Numbers.parseDouble(null), 0.1);
     }

@@ -1,7 +1,5 @@
 package com.platypii.baseline.util;
 
-import java.util.Locale;
-
 /**
  * Range represents a min and max
  */
@@ -24,7 +22,7 @@ public class Range {
 
     @Override
     public String toString() {
-        return String.format(Locale.US, "Range(%f,%f)", min, max);
+        return "Range(" + min + "," + max + ")";
     }
 
 }

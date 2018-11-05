@@ -21,6 +21,8 @@ public class ConvertTest {
     public void convertDistance() {
         assertEquals("0 ft", Convert.distance(0.0));
         assertEquals("3 ft", Convert.distance(1.0));
+        assertEquals("3.3 ft", Convert.distance(1.0, 1, true));
+        assertEquals("3.3", Convert.distance(1.0, 1, false));
         assertEquals("", Convert.distance(Double.NaN));
         assertEquals("Infinity", Convert.distance(Double.POSITIVE_INFINITY));
     }
@@ -31,6 +33,9 @@ public class ConvertTest {
         assertEquals("3280 feet", Convert.distance2(1000, 3));
         assertEquals("1 mile", Convert.distance2(1609.34, 1));
         assertEquals("1.0 miles", Convert.distance2(1609.34, 2));
+        assertEquals("", Convert.distance2(Double.NaN, 1));
+        assertEquals("Infinity", Convert.distance2(Double.POSITIVE_INFINITY, 1));
+        assertEquals("-Infinity", Convert.distance2(Double.NEGATIVE_INFINITY, 1));
     }
 
     @Test
@@ -43,10 +48,32 @@ public class ConvertTest {
     }
 
     @Test
+    public void convertDistance3() {
+        assertEquals("3 ft", Convert.distance3(1));
+        assertEquals("3281 ft", Convert.distance3(1000));
+        assertEquals("1 mi", Convert.distance3(1609.34));
+        assertEquals("10 mi", Convert.distance3(16093.4));
+        assertEquals("", Convert.distance3(Double.NaN));
+        assertEquals("Infinity", Convert.distance3(Double.POSITIVE_INFINITY));
+        assertEquals("-Infinity", Convert.distance3(Double.NEGATIVE_INFINITY));
+    }
+
+    @Test
+    public void convertDistance3Metric() {
+        Convert.metric = true;
+        assertEquals("1 m", Convert.distance3(1));
+        assertEquals("1 km", Convert.distance3(1000));
+        assertEquals("2 km", Convert.distance3(1609.34));
+        assertEquals("16 km", Convert.distance3(16093.4));
+    }
+
+    @Test
     public void convertSpeed() {
         assertEquals("0.0 mph", Convert.speed(0.0));
         assertEquals("22.4 mph", Convert.speed(10.0));
         assertEquals("223.7 mph", Convert.speed(100.0));
+        assertEquals("224 mph", Convert.speed(100.0, 0, true));
+        assertEquals("224", Convert.speed(100.0, 0, false));
         assertEquals("", Convert.speed(Double.NaN));
         assertEquals("Infinity", Convert.speed(Double.POSITIVE_INFINITY));
     }
@@ -64,10 +91,13 @@ public class ConvertTest {
         assertEquals("+2.0 : 1", Convert.glide(20, 10, 1, true));
 
         // Special cases
+        assertEquals("", Convert.glide(0, 0, 1, true));
+        assertEquals("", Convert.glide(Double.NaN, 1, true));
+        assertEquals("Level", Convert.glide(Double.POSITIVE_INFINITY, 1, true));
+        assertEquals("Level", Convert.glide(41, 1, true));
         assertEquals("Level", Convert.glide(20, 0, 1, true));
         assertEquals("Vertical", Convert.glide(0, 10, 1, true));
         assertEquals("Stationary", Convert.glide(0.1, 0.1, 1, true));
-        assertEquals("", Convert.glide(0, 0, 1, true));
     }
 
     @Test
@@ -111,9 +141,11 @@ public class ConvertTest {
     @Test
     public void convertBearing2() {
         assertEquals("0° (N)", Convert.bearing2(0.0));
+        assertEquals("45° (NE)", Convert.bearing2(45.0));
         assertEquals("90° (E)", Convert.bearing2(90.0));
         assertEquals("90° (E)", Convert.bearing2(90.5));
         assertEquals("135° (SE)", Convert.bearing2(135.0));
+        assertEquals("188° (S)", Convert.bearing2(188.0));
         assertEquals("225° (SW)", Convert.bearing2(-135.0));
         assertEquals("270° (W)", Convert.bearing2(-90.0));
         assertEquals("300° (NW)", Convert.bearing2(660.0));
