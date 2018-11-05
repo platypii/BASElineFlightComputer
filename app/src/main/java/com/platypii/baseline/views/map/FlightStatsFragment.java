@@ -52,6 +52,8 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener 
         }
     }
 
+    private final Runnable updateRunnable = this::update;
+
     /**
      * Listen for altitude updates
      */
@@ -64,7 +66,7 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener 
     public void onLocationChanged(@NonNull MLocation loc) {
         final Activity activity = getActivity();
         if (activity != null) {
-            activity.runOnUiThread(this::update);
+            activity.runOnUiThread(updateRunnable);
         }
     }
 

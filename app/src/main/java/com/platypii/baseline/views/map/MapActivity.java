@@ -156,7 +156,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     @Override
     public void onLocationChanged(@NonNull MLocation loc) {
-        runOnUiThread(this::updateLocation);
+        runOnUiThread(updateLocationRunnable);
     }
 
     private void updateLayers() {
@@ -194,6 +194,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
             }
         }
     }
+
+    private final Runnable updateLocationRunnable = this::updateLocation;
 
     /**
      * Listen for altitude updates

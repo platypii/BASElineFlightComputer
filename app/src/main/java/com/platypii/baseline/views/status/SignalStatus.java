@@ -55,15 +55,17 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
     /**
      * Update the views for GPS signal strength
      */
-    public void update() {
+    private void update() {
         LocationStatus.updateStatus();
         signalStatus.setCompoundDrawablesWithIntrinsicBounds(LocationStatus.icon, 0, 0, 0);
         signalStatus.setText(LocationStatus.message);
     }
 
+    private final Runnable updateRunnable = this::update;
+
     @Override
     public void onLocationChanged(@NonNull MLocation loc) {
-        handler.post(this::update);
+        handler.post(updateRunnable);
     }
 
     @Override

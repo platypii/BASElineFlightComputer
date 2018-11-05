@@ -102,12 +102,17 @@ public abstract class LocationProvider implements BaseService {
         refreshRate.addSample(lastLoc.millis);
 
         // Notify listeners (using AsyncTask so the manager never blocks!)
-        AsyncTask.execute(() -> {
+        AsyncTask.execute(updateRunner);
+    }
+
+    private final Runnable updateRunner = new Runnable() {
+        @Override
+        public void run() {
             for (MyLocationListener listener : listeners) {
                 listener.onLocationChanged(lastLoc);
             }
-        });
-    }
+        }
+    };
 
     /**
      * Helper method for getting latest speed in m/s
