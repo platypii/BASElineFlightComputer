@@ -37,6 +37,19 @@ public abstract class FilterTest {
     }
 
     @Test
+    public void secondSampleInvalid() {
+        Filter filter = getFilter();
+
+        // Add samples
+        filter.update(10, 0);
+        filter.update(20, 0);
+        filter.update(30, 1);
+
+        assertEquals(30, filter.x(), .1);
+        assertEquals(10, filter.v(), .1);
+    }
+
+    @Test
     public void constantVelocity() {
         Filter filter = getFilter();
 

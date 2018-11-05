@@ -41,6 +41,12 @@ public class FilterKalman implements Filter {
 
     @Override
     public void update(double z, double dt) {
+        // Check for input exceptions
+        if (Double.isNaN(z)) {
+            Log.e(TAG, "Invalid update: z = NaN");
+            return;
+        }
+
         // Filter initialization
         if (filterState == INIT0) {
             if (dt != 0) {
@@ -50,21 +56,23 @@ public class FilterKalman implements Filter {
             filterState = INIT1;
             return;
         } else if (filterState == INIT1) {
-            final double v = (z - x.p1) / dt;
-            x.set(z, v);
-            filterState = READY;
+            if (dt <= 0) {
+                Log.e(TAG, "Invalid second update: dt = " + dt);
+                x.set(z, 0);
+            } else {
+                final double v = (z - x.p1) / dt;
+                x.set(z, v);
+                filterState = READY;
+            }
             return;
         }
 
-        // Check for exceptions
-        if (Double.isNaN(z)) {
-            Log.e(TAG, "Invalid update: z = NaN");
-            return;
-        }
+        // Ignore invalid time delta
         if (dt <= 0) {
             Log.e(TAG, "Invalid update: dt = " + dt);
             return;
         }
+        // Warn on invalid kalman state
         if (!x.isReal()) {
             Log.w(TAG, "Invalid kalman state: x = " + x);
         }
@@ -123,6 +131,11 @@ public class FilterKalman implements Filter {
     @Override
     public double v() {
         return x.p2;
+    }
+
+    @Override
+    public String toString() {
+        return x.toString();
     }
 
 }
