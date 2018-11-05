@@ -24,7 +24,7 @@ class PlacesLayer implements MapLayer {
     @Override
     public void update() {
         if (Services.location.lastLoc != null) {
-            final Place place = Services.places.getNearestPlace(Services.location.lastLoc);
+            final Place place = Services.places.nearestPlace.cached(Services.location.lastLoc);
             if (place != null) {
                 placeMarker.setVisible(true);
                 placeMarker.setPosition(place.latLng());
