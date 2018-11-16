@@ -28,7 +28,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
+public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener {
     private static final String TAG = "Map";
 
     private AnalogAltimeterSettable analogAltimeter;
@@ -40,8 +40,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     // Layers
     private final List<MapLayer> layers = new ArrayList<>();
-
-    // Markers
+    // Used to limit number of layer updates
+    private long lastLayerUpdate = 0;
 
     // Activity state
     private boolean ready = false;
@@ -103,6 +103,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
         // Drag listener
         map.setOnCameraMoveStartedListener(this);
+        map.setOnCameraMoveListener(this);
         map.setOnCameraIdleListener(this);
 
         ready = true;
@@ -146,6 +147,14 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         }
     }
 
+    @Override
+    public void onCameraMove() {
+        // Only update layers once per second
+        if (System.currentTimeMillis() - lastLayerUpdate > 1000) {
+            updateLayers();
+            lastLayerUpdate = System.currentTimeMillis();
+        }
+    }
     @Override
     public void onCameraIdle() {
         if (dragged) {
