@@ -3,34 +3,55 @@ package com.platypii.baseline.views.map;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.places.Place;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 class PlacesLayer implements MapLayer {
 
-    private final Marker placeMarker;
+    private final GoogleMap map;
+    private final Map<Place, Marker> placeMarkers = new HashMap<>();
 
     PlacesLayer(GoogleMap map) {
-        placeMarker = map.addMarker(new MarkerOptions()
-                .position(new LatLng(0, 0))
-                .visible(false)
-                .alpha(0.5f)
-                .anchor(0.5f, 0.5f)
-                .flat(true)
-        );
+        this.map = map;
     }
 
     @Override
     public void update() {
-        if (Services.location.lastLoc != null) {
-            final Place place = Services.places.nearestPlace.cached(Services.location.lastLoc);
-            if (place != null) {
-                placeMarker.setVisible(true);
-                placeMarker.setPosition(place.latLng());
-                placeMarker.setIcon(PlaceIcons.icon(place.objectType));
+        final LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+        final List<Place> places = Services.places.getPlacesByArea(bounds);
+        // Remove out of bounds places
+        final Iterator<Map.Entry<Place, Marker>> it = placeMarkers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Place, Marker> entry = it.next();
+            if (!places.contains(entry.getKey())) {
+                // Remove from HashMap and GoogleMap
+                entry.getValue().remove();
+                it.remove();
             }
         }
+        // Add new places
+        for (Place place : places) {
+            if (!placeMarkers.containsKey(place)) {
+                addMarker(place);
+            }
+        }
+    }
+
+    private void addMarker(Place place) {
+        final Marker placeMarker = map.addMarker(new MarkerOptions()
+                .position(place.latLng())
+                .visible(true)
+                .alpha(0.5f)
+                .anchor(0.5f, 0.5f)
+                .flat(true)
+                .icon(PlaceIcons.icon(place.objectType))
+        );
+        placeMarkers.put(place, placeMarker);
     }
 
 }

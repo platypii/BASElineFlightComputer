@@ -1,15 +1,14 @@
 package com.platypii.baseline.places;
 
 import com.platypii.baseline.BaseService;
-import com.platypii.baseline.location.Geo;
-import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.util.Convert;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import com.google.android.gms.maps.model.LatLngBounds;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,6 +47,7 @@ public class Places implements BaseService {
     /**
      * Load from place file, if necessary
      */
+    @Nullable
     List<Place> getPlaces() {
         if (places == null && placeFile != null && placeFile.exists()) {
             try {
@@ -60,14 +60,21 @@ public class Places implements BaseService {
         return places;
     }
 
-    public String getNearestPlaceString(@NonNull MLocation loc) {
-        final Place place = nearestPlace.cached(loc);
-        if (place != null) {
-            final double distance = Geo.distance(loc.latitude, loc.longitude, place.latitude, place.longitude);
-            return String.format("%s (%s)", place, Convert.distance3(distance));
-        } else {
-            return "";
+    @NonNull
+    public List<Place> getPlacesByArea(LatLngBounds bounds) {
+        final long start = System.currentTimeMillis();
+        final List<Place> filtered = new ArrayList<>();
+        final List<Place> places = getPlaces();
+        if (places != null) {
+            for (Place place : places) {
+                if (bounds.contains(place.latLng())) {
+                    filtered.add(place);
+                }
+            }
+            final long duration = System.currentTimeMillis() - start;
+            Log.i(TAG, "Got " + filtered.size() + "/" + places.size() + " places in view " + duration + " ms");
         }
+        return filtered;
     }
 
     @Override

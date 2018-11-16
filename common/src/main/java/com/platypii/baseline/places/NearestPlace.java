@@ -2,6 +2,7 @@ package com.platypii.baseline.places;
 
 import com.platypii.baseline.location.Geo;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Convert;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.util.List;
@@ -56,6 +57,16 @@ public class NearestPlace {
             return best;
         } else {
             return null;
+        }
+    }
+
+    public String getString(@NonNull MLocation loc) {
+        final Place place = cached(loc);
+        if (place != null) {
+            final double distance = Geo.distance(loc.latitude, loc.longitude, place.latitude, place.longitude);
+            return String.format("%s (%s)", place, Convert.distance3(distance));
+        } else {
+            return "";
         }
     }
 

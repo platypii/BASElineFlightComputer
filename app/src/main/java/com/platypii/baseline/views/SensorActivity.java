@@ -221,7 +221,7 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
             glideAngleLabel.setText("Glide angle: " + Convert.angle(loc.glideAngle()));
             bearingLabel.setText("Bearing: " + Convert.bearing2(loc.bearing()));
             flightModeLabel.setText("Flight mode: " + Services.flightComputer.getModeString());
-            placeLabel.setText("Location: " + Services.places.getNearestPlaceString(loc));
+            placeLabel.setText("Location: " + Services.places.nearestPlace.getString(loc));
         }
     }
 
