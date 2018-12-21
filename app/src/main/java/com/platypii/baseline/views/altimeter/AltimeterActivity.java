@@ -5,8 +5,10 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.PolarPlotLive;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Window;
+import android.view.WindowManager;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -20,7 +22,9 @@ public class AltimeterActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_altimeter);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         polar = findViewById(R.id.polar);
         analogAltimeter = findViewById(R.id.analogAltimeter);

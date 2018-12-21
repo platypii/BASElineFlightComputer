@@ -42,6 +42,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private final List<MapLayer> layers = new ArrayList<>();
     // Used to limit number of layer updates
     private long lastLayerUpdate = 0;
+    private static final long maxLayerUpdateDuration = 500; // don't update layers more than once every 500ms
 
     // Activity state
     private boolean ready = false;
@@ -55,8 +56,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_map);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
@@ -149,11 +149,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     @Override
     public void onCameraMove() {
-        // Only update layers once per second
-        if (System.currentTimeMillis() - lastLayerUpdate > 1000) {
-            updateLayers();
-            lastLayerUpdate = System.currentTimeMillis();
-        }
+        updateLayers();
     }
     @Override
     public void onCameraIdle() {
@@ -169,8 +165,12 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     private void updateLayers() {
-        for (MapLayer layer : layers) {
-            layer.update();
+        // Only update layers once per second
+        if (System.currentTimeMillis() - lastLayerUpdate > maxLayerUpdateDuration) {
+            lastLayerUpdate = System.currentTimeMillis();
+            for (MapLayer layer : layers) {
+                layer.update();
+            }
         }
     }
 
