@@ -34,15 +34,15 @@ public class PolarPlot extends PlotView {
 
         final float density = getResources().getDisplayMetrics().density;
         options.padding.top = (int) (12 * density);
-        options.padding.bottom = (int) (42 * density);
+        options.padding.bottom = (int) (4 * density);
         options.padding.left = (int) (density);
-        options.padding.right = (int) (76 * density);
+        options.padding.right = (int) (4 * density);
 
         inner.x.min = outer.x.min = 0;
         inner.x.max = 9 * Convert.MPH;
         outer.x.max = 160 * Convert.MPH;
-        inner.y.min = -160 * Convert.MPH;
-        outer.y.min = -2 * Convert.MPH;
+        inner.y.min = -2 * Convert.MPH;
+        outer.y.min = -160 * Convert.MPH;
         inner.y.max = 0;
         outer.y.max = 28 * Convert.MPH;
 

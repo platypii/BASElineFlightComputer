@@ -32,9 +32,9 @@ public class FlightProfile extends PlotView {
 
         final float density = getResources().getDisplayMetrics().density;
         options.padding.top = (int) (12 * density);
-        options.padding.bottom = (int) (42 * density);
+        options.padding.bottom = (int) (4 * density);
         options.padding.left = (int) (density);
-        options.padding.right = (int) (76 * density);
+        options.padding.right = (int) (4 * density);
 
         inner.x.min = outer.x.min = 0;
         inner.x.max = 100;

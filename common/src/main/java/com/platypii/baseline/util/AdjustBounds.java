@@ -11,26 +11,31 @@ public class AdjustBounds {
     /**
      * Clean the bounds (satisfy min/max, no infinities, and width/height span of at least epsilon)
      */
-    public static void clean(@NonNull Bounds b, @NonNull Bounds min, @NonNull Bounds max) {
+    public static void clean(@NonNull Bounds b, @NonNull Bounds inner, @NonNull Bounds outer) {
+        // Extra checks that shouldn't be needed at runtime
+//        if (inner.x.min < outer.x.min) Exceptions.report(new IllegalArgumentException("inner x min exceeds outer bound"));
+//        if (inner.x.max > outer.x.max) Exceptions.report(new IllegalArgumentException("inner x max exceeds outer bound"));
+//        if (inner.y.min < outer.y.min) Exceptions.report(new IllegalArgumentException("inner y min exceeds outer bound"));
+//        if (inner.y.max > outer.y.max) Exceptions.report(new IllegalArgumentException("inner y max exceeds outer bound"));
         // If bounds are NaN, then use smallest legal viewing window
-        if (Double.isNaN(b.x.min)) b.x.min = min.x.min;
-        if (Double.isNaN(b.y.max)) b.y.max = min.y.max;
-        if (Double.isNaN(b.x.max)) b.x.max = min.x.max;
-        if (Double.isNaN(b.y.min)) b.y.min = min.y.min;
+        if (Double.isNaN(b.x.min)) b.x.min = inner.x.min;
+        if (Double.isNaN(b.y.max)) b.y.max = inner.y.max;
+        if (Double.isNaN(b.x.max)) b.x.max = inner.x.max;
+        if (Double.isNaN(b.y.min)) b.y.min = inner.y.min;
         // If we are still infinite, make it 0..1
         if (Double.isInfinite(b.x.min)) b.x.min = 0;
         if (Double.isInfinite(b.y.max)) b.y.max = 1;
         if (Double.isInfinite(b.x.max)) b.x.max = 1;
         if (Double.isInfinite(b.y.min)) b.y.min = 0;
         // Fit bounds to min/max
-        if (b.x.min > min.x.min) b.x.min = min.x.min;
-        if (b.x.min < max.x.min) b.x.min = max.x.min;
-        if (b.y.max < min.y.max) b.y.max = min.y.max;
-        if (b.y.max > max.y.max) b.y.max = max.y.max;
-        if (b.x.max < min.x.max) b.x.max = min.x.max;
-        if (b.x.max > max.x.max) b.x.max = max.x.max;
-        if (b.y.min > min.y.min) b.y.min = min.y.min;
-        if (b.y.min < max.y.min) b.y.min = max.y.min;
+        if (b.x.min > inner.x.min) b.x.min = inner.x.min;
+        if (b.x.min < outer.x.min) b.x.min = outer.x.min;
+        if (b.y.max < inner.y.max) b.y.max = inner.y.max;
+        if (b.y.max > outer.y.max) b.y.max = outer.y.max;
+        if (b.x.max < inner.x.max) b.x.max = inner.x.max;
+        if (b.x.max > outer.x.max) b.x.max = outer.x.max;
+        if (b.y.min > inner.y.min) b.y.min = inner.y.min;
+        if (b.y.min < outer.y.min) b.y.min = outer.y.min;
         if (b.x.max < b.x.min) {
             final double tmp = b.x.max;
             b.x.max = b.x.min;

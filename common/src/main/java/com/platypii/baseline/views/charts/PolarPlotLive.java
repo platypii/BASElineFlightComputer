@@ -42,8 +42,8 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
         inner.x.min = outer.x.min = 0;
         inner.x.max = 9 * Convert.MPH;
         outer.x.max = 160 * Convert.MPH;
-        inner.y.min = -160 * Convert.MPH;
-        outer.y.min = -2 * Convert.MPH;
+        inner.y.min = -2 * Convert.MPH;
+        outer.y.min = -160 * Convert.MPH;
         inner.y.max = 2 * Convert.MPH;
         outer.y.max = 28 * Convert.MPH;
 
