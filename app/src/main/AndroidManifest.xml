@@ -96,6 +96,10 @@
             android:name=".views.tracks.TrackDownloadActivity"/>
         <activity
             android:name=".views.tracks.ChartsActivity"/>
+        <activity
+            android:name=".views.LaserActivity"/>
+        <activity
+            android:name=".views.LaserEditActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

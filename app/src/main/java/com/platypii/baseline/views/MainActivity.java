@@ -189,6 +189,11 @@ public class MainActivity extends BaseActivity {
         startActivity(new Intent(this, TrackListActivity.class));
     }
 
+    public void clickLasers(View v) {
+        firebaseAnalytics.logEvent("click_lasers", null);
+        startActivity(new Intent(this, LaserActivity.class));
+    }
+
     public void clickSettings(View v) {
         firebaseAnalytics.logEvent("click_settings", null);
         startActivity(new Intent(this, SettingsActivity.class));

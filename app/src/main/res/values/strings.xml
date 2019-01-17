@@ -10,6 +10,7 @@
     <string name="action_altimeter">Alti</string>
     <string name="action_nav">Nav</string>
     <string name="action_tracks">Tracks</string>
+    <string name="action_profiles">Profiles</string>
     <string name="action_settings">Settings</string>
 
     <!-- Track Activity -->
@@ -111,5 +112,11 @@
     <string name="notify_audible">Audible enabled</string>
     <string name="notify_audible_logging">Audible enabled, logging data</string>
     <string name="notify_logging">Logging data</string>
+
+    <!-- Laser -->
+    <string-array name="metric_modes">
+        <item>Metric</item>
+        <item>Imperial</item>
+    </string-array>
 
 </resources>
