@@ -14,13 +14,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 /**
  * Tools for getting google sign in authentication tokens
  */
-class AuthToken {
+public class AuthToken {
     private static final String TAG = "AuthToken";
 
     /**
      * Get google auth token. Blocking!
      */
-    static @NonNull String getAuthToken(@NonNull Context context) throws AuthException {
+    public static @NonNull String getAuthToken(@NonNull Context context) throws AuthException {
         final long startTime = System.currentTimeMillis();
         final GoogleApiClient googleApiClient = getClient(context);
         try {

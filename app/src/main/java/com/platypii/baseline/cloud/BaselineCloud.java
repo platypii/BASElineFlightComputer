@@ -24,9 +24,9 @@ public class BaselineCloud implements BaseService {
         listing.cache.clear();
     }
 
-    public void deleteTrack(@NonNull CloudData track, @NonNull String auth) {
+    public void deleteTrack(@NonNull Context context, @NonNull CloudData track) {
         // Delete track on server
-        new Thread(new DeleteTask(auth, track)).start();
+        new Thread(new DeleteTask(context, track)).start();
     }
 
     boolean isNetworkAvailable() {

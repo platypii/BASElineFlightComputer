@@ -3,6 +3,7 @@ package com.platypii.baseline.cloud;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Exceptions;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import java.io.IOException;
@@ -17,12 +18,12 @@ class DeleteTask implements Runnable {
     private static final String TAG = "DeleteTask";
 
     @NonNull
-    private final String auth;
+    private final Context context;
     @NonNull
     private final CloudData track;
 
-    DeleteTask(@NonNull String auth, @NonNull CloudData track) {
-        this.auth = auth;
+    DeleteTask(@NonNull Context context, @NonNull CloudData track) {
+        this.context = context;
         this.track = track;
     }
 
@@ -35,6 +36,8 @@ class DeleteTask implements Runnable {
         // Check for network availability. Still try to delete anyway, but don't report to firebase
         final boolean networkAvailable = Services.cloud.isNetworkAvailable();
         try {
+            // Get auth token
+            final String auth = AuthToken.getAuthToken(context);
             // Make HTTP request
             deleteRemote(auth, track.trackUrl);
             Log.i(TAG, "Track delete successful: " + track.track_id);

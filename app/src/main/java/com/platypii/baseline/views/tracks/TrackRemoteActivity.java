@@ -3,7 +3,6 @@ package com.platypii.baseline.views.tracks;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
@@ -112,6 +111,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     }
 
     private void clickDelete(View v) {
+        Log.i(TAG, "User clicked delete track " + track.track_id);
         // Analytics
         final Bundle bundle = new Bundle();
         bundle.putString("track_id", track.track_id);
@@ -137,6 +137,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
+            Log.i(TAG, "User confirmed delete track " + track.track_id);
             // Analytics
             final Bundle bundle = new Bundle();
             bundle.putString("track_id", track.track_id);
@@ -150,12 +151,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
 
     private void deleteRemote() {
         // Delete on baseline server
-        try {
-            final String authToken = getAuthToken();
-            Services.cloud.deleteTrack(track, authToken);
-        } catch (AuthException e) {
-            Toast.makeText(getApplicationContext(), "Track delete failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        Services.cloud.deleteTrack(this, track);
     }
 
     // Listen for deletion of this track

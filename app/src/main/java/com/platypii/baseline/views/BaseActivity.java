@@ -2,7 +2,6 @@ package com.platypii.baseline.views;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.events.AuthEvent;
 import android.Manifest;
 import android.content.Intent;
@@ -244,23 +243,6 @@ public abstract class BaseActivity extends FragmentActivity implements GoogleApi
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Log.i(TAG, "Not signed in - connection failed");
-    }
-
-    /**
-     * Get google auth token for currently signed in account
-     */
-    protected String getAuthToken() throws AuthException {
-        if (account != null) {
-            final String token = account.getIdToken();
-            if (token != null) {
-                Log.i(TAG, "Got auth token " + token);
-                return token;
-            } else {
-                throw new AuthException("Failed to get auth token");
-            }
-        } else {
-            throw new AuthException("Not signed in");
-        }
     }
 
     @Override
