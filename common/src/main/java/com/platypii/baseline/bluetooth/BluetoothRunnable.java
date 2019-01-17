@@ -21,7 +21,7 @@ class BluetoothRunnable implements Runnable {
 
     private static final UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    private static final int reconnectDelay = 1000; // 1 second
+    private static final int reconnectDelay = 500; // milliseconds
 
     @NonNull
     private final BluetoothService bluetooth;
