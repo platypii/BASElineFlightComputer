@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.UUID;
 
+import static com.platypii.baseline.bluetooth.BluetoothState.*;
+
 /**
  * Thread that reads from bluetooth input stream, and turns into NMEA sentences
  */
@@ -39,19 +41,19 @@ class BluetoothRunnable implements Runnable {
         Log.i(TAG, "Bluetooth thread starting");
 
         // Reconnect loop
-        while (bluetooth.getState() != BluetoothService.BT_STOPPING) {
+        while (bluetooth.getState() != BT_STOPPING) {
             // Connect to bluetooth GPS
-            bluetooth.setState(BluetoothService.BT_CONNECTING);
+            bluetooth.setState(BT_CONNECTING);
             final boolean isConnected = connect();
-            if (bluetooth.getState() == BluetoothService.BT_CONNECTING && isConnected) {
-                bluetooth.setState(BluetoothService.BT_CONNECTED);
+            if (bluetooth.getState() == BT_CONNECTING && isConnected) {
+                bluetooth.setState(BT_CONNECTED);
 
                 // Start processing NMEA sentences
                 processSentences();
             }
             // Are we restarting or stopping?
-            if (bluetooth.getState() != BluetoothService.BT_STOPPING) {
-                bluetooth.setState(BluetoothService.BT_DISCONNECTED);
+            if (bluetooth.getState() != BT_STOPPING) {
+                bluetooth.setState(BT_DISCONNECTED);
                 // Sleep before reconnect
                 try {
                     Thread.sleep(reconnectDelay);
@@ -65,7 +67,7 @@ class BluetoothRunnable implements Runnable {
         }
 
         // Bluetooth service stopped
-        bluetooth.setState(BluetoothService.BT_STOPPED);
+        bluetooth.setState(BT_STOPPED);
     }
 
     /**
@@ -110,7 +112,7 @@ class BluetoothRunnable implements Runnable {
             final InputStream is = bluetoothSocket.getInputStream();
             final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String line;
-            while (bluetooth.getState() == BluetoothService.BT_CONNECTED && (line = reader.readLine()) != null) {
+            while (bluetooth.getState() == BT_CONNECTED && (line = reader.readLine()) != null) {
                 final String nmea = line.trim();
                 // Log.v(TAG, "Got line: " + nmea);
                 // Update listeners
@@ -119,7 +121,7 @@ class BluetoothRunnable implements Runnable {
                 }
             }
         } catch (IOException e) {
-            if (bluetooth.getState() == BluetoothService.BT_CONNECTED) {
+            if (bluetooth.getState() == BT_CONNECTED) {
                 Log.e(TAG, "Error reading from bluetooth socket", e);
             }
         } finally {
@@ -128,7 +130,7 @@ class BluetoothRunnable implements Runnable {
     }
 
     void stop() {
-        bluetooth.setState(BluetoothService.BT_STOPPING);
+        bluetooth.setState(BT_STOPPING);
 
         // Close bluetooth socket
         if (bluetoothSocket != null) {

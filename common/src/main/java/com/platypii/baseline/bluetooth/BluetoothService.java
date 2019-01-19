@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Set;
 import org.greenrobot.eventbus.EventBus;
 
+import static com.platypii.baseline.bluetooth.BluetoothState.*;
+
 /**
  * Class to manage a bluetooth GPS receiver.
  * Note: instantiating this class will not automatically start bluetooth. Call startAsync to connect.
@@ -31,16 +33,6 @@ public class BluetoothService implements BaseService {
 
     // Android shared preferences for bluetooth
     public final BluetoothPreferences preferences = new BluetoothPreferences();
-
-    // Bluetooth finite state machine
-    public static final int BT_STOPPED = 0;
-    public static final int BT_STARTING = 1;
-    public static final int BT_CONNECTING = 2;
-    public static final int BT_CONNECTED = 3;
-    public static final int BT_DISCONNECTED = 4;
-    public static final int BT_STOPPING = 5;
-
-    private static final String[] BT_STATES = {"BT_STOPPED", "BT_STARTING", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
 
     // Bluetooth state
     private int bluetoothState = BT_STOPPED;

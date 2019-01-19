@@ -2,7 +2,7 @@ package com.platypii.baseline.location;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.bluetooth.BluetoothState;
 import com.platypii.baseline.util.StringBuilderUtil;
 import android.util.Log;
 
@@ -23,14 +23,14 @@ public class LocationStatus {
      */
     public static void updateStatus() {
         // GPS signal status
-        if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothService.BT_CONNECTED) {
+        if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothState.BT_CONNECTED) {
             // Bluetooth enabled, but not connected
             icon = R.drawable.warning;
             switch (Services.bluetooth.getState()) {
-                case BluetoothService.BT_CONNECTING:
+                case BluetoothState.BT_CONNECTING:
                     message = "GPS bluetooth connecting...";
                     break;
-                case BluetoothService.BT_DISCONNECTED:
+                case BluetoothState.BT_DISCONNECTED:
                     message = "GPS bluetooth not connected";
                     break;
                 default:
@@ -56,7 +56,7 @@ public class LocationStatus {
                     icon = R.drawable.status_yellow;
                 } else {
                     sb.setLength(0);
-                    if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() == BluetoothService.BT_CONNECTED) {
+                    if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() == BluetoothState.BT_CONNECTED) {
                         sb.append("GPS bluetooth ");
                         icon = R.drawable.status_blue;
                     } else {
