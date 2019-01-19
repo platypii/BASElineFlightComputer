@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="0dp"
-        tools:context="com.platypii.baseline.views.LaserActivity">
+        tools:context="com.platypii.baseline.views.laser.LaserEditActivity">
 
     <com.platypii.baseline.views.charts.FlightProfile
             android:id="@+id/flightProfile"

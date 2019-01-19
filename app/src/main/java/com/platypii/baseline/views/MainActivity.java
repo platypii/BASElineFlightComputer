@@ -7,6 +7,7 @@ import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.tracks.ImportCSV;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.altimeter.AltimeterActivity;
+import com.platypii.baseline.views.laser.LaserActivity;
 import com.platypii.baseline.views.map.MapActivity;
 import com.platypii.baseline.views.tracks.TrackListActivity;
 import android.content.Intent;

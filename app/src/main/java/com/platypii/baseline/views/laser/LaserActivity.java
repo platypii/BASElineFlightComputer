@@ -1,6 +1,8 @@
-package com.platypii.baseline.views;
+package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.laser.RangefinderActivity;
+import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.FlightProfile;
 import com.platypii.baseline.views.tracks.TrackListActivity;
 import android.content.Intent;
@@ -23,6 +25,7 @@ public class LaserActivity extends BaseActivity {
         flightProfile = findViewById(R.id.flightProfile);
         findViewById(R.id.chooseTrack).setOnClickListener(this::chooseTrack);
         findViewById(R.id.chooseExit).setOnClickListener(this::chooseExit);
+        findViewById(R.id.clickRangefinder).setOnClickListener(this::clickRangefinder);
     }
 
     @Override
@@ -44,6 +47,11 @@ public class LaserActivity extends BaseActivity {
     private void chooseExit(View view) {
         firebaseAnalytics.logEvent("click_profiles_choose_exit", null);
         startActivityForResult(new Intent(this, LaserEditActivity.class), EXIT_REQUEST);
+    }
+
+    private void clickRangefinder(View view) {
+        firebaseAnalytics.logEvent("click_rangefinder", null);
+        startActivity(new Intent(this, RangefinderActivity.class));
     }
 
 }

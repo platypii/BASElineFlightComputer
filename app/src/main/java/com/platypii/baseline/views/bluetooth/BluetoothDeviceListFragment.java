@@ -20,7 +20,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class BluetoothDeviceListFragment extends ListFragment {
-    private static final String TAG = "BluetoothActivity";
+    private static final String TAG = "BluetoothDeviceList";
 
     private final List<BluetoothDevice> devices = new ArrayList<>();
     @Nullable

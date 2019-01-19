@@ -1,6 +1,7 @@
-package com.platypii.baseline.views;
+package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.FlightProfile;
 import com.platypii.baseline.views.tracks.TrackListActivity;
 import android.content.Intent;

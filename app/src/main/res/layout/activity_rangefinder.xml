@@ -1,0 +1,22 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.platypii.baseline.laser.RangefinderActivity"
+    android:background="#000000"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.platypii.baseline.views.charts.FlightProfile
+            android:id="@+id/flightProfile"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"/>
+
+    <TextView
+        android:id="@+id/bluetoothLog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text=""/>
+
+</LinearLayout>

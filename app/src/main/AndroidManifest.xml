@@ -97,9 +97,11 @@
         <activity
             android:name=".views.tracks.ChartsActivity"/>
         <activity
-            android:name=".views.LaserActivity"/>
+            android:name=".views.laser.LaserActivity"/>
         <activity
-            android:name=".views.LaserEditActivity"/>
+            android:name=".views.laser.LaserEditActivity"/>
+        <activity
+            android:name=".laser.RangefinderActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
