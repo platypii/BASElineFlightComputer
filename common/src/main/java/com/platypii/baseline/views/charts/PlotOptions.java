@@ -10,13 +10,13 @@ import java.util.Locale;
 /**
  * Used by PlotView to represent screen padding, etc.
  */
-class PlotOptions {
+public class PlotOptions {
 
     // Plot will scale to data bounds, with some padding on the sides
     public final IntBounds padding = new IntBounds();
 
     // Drawing options
-    final float density;
+    public final float density;
     final int axis_color = 0xffee0000;
     final int grid_color = 0xff555555;
     final float font_size = 16;

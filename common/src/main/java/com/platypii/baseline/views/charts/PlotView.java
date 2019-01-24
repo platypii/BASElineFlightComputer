@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A general view for plotting data.
@@ -26,6 +28,9 @@ public abstract class PlotView extends View {
     // Object to store the plot state and drawing primitives
     final Plot plot = new Plot(options);
 
+    // Chart layers
+    private final List<ChartLayer> layers = new ArrayList<>();
+
     // Avoid creating new objects unnecessarily
     final Paint paint = new Paint();
     final Paint text = new Paint();
@@ -39,6 +44,11 @@ public abstract class PlotView extends View {
         text.setColor(0xffcccccc);
         // Initialize bounds
         plot.initBounds(1);
+    }
+
+    public void addLayer(ChartLayer layer) {
+        layers.add(layer);
+        invalidate();
     }
 
     /**
@@ -68,6 +78,11 @@ public abstract class PlotView extends View {
 
         // Draw grid lines
         axes.drawGridlines(plot);
+
+        // Draw the layers
+        for (ChartLayer layer : layers) {
+            layer.drawData(plot, paint, text);
+        }
 
         // Plot the data
         drawData(plot);

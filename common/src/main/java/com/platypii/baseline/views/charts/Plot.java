@@ -11,15 +11,15 @@ import android.support.annotation.NonNull;
 /**
  * Wraps a canvas, but operations are in plot-space x,y
  */
-class Plot {
+public class Plot {
 
     // Drawing options
-    private final PlotOptions options;
+    public final PlotOptions options;
 
     // Drawing surface
-    Canvas canvas;
-    int width;
-    int height;
+    public Canvas canvas;
+    public int width;
+    public int height;
 
     // Bounds are indexed per-axis
     // Data bounds get expanded as we see points
@@ -63,7 +63,7 @@ class Plot {
      * @param radius the width of the path
      * @param paint the paintbrush to use
      */
-    void drawPoint(int axis, double x, double y, float radius, @NonNull Paint paint) {
+    public void drawPoint(int axis, double x, double y, float radius, @NonNull Paint paint) {
         dataBounds[axis].expandBounds(x, y);
         // Screen coordinates
         float sx = getX(axis, x);
@@ -90,7 +90,7 @@ class Plot {
      * @param series the data series to draw
      * @param radius the width of the path
      */
-    void drawLine(int axis, @NonNull DataSeries series, float radius, @NonNull Paint paint) {
+    public void drawLine(int axis, @NonNull DataSeries series, float radius, @NonNull Paint paint) {
         if (series.size() > 0) {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2 * radius * options.density);
