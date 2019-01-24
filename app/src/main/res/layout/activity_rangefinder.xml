@@ -10,10 +10,10 @@
     <com.platypii.baseline.views.charts.FlightProfile
             android:id="@+id/flightProfile"
             android:layout_width="match_parent"
-            android:layout_height="240dp"/>
+            android:layout_height="260dp"/>
 
     <TextView
-        android:id="@+id/bluetoothLog"
+        android:id="@+id/laserText"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
