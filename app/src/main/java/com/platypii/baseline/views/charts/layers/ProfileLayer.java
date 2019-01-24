@@ -2,13 +2,12 @@ package com.platypii.baseline.views.charts.layers;
 
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.DataSeries;
-import com.platypii.baseline.views.charts.ChartLayer;
 import com.platypii.baseline.views.charts.Plot;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import java.util.List;
 
-public class ProfileLayer implements ChartLayer {
+public class ProfileLayer extends ChartLayer {
 
     private static final int AXIS_PROFILE = 0;
     private final List<MLocation> trackData;

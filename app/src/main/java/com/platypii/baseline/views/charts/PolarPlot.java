@@ -5,10 +5,9 @@ import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.DataSeries;
+import com.platypii.baseline.views.charts.layers.EllipseLayer;
 import android.content.Context;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Paint;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -59,6 +58,11 @@ public class PolarPlot extends PlotView {
         for (MLocation loc : trackData) {
             speedSeries.addPoint(loc.groundSpeed(), loc.climb);
         }
+
+        // Add layers
+        if (!trackData.isEmpty()) {
+            addLayer(new EllipseLayer(options.density));
+        }
     }
 
     public void onFocus(@Nullable MLocation focus) {
@@ -73,9 +77,6 @@ public class PolarPlot extends PlotView {
                 text.setTextAlign(Paint.Align.CENTER);
                 plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, text);
             } else {
-                // Draw background ellipses
-                drawEllipses(plot);
-
                 // Draw data
                 paint.setColor(0xff7f00ff);
                 plot.drawLine(AXIS_POLAR, speedSeries, 1.5f, paint);
@@ -91,27 +92,6 @@ public class PolarPlot extends PlotView {
             plot.drawPoint(0, x, y, 2 * options.density, paint);
             paint.setStyle(Paint.Style.FILL);
             plot.drawPoint(0, x, y, options.density, paint);
-        }
-    }
-
-    private final BlurMaskFilter blurry = new BlurMaskFilter(2 * options.density, BlurMaskFilter.Blur.NORMAL);
-    private void drawEllipses(@NonNull Plot plot) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            paint.setStyle(Paint.Style.FILL);
-            paint.setMaskFilter(blurry);
-            // Draw canopy ellipse
-            paint.setColor(0x2244ee44);
-            plot.canvas.save();
-            plot.canvas.rotate(9, plot.getX(11), plot.getY(-5.5));
-            plot.canvas.drawOval(plot.getX(1), plot.getY(-1), plot.getX(21), plot.getY(-10), paint);
-            plot.canvas.restore();
-            // Draw wingsuit ellipse
-            paint.setColor(0x229e62f2);
-            plot.canvas.save();
-            plot.canvas.rotate(35, plot.getX(38), plot.getY(-21));
-            plot.canvas.drawOval(plot.getX(20), plot.getY(-10), plot.getX(56), plot.getY(-32), paint);
-            plot.canvas.restore();
-            paint.setMaskFilter(null);
         }
     }
 

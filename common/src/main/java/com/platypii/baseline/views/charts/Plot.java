@@ -181,7 +181,7 @@ public class Plot {
         final double ppm_x = (width - padding.right - padding.left) / (bounds[axis].x.max - bounds[axis].x.min); // pixels per meter
         return (float) (padding.left + (x - bounds[axis].x.min) * ppm_x);
     }
-    float getX(double x) {
+    public float getX(double x) {
         return getX(0, x);
     }
 
@@ -202,7 +202,7 @@ public class Plot {
         final double ppm_y = (height - padding.bottom - padding.top) / (bounds[axis].y.max - bounds[axis].y.min); // pixels per meter
         return (float) (height - padding.bottom - (y - bounds[axis].y.min) * ppm_y);
     }
-    float getY(double y) {
+    public float getY(double y) {
         return getY(0, y);
     }
 

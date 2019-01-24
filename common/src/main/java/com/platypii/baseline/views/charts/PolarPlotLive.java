@@ -9,16 +9,18 @@ import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.SyncedList;
+import com.platypii.baseline.views.charts.layers.EllipseLayer;
 import android.content.Context;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Paint;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 
 public class PolarPlotLive extends PlotSurface implements MyLocationListener {
 
     private static final int AXIS_POLAR = 0;
+    private final EllipseLayer ellipses;
+    private final Bounds inner = new Bounds();
+    private final Bounds outer = new Bounds();
     private final Bounds bounds = new Bounds();
 
     private static final long window = 15000; // The size of the view window, in milliseconds
@@ -26,9 +28,6 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
 
     private LocationProvider locationService = null;
     private MyAltimeter altimeter = null;
-
-    private final Bounds inner = new Bounds();
-    private final Bounds outer = new Bounds();
 
     public PolarPlotLive(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -50,6 +49,11 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
         options.axis.x = options.axis.y = PlotOptions.axisSpeed();
 
         history.setMaxSize(300);
+
+        // Add layers
+        ellipses = new EllipseLayer(options.density);
+        ellipses.setEnabled(false); // Disable until the first data comes in
+        addLayer(ellipses);
     }
 
     @Override
@@ -58,8 +62,7 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
             final long currentTime = TimeOffset.phoneToGpsTime(System.currentTimeMillis());
             final MLocation loc = locationService.lastLoc;
             if (loc != null && currentTime - loc.millis <= window) {
-                // Draw background ellipses
-                drawEllipses(plot);
+                ellipses.setEnabled(true);
 
                 // Draw horizontal, vertical speed
                 final double vx = locationService.groundSpeed();
@@ -76,30 +79,10 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
                 drawLocation(plot, loc.millis, vx, vy);
             } else {
                 // Draw "no gps signal"
+                ellipses.setEnabled(false);
                 text.setTextAlign(Paint.Align.CENTER);
                 plot.canvas.drawText("no gps signal", plot.width / 2, plot.height / 2, text);
             }
-        }
-    }
-
-    private final BlurMaskFilter blurry = new BlurMaskFilter(2 * options.density, BlurMaskFilter.Blur.NORMAL);
-    private void drawEllipses(@NonNull Plot plot) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            paint.setStyle(Paint.Style.FILL);
-            paint.setMaskFilter(blurry);
-            // Draw canopy ellipse
-            paint.setColor(0x2244ee44);
-            plot.canvas.save();
-            plot.canvas.rotate(9, plot.getX(11), plot.getY(-5.5));
-            plot.canvas.drawOval(plot.getX(1), plot.getY(-1), plot.getX(21), plot.getY(-10), paint);
-            plot.canvas.restore();
-            // Draw wingsuit ellipse
-            paint.setColor(0x229e62f2);
-            plot.canvas.save();
-            plot.canvas.rotate(35, plot.getX(38), plot.getY(-21));
-            plot.canvas.drawOval(plot.getX(20), plot.getY(-10), plot.getX(56), plot.getY(-32), paint);
-            plot.canvas.restore();
-            paint.setMaskFilter(null);
         }
     }
 

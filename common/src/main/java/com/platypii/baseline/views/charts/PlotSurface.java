@@ -2,6 +2,7 @@ package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.views.charts.layers.ChartLayer;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -9,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A general view for plotting data.
@@ -31,6 +34,9 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
     // The drawing thread will sleep for refreshRateMillis
     private static final long refreshRateMillis = 33; // Approx 30fps
 
+    // Chart layers
+    private final List<ChartLayer> layers = new ArrayList<>();
+
     // Avoid creating new objects unnecessarily
     final Paint paint = new Paint();
     final Paint text = new Paint();
@@ -47,6 +53,11 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
         text.setColor(0xffcccccc);
         // Initialize bounds
         plot.initBounds(1);
+    }
+
+    public void addLayer(ChartLayer layer) {
+        layers.add(layer);
+        invalidate();
     }
 
     // SurfaceView stuff:
@@ -133,6 +144,13 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
 
         // Draw grid lines
         axes.drawGridlines(plot);
+
+        // Draw the layers
+        for (ChartLayer layer : layers) {
+            if (layer.isEnabled()) {
+                layer.drawData(plot, paint, text);
+            }
+        }
 
         // Plot the data
         drawData(plot);

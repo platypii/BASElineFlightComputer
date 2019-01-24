@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.util.Bounds;
+import com.platypii.baseline.views.charts.layers.ChartLayer;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -81,7 +82,9 @@ public abstract class PlotView extends View {
 
         // Draw the layers
         for (ChartLayer layer : layers) {
-            layer.drawData(plot, paint, text);
+            if (layer.isEnabled()) {
+                layer.drawData(plot, paint, text);
+            }
         }
 
         // Plot the data
