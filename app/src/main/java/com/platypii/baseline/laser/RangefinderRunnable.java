@@ -5,8 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -55,48 +53,15 @@ class RangefinderRunnable implements Runnable {
         bluetoothGatt = bluetoothDevice.connectGatt(context, true, gattCallback);
     }
 
-    private void requestRangefinderService() {
-        final BluetoothGattService service = bluetoothGatt.getService(rangefinderService);
-        final BluetoothGattCharacteristic ch = service.getCharacteristic(rangefinderCharacteristic);
-        if (ch != null) {
-            // Enables notification locally:
-            bluetoothGatt.setCharacteristicNotification(ch, true);
-            // Enables notification on the device
-            final BluetoothGattDescriptor descriptor = ch.getDescriptor(clientCharacteristicDescriptor);
-            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            bluetoothGatt.writeDescriptor(descriptor);
-        }
-    }
-
-    private void sendHello() {
-        Log.d(TAG, "app -> rf: hello");
-        final BluetoothGattService service = bluetoothGatt.getService(rangefinderService);
-        final BluetoothGattCharacteristic ch = service.getCharacteristic(rangefinderCharacteristic);
-        if (ch != null) {
-            ch.setValue(appHello);
-            bluetoothGatt.writeCharacteristic(ch);
-        }
-    }
-
-    private void sendHeartbeatAck() {
-        Log.d(TAG, "app -> rf: heartbeat ack");
-        final BluetoothGattService service = bluetoothGatt.getService(rangefinderService);
-        final BluetoothGattCharacteristic ch = service.getCharacteristic(rangefinderCharacteristic);
-        if (ch != null) {
-            ch.setValue(appHeartbeatAck);
-            bluetoothGatt.writeCharacteristic(ch);
-        }
-    }
-
     private void processSentence(byte[] value) {
         if (Arrays.equals(value, laserHello)) {
             Log.i(TAG, "rf -> app: hello");
         } else if (Arrays.equals(value, heartbeat)) {
             Log.d(TAG, "rf -> app: heartbeat");
-            sendHeartbeatAck();
+            RangefinderCommands.sendHeartbeatAck(bluetoothGatt);
         } else if (Arrays.equals(value, norange)) {
             Log.i(TAG, "rf -> app: norange");
-            sendHeartbeatAck();
+            RangefinderCommands.sendHeartbeatAck(bluetoothGatt);
         } else if (value[0] == 23 && value[1] == 0) {
             Uineye.processMeasurement(value);
         } else {
@@ -123,9 +88,9 @@ class RangefinderRunnable implements Runnable {
             super.onServicesDiscovered(gatt, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.i(TAG, "Bluetooth services discovered");
-                sendHello();
+                RangefinderCommands.sendHello(bluetoothGatt);
                 Util.sleep(200); // TODO: Is this needed?
-                requestRangefinderService();
+                RangefinderCommands.requestRangefinderService(bluetoothGatt);
             } else {
                 Log.i(TAG, "Rangefinder service discovery failed");
             }
