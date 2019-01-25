@@ -10,6 +10,10 @@ import org.greenrobot.eventbus.EventBus;
 class Uineye {
     private static final String TAG = "RangefinderUineye";
 
+    // Manufacturer ID
+    static final int manufacturerId = 21881;
+    static final byte[] manufacturerData = {-120, -96, -44, 54, 57, 101, 118, 103};
+
     // Rangefinder service
     static final UUID rangefinderService = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
     // Rangefinder characteristic

@@ -1,15 +1,23 @@
 package com.platypii.baseline.laser;
 
+import com.platypii.baseline.util.Exceptions;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.le.*;
 import android.content.Context;
+import android.os.Build;
+import android.os.ParcelUuid;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static com.platypii.baseline.laser.Uineye.*;
 
@@ -20,19 +28,27 @@ import static com.platypii.baseline.laser.Uineye.*;
 class RangefinderRunnable implements Runnable {
     private static final String TAG = "RangefinderRunnable";
 
-    // baseline's rangefinder device id
-    // TODO: Scan for rangefinder
-    // TODO: Don't use hardcoded device id
-    private static final String deviceId = "D4:36:39:65:76:67";
-
     private final RfSentenceIterator sentenceIterator = new RfSentenceIterator();
 
     @NonNull
     private final Context context;
     @NonNull
     private final BluetoothAdapter bluetoothAdapter;
-
+    @Nullable
     private BluetoothGatt bluetoothGatt;
+    @Nullable
+    private BluetoothLeScanner bluetoothScanner;
+    @Nullable
+    private ScanCallback scanCallback;
+
+    // State machine
+    private static final int BT_STOPPED = 0;
+    private static final int BT_SCANNING = 1;
+    private static final int BT_CONNECTING = 2;
+    private static final int BT_CONNECTED = 3;
+    private static final int BT_DISCONNECTED = 4;
+    private static final int BT_STOPPING = 5;
+    private int state = BT_STOPPED;
 
     RangefinderRunnable(@NonNull Context context, @NonNull BluetoothAdapter bluetoothAdapter) {
         this.context = context;
@@ -41,21 +57,69 @@ class RangefinderRunnable implements Runnable {
 
     @Override
     public void run() {
-        Log.i(TAG, "Laser rangefinder bluetooth thread starting");
+        Log.i(TAG, "Rangefinder bluetooth thread starting");
         if (!bluetoothAdapter.isEnabled()) {
             Log.w(TAG, "Bluetooth is not enabled");
             return;
         }
-        // Get bluetooth device
-        final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(deviceId);
-        // Connect to bluetooth device
-        Log.i(TAG, "Rangefinder connecting to: " + bluetoothDevice.getName());
-        bluetoothGatt = bluetoothDevice.connectGatt(context, true, gattCallback);
+        // Scan for rangefinders
+        // TODO: Set timeout
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            startScan();
+        } else {
+            Log.e(TAG, "Android 5.0+ required for bluetooth LE");
+        }
+    }
+
+    /**
+     * Scan for bluetooth LE devices that look like a rangefinder
+     */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void startScan() {
+        Log.i(TAG, "Scanning for rangefinder");
+        state = BT_SCANNING;
+        bluetoothScanner = bluetoothAdapter.getBluetoothLeScanner();
+        if (bluetoothScanner == null) {
+            Log.e(TAG, "Failed to get bluetooth LE scanner");
+            return;
+        }
+        final ScanFilter scanFilter = new ScanFilter.Builder()
+                .setManufacturerData(manufacturerId, manufacturerData)
+                .setServiceUuid(new ParcelUuid(rangefinderService))
+                .build();
+        final List<ScanFilter> scanFilters = Collections.singletonList(scanFilter);
+        final ScanSettings scanSettings = new ScanSettings.Builder().build();
+        scanCallback = new ScanCallback() {
+            @Override
+            public void onScanResult(int callbackType, ScanResult result) {
+                super.onScanResult(callbackType, result);
+                if (state == BT_SCANNING) {
+                    // Stop scanning and get device
+                    stopScan();
+                    final BluetoothDevice device = result.getDevice();
+                    Log.i(TAG, "Rangefinder found, connecting to: " + device.getName());
+                    state = BT_CONNECTING;
+                    bluetoothGatt = device.connectGatt(context, true, gattCallback);
+                }
+            }
+        };
+        bluetoothScanner.startScan(scanFilters, scanSettings, scanCallback);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void stopScan() {
+        if (bluetoothScanner != null) {
+            if (state != BT_SCANNING) {
+                Exceptions.report(new IllegalStateException("Scanner shouldn't exist except in state BT_SCANNING"));
+            }
+            bluetoothScanner.stopScan(scanCallback);
+        }
     }
 
     private void processSentence(byte[] value) {
         if (Arrays.equals(value, laserHello)) {
             Log.i(TAG, "rf -> app: hello");
+            state = BT_CONNECTED;
         } else if (Arrays.equals(value, heartbeat)) {
             Log.d(TAG, "rf -> app: heartbeat");
             RangefinderCommands.sendHeartbeatAck(bluetoothGatt);
@@ -75,11 +139,13 @@ class RangefinderRunnable implements Runnable {
             super.onConnectionStateChange(gatt, status, newState);
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i(TAG, "Rangefinder connected");
+                // TODO: Do we need to discover services? Or can we just connect?
                 bluetoothGatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "Rangefinder disconnected");
+                state = BT_DISCONNECTED;
             } else {
-                Log.i(TAG, "Rangefinder " + newState);
+                Log.i(TAG, "Rangefinder state " + newState);
             }
         }
 
@@ -87,7 +153,7 @@ class RangefinderRunnable implements Runnable {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.i(TAG, "Bluetooth services discovered");
+                Log.i(TAG, "Bluetooth services discovered for device, saying hello");
                 RangefinderCommands.sendHello(bluetoothGatt);
                 Util.sleep(200); // TODO: Is this needed?
                 RangefinderCommands.requestRangefinderService(bluetoothGatt);
@@ -119,6 +185,11 @@ class RangefinderRunnable implements Runnable {
             bluetoothGatt.close();
             bluetoothGatt = null;
         }
+        // Stop scanning
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            stopScan();
+        }
+        state = BT_STOPPING;
     }
 
 }

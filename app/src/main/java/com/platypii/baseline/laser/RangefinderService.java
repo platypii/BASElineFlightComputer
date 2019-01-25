@@ -13,7 +13,7 @@ import android.util.Log;
 
 /**
  * Class to manage a bluetooth laser rangefinder.
- * Note: instantiating this class will not automatically start bluetooth. Call startAsync to connect.
+ * Note: instantiating this class will not automatically start bluetooth. Call start to connect.
  */
 public class RangefinderService implements BaseService {
     private static final String TAG = "RangefinderService";
@@ -32,6 +32,7 @@ public class RangefinderService implements BaseService {
             return;
         }
         final Activity activity = (Activity) context;
+        // TODO: Check for location permission? Can't scan without location permission
         startAsync(activity);
     }
 
@@ -56,14 +57,12 @@ public class RangefinderService implements BaseService {
      */
     @Nullable
     private BluetoothAdapter getAdapter(@NonNull Activity activity) {
-        // TODO: Make sure this doesn't take too long
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             // Device not supported
             Log.e(TAG, "Bluetooth not supported");
         } else if (!bluetoothAdapter.isEnabled()) {
             // Turn on bluetooth
-            // TODO: Handle result?
             final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             activity.startActivityForResult(enableBluetoothIntent, ENABLE_BLUETOOTH_CODE);
         }
