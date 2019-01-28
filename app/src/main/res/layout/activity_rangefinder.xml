@@ -8,9 +8,15 @@
     android:orientation="vertical">
 
     <com.platypii.baseline.views.charts.FlightProfile
-            android:id="@+id/flightProfile"
-            android:layout_width="match_parent"
-            android:layout_height="260dp"/>
+        android:id="@+id/flightProfile"
+        android:layout_width="match_parent"
+        android:layout_height="260dp"/>
+
+    <TextView
+        android:id="@+id/laserStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""/>
 
     <TextView
         android:id="@+id/laserText"

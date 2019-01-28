@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.platypii.baseline.bluetooth.BluetoothState.*;
 import static com.platypii.baseline.laser.Uineye.*;
 
 /**
@@ -31,6 +32,8 @@ class RangefinderRunnable implements Runnable {
     private final RfSentenceIterator sentenceIterator = new RfSentenceIterator();
 
     @NonNull
+    private final RangefinderService service;
+    @NonNull
     private final Context context;
     @NonNull
     private final BluetoothAdapter bluetoothAdapter;
@@ -41,16 +44,8 @@ class RangefinderRunnable implements Runnable {
     @Nullable
     private ScanCallback scanCallback;
 
-    // State machine
-    private static final int BT_STOPPED = 0;
-    private static final int BT_SCANNING = 1;
-    private static final int BT_CONNECTING = 2;
-    private static final int BT_CONNECTED = 3;
-    private static final int BT_DISCONNECTED = 4;
-    private static final int BT_STOPPING = 5;
-    private int state = BT_STOPPED;
-
-    RangefinderRunnable(@NonNull Context context, @NonNull BluetoothAdapter bluetoothAdapter) {
+    RangefinderRunnable(@NonNull RangefinderService service, @NonNull Context context, @NonNull BluetoothAdapter bluetoothAdapter) {
+        this.service = service;
         this.context = context;
         this.bluetoothAdapter = bluetoothAdapter;
     }
@@ -77,7 +72,7 @@ class RangefinderRunnable implements Runnable {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void startScan() {
         Log.i(TAG, "Scanning for rangefinder");
-        state = BT_SCANNING;
+        service.setState(BT_STARTING);
         bluetoothScanner = bluetoothAdapter.getBluetoothLeScanner();
         if (bluetoothScanner == null) {
             Log.e(TAG, "Failed to get bluetooth LE scanner");
@@ -93,12 +88,12 @@ class RangefinderRunnable implements Runnable {
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
-                if (state == BT_SCANNING) {
+                if (service.getState() == BT_STARTING) {
                     // Stop scanning and get device
                     stopScan();
                     final BluetoothDevice device = result.getDevice();
                     Log.i(TAG, "Rangefinder found, connecting to: " + device.getName());
-                    state = BT_CONNECTING;
+                    service.setState(BT_CONNECTING);
                     bluetoothGatt = device.connectGatt(context, true, gattCallback);
                 }
             }
@@ -109,8 +104,8 @@ class RangefinderRunnable implements Runnable {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void stopScan() {
         if (bluetoothScanner != null) {
-            if (state != BT_SCANNING) {
-                Exceptions.report(new IllegalStateException("Scanner shouldn't exist except in state BT_SCANNING"));
+            if (service.getState() != BT_STARTING) {
+                Exceptions.report(new IllegalStateException("Scanner shouldn't exist in state " + service.getState()));
             }
             bluetoothScanner.stopScan(scanCallback);
         }
@@ -119,7 +114,7 @@ class RangefinderRunnable implements Runnable {
     private void processSentence(byte[] value) {
         if (Arrays.equals(value, laserHello)) {
             Log.i(TAG, "rf -> app: hello");
-            state = BT_CONNECTED;
+            service.setState(BT_CONNECTED);
         } else if (Arrays.equals(value, heartbeat)) {
             Log.d(TAG, "rf -> app: heartbeat");
             RangefinderCommands.sendHeartbeatAck(bluetoothGatt);
@@ -143,7 +138,7 @@ class RangefinderRunnable implements Runnable {
                 bluetoothGatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "Rangefinder disconnected");
-                state = BT_DISCONNECTED;
+                service.setState(BT_DISCONNECTED);
             } else {
                 Log.i(TAG, "Rangefinder state " + newState);
             }
@@ -189,7 +184,7 @@ class RangefinderRunnable implements Runnable {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             stopScan();
         }
-        state = BT_STOPPING;
+        service.setState(BT_STOPPING);
     }
 
 }

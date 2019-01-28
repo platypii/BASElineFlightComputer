@@ -1,6 +1,7 @@
 package com.platypii.baseline.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.FlightProfile;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
+
 public class RangefinderActivity extends BaseActivity {
 
     private final RangefinderService rangefinder = new RangefinderService();
@@ -18,6 +21,7 @@ public class RangefinderActivity extends BaseActivity {
 
     // Views
     private FlightProfile chart;
+    private TextView laserStatus;
     private TextView laserText;
 
     @Override
@@ -25,7 +29,9 @@ public class RangefinderActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rangefinder);
 
+        laserStatus = findViewById(R.id.laserStatus);
         laserText = findViewById(R.id.laserText);
+        updateState();
         updateText();
 
         chart = findViewById(R.id.flightProfile);
@@ -37,6 +43,14 @@ public class RangefinderActivity extends BaseActivity {
 
         rangefinder.start(this);
         EventBus.getDefault().register(this);
+    }
+
+    private void updateState() {
+        if (rangefinder.getState() == BT_CONNECTED) {
+            laserStatus.setText(R.string.bluetooth_status_connected);
+        } else {
+            laserStatus.setText(R.string.bluetooth_status_disconnected);
+        }
     }
 
     private void updateText() {
@@ -56,12 +70,17 @@ public class RangefinderActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onBluetoothEvent(LaserMeasurement meas) {
+    public void onLaserMeasure(LaserMeasurement meas) {
         lasers.add(meas);
         // Sort by horiz
         Collections.sort(lasers, (l1, l2) -> Double.compare(l1.horiz, l2.horiz));
         updateText();
         chart.setLasers(lasers);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBluetoothEvent(BluetoothEvent event) {
+        updateState();
     }
 
 }

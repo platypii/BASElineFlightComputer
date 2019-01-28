@@ -1,6 +1,7 @@
 package com.platypii.baseline.laser;
 
 import com.platypii.baseline.BaseService;
+import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.util.Exceptions;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -10,6 +11,9 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import org.greenrobot.eventbus.EventBus;
+
+import static com.platypii.baseline.bluetooth.BluetoothState.*;
 
 /**
  * Class to manage a bluetooth laser rangefinder.
@@ -21,6 +25,7 @@ public class RangefinderService implements BaseService {
     private static final int ENABLE_BLUETOOTH_CODE = 13;
 
     // Bluetooth state
+    private int bluetoothState = BT_STOPPED;
     private BluetoothAdapter bluetoothAdapter;
     private RangefinderRunnable bluetoothRunnable;
     private Thread bluetoothThread;
@@ -44,7 +49,7 @@ public class RangefinderService implements BaseService {
         AsyncTask.execute(() -> {
             bluetoothAdapter = getAdapter(activity);
             if (bluetoothAdapter != null) {
-                bluetoothRunnable = new RangefinderRunnable(activity, bluetoothAdapter);
+                bluetoothRunnable = new RangefinderRunnable(this, activity, bluetoothAdapter);
                 bluetoothThread = new Thread(bluetoothRunnable);
                 bluetoothThread.start();
             }
@@ -67,6 +72,16 @@ public class RangefinderService implements BaseService {
             activity.startActivityForResult(enableBluetoothIntent, ENABLE_BLUETOOTH_CODE);
         }
         return bluetoothAdapter;
+    }
+
+    int getState() {
+        return bluetoothState;
+    }
+
+    void setState(int state) {
+        Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
+        bluetoothState = state;
+        EventBus.getDefault().post(new BluetoothEvent());
     }
 
     @Override
