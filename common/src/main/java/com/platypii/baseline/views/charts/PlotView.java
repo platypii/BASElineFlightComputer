@@ -49,7 +49,6 @@ public abstract class PlotView extends View {
 
     public void addLayer(ChartLayer layer) {
         layers.add(layer);
-        invalidate();
     }
 
     /**

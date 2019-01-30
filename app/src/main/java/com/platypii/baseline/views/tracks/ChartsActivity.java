@@ -3,7 +3,7 @@ package com.platypii.baseline.views.tracks;
 import com.platypii.baseline.R;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.tracks.TrackFileData;
+import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackStats;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
@@ -22,7 +22,6 @@ import android.widget.TextView;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Date;
-import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -109,9 +108,7 @@ public class ChartsActivity extends BaseActivity {
         protected Void doInBackground(Void... voids) {
             final ChartsActivity activity = activityRef.get();
             if (activity != null && !activity.isFinishing()) {
-                Log.i(TAG, "Loading track data from " + trackFile);
-                final List<MLocation> trackData = TrackFileData.getTrackData(trackFile);
-                activity.loadData(trackData);
+                activity.loadData(trackFile);
             }
             return null;
         }
@@ -127,11 +124,13 @@ public class ChartsActivity extends BaseActivity {
     /**
      * Load data into charts, called from LoadTask in background thread
      */
-    private void loadData(@NonNull List<MLocation> trackData) {
-        stats = new TrackStats(trackData);
-        timeChart.loadTrack(trackData);
-        flightProfile.loadTrack(trackData);
-        polarChart.loadTrack(trackData);
+    private void loadData(File trackFile) {
+        Log.i(TAG, "Loading track data from " + trackFile);
+        final TrackData trackData = new TrackData(trackFile);
+        stats = trackData.stats;
+        timeChart.loadTrack(trackData.data);
+        flightProfile.loadTrack(trackData.data);
+        polarChart.loadTrack(trackData.data);
     }
 
     /**

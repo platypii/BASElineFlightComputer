@@ -57,7 +57,6 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
 
     public void addLayer(ChartLayer layer) {
         layers.add(layer);
-        invalidate();
     }
 
     // SurfaceView stuff:

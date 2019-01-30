@@ -1,46 +1,30 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.altimeter.BaroAltimeter;
+import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.CSVHeader;
 import com.platypii.baseline.util.kalman.Filter;
 import com.platypii.baseline.util.kalman.FilterKalman;
-import com.platypii.baseline.measurements.MLocation;
-
 import android.support.annotation.NonNull;
 import android.util.Log;
-import java.io.BufferedReader;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-import static com.platypii.baseline.util.CSVParse.getColumnDate;
-import static com.platypii.baseline.util.CSVParse.getColumnDouble;
-import static com.platypii.baseline.util.CSVParse.getColumnLong;
+import static com.platypii.baseline.util.CSVParse.*;
 
 /**
  * Parse location data from track file
  */
-public class TrackFileData {
-    private static final String TAG = "TrackFileData";
-
-    @NonNull
-    public static List<MLocation> getTrackData(@NonNull File trackFile) {
-        // Try and parse file
-        final List<MLocation> trackData = readTrackFile(trackFile);
-        // Trim plane and ground
-        return autoTrim(trackData);
-    }
+class TrackFileReader {
+    private static final String TAG = "TrackFileReader";
 
     /**
      * Load track data from file into location data
      */
     @NonNull
-    private static List<MLocation> readTrackFile(File trackFile) {
+    static List<MLocation> readTrackFile(File trackFile) {
         // Read file line by line
         // TODO minsdk19: InputStreamReader(,StandardCharsets.UTF_8)
         if (trackFile.getName().endsWith(".gz")) {
@@ -147,33 +131,6 @@ public class TrackFileData {
         }
 
         return data;
-    }
-
-    /**
-     * Trim plane ride and ground from track data
-     */
-    @NonNull
-    private static List<MLocation> autoTrim(@NonNull List<MLocation> points) {
-        // Margin size is the number of data points on either side of the jump
-        // TODO: Use time instead of samples
-        final int margin_size = 50;
-        final int n = points.size();
-        // Scan data
-        int index_start = 0;
-        int index_end = n;
-        for (int i = 0; i < n; i++) {
-            final MLocation point = points.get(i);
-            if (index_start == 0 && point.climb < -4) {
-                index_start = i;
-            }
-            if (point.climb < -2.5 && index_start < i) {
-                index_end = i;
-            }
-        }
-        // Conform to list bounds
-        index_start = index_start - margin_size < 0 ? 0 : index_start - margin_size;
-        index_end = index_end + margin_size > n ? n : index_end + margin_size;
-        return points.subList(index_start, index_end);
     }
 
 }
