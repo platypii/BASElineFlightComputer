@@ -99,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="clickLasers"
-                android:drawableTop="@drawable/ic_glide"
+                android:drawableTop="@drawable/profiles"
                 android:text="@string/action_profiles"
                 style="@style/Widget.AppCompat.Button.Borderless" />
 

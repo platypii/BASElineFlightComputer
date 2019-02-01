@@ -81,7 +81,7 @@ class UineyeProtocol implements RangefinderProtocol {
         } else if (value[0] == 23 && value[1] == 0) {
             processMeasurement(value);
         } else {
-            Log.i(TAG, "rf -> app: data " + Util.byteArrayToHex(value));
+            Log.w(TAG, "rf -> app: unknown " + Util.byteArrayToHex(value));
         }
     }
 
@@ -126,7 +126,7 @@ class UineyeProtocol implements RangefinderProtocol {
         }
 
         double pitch = Util.bytesToShort(value[3], value[4]) * 0.1; // degrees
-        double total = Util.bytesToShort(value[5], value[6]) * 0.1; // meters
+//        double total = Util.bytesToShort(value[5], value[6]) * 0.1; // meters
         double vert = Util.bytesToShort(value[7], value[8]) * 0.1; // meters
         double horiz = Util.bytesToShort(value[9], value[10]) * 0.1; // meters
 
@@ -137,7 +137,7 @@ class UineyeProtocol implements RangefinderProtocol {
         // TODO: Check checksum?
 //        byte checksum = value[22];
 
-        final LaserMeasurement meas = new LaserMeasurement(pitch, total, vert, horiz);
+        final LaserMeasurement meas = new LaserMeasurement(horiz, vert);
         Log.i(TAG, "rf -> app: measure " + meas);
         EventBus.getDefault().post(meas);
     }

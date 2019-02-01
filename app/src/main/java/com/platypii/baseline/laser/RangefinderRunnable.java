@@ -89,7 +89,7 @@ class RangefinderRunnable implements Runnable {
                     final BluetoothDevice device = result.getDevice();
                     final ScanRecord record = result.getScanRecord();
                     if (ATNProtocol.isATN(device)) {
-                        Log.e(TAG, "ATN rangefinder found, connecting to: " +  device.getName());
+                        Log.i(TAG, "ATN rangefinder found, connecting to: " +  device.getName());
                         connect(device);
                         protocol = new ATNProtocol(bluetoothGatt);
                     } else if (UineyeProtocol.isUineye(record)) {
@@ -105,7 +105,6 @@ class RangefinderRunnable implements Runnable {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void connect(BluetoothDevice device) {
-        Log.i(TAG, "Rangefinder found, connecting to: " + device.getName());
         stopScan();
         service.setState(BT_CONNECTING);
         // Connect to device
@@ -168,7 +167,7 @@ class RangefinderRunnable implements Runnable {
             bluetoothGatt = null;
         }
         // Stop scanning
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && service.getState() == BT_STARTING) {
             stopScan();
         }
         service.setState(BT_STOPPING);

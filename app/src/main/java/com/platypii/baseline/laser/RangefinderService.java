@@ -74,7 +74,7 @@ public class RangefinderService implements BaseService {
         return bluetoothAdapter;
     }
 
-    int getState() {
+    public int getState() {
         return bluetoothState;
     }
 

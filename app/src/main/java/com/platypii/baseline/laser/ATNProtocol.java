@@ -22,7 +22,10 @@ class ATNProtocol implements RangefinderProtocol {
     private static final UUID clientCharacteristicDescriptor = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
     // Rangefinder responses
-    private static final String norangePrefix = "10-01-a1-ff-58-";
+    // 10-01-20-00-0b-01-bb-18 // measurement
+    // 10-01-a0-ff-58-01-55-b2 // measurement fail
+    // 10-01-10-02-0c-00-79-68 // fog mode
+    // 10-01-91-ff-58-01-bb-5c // fog mode fail yards
 
     // Protocol state
     private final BluetoothGatt bluetoothGatt;
@@ -39,12 +42,21 @@ class ATNProtocol implements RangefinderProtocol {
     @Override
     public void processBytes(byte[] value) {
         final String hex = Util.byteArrayToHex(value);
-        if (hex.startsWith(norangePrefix)) {
-            Log.i(TAG, "rf -> app: norange " + hex);
-        } else if (value[0] == 16 && value[1] == 1) {
-            processMeasurement(value);
+        if (value[0] == 16 && value[1] == 1) {
+            if ((value[2] & 0x91) != 0) {
+                Log.w(TAG, "Unexpected ATN command: " + hex);
+            }
+            final boolean success = (value[2] & 0x80) == 0;
+//            final boolean fogMode = (value[2] & 0x10) != 0;
+//            final boolean metric = (value[2] & 0x01) == 0;
+
+            if (success) {
+                processMeasurement(value);
+            } else {
+                Log.i(TAG, "rf -> app: norange " + hex);
+            }
         } else {
-            Log.i(TAG, "rf -> app: data " + hex);
+            Log.w(TAG, "rf -> app: unknown " + hex);
         }
     }
 
@@ -77,10 +89,14 @@ class ATNProtocol implements RangefinderProtocol {
         double total = Util.bytesToShort(value[3], value[4]) * 0.5; // meters
         double pitch = Util.bytesToShort(value[5], value[6]) * 0.1; // degrees
 
-        double vert = total * Math.sin(Math.toRadians(pitch)); // meters
         double horiz = total * Math.cos(Math.toRadians(pitch)); // meters
+        double vert = total * Math.sin(Math.toRadians(pitch)); // meters
 
-        final LaserMeasurement meas = new LaserMeasurement(pitch, total, vert, horiz);
+        if (horiz < 0) {
+            throw new IllegalArgumentException("Invalid horizontal distance " + total + " " + pitch + " " + horiz + " " + vert);
+        }
+
+        final LaserMeasurement meas = new LaserMeasurement(horiz, vert);
         Log.i(TAG, "rf -> app: measure " + meas);
         EventBus.getDefault().post(meas);
     }

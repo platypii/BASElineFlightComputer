@@ -22,9 +22,7 @@ public class LaserLayer extends ChartLayer {
         profileSeries.addPoint(0, 0);
         if (!lasers.isEmpty()) {
             for (LaserMeasurement laser : lasers) {
-                final double x = laser.horiz;
-                final double y = laser.vert;
-                profileSeries.addPoint(x, y);
+                profileSeries.addPoint(laser.x, laser.y);
             }
         }
     }
