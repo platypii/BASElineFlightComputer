@@ -10,26 +10,21 @@ import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.*;
 import android.content.Context;
 import android.os.Build;
-import android.os.ParcelUuid;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.*;
-import static com.platypii.baseline.laser.Uineye.*;
 
 /**
- * Thread that reads from bluetooth rangefinder.
- * This implements protocol for reading laser measurements from a Uineye HK-1800-P.
+ * Thread that reads from bluetooth laser rangefinder.
+ * Laser measurements are emitted as EventBus messages.
  */
 class RangefinderRunnable implements Runnable {
     private static final String TAG = "RangefinderRunnable";
-
-    private final RfSentenceIterator sentenceIterator = new RfSentenceIterator();
 
     @NonNull
     private final RangefinderService service;
@@ -43,6 +38,8 @@ class RangefinderRunnable implements Runnable {
     private BluetoothLeScanner bluetoothScanner;
     @Nullable
     private ScanCallback scanCallback;
+    @Nullable
+    private RangefinderProtocol protocol;
 
     RangefinderRunnable(@NonNull RangefinderService service, @NonNull Context context, @NonNull BluetoothAdapter bluetoothAdapter) {
         this.service = service;
@@ -79,8 +76,8 @@ class RangefinderRunnable implements Runnable {
             return;
         }
         final ScanFilter scanFilter = new ScanFilter.Builder()
-                .setManufacturerData(manufacturerId, manufacturerData)
-                .setServiceUuid(new ParcelUuid(rangefinderService))
+//                .setManufacturerData(manufacturerId, manufacturerData)
+//                .setServiceUuid(new ParcelUuid(rangefinderService))
                 .build();
         final List<ScanFilter> scanFilters = Collections.singletonList(scanFilter);
         final ScanSettings scanSettings = new ScanSettings.Builder().build();
@@ -89,12 +86,17 @@ class RangefinderRunnable implements Runnable {
             public void onScanResult(int callbackType, ScanResult result) {
                 super.onScanResult(callbackType, result);
                 if (service.getState() == BT_STARTING) {
-                    // Stop scanning and get device
-                    stopScan();
                     final BluetoothDevice device = result.getDevice();
-                    Log.i(TAG, "Rangefinder found, connecting to: " + device.getName());
-                    service.setState(BT_CONNECTING);
-                    bluetoothGatt = device.connectGatt(context, true, gattCallback);
+                    final ScanRecord record = result.getScanRecord();
+                    if (ATNProtocol.isATN(device)) {
+                        Log.e(TAG, "ATN rangefinder found, connecting to: " +  device.getName());
+                        connect(device);
+                        protocol = new ATNProtocol(bluetoothGatt);
+                    } else if (UineyeProtocol.isUineye(record)) {
+                        Log.i(TAG, "Uineye rangefinder found, connecting to: " + device.getName());
+                        connect(device);
+                        protocol = new UineyeProtocol(bluetoothGatt);
+                    }
                 }
             }
         };
@@ -102,29 +104,22 @@ class RangefinderRunnable implements Runnable {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void stopScan() {
-        if (bluetoothScanner != null) {
-            if (service.getState() != BT_STARTING) {
-                Exceptions.report(new IllegalStateException("Scanner shouldn't exist in state " + service.getState()));
-            }
-            bluetoothScanner.stopScan(scanCallback);
-        }
+    private void connect(BluetoothDevice device) {
+        Log.i(TAG, "Rangefinder found, connecting to: " + device.getName());
+        stopScan();
+        service.setState(BT_CONNECTING);
+        // Connect to device
+        bluetoothGatt = device.connectGatt(context, true, gattCallback);
     }
 
-    private void processSentence(byte[] value) {
-        if (Arrays.equals(value, laserHello)) {
-            Log.i(TAG, "rf -> app: hello");
-            service.setState(BT_CONNECTED);
-        } else if (Arrays.equals(value, heartbeat)) {
-            Log.d(TAG, "rf -> app: heartbeat");
-            RangefinderCommands.sendHeartbeatAck(bluetoothGatt);
-        } else if (Arrays.equals(value, norange)) {
-            Log.i(TAG, "rf -> app: norange");
-            RangefinderCommands.sendHeartbeatAck(bluetoothGatt);
-        } else if (value[0] == 23 && value[1] == 0) {
-            Uineye.processMeasurement(value);
-        } else {
-            Log.i(TAG, "rf -> app: data " + Util.byteArrayToHex(value));
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void stopScan() {
+        if (service.getState() != BT_STARTING) {
+            Exceptions.report(new IllegalStateException("Scanner shouldn't exist in state " + service.getState()));
+        }
+        // Stop scanning
+        if (bluetoothScanner != null) {
+            bluetoothScanner.stopScan(scanCallback);
         }
     }
 
@@ -136,6 +131,7 @@ class RangefinderRunnable implements Runnable {
                 Log.i(TAG, "Rangefinder connected");
                 // TODO: Do we need to discover services? Or can we just connect?
                 bluetoothGatt.discoverServices();
+                service.setState(BT_CONNECTED);
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "Rangefinder disconnected");
                 service.setState(BT_DISCONNECTED);
@@ -148,10 +144,8 @@ class RangefinderRunnable implements Runnable {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.i(TAG, "Bluetooth services discovered for device, saying hello");
-                RangefinderCommands.sendHello(bluetoothGatt);
-                Util.sleep(200); // TODO: Is this needed?
-                RangefinderCommands.requestRangefinderService(bluetoothGatt);
+                Log.i(TAG, "Rangefinder bluetooth services discovered");
+                protocol.onServicesDiscovered();
             } else {
                 Log.i(TAG, "Rangefinder service discovery failed");
             }
@@ -159,20 +153,13 @@ class RangefinderRunnable implements Runnable {
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic ch) {
-            if (ch.getUuid().equals(rangefinderCharacteristic)) {
-                addBytesToBuffer(ch.getValue());
+            if (ch.getUuid().equals(protocol.getCharacteristic())) {
+                protocol.processBytes(ch.getValue());
             } else {
                 Log.i(TAG, "Rangefinder onCharacteristicChanged " + ch);
             }
         }
     };
-
-    private void addBytesToBuffer(byte[] value) {
-        sentenceIterator.addBytes(value);
-        while (sentenceIterator.hasNext()) {
-            processSentence(sentenceIterator.next());
-        }
-    }
 
     void stop() {
         // Close bluetooth socket

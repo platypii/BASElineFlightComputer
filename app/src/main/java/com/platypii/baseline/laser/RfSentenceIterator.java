@@ -15,7 +15,7 @@ public class RfSentenceIterator implements Iterator<byte[]> {
     // Sentences ready to read
     private List<byte[]> sentences = new ArrayList<>();
 
-    int state = 0;
+    private int state = 0;
 
     void addBytes(byte[] bytes) {
         for (byte b : bytes) {
