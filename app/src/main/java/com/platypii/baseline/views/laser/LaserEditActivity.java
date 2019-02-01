@@ -1,8 +1,10 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.cloud.LaserUpload;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.laser.LaserMeasurement;
+import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.laser.RangefinderService;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.FlightProfile;
@@ -25,6 +27,7 @@ public class LaserEditActivity extends BaseActivity {
     private final RangefinderService rangefinder = new RangefinderService();
 
     private FlightProfile flightProfile;
+    private EditText laserName;
     private EditText laserText;
     private TextView laserStatus;
 
@@ -35,6 +38,7 @@ public class LaserEditActivity extends BaseActivity {
 
         // Find views
         flightProfile = findViewById(R.id.flightProfile);
+        laserName = findViewById(R.id.laserName);
         laserText = findViewById(R.id.laserText);
         laserStatus = findViewById(R.id.laserStatus);
         findViewById(R.id.laserSave).setOnClickListener(this::laserSave);
@@ -50,8 +54,13 @@ public class LaserEditActivity extends BaseActivity {
 
     private void laserSave(View view) {
         firebaseAnalytics.logEvent("click_laser_edit_save", null);
-        // TODO: Save laser
-        finish();
+        final List<LaserMeasurement> points = LaserMeasurement.parse(laserText.getText().toString());
+        final String name = laserName.getText().toString();
+        final LaserProfile laserProfile = new LaserProfile("", name, false, "app", points);
+        new Thread(() -> {
+            LaserUpload.post(LaserEditActivity.this, laserProfile);
+            finish();
+        }).start();
     }
 
     private void laserCancel(View view) {
@@ -61,15 +70,15 @@ public class LaserEditActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserMeasure(LaserMeasurement meas) {
-        // TODO: Parse lasers
-        final List<LaserMeasurement> lasers = LaserMeasurement.parse(laserText.getText().toString());
-        // Add measurement to lasers
-        lasers.add(meas);
+        // Parse lasers
+        final List<LaserMeasurement> points = LaserMeasurement.parse(laserText.getText().toString());
+        // Add measurement to laser points
+        points.add(meas);
         // Sort by horiz
-        Collections.sort(lasers, (l1, l2) -> Double.compare(l1.x, l2.x));
+        Collections.sort(points, (l1, l2) -> Double.compare(l1.x, l2.x));
         // Update text and chart
-        updateText(lasers);
-        flightProfile.setLasers(lasers);
+        updateText(points);
+        flightProfile.setLasers(points);
     }
 
     /**

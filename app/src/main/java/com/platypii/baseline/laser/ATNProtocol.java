@@ -43,10 +43,12 @@ class ATNProtocol implements RangefinderProtocol {
     public void processBytes(byte[] value) {
         final String hex = Util.byteArrayToHex(value);
         if (value[0] == 16 && value[1] == 1) {
-            if ((value[2] & 0x91) != 0) {
+            // Check for bits we haven't seen before
+            if ((value[2] & 0x4e) != 0) {
                 Log.w(TAG, "Unexpected ATN command: " + hex);
             }
             final boolean success = (value[2] & 0x80) == 0;
+//            final boolean normalMode = (value[2] & 0x20) != 0;
 //            final boolean fogMode = (value[2] & 0x10) != 0;
 //            final boolean metric = (value[2] & 0x01) == 0;
 
