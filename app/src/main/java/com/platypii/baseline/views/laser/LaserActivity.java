@@ -1,18 +1,17 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.FlightProfile;
-import com.platypii.baseline.views.tracks.TrackListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 public class LaserActivity extends BaseActivity {
 
     private FlightProfile flightProfile;
-    private int TRACK_REQUEST = 64;
-    private int EXIT_REQUEST = 128;
+
+    static final int TRACK_REQUEST = 64;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,9 +20,12 @@ public class LaserActivity extends BaseActivity {
 
         // Find views
         flightProfile = findViewById(R.id.flightProfile);
-        findViewById(R.id.chooseTrack).setOnClickListener(this::chooseTrack);
-        findViewById(R.id.chooseExit).setOnClickListener(this::chooseExit);
-        findViewById(R.id.clickLaserAdd).setOnClickListener(this::clickAdd);
+
+        // Load laser panel fragment
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.laserPanel, new LaserPanelFragment())
+                .commit();
     }
 
     @Override
@@ -37,19 +39,8 @@ public class LaserActivity extends BaseActivity {
         }
     }
 
-    private void chooseTrack(View view) {
-        firebaseAnalytics.logEvent("click_profiles_choose_track", null);
-        startActivityForResult(new Intent(this, TrackListActivity.class), TRACK_REQUEST);
-    }
-
-    private void chooseExit(View view) {
-        firebaseAnalytics.logEvent("click_profiles_choose_exit", null);
-        startActivityForResult(new Intent(this, LaserEditActivity.class), EXIT_REQUEST);
-    }
-
-    private void clickAdd(View view) {
-        firebaseAnalytics.logEvent("click_rangefinder", null);
-        startActivity(new Intent(this, LaserEditActivity.class));
+    void updateLaser(LaserProfile laser) {
+        flightProfile.setLasers(laser.points);
     }
 
 }

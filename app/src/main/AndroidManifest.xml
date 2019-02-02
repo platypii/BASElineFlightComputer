@@ -98,8 +98,6 @@
             android:name=".views.tracks.ChartsActivity"/>
         <activity
             android:name=".views.laser.LaserActivity"/>
-        <activity
-            android:name=".views.laser.LaserEditActivity"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

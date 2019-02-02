@@ -1,7 +1,9 @@
 package com.platypii.baseline.laser;
 
+import com.platypii.baseline.util.Exceptions;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -23,10 +25,11 @@ public class LaserMeasurement {
         return String.format(Locale.US, "%.1f, %.1f", x, y);
     }
 
-    public static List<LaserMeasurement> parse(String pointString) {
+    public static List<LaserMeasurement> parse(String pointString, boolean strict) throws ParseException {
         final List<LaserMeasurement> points = new ArrayList<>();
         final String[] lines = pointString.split("\n");
-        for (String line : lines) {
+        for (int i = 0; i < lines.length; i++) {
+            final String line = lines[i];
             final String[] row = line.split(",");
             if (row.length >= 2) {
                 try {
@@ -35,9 +38,26 @@ public class LaserMeasurement {
                     points.add(new LaserMeasurement(x, y));
                 } catch (NumberFormatException e) {
                     Log.w(TAG, "Error parsing laser profile", e);
+                    if (strict) {
+                        throw new ParseException("Invalid measurement", i + 1);
+                    }
+                }
+            } else {
+                if (strict) {
+                    throw new ParseException("Invalid measurement", i + 1);
                 }
             }
         }
         return points;
+    }
+
+    public static List<LaserMeasurement> parseSafe(String pointString) {
+        try {
+            return parse(pointString, false);
+        } catch (ParseException e) {
+            // Parse exception should never actually be thrown when strict = false
+            Exceptions.report(e);
+            return new ArrayList<>();
+        }
     }
 }
