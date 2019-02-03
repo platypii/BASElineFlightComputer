@@ -33,7 +33,7 @@ public class RangefinderService implements BaseService {
     @Override
     public void start(@NonNull Context context) {
         if (!(context instanceof Activity)) {
-            Exceptions.report(new ClassCastException("Bluetooth context must be an activity"));
+            Exceptions.report(new ClassCastException("Rangefinder context must be an activity"));
             return;
         }
         final Activity activity = (Activity) context;
@@ -79,14 +79,14 @@ public class RangefinderService implements BaseService {
     }
 
     void setState(int state) {
-        Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
+        Log.d(TAG, "Rangefinder bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         bluetoothState = state;
         EventBus.getDefault().post(new BluetoothEvent());
     }
 
     @Override
     public synchronized void stop() {
-        Log.i(TAG, "Stopping bluetooth service");
+        Log.i(TAG, "Stopping rangefinder service");
         // Stop thread
         if (bluetoothRunnable != null) {
             bluetoothRunnable.stop();
@@ -99,9 +99,9 @@ public class RangefinderService implements BaseService {
             } catch (InterruptedException e) {
                 Log.e(TAG, "Bluetooth thread interrupted while waiting for it to die", e);
             }
-            Log.i(TAG, "Bluetooth service stopped");
+            Log.i(TAG, "Rangefinder service stopped");
         } else {
-            Log.e(TAG, "Cannot stop bluetooth: runnable is null");
+            Log.e(TAG, "Cannot stop rangefinder: runnable is null");
         }
     }
 

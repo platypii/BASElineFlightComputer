@@ -14,8 +14,11 @@ public class BaselineCloud implements BaseService {
 
     @Nullable
     private ConnectivityManager connectivityManager;
+
+    // REST objects
     public final TrackListing listing = new TrackListing();
     private final UploadManager uploads = new UploadManager();
+    public final LaserListing lasers = new LaserListing();
 
     public void deleteTrack(@NonNull Context context, @NonNull CloudData track) {
         new Thread(new DeleteTask(context, track)).start();
@@ -40,10 +43,12 @@ public class BaselineCloud implements BaseService {
         // Start cloud services
         listing.start(context);
         uploads.start(context);
+        lasers.start(context);
     }
 
     @Override
     public void stop() {
+        lasers.stop();
         uploads.stop();
         listing.stop();
     }

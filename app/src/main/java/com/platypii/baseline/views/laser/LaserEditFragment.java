@@ -9,13 +9,18 @@ import com.platypii.baseline.laser.RangefinderService;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -31,6 +36,7 @@ public class LaserEditFragment extends Fragment {
     private final RangefinderService rangefinder = new RangefinderService();
 
     private EditText laserName;
+    private Spinner laserUnits;
     private EditText laserText;
     private TextView laserStatus;
 
@@ -38,10 +44,22 @@ public class LaserEditFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.laser_edit_panel, container, false);
         laserName = view.findViewById(R.id.laserName);
+        laserUnits = view.findViewById(R.id.laserUnits);
         laserText = view.findViewById(R.id.laserText);
         laserStatus = view.findViewById(R.id.laserStatus);
         view.findViewById(R.id.laserSave).setOnClickListener(this::laserSave);
         view.findViewById(R.id.laserCancel).setOnClickListener(this::laserCancel);
+        laserText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Update chart in parent activity
+                ((LaserActivity) getActivity()).updateLaser(getLaserProfile());
+            }
+        });
         return view;
     }
 
@@ -53,9 +71,13 @@ public class LaserEditFragment extends Fragment {
     }
 
     private LaserProfile getLaserProfile() {
-        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString());
+        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
         final String name = laserName.getText().toString();
         return new LaserProfile("", name, false, "app", points);
+    }
+
+    private boolean isMetric() {
+        return "meters".equals(laserUnits.toString());
     }
 
     /**
@@ -67,15 +89,21 @@ public class LaserEditFragment extends Fragment {
             Toast.makeText(getContext(), "Name cannot be empty", Toast.LENGTH_LONG).show();
             return false;
         }
+        final boolean metric = "meters".equals(laserUnits.toString());
         // Validate points
+        final String pointString = laserText.getText().toString();
+        if (pointString.isEmpty()) {
+            Toast.makeText(getContext(), "Measurements cannot be empty", Toast.LENGTH_LONG).show();
+            return false;
+        }
         try {
-            final int count = LaserMeasurement.parse(laserText.getText().toString(), true).size();
+            final int count = LaserMeasurement.parse(pointString, metric, true).size();
             if (count == 0) {
                 Toast.makeText(getContext(), "Measurements cannot be empty", Toast.LENGTH_LONG).show();
                 return false;
             }
-        } catch (Exception e) {
-            Toast.makeText(getContext(), "Invalid measurements", Toast.LENGTH_LONG).show();
+        } catch (ParseException e) {
+            Toast.makeText(getContext(), "Invalid measurements, line " + e.getErrorOffset(), Toast.LENGTH_LONG).show();
             return false;
         }
         return true;
@@ -87,20 +115,22 @@ public class LaserEditFragment extends Fragment {
             new Thread(() -> {
                 final LaserProfile laserProfile = getLaserProfile();
                 LaserUpload.post(getContext(), laserProfile);
-                getFragmentManager().popBackStack();
+                final FragmentManager fm = getFragmentManager();
+                if (fm != null) fm.popBackStack();
             }).start();
         }
     }
 
     private void laserCancel(View view) {
         firebaseAnalytics.logEvent("click_laser_edit_cancel", null);
-        getFragmentManager().popBackStack();
+        final FragmentManager fm = getFragmentManager();
+        if (fm != null) fm.popBackStack();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserMeasure(LaserMeasurement meas) {
         // Parse lasers
-        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString());
+        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
         // Add measurement to laser points
         points.add(meas);
         // Sort by horiz
@@ -129,10 +159,10 @@ public class LaserEditFragment extends Fragment {
 
     private void updateRangefinder() {
         if (rangefinder.getState() == BT_CONNECTED) {
-            laserStatus.setText(R.string.bluetooth_status_connected);
+            laserStatus.setText("Rangefinder connected");
             laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
         } else {
-            laserStatus.setText(R.string.bluetooth_status_disconnected);
+            laserStatus.setText("Rangefinder not connected");
             laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
         }
     }

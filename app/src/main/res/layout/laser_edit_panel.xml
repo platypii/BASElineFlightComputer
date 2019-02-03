@@ -17,13 +17,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:singleLine="true"
                 android:hint="Exit Name"/>
 
         <Spinner
                 android:id="@+id/laserUnits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:entries="@array/metric_modes"/>
+                android:entries="@array/metric_modes"
+                android:entryValues="@array/metric_modes_values"/>
 
     </LinearLayout>
 

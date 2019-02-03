@@ -115,8 +115,12 @@
 
     <!-- Laser -->
     <string-array name="metric_modes">
-        <item>Metric</item>
-        <item>Imperial</item>
+        <item>Meters</item>
+        <item>Feet</item>
+    </string-array>
+    <string-array name="metric_modes_values">
+        <item>meters</item>
+        <item>feet</item>
     </string-array>
 
 </resources>

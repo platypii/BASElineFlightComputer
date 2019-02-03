@@ -1,5 +1,6 @@
 package com.platypii.baseline.laser;
 
+import android.support.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
@@ -17,6 +18,12 @@ public class LaserProfile {
         this.isPublic = isPublic;
         this.source = source;
         this.points = points;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return name;
     }
 
 }

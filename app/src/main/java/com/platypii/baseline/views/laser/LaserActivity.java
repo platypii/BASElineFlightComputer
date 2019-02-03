@@ -1,6 +1,8 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.FlightProfile;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 public class LaserActivity extends BaseActivity {
 
     private FlightProfile flightProfile;
+    LaserProfile laserProfile;
 
     static final int TRACK_REQUEST = 64;
 
@@ -26,6 +29,9 @@ public class LaserActivity extends BaseActivity {
                 .beginTransaction()
                 .add(R.id.laserPanel, new LaserPanelFragment())
                 .commit();
+
+        // Update laser listing
+        Services.cloud.lasers.listAsync(this, false);
     }
 
     @Override
@@ -34,12 +40,14 @@ public class LaserActivity extends BaseActivity {
             if (resultCode == RESULT_OK) {
                 // User picked a track
                 final String trackId = resultIntent.getStringExtra("trackId");
+                final CloudData cloudData = Services.cloud.listing.cache.get(trackId);
                 // TODO: Set track selection
             }
         }
     }
 
     void updateLaser(LaserProfile laser) {
+        this.laserProfile = laser;
         flightProfile.setLasers(laser.points);
     }
 

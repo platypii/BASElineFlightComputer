@@ -7,14 +7,8 @@ import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.util.Log;
 import java.io.IOException;
-import okhttp3.Headers;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import org.greenrobot.eventbus.EventBus;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Upload laser profile to the cloud
@@ -26,24 +20,7 @@ public class LaserUpload {
 
     private static LaserApi getLaserApi(Context context) {
         if (laserApi == null) {
-            // Interceptor to add auth header
-            final Interceptor authInterceptor = chain -> {
-                Request request = chain.request();
-                // Get auth token
-                final String authToken = AuthToken.getAuthToken(context);
-                final Headers headers = request.headers().newBuilder().add("Authorization", authToken).build();
-                request = request.newBuilder().headers(headers).build();
-                return chain.proceed(request);
-            };
-            final OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(authInterceptor)
-                    .build();
-            final Retrofit retrofit = new Retrofit.Builder()
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .baseUrl(BaselineCloud.baselineServer)
-                    .client(client)
-                    .build();
-            laserApi = retrofit.create(LaserApi.class);
+            laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
         }
         return laserApi;
     }
