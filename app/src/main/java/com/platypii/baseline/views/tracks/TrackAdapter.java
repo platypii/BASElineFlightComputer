@@ -52,7 +52,8 @@ class TrackAdapter extends BaseAdapter {
         if (cloudTracks != null && !cloudTracks.isEmpty()) {
             updated.add(new ListHeader("Synced"));
             for (CloudData track : cloudTracks) {
-                if (track.location.toLowerCase().contains(filter)) {
+                final String location = track.location == null ? "" : track.location;
+                if (location.toLowerCase().contains(filter)) {
                     updated.add(new ListTrackData(track));
                 }
             }

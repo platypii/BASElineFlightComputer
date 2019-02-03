@@ -6,9 +6,10 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONException;
 
 /**
  * Local track list cache, store in shared preferences.
@@ -40,8 +41,8 @@ public class TrackListingCache {
             final String jsonString = prefs.getString(CACHE_TRACK_LIST, null);
             if (jsonString != null) {
                 try {
-                    return TrackListing.fromJson(jsonString);
-                } catch (JSONException e) {
+                    return new Gson().fromJson(jsonString, TrackListing.listType);
+                } catch (JsonSyntaxException e) {
                     Exceptions.report(e);
                 }
             }
@@ -102,7 +103,7 @@ public class TrackListingCache {
      * Set the track listing cache
      */
     void update(@NonNull List<CloudData> trackList) {
-        final String trackListJson = TrackListing.toJson(trackList);
+        final String trackListJson = new Gson().toJson(trackList);
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(CACHE_LAST_UPDATE, System.currentTimeMillis());
         editor.putString(CACHE_TRACK_LIST, trackListJson);

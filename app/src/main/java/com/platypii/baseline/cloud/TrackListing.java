@@ -9,21 +9,23 @@ import com.platypii.baseline.util.IOUtil;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * List tracks from the cloud
  */
 public class TrackListing implements BaseService {
     private static final String TAG = "TrackListing";
+
+    static final Type listType = new TypeToken<List<CloudData>>(){}.getType();
 
     public final TrackListingCache cache = new TrackListingCache();
 
@@ -74,8 +76,7 @@ public class TrackListing implements BaseService {
             } else {
                 Log.w(TAG, "Failed to list tracks, network not available", e);
             }
-        } catch (JSONException e) {
-            Log.e(TAG, "Failed to parse response", e);
+        } catch (JsonSyntaxException e) {
             Exceptions.report(e);
         }
     }
@@ -84,7 +85,7 @@ public class TrackListing implements BaseService {
      * Send http request to BASEline server for track listing
      */
     @NonNull
-    private List<CloudData> listRemote(String auth) throws IOException, JSONException {
+    private List<CloudData> listRemote(String auth) throws IOException, JsonSyntaxException {
         final URL url = new URL(BaselineCloud.listUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", auth);
@@ -95,7 +96,7 @@ public class TrackListing implements BaseService {
             if (status == 200) {
                 // Read body
                 final String body = IOUtil.toString(conn.getInputStream());
-                return fromJson(body);
+                return new Gson().fromJson(body, listType);
             } else if (status == 401) {
                 throw new AuthException(auth);
             } else {
@@ -104,32 +105,6 @@ public class TrackListing implements BaseService {
         } finally {
             conn.disconnect();
         }
-    }
-
-    /**
-     * Parse a json string into a list of track data
-     */
-    @NonNull
-    static List<CloudData> fromJson(String json) throws JSONException {
-        final ArrayList<CloudData> listing = new ArrayList<>();
-        final JSONArray arr = new JSONArray(json);
-        for (int i = 0; i < arr.length(); i++) {
-            final JSONObject jsonObject = arr.getJSONObject(i);
-            final CloudData cloudData = CloudData.fromJson(jsonObject);
-            listing.add(cloudData);
-        }
-        return listing;
-    }
-
-    /**
-     * Stringify a list of track data into a json string
-     */
-    static String toJson(@NonNull List<CloudData> trackList) {
-        final JSONArray arr = new JSONArray();
-        for (CloudData track : trackList) {
-            arr.put(track.toJson());
-        }
-        return arr.toString();
     }
 
     @Override

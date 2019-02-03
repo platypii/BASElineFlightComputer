@@ -10,6 +10,8 @@ import com.platypii.baseline.util.MD5;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,8 +24,6 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import javax.net.ssl.SSLException;
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Upload to the cloud
@@ -81,8 +81,7 @@ class UploadTask implements Runnable {
                 Log.w(TAG, "Failed to upload file, network not available", e);
             }
             uploadFailed(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
-        } catch (JSONException e) {
-            Log.e(TAG, "Failed to parse response", e);
+        } catch (JsonSyntaxException e) {
             Exceptions.report(e);
             uploadFailed(new SyncEvent.UploadFailure(trackFile, "invalid response from server"));
         }
@@ -99,7 +98,7 @@ class UploadTask implements Runnable {
      * HTTP post track to baseline, parse response as CloudData
      */
     @NonNull
-    private CloudData postTrack(@NonNull TrackFile trackFile, String auth) throws IOException, JSONException {
+    private CloudData postTrack(@NonNull TrackFile trackFile, String auth) throws IOException, JsonSyntaxException {
         final long contentLength = trackFile.file.length();
         final String md5 = MD5.md5(trackFile.file);
         final URL url = new URL(postUrl);
@@ -125,8 +124,7 @@ class UploadTask implements Runnable {
             if (status == 200) {
                 // Read body
                 final String body = IOUtil.toString(conn.getInputStream());
-                final JSONObject jsonObject = new JSONObject(body);
-                return CloudData.fromJson(jsonObject);
+                return new Gson().fromJson(body, CloudData.class);
             } else if (status == 401) {
                 throw new AuthException(auth);
             } else {
