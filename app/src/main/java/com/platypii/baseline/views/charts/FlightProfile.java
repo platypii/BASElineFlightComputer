@@ -1,12 +1,10 @@
 package com.platypii.baseline.views.charts;
 
-import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.views.charts.layers.Colors;
-import com.platypii.baseline.views.charts.layers.LaserLayer;
 import com.platypii.baseline.views.charts.layers.ProfileFocusLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
 import android.content.Context;
@@ -23,7 +21,6 @@ public class FlightProfile extends PlotView {
     private final Bounds inner = new Bounds();
     private final Bounds outer = new Bounds();
 
-    private final LaserLayer laserLayer = new LaserLayer();
     private ProfileFocusLayer focusLayer;
 
     public FlightProfile(Context context, AttributeSet attrs) {
@@ -44,9 +41,6 @@ public class FlightProfile extends PlotView {
         outer.y.max = 100;
 
         options.axis.x = options.axis.y = PlotOptions.axisDistance();
-
-        // Add layers
-        addLayer(laserLayer);
     }
 
     public void loadTrack(@NonNull TrackData trackData) {
@@ -56,11 +50,6 @@ public class FlightProfile extends PlotView {
         addLayer(trackLayer);
         focusLayer = new ProfileFocusLayer(trackData.data);
         addLayer(focusLayer);
-    }
-
-    public void setLasers(@NonNull List<LaserMeasurement> lasers) {
-        laserLayer.setPoints(lasers);
-        invalidate();
     }
 
     public void onFocus(@Nullable MLocation focus) {

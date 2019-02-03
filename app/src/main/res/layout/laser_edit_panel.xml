@@ -35,6 +35,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="top"
+            android:background="@android:color/transparent"
             android:hint="10, -100"/>
 
     <TextView

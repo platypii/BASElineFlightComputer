@@ -6,6 +6,7 @@ import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.laser.RangefinderService;
+import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -23,7 +24,6 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -39,6 +39,8 @@ public class LaserEditFragment extends Fragment {
     private Spinner laserUnits;
     private EditText laserText;
     private TextView laserStatus;
+
+    private LaserProfileLayer editLayer = new LaserProfileLayer();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,8 +58,7 @@ public class LaserEditFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
-                // Update chart in parent activity
-                ((LaserActivity) getActivity()).updateLaser(getLaserProfile());
+                updateLayers();
             }
         });
         return view;
@@ -66,8 +67,21 @@ public class LaserEditFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        rangefinder.start(getActivity());
+        final LaserActivity laserActivity = (LaserActivity) getActivity();
+        if (laserActivity != null) {
+            laserActivity.addLayer(editLayer);
+            rangefinder.start(laserActivity);
+        }
         EventBus.getDefault().register(this);
+    }
+
+    // Update chart in parent activity
+    private void updateLayers() {
+        final LaserActivity laserActivity = (LaserActivity) getActivity();
+        if (laserActivity != null) {
+            editLayer.loadLaser(getLaserProfile());
+            laserActivity.updateLayers();
+        }
     }
 
     private LaserProfile getLaserProfile() {
@@ -114,6 +128,7 @@ public class LaserEditFragment extends Fragment {
         if (validate()) {
             new Thread(() -> {
                 final LaserProfile laserProfile = getLaserProfile();
+                updateLayers();
                 LaserUpload.post(getContext(), laserProfile);
                 final FragmentManager fm = getFragmentManager();
                 if (fm != null) fm.popBackStack();
@@ -136,20 +151,9 @@ public class LaserEditFragment extends Fragment {
         // Sort by horiz
         Collections.sort(points, (l1, l2) -> Double.compare(l1.x, l2.x));
         // Update text box
-        updateText(points);
+        laserText.setText(LaserMeasurement.render(points));
         // Update chart in parent activity
-        ((LaserActivity) getActivity()).updateLaser(getLaserProfile());
-    }
-
-    /**
-     * Render list of laser measurements as text
-     */
-    private void updateText(List<LaserMeasurement> lasers) {
-        final StringBuilder sb = new StringBuilder();
-        for (LaserMeasurement laser : lasers) {
-            sb.append(String.format(Locale.US, "%.1f, %.1f\n", laser.x, laser.y));
-        }
-        laserText.setText(sb);
+        updateLayers();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -159,10 +163,10 @@ public class LaserEditFragment extends Fragment {
 
     private void updateRangefinder() {
         if (rangefinder.getState() == BT_CONNECTED) {
-            laserStatus.setText("Rangefinder connected");
+            laserStatus.setText(R.string.rangefinder_connected);
             laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
         } else {
-            laserStatus.setText("Rangefinder not connected");
+            laserStatus.setText(R.string.rangefinder_searching);
             laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
         }
     }

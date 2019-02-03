@@ -3,6 +3,8 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
+import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -21,7 +23,7 @@ public class LaserListFragment extends ListFragment implements AdapterView.OnIte
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.track_list, container, false);
+        return inflater.inflate(R.layout.laser_list, container, false);
     }
 
     @Override
@@ -38,8 +40,9 @@ public class LaserListFragment extends ListFragment implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        final LaserProfile laserProfile = lasers.get(position);
-        ((LaserActivity) getActivity()).updateLaser(laserProfile);
+        final LaserActivity laserActivity = (LaserActivity) getActivity();
+        final ProfileLayer layer = new LaserProfileLayer(lasers.get(position));
+        laserActivity.addLayer(layer);
         final FragmentManager fm = getFragmentManager();
         if (fm != null) fm.popBackStack();
 

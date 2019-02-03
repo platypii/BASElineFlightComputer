@@ -3,16 +3,23 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.FlightProfile;
+import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LaserActivity extends BaseActivity {
+    private static final String TAG = "LaserActivity";
 
-    private FlightProfile flightProfile;
-    LaserProfile laserProfile;
+    private FlightProfile chart;
+    private LaserPanelFragment laserPanel;
+
+    // List of tracks and laser profiles to display
+    final List<ProfileLayer> layers = new ArrayList<>();
 
     static final int TRACK_REQUEST = 64;
 
@@ -22,12 +29,13 @@ public class LaserActivity extends BaseActivity {
         setContentView(R.layout.activity_laser);
 
         // Find views
-        flightProfile = findViewById(R.id.flightProfile);
+        chart = findViewById(R.id.flightProfile);
 
         // Load laser panel fragment
+        laserPanel = new LaserPanelFragment();
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.laserPanel, new LaserPanelFragment())
+                .add(R.id.laserPanel, laserPanel)
                 .commit();
 
         // Update laser listing
@@ -46,9 +54,29 @@ public class LaserActivity extends BaseActivity {
         }
     }
 
-    void updateLaser(LaserProfile laser) {
-        this.laserProfile = laser;
-        flightProfile.setLasers(laser.points);
+    void addLayer(ProfileLayer layer) {
+        if (layers.contains(layer)) {
+            // Don't add duplicate layer
+            return;
+        }
+        layers.add(layer);
+        chart.addLayer(layer);
+        chart.invalidate();
+    }
+
+    void removeLayer(ProfileLayer layer) {
+        if (layers.remove(layer)) {
+            chart.removeLayer(layer);
+            chart.invalidate();
+            laserPanel.updateLayers();
+        } else {
+            Log.e(TAG, "Remove called on unknown layer");
+        }
+    }
+
+    void updateLayers() {
+        chart.invalidate();
+        laserPanel.updateLayers();
     }
 
 }

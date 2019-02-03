@@ -21,14 +21,14 @@ public class ProfileLayer extends ChartLayer {
 
     @Override
     public void drawData(@NonNull Plot plot) {
-        if (profileSeries.size() == 0) {
-            plot.text.setTextAlign(Paint.Align.CENTER);
-            plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, plot.text);
-        } else {
-            // Draw data
-            plot.paint.setColor(0xff7f00ff);
-            plot.drawLine(AXIS_PROFILE, profileSeries, 1.5f);
-        }
+        plot.paint.setColor(color);
+        plot.drawLine(AXIS_PROFILE, profileSeries, 1.5f);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // TODO: Check points too?
+        return obj instanceof ProfileLayer && ((ProfileLayer) obj).name.equals(name);
     }
 
 }

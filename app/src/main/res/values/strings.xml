@@ -114,6 +114,8 @@
     <string name="notify_logging">Logging data</string>
 
     <!-- Laser -->
+    <string name="rangefinder_connected">Rangefinder connected</string>
+    <string name="rangefinder_searching">Searching for rangefinder...</string>
     <string-array name="metric_modes">
         <item>Meters</item>
         <item>Feet</item>

@@ -62,4 +62,12 @@ public class LaserMeasurement {
             return new ArrayList<>();
         }
     }
+
+    public static CharSequence render(List<LaserMeasurement> points) {
+        final StringBuilder sb = new StringBuilder();
+        for (LaserMeasurement point : points) {
+            sb.append(String.format(Locale.US, "%.1f, %.1f\n", point.x, point.y));
+        }
+        return sb;
+    }
 }
