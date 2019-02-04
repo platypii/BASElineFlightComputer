@@ -130,6 +130,7 @@ public class LaserEditFragment extends Fragment {
                 final LaserProfile laserProfile = getLaserProfile();
                 updateLayers();
                 LaserUpload.post(getContext(), laserProfile);
+                // Return to main fragment
                 final FragmentManager fm = getFragmentManager();
                 if (fm != null) fm.popBackStack();
             }).start();

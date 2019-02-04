@@ -2,11 +2,9 @@ package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.FlightProfile;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import java.util.ArrayList;
@@ -20,8 +18,6 @@ public class LaserActivity extends BaseActivity {
 
     // List of tracks and laser profiles to display
     final List<ProfileLayer> layers = new ArrayList<>();
-
-    static final int TRACK_REQUEST = 64;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,18 +36,6 @@ public class LaserActivity extends BaseActivity {
 
         // Update laser listing
         Services.cloud.lasers.listAsync(this, false);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent resultIntent) {
-        if (requestCode == TRACK_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                // User picked a track
-                final String trackId = resultIntent.getStringExtra("trackId");
-                final CloudData cloudData = Services.cloud.listing.cache.get(trackId);
-                // TODO: Set track selection
-            }
-        }
     }
 
     void addLayer(ProfileLayer layer) {

@@ -1,8 +1,6 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
-import com.platypii.baseline.views.tracks.TrackListActivity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ListFragment;
@@ -42,7 +40,11 @@ public class LaserPanelFragment extends ListFragment {
 
     private void chooseTrack(View view) {
         firebaseAnalytics.logEvent("click_laser_track", null);
-        startActivityForResult(new Intent(getActivity(), TrackListActivity.class), LaserActivity.TRACK_REQUEST);
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.laserPanel, new TrackPickerFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     private void chooseLaser(View view) {

@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class TrackListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
-    private TrackAdapter listAdapter;
+    protected TrackAdapter listAdapter;
 
     private EditText searchBox;
     private View tracksEmptyLabel;

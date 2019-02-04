@@ -54,6 +54,11 @@ public class CloudData {
         return place == null ? "" : place.niceString();
     }
 
+    @NonNull
+    public String getName() {
+        return date_string + " " + location();
+    }
+
     @Override
     public boolean equals(Object cd) {
         return cd instanceof CloudData && ((CloudData) cd).track_id.equals(track_id);
