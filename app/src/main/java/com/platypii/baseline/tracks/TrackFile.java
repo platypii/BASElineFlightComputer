@@ -35,6 +35,7 @@ public class TrackFile {
         return size + " kb";
     }
 
+    @NonNull
     @Override
     public String toString() {
         return file.getName();

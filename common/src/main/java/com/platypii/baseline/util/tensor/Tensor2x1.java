@@ -40,6 +40,7 @@ public class Tensor2x1 {
         );
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.US, "[[%f],[%f]]", p1, p2);

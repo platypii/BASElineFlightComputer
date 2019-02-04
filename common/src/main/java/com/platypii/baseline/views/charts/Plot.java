@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 public class Plot {
 
     // Drawing options
+    @NonNull
     public final PlotOptions options;
 
     // Drawing surface

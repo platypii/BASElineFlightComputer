@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 
 public class EllipseLayer extends ChartLayer {
 
+    @NonNull
     private final BlurMaskFilter blurry;
 
     public EllipseLayer(float density) {
@@ -15,7 +16,7 @@ public class EllipseLayer extends ChartLayer {
     }
 
     @Override
-    public void drawData(@NonNull Plot plot, Paint paint, Paint text) {
+    public void drawData(@NonNull Plot plot, @NonNull Paint paint, @NonNull Paint text) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // minsdk 21
             paint.setStyle(Paint.Style.FILL);
             paint.setMaskFilter(blurry);

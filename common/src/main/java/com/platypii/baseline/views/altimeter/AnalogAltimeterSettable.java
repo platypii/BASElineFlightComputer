@@ -8,6 +8,7 @@ import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -22,6 +23,7 @@ import android.view.View;
 public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureDetector.OnGestureListener, View.OnTouchListener {
     private static final String TAG = "AnalogAltimeterSettable";
 
+    @Nullable
     private MyAltimeter alti = null;
 
     // How long to wait in each mode
@@ -53,7 +55,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
     /**
      * MUST be called to be able to set ground level
      */
-    public void setAlti(MyAltimeter alti) {
+    public void setAlti(@NonNull MyAltimeter alti) {
         this.alti = alti;
     }
 

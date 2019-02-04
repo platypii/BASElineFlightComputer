@@ -3,6 +3,7 @@ package com.platypii.baseline.tracks;
 import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -21,7 +22,7 @@ public class TrackFiles {
     private static final String TAG = "TrackFiles";
 
     @NonNull
-    static List<TrackFile> getTracks(File logDir) {
+    static List<TrackFile> getTracks(@Nullable File logDir) {
         final List<TrackFile> tracks = new ArrayList<>();
         // Load jumps from disk
         if (logDir != null) {
@@ -72,7 +73,7 @@ public class TrackFiles {
      * When importing an existing CSV, generate filename based on source file
      */
     @NonNull
-    static TrackFile newTrackFile(File logDir, String sourceFilename) {
+    static TrackFile newTrackFile(File logDir, @Nullable String sourceFilename) {
         if (sourceFilename == null) {
             return newTrackFile(logDir);
         } else {
@@ -86,6 +87,7 @@ public class TrackFiles {
      * Generate a unique file that doesn't yet exist.
      * If logdir/prefix.ext exists, generate logdir/prefix_2.ext
      */
+    @NonNull
     private static File makeUnique(File logDir, String prefix, String ext) {
         File file = new File(logDir, prefix + "." + ext);
 

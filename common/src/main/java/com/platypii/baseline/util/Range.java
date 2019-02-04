@@ -1,5 +1,7 @@
 package com.platypii.baseline.util;
 
+import android.support.annotation.NonNull;
+
 /**
  * Range represents a min and max
  */
@@ -20,6 +22,7 @@ public class Range {
         return Double.isNaN(min);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Range(" + min + "," + max + ")";

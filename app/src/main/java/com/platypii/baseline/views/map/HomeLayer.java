@@ -3,6 +3,7 @@ package com.platypii.baseline.views.map;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.location.LandingZone;
+import android.support.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -16,7 +17,9 @@ import java.util.List;
 
 class HomeLayer implements MapLayer {
 
+    @NonNull
     private final Marker homeMarker;
+    @NonNull
     private final Polyline homePath;
     private final List<LatLng> homePoints = new ArrayList<>();
 

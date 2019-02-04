@@ -44,7 +44,8 @@ public abstract class AudibleMode {
     /**
      * Return the latest measurement data (speed, glide, etc)
      */
-    abstract public @NonNull AudibleSample currentSample(int precision);
+    @NonNull
+    abstract public AudibleSample currentSample(int precision);
 
     /**
      * Convert from local units to internal metric units
@@ -55,6 +56,7 @@ public abstract class AudibleMode {
     /**
      * Convert from internal units to local display units
      */
+    @NonNull
     abstract public String renderDisplay(double output, int precision);
 
 }

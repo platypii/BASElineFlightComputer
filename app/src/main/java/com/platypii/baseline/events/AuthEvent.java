@@ -1,5 +1,7 @@
 package com.platypii.baseline.events;
 
+import android.support.annotation.NonNull;
+
 /**
  * Indicates that sign in or sign out status has changed.
  *
@@ -29,6 +31,7 @@ public class AuthEvent {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "AuthEvent(" + state + ")";

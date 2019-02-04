@@ -38,6 +38,7 @@ public class GlideRatioMode extends AudibleMode {
         return 1;
     }
 
+    @NonNull
     @Override
     public String renderDisplay(double output, int precision) {
         return Convert.glide(output, precision, true);

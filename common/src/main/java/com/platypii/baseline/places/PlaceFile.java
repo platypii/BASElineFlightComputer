@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import static com.platypii.baseline.util.CSVParse.getColumnDouble;
+import static com.platypii.baseline.util.CSVParse.getColumnString;
 
 /**
  * Loads places from gzipped CSV
@@ -24,6 +25,7 @@ class PlaceFile {
     private static final String placeFilename = "places/places.csv.gz";
     private static final long ttl = 24 * 60 * 60 * 1000; // Update if data is older than 1 day
 
+    @NonNull
     final File file;
 
     PlaceFile(@NonNull Context context) {
@@ -55,13 +57,13 @@ class PlaceFile {
                 if (!line.isEmpty()) {
                     try {
                         final String[] row = line.split(",");
-                        final String name = row[columns.get("name")];
-                        final String region = row[columns.get("region")];
-                        final String country = row[columns.get("country")];
+                        final String name = getColumnString(row, columns, "name");
+                        final String region = getColumnString(row, columns, "region");
+                        final String country = getColumnString(row, columns, "country");
                         final double latitude = getColumnDouble(row, columns, "latitude");
                         final double longitude = getColumnDouble(row, columns, "longitude");
                         final double altitude = getColumnDouble(row, columns, "altitude");
-                        final String objectType = row[columns.get("type")];
+                        final String objectType = getColumnString(row, columns, "type");
                         final double radius = getColumnDouble(row, columns, "radius");
                         places.add(new Place(name, region, country, latitude, longitude, altitude, objectType, radius));
                     } catch (Exception e) {

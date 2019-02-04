@@ -2,7 +2,6 @@ package com.platypii.baseline.views.tracks;
 
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
-import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.cloud.DownloadTask;
 import com.platypii.baseline.events.DownloadEvent;
@@ -11,7 +10,6 @@ import com.platypii.baseline.views.BaseActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
@@ -19,51 +17,24 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class TrackDownloadActivity extends BaseActivity {
-    private static final String TAG = "TrackDownload";
-
-    public static final String EXTRA_TRACK_ID = "TRACK_ID";
 
     private CloudData track;
-
     private ProgressBar downloadProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_track_download);
-
+        setContentView(R.layout.track_download);
         downloadProgress = findViewById(R.id.downloadProgress);
 
         // Load track from extras
         try {
-            track = loadTrack();
-
+            track = TrackLoader.loadTrack(getIntent().getExtras());
             // Start download
             AsyncTask.execute(new DownloadTask(this, track));
         } catch (IllegalStateException e) {
             Exceptions.report(e);
             finish();
-        }
-    }
-
-    @NonNull
-    private CloudData loadTrack() throws IllegalStateException {
-        // Load track from extras
-        final Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            final String track_id = extras.getString(EXTRA_TRACK_ID);
-            if (track_id != null) {
-                final CloudData track = Services.cloud.listing.cache.getTrack(track_id);
-                if (track != null) {
-                    return track;
-                } else {
-                    throw new IllegalStateException("Failed to load track from track_id " + track_id);
-                }
-            } else {
-                throw new IllegalStateException("Failed to load track_id from extras");
-            }
-        } else {
-            throw new IllegalStateException("Failed to load extras");
         }
     }
 
@@ -78,7 +49,6 @@ public class TrackDownloadActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDownloadFailure(@NonNull DownloadEvent.DownloadFailure event) {
         if (event.track_id.equals(track.track_id)) {
-            Log.e(TAG, "Failed to upload track: " + event.error);
             Toast.makeText(getApplicationContext(), "Track download failed", Toast.LENGTH_LONG).show();
             finish();
         }

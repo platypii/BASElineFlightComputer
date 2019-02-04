@@ -1,5 +1,6 @@
 package com.platypii.baseline.places;
 
+import android.support.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -32,6 +33,7 @@ public class Place {
     }
 
     private LatLng lazyLatLng = null;
+    @NonNull
     public LatLng latLng() {
         if (lazyLatLng == null) {
             lazyLatLng = new LatLng(latitude, longitude);
@@ -39,6 +41,7 @@ public class Place {
         return lazyLatLng;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return name;

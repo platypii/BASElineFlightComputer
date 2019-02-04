@@ -88,6 +88,7 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
         return sb.toString();
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.US, "MLocation(%d,%.6f,%.6f,%.1f,%.0f,%.0f)", millis, latitude, longitude, altitude_gps, vN, vE);

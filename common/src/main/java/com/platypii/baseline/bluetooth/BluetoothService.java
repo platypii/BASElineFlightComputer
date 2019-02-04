@@ -36,7 +36,9 @@ public class BluetoothService implements BaseService {
 
     // Bluetooth state
     private int bluetoothState = BT_STOPPED;
+    @Nullable
     private BluetoothAdapter bluetoothAdapter;
+    @Nullable
     private BluetoothRunnable bluetoothRunnable;
     private Thread bluetoothThread;
 

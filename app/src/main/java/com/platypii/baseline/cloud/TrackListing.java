@@ -8,6 +8,7 @@ import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -37,7 +38,7 @@ public class TrackListing implements BaseService {
     /**
      * Query baseline server for track listing asynchronously
      */
-    public void listAsync(final String auth, boolean force) {
+    public void listAsync(@Nullable final String auth, boolean force) {
         if (auth != null) {
             if (force || cache.shouldRequest()) {
                 cache.request();
@@ -65,7 +66,7 @@ public class TrackListing implements BaseService {
             // Make HTTP request
             final List<CloudData> trackList = listRemote(auth);
             // Save track listing to local cache
-            Services.cloud.listing.cache.update(trackList);
+            cache.update(trackList);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.ListingSuccess());
 

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.location.GpsStatus;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
@@ -36,6 +37,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     private int satellitesUsed = -1;
 
     // Android Location manager
+    @Nullable
     private static LocationManager manager;
 
     @NonNull
@@ -260,6 +262,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "DSTAT":
                 // Samsung SM-G955U
                 // $AIDSTAT,3,3,3,2,-597,7
+            case "GINESTATE":
+                // $ENGINESTATE,1*00
             case "EVT":
                 // LG-E460
                 // $GPEVT,19052017,234044.807,19,,,,

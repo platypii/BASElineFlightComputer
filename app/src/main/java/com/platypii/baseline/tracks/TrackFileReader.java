@@ -57,8 +57,6 @@ class TrackFileReader {
         long baroLastNano = -1L;
         long gpsLastMillis = -1L;
 
-        double baroOffset = 0;
-
         final List<MLocation> data = new ArrayList<>();
 
         // Parse header column

@@ -1,9 +1,9 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.BaseService;
-import com.platypii.baseline.util.Network;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -29,8 +29,16 @@ public class BaselineCloud implements BaseService {
         new Thread(new DeleteTask(context, track)).start();
     }
 
+    /**
+     * Return true if there is a network connection available
+     */
     boolean isNetworkAvailable() {
-        return Network.isAvailable(connectivityManager);
+        if (connectivityManager != null) {
+            final NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        } else {
+            return false;
+        }
     }
 
     @Override

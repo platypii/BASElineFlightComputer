@@ -19,7 +19,7 @@ public class Places implements BaseService {
 
     private PlaceFile placeFile;
 
-    public NearestPlace nearestPlace = new NearestPlace(this);
+    public final NearestPlace nearestPlace = new NearestPlace(this);
 
     // In-memory cache of places, lazy loaded on first call to getPlaces()
     @Nullable
@@ -61,7 +61,7 @@ public class Places implements BaseService {
     }
 
     @NonNull
-    public List<Place> getPlacesByArea(LatLngBounds bounds) {
+    public List<Place> getPlacesByArea(@NonNull LatLngBounds bounds) {
         final long start = System.currentTimeMillis();
         final List<Place> filtered = new ArrayList<>();
         final List<Place> places = getPlaces();

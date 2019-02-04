@@ -15,6 +15,6 @@ public abstract class ChartLayer {
         this.enabled = enabled;
     }
 
-    public abstract void drawData(@NonNull Plot plot, Paint paint, Paint text);
+    public abstract void drawData(@NonNull Plot plot, @NonNull Paint paint, @NonNull Paint text);
 
 }

@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.views.charts.layers.ProfileFocusLayer;
@@ -10,7 +11,6 @@ import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import java.util.List;
 
 public class FlightProfile extends PlotView {
 
@@ -32,8 +32,8 @@ public class FlightProfile extends PlotView {
         inner.x.min = outer.x.min = 0;
         inner.x.max = 100;
         outer.x.max = 10000;
-        inner.y.min = -100;
-        outer.y.min = -10000;
+        inner.y.min = -61;
+        outer.y.min = -8000;
         inner.y.max = 0;
         outer.y.max = 100;
 
@@ -42,9 +42,11 @@ public class FlightProfile extends PlotView {
         paint.setStrokeJoin(Paint.Join.ROUND);
     }
 
-    public void loadTrack(@NonNull List<MLocation> trackData) {
-        addLayer(new ProfileLayer(trackData));
-        focusLayer = new ProfileFocusLayer(trackData);
+    public void loadTrack(@NonNull TrackData trackData) {
+        final ProfileLayer trackLayer = new ProfileLayer();
+        trackLayer.loadTrack(trackData);
+        addLayer(trackLayer);
+        focusLayer = new ProfileFocusLayer(trackData.data);
         addLayer(focusLayer);
     }
 

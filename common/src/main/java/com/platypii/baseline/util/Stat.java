@@ -1,5 +1,6 @@
 package com.platypii.baseline.util;
 
+import android.support.annotation.NonNull;
 import java.util.Locale;
 
 /**
@@ -37,6 +38,8 @@ public class Stat {
         // return M2 / (n - 1);
     }
 
+    @NonNull
+    @Override
     public String toString() {
         if (n > 0) {
             return String.format(Locale.US, "%.3f ± %.3f", mean, var());

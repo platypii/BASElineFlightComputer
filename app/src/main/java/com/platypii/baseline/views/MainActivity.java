@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
@@ -64,11 +65,11 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(@NonNull Intent intent) {
         super.onNewIntent(intent);
         doImport(intent);
     }
-    private void doImport(Intent intent) {
+    private void doImport(@NonNull Intent intent) {
         final boolean importing = ImportCSV.importIntent(this, intent);
         if (importing) {
             firebaseAnalytics.logEvent("import_csv", null);

@@ -75,6 +75,7 @@ public class SyncedList<T> implements Iterable<T> {
         this.maxSize = maxSize;
     }
 
+    @NonNull
     @Override
     public String toString() {
         copy();

@@ -110,6 +110,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         Log.w(TAG, "Map ready");
     }
 
+    @NonNull
     private final View.OnClickListener homeButtonListener = new View.OnClickListener() {
         public void onClick(View arg0) {
             if (map != null) {

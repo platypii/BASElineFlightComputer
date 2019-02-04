@@ -55,6 +55,7 @@ public class Bounds {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.US, "Bounds(x=%f,%f y=%f,%f)", x.min, x.max, y.min, y.max);

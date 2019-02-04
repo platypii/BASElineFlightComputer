@@ -1,5 +1,7 @@
 package com.platypii.baseline.audible;
 
+import android.support.annotation.NonNull;
+
 /**
  * Represents a single audible sample and phrase
  */
@@ -13,6 +15,7 @@ public class AudibleSample {
         this.phrase = phrase;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "AudibleSample(" + value + "," + phrase + ")";

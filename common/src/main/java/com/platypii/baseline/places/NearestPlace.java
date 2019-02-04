@@ -60,6 +60,7 @@ public class NearestPlace {
         }
     }
 
+    @NonNull
     public String getString(@NonNull MLocation loc) {
         final Place place = cached(loc);
         if (place != null) {

@@ -25,7 +25,7 @@ public class ProfileFocusLayer extends ChartLayer {
     }
 
     @Override
-    public void drawData(@NonNull Plot plot, Paint paint, Paint text) {
+    public void drawData(@NonNull Plot plot, @NonNull Paint paint, @NonNull Paint text) {
         if (focus != null && start != null) {
             final double x = start.distanceTo(focus);
             final double y = focus.altitude_gps - start.altitude_gps;

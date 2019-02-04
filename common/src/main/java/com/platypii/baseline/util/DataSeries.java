@@ -25,6 +25,7 @@ public class DataSeries implements Iterable<DataSeries.Point> {
         boolean isNaN() {
             return Double.isNaN(x) || Double.isInfinite(x) || Double.isNaN(y) || Double.isInfinite(y);
         }
+        @NonNull
         @Override
         public String toString() {
             return String.format(Locale.US, "Point(%.1f,%.1f)", x, y);

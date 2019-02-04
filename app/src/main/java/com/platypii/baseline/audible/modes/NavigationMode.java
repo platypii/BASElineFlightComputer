@@ -54,6 +54,7 @@ public class NavigationMode extends AudibleMode {
         return Convert.metric ? 1f : (float) Convert.FT;
     }
 
+    @NonNull
     @Override
     public String renderDisplay(double output, int precision) {
         return Convert.distance(output, precision, true);

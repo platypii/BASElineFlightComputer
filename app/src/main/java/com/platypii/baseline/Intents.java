@@ -3,10 +3,7 @@ package com.platypii.baseline;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.views.tracks.ChartsActivity;
-import com.platypii.baseline.views.tracks.TrackDownloadActivity;
-import com.platypii.baseline.views.tracks.TrackLocalActivity;
-import com.platypii.baseline.views.tracks.TrackRemoteActivity;
+import com.platypii.baseline.views.tracks.*;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -31,7 +28,7 @@ public class Intents {
     }
     public static void openTrackRemote(@NonNull Context context, @NonNull CloudData track) {
         final Intent intent = new Intent(context, TrackRemoteActivity.class);
-        intent.putExtra(TrackRemoteActivity.EXTRA_TRACK_ID, track.track_id);
+        intent.putExtra(TrackLoader.EXTRA_TRACK_ID, track.track_id);
         context.startActivity(intent);
     }
 
@@ -52,7 +49,7 @@ public class Intents {
         } else {
             // File not downloaded to device, start TrackDownloadActivity
             final Intent intent = new Intent(context, TrackDownloadActivity.class);
-            intent.putExtra(TrackDownloadActivity.EXTRA_TRACK_ID, track.track_id);
+            intent.putExtra(TrackLoader.EXTRA_TRACK_ID, track.track_id);
             context.startActivity(intent);
         }
     }

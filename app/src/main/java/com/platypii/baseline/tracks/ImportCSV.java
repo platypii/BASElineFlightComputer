@@ -22,13 +22,11 @@ public class ImportCSV {
      * Check if activity was opened with a CSV file, and import if so
      * @return true if a track was imported
      */
-    public static boolean importIntent(@NonNull Context context, Intent intent) {
+    public static boolean importIntent(@NonNull Context context, @NonNull Intent intent) {
         final String intentType = intent.getType();
         if (intentType != null && (intentType.contains("text/comma-separated-values") || intentType.contains("text/csv"))) {
             final Uri uri = intent.getData();
-            AsyncTask.execute(() -> {
-                copyFile(context, uri);
-            });
+            AsyncTask.execute(() -> copyFile(context, uri));
             return true;
         }
         return false;
@@ -37,7 +35,7 @@ public class ImportCSV {
     /**
      * Copy content file into a new track file
      */
-    private static void copyFile(@NonNull Context context, Uri uri) {
+    private static void copyFile(@NonNull Context context, @NonNull Uri uri) {
         final ContentResolver content = context.getContentResolver();
         // Get source filename
         String sourceFilename = resolveFileName(content, uri);
@@ -57,7 +55,7 @@ public class ImportCSV {
     }
 
     @Nullable
-    private static String resolveFileName(ContentResolver contentResolver, Uri uri) {
+    private static String resolveFileName(@NonNull ContentResolver contentResolver, Uri uri) {
         if ("content".equals(uri.getScheme())) {
             try (Cursor cursor = contentResolver.query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {

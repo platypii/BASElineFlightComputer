@@ -5,6 +5,7 @@ import com.platypii.baseline.Services;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,7 @@ class BluetoothAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final BluetoothDevice device = devices.get(position);
 
         if (convertView == null) {

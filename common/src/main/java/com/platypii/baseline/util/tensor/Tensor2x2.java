@@ -43,7 +43,7 @@ public class Tensor2x2 {
      * @param mat the matrix to dot against
      * @param output matrix to store the output (this okay)
      */
-    public void dot(Tensor2x1 mat, Tensor2x1 output) {
+    public void dot(@NonNull Tensor2x1 mat, @NonNull Tensor2x1 output) {
         final double q1 = p11 * mat.p1 + p12 * mat.p2;
         final double q2 = p21 * mat.p1 + p22 * mat.p2;
         output.set(q1, q2);
@@ -90,6 +90,7 @@ public class Tensor2x2 {
         p22 *= factor;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.US, "[[%f,%f],[%f,%f]]", p11, p12, p21, p22);

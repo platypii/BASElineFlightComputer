@@ -30,6 +30,7 @@ public class MPressure extends Measurement {
         return millis + "," + nano + ",alt," + Numbers.format3.format(pressure);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.US, "MPressure(%d,%.2f)", millis, pressure);

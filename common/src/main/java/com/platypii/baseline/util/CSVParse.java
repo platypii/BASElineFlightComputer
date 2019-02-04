@@ -13,7 +13,7 @@ import java.util.TimeZone;
 public class CSVParse {
     private static final String TAG = "CSVParse";
 
-    public static double getColumnDouble(String[] row, @NonNull CSVHeader columns, String columnName) {
+    public static double getColumnDouble(@NonNull String[] row, @NonNull CSVHeader columns, @NonNull String columnName) {
         final Integer index = columns.get(columnName);
         if (index != null && index < row.length) {
             try {
@@ -28,7 +28,7 @@ public class CSVParse {
         return Double.NaN;
     }
 
-    public static long getColumnLong(String[] row, @NonNull CSVHeader columns, String columnName) {
+    public static long getColumnLong(@NonNull String[] row, @NonNull CSVHeader columns, @NonNull String columnName) {
         final Integer index = columns.get(columnName);
         if (index != null && index < row.length) {
             try {
@@ -43,7 +43,7 @@ public class CSVParse {
         return -1L;
     }
 
-    public static long getColumnDate(String[] row, @NonNull CSVHeader columns, String columnName) {
+    public static long getColumnDate(@NonNull String[] row, @NonNull CSVHeader columns, @NonNull String columnName) {
         final Integer index = columns.get(columnName);
         if (index != null && index < row.length) {
             try {
@@ -56,6 +56,16 @@ public class CSVParse {
             }
         }
         return -1L;
+    }
+
+    @NonNull
+    public static String getColumnString(@NonNull String[] row, @NonNull CSVHeader columns, @NonNull String columnName) {
+        final Integer index = columns.get(columnName);
+        if (index != null && index < row.length) {
+            return row[index];
+        } else {
+            return "";
+        }
     }
 
     private static SimpleDateFormat df;

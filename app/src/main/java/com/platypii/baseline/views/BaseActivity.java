@@ -39,6 +39,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
     /* Client used to interact with Google APIs */
     private GoogleSignInClient signInClient;
+    @Nullable
     private GoogleSignInAccount account;
 
     // If user didn't click, don't show sign in/out toast

@@ -12,6 +12,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 // TODO: Switch to GnssStatus when minsdk >= 24
@@ -22,6 +23,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     private final MyAltimeter alti;
 
     // Android Location manager
+    @Nullable
     private LocationManager manager;
 
     // Satellite data comes from GpsStatusListener

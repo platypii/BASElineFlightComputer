@@ -124,12 +124,12 @@ public class ChartsActivity extends BaseActivity {
     /**
      * Load data into charts, called from LoadTask in background thread
      */
-    private void loadData(File trackFile) {
+    private void loadData(@NonNull File trackFile) {
         Log.i(TAG, "Loading track data from " + trackFile);
         final TrackData trackData = new TrackData(trackFile);
         stats = trackData.stats;
         timeChart.loadTrack(trackData.data);
-        flightProfile.loadTrack(trackData.data);
+        flightProfile.loadTrack(trackData);
         polarChart.loadTrack(trackData.data);
     }
 

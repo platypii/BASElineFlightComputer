@@ -23,7 +23,7 @@ public class TrackListingCache {
 
     // Minimum time between requests
     private static final long REQUEST_TTL = 30 * 1000; // milliseconds
-    // Maximum lifetime of a successful track listing
+    // Maximum lifetime of a successful listing
     private static final long UPDATE_TTL = 5 * 60 * 1000; // milliseconds
 
     private SharedPreferences prefs;
@@ -88,7 +88,7 @@ public class TrackListingCache {
     }
 
     /**
-     * Add track to track listing, and save to preferences
+     * Remove track from listing, and save to preferences
      */
     void removeTrack(@NonNull CloudData track) {
         final List<CloudData> tracks = list();

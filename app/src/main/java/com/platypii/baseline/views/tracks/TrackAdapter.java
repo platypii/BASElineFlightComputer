@@ -17,19 +17,18 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.platypii.baseline.views.tracks.TrackListItem.*;
+
 /**
  * Track adapter renders a list of tracks, both local and remote
  */
-class TrackAdapter extends BaseAdapter {
+public class TrackAdapter extends BaseAdapter {
 
-    // Item types
-    private static final int TYPE_HEADER = 0;
-    private static final int TYPE_TRACK_LOCAL = 1;
-    private static final int TYPE_TRACK_REMOTE = 2;
-
+    @NonNull
     private final LayoutInflater inflater;
-    private List<ListItem> items;
+    private List<TrackListItem> items;
 
+    @NonNull
     private String filter = "";
 
     TrackAdapter(@NonNull Context context) {
@@ -38,7 +37,7 @@ class TrackAdapter extends BaseAdapter {
     }
 
     private void populateItems() {
-        final List<ListItem> updated = new ArrayList<>();
+        final List<TrackListItem> updated = new ArrayList<>();
         // Add local tracks
         final List<TrackFile> localTracks = Services.trackStore.getLocalTracks();
         if (!localTracks.isEmpty()) {
@@ -69,7 +68,7 @@ class TrackAdapter extends BaseAdapter {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        final ListItem item = getItem(position);
+        final TrackListItem item = getItem(position);
         final int itemType = item.getType();
 
         if (convertView == null) {
@@ -132,14 +131,13 @@ class TrackAdapter extends BaseAdapter {
     }
 
     @Override
-    public ListItem getItem(int position) {
+    public TrackListItem getItem(int position) {
         return items.get(position);
     }
 
     void clickItem(int position, @NonNull Context context) {
-        final ListItem item = items.get(position);
-        final int itemType = item.getType();
-        switch (itemType) {
+        final TrackListItem item = items.get(position);
+        switch (item.getType()) {
             case TYPE_TRACK_LOCAL:
                 final TrackFile trackFile = ((ListTrackFile) item).track;
                 Intents.openTrackLocal(context, trackFile);
@@ -168,43 +166,8 @@ class TrackAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        final ListItem item = getItem(position);
+        final TrackListItem item = getItem(position);
         return item.getType();
-    }
-
-    // Create list item types so we can have headers
-    private interface ListItem {
-        int getType();
-    }
-
-    private static class ListHeader implements ListItem {
-        final String name;
-        ListHeader(String name) {
-            this.name = name;
-        }
-        public int getType() {
-            return TYPE_HEADER;
-        }
-    }
-
-    private static class ListTrackFile implements ListItem {
-        final TrackFile track;
-        ListTrackFile(TrackFile track) {
-            this.track = track;
-        }
-        public int getType() {
-            return TYPE_TRACK_LOCAL;
-        }
-    }
-
-    private static class ListTrackData implements ListItem {
-        final CloudData track;
-        ListTrackData(CloudData track) {
-            this.track = track;
-        }
-        public int getType() {
-            return TYPE_TRACK_REMOTE;
-        }
     }
 
 }

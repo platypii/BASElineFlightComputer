@@ -5,8 +5,7 @@
     android:paddingBottom="2dp"
     android:paddingTop="2dp"
     android:paddingLeft="4dp"
-    android:paddingRight="4dp"
-    android:orientation="horizontal">
+    android:paddingRight="4dp">
 
     <TextView
         android:id="@+id/list_item_name"
@@ -16,6 +15,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="#eeeeee" />
+
     <TextView
         android:id="@+id/list_item_subtitle"
         android:layout_width="wrap_content"

@@ -25,6 +25,7 @@ public class MAltitude extends Measurement {
         return "";
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.US, "MAltitude(%d,%.1f)", millis, altitude);

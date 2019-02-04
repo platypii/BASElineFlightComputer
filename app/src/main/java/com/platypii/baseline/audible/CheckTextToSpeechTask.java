@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.AsyncTask;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ public class CheckTextToSpeechTask extends AsyncTask<Void,Void,Boolean> {
         this.activity = activity;
     }
 
+    @NonNull
     @Override
     protected Boolean doInBackground(Void... voids) {
         Log.i(TAG, "Checking for text-to-speech");

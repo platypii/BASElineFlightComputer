@@ -1,5 +1,6 @@
 package com.platypii.baseline.util.tensor;
 
+import android.support.annotation.NonNull;
 import java.util.Locale;
 
 /**
@@ -17,6 +18,7 @@ public class Tensor1x2 {
         p2 = v;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.US, "[[%f,%f]]", p1, p2);

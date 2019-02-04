@@ -5,6 +5,7 @@ import com.platypii.baseline.events.BluetoothEvent;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
     private static final String TAG = "BluetoothActivity";
 
     private final List<BluetoothDevice> devices = new ArrayList<>();
+    @Nullable
     private BluetoothAdapter bluetoothAdapter;
 
     @Override
@@ -34,7 +36,9 @@ public class BluetoothDeviceListFragment extends ListFragment {
         devices.clear();
         final List<BluetoothDevice> updatedDevices = Services.bluetooth.getDevices();
         devices.addAll(updatedDevices);
-        bluetoothAdapter.notifyDataSetChanged();
+        if (bluetoothAdapter != null) {
+            bluetoothAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

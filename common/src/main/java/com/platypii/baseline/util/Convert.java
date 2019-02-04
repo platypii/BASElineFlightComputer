@@ -40,6 +40,7 @@ public class Convert {
      * Uses default locale. Do NOT use this function to write data to a file.
      * 12.4 kft, 486 ft, 3.2 km
      */
+    @NonNull
     public static String altitude(double m) {
         if (Double.isNaN(m)) {
             return "";
@@ -61,6 +62,7 @@ public class Convert {
      * @param m meters
      * @return distance string in local units
      */
+    @NonNull
     public static String distance(double m) {
         return distance(m, 0, true);
     }
@@ -71,6 +73,7 @@ public class Convert {
      * @param units show the units?
      * @return distance string in local units
      */
+    @NonNull
     public static String distance(double m, int precision, boolean units) {
         if (Double.isNaN(m)) {
             return "";
@@ -162,6 +165,7 @@ public class Convert {
      * @param mps meters per second
      * @return speed string in local units
      */
+    @NonNull
     public static String speed(double mps) {
         return speed(mps, 1, true);
     }
@@ -172,6 +176,7 @@ public class Convert {
      * @param units show the units?
      * @return speed string in local units
      */
+    @NonNull
     public static String speed(double mps, int precision, boolean units) {
         if (Double.isNaN(mps)) {
             return "";
@@ -189,6 +194,7 @@ public class Convert {
         }
     }
 
+    @NonNull
     public static String glide(double glideRatio, int precision, boolean units) {
         if (Double.isNaN(glideRatio)) {
             return "";
@@ -209,6 +215,7 @@ public class Convert {
         }
     }
 
+    @NonNull
     public static String glide(double groundSpeed, double climb, int precision, boolean units) {
         final double glideRatio = -groundSpeed / climb;
         if (Double.isNaN(glideRatio)) {
@@ -237,6 +244,7 @@ public class Convert {
     /**
      * Convert.glide2 is used by PolarPlot, and uses empty string more than Convert.glide
      */
+    @NonNull
     public static String glide2(double groundSpeed, double climb, int precision, boolean units) {
         final double glideRatio = -groundSpeed / climb;
         if (Double.isNaN(glideRatio)) {

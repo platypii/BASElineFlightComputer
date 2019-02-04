@@ -113,10 +113,9 @@ class NMEA {
                 throw new NMEAException("Invalid NMEA sentence: " + nmea);
             }
         }
-        // Special case for AIDSTAT
-        if (nmea.startsWith("$AIDSTAT") && nmea.endsWith("*00")) {
-            return;
-        }
+        // Special commands that don't checksum
+        if (nmea.startsWith("$AIDSTAT") && nmea.endsWith("*00")) return;
+        if (nmea.startsWith("$ENGINESTATE") && nmea.endsWith("*00")) return;
 
         // Compute checksum
         short checksum1 = 0;
