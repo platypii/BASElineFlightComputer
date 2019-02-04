@@ -1,4 +1,4 @@
-package com.platypii.baseline.cloud;
+package com.platypii.baseline.cloud.lasers;
 
 import com.platypii.baseline.laser.LaserProfile;
 import java.util.List;

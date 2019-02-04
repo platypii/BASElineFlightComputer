@@ -1,26 +1,26 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
-import com.platypii.baseline.cloud.LaserUpload;
+import com.platypii.baseline.cloud.lasers.LaserUpload;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.laser.RangefinderService;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +31,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 
 public class LaserEditFragment extends Fragment {
+    private static final String TAG = "LaserEditFrag";
+
     private final FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());;
 
     private final RangefinderService rangefinder = new RangefinderService();
@@ -60,6 +62,14 @@ public class LaserEditFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 updateLayers();
             }
+        });
+        laserUnits.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateLayers();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
         return view;
     }
@@ -91,7 +101,10 @@ public class LaserEditFragment extends Fragment {
     }
 
     private boolean isMetric() {
-        return "meters".equals(laserUnits.toString());
+        final int position = laserUnits.getSelectedItemPosition();
+        final String[] values = getResources().getStringArray(R.array.metric_modes_values);
+        final String value = values[position];
+        return "meters".equals(value);
     }
 
     /**
@@ -126,13 +139,23 @@ public class LaserEditFragment extends Fragment {
     private void laserSave(View view) {
         firebaseAnalytics.logEvent("click_laser_edit_save", null);
         if (validate()) {
+            // Publish laser as a new layer
+            final LaserProfile laserProfile = getLaserProfile();
+            updateLayers();
+            // Reset for next laser input
+            editLayer = new LaserProfileLayer();
+            // Post to server in background
+            final Handler handler = new Handler();
             new Thread(() -> {
-                final LaserProfile laserProfile = getLaserProfile();
-                updateLayers();
-                LaserUpload.post(getContext(), laserProfile);
-                // Return to main fragment
-                final FragmentManager fm = getFragmentManager();
-                if (fm != null) fm.popBackStack();
+                try {
+                    LaserUpload.post(getContext(), laserProfile);
+                    // Return to main fragment
+                    final FragmentManager fm = getFragmentManager();
+                    if (fm != null) fm.popBackStack();
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to upload laser", e);
+                    handler.post(() -> Toast.makeText(getContext(), "Profile upload failed", Toast.LENGTH_LONG).show());
+                }
             }).start();
         }
     }
@@ -176,6 +199,10 @@ public class LaserEditFragment extends Fragment {
     public void onStop() {
         super.onStop();
         rangefinder.stop();
+        final LaserActivity laserActivity = (LaserActivity) getActivity();
+        if (laserActivity != null) {
+            laserActivity.removeLayer(editLayer);
+        }
         EventBus.getDefault().unregister(this);
     }
 }

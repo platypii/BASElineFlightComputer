@@ -9,18 +9,22 @@ import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-class RetrofitClient {
+public class RetrofitClient {
 
     private static Retrofit retrofit;
 
-    static Retrofit getRetrofit(@NonNull Context context) {
+    public static Retrofit getRetrofit(@NonNull Context context) {
         if (retrofit == null) {
             // Interceptor to add auth header
             final Interceptor authInterceptor = chain -> {
                 Request request = chain.request();
+                final Headers.Builder headerBuilder = request.headers().newBuilder();
                 // Get auth token
-                final String authToken = AuthToken.getAuthToken(context);
-                final Headers headers = request.headers().newBuilder().add("Authorization", authToken).build();
+                if (AuthState.getUser() != null) {
+                    final String authToken = AuthToken.getAuthToken(context);
+                    headerBuilder.add("Authorization", authToken);
+                }
+                final Headers headers = headerBuilder.build();
                 request = request.newBuilder().headers(headers).build();
                 return chain.proceed(request);
             };

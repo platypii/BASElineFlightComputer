@@ -2,10 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="2dp"
-    android:paddingTop="2dp"
-    android:paddingLeft="4dp"
-    android:paddingRight="4dp"
+    android:padding="4dp"
     android:orientation="horizontal">
 
     <View
@@ -22,14 +19,15 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:textSize="16sp"
         android:textColor="#eeeeee" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/list_item_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="4dp"
         android:src="@drawable/x"
         android:contentDescription="@string/action_delete"/>
 

@@ -1,6 +1,7 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.BaseService;
+import com.platypii.baseline.cloud.lasers.LaserListing;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;

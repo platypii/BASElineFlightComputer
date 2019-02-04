@@ -1,7 +1,9 @@
-package com.platypii.baseline.cloud;
+package com.platypii.baseline.cloud.lasers;
 
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthState;
+import com.platypii.baseline.cloud.RetrofitClient;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.laser.LaserProfile;
 import android.content.Context;
@@ -41,6 +43,7 @@ public class LaserListing implements BaseService {
             // Update the laser listing in a thread
             Log.i(TAG, "Listing laser profiles");
             final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
+            // TODO: Public vs private
             laserApi.getPublic().enqueue(new Callback<List<LaserProfile>>() {
                 @Override
                 public void onResponse(Call<List<LaserProfile>> call, Response<List<LaserProfile>> response) {
@@ -49,7 +52,6 @@ public class LaserListing implements BaseService {
                     cache.update(lasers);
                     // Notify listeners
                     EventBus.getDefault().post(new SyncEvent.ListingSuccess());
-
                     Log.i(TAG, "Listing successful: " + lasers.size() + " laser profiles");
                 }
 

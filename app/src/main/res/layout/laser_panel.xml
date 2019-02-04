@@ -25,21 +25,21 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Pick Track"/>
+                android:text="Add Track"/>
 
         <Button
                 android:id="@+id/chooseLaser"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Pick Profile"/>
+                android:text="Add Profile"/>
 
         <Button
                 android:id="@+id/addLaser"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Add Profile"/>
+                android:text="New Profile"/>
 
     </LinearLayout>
 

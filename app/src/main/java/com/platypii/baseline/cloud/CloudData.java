@@ -6,6 +6,9 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Class representing online track info
@@ -56,7 +59,10 @@ public class CloudData {
 
     @NonNull
     public String getName() {
-        return date_string + " " + location();
+        final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        final String shortDate = df.format(new Date(date));
+        final String shortLocation = place == null ? "" : place.shortName();
+        return shortDate + " " + shortLocation;
     }
 
     @Override

@@ -57,6 +57,15 @@ public class Place {
     }
 
     @NonNull
+    public String shortName() {
+        if (name.isEmpty()) {
+            return country;
+        } else {
+            return name + ", " + country;
+        }
+    }
+
+    @NonNull
     @Override
     public String toString() {
         return name;

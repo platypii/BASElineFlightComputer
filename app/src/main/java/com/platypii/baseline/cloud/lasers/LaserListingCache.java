@@ -1,4 +1,4 @@
-package com.platypii.baseline.cloud;
+package com.platypii.baseline.cloud.lasers;
 
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.util.Exceptions;
@@ -81,7 +81,7 @@ public class LaserListingCache {
         return UPDATE_TTL < lastUpdateDuration && REQUEST_TTL < lastRequestDuration;
     }
 
-    void clear() {
+    public void clear() {
         final SharedPreferences.Editor editor = prefs.edit();
         editor.remove(CACHE_LAST_REQUEST);
         editor.remove(CACHE_LAST_UPDATE);
