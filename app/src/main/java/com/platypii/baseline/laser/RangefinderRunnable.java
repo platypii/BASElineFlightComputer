@@ -10,10 +10,12 @@ import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.*;
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,10 +43,14 @@ class RangefinderRunnable implements Runnable {
     @Nullable
     private RangefinderProtocol protocol;
 
+    @NonNull
+    private FirebaseAnalytics firebaseAnalytics;
+
     RangefinderRunnable(@NonNull RangefinderService service, @NonNull Context context, @NonNull BluetoothAdapter bluetoothAdapter) {
         this.service = service;
         this.context = context;
         this.bluetoothAdapter = bluetoothAdapter;
+        firebaseAnalytics = FirebaseAnalytics.getInstance(context);
     }
 
     @Override
@@ -92,10 +98,14 @@ class RangefinderRunnable implements Runnable {
                         Log.i(TAG, "ATN rangefinder found, connecting to: " +  device.getName());
                         connect(device);
                         protocol = new ATNProtocol(bluetoothGatt);
-                    } else if (UineyeProtocol.isUineye(record)) {
+                    } else if (UineyeProtocol.isUineye(device, record)) {
                         Log.i(TAG, "Uineye rangefinder found, connecting to: " + device.getName());
                         connect(device);
                         protocol = new UineyeProtocol(bluetoothGatt);
+                    } else if (SigSauerProtocol.isSigSauer(device, record)) {
+                        Log.i(TAG, "SigSauer rangefinder found, connecting to: " + device.getName());
+                        connect(device);
+                        protocol = new SigSauerProtocol(bluetoothGatt);
                     }
                 }
             }
@@ -104,11 +114,15 @@ class RangefinderRunnable implements Runnable {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void connect(BluetoothDevice device) {
+    private void connect(@NonNull BluetoothDevice device) {
         stopScan();
         service.setState(BT_CONNECTING);
         // Connect to device
         bluetoothGatt = device.connectGatt(context, true, gattCallback);
+        // Log event
+        final Bundle bundle = new Bundle();
+        bundle.putString("device_name", device.getName());
+        firebaseAnalytics.logEvent("rangefinder_found", bundle);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

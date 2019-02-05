@@ -18,6 +18,9 @@ public class LaserMeasurement {
     LaserMeasurement(double x, double y) {
         this.x = x;
         this.y = y;
+        if (x < 0) {
+            throw new IllegalArgumentException("Invalid horizontal distance " + x + " " + y);
+        }
     }
 
     @NonNull

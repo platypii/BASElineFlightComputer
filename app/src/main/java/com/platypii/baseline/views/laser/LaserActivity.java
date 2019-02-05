@@ -7,6 +7,7 @@ import com.platypii.baseline.views.charts.FlightProfile;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import android.os.Bundle;
 import android.util.Log;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,9 @@ public class LaserActivity extends BaseActivity {
 
     // List of tracks and laser profiles to display
     final List<ProfileLayer> layers = new ArrayList<>();
+
+    // TODO: remove static instance after debugging
+    public static FirebaseAnalytics firebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,8 @@ public class LaserActivity extends BaseActivity {
 
         // Update laser listing
         Services.cloud.lasers.listAsync(this, false);
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
     void addLayer(ProfileLayer layer) {

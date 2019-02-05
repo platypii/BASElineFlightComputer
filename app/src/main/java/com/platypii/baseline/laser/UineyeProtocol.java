@@ -1,13 +1,15 @@
 package com.platypii.baseline.laser;
 
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
+import com.platypii.baseline.views.laser.LaserActivity;
+import android.bluetooth.*;
 import android.bluetooth.le.ScanRecord;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.util.SparseArray;
 import java.util.Arrays;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
@@ -19,8 +21,11 @@ class UineyeProtocol implements RangefinderProtocol {
     private static final String TAG = "UineyeProtocol";
 
     // Manufacturer ID
-    private static final int manufacturerId = 21881;
-    private static final byte[] manufacturerData = {-120, -96, -44, 54, 57, 101, 118, 103};
+    private static final int manufacturerId1 = 21881;
+    private static final byte[] manufacturerData1 = {-120, -96, -44, 54, 57, 101, 118, 103}; // 88-a0-d4-36-39-65-76-67
+
+    private static final int manufacturerId2 = 19784;
+    private static final byte[] manufacturerData2 = {0, 21, -123, 20, -100, 9}; // 00-15-85-14-9c-09
 
     // Rangefinder service
     private static final UUID rangefinderService = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
@@ -39,8 +44,8 @@ class UineyeProtocol implements RangefinderProtocol {
 
     // Rangefinder responses
     private static final byte[] laserHello = {4, 0, -122, -118}; // ae-a7-04-00-86-8a-bc-b7
-    private static final byte[] heartbeat = {4, 0, 8, 12};       // ae-a7-04-00-08-0c-bc-b7
-    private static final byte[] norange = {4, 0, 5, 9};         // ae-a7-04-00-05-09-bc-b7
+    private static final byte[] heartbeat = {4, 0, 8, 12}; // ae-a7-04-00-08-0c-bc-b7
+    private static final byte[] norange = {4, 0, 5, 9}; // ae-a7-04-00-05-09-bc-b7
 
     // Protocol state
     private final RfSentenceIterator sentenceIterator = new RfSentenceIterator();
@@ -121,21 +126,14 @@ class UineyeProtocol implements RangefinderProtocol {
     private void processMeasurement(byte[] value) {
         Log.d(TAG, "rf -> app: measure " + Util.byteArrayToHex(value));
 
-        if (value[0] != 23 || value[1] != 0 || value[2] != -123) {
-            throw new IllegalArgumentException("Invalid measurement prefix " + Util.byteArrayToHex(value));
-        }
-
-        double pitch = Util.bytesToShort(value[3], value[4]) * 0.1; // degrees
-//        double total = Util.bytesToShort(value[5], value[6]) * 0.1; // meters
+        final double pitch = Util.bytesToShort(value[3], value[4]) * 0.1; // degrees
+//        final double total = Util.bytesToShort(value[5], value[6]) * 0.1; // meters
         double vert = Util.bytesToShort(value[7], value[8]) * 0.1; // meters
         double horiz = Util.bytesToShort(value[9], value[10]) * 0.1; // meters
-
+//        double bearing = (value[22] & 0xff) * 360.0 / 256.0; // degrees
         if (pitch < 0) {
             vert = -vert;
         }
-
-        // TODO: Check checksum?
-//        byte checksum = value[22];
 
         final LaserMeasurement meas = new LaserMeasurement(horiz, vert);
         Log.i(TAG, "rf -> app: measure " + meas);
@@ -146,8 +144,32 @@ class UineyeProtocol implements RangefinderProtocol {
      * Return true iff a bluetooth scan result looks like a rangefinder
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    static boolean isUineye(ScanRecord record) {
-        return record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId), manufacturerData);
+    static boolean isUineye(@NonNull BluetoothDevice device, @Nullable ScanRecord record) {
+        final String deviceName = device.getName();
+        if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId1), manufacturerData1)) {
+            // Manufacturer match (kenny's laser)
+            return true;
+        } else if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId2), manufacturerData2)) {
+            // Manufacturer match (hartman's laser)
+            return true;
+        } else if (deviceName != null && deviceName.endsWith("BT05")) {
+            // Device name match
+            if (record != null) {
+                // Send manufacturer data to firebase
+                final Bundle bundle = new Bundle();
+                bundle.putString("rf_device_name", deviceName);
+                final SparseArray<byte[]> mfg = record.getManufacturerSpecificData();
+                for (int i = 0; i < mfg.size(); i++) {
+                    final String key = "mfg_" + mfg.keyAt(i);
+                    final String hex = Util.byteArrayToHex(mfg.valueAt(i));
+                    bundle.putString(key, hex);
+                }
+                LaserActivity.firebaseAnalytics.logEvent("manufacturer_data", bundle);
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

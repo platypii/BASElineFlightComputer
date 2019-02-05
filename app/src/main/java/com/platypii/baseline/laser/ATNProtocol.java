@@ -2,6 +2,7 @@ package com.platypii.baseline.laser;
 
 import android.bluetooth.*;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import java.util.UUID;
@@ -107,7 +108,7 @@ class ATNProtocol implements RangefinderProtocol {
      * Return true iff a bluetooth scan result looks like a rangefinder
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    static boolean isATN(BluetoothDevice device) {
+    static boolean isATN(@NonNull BluetoothDevice device) {
         return "ATN-LD99".equals(device.getName());
     }
 

@@ -3,6 +3,7 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 public class LaserPanelFragment extends ListFragment {
     private final FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
 
+    @Nullable
     private ProfileAdapter listAdapter;
 
     @Override
@@ -28,8 +30,10 @@ public class LaserPanelFragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
         final LaserActivity laserActivity = (LaserActivity) getActivity();
-        listAdapter = new ProfileAdapter(laserActivity, laserActivity.layers);
-        setListAdapter(listAdapter);
+        if (laserActivity != null) {
+            listAdapter = new ProfileAdapter(laserActivity, laserActivity.layers);
+            setListAdapter(listAdapter);
+        }
     }
 
     @Override
@@ -66,6 +70,8 @@ public class LaserPanelFragment extends ListFragment {
     }
 
     public void updateLayers() {
-        listAdapter.notifyDataSetChanged();
+        if (listAdapter != null) {
+            listAdapter.notifyDataSetChanged();
+        }
     }
 }
