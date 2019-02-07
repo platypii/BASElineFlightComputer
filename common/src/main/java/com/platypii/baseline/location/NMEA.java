@@ -137,7 +137,7 @@ class NMEA {
      * $GPPWR,04C3,0,0,0,0,00,0,0,97, 1 9 ,S00 // not charging 04C3 = 1219 = ~70%
      * $GPPWR,0501,1,0,1,1,00,0,0,97, 1 9 ,S00 // charging
      */
-    static float parsePowerLevel(String split[]) {
+    static float parsePowerLevel(@NonNull String split[]) {
         if (!"$GPPWR".equals(split[0])) {
             Exceptions.report(new IllegalStateException("Parse power level should only be called on GPPWR"));
         }
@@ -157,6 +157,7 @@ class NMEA {
     /**
      * Remove junk before and after nmea sentence
      */
+    @NonNull
     static String cleanNmea(@NonNull String nmea) {
         // Remove anything before $
         final int sentenceStart = nmea.indexOf('$');
@@ -170,6 +171,7 @@ class NMEA {
     /**
      * Split nmea sentence into columns, no checksum
      */
+    @NonNull
     static String[] splitNmea(@NonNull String nmea) {
         // Strip checksum
         final int starIndex = nmea.lastIndexOf('*');

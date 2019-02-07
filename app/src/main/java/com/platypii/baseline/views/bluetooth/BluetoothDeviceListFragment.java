@@ -2,6 +2,8 @@ package com.platypii.baseline.views.bluetooth;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.util.Exceptions;
+import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +12,7 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -45,9 +48,19 @@ public class BluetoothDeviceListFragment extends ListFragment {
     public void onListItemClick(@NonNull ListView l, View v, int position, long id) {
         final BluetoothDevice device = (BluetoothDevice) l.getItemAtPosition(position);
         Log.i(TAG, "Bluetooth device selected: " + device.getName());
-        // Save device preference
-        Services.bluetooth.preferences.save(getActivity(), true, device.getAddress(), device.getName());
-        Services.bluetooth.restart(getActivity());
+        final Activity activity = getActivity();
+        if (activity != null) {
+            // Log event
+            final Bundle bundle = new Bundle();
+            bundle.putString("device_id", device.getAddress());
+            bundle.putString("device_name", device.getName());
+            FirebaseAnalytics.getInstance(activity).logEvent("bluetooth_selected", bundle);
+            // Save device preference
+            Services.bluetooth.preferences.save(activity, true, device.getAddress(), device.getName());
+            Services.bluetooth.restart(activity);
+        } else {
+            Exceptions.report(new NullPointerException("Null activity on bluetooth device click"));
+        }
     }
 
     @Override

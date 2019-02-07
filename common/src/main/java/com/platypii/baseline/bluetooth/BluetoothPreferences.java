@@ -3,6 +3,7 @@ package com.platypii.baseline.bluetooth;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public class BluetoothPreferences {
@@ -18,14 +19,14 @@ public class BluetoothPreferences {
     @Nullable
     public String preferenceDeviceName = null;
 
-    public void load(Context context) {
+    public void load(@NonNull Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         preferenceEnabled = prefs.getBoolean(PREF_BT_ENABLED, preferenceEnabled);
         preferenceDeviceId = prefs.getString(PREF_BT_DEVICE_ID, preferenceDeviceId);
         preferenceDeviceName = prefs.getString(PREF_BT_DEVICE_NAME, preferenceDeviceName);
     }
 
-    public void save(Context context, boolean enabled, String deviceId, String deviceName) {
+    public void save(@NonNull Context context, boolean enabled, String deviceId, String deviceName) {
         preferenceEnabled = enabled;
         preferenceDeviceId = deviceId;
         preferenceDeviceName = deviceName;

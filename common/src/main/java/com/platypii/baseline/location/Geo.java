@@ -41,11 +41,10 @@ public class Geo {
     public static double fastDistance(double lat1, double lon1, double lat2, double lon2) {
         final double lat1r = Math.toRadians(lat1);
         final double lat2r = Math.toRadians(lat2);
-        final double delta_lat = lat2r - lat1r;
         final double delta_lon = Math.toRadians(lon2 - lon1);
 
         final double x = delta_lon * Math.cos((lat1r + lat2r) / 2);
-        final double y = delta_lat;
+        final double y = lat2r - lat1r;
 
         return R * Math.sqrt(x * x + y * y);
     }
@@ -56,11 +55,11 @@ public class Geo {
      * @return the bearing in degrees (relative to true north, not magnetic)
      */
     public static double bearing(double lat1, double lon1, double lat2, double lon2) {
-        final double φ1 = Math.toRadians(lat1);
-        final double φ2 = Math.toRadians(lat2);
-        final double Δλ = Math.toRadians(lon2 - lon1);
-        final double y = Math.sin(Δλ) * Math.cos(φ2);
-        final double x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+        final double lat1r = Math.toRadians(lat1);
+        final double lat2r = Math.toRadians(lat2);
+        final double delta_lon = Math.toRadians(lon2 - lon1);
+        final double y = Math.sin(delta_lon) * Math.cos(lat2r);
+        final double x = Math.cos(lat1r) * Math.sin(lat2r) - Math.sin(lat1r) * Math.cos(lat2r) * Math.cos(delta_lon);
         return Math.toDegrees(Math.atan2(y, x));
     }
 

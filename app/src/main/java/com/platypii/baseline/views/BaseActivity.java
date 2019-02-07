@@ -210,6 +210,7 @@ public abstract class BaseActivity extends FragmentActivity {
         // Signed in successfully, show authenticated UI.
         if (account != null) {
             Log.i(TAG, "Sign in successful for user " + account.getDisplayName());
+            firebaseAnalytics.setUserId(account.getId());
 
             // Update track listing
             Services.cloud.listing.listAsync(account.getIdToken(), false);
@@ -239,6 +240,7 @@ public abstract class BaseActivity extends FragmentActivity {
     private void signedOut() {
         // Clear account
         account = null;
+        firebaseAnalytics.setUserId(null);
         // Clear track listing
         Services.cloud.signOut();
         // Notify listeners
