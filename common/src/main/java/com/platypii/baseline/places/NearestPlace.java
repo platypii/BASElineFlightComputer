@@ -48,7 +48,7 @@ public class NearestPlace {
             double bestDistance = Double.NaN;
             // Find closest place
             for (Place place : placeList) {
-                final double distance = Geo.fastDistance(loc.latitude, loc.longitude, place.latitude, place.longitude);
+                final double distance = Geo.fastDistance(loc.latitude, loc.longitude, place.lat, place.lng);
                 if (Double.isNaN(bestDistance) || (distance < bestDistance && distance < place.radius)) {
                     best = place;
                     bestDistance = distance;
@@ -64,7 +64,7 @@ public class NearestPlace {
     public String getString(@NonNull MLocation loc) {
         final Place place = cached(loc);
         if (place != null) {
-            final double distance = Geo.distance(loc.latitude, loc.longitude, place.latitude, place.longitude);
+            final double distance = Geo.distance(loc.latitude, loc.longitude, place.lat, place.lng);
             return String.format("%s (%s)", place, Convert.distance3(distance));
         } else {
             return "";

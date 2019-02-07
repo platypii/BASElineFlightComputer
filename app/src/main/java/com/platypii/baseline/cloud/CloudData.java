@@ -1,5 +1,6 @@
 package com.platypii.baseline.cloud;
 
+import com.platypii.baseline.places.Place;
 import com.platypii.baseline.tracks.TrackFiles;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -16,15 +17,15 @@ public class CloudData {
     public final String trackUrl;
     public final String trackKml;
     @Nullable
-    public final String location;
+    public final Place place;
 
-    CloudData(String track_id, long date, String date_string, String trackUrl, String trackKml, String location) {
+    CloudData(String track_id, long date, String date_string, String trackUrl, String trackKml, @Nullable Place place) {
         this.track_id = track_id;
         this.date = date;
         this.date_string = date_string;
         this.trackUrl = trackUrl;
         this.trackKml = trackKml;
-        this.location = location;
+        this.place = place;
     }
 
     /**
@@ -43,6 +44,14 @@ public class CloudData {
     public File abbrvFile(@NonNull Context context) {
         final File trackDir = TrackFiles.getTrackDirectory(context);
         return new File(trackDir, "tracks/" + track_id + "/track-abbrv.csv");
+    }
+
+    /**
+     * Returns short "Name, Country" string, similar to old location field.
+     */
+    @NonNull
+    public String location() {
+        return place == null ? "" : place.niceString();
     }
 
     @Override

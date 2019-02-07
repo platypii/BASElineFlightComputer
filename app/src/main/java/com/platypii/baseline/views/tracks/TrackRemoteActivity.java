@@ -59,7 +59,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
             final TextView trackLocation = findViewById(R.id.trackLocation);
 
             trackDate.setText(track.date_string);
-            trackLocation.setText(track.location);
+            trackLocation.setText(track.location());
         }
     }
 

@@ -12,22 +12,22 @@ public class Place {
     public final String region;
     public final String country;
 
-    public final double latitude;
-    public final double longitude;
-    public final double altitude;
+    public final double lat;
+    public final double lng;
+    public final double alt;
 
     // B,A,S,E,DZ
     public final String objectType;
 
     public final double radius;
 
-    Place(String name, String region, String country, double latitude, double longitude, double altitude, String objectType, double radius) {
+    public Place(String name, String region, String country, double lat, double lng, double alt, String objectType, double radius) {
         this.name = name;
         this.region = region;
         this.country = country;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.altitude = altitude;
+        this.lat = lat;
+        this.lng = lng;
+        this.alt = alt;
         this.objectType = objectType;
         this.radius = radius;
     }
@@ -36,9 +36,18 @@ public class Place {
     @NonNull
     public LatLng latLng() {
         if (lazyLatLng == null) {
-            lazyLatLng = new LatLng(latitude, longitude);
+            lazyLatLng = new LatLng(lat, lng);
         }
         return lazyLatLng;
+    }
+
+    @NonNull
+    public String niceString() {
+        if (name.isEmpty()) {
+            return country;
+        } else {
+            return name + ", " + country;
+        }
     }
 
     @NonNull

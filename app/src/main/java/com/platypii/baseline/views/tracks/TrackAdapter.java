@@ -51,8 +51,8 @@ public class TrackAdapter extends BaseAdapter {
         if (cloudTracks != null && !cloudTracks.isEmpty()) {
             updated.add(new ListHeader("Synced"));
             for (CloudData track : cloudTracks) {
-                final String location = track.location == null ? "" : track.location;
-                if (location.toLowerCase().contains(filter)) {
+                // TODO: Search over more fields, full place
+                if (track.location().toLowerCase().contains(filter)) {
                     updated.add(new ListTrackData(track));
                 }
             }
@@ -116,7 +116,7 @@ public class TrackAdapter extends BaseAdapter {
                 final TextView itemSizeView2 = convertView.findViewById(R.id.list_item_subtitle);
                 final ProgressBar itemSpinner2 = convertView.findViewById(R.id.list_spinner);
                 itemNameView2.setText(trackData.date_string);
-                itemSizeView2.setText(trackData.location);
+                itemSizeView2.setText(trackData.location());
                 itemSpinner2.setVisibility(View.GONE);
                 break;
         }
