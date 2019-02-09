@@ -38,6 +38,7 @@ public abstract class BaseActivity extends FragmentActivity {
     protected FirebaseAnalytics firebaseAnalytics;
 
     /* Client used to interact with Google APIs */
+    @Nullable
     private GoogleSignInClient signInClient;
     @Nullable
     private GoogleSignInAccount account;
@@ -50,6 +51,7 @@ public abstract class BaseActivity extends FragmentActivity {
     private View signInSpinner;
 
     // Save last sign in state so that sign in panel doesn't blink
+    @Nullable
     public static AuthEvent currentAuthState = null;
     private static final String PREF_AUTH_STATE = "auth_state";
 
@@ -110,11 +112,15 @@ public abstract class BaseActivity extends FragmentActivity {
         }
 
         // Initialize Google sign in
-        final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.server_client_id))
-                .requestEmail()
-                .build();
-        signInClient = GoogleSignIn.getClient(this, gso);
+        try {
+            final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.server_client_id))
+                    .requestEmail()
+                    .build();
+            signInClient = GoogleSignIn.getClient(this, gso);
+        } catch (IllegalArgumentException e) {
+            Exceptions.report(new IllegalArgumentException("Server client id = " + getString(R.string.server_client_id), e));
+        }
     }
 
     @Override
@@ -124,7 +130,9 @@ public abstract class BaseActivity extends FragmentActivity {
         // Start flight services
         Services.start(this);
 
-        signInClient.silentSignIn().addOnCompleteListener(this::onSignInComplete);
+        if (signInClient != null) {
+            signInClient.silentSignIn().addOnCompleteListener(this::onSignInComplete);
+        }
 
         // Bind sign in panel
         signInPanel = findViewById(R.id.sign_in_panel);
@@ -156,23 +164,31 @@ public abstract class BaseActivity extends FragmentActivity {
     void clickSignIn() {
         Log.i(TAG, "User clicked sign in");
         firebaseAnalytics.logEvent("click_sign_in", null);
-        userClickedSignIn = true;
+        if (signInClient != null) {
+            userClickedSignIn = true;
 
-        // Notify sign in listeners
-        updateAuthState(AuthEvent.SIGNING_IN);
+            // Notify sign in listeners
+            updateAuthState(AuthEvent.SIGNING_IN);
 
-        final Intent signInIntent = signInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+            final Intent signInIntent = signInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        } else {
+            Exceptions.report(new NullPointerException("Clicked sign in, but SignInClient is null"));
+        }
     }
 
     void clickSignOut() {
         Log.i(TAG, "User clicked sign out");
-        signInClient.signOut()
-                .addOnSuccessListener(aVoid -> {
-                    Log.i(TAG, "Signed out");
-                    Toast.makeText(BaseActivity.this, R.string.signout_success, Toast.LENGTH_LONG).show();
-                    signedOut();
-                });
+        if (signInClient != null) {
+            signInClient.signOut()
+                    .addOnSuccessListener(aVoid -> {
+                        Log.i(TAG, "Signed out");
+                        Toast.makeText(BaseActivity.this, R.string.signout_success, Toast.LENGTH_LONG).show();
+                        signedOut();
+                    });
+        } else {
+            Exceptions.report(new NullPointerException("Clicked sign out, but SignInClient is null"));
+        }
     }
 
     @Override
@@ -215,7 +231,7 @@ public abstract class BaseActivity extends FragmentActivity {
             // Update track listing
             Services.cloud.listing.listAsync(account.getIdToken(), false);
         } else {
-            Exceptions.report(new NullPointerException("Sign in success, but null account"));
+            Exceptions.report(new NullPointerException("Sign in success, but account is null"));
         }
 
         // Notify listeners
