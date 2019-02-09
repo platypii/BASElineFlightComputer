@@ -3,13 +3,16 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.cloud.lasers.LaserUpload;
 import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.laser.GeoPoint;
 import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.laser.RangefinderService;
+import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
@@ -39,6 +42,9 @@ public class LaserEditFragment extends Fragment {
 
     private EditText laserName;
     private Spinner laserUnits;
+    private EditText laserLat;
+    private EditText laserLon;
+    private EditText laserAlt;
     private EditText laserText;
     private TextView laserStatus;
 
@@ -46,9 +52,12 @@ public class LaserEditFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.laser_edit_panel, container, false);
+        final View view = inflater.inflate(R.layout.laser_edit, container, false);
         laserName = view.findViewById(R.id.laserName);
         laserUnits = view.findViewById(R.id.laserUnits);
+        laserLat = view.findViewById(R.id.laserLat);
+        laserLon = view.findViewById(R.id.laserLon);
+        laserAlt = view.findViewById(R.id.laserAlt);
         laserText = view.findViewById(R.id.laserText);
         laserStatus = view.findViewById(R.id.laserStatus);
         view.findViewById(R.id.laserSave).setOnClickListener(this::laserSave);
@@ -95,9 +104,13 @@ public class LaserEditFragment extends Fragment {
     }
 
     private LaserProfile getLaserProfile() {
-        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
         final String name = laserName.getText().toString();
-        return new LaserProfile("", name, false, "app", points);
+        final double lat = Numbers.parseDouble(laserLat.getText().toString());
+        final double lon = Numbers.parseDouble(laserLon.getText().toString());
+        final double alt = Numbers.parseDouble(laserAlt.getText().toString());
+        final GeoPoint exit = new GeoPoint(System.currentTimeMillis(), alt, lat, lon);
+        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
+        return new LaserProfile("", name, false, exit, "app", points);
     }
 
     private boolean isMetric() {
@@ -108,37 +121,39 @@ public class LaserEditFragment extends Fragment {
     }
 
     /**
-     * Return true if the form is valid
+     * Return null if the form is valid, or error message
      */
-    private boolean validate() {
+    @Nullable
+    private String validate() {
         // Validate name
         if (laserName.getText().toString().isEmpty()) {
-            Toast.makeText(getContext(), "Name cannot be empty", Toast.LENGTH_LONG).show();
-            return false;
+            return "Name cannot be empty";
         }
         final boolean metric = "meters".equals(laserUnits.toString());
+        // Altitude is required
+        if (laserAlt.getText().toString().isEmpty()) {
+            return "Altitude needed for start performance";
+        }
         // Validate points
         final String pointString = laserText.getText().toString();
         if (pointString.isEmpty()) {
-            Toast.makeText(getContext(), "Measurements cannot be empty", Toast.LENGTH_LONG).show();
-            return false;
+            return "Measurements cannot be empty";
         }
         try {
             final int count = LaserMeasurement.parse(pointString, metric, true).size();
             if (count == 0) {
-                Toast.makeText(getContext(), "Measurements cannot be empty", Toast.LENGTH_LONG).show();
-                return false;
+                return "Measurements cannot be empty";
             }
         } catch (ParseException e) {
-            Toast.makeText(getContext(), "Invalid measurements, line " + e.getErrorOffset(), Toast.LENGTH_LONG).show();
-            return false;
+            return "Invalid measurements, line " + e.getErrorOffset();
         }
-        return true;
+        return null;
     }
 
     private void laserSave(View view) {
         firebaseAnalytics.logEvent("click_laser_edit_save", null);
-        if (validate()) {
+        final String error = validate();
+        if (error == null) {
             // Publish laser as a new layer
             final LaserProfile laserProfile = getLaserProfile();
             updateLayers();
@@ -157,6 +172,9 @@ public class LaserEditFragment extends Fragment {
                     handler.post(() -> Toast.makeText(getContext(), "Profile upload failed", Toast.LENGTH_LONG).show());
                 }
             }).start();
+        } else {
+            // Form error
+            Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
         }
     }
 

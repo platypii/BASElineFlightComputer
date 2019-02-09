@@ -29,6 +29,39 @@
 
     </LinearLayout>
 
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <EditText
+                android:id="@+id/laserLat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:inputType="number"
+                android:hint="Latitude"/>
+
+        <EditText
+                android:id="@+id/laserLon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:inputType="number"
+                android:hint="Longitude"/>
+
+        <EditText
+                android:id="@+id/laserAlt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:inputType="number"
+                android:hint="Altitude"/>
+
+    </LinearLayout>
+
     <EditText
             android:id="@+id/laserText"
             android:layout_width="match_parent"
