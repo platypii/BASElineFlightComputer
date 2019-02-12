@@ -11,7 +11,6 @@ public class PlotTest {
     @Test
     public void plot() {
         PlotOptions options = new PlotOptions(1);
-        PlotAxes axes = new PlotAxes(options);
         Plot plot = new Plot(options);
         plot.initBounds(1);
         assertNull(plot.canvas);

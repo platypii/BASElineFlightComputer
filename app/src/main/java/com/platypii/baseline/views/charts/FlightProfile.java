@@ -7,7 +7,6 @@ import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.views.charts.layers.ProfileFocusLayer;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import android.content.Context;
-import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -38,8 +37,6 @@ public class FlightProfile extends PlotView {
         outer.y.max = 100;
 
         options.axis.x = options.axis.y = PlotOptions.axisDistance();
-
-        paint.setStrokeJoin(Paint.Join.ROUND);
     }
 
     public void loadTrack(@NonNull TrackData trackData) {

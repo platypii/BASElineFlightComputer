@@ -78,13 +78,13 @@ public class SensorPlot extends PlotSurface {
             // drawArea(canvas, zSeries, 0, 1);
 
             // Line plot:
-            paint.setStrokeMiter(2);
-            paint.setColor(0xffee0000);
-            plot.drawLine(AXIS_SENSOR, xSeries, 1.5f, paint);
-            paint.setColor(0xff00ee00);
-            plot.drawLine(AXIS_SENSOR, ySeries, 1.5f, paint);
-            paint.setColor(0xffee00ee);
-            plot.drawLine(AXIS_SENSOR, zSeries, 1.5f, paint);
+            plot.paint.setStrokeMiter(2);
+            plot.paint.setColor(0xffee0000);
+            plot.drawLine(AXIS_SENSOR, xSeries, 1.5f);
+            plot.paint.setColor(0xff00ee00);
+            plot.drawLine(AXIS_SENSOR, ySeries, 1.5f);
+            plot.paint.setColor(0xffee00ee);
+            plot.drawLine(AXIS_SENSOR, zSeries, 1.5f);
         }
     }
 

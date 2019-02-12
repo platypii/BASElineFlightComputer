@@ -46,8 +46,6 @@ public class PolarPlot extends PlotView {
         outer.y.max = 28 * Convert.MPH;
 
         options.axis.x = options.axis.y = PlotOptions.axisSpeed();
-
-        paint.setStrokeJoin(Paint.Join.ROUND);
     }
 
     public void loadTrack(@NonNull List<MLocation> trackData) {
@@ -74,24 +72,25 @@ public class PolarPlot extends PlotView {
     public void drawData(@NonNull Plot plot) {
         if (trackData != null) {
             if (trackData.isEmpty()) {
-                text.setTextAlign(Paint.Align.CENTER);
-                plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, text);
+                plot.text.setTextAlign(Paint.Align.CENTER);
+                plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, plot.text);
             } else {
                 // Draw data
-                paint.setColor(0xff7f00ff);
-                plot.drawLine(AXIS_POLAR, speedSeries, 1.5f, paint);
+                plot.paint.setColor(0xff7f00ff);
+                plot.paint.setStrokeJoin(Paint.Join.ROUND);
+                plot.drawLine(AXIS_POLAR, speedSeries, 1.5f);
             }
         }
         // Draw focus
         if (focus != null) {
             final double x = focus.groundSpeed();
             final double y = focus.climb;
-            paint.setColor(0xcceeeeee);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(options.density);
-            plot.drawPoint(0, x, y, 2 * options.density, paint);
-            paint.setStyle(Paint.Style.FILL);
-            plot.drawPoint(0, x, y, options.density, paint);
+            plot.paint.setColor(0xcceeeeee);
+            plot.paint.setStyle(Paint.Style.STROKE);
+            plot.paint.setStrokeWidth(options.density);
+            plot.drawPoint(0, x, y, 2 * options.density);
+            plot.paint.setStyle(Paint.Style.FILL);
+            plot.drawPoint(0, x, y, options.density);
         }
     }
 

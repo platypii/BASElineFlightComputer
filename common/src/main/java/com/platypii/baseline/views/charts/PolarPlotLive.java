@@ -81,8 +81,8 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
             } else {
                 // Draw "no gps signal"
                 ellipses.setEnabled(false);
-                text.setTextAlign(Paint.Align.CENTER);
-                plot.canvas.drawText("no gps signal", plot.width / 2, plot.height / 2, text);
+                plot.text.setTextAlign(Paint.Align.CENTER);
+                plot.canvas.drawText("no gps signal", plot.width / 2, plot.height / 2, plot.text);
             }
         }
     }
@@ -93,7 +93,7 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
     private void drawHistory(@NonNull Plot plot) {
         final long currentTime = TimeOffset.phoneToGpsTime(System.currentTimeMillis());
         synchronized (history) {
-            paint.setStyle(Paint.Style.FILL);
+            plot.paint.setStyle(Paint.Style.FILL);
             for (MLocation loc : history) {
                 final int t = (int) (currentTime - loc.millis);
                 if (t <= window) {
@@ -112,8 +112,8 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
                     // Draw point
                     float radius = 12f * (4000 - t) / 6000;
                     radius = Math.max(3, Math.min(radius, 12));
-                    paint.setColor(color);
-                    plot.drawPoint(AXIS_POLAR, vx, vy, radius, paint);
+                    plot.paint.setColor(color);
+                    plot.drawPoint(AXIS_POLAR, vx, vy, radius);
                 }
             }
         }
@@ -134,9 +134,9 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
         // Draw point
         float radius = 16f * (6000 - t) / 8000;
         radius = Math.max(3, Math.min(radius, 16));
-        paint.setColor(color);
-        paint.setStyle(Paint.Style.FILL);
-        plot.drawPoint(AXIS_POLAR, vx, vy, radius, paint);
+        plot.paint.setColor(color);
+        plot.paint.setStyle(Paint.Style.FILL);
+        plot.drawPoint(AXIS_POLAR, vx, vy, radius);
     }
 
     private void drawSpeedLines(@NonNull Plot plot, double vx, double vy) {
@@ -147,21 +147,21 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
         final float cy = plot.getY(0);
 
         // Draw horizontal and vertical speed lines
-        paint.setStrokeWidth(options.density);
-        paint.setColor(0xff666666);
-        plot.canvas.drawLine(cx, (int) sy, sx, (int) sy, paint); // Horizontal
-        plot.canvas.drawLine((int) sx, cy, (int) sx, sy, paint); // Vertical
+        plot.paint.setStrokeWidth(options.density);
+        plot.paint.setColor(0xff666666);
+        plot.canvas.drawLine(cx, (int) sy, sx, (int) sy, plot.paint); // Horizontal
+        plot.canvas.drawLine((int) sx, cy, (int) sx, sy, plot.paint); // Vertical
 
         // Draw total speed circle
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(0xff444444);
+        plot.paint.setStyle(Paint.Style.STROKE);
+        plot.paint.setColor(0xff444444);
         final float r = Math.abs(plot.getX(v) - cx);
-        plot.canvas.drawCircle(cx, cy, r, paint);
+        plot.canvas.drawCircle(cx, cy, r, plot.paint);
 
         // Draw glide line
-        paint.setColor(0xff999999);
-        paint.setStrokeCap(Paint.Cap.ROUND);
-        plot.canvas.drawLine(cx, cy, sx, sy, paint);
+        plot.paint.setColor(0xff999999);
+        plot.paint.setStrokeCap(Paint.Cap.ROUND);
+        plot.canvas.drawLine(cx, cy, sx, sy, plot.paint);
     }
 
     private void drawSpeedLabels(@NonNull Plot plot, double vx, double vy) {
@@ -172,23 +172,23 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
         final float cy = plot.getY(0);
 
         // Draw horizontal and vertical speed labels (unless near axis)
-        text.setColor(0xff888888);
+        plot.text.setColor(0xff888888);
         if (sy - cy < -44 * options.density || 18 * options.density < sy - cy) {
             // Horizontal speed label
-            plot.canvas.drawText(Convert.speed(vx, 0, true), sx + 3 * options.density, cy + 16 * options.density, text);
+            plot.canvas.drawText(Convert.speed(vx, 0, true), sx + 3 * options.density, cy + 16 * options.density, plot.text);
         }
         if (42 * options.density < sx - cx) {
             // Vertical speed label
-            plot.canvas.drawText(Convert.speed(Math.abs(vy), 0, true), cx + 3 * options.density, sy + 16 * options.density, text);
+            plot.canvas.drawText(Convert.speed(Math.abs(vy), 0, true), cx + 3 * options.density, sy + 16 * options.density, plot.text);
         }
 
         // Draw total speed label
-        text.setColor(0xffcccccc);
-        text.setTextAlign(Paint.Align.LEFT);
+        plot.text.setColor(0xffcccccc);
+        plot.text.setTextAlign(Paint.Align.LEFT);
         final String totalSpeed = Convert.speed(v);
-        plot.canvas.drawText(totalSpeed, sx + 6 * options.density, sy + 22 * options.density, text);
+        plot.canvas.drawText(totalSpeed, sx + 6 * options.density, sy + 22 * options.density, plot.text);
         final String glideRatio = Convert.glide2(vx, vy, 2, true);
-        plot.canvas.drawText(glideRatio, sx + 6 * options.density, sy + 40 * options.density, text);
+        plot.canvas.drawText(glideRatio, sx + 6 * options.density, sy + 40 * options.density, plot.text);
     }
 
     // Always keep square aspect ratio

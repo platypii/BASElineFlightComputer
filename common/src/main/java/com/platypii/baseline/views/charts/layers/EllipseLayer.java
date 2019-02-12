@@ -16,23 +16,23 @@ public class EllipseLayer extends ChartLayer {
     }
 
     @Override
-    public void drawData(@NonNull Plot plot, @NonNull Paint paint, @NonNull Paint text) {
+    public void drawData(@NonNull Plot plot) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // minsdk 21
-            paint.setStyle(Paint.Style.FILL);
-            paint.setMaskFilter(blurry);
+            plot.paint.setStyle(Paint.Style.FILL);
+            plot.paint.setMaskFilter(blurry);
             // Draw canopy ellipse
-            paint.setColor(0x2244ee44);
+            plot.paint.setColor(0x2244ee44);
             plot.canvas.save();
             plot.canvas.rotate(9, plot.getX(11), plot.getY(-5.5));
-            plot.canvas.drawOval(plot.getX(1), plot.getY(-1), plot.getX(21), plot.getY(-10), paint);
+            plot.canvas.drawOval(plot.getX(1), plot.getY(-1), plot.getX(21), plot.getY(-10), plot.paint);
             plot.canvas.restore();
             // Draw wingsuit ellipse
-            paint.setColor(0x229e62f2);
+            plot.paint.setColor(0x229e62f2);
             plot.canvas.save();
             plot.canvas.rotate(35, plot.getX(38), plot.getY(-21));
-            plot.canvas.drawOval(plot.getX(20), plot.getY(-10), plot.getX(56), plot.getY(-32), paint);
+            plot.canvas.drawOval(plot.getX(20), plot.getY(-10), plot.getX(56), plot.getY(-32), plot.paint);
             plot.canvas.restore();
-            paint.setMaskFilter(null);
+            plot.paint.setMaskFilter(null);
         }
     }
 

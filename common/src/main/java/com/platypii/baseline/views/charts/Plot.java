@@ -3,10 +3,13 @@ package com.platypii.baseline.views.charts;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.util.IntBounds;
+import com.platypii.baseline.views.charts.layers.ChartLayer;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Wraps a canvas, but operations are in plot-space x,y
@@ -16,6 +19,7 @@ public class Plot {
     // Drawing options
     @NonNull
     public final PlotOptions options;
+    final PlotAxes axes = new PlotAxes(this);
 
     // Drawing surface
     public Canvas canvas;
@@ -24,15 +28,27 @@ public class Plot {
 
     // Bounds are indexed per-axis
     // Data bounds get expanded as we see points
-    Bounds dataBounds[];
+    private Bounds dataBounds[];
     // Plot bounds get updated once at the beginning of drawPlot
     Bounds bounds[];
 
+    // Chart layers
+    final List<ChartLayer> layers = new ArrayList<>();
+
+
     // Avoid creating new objects unnecessarily
     private final Path path = new Path();
+    public final Paint paint = new Paint();
+    public final Paint text = new Paint();
 
     Plot(@NonNull PlotOptions options) {
         this.options = options;
+        paint.setAntiAlias(true);
+        paint.setDither(true);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        text.setAntiAlias(true);
+        text.setTextSize(options.font_size * options.density);
+        text.setColor(0xffcccccc);
     }
 
     /**
@@ -44,6 +60,19 @@ public class Plot {
             // Cache the width and height since canvas.getWidth is slowwww
             width = canvas.getWidth();
             height = canvas.getHeight();
+        }
+    }
+
+    /**
+     * Update bounds from dataBounds
+     */
+    void updateBounds(BasePlot basePlot) {
+        for (int i = 0; i < bounds.length; i++) {
+            // Get plot-space bounds from subclass, and copy to bounds
+            final Bounds plotBounds = basePlot.getBounds(dataBounds[i], i);
+            bounds[i].set(plotBounds);
+            // Reset data bounds
+            dataBounds[i].reset();
         }
     }
 
@@ -62,9 +91,8 @@ public class Plot {
     /**
      * Draws a point (input given in plot-space)
      * @param radius the width of the path
-     * @param paint the paintbrush to use
      */
-    public void drawPoint(int axis, double x, double y, float radius, @NonNull Paint paint) {
+    public void drawPoint(int axis, double x, double y, float radius) {
         dataBounds[axis].expandBounds(x, y);
         // Screen coordinates
         float sx = getX(axis, x);
@@ -78,7 +106,7 @@ public class Plot {
 //     * @param series the data series to draw
 //     * @param radius the width of the path
 //     */
-//    void drawPoints(@NonNull DataSeries series, float radius, Paint paint) {
+//    void drawPoints(@NonNull DataSeries series, float radius) {
 //        paint.setStyle(Paint.Style.FILL);
 //        for (DataSeries.Point point : series) {
 //            dataBounds.expandBounds(point.x, point.y);
@@ -91,7 +119,7 @@ public class Plot {
      * @param series the data series to draw
      * @param radius the width of the path
      */
-    public void drawLine(int axis, @NonNull DataSeries series, float radius, @NonNull Paint paint) {
+    public void drawLine(int axis, @NonNull DataSeries series, float radius) {
         if (series.size() > 0) {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2 * radius * options.density);
@@ -106,7 +134,7 @@ public class Plot {
 //     * @param series the data series to draw
 //     * @param y_zero the y-origin, in plot-space
 //     */
-//    void drawArea(@NonNull DataSeries series, double y_zero, Paint paint) {
+//    void drawArea(@NonNull DataSeries series, double y_zero) {
 //        if (series.size() > 0) {
 //            Path area = renderArea(series, y_zero);
 //            if (area != null) {

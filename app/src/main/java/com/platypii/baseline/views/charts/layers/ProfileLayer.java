@@ -26,14 +26,14 @@ public class ProfileLayer extends ChartLayer {
     }
 
     @Override
-    public void drawData(@NonNull Plot plot, @NonNull Paint paint, @NonNull Paint text) {
+    public void drawData(@NonNull Plot plot) {
         if (profileSeries.size() == 0) {
-            text.setTextAlign(Paint.Align.CENTER);
-            plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, text);
+            plot.text.setTextAlign(Paint.Align.CENTER);
+            plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, plot.text);
         } else {
             // Draw data
-            paint.setColor(0xff7f00ff);
-            plot.drawLine(AXIS_PROFILE, profileSeries, 1.5f, paint);
+            plot.paint.setColor(0xff7f00ff);
+            plot.drawLine(AXIS_PROFILE, profileSeries, 1.5f);
         }
     }
 

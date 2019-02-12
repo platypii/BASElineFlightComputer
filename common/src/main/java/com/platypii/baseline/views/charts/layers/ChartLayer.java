@@ -1,7 +1,6 @@
 package com.platypii.baseline.views.charts.layers;
 
 import com.platypii.baseline.views.charts.Plot;
-import android.graphics.Paint;
 import android.support.annotation.NonNull;
 
 public abstract class ChartLayer {
@@ -15,6 +14,6 @@ public abstract class ChartLayer {
         this.enabled = enabled;
     }
 
-    public abstract void drawData(@NonNull Plot plot, @NonNull Paint paint, @NonNull Paint text);
+    public abstract void drawData(@NonNull Plot plot);
 
 }

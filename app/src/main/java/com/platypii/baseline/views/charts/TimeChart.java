@@ -35,8 +35,6 @@ public class TimeChart extends PlotView {
         options.axis.x = PlotOptions.axisTime();
         options.axis.y = PlotOptions.axisDistance();
 
-        paint.setStrokeJoin(Paint.Join.ROUND);
-
         // Initialize bounds with 3 axes
         plot.initBounds(3);
     }
@@ -64,8 +62,8 @@ public class TimeChart extends PlotView {
     public void drawData(@NonNull Plot plot) {
         if (trackData != null) {
             if (trackData.isEmpty()) {
-                text.setTextAlign(Paint.Align.CENTER);
-                plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, text);
+                plot.text.setTextAlign(Paint.Align.CENTER);
+                plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, plot.text);
             } else {
                 // Draw track data
                 drawTrackData(plot);
@@ -74,9 +72,9 @@ public class TimeChart extends PlotView {
         // Draw focus line
         if (focus != null) {
             final float sx = plot.getX(0, focus.millis);
-            paint.setColor(0xddeeeeee);
-            paint.setStrokeWidth(3f);
-            plot.canvas.drawLine(sx, 0, sx, getHeight(), paint);
+            plot.paint.setColor(0xddeeeeee);
+            plot.paint.setStrokeWidth(3f);
+            plot.canvas.drawLine(sx, 0, sx, getHeight(), plot.paint);
         }
     }
 
@@ -85,12 +83,12 @@ public class TimeChart extends PlotView {
      */
     private void drawTrackData(@NonNull Plot plot) {
         // Draw data series
-        paint.setColor(0xffff0000);
-        plot.drawLine(AXIS_ALT, altitudeSeries, 1.5f, paint);
-        paint.setColor(0xff0000ff);
-        plot.drawLine(AXIS_SPEED, speedSeries, 1.5f, paint);
-        paint.setColor(0xff7f00ff);
-        plot.drawLine(AXIS_GLIDE, glideSeries, 1.5f, paint);
+        plot.paint.setColor(0xffff0000);
+        plot.drawLine(AXIS_ALT, altitudeSeries, 1.5f);
+        plot.paint.setColor(0xff0000ff);
+        plot.drawLine(AXIS_SPEED, speedSeries, 1.5f);
+        plot.paint.setColor(0xff7f00ff);
+        plot.drawLine(AXIS_GLIDE, glideSeries, 1.5f);
     }
 
     @NonNull
