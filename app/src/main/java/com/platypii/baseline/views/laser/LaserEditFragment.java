@@ -1,12 +1,10 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.lasers.LaserUpload;
 import com.platypii.baseline.events.BluetoothEvent;
-import com.platypii.baseline.laser.GeoPoint;
-import com.platypii.baseline.laser.LaserMeasurement;
-import com.platypii.baseline.laser.LaserProfile;
-import com.platypii.baseline.laser.RangefinderService;
+import com.platypii.baseline.laser.*;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import android.os.Bundle;
@@ -86,21 +84,15 @@ public class LaserEditFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        final LaserActivity laserActivity = (LaserActivity) getActivity();
-        if (laserActivity != null) {
-            laserActivity.addLayer(editLayer);
-            rangefinder.start(laserActivity);
-        }
+        LaserLayers.getInstance().add(editLayer);
+        rangefinder.start(getActivity());
         EventBus.getDefault().register(this);
     }
 
     // Update chart in parent activity
     private void updateLayers() {
-        final LaserActivity laserActivity = (LaserActivity) getActivity();
-        if (laserActivity != null) {
-            editLayer.loadLaser(getLaserProfile());
-            laserActivity.updateLayers();
-        }
+        editLayer.loadLaser(getLaserProfile());
+        LaserLayers.getInstance().update(editLayer);
     }
 
     private LaserProfile getLaserProfile() {
@@ -216,11 +208,8 @@ public class LaserEditFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        rangefinder.stop();
-        final LaserActivity laserActivity = (LaserActivity) getActivity();
-        if (laserActivity != null) {
-            laserActivity.removeLayer(editLayer);
-        }
         EventBus.getDefault().unregister(this);
+        rangefinder.stop();
+        LaserLayers.getInstance().remove(editLayer);
     }
 }

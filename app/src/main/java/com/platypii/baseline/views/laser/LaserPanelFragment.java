@@ -1,6 +1,8 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.events.ProfileLayerEvent;
+import com.platypii.baseline.laser.LaserLayers;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,12 +11,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class LaserPanelFragment extends ListFragment {
     private final FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
 
     @Nullable
     private ProfileAdapter listAdapter;
+    private final LaserLayers layers = LaserLayers.getInstance();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,15 +37,18 @@ public class LaserPanelFragment extends ListFragment {
         // Initialize the ListAdapter
         final LaserActivity laserActivity = (LaserActivity) getActivity();
         if (laserActivity != null) {
-            listAdapter = new ProfileAdapter(laserActivity, laserActivity.layers);
+            listAdapter = new ProfileAdapter(laserActivity);
             setListAdapter(listAdapter);
         }
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        updateLayers();
+    public void onStart() {
+        super.onStart();
+        if (listAdapter != null) {
+            listAdapter.setLayers(layers.layers);
+        }
+        EventBus.getDefault().register(this);
     }
 
     private void chooseTrack(View view) {
@@ -69,9 +78,16 @@ public class LaserPanelFragment extends ListFragment {
                 .commit();
     }
 
-    public void updateLayers() {
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    void updateLayers(ProfileLayerEvent event) {
         if (listAdapter != null) {
-            listAdapter.notifyDataSetChanged();
+            listAdapter.setLayers(layers.layers);
         }
     }
 }

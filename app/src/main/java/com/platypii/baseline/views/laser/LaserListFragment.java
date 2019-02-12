@@ -2,6 +2,7 @@ package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
@@ -40,12 +41,10 @@ public class LaserListFragment extends ListFragment implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        final LaserActivity laserActivity = (LaserActivity) getActivity();
         final ProfileLayer layer = new LaserProfileLayer(lasers.get(position));
-        laserActivity.addLayer(layer);
+        LaserLayers.getInstance().add(layer);
         final FragmentManager fm = getFragmentManager();
         if (fm != null) fm.popBackStack();
-
     }
 
 }

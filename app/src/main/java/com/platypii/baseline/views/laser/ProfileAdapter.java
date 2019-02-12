@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,20 +18,16 @@ import java.util.List;
  */
 class ProfileAdapter extends BaseAdapter {
 
-    private final LaserActivity laserActivity;
     private final LayoutInflater inflater;
-    private final List<ProfileLayer> layers;
+    private final List<ProfileLayer> layers = new ArrayList<>();
 
-    private String filter = "";
-
-    ProfileAdapter(@NonNull LaserActivity laserActivity, List<ProfileLayer> layers) {
-        this.laserActivity = laserActivity;
-        this.inflater = (LayoutInflater) laserActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.layers = layers;
+    ProfileAdapter(@NonNull Context context) {
+        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    void setFilter(@NonNull String filter) {
-        this.filter = filter;
+    public void setLayers(List<ProfileLayer> layers) {
+        this.layers.clear();
+        this.layers.addAll(layers);
         notifyDataSetChanged();
     }
 
@@ -51,7 +48,7 @@ class ProfileAdapter extends BaseAdapter {
         // Bind delete button
         convertView.findViewById(R.id.list_item_delete).setOnClickListener(v -> {
             // Remove from layers
-            laserActivity.removeLayer(layer);
+            layers.remove(layer);
         });
 
         return convertView;
@@ -71,10 +68,4 @@ class ProfileAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return 0;
     }
-
-    void clickItem(int position, @NonNull Context context) {
-        final ProfileLayer layer = layers.get(position);
-        // TODO: Enable / disable
-    }
-
 }

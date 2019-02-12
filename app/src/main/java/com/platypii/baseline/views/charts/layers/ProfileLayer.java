@@ -31,4 +31,10 @@ public class ProfileLayer extends ChartLayer {
         return obj instanceof ProfileLayer && ((ProfileLayer) obj).name.equals(name);
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "ProfileLayer(" + name + ")";
+    }
+
 }

@@ -4,6 +4,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.cloud.DownloadTask;
 import com.platypii.baseline.events.DownloadEvent;
+import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
@@ -65,7 +66,7 @@ public class TrackDownloadFragment extends Fragment {
             final LaserActivity laserActivity = (LaserActivity) getActivity();
             if (laserActivity != null) {
                 final ProfileLayer layer = new TrackProfileLayerRemote(track, new TrackData(event.trackFile));
-                laserActivity.addLayer(layer);
+                LaserLayers.getInstance().add(layer);
                 // Return to main fragment
                 final FragmentManager fm = getFragmentManager();
                 if (fm != null) fm.popBackStack();
