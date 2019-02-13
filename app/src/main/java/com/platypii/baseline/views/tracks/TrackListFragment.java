@@ -18,6 +18,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class TrackListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
+    public static final String SEARCH_KEY = "search_string";
     protected TrackAdapter listAdapter;
 
     private EditText searchBox;
@@ -28,6 +29,26 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
         final View view = inflater.inflate(R.layout.track_list, container, false);
         searchBox = view.findViewById(R.id.track_search);
         tracksEmptyLabel = view.findViewById(R.id.tracks_empty);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Initialize the ListAdapter
+        listAdapter = new TrackAdapter(getActivity());
+        setListAdapter(listAdapter);
+        getListView().setOnItemClickListener(this);
+
+        // Load filter string from arguments
+        final Bundle args = getArguments();
+        if (args != null) {
+            final String filter = args.getString(SEARCH_KEY, "");
+            if (!filter.isEmpty()) {
+                searchBox.setText(filter);
+                listAdapter.setFilter(filter);
+            }
+        }
 
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
@@ -41,16 +62,6 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
             public void afterTextChanged(Editable s) {}
         });
 
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        // Initialize the ListAdapter
-        listAdapter = new TrackAdapter(getActivity());
-        setListAdapter(listAdapter);
-        getListView().setOnItemClickListener(this);
     }
 
     @Override

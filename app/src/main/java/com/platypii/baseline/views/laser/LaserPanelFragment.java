@@ -3,9 +3,11 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.laser.LaserLayers;
+import com.platypii.baseline.views.tracks.TrackListFragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,9 +55,13 @@ public class LaserPanelFragment extends ListFragment {
 
     private void chooseTrack(View view) {
         firebaseAnalytics.logEvent("click_laser_track", null);
+        final Fragment frag = new TrackPickerFragment();
+        final Bundle args = new Bundle();
+        args.putString(TrackListFragment.SEARCH_KEY, "Wingsuit BASE");
+        frag.setArguments(args);
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.laserPanel, new TrackPickerFragment())
+                .replace(R.id.laserPanel, frag)
                 .addToBackStack(null)
                 .commit();
     }

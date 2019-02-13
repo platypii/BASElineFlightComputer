@@ -29,7 +29,7 @@ public class LaserActivity extends BaseActivity {
         chart = findViewById(R.id.flightProfile);
 
         // Load laser panel fragment
-        LaserPanelFragment laserPanel = new LaserPanelFragment();
+        final LaserPanelFragment laserPanel = new LaserPanelFragment();
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.laserPanel, laserPanel)
