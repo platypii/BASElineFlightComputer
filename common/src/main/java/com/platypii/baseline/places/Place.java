@@ -18,10 +18,11 @@ public class Place {
 
     // B,A,S,E,DZ
     public final String objectType;
+    public final boolean wingsuitable;
 
     public final double radius;
 
-    public Place(String name, String region, String country, double lat, double lng, double alt, String objectType, double radius) {
+    public Place(String name, String region, String country, double lat, double lng, double alt, String objectType, double radius, boolean wingsuitable) {
         this.name = name;
         this.region = region;
         this.country = country;
@@ -30,6 +31,11 @@ public class Place {
         this.alt = alt;
         this.objectType = objectType;
         this.radius = radius;
+        this.wingsuitable = wingsuitable;
+    }
+
+    public boolean isBASE() {
+        return "BASE".contains(objectType);
     }
 
     private LatLng lazyLatLng = null;

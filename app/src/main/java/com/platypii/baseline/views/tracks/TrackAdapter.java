@@ -51,13 +51,47 @@ public class TrackAdapter extends BaseAdapter {
         if (cloudTracks != null && !cloudTracks.isEmpty()) {
             updated.add(new ListHeader("Synced"));
             for (CloudData track : cloudTracks) {
-                // TODO: Search over more fields, full place
-                if (track.location().toLowerCase().contains(filter)) {
+                if (filterMatch(track)) {
                     updated.add(new ListTrackData(track));
                 }
             }
         }
         items = updated;
+    }
+
+    /**
+     * Return true if the track matches the search filter string
+     * TODO: Search track.stats.plan.name
+     */
+    private boolean filterMatch(@NonNull CloudData track) {
+        // Make a lower case super string of all properties we want to search
+        final StringBuilder sb = new StringBuilder();
+        if (track.place != null) {
+            sb.append(track.place.name);
+            sb.append(' ');
+            sb.append(track.place.region);
+            sb.append(' ');
+            sb.append(track.place.country);
+            sb.append(' ');
+            sb.append(track.place.objectType);
+            if (track.place.wingsuitable) {
+                sb.append(" wingsuit");
+            }
+            if ("DZ".equals(track.place.objectType)) {
+                sb.append(" skydive");
+            }
+            if (track.place.isBASE()) {
+                sb.append(" BASE");
+            }
+        }
+        final String superString = sb.toString().toLowerCase();
+        // Break into tokens
+        for (String token : filter.toLowerCase().split(" ")) {
+            if (!superString.contains(token)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     void setFilter(@NonNull String filter) {

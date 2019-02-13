@@ -68,6 +68,18 @@ public class CSVParse {
         }
     }
 
+    /**
+     * Return true if the column is "Y". Case sensiTive.
+     */
+    public static boolean getColumnYes(@NonNull String[] row, @NonNull CSVHeader columns, @NonNull String columnName) {
+        final Integer index = columns.get(columnName);
+        if (index != null && index < row.length) {
+            return "Y".equals(row[index]);
+        } else {
+            return false;
+        }
+    }
+
     private static SimpleDateFormat df;
     static long parseFlySightDate(@NonNull String dateString) throws ParseException {
         // Lazy init

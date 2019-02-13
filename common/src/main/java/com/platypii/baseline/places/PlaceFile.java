@@ -15,6 +15,7 @@ import java.util.zip.GZIPInputStream;
 
 import static com.platypii.baseline.util.CSVParse.getColumnDouble;
 import static com.platypii.baseline.util.CSVParse.getColumnString;
+import static com.platypii.baseline.util.CSVParse.getColumnYes;
 
 /**
  * Loads places from gzipped CSV
@@ -65,7 +66,8 @@ class PlaceFile {
                         final double altitude = getColumnDouble(row, columns, "altitude");
                         final String objectType = getColumnString(row, columns, "type");
                         final double radius = getColumnDouble(row, columns, "radius");
-                        places.add(new Place(name, region, country, latitude, longitude, altitude, objectType, radius));
+                        final boolean wingsuitable = getColumnYes(row, columns, "wingsuitable");
+                        places.add(new Place(name, region, country, latitude, longitude, altitude, objectType, radius, wingsuitable));
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing place file", e);
                     }
