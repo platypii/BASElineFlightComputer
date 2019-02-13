@@ -10,6 +10,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 
 public class FlightProfile extends PlotView {
 
@@ -18,6 +20,7 @@ public class FlightProfile extends PlotView {
     private final Bounds outer = new Bounds();
 
     private ProfileFocusLayer focusLayer;
+    private float scaleFactor = 1;
 
     public FlightProfile(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -39,6 +42,20 @@ public class FlightProfile extends PlotView {
         options.axis.x = options.axis.y = PlotOptions.axisDistance();
     }
 
+    private final ScaleGestureDetector scaler = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            scaleFactor *= detector.getScaleFactor();
+            scaleFactor = Math.max(1f, Math.min(scaleFactor, 10f));
+            invalidate();
+            return true;
+        }
+    });
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return scaler.onTouchEvent(event);
+    }
+
     public void loadTrack(@NonNull TrackData trackData) {
         final ProfileLayer trackLayer = new ProfileLayer();
         trackLayer.loadTrack(trackData);
@@ -55,11 +72,12 @@ public class FlightProfile extends PlotView {
     @Override
     public void drawData(@NonNull Plot plot) {}
 
-    // Always keep square aspect ratio
     @NonNull
     @Override
     public Bounds getBounds(@NonNull Bounds dataBounds, int axis) {
         bounds.set(dataBounds);
+        bounds.x.max /= scaleFactor;
+        bounds.y.min /= scaleFactor;
         AdjustBounds.clean(bounds, inner, outer);
         AdjustBounds.squareBounds(bounds, getWidth(), getHeight(), options.padding);
         return bounds;
