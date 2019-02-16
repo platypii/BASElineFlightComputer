@@ -42,7 +42,7 @@ public class LaserMeasurement {
                     final double y = Double.parseDouble(row[1]) * units;
                     points.add(new LaserMeasurement(x, y));
                 } catch (NumberFormatException e) {
-                    Log.w(TAG, "Error parsing laser profile", e);
+                    Log.w(TAG, "Error parsing laser profile " + e);
                     if (strict) {
                         throw new ParseException("Invalid measurement", i + 1);
                     }

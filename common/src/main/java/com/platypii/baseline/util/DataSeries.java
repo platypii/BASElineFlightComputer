@@ -78,4 +78,10 @@ public class DataSeries implements Iterable<DataSeries.Point> {
         };
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "DataSeries(n=" + n + ")";
+    }
+
 }

@@ -5,6 +5,8 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.lasers.LaserUpload;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.laser.*;
+import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import android.os.Bundle;
@@ -31,7 +33,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 
-public class LaserEditFragment extends Fragment {
+public class LaserEditFragment extends Fragment implements MyLocationListener {
     private static final String TAG = "LaserEditFrag";
 
     private final FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());;
@@ -46,7 +48,12 @@ public class LaserEditFragment extends Fragment {
     private EditText laserText;
     private TextView laserStatus;
 
+    // Edit layer gets recreated on save, and the active one gets left in LaserLayers
+    @NonNull
     private LaserProfileLayer editLayer = new LaserProfileLayer();
+
+    @Nullable
+    private MLocation defaultLocation = null;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,6 +93,7 @@ public class LaserEditFragment extends Fragment {
         super.onStart();
         LaserLayers.getInstance().add(editLayer);
         rangefinder.start(getActivity());
+        Services.location.addListener(this);
         EventBus.getDefault().register(this);
     }
 
@@ -119,24 +127,29 @@ public class LaserEditFragment extends Fragment {
     private String validate() {
         // Validate name
         if (laserName.getText().toString().isEmpty()) {
+            laserName.requestFocus();
             return "Name cannot be empty";
         }
         final boolean metric = "meters".equals(laserUnits.toString());
         // Altitude is required
         if (laserAlt.getText().toString().isEmpty()) {
+            laserName.requestFocus();
             return "Altitude needed for start performance";
         }
         // Validate points
         final String pointString = laserText.getText().toString();
         if (pointString.isEmpty()) {
+            laserText.requestFocus();
             return "Measurements cannot be empty";
         }
         try {
             final int count = LaserMeasurement.parse(pointString, metric, true).size();
             if (count == 0) {
+                laserText.requestFocus();
                 return "Measurements cannot be empty";
             }
         } catch (ParseException e) {
+            laserText.requestFocus();
             return "Invalid measurements, line " + e.getErrorOffset();
         }
         return null;
@@ -209,7 +222,19 @@ public class LaserEditFragment extends Fragment {
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        Services.location.removeListener(this);
         rangefinder.stop();
         LaserLayers.getInstance().remove(editLayer);
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull MLocation loc) {
+        if (defaultLocation == null) {
+            defaultLocation = loc;
+            // Fill in lat,lon
+            laserLat.setText(Numbers.format6.format(loc.latitude));
+            laserLon.setText(Numbers.format6.format(loc.longitude));
+            laserAlt.setText(Numbers.format2.format(loc.altitude_gps));
+        }
     }
 }

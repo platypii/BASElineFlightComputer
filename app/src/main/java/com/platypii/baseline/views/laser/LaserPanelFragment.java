@@ -1,8 +1,15 @@
 package com.platypii.baseline.views.laser;
 
+import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
+import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.laser.LaserLayers;
+import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.views.charts.layers.TrackProfileLayerLocal;
+import com.platypii.baseline.views.charts.layers.TrackProfileLayerRemote;
+import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.tracks.TrackListFragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +19,7 @@ import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -51,6 +59,36 @@ public class LaserPanelFragment extends ListFragment {
             listAdapter.setLayers(layers.layers);
         }
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onListItemClick(ListView parent, View view, int position, long id) {
+        super.onListItemClick(parent, view, position, id);
+        final Object item = parent.getItemAtPosition(position);
+        if (item instanceof LaserProfileLayer) {
+            // TODO: Open editor / view mode
+            final LaserProfileLayer layer = (LaserProfileLayer) item;
+            firebaseAnalytics.logEvent("click_laser_profile", null);
+            final Bundle bundle = new Bundle();
+            bundle.putString("laser_id", layer.laserProfile.laser_id);
+            final Fragment frag = new LaserEditFragment();
+            frag.setArguments(bundle);
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.laserPanel, frag)
+                    .addToBackStack(null)
+                    .commit();
+        } else if (item instanceof TrackProfileLayerLocal) {
+            // Open local track file charts
+            final TrackFile track = ((TrackProfileLayerLocal) item).track;
+            Intents.openCharts(getContext(), track.file);
+        } else if (item instanceof TrackProfileLayerRemote) {
+            // Open cloud track charts
+            final CloudData track = ((TrackProfileLayerRemote) item).track;
+            Intents.openCharts(getContext(), track.abbrvFile(getContext()));
+        } else {
+            Exceptions.report(new IllegalStateException("Unexpected list item type " + item));
+        }
     }
 
     private void chooseTrack(View view) {

@@ -2,6 +2,7 @@ package com.platypii.baseline.laser;
 
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.greenrobot.eventbus.EventBus;
  */
 public class LaserLayers {
     private static final String TAG = "LaserLayers";
+    @Nullable
     private static LaserLayers instance;
     public static LaserLayers getInstance() {
         if (instance == null) {
@@ -37,7 +39,6 @@ public class LaserLayers {
     }
 
     public void remove(ProfileLayer layer) {
-        layers.remove(layer);
         if (layers.remove(layer)) {
             EventBus.getDefault().post(new ProfileLayerEvent.ProfileLayerRemoved(layer));
         } else {

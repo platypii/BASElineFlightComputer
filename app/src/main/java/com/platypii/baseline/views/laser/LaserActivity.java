@@ -58,7 +58,7 @@ public class LaserActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    void removeLayer(ProfileLayerEvent.ProfileLayerUpdated event) {
+    void removeLayer(ProfileLayerEvent.ProfileLayerRemoved event) {
         chart.removeLayer(event.layer);
         chart.invalidate();
     }

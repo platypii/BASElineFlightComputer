@@ -69,7 +69,7 @@
             android:layout_weight="1"
             android:gravity="top"
             android:background="@android:color/transparent"
-            android:hint="10, -100"/>
+            android:hint="10,-100"/>
 
     <TextView
             android:id="@+id/laserStatus"
