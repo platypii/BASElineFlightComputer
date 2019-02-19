@@ -1,5 +1,6 @@
 package com.platypii.baseline.cloud.lasers;
 
+import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,6 +59,18 @@ public class LaserListingCache {
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(CACHE_LAST_REQUEST, System.currentTimeMillis());
         editor.apply();
+    }
+
+    /**
+     * Add laser profile to listing, and save to preferences
+     */
+    void addLaser(@NonNull LaserProfile laser) {
+        List<LaserProfile> laserList = list();
+        if (laserList == null) {
+            laserList = new ArrayList<>();
+        }
+        laserList.add(0, laser);
+        update(laserList);
     }
 
     /**

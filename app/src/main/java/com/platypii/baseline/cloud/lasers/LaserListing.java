@@ -40,11 +40,12 @@ public class LaserListing implements BaseService {
     public void listAsync(@NonNull Context context, boolean force) {
         if (force || cache.shouldRequest()) {
             cache.request();
-            // Update the laser listing in a thread
             Log.i(TAG, "Listing laser profiles");
             final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
-            // TODO: Public vs private
-            laserApi.getPublic().enqueue(new Callback<List<LaserProfile>>() {
+            // Public vs private based on sign in state
+            final String userId = AuthState.getUser();
+            final Call<List<LaserProfile>> laserCall = userId != null ? laserApi.byUser(userId) : laserApi.getPublic();
+            laserCall.enqueue(new Callback<List<LaserProfile>>() {
                 @Override
                 public void onResponse(Call<List<LaserProfile>> call, Response<List<LaserProfile>> response) {
                     final List<LaserProfile> lasers = response.body();
