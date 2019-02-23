@@ -3,7 +3,7 @@ package com.platypii.baseline.views;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.events.AuthEvent;
+import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.bluetooth.BluetoothActivity;
@@ -100,7 +100,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         // Update sign in views
         final SettingsActivity activity = (SettingsActivity) getActivity();
-        if (BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {
+        if (AuthState.getUser() != null) {
             // Change to sign out state
             signInPreference.setTitle(R.string.pref_sign_out);
             final String name = activity.getDisplayName();
@@ -139,12 +139,11 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             firebaseAnalytics.logEvent("click_sensors", null);
             startActivity(new Intent(getActivity(), SensorActivity.class));
         } else if (preference.getKey().equals("sign_in")) {
-            // Handle sign in click
+            // Handle sign in/out click
             final BaseActivity activity = (BaseActivity) getActivity();
-            // Ignore click if state is signing in
-            if (BaseActivity.currentAuthState == AuthEvent.SIGNED_IN) {
+            if (AuthState.getUser() != null) {
                 activity.clickSignOut();
-            } else if (BaseActivity.currentAuthState == AuthEvent.SIGNED_OUT) {
+            } else {
                 activity.clickSignIn();
             }
         } else if (preference.getKey().equals("help_page")) {
@@ -168,7 +167,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         EventBus.getDefault().unregister(this);
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAuthEvent(AuthEvent event) {
+    public void onAuthEvent(AuthState event) {
         updateViews();
     }
 }

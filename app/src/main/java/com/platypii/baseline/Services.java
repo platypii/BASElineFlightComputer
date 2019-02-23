@@ -4,6 +4,7 @@ import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.audible.CheckTextToSpeechTask;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.jarvis.FlightComputer;
@@ -227,6 +228,9 @@ public class Services {
 
         // Auto-stop
         AutoStop.preferenceEnabled = prefs.getBoolean("auto_stop_enabled", true);
+
+        // Sign in state
+        AuthState.loadFromPreferences(context);
 
         // Bluetooth
         bluetooth.preferences.load(context);

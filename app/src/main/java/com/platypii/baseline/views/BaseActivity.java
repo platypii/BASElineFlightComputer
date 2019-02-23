@@ -2,14 +2,12 @@ package com.platypii.baseline.views;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.events.AuthEvent;
+import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.util.Exceptions;
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -50,11 +48,6 @@ public abstract class BaseActivity extends FragmentActivity {
     private View signInPanel;
     private View signInSpinner;
 
-    // Save last sign in state so that sign in panel doesn't blink
-    @Nullable
-    public static AuthEvent currentAuthState = null;
-    private static final String PREF_AUTH_STATE = "auth_state";
-
     @Nullable
     String getDisplayName() {
         if (account != null) {
@@ -67,33 +60,28 @@ public abstract class BaseActivity extends FragmentActivity {
     /**
      * Update sign in state, notify listeners, and update shared UI
      */
-    private void updateAuthState(@NonNull AuthEvent event) {
-        currentAuthState = event;
+    private void updateAuthState(@NonNull AuthState event) {
+        AuthState.setState(this, event);
         // Notify listeners
         EventBus.getDefault().post(event);
         // Update sign in panel state
         if (signInPanel != null) {
-            if (event == AuthEvent.SIGNED_IN) {
+            if (event instanceof AuthState.SignedIn) {
                 signInPanel.setVisibility(View.GONE);
-            } else if (event == AuthEvent.SIGNING_IN) {
+            } else if (event instanceof AuthState.SigningIn) {
                 signInSpinner.setVisibility(View.VISIBLE);
                 signInPanel.setVisibility(View.VISIBLE);
-            } else if (event == AuthEvent.SIGNED_OUT) {
+            } else if (event instanceof AuthState.SignedOut) {
                 signInSpinner.setVisibility(View.GONE);
                 signInPanel.setVisibility(View.VISIBLE);
             }
         }
         // Show toasts
-        if (userClickedSignIn && event == AuthEvent.SIGNED_IN) {
+        if (userClickedSignIn && event instanceof AuthState.SignedIn) {
             Toast.makeText(this, R.string.signin_success, Toast.LENGTH_LONG).show();
-        } else if (userClickedSignIn && event == AuthEvent.SIGNED_OUT) {
+        } else if (userClickedSignIn && event instanceof AuthState.SignedOut) {
             Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
         }
-        // Save to preferences
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(PREF_AUTH_STATE, event.state);
-        editor.apply();
     }
 
     @Override
@@ -104,12 +92,6 @@ public abstract class BaseActivity extends FragmentActivity {
 
         // Initialize early services
         Services.create(this);
-
-        // Load previous auth state
-        if (currentAuthState == null) {
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            currentAuthState = AuthEvent.fromString(prefs.getString(PREF_AUTH_STATE, null));
-        }
 
         // Initialize Google sign in
         try {
@@ -144,7 +126,7 @@ public abstract class BaseActivity extends FragmentActivity {
                 signInButton.setOnClickListener(signInClickListener);
             }
             // If we know that we are signed out, then show the panel
-            if (currentAuthState == AuthEvent.SIGNED_OUT) {
+            if (AuthState.currentAuthState instanceof AuthState.SignedOut) {
                 signInPanel.setVisibility(View.VISIBLE);
             } else {
                 signInPanel.setVisibility(View.GONE);
@@ -168,7 +150,7 @@ public abstract class BaseActivity extends FragmentActivity {
             userClickedSignIn = true;
 
             // Notify sign in listeners
-            updateAuthState(AuthEvent.SIGNING_IN);
+            updateAuthState(new AuthState.SigningIn());
 
             final Intent signInIntent = signInClient.getSignInIntent();
             startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -226,7 +208,9 @@ public abstract class BaseActivity extends FragmentActivity {
         // Signed in successfully, show authenticated UI.
         if (account != null) {
             Log.i(TAG, "Sign in successful for user " + account.getDisplayName());
-            firebaseAnalytics.setUserId(account.getId());
+            final String userId = account.getId();
+            firebaseAnalytics.setUserId(userId);
+            updateAuthState(new AuthState.SignedIn(userId));
 
             // Update track listing
             Services.cloud.listing.listAsync(account.getIdToken(), false);
@@ -235,7 +219,6 @@ public abstract class BaseActivity extends FragmentActivity {
         }
 
         // Notify listeners
-        updateAuthState(AuthEvent.SIGNED_IN);
     }
     private void onSignInFailure(@NonNull ApiException e) {
         if (e.getStatusCode() == CommonStatusCodes.NETWORK_ERROR) {
@@ -260,7 +243,7 @@ public abstract class BaseActivity extends FragmentActivity {
         // Clear track listing
         Services.cloud.signOut();
         // Notify listeners
-        updateAuthState(AuthEvent.SIGNED_OUT);
+        updateAuthState(new AuthState.SignedOut());
     }
 
     @Override

@@ -3,8 +3,8 @@ package com.platypii.baseline.views.tracks;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackFiles;
@@ -106,7 +106,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
             } else {
                 // Not uploaded
                 uploadProgress.setVisibility(View.GONE);
-                if (currentAuthState == AuthEvent.SIGNED_IN) {
+                if (AuthState.getUser() != null) {
                     alertLabel.setText(R.string.upload_waiting);
                     alertLabel.setVisibility(View.VISIBLE);
                 } else {
@@ -129,6 +129,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
     }
 
     private void clickCharts(View v) {
+        firebaseAnalytics.logEvent("click_track_local_charts", null);
         // Open track charts activity
         Intents.openCharts(this, trackFile.file);
     }
@@ -189,7 +190,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAuthEvent(AuthEvent event) {
+    public void onAuthEvent(AuthState event) {
         updateViews();
     }
 

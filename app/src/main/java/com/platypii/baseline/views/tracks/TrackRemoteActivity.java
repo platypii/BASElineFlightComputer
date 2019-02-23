@@ -3,8 +3,8 @@ package com.platypii.baseline.views.tracks;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.BaseActivity;
@@ -104,6 +104,9 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     }
 
     private void clickCharts(View v) {
+        final Bundle bundle = new Bundle();
+        bundle.putString("track_id", track.track_id);
+        firebaseAnalytics.logEvent("click_track_remote_charts", bundle);
         // Open time chart activity
         Intents.openCharts(this, track);
     }
@@ -152,9 +155,9 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAuthEvent(@NonNull AuthEvent event) {
+    public void onAuthEvent(@NonNull AuthState event) {
         // If user gets signed out, close the track activity
-        if (event == AuthEvent.SIGNED_OUT) {
+        if (event instanceof AuthState.SignedOut) {
             Log.i(TAG, "User signed out, closing cloud track");
             finish();
         }

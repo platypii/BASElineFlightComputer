@@ -1,11 +1,9 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.Services;
-import com.platypii.baseline.events.AuthEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.views.BaseActivity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -55,7 +53,7 @@ class UploadManager {
      * Upload the first track waiting to upload
      */
     private void uploadAll() {
-        if (BaseActivity.currentAuthState != AuthEvent.SIGNED_IN) {
+        if (AuthState.getUser() == null) {
             // Can't upload if you're not signed in
             return;
         }
@@ -72,7 +70,7 @@ class UploadManager {
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onLoggingEvent(@NonNull LoggingEvent event) {
-        if (BaseActivity.currentAuthState == AuthEvent.SIGNED_IN && !event.started) {
+        if (AuthState.getUser() != null && !event.started) {
             if (!uploading) {
                 Log.i(TAG, "Auto syncing track " + event.trackFile);
                 upload(event.trackFile);
@@ -104,8 +102,8 @@ class UploadManager {
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void onSignIn(@NonNull AuthEvent event) {
-        if (event == AuthEvent.SIGNED_IN) {
+    public void onSignIn(@NonNull AuthState event) {
+        if (event instanceof AuthState.SignedIn) {
             Log.d(TAG, "User signed in, uploading queued tracks");
             uploadAll();
         }
