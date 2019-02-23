@@ -1,6 +1,5 @@
 package com.platypii.baseline.cloud.lasers;
 
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.util.Exceptions;
 import android.content.Context;

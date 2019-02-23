@@ -7,6 +7,8 @@ import java.util.List;
 
 public class LaserProfile {
     public String laser_id;
+    @Nullable
+    public String user_id;
     public String name;
     @SerializedName("public")
     public boolean isPublic;
@@ -15,8 +17,9 @@ public class LaserProfile {
     public String source;
     public List<LaserMeasurement> points;
 
-    public LaserProfile(String laser_id, String name, boolean isPublic, GeoPoint exit, String source, List<LaserMeasurement> points) {
+    public LaserProfile(String laser_id, String user_id, String name, boolean isPublic, GeoPoint exit, String source, List<LaserMeasurement> points) {
         this.laser_id = laser_id;
+        this.user_id = user_id;
         this.name = name;
         this.isPublic = isPublic;
         this.exit = exit;

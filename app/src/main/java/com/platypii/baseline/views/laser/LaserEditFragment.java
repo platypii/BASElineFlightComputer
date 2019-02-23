@@ -2,6 +2,7 @@ package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.lasers.LaserUpload;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.laser.*;
@@ -110,7 +111,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         final double alt = Numbers.parseDouble(laserAlt.getText().toString());
         final GeoPoint exit = new GeoPoint(System.currentTimeMillis(), alt, lat, lon);
         final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
-        return new LaserProfile("", name, false, exit, "app", points);
+        return new LaserProfile("", AuthState.getUser(), name, false, exit, "app", points);
     }
 
     private boolean isMetric() {

@@ -14,13 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LaserListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
     private List<LaserProfile> lasers = new ArrayList<>();
+    private LaserAdapter laserAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,16 +35,22 @@ public class LaserListFragment extends ListFragment implements AdapterView.OnIte
         if (cloudLasers != null) {
             lasers = cloudLasers;
         }
-        setListAdapter(new ArrayAdapter<>(getContext(), R.layout.track_list_item, R.id.list_item_name, lasers));
+        laserAdapter = new LaserAdapter(getContext());
+        laserAdapter.setLayers(lasers);
+        setListAdapter(laserAdapter);
         getListView().setOnItemClickListener(this);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        final ProfileLayer layer = new LaserProfileLayer(lasers.get(position));
-        LaserLayers.getInstance().add(layer);
-        final FragmentManager fm = getFragmentManager();
-        if (fm != null) fm.popBackStack();
+        final LaserListItem item = laserAdapter.getItem(position);
+        if (item instanceof LaserListItem.ListLaser) {
+            final LaserProfile laser = ((LaserListItem.ListLaser) item).laser;
+            final ProfileLayer layer = new LaserProfileLayer(laser);
+            LaserLayers.getInstance().add(layer);
+            final FragmentManager fm = getFragmentManager();
+            if (fm != null) fm.popBackStack();
+        }
     }
 
 }
