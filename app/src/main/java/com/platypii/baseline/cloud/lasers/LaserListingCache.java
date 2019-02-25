@@ -84,6 +84,22 @@ public class LaserListingCache {
     }
 
     /**
+     * Return the most recent track data available
+     */
+    @Nullable
+    public LaserProfile get(@NonNull String laserId) {
+        final List<LaserProfile> lasers = list();
+        if (lasers != null) {
+            for (LaserProfile laser : lasers) {
+                if (laser.laser_id.equals(laserId)) {
+                    return laser;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Return true if we should re-try listing
      */
     boolean shouldRequest() {

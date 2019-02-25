@@ -66,12 +66,12 @@ public class LaserPanelFragment extends ListFragment {
         super.onListItemClick(parent, view, position, id);
         final Object item = parent.getItemAtPosition(position);
         if (item instanceof LaserProfileLayer) {
-            // TODO: Open editor / view mode
+            // Open view mode
             final LaserProfileLayer layer = (LaserProfileLayer) item;
             firebaseAnalytics.logEvent("click_laser_profile", null);
             final Bundle bundle = new Bundle();
-            bundle.putString("laser_id", layer.laserProfile.laser_id);
-            final Fragment frag = new LaserEditFragment();
+            bundle.putString(LaserViewFragment.LASER_ID, layer.laserProfile.laser_id);
+            final Fragment frag = new LaserViewFragment();
             frag.setArguments(bundle);
             getFragmentManager()
                     .beginTransaction()
