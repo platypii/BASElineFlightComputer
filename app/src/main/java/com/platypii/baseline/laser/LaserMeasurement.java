@@ -2,10 +2,12 @@ package com.platypii.baseline.laser;
 
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.util.Range;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,6 +65,28 @@ public class LaserMeasurement {
             // Parse exception should never actually be thrown when strict = false
             Exceptions.report(e);
             return new ArrayList<>();
+        }
+    }
+
+    public static List<LaserMeasurement> reorder(List<LaserMeasurement> points) {
+        // Find height and width range
+        final Range xRange = new Range();
+        final Range yRange = new Range();
+        for (LaserMeasurement point : points) {
+            xRange.expand(point.x);
+            yRange.expand(point.y);
+        }
+        // Check if reversible
+        if (yRange.min >= 0) {
+            final List<LaserMeasurement> reversed = new ArrayList<>();
+            for (LaserMeasurement point : points) {
+                reversed.add(new LaserMeasurement(xRange.max - point.x, point.y - yRange.max));
+            }
+            // Sort by horiz
+            Collections.sort(reversed, (l1, l2) -> Double.compare(l1.x, l2.x));
+            return reversed;
+        } else {
+            return points;
         }
     }
 
