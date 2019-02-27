@@ -129,7 +129,7 @@ public class LaserPanelFragment extends ListFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    void updateLayers(ProfileLayerEvent event) {
+    public void updateLayers(ProfileLayerEvent event) {
         if (listAdapter != null) {
             listAdapter.setLayers(layers.layers);
         }

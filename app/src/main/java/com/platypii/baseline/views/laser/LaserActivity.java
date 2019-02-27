@@ -52,19 +52,19 @@ public class LaserActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    void addLayer(ProfileLayerEvent.ProfileLayerAdded event) {
+    public void addLayer(ProfileLayerEvent.ProfileLayerAdded event) {
         chart.addLayer(event.layer);
         chart.invalidate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    void removeLayer(ProfileLayerEvent.ProfileLayerRemoved event) {
+    public void removeLayer(ProfileLayerEvent.ProfileLayerRemoved event) {
         chart.removeLayer(event.layer);
         chart.invalidate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    void updateLayer(ProfileLayerEvent.ProfileLayerUpdated event) {
+    public void updateLayer(ProfileLayerEvent.ProfileLayerUpdated event) {
         chart.invalidate();
     }
 

@@ -10,6 +10,7 @@ import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -106,12 +107,32 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
 
     private LaserProfile getLaserProfile() {
         final String name = laserName.getText().toString();
-        final double lat = Numbers.parseDouble(laserLat.getText().toString());
-        final double lon = Numbers.parseDouble(laserLon.getText().toString());
-        final double alt = Numbers.parseDouble(laserAlt.getText().toString());
-        final GeoPoint exit = new GeoPoint(System.currentTimeMillis(), alt, lat, lon);
+        final Double lat = parseDoubleNull(laserLat.getText().toString());
+        final Double lng = parseDoubleNull(laserLon.getText().toString());
+        final Double alt = parseDoubleNull(laserAlt.getText().toString());
         final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
-        return new LaserProfile("", AuthState.getUser(), name, false, exit, "app", points);
+        return new LaserProfile("", AuthState.getUser(), name, false, alt, lat, lng, "app", points);
+    }
+
+    /**
+     * Parse a string into a double, but use null instead of exceptions or non-real
+     */
+    @Nullable
+    private static Double parseDoubleNull(@Nullable String str) {
+        if (str == null || str.isEmpty()) {
+            return null;
+        } else {
+            try {
+                final double value = Double.parseDouble(str);
+                if (Double.isNaN(value) || Double.isInfinite(value)) {
+                    return null;
+                } else {
+                    return value;
+                }
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
     }
 
     private boolean isMetric() {
@@ -232,10 +253,15 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     public void onLocationChanged(@NonNull MLocation loc) {
         if (defaultLocation == null) {
             defaultLocation = loc;
-            // Fill in lat,lon
-            laserLat.setText(Numbers.format6.format(loc.latitude));
-            laserLon.setText(Numbers.format6.format(loc.longitude));
-            laserAlt.setText(Numbers.format2.format(loc.altitude_gps));
+            final Activity activity = getActivity();
+            if (activity != null) {
+                activity.runOnUiThread(() -> {
+                    // Fill in lat,lon
+                    laserLat.setText(Numbers.format6.format(loc.latitude));
+                    laserLon.setText(Numbers.format6.format(loc.longitude));
+                    laserAlt.setText(Numbers.format2.format(loc.altitude_gps));
+                });
+            }
         }
     }
 }
