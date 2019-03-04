@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import java.util.Locale;
 
 /**
  * Show the user their GPS status
@@ -19,6 +20,7 @@ import android.widget.TextView;
 public class SignalStatus extends BaseStatus implements MyLocationListener {
 
     private TextView signalStatus;
+    private TextView satelliteStatus;
 
     // Periodic UI updates
     private static final int signalUpdateInterval = 200; // milliseconds
@@ -34,6 +36,7 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.status_panel, container, false);
         signalStatus = view.findViewById(R.id.signalStatus);
+        satelliteStatus = view.findViewById(R.id.satelliteStatus);
         return view;
     }
 
@@ -59,6 +62,12 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
         LocationStatus.updateStatus();
         signalStatus.setCompoundDrawablesWithIntrinsicBounds(LocationStatus.icon, 0, 0, 0);
         signalStatus.setText(LocationStatus.message);
+        if (LocationStatus.satellites > 0) {
+            satelliteStatus.setText(String.format(Locale.US, "%d", LocationStatus.satellites));
+            satelliteStatus.setVisibility(View.VISIBLE);
+        } else {
+            satelliteStatus.setVisibility(View.GONE);
+        }
     }
 
     private final Runnable updateRunnable = this::update;

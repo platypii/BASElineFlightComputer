@@ -14,6 +14,7 @@ public class LocationStatus {
 
     public static CharSequence message;
     public static int icon;
+    public static int satellites;
 
     // A buffer to be used for formatted strings, to avoid allocation
     private static final StringBuilder sb = new StringBuilder();
@@ -22,6 +23,7 @@ public class LocationStatus {
      * Get GPS status info from services
      */
     public static void updateStatus() {
+        satellites = 0;
         // GPS signal status
         if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothState.BT_CONNECTED) {
             // Bluetooth enabled, but not connected
@@ -54,6 +56,7 @@ public class LocationStatus {
                 } else if (lastFixDuration > 2000) {
                     message = "GPS last fix " + lastFixDuration / 1000L + "s";
                     icon = R.drawable.status_yellow;
+                    satellites = Services.location.lastLoc.satellitesUsed;
                 } else {
                     sb.setLength(0);
                     if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() == BluetoothState.BT_CONNECTED) {
@@ -66,6 +69,7 @@ public class LocationStatus {
                     StringBuilderUtil.format2f(sb, Services.location.refreshRate.refreshRate);
                     sb.append("Hz");
                     message = sb;
+                    satellites = Services.location.lastLoc.satellitesUsed;
                 }
             }
         }
