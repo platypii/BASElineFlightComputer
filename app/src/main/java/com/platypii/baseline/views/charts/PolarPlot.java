@@ -18,7 +18,7 @@ public class PolarPlot extends PlotView {
     private static final int AXIS_POLAR = 0;
     private final Bounds bounds = new Bounds();
 
-    private List<MLocation> trackData;
+    List<MLocation> trackData;
 
     private final DataSeries speedSeries = new DataSeries();
 

@@ -71,7 +71,7 @@
         android:layout_marginTop="8dp"
         android:text="Polar"/>
 
-    <com.platypii.baseline.views.charts.PolarPlot
+    <com.platypii.baseline.views.charts.PolarPlotTouchable
         android:id="@+id/polarChart"
         android:layout_width="match_parent"
         android:layout_height="200dp"

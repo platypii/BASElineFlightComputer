@@ -235,4 +235,13 @@ public class Plot {
         return getY(0, y);
     }
 
+    /**
+     * Returns the data-space x coordinate from a screen-space x coordinate
+     */
+    double getYinverse(int axis, double sy) {
+        final IntBounds padding = options.padding;
+        final double ppm_y = (height - padding.bottom - padding.top) / (bounds[axis].y.max - bounds[axis].y.min); // pixels per meter
+        return (-sy + height - padding.bottom) / ppm_y + bounds[axis].y.min;
+    }
+
 }
