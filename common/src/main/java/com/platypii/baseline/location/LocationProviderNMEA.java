@@ -268,6 +268,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // LG-E460
                 // $GPEVT,19052017,234044.807,19,,,,
                 // split[1]: Date: 19052017 = 19 May 2017
+            case "GDC":
+                // $PCGDC,SETMODE,76,0*0F
             case "GDS":
                 // Fly FS451
                 // $PCGDS,EPH sow 407586: 1 3 6 9 11 12 14 17 19 22 23 25 31 32--AS:,1995387692*6A
@@ -277,7 +279,11 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "GLG":
                 // $GPGLG,VER2,GNSS,130616,171913.0,85,4737.550964,N,12219.566617,W,96.0,38.5,2.0,0.0,13.0,TP,Seoul,,,15,3,,*5C
                 // $GPGLG,version,provider,???,???,???,lat,lat,lon,lon,...
+            case "GRS":
+                // Bluetooth:
+                // $GNGRS,153238.10,1,2.7,0.1,-8.4,-18.5,8.6,2.1,12.3,,,,,*78
             case "GST":
+                // $GNGST,183132.000,6.1,15,11,76,11,15,32
                 // split[2]: RMS value of the standard deviation of the range inputs to the navigation process. Range inputs include preudoranges & DGNSS corrections.
                 // split[3]: Stdev of semi-major axis of error ellipse (meters)
                 // split[4]: Stdev of semi-minor axis of error ellipse (meters)
@@ -286,6 +292,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // split[7]: Stdev of longitude error (meters)
                 // split[8]: Stdev of altitude error (meters)
             case "JNR":
+            case "MSG":
+                // $BDMSG,ENGI_MSG,RPUSH,00059*00
             case "NVD":
             case "8EX1":
                 // HTC One M8
@@ -327,11 +335,14 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "TIS":
                 // Samsung Note7
                 // $PSTIS,*61
+            case "TXO":
+                // $MVTXO,174538.51,-350.548714,*6C
             case "TXT":
                 // $GNTXT,01,01,02,ANTSTATUS=INIT*3B
+            case "WP1":
+                // $PQWP1,131955.93,03,0.728909016,-0.014442960,302.38,9338.27,3.23,3*24
             case "ZCD":
                 // Rockchip 3GR
-                // $GNGST,183132.000,6.1,15,11,76,11,15,32
                 // $PGJNR,3,3,09,09,64,11,21
                 // $PGNVD,2,1137580,1138164,419442.000,0.612,0.11,-0.01,5,31.0,0,0.0,0,4.6,130,68,15
                 // $GNZCD,682.617,+

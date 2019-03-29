@@ -37,7 +37,7 @@ public class PolarPlotTouchable extends PolarPlot {
     }
 
     /**
-     * Performs a binary search for the nearest data point
+     * Performs a search for the nearest data point
      */
     @Nullable
     private MLocation findClosest(double x, double y) {

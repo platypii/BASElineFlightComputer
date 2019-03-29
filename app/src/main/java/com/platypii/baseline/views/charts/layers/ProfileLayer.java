@@ -1,28 +1,22 @@
 package com.platypii.baseline.views.charts.layers;
 
-import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.views.charts.Plot;
 import android.graphics.Paint;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 
 public class ProfileLayer extends ChartLayer {
 
     private static final int AXIS_PROFILE = 0;
-    private final DataSeries profileSeries = new DataSeries();
+    protected final DataSeries profileSeries = new DataSeries();
+    @NonNull
+    public String name = "";
+    @ColorInt
+    public final int color;
 
-    public void loadTrack(@NonNull TrackData trackData) {
-        // Load track data into time series
-        profileSeries.reset();
-        if (!trackData.data.isEmpty()) {
-            final MLocation start = trackData.data.get(0);
-            for (MLocation loc : trackData.data) {
-                final double x = start.distanceTo(loc);
-                final double y = loc.altitude_gps - start.altitude_gps;
-                profileSeries.addPoint(x, y);
-            }
-        }
+    ProfileLayer(@ColorInt int color) {
+        this.color = color;
     }
 
     @Override

@@ -4,23 +4,24 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
+import com.platypii.baseline.views.charts.layers.Colors;
 import com.platypii.baseline.views.charts.layers.ProfileFocusLayer;
-import com.platypii.baseline.views.charts.layers.ProfileLayer;
+import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
+import java.util.List;
 
 public class FlightProfile extends PlotView {
+
+    List<MLocation> trackData;
 
     private final Bounds bounds = new Bounds();
     private final Bounds inner = new Bounds();
     private final Bounds outer = new Bounds();
 
     private ProfileFocusLayer focusLayer;
-    private float scaleFactor = 1;
 
     public FlightProfile(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -42,23 +43,10 @@ public class FlightProfile extends PlotView {
         options.axis.x = options.axis.y = PlotOptions.axisDistance();
     }
 
-    private final ScaleGestureDetector scaler = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            scaleFactor *= detector.getScaleFactor();
-            scaleFactor = Math.max(1f, Math.min(scaleFactor, 10f));
-            invalidate();
-            return true;
-        }
-    });
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return scaler.onTouchEvent(event);
-    }
-
     public void loadTrack(@NonNull TrackData trackData) {
-        final ProfileLayer trackLayer = new ProfileLayer();
-        trackLayer.loadTrack(trackData);
+        this.trackData = trackData.data;
+
+        final TrackProfileLayer trackLayer = new TrackProfileLayer("", trackData, Colors.defaultColor);
         addLayer(trackLayer);
         focusLayer = new ProfileFocusLayer(trackData.data);
         addLayer(focusLayer);
@@ -76,8 +64,6 @@ public class FlightProfile extends PlotView {
     @Override
     public Bounds getBounds(@NonNull Bounds dataBounds, int axis) {
         bounds.set(dataBounds);
-        bounds.x.max /= scaleFactor;
-        bounds.y.min /= scaleFactor;
         AdjustBounds.clean(bounds, inner, outer);
         AdjustBounds.squareBounds(bounds, getWidth(), getHeight(), options.padding);
         return bounds;

@@ -55,9 +55,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/timeChart"
         android:layout_marginTop="8dp"
-        android:text="Flight Profile"/>
+        android:text="Distance"/>
 
-    <com.platypii.baseline.views.charts.FlightProfile
+    <com.platypii.baseline.views.charts.FlightProfileTouchable
         android:id="@+id/flightProfile"
         android:layout_width="match_parent"
         android:layout_height="200dp"
@@ -69,7 +69,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/flightProfile"
         android:layout_marginTop="8dp"
-        android:text="Polar"/>
+        android:text="Speed"/>
 
     <com.platypii.baseline.views.charts.PolarPlotTouchable
         android:id="@+id/polarChart"

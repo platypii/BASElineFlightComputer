@@ -8,6 +8,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import java.util.concurrent.ExecutionException;
@@ -39,7 +40,13 @@ public class AuthToken {
                 throw new AuthException("Not signed in");
             }
         } catch (ExecutionException e) {
-            throw new AuthException("Sign in failed", e);
+            final Throwable cause = e.getCause();
+            if (cause instanceof ApiException) {
+                final ApiException apiException = (ApiException) cause;
+                throw new AuthException("Sign in failed " + apiException.getMessage(), apiException);
+            } else {
+                throw new AuthException("Sign in failed", e);
+            }
         } catch (InterruptedException e) {
             throw new AuthException("Sign in interrupted", e);
         }
