@@ -3,6 +3,7 @@
 
     <!-- Home Screen -->
     <string name="action_polar">Polar</string>
+    <string name="action_speed">Speed</string>
     <string name="action_nav">Nav</string>
 
     <!-- Settings -->

@@ -38,6 +38,9 @@ public class GlassActivity extends BaseActivity implements AdapterView.OnItemCli
                 .setIcon(R.drawable.polar)
                 .setText(R.string.action_polar));
         cards.add(new CardBuilder(context, CardBuilder.Layout.COLUMNS)
+                .setIcon(R.drawable.polar)
+                .setText(R.string.action_speed));
+        cards.add(new CardBuilder(context, CardBuilder.Layout.COLUMNS)
                 .setIcon(R.drawable.nav)
                 .setText(R.string.action_nav));
         cards.add(new CardBuilder(context, CardBuilder.Layout.COLUMNS)
@@ -55,10 +58,12 @@ public class GlassActivity extends BaseActivity implements AdapterView.OnItemCli
         if (position == 0) {
             startActivity(new Intent(this, PolarActivity.class));
         } else if (position == 1) {
-            startActivity(new Intent(this, NavActivity.class));
+            startActivity(new Intent(this, SpeedActivity.class));
         } else if (position == 2) {
-            startActivity(new Intent(this, BluetoothActivity.class));
+            startActivity(new Intent(this, NavActivity.class));
         } else if (position == 3) {
+            startActivity(new Intent(this, BluetoothActivity.class));
+        } else if (position == 4) {
             startActivity(new Intent(this, BluetoothPairActivity.class));
         } else {
             Log.e(TAG, "Invalid click position = " + position);
