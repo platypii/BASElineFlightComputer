@@ -45,7 +45,7 @@ public abstract class LocalCache<T> {
     /**
      * Return the unique id for an item
      */
-    abstract String getId(T item);
+    abstract String getId(@NonNull T item);
 
     /**
      * Return listing from local cache, does NOT request from server, always returns fast.

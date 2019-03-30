@@ -4,6 +4,7 @@ import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.RetrofitClient;
+import com.platypii.baseline.cloud.cache.LaserCache;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.laser.LaserProfile;
 import android.content.Context;
@@ -26,7 +27,7 @@ public class LaserListing implements BaseService {
 
     static final Type listType = new TypeToken<List<LaserProfile>>(){}.getType();
 
-    public final LaserListingCache cache = new LaserListingCache();
+    public final LaserCache cache = new LaserCache();
 
     @Override
     public void start(@NonNull Context context) {

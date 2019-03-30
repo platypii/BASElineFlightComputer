@@ -23,7 +23,7 @@ public class LaserUpload {
         if (response.isSuccessful()) {
             Log.i(TAG, "Laser POST successful, laser profile " + response.body());
             // Add to cloud cache // TODO: Use response.body()?
-            Services.cloud.lasers.cache.addLaser(laser);
+            Services.cloud.lasers.cache.add(laser);
             // Update laser listing
             Services.cloud.lasers.listAsync(context, true);
         }

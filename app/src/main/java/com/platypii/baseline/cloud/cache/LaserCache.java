@@ -1,35 +1,35 @@
 package com.platypii.baseline.cloud.cache;
 
-import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.laser.LaserProfile;
 import android.support.annotation.NonNull;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * Local track list cache
+ * Local laser profile list cache
  */
-public class TrackCache extends LocalCache<CloudData> {
+public class LaserCache extends LocalCache<LaserProfile> {
 
     @Override
     String keyPrefix() {
-        return "cloud.track";
+        return "cloud.laser";
     }
 
     /**
-     * Return Type of List<CloudData>
+     * Return Type of List<LaserProfile>
      */
     @Override
     Type listType() {
-        return new TypeToken<List<CloudData>>(){}.getType();
+        return new TypeToken<List<LaserProfile>>(){}.getType();
     }
 
     /**
      * Return the unique id for an item
      */
     @Override
-    String getId(@NonNull CloudData item) {
-        return item.track_id;
+    String getId(@NonNull LaserProfile item) {
+        return item.laser_id;
     }
 
 }
