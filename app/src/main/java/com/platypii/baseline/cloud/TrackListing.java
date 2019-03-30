@@ -3,6 +3,7 @@ package com.platypii.baseline.cloud;
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.cache.TrackCache;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
@@ -26,9 +27,9 @@ import org.greenrobot.eventbus.EventBus;
 public class TrackListing implements BaseService {
     private static final String TAG = "TrackListing";
 
-    static final Type listType = new TypeToken<List<CloudData>>(){}.getType();
+    private static final Type listType = new TypeToken<List<CloudData>>(){}.getType();
 
-    public final TrackListingCache cache = new TrackListingCache();
+    public final TrackCache cache = new TrackCache();
 
     @Override
     public void start(@NonNull Context context) {
