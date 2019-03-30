@@ -41,8 +41,8 @@ public class NavView extends View implements MyLocationListener {
         final float center_x = width * 0.5f;
         final float center_y = height * 0.5f;
 
-        final MLocation currentLocation = Services.location.lastLoc;
-        if (currentLocation != null) { // TODO: Check for freshness?
+        if (Services.location.isFresh()) {
+            final MLocation currentLocation = Services.location.lastLoc;
             // Nearest place
             final Place place = Services.places.nearestPlace.cached(currentLocation);
             if (place != null) {
