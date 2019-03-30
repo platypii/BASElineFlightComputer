@@ -26,6 +26,7 @@ public class TrackStore implements BaseService {
     private final Map<TrackFile,TrackState> trackState = new HashMap<>();
     private boolean initialized = false;
 
+    @Override
     public void start(@NonNull Context context) {
         if (!initialized) {
             initialized = true;
@@ -66,6 +67,7 @@ public class TrackStore implements BaseService {
         return tracks;
     }
 
+    @Override
     public void stop() {}
 
     void setRecording(@NonNull TrackFile trackFile) {

@@ -8,7 +8,7 @@
     android:padding="0dp"
     tools:context="com.platypii.baseline.views.laser.LaserActivity">
 
-    <com.platypii.baseline.views.charts.FlightProfile
+    <com.platypii.baseline.views.charts.FlightProfileTouchable
         android:id="@+id/flightProfile"
         android:layout_width="match_parent"
         android:layout_height="250dp"/>
