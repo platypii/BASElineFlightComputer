@@ -6,7 +6,7 @@ public class PendingTask {
     @NonNull
     public String name;
     @NonNull
-    String json;
+    public String json;
 
     PendingTask(@NonNull String name, @NonNull String json) {
         this.name = name;

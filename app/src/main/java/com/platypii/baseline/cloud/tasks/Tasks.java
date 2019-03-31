@@ -2,7 +2,6 @@ package com.platypii.baseline.cloud.tasks;
 
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.AuthRequiredException;
 import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import androidx.annotation.NonNull;

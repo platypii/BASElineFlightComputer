@@ -184,7 +184,7 @@ public class Services {
 
     public static void stop() {
         if (dec()) {
-            Log.i(TAG, String.format("All activities have stopped. Base services will stop in %.3fs", shutdownDelay * 0.001));
+            Log.i(TAG, String.format("All activities have stopped. Base services will stop in %d seconds", shutdownDelay / 1000));
             handler.postDelayed(stopRunnable, shutdownDelay);
         }
     }

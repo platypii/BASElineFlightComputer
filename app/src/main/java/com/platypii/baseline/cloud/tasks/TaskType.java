@@ -19,5 +19,4 @@ public interface TaskType {
      */
     boolean persistent();
 
-
 }

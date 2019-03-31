@@ -1,4 +1,4 @@
-package com.platypii.baseline.cloud;
+package com.platypii.baseline.cloud.tasks;
 
 public class AuthRequiredException extends Exception {
     public AuthRequiredException() {

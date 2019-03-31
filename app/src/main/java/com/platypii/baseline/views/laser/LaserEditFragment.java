@@ -3,7 +3,7 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.cloud.lasers.LaserUpload;
+import com.platypii.baseline.cloud.lasers.LaserUploadTask;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.laser.*;
 import com.platypii.baseline.location.MyLocationListener;
@@ -12,20 +12,17 @@ import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
@@ -184,21 +181,17 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             // Publish laser as a new layer
             final LaserProfile laserProfile = getLaserProfile();
             updateLayers();
+            // Save in background and return to profile list view
+            Services.tasks.add(new LaserUploadTask(laserProfile));
+            // Add to cloud cache
+            Services.cloud.lasers.cache.add(laserProfile);
             // Reset for next laser input
             editLayer = new LaserProfileLayer();
-            // Post to server in background
-            final Handler handler = new Handler();
-            new Thread(() -> {
-                try {
-                    LaserUpload.post(getContext(), laserProfile);
-                    // Return to main fragment
-                    final FragmentManager fm = getFragmentManager();
-                    if (fm != null) fm.popBackStack();
-                } catch (IOException e) {
-                    Log.e(TAG, "Failed to upload laser", e);
-                    handler.post(() -> Toast.makeText(getContext(), "Profile upload failed", Toast.LENGTH_LONG).show());
-                }
-            }).start();
+            // Re-add edit layer since it will be removed on fragment stop
+            LaserLayers.getInstance().add(editLayer);
+            // Return to main fragment
+            final FragmentManager fm = getFragmentManager();
+            if (fm != null) fm.popBackStack();
         } else {
             // Form error
             Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();

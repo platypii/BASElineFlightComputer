@@ -10,8 +10,6 @@ import com.platypii.baseline.laser.LaserProfile;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -25,12 +23,12 @@ import retrofit2.Response;
 public class LaserListing implements BaseService {
     private static final String TAG = "LaserListing";
 
-    static final Type listType = new TypeToken<List<LaserProfile>>(){}.getType();
-
+    private Context context;
     public final LaserCache cache = new LaserCache();
 
     @Override
     public void start(@NonNull Context context) {
+        this.context = context;
         cache.start(context);
         EventBus.getDefault().register(this);
     }
@@ -38,13 +36,13 @@ public class LaserListing implements BaseService {
     /**
      * Query baseline server for laser listing asynchronously
      */
-    public void listAsync(@NonNull Context context, boolean force) {
+    void listAsync(@NonNull Context context, boolean force) {
         if (force || cache.shouldRequest()) {
             cache.request();
-            Log.i(TAG, "Listing laser profiles");
             final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
             // Public vs private based on sign in state
             final String userId = AuthState.getUser();
+            Log.i(TAG, "Listing laser profiles " + userId);
             final Call<List<LaserProfile>> laserCall = userId != null ? laserApi.byUser(userId) : laserApi.getPublic();
             laserCall.enqueue(new Callback<List<LaserProfile>>() {
                 @Override
@@ -71,16 +69,26 @@ public class LaserListing implements BaseService {
     }
 
     /**
-     * Clear the laser cache when user signs out
+     * Update laser listings on sign in
      */
     @Subscribe
-    public void onSignOut(@NonNull AuthState.SignedOut event) {
+    public void onSignIn(AuthState.SignedIn event) {
+        listAsync(context, true);
+    }
+
+    /**
+     * Clear the laser list cache and fetch public on sign out
+     */
+    @Subscribe
+    public void onSignOut(AuthState.SignedOut event) {
         cache.clear();
+        listAsync(context, true);
     }
 
     @Override
     public void stop() {
         EventBus.getDefault().unregister(this);
+        context = null;
     }
 
 }

@@ -3,6 +3,7 @@ package com.platypii.baseline.views;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
+import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.util.Exceptions;
 import android.Manifest;
 import android.content.Intent;
@@ -231,7 +232,7 @@ public abstract class BaseActivity extends FragmentActivity {
                 signedOut();
             }
         } else if (e.getStatusCode() == CommonStatusCodes.SIGN_IN_REQUIRED) {
-            Log.i(TAG, "Sign in required (user is not signed in)");
+            Log.i(TAG, "Not signed in");
             signedOut();
         } else {
             Log.w(TAG, "Sign in failed: " + CommonStatusCodes.getStatusCodeString(e.getStatusCode()));
@@ -245,6 +246,8 @@ public abstract class BaseActivity extends FragmentActivity {
         firebaseAnalytics.setUserId(null);
         // Notify listeners
         updateAuthState(new AuthState.SignedOut());
+        // Clear laser layers
+        LaserLayers.getInstance().layers.clear();
     }
 
     @Override

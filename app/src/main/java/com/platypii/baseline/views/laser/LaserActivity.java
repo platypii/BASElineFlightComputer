@@ -1,7 +1,6 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
-import com.platypii.baseline.Services;
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.views.BaseActivity;
@@ -34,9 +33,6 @@ public class LaserActivity extends BaseActivity {
                 .beginTransaction()
                 .add(R.id.laserPanel, laserPanel)
                 .commit();
-
-        // Update laser listing
-        Services.cloud.lasers.listAsync(this, false);
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }

@@ -2,6 +2,7 @@ package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.tasks.AuthRequiredException;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;

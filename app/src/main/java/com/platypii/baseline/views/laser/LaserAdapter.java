@@ -32,11 +32,14 @@ class LaserAdapter extends BaseAdapter {
     public void setLayers(@NonNull List<LaserProfile> lasers) {
         final String userId = AuthState.getUser();
         items.clear();
-        if (userId != null) {
-            items.add(new LaserListItem.ListHeader("My Profiles"));
+        if (userId != null && !lasers.isEmpty()) {
             // Add my lasers
             for (LaserProfile laser : lasers) {
                 if (userId.equals(laser.user_id)) {
+                    if (items.isEmpty()) {
+                        // Add header
+                        items.add(new LaserListItem.ListHeader("My Profiles"));
+                    }
                     items.add(new LaserListItem.ListLaser(laser));
                 }
             }
