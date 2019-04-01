@@ -6,6 +6,7 @@ import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.BaselineCloud;
+import com.platypii.baseline.cloud.tasks.Tasks;
 import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.jarvis.FlightComputer;
 import com.platypii.baseline.location.LandingZone;
@@ -63,6 +64,7 @@ public class Services {
     private static final Notifications notifications = new Notifications();
     public static final BaselineCloud cloud = new BaselineCloud();
     public static final Places places = new Places();
+    public static final Tasks tasks = new Tasks();
 
     /**
      * We want preferences to be available as early as possible.
@@ -142,6 +144,9 @@ public class Services {
             Log.i(TAG, "Starting place database");
 //            places.start(appContext);
 
+            Log.i(TAG, "Starting task manager");
+            tasks.start(appContext);
+
             Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
         }
     }
@@ -192,6 +197,7 @@ public class Services {
             if (!logger.isLogging() && !audible.isEnabled()) {
                 Log.i(TAG, "All activities have stopped. Stopping services.");
                 // Stop services
+                tasks.stop();
                 places.stop();
                 cloud.stop();
                 notifications.stop();

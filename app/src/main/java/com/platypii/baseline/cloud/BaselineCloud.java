@@ -24,7 +24,7 @@ public class BaselineCloud implements BaseService {
     /**
      * Return true if there is a network connection available
      */
-    boolean isNetworkAvailable() {
+    public boolean isNetworkAvailable() {
         if (connectivityManager != null) {
             final NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
             return activeNetworkInfo != null && activeNetworkInfo.isConnected();
