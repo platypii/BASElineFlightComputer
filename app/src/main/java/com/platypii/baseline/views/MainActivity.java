@@ -4,7 +4,6 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
-import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.ImportCSV;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.altimeter.AltimeterActivity;
@@ -216,15 +215,6 @@ public class MainActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAudibleEvent(AudibleEvent event) {
         updateUIState();
-    }
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSyncEvent(SyncEvent event) {
-        if (event instanceof SyncEvent.UploadSuccess) {
-            Toast.makeText(MainActivity.this, "Track sync success", Toast.LENGTH_SHORT).show();
-        } else if (event instanceof SyncEvent.UploadFailure) {
-            final SyncEvent.UploadFailure uploadFailure = (SyncEvent.UploadFailure) event;
-            Toast.makeText(MainActivity.this, "Track sync failed: " + uploadFailure.error, Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override

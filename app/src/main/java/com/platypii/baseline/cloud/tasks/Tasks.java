@@ -2,6 +2,7 @@ package com.platypii.baseline.cloud.tasks;
 
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthRequiredException;
 import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Queue for tasks such as uploading to the cloud.
@@ -38,7 +40,9 @@ public class Tasks implements BaseService {
     public void add(Task task) {
         Log.i(TAG, "Adding task " + task);
         pending.add(task);
-        PendingPreferences.save(context, pending);
+        if (task.taskType().persistent()) {
+            PendingPreferences.save(context, pending);
+        }
         tendQueue();
     }
 
@@ -58,16 +62,35 @@ public class Tasks implements BaseService {
                     pending.remove(0);
                     // Check for next pending task
                     tendQueue();
-                } catch (Exception e) {
-                    Log.e(TAG, "Task failed: " + running, e);
+                } catch (AuthRequiredException e) {
+                    // Wait for sign in
                     running = null;
+                } catch (Exception e) {
                     if (Services.cloud.isNetworkAvailable()) {
+                        Log.e(TAG, "Task failed: " + running, e);
                         Exceptions.report(e);
+                    } else {
+                        Log.w(TAG, "Task failed, network unavailable: " + running, e);
                     }
+                    running = null;
                     // TODO: Try again later
                 }
             }).start();
         }
+    }
+
+    /**
+     * Remove all tasks of a given type
+     */
+    public void removeType(@NonNull TaskType taskType) {
+        final ListIterator<Task> it = pending.listIterator();
+        while (it.hasNext()) {
+            final Task task = it.next();
+            if (task.taskType().name().equals(taskType.name())) {
+                it.remove();
+            }
+        }
+        PendingPreferences.save(context, pending);
     }
 
     @Override

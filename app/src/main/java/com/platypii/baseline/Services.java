@@ -62,9 +62,9 @@ public class Services {
     public static final FlightComputer flightComputer = new FlightComputer();
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();
+    public static final Tasks tasks = new Tasks();
     public static final BaselineCloud cloud = new BaselineCloud();
     public static final Places places = new Places();
-    public static final Tasks tasks = new Tasks();
 
     /**
      * We want preferences to be available as early as possible.
@@ -138,14 +138,14 @@ public class Services {
             Log.i(TAG, "Starting notification bar service");
             notifications.start(appContext);
 
+            Log.i(TAG, "Starting task manager");
+            tasks.start(appContext);
+
             Log.i(TAG, "Starting cloud services");
             cloud.start(appContext);
 
             Log.i(TAG, "Starting place database");
 //            places.start(appContext);
-
-            Log.i(TAG, "Starting task manager");
-            tasks.start(appContext);
 
             Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
         }
@@ -184,7 +184,7 @@ public class Services {
 
     public static void stop() {
         if (dec()) {
-            Log.i(TAG, String.format("All activities have stopped. Services will stop in %.3fs", shutdownDelay * 0.001));
+            Log.i(TAG, String.format("All activities have stopped. Base services will stop in %.3fs", shutdownDelay * 0.001));
             handler.postDelayed(stopRunnable, shutdownDelay);
         }
     }
@@ -197,9 +197,9 @@ public class Services {
             if (!logger.isLogging() && !audible.isEnabled()) {
                 Log.i(TAG, "All activities have stopped. Stopping services.");
                 // Stop services
-                tasks.stop();
                 places.stop();
                 cloud.stop();
+                tasks.stop();
                 notifications.stop();
                 audible.stop();
                 flightComputer.stop();

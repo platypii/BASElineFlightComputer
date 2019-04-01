@@ -2,9 +2,22 @@ package com.platypii.baseline.cloud.tasks;
 
 import android.support.annotation.NonNull;
 
-public abstract class TaskType {
+public interface TaskType {
 
-    public abstract String name();
-    public abstract Task fromJson(@NonNull String json);
+    /**
+     * The name of this type of task
+     */
+    String name();
+
+    /**
+     * Parse from JSON into a Task of this type
+     */
+    Task fromJson(@NonNull String json);
+
+    /**
+     * Return true if this task should be persisted across start/stops
+     */
+    boolean persistent();
+
 
 }

@@ -200,8 +200,7 @@ public class TrackAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        final TrackListItem item = getItem(position);
-        return item.getType();
+        return getItem(position).getType();
     }
 
 }

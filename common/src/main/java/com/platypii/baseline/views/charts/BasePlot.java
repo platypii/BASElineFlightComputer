@@ -10,7 +10,7 @@ interface BasePlot {
      * Add a chart layer
      * @param layer chart layer to add
      */
-    default void addLayer(ChartLayer layer) {
+    default void addLayer(@NonNull ChartLayer layer) {
         getPlot().layers.add(layer);
     }
 
@@ -18,7 +18,7 @@ interface BasePlot {
      * Remove a chart layer
      * @param layer chart layer to remove
      */
-    default void removeLayer(ChartLayer layer) {
+    default void removeLayer(@NonNull ChartLayer layer) {
         getPlot().layers.remove(layer);
     }
 
@@ -35,7 +35,7 @@ interface BasePlot {
         plot.axes.drawGridlines();
 
         // Draw the layers
-        for (ChartLayer layer : getPlot().layers) {
+        for (ChartLayer layer : plot.layers) {
             if (layer.isEnabled()) {
                 layer.drawData(plot);
             }

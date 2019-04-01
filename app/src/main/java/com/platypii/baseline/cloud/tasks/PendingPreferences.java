@@ -45,13 +45,16 @@ public class PendingPreferences {
     }
 
     /**
-     * Serialize pending tasks as JSON
+     * Serialize pending tasks as JSON.
+     * Persistent tasks only.
      */
     @NonNull
     private static String toJson(@NonNull List<Task> pending) {
         final List<PendingTask> list = new ArrayList<>();
         for (Task task : pending) {
-            list.add(new PendingTask(task.taskType().name(), task.toJson()));
+            if (task.taskType().persistent()) {
+                list.add(new PendingTask(task.taskType().name(), task.toJson()));
+            }
         }
         return new Gson().toJson(list);
     }

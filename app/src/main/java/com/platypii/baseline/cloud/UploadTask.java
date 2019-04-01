@@ -27,24 +27,17 @@ import org.greenrobot.eventbus.EventBus;
 /**
  * Upload to the cloud
  */
-class UploadTask implements Runnable {
+public class UploadTask {
     private static final String TAG = "UploadTask";
 
     private static final String postUrl = BaselineCloud.baselineServer + "/tracks";
 
-    private final Context context;
-    private final TrackFile trackFile;
-
-    UploadTask(Context context, TrackFile trackFile) {
-        this.context = context;
-        this.trackFile = trackFile;
-    }
-
-    @Override
-    public void run() {
+    public static void upload(@NonNull Context context, @NonNull TrackFile trackFile) throws AuthRequiredException, UploadFailedException {
+        if (AuthState.getUser() == null) {
+            throw new AuthRequiredException();
+        }
         Log.i(TAG, "Uploading track " + trackFile);
-        // Check for network availability. Still try to upload anyway, but don't report to firebase
-        final boolean networkAvailable = Services.cloud.isNetworkAvailable();
+        Services.trackStore.setUploading(trackFile);
         try {
             // Get auth token
             final String authToken = AuthToken.getAuthToken(context);
@@ -60,25 +53,10 @@ class UploadTask implements Runnable {
             Services.cloud.listing.listAsync(authToken, true);
             Log.i(TAG, "Upload successful, track " + track.track_id);
             EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, track));
-        } catch (AuthException e) {
-            // getAuthToken fails if network is unavailable
-            if (networkAvailable) {
-                Log.e(TAG, "Failed to upload file: auth error", e);
-                Exceptions.report(e);
-            } else {
-                Log.w(TAG, "Failed to upload file: auth error", e);
-            }
-            uploadFailed(new SyncEvent.UploadFailure(trackFile, "auth error"));
         } catch (SocketException | SSLException | UnknownHostException e) {
-            Log.e(TAG, "Failed to upload file, network exception, network = " + networkAvailable, e);
+            Log.w(TAG, "Failed to upload file, network exception", e);
             uploadFailed(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
         } catch (IOException e) {
-            if (networkAvailable) {
-                Log.e(TAG, "Failed to upload file", e);
-                Exceptions.report(e);
-            } else {
-                Log.w(TAG, "Failed to upload file, network not available", e);
-            }
             uploadFailed(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
         } catch (JsonSyntaxException e) {
             Exceptions.report(e);
@@ -86,18 +64,22 @@ class UploadTask implements Runnable {
         }
     }
 
-    private void uploadFailed(SyncEvent.UploadFailure event) {
+    /**
+     * Update track store, notify listeners, and then throw exception to indicate Task failure.
+     */
+    private static void uploadFailed(@NonNull SyncEvent.UploadFailure event) throws UploadFailedException {
         // Update track store
         Services.trackStore.setNotUploaded(event.trackFile);
         // Notify listeners
         EventBus.getDefault().post(event);
+        throw new UploadFailedException(event);
     }
 
     /**
      * HTTP post track to baseline, parse response as CloudData
      */
     @NonNull
-    private CloudData postTrack(@NonNull TrackFile trackFile, String auth) throws IOException, JsonSyntaxException {
+    private static CloudData postTrack(@NonNull TrackFile trackFile, String auth) throws IOException, JsonSyntaxException {
         final long contentLength = trackFile.file.length();
         final String md5 = MD5.md5(trackFile.file);
         final URL url = new URL(postUrl);

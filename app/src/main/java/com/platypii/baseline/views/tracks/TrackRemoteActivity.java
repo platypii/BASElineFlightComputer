@@ -138,8 +138,6 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDeleteSuccess(@NonNull SyncEvent.DeleteSuccess event) {
         if (event.track_id.equals(track.track_id)) {
-            // Notify user
-            Toast.makeText(getApplicationContext(), "Deleted track", Toast.LENGTH_LONG).show();
             // Exit activity
             finish();
         }
@@ -155,12 +153,10 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAuthEvent(@NonNull AuthState event) {
+    public void onSignOut(@NonNull AuthState.SignedOut event) {
         // If user gets signed out, close the track activity
-        if (event instanceof AuthState.SignedOut) {
-            Log.i(TAG, "User signed out, closing cloud track");
-            finish();
-        }
+        Log.i(TAG, "User signed out, closing cloud track");
+        finish();
     }
 
     @Override

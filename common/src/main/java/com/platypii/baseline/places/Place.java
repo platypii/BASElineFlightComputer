@@ -35,7 +35,7 @@ public class Place {
     }
 
     public boolean isBASE() {
-        return "BASE".contains(objectType);
+        return !objectType.isEmpty() && "BASE".contains(objectType);
     }
 
     private LatLng lazyLatLng = null;
