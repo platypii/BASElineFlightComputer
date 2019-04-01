@@ -69,14 +69,13 @@ class UploadManager {
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void onLoggingEvent(@NonNull LoggingEvent event) {
-        if (AuthState.getUser() != null && !event.started) {
-            if (!uploading) {
-                Log.i(TAG, "Auto syncing track " + event.trackFile);
-                upload(event.trackFile);
-            }
+    public void onLoggingEvent(@NonNull LoggingEvent.LoggingStop event) {
+        if (AuthState.getUser() != null && !uploading) {
+            Log.i(TAG, "Auto syncing track " + event.trackFile);
+            upload(event.trackFile);
         }
     }
+
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onUploadSuccess(@NonNull SyncEvent.UploadSuccess event) {
         if (event.trackFile == uploadingTrack) {
@@ -88,6 +87,7 @@ class UploadManager {
             Log.e(TAG, "Tracks should not be uploading except through uploadAll loop");
         }
     }
+
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onUploadFailure(@NonNull SyncEvent.UploadFailure event) {
         if (event.trackFile == uploadingTrack) {

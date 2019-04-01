@@ -119,6 +119,7 @@ class Notifications implements BaseService {
         }
         context.startService(service);
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAudibleEvent(@NonNull AudibleEvent event) {
         final Intent service = new Intent(context, ForegroundService.class);

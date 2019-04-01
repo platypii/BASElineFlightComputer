@@ -9,6 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import java.util.concurrent.ExecutionException;
@@ -43,7 +44,8 @@ public class AuthToken {
             final Throwable cause = e.getCause();
             if (cause instanceof ApiException) {
                 final ApiException apiException = (ApiException) cause;
-                throw new AuthException("Sign in failed " + apiException.getMessage(), apiException);
+                final String statusString = CommonStatusCodes.getStatusCodeString(apiException.getStatusCode());
+                throw new AuthException("Sign in failed " + statusString, apiException);
             } else {
                 throw new AuthException("Sign in failed", e);
             }

@@ -17,15 +17,7 @@ public class BaselineCloud implements BaseService {
     public final TrackListing listing = new TrackListing();
     private final UploadManager uploads = new UploadManager();
 
-    /**
-     * Clear the track list cache (for when user signs out)
-     */
-    public void signOut() {
-        listing.cache.clear();
-    }
-
     public void deleteTrack(@NonNull Context context, @NonNull CloudData track) {
-        // Delete track on server
         new Thread(new DeleteTask(context, track)).start();
     }
 

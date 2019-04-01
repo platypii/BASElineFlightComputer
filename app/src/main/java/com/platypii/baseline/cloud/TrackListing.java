@@ -20,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * List tracks from the cloud
@@ -34,6 +35,7 @@ public class TrackListing implements BaseService {
     @Override
     public void start(@NonNull Context context) {
         cache.start(context);
+        EventBus.getDefault().register(this);
     }
 
     /**
@@ -109,7 +111,17 @@ public class TrackListing implements BaseService {
         }
     }
 
+    /**
+     * Clear the track list cache when user signs out
+     */
+    @Subscribe
+    public void onSignOut(@NonNull AuthState.SignedOut event) {
+        cache.clear();
+    }
+
     @Override
-    public void stop() {}
+    public void stop() {
+        EventBus.getDefault().unregister(this);
+    }
 
 }

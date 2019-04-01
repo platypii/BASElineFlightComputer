@@ -13,7 +13,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +53,7 @@ class UploadTask implements Runnable {
             // Remove from track store
             Services.trackStore.setUploadSuccess(trackFile, track);
             // Move track to synced directory
-            archive(track);
+            trackFile.archive(track.localFile(context));
             // Add to cloud cache
             Services.cloud.listing.cache.add(track);
             // Update track listing
@@ -132,27 +131,6 @@ class UploadTask implements Runnable {
             }
         } finally {
             conn.disconnect();
-        }
-    }
-
-    /**
-     * Move the track file to track directory
-     */
-    private void archive(CloudData trackData) {
-        Log.i(TAG, "Archiving track file " + trackFile.getName() + " to " + trackData.track_id);
-        // Move form source to destination
-        final File source = trackFile.file;
-        final File destination = trackData.localFile(context);
-        // Ensure track directory exists
-        final File trackDir = destination.getParentFile();
-        if (!trackDir.exists()) {
-            if (!trackDir.mkdirs()) {
-                Log.e(TAG, "Failed to make track directory " + trackDir);
-            }
-        }
-        // Move track file to track directory
-        if (!source.renameTo(destination)) {
-            Log.e(TAG, "Failed to move track file " + source + " to " + destination);
         }
     }
 

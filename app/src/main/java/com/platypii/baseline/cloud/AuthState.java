@@ -10,12 +10,29 @@ import android.support.annotation.Nullable;
 public abstract class AuthState {
     private static final String PREF_AUTH_USER = "auth_user";
 
-    public static class SignedOut extends AuthState {}
-    public static class SigningIn extends AuthState {}
+    public static class SignedOut extends AuthState {
+        @NonNull
+        @Override
+        public String toString() {
+            return "SignedOut";
+        }
+    }
+    public static class SigningIn extends AuthState {
+        @NonNull
+        @Override
+        public String toString() {
+            return "SigningIn";
+        }
+    }
     public static class SignedIn extends AuthState {
         final String userId;
         public SignedIn(String userId) {
             this.userId = userId;
+        }
+        @NonNull
+        @Override
+        public String toString() {
+            return "SignedIn(" + userId + ")";
         }
     }
 
@@ -56,6 +73,11 @@ public abstract class AuthState {
             editor.putString(PREF_AUTH_USER, userId);
             editor.apply();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof AuthState && o.toString().equals(toString());
     }
 
 }

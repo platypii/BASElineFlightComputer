@@ -58,29 +58,32 @@ public abstract class BaseActivity extends FragmentActivity {
     }
 
     /**
-     * Update sign in state, notify listeners, and update shared UI
+     * Update sign in state, notify listeners, and update shared UI.
+     * Only updates on state change. Views should get auth state from AuthState directly.
      */
     private void updateAuthState(@NonNull AuthState event) {
-        AuthState.setState(this, event);
-        // Notify listeners
-        EventBus.getDefault().post(event);
-        // Update sign in panel state
-        if (signInPanel != null) {
-            if (event instanceof AuthState.SignedIn) {
-                signInPanel.setVisibility(View.GONE);
-            } else if (event instanceof AuthState.SigningIn) {
-                signInSpinner.setVisibility(View.VISIBLE);
-                signInPanel.setVisibility(View.VISIBLE);
-            } else if (event instanceof AuthState.SignedOut) {
-                signInSpinner.setVisibility(View.GONE);
-                signInPanel.setVisibility(View.VISIBLE);
+        if (!event.equals(AuthState.currentAuthState)) {
+            AuthState.setState(this, event);
+            // Notify listeners
+            EventBus.getDefault().post(event);
+            // Update sign in panel state
+            if (signInPanel != null) {
+                if (event instanceof AuthState.SignedIn) {
+                    signInPanel.setVisibility(View.GONE);
+                } else if (event instanceof AuthState.SigningIn) {
+                    signInSpinner.setVisibility(View.VISIBLE);
+                    signInPanel.setVisibility(View.VISIBLE);
+                } else if (event instanceof AuthState.SignedOut) {
+                    signInSpinner.setVisibility(View.GONE);
+                    signInPanel.setVisibility(View.VISIBLE);
+                }
             }
-        }
-        // Show toasts
-        if (userClickedSignIn && event instanceof AuthState.SignedIn) {
-            Toast.makeText(this, R.string.signin_success, Toast.LENGTH_LONG).show();
-        } else if (userClickedSignIn && event instanceof AuthState.SignedOut) {
-            Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
+            // Show toasts
+            if (userClickedSignIn && event instanceof AuthState.SignedIn) {
+                Toast.makeText(this, R.string.signin_success, Toast.LENGTH_LONG).show();
+            } else if (userClickedSignIn && event instanceof AuthState.SignedOut) {
+                Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -240,8 +243,6 @@ public abstract class BaseActivity extends FragmentActivity {
         // Clear account
         account = null;
         firebaseAnalytics.setUserId(null);
-        // Clear track listing
-        Services.cloud.signOut();
         // Notify listeners
         updateAuthState(new AuthState.SignedOut());
     }

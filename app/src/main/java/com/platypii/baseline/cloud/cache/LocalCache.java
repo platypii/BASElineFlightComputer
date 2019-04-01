@@ -31,7 +31,7 @@ public abstract class LocalCache<T> {
 
     private SharedPreferences prefs;
 
-    public void start(Context context) {
+    public void start(@NonNull Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 

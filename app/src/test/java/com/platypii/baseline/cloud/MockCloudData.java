@@ -10,7 +10,7 @@ public class MockCloudData extends CloudData {
                 "2018ish",
                 "https://baseline.ws/tracks/1234/track.csv",
                 "https://baseline.ws/tracks/1234/track.kml",
-                new Place("TestExit", "", "Norway", 59.033, 6.586, Double.NaN, "E", 2000)
+                new Place("TestExit", "", "Norway", 59.033, 6.586, Double.NaN, "E", 2000, true)
         );
     }
 }

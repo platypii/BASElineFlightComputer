@@ -35,6 +35,25 @@ public class TrackFile {
         return size + " kb";
     }
 
+    /**
+     * Move the track file to track directory
+     */
+    public void archive(@NonNull File destination) {
+        Log.i(TAG, "Archiving track file " + getName() + " to " + destination);
+        // Move form source to destination
+        // Ensure track directory exists
+        final File trackDir = destination.getParentFile();
+        if (!trackDir.exists()) {
+            if (!trackDir.mkdirs()) {
+                Log.e(TAG, "Failed to make track directory " + trackDir);
+            }
+        }
+        // Move track file to track directory
+        if (!file.renameTo(destination)) {
+            Log.e(TAG, "Failed to move track file " + file + " to " + destination);
+        }
+    }
+
     @NonNull
     @Override
     public String toString() {

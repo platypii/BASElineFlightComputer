@@ -65,7 +65,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
                 startFileLogging(trackFile.file);
 
                 // Notify listeners that recording has started
-                EventBus.getDefault().post(new LoggingEvent(true, null));
+                EventBus.getDefault().post(new LoggingEvent.LoggingStart());
             } catch (IOException e) {
                 Log.e(TAG, "Error starting logging", e);
             }
@@ -87,7 +87,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
             if (trackFile != null) {
                 // Update state before notifying listeners (such as upload manager)
                 Services.trackStore.setNotUploaded(trackFile);
-                EventBus.getDefault().post(new LoggingEvent(false, trackFile));
+                EventBus.getDefault().post(new LoggingEvent.LoggingStop(trackFile));
             } else {
                 Exceptions.report(new IllegalStateException("Result of stopFileLogging should not be null"));
             }
