@@ -82,6 +82,8 @@ public class LaserMeasurement {
             for (LaserMeasurement point : points) {
                 reversed.add(new LaserMeasurement(xRange.max - point.x, point.y - yRange.max));
             }
+            // Add reversed 0,0
+            reversed.add(new LaserMeasurement(xRange.max, - yRange.max));
             // Sort by horiz
             Collections.sort(reversed, (l1, l2) -> Double.compare(l1.x, l2.x));
             return reversed;

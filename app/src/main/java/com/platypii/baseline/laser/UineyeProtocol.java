@@ -38,7 +38,7 @@ class UineyeProtocol implements RangefinderProtocol {
     // Say hello to laser
     private static final byte[] appHello = {-82, -89, 4, 0, 6, 10, -68, -73};   // ae-a7-04-00-06-0a-bc-b7
     // Tell laser to shutdown. Uineye app sends this if laser doesn't say hello back in 5s.
-    private static final byte[] appGoodbye = {-82, -89, 4, 0, 7, 11, -68, -73}; // ae-a7-04-00-07-0b-bc-b7
+    // private static final byte[] appGoodbye = {-82, -89, 4, 0, 7, 11, -68, -73}; // ae-a7-04-00-07-0b-bc-b7
     // Send this in response to heartbeat
     private static final byte[] appHeartbeatAck = {-82, -89, 4, 0, -120, -116, -68, -73}; // ae-a7-04-00-88-8c-bc-b7
 

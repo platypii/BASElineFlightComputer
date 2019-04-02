@@ -115,7 +115,7 @@
 
     <!-- Laser -->
     <string name="rangefinder_connected">Rangefinder connected</string>
-    <string name="rangefinder_searching">Searching for rangefinder...</string>
+    <string name="rangefinder_searching">Searching for rangefinder…</string>
     <string-array name="metric_modes">
         <item>Meters</item>
         <item>Feet</item>
@@ -124,5 +124,14 @@
         <item>meters</item>
         <item>feet</item>
     </string-array>
+    <string name="help_profiles">
+        <![CDATA[
+Compare flight profile data against terrain profiles from known exit points.
+
+Chart shows horizontal and vertical distance from the start point.
+
+https://baseline.ws/help/app#profiles
+        ]]>
+    </string>
 
 </resources>

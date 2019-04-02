@@ -31,6 +31,7 @@ public class LaserPanelFragment extends ListFragment {
     @Nullable
     private ProfileAdapter listAdapter;
     private final LaserLayers layers = LaserLayers.getInstance();
+    private View helpText;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class LaserPanelFragment extends ListFragment {
         view.findViewById(R.id.chooseTrack).setOnClickListener(this::chooseTrack);
         view.findViewById(R.id.chooseLaser).setOnClickListener(this::chooseLaser);
         view.findViewById(R.id.addLaser).setOnClickListener(this::clickAdd);
+        helpText = view.findViewById(R.id.helpProfiles);
         return view;
     }
 
@@ -58,6 +60,7 @@ public class LaserPanelFragment extends ListFragment {
         if (listAdapter != null) {
             listAdapter.setLayers(layers.layers);
         }
+        updateViews();
         EventBus.getDefault().register(this);
     }
 
@@ -122,6 +125,14 @@ public class LaserPanelFragment extends ListFragment {
                 .commit();
     }
 
+    private void updateViews() {
+        if (layers.layers.isEmpty()) {
+            helpText.setVisibility(View.VISIBLE);
+        } else {
+            helpText.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -133,5 +144,6 @@ public class LaserPanelFragment extends ListFragment {
         if (listAdapter != null) {
             listAdapter.setLayers(layers.layers);
         }
+        updateViews();
     }
 }

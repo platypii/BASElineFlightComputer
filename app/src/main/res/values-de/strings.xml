@@ -10,6 +10,7 @@
     <string name="action_altimeter">Alti</string>
     <string name="action_nav">Nav</string>
     <string name="action_tracks">Spuren</string>
+    <string name="action_profiles">Profile</string>
     <string name="action_settings">Einstellungen</string>
 
     <!-- Track Activity -->
@@ -111,5 +112,26 @@
     <string name="notify_logging">Aufzeichnungsdaten</string>
     <string name="notify_audible_logging">Audible aktiviert, aufzeichnungsdaten</string>
     <string name="notify_audible">Audible aktiviert</string>
+
+    <!-- Laser -->
+    <string name="rangefinder_connected">Entfernungsmesser verbunden</string>
+    <string name="rangefinder_searching">Entfernungsmesser suchen…</string>
+    <string-array name="metric_modes">
+        <item>Meter</item>
+        <item>Fuß</item>
+    </string-array>
+    <string-array name="metric_modes_values">
+        <item>meters</item>
+        <item>feet</item>
+    </string-array>
+    <string name="help_profiles">
+        <![CDATA[
+Vergleichen Sie Flugprofildaten gegen Geländeprofilen aus bekannten Ausgangspunkten.
+
+Das Diagramm zeigt die horizontale und vertikale Entfernung vom Startpunkt.
+
+https://baseline.ws/help/app#profiles
+        ]]>
+    </string>
 
 </resources>

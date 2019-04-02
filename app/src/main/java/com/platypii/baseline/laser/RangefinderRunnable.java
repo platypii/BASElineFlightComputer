@@ -44,7 +44,7 @@ class RangefinderRunnable implements Runnable {
     private RangefinderProtocol protocol;
 
     @NonNull
-    private FirebaseAnalytics firebaseAnalytics;
+    private final FirebaseAnalytics firebaseAnalytics;
 
     RangefinderRunnable(@NonNull RangefinderService service, @NonNull Context context, @NonNull BluetoothAdapter bluetoothAdapter) {
         this.service = service;
@@ -136,7 +136,7 @@ class RangefinderRunnable implements Runnable {
         }
     }
 
-    private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
+    private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);

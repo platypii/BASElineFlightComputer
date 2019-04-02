@@ -8,6 +8,14 @@
     android:padding="0dp"
     tools:context="com.platypii.baseline.views.laser.LaserActivity">
 
+    <TextView
+            android:id="@+id/helpProfiles"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:autoLink="web"
+            android:text="@string/help_profiles"/>
+
     <ListView
             android:id="@android:id/list"
             android:layout_width="match_parent"

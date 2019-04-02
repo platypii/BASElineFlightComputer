@@ -10,10 +10,10 @@ import java.util.List;
 // Wait for bc-b7:
 public class RfSentenceIterator implements Iterator<byte[]> {
 
-    private List<Byte> byteBuffer = new ArrayList<>();
+    private final List<Byte> byteBuffer = new ArrayList<>();
 
     // Sentences ready to read
-    private List<byte[]> sentences = new ArrayList<>();
+    private final List<byte[]> sentences = new ArrayList<>();
 
     private int state = 0;
 
