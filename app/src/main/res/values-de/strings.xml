@@ -104,6 +104,8 @@
     <string name="pref_sign_out_description">Abmelden</string>
     <string name="pref_help">Hilfebereich</string>
     <string name="pref_help_description">BASEline Bedienungsanleitung</string>
+    <string name="pref_privacy">Datenschutzrichtlinie</string>
+    <string name="pref_privacy_description">BASEline-Datenschutzrichtlinie</string>
 
     <!-- Notifications -->
     <string name="notify_logging">Aufzeichnungsdaten</string>

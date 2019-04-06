@@ -104,6 +104,8 @@
     <string name="pref_sign_out_description">Déconnecter</string>
     <string name="pref_help">Page d\'aide</string>
     <string name="pref_help_description">Manuel de l\'utilisateur BASEline</string>
+    <string name="pref_privacy">Politique de confidentialité</string>
+    <string name="pref_privacy_description">Politique de confidentialité de BASEline</string>
 
     <!-- Notifications -->
     <string name="notify_audible">Audible activé</string>

@@ -138,6 +138,16 @@ public class Intents {
         context.startActivity(intent);
     }
 
+    /**
+     * Open privacy policy page in browser
+     */
+    public static void openPrivacyUrl(@NonNull Context context) {
+        final Uri uri = Uri.parse("https://baseline.ws/privacy");
+        Log.i(TAG, "Opening privacy url " + uri);
+        final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        context.startActivity(intent);
+    }
+
     public static void openBluetoothSettings(@NonNull Context context) {
         try {
             final Intent intent = new Intent(Intent.ACTION_MAIN, null);

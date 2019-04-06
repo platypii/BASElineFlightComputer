@@ -104,6 +104,8 @@
     <string name="pref_sign_out_description">Sign out</string>
     <string name="pref_help">Help</string>
     <string name="pref_help_description">BASEline user manual</string>
+    <string name="pref_privacy">Privacy</string>
+    <string name="pref_privacy_description">BASEline privacy policy</string>
 
     <!-- Notifications -->
     <string name="notify_audible">Audible enabled</string>

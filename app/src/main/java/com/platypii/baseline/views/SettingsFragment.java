@@ -55,6 +55,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         signInPreference = findPreference("sign_in");
         signInPreference.setOnPreferenceClickListener(this);
         findPreference("help_page").setOnPreferenceClickListener(this);
+        findPreference("privacy_page").setOnPreferenceClickListener(this);
     }
 
     @Override
@@ -150,6 +151,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             // Handle help page click
             firebaseAnalytics.logEvent("click_help", null);
             Intents.openHelpUrl(getActivity());
+        } else if (preference.getKey().equals("privacy_page")) {
+            // Handle privacy policy page click
+            firebaseAnalytics.logEvent("click_privacy", null);
+            Intents.openPrivacyUrl(getActivity());
         }
         return false;
     }

@@ -45,4 +45,9 @@
         android:title="@string/pref_help"
         android:summary="@string/pref_help_description"/>
 
+    <Preference
+        android:key="privacy_page"
+        android:title="@string/pref_privacy"
+        android:summary="@string/pref_privacy_description"/>
+
 </PreferenceScreen>
