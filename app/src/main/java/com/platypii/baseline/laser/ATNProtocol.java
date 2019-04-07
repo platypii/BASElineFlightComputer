@@ -11,6 +11,7 @@ import org.greenrobot.eventbus.EventBus;
 /**
  * This class contains ids, commands, and decoders for ATN laser rangefinders.
  */
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 class ATNProtocol implements RangefinderProtocol {
     private static final String TAG = "ATNProtocol";
 

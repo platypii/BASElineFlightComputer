@@ -17,6 +17,7 @@ import org.greenrobot.eventbus.EventBus;
 /**
  * This class contains ids, commands, and decoders for Sig Sauer laser rangefinders.
  */
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 class SigSauerProtocol implements RangefinderProtocol {
     private static final String TAG = "SigSauerProtocol";
 

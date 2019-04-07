@@ -47,9 +47,9 @@ public class BluetoothActivity extends BaseActivity {
         bluetoothSwitch.setChecked(Services.bluetooth.preferences.preferenceEnabled);
         bluetoothStatus.setText(Services.bluetooth.getStatusMessage(this));
         if (Services.bluetooth.getState() == BluetoothState.BT_CONNECTED) {
-            bluetoothStatus.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
+            bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
         } else {
-            bluetoothStatus.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
+            bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
         }
     }
 

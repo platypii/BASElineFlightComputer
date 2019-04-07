@@ -21,7 +21,7 @@ public class LaserMeasurement {
         this.x = x;
         this.y = y;
         if (x < 0) {
-            throw new IllegalArgumentException("Invalid horizontal distance " + x + " " + y);
+            Log.w(TAG, "Invalid horizontal distance " + x + " " + y);
         }
     }
 
@@ -68,6 +68,12 @@ public class LaserMeasurement {
         }
     }
 
+    /**
+     * There are three laser input formats:
+     * Quadrant 2: 20,-100
+     * Quadrant 1: 20,100 (laser from bottom)
+     * Quadrant 4: -100,20 (reversed y,x)
+     */
     public static List<LaserMeasurement> reorder(List<LaserMeasurement> points) {
         // Find height and width range
         final Range xRange = new Range();
@@ -76,8 +82,16 @@ public class LaserMeasurement {
             xRange.expand(point.x);
             yRange.expand(point.y);
         }
-        // Check if reversible
-        if (yRange.min >= 0) {
+        if (xRange.min < 0 && xRange.max <= 0 && yRange.min >= 0) {
+            // Quadrant 4: Assume coordinates are reversed y,x
+            final List<LaserMeasurement> swapped = new ArrayList<>();
+            for (LaserMeasurement point : points) {
+                //noinspection SuspiciousNameCombination
+                swapped.add(new LaserMeasurement(point.y, point.x));
+            }
+            return swapped;
+        } else if (yRange.min >= 0 && yRange.max > 0) {
+            // Quadrant 1: Assume lasering from bottom
             final List<LaserMeasurement> reversed = new ArrayList<>();
             for (LaserMeasurement point : points) {
                 reversed.add(new LaserMeasurement(xRange.max - point.x, point.y - yRange.max));
@@ -88,6 +102,7 @@ public class LaserMeasurement {
             Collections.sort(reversed, (l1, l2) -> Double.compare(l1.x, l2.x));
             return reversed;
         } else {
+            // Quadrant 2: default x,y
             return points;
         }
     }

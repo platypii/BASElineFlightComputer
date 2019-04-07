@@ -33,7 +33,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 
 public class LaserEditFragment extends Fragment implements MyLocationListener {
-    private static final String TAG = "LaserEditFrag";
 
     private final FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
 

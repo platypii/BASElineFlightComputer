@@ -11,6 +11,7 @@ import com.platypii.baseline.views.charts.layers.TrackProfileLayerLocal;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerRemote;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.tracks.TrackListFragment;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,7 +48,7 @@ public class LaserPanelFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
-        final LaserActivity laserActivity = (LaserActivity) getActivity();
+        final Activity laserActivity = getActivity();
         if (laserActivity != null) {
             listAdapter = new ProfileAdapter(laserActivity);
             setListAdapter(listAdapter);
@@ -133,17 +134,17 @@ public class LaserPanelFragment extends ListFragment {
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateLayers(ProfileLayerEvent event) {
         if (listAdapter != null) {
             listAdapter.setLayers(layers.layers);
         }
         updateViews();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }

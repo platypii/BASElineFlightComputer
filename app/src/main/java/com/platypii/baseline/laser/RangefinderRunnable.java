@@ -25,6 +25,7 @@ import static com.platypii.baseline.bluetooth.BluetoothState.*;
  * Thread that reads from bluetooth laser rangefinder.
  * Laser measurements are emitted as EventBus messages.
  */
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 class RangefinderRunnable implements Runnable {
     private static final String TAG = "RangefinderRunnable";
 
@@ -62,17 +63,12 @@ class RangefinderRunnable implements Runnable {
         }
         // Scan for rangefinders
         // TODO: Set timeout
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            startScan();
-        } else {
-            Log.e(TAG, "Android 5.0+ required for bluetooth LE");
-        }
+        startScan();
     }
 
     /**
      * Scan for bluetooth LE devices that look like a rangefinder
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void startScan() {
         Log.i(TAG, "Scanning for rangefinder");
         service.setState(BT_STARTING);
@@ -113,7 +109,6 @@ class RangefinderRunnable implements Runnable {
         bluetoothScanner.startScan(scanFilters, scanSettings, scanCallback);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void connect(@NonNull BluetoothDevice device) {
         stopScan();
         service.setState(BT_CONNECTING);
@@ -125,7 +120,6 @@ class RangefinderRunnable implements Runnable {
         firebaseAnalytics.logEvent("rangefinder_found", bundle);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void stopScan() {
         if (service.getState() != BT_STARTING) {
             Exceptions.report(new IllegalStateException("Scanner shouldn't exist in state " + service.getState()));
@@ -181,7 +175,7 @@ class RangefinderRunnable implements Runnable {
             bluetoothGatt = null;
         }
         // Stop scanning
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && service.getState() == BT_STARTING) {
+        if (service.getState() == BT_STARTING) {
             stopScan();
         }
         service.setState(BT_STOPPING);

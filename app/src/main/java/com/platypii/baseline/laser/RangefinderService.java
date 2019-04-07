@@ -8,8 +8,10 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import org.greenrobot.eventbus.EventBus;
 
@@ -38,13 +40,18 @@ public class RangefinderService implements BaseService {
         }
         final Activity activity = (Activity) context;
         // TODO: Check for location permission? Can't scan without location permission
-        startAsync(activity);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            startAsync(activity);
+        } else {
+            Log.e(TAG, "Android 5.0+ required for bluetooth LE");
+        }
     }
 
     /**
      * Starts bluetooth in an asynctask.
      * Even though we're mostly just starting the bluetooth thread, calling getAdapter can be slow.
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void startAsync(@NonNull final Activity activity) {
         AsyncTask.execute(() -> {
             bluetoothAdapter = getAdapter(activity);
@@ -88,7 +95,7 @@ public class RangefinderService implements BaseService {
     public synchronized void stop() {
         Log.i(TAG, "Stopping rangefinder service");
         // Stop thread
-        if (bluetoothRunnable != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bluetoothRunnable != null) {
             bluetoothRunnable.stop();
             try {
                 bluetoothThread.join(1000);
