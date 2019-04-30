@@ -130,7 +130,7 @@ public class DownloadTask implements Runnable {
         }
         // Copy input stream to output stream
         final OutputStream os = new FileOutputStream(file);
-        final byte buffer[] = new byte[1024];
+        final byte[] buffer = new byte[1024];
         int bytesRead;
         int bytesCopied = 0;
         while ((bytesRead = is.read(buffer)) != -1) {

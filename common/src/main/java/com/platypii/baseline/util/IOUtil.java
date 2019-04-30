@@ -9,7 +9,7 @@ import java.io.OutputStream;
 public class IOUtil {
 
     public static void copy(InputStream input, @NonNull OutputStream output) throws IOException {
-        final byte buffer[] = new byte[1024];
+        final byte[] buffer = new byte[1024];
         int bytesRead;
         while ((bytesRead = input.read(buffer)) != -1) {
             output.write(buffer, 0, bytesRead);
@@ -19,7 +19,7 @@ public class IOUtil {
 
     public static String toString(@NonNull InputStream input) throws IOException {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        final byte buffer[] = new byte[1024];
+        final byte[] buffer = new byte[1024];
         int bytesRead;
         while ((bytesRead = input.read(buffer)) != -1) {
             output.write(buffer, 0, bytesRead);

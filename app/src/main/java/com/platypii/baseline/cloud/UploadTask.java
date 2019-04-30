@@ -121,7 +121,7 @@ public class UploadTask {
      */
     private static void copy(@NonNull TrackFile trackFile, @NonNull OutputStream output) throws IOException {
         final InputStream is = new FileInputStream(trackFile.file);
-        final byte buffer[] = new byte[1024];
+        final byte[] buffer = new byte[1024];
         int bytesRead;
         int bytesCopied = 0;
         while ((bytesRead = is.read(buffer)) != -1) {

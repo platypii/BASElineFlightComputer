@@ -28,9 +28,9 @@ public class Plot {
 
     // Bounds are indexed per-axis
     // Data bounds get expanded as we see points
-    private Bounds dataBounds[];
+    private Bounds[] dataBounds;
     // Plot bounds get updated once at the beginning of drawPlot
-    Bounds bounds[];
+    Bounds[] bounds;
 
     // Chart layers
     final List<ChartLayer> layers = new ArrayList<>();

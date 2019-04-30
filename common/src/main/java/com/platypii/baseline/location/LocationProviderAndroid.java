@@ -16,7 +16,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 // TODO: Switch to GnssStatus when minsdk >= 24
-@SuppressWarnings("deprecation")
 class LocationProviderAndroid extends LocationProvider implements LocationListener, GpsStatus.Listener {
     private static final String TAG = "LocationProviderAndroid";
 

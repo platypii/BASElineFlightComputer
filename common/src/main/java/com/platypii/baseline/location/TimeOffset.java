@@ -1,5 +1,6 @@
 package com.platypii.baseline.location;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**
@@ -8,25 +9,40 @@ import android.util.Log;
  * This class stores the global state for tracking this clock difference.
  */
 public class TimeOffset {
+    // If phone time is different than GPS time by at least adjustThreshold, then we will adjust.
+    // If this time is too short, then lag can cause frequent time shifts and messes up the data.
+    private static final long adjustThreshold = 60000; // milliseconds
+    private static final long warnThreshold = 1000; // milliseconds
 
     // phone time = GPS time + offset
     private static long phoneOffsetMillis = 0;
+    private static boolean initialized = false;
 
     /**
      * Update the time offset based on a received gps signal
      * @param provider the name of the gps source so we can log
      * @param gpsTime gps time in milliseconds
      */
-    public static void update(String provider, long gpsTime) {
+    public static void update(@NonNull String provider, long gpsTime) {
         final long clockOffset = System.currentTimeMillis() - gpsTime;
-        if (Math.abs(phoneOffsetMillis - clockOffset) > 1000) {
-            if (clockOffset < 0) {
-                Log.w(provider, "Adjusting clock: phone behind gps by " + (-clockOffset) + "ms");
-            } else {
-                Log.w(provider, "Adjusting clock: phone ahead of gps by " + clockOffset + "ms");
-            }
+        if (!initialized) {
+            Log.i(provider, "Initial time offset: " + offsetString(clockOffset));
+            phoneOffsetMillis = clockOffset;
+            initialized = true;
+        } else if (Math.abs(phoneOffsetMillis - clockOffset) > adjustThreshold) {
+            Log.w(provider, "Adjusting time offset: " + offsetString(clockOffset));
+            phoneOffsetMillis = clockOffset;
+        } else if (Math.abs(phoneOffsetMillis - clockOffset) > warnThreshold) {
+            Log.w(provider, "Warning time offset: " + offsetString(clockOffset));
         }
-        phoneOffsetMillis = clockOffset;
+    }
+
+    private static String offsetString(long clockOffset) {
+        if (clockOffset < 0) {
+            return "phone behind gps by " + (-clockOffset) + "ms";
+        } else {
+            return "phone ahead of gps by " + clockOffset + "ms";
+        }
     }
 
     public static long gpsToPhoneTime(long gpsTime) {

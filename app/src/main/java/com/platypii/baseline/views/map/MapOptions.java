@@ -26,8 +26,8 @@ class MapOptions {
         final double altitude = Services.alti.altitudeAGL();
 
         // Piecewise linear zoom function
-        final double alts[] = {100, 600, 1200, 2000};
-        final float zooms[] = {17f, 13.5f, 12.8f, 11.8f};
+        final double[] alts = {100, 600, 1200, 2000};
+        final float[] zooms = {17f, 13.5f, 12.8f, 11.8f};
 
         // Find which linear segment altitude lies in
         // when loop completes, alts[index] <= altitude < alts[index+1]

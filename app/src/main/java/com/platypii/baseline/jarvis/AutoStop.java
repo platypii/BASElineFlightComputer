@@ -71,9 +71,10 @@ public class AutoStop {
             }
         } else if (state == STATE_EXITED) {
             // Look for landing
-            final double altNormalized = (alt - altMin) / (altMax - altMin);
-            if (FlightMode.getMode(loc) == FlightMode.MODE_GROUND && !(loc.groundSpeed() > 5) && altMax - altMin > minHeight && altNormalized < 0.1) {
-                prLanded += (1 - prLanded) * beta;
+            if (FlightMode.getMode(loc) == FlightMode.MODE_GROUND && !(loc.groundSpeed() > 5) && altMax - altMin > minHeight) {
+                // (1 - normalizedAlt) makes this more likely to trigger on ground
+                final double altNormalized = (alt - altMin) / (altMax - altMin);
+                prLanded += (1 - prLanded) * (1 - altNormalized) * beta;
             } else {
                 prLanded -= (1 - prLanded) * 0.25;
             }

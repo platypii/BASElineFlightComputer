@@ -137,7 +137,7 @@ class NMEA {
      * $GPPWR,04C3,0,0,0,0,00,0,0,97, 1 9 ,S00 // not charging 04C3 = 1219 = ~70%
      * $GPPWR,0501,1,0,1,1,00,0,0,97, 1 9 ,S00 // charging
      */
-    static float parsePowerLevel(@NonNull String split[]) {
+    static float parsePowerLevel(@NonNull String[] split) {
         if (!"$GPPWR".equals(split[0])) {
             Exceptions.report(new IllegalStateException("Parse power level should only be called on GPPWR"));
         }

@@ -27,7 +27,7 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
     @Override
     protected void handleNmea(long timestamp, @NonNull String nmea) throws NMEAException {
         // Parse NMEA command
-        final String split[] = NMEA.splitNmea(nmea);
+        final String[] split = NMEA.splitNmea(nmea);
         if (split[0].equals("$GPPWR")) {
             bluetooth.powerLevel = NMEA.parsePowerLevel(split);
             bluetooth.charging = Numbers.parseInt(split[5], 0) == 1;
