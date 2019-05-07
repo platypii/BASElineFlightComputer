@@ -39,43 +39,65 @@ public class Tasks implements BaseService {
 
     public void add(Task task) {
         Log.i(TAG, "Adding task " + task);
-        pending.add(task);
+        synchronized (pending) {
+            pending.add(task);
+        }
         if (task.taskType().persistent()) {
             PendingPreferences.save(context, pending);
         }
         tendQueue();
     }
 
-    private synchronized void tendQueue() {
-        Log.i(TAG, "Tending task queue: " + pending.size() + " tasks");
-        if (running == null && !pending.isEmpty()) {
-            // Start first pending task
-            running = pending.get(0);
-            Log.i(TAG, "Running task: " + running);
-            new Thread(() -> {
-                // Run in background
-                try {
-                    running.run(context);
-                    // Success
-                    Log.i(TAG, "Task success: " + running);
-                    running = null;
-                    pending.remove(0);
-                    // Check for next pending task
-                    tendQueue();
-                } catch (AuthRequiredException e) {
-                    // Wait for sign in
-                    running = null;
-                } catch (Exception e) {
-                    if (Services.cloud.isNetworkAvailable()) {
-                        Log.e(TAG, "Task failed: " + running, e);
-                        Exceptions.report(e);
-                    } else {
-                        Log.w(TAG, "Task failed, network unavailable: " + running, e);
-                    }
-                    running = null;
-                    // TODO: Try again later
+    private void tendQueue() {
+        synchronized (pending) {
+            Log.i(TAG, "Tending task queue: " + pending.size() + " tasks");
+            if (running == null && !pending.isEmpty()) {
+                // Start first pending task
+                running = pending.remove(0);
+                runAsync();
+            }
+        }
+    }
+
+    /**
+     * Run `running` task in a new thread
+     */
+    private void runAsync() {
+        Log.i(TAG, "Running task: " + running);
+        new Thread(() -> {
+            // Run in background
+            try {
+                running.run(context);
+                // Success
+                runSuccess();
+            } catch (AuthRequiredException e) {
+                // Wait for sign in
+                runFailed();
+            } catch (Exception e) {
+                if (Services.cloud.isNetworkAvailable()) {
+                    Log.e(TAG, "Task failed: " + running, e);
+                    Exceptions.report(e);
+                } else {
+                    Log.w(TAG, "Task failed, network unavailable: " + running, e);
                 }
-            }).start();
+                runFailed();
+                // TODO: Try again later
+            }
+        }).start();
+    }
+
+    private void runSuccess() {
+        Log.i(TAG, "Task success: " + running);
+        running = null;
+        PendingPreferences.save(context, pending);
+        // Check for next pending task
+        tendQueue();
+    }
+
+    private void runFailed() {
+        synchronized (pending) {
+            pending.add(0, running);
+            running = null;
         }
     }
 
