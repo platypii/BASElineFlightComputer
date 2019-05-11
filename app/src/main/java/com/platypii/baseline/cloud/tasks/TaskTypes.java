@@ -1,7 +1,7 @@
 package com.platypii.baseline.cloud.tasks;
 
 import com.platypii.baseline.cloud.tracks.TrackUploadTaskType;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class TaskTypes {
 

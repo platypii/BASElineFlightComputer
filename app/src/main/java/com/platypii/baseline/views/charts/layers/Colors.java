@@ -1,6 +1,6 @@
 package com.platypii.baseline.views.charts.layers;
 
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 
 public class Colors {
 

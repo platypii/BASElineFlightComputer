@@ -5,7 +5,7 @@ import com.platypii.baseline.audible.AudibleMode;
 import com.platypii.baseline.audible.AudibleSample;
 import com.platypii.baseline.audible.AudibleSettings;
 import com.platypii.baseline.util.Convert;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class GlideRatioMode extends AudibleMode {
 

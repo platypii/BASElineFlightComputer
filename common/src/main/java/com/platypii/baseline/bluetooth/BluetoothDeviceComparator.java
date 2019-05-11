@@ -1,7 +1,7 @@
 package com.platypii.baseline.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.util.Comparator;
 
 /**

@@ -1,7 +1,7 @@
 package com.platypii.baseline.sensors;
 
 import com.platypii.baseline.measurements.Measurement;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Used by Managers to notify of updated sensors

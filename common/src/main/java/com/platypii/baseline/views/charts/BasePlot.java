@@ -2,7 +2,7 @@ package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.views.charts.layers.ChartLayer;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 interface BasePlot {
 

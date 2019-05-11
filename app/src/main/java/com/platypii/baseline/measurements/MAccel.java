@@ -1,7 +1,7 @@
 package com.platypii.baseline.measurements;
 
 import com.platypii.baseline.util.Numbers;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Copies an android SensorEvent

@@ -1,6 +1,6 @@
 package com.platypii.baseline.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

@@ -8,7 +8,7 @@ import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.cloud.tasks.TaskTypes;
 import com.platypii.baseline.tracks.TrackFile;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 
 public class TrackUploadTask implements Task {

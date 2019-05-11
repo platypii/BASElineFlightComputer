@@ -8,8 +8,8 @@ import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.views.charts.layers.EllipseLayer;
 import android.content.Context;
 import android.graphics.Paint;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import java.util.List;
 

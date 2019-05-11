@@ -1,6 +1,6 @@
 package com.platypii.baseline.audible;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Describes an audible mode such as horizontal speed, total speed, glide, etc.

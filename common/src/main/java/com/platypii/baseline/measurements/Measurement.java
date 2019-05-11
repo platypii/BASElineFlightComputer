@@ -1,6 +1,6 @@
 package com.platypii.baseline.measurements;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * A generic measurement (alti, gps, gyro, etc)

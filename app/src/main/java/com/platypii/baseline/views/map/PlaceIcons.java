@@ -1,7 +1,7 @@
 package com.platypii.baseline.views.map;
 
 import com.platypii.baseline.R;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 

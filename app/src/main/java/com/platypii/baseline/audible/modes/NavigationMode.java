@@ -6,7 +6,7 @@ import com.platypii.baseline.audible.AudibleSample;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Navigation mode is intended to help navigate to a target destination

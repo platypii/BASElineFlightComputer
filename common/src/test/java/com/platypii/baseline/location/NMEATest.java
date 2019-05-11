@@ -1,6 +1,6 @@
 package com.platypii.baseline.location;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;

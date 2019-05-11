@@ -8,8 +8,8 @@ import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.location.GpsStatus;
 import android.location.LocationManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {

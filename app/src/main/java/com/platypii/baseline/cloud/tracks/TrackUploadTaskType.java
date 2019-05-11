@@ -3,7 +3,7 @@ package com.platypii.baseline.cloud.tracks;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.tracks.TrackFile;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import java.io.File;
 

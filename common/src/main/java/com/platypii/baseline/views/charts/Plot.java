@@ -7,7 +7,7 @@ import com.platypii.baseline.views.charts.layers.ChartLayer;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 

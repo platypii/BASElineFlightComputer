@@ -2,7 +2,7 @@ package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Range;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import java.util.List;
 
 /**

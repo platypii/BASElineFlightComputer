@@ -1,6 +1,6 @@
 package com.platypii.baseline.location;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 
 /**

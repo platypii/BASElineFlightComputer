@@ -2,8 +2,8 @@ package com.platypii.baseline.views.charts.layers;
 
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackData;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 
 public class TrackProfileLayer extends ProfileLayer {
 

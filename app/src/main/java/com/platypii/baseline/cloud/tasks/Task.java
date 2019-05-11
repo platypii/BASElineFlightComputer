@@ -1,7 +1,7 @@
 package com.platypii.baseline.cloud.tasks;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Any background task

@@ -12,8 +12,8 @@ import com.platypii.baseline.util.SyncedList;
 import com.platypii.baseline.views.charts.layers.EllipseLayer;
 import android.content.Context;
 import android.graphics.Paint;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 
 public class PolarPlotLive extends PlotSurface implements MyLocationListener {

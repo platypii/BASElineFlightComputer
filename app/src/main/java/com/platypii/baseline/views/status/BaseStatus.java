@@ -1,6 +1,6 @@
 package com.platypii.baseline.views.status;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 /**
  * Represents a status view that can be added to the home screen.

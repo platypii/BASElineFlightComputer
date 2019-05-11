@@ -5,7 +5,7 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.CSVHeader;
 import com.platypii.baseline.util.kalman.Filter;
 import com.platypii.baseline.util.kalman.FilterKalman;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import java.io.*;
 import java.util.ArrayList;

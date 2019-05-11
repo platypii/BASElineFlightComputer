@@ -7,7 +7,7 @@ import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

@@ -9,7 +9,7 @@ import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.BaseActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;

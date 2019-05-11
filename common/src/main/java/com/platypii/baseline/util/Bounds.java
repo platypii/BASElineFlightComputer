@@ -1,6 +1,6 @@
 package com.platypii.baseline.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import java.util.Locale;
 

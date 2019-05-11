@@ -3,8 +3,8 @@ package com.platypii.baseline.views.tracks;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class TrackLoader {
 

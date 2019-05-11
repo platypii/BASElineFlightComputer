@@ -1,6 +1,6 @@
 package com.platypii.baseline.cloud.tasks;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public interface TaskType {
 

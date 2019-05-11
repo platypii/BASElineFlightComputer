@@ -4,8 +4,8 @@ import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.IntBounds;
 import com.platypii.baseline.util.Numbers;
 import android.graphics.Paint;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 /**

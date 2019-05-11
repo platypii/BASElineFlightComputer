@@ -7,7 +7,7 @@ import com.platypii.baseline.util.RefreshRateEstimator;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

@@ -3,7 +3,7 @@ package com.platypii.baseline.jarvis;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import android.os.Handler;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 /**

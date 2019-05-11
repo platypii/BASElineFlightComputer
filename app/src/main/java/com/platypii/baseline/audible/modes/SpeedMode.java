@@ -2,7 +2,7 @@ package com.platypii.baseline.audible.modes;
 
 import com.platypii.baseline.audible.AudibleMode;
 import com.platypii.baseline.util.Convert;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 abstract class SpeedMode extends AudibleMode {
 

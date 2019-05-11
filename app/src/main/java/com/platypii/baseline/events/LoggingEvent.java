@@ -1,7 +1,7 @@
 package com.platypii.baseline.events;
 
 import com.platypii.baseline.tracks.TrackFile;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Indicates that logging has either started or stopped

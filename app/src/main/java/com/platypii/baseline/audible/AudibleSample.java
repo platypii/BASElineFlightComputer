@@ -1,6 +1,6 @@
 package com.platypii.baseline.audible;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Represents a single audible sample and phrase

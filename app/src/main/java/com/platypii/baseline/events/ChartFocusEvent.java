@@ -1,7 +1,7 @@
 package com.platypii.baseline.events;
 
 import com.platypii.baseline.measurements.MLocation;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Indicates that audible has either started or stopped

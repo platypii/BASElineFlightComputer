@@ -8,7 +8,7 @@ import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
 import com.platypii.baseline.util.MD5;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;

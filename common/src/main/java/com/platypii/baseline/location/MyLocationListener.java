@@ -1,7 +1,7 @@
 package com.platypii.baseline.location;
 
 import com.platypii.baseline.measurements.MLocation;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Used by MyLocationManager to notify activities of updated location

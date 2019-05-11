@@ -6,7 +6,7 @@ import com.platypii.baseline.audible.modes.NavigationMode;
 import com.platypii.baseline.audible.modes.TotalSpeedMode;
 import com.platypii.baseline.audible.modes.VerticalSpeedMode;
 import com.platypii.baseline.util.Exceptions;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Contains the default audible modes

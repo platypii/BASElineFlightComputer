@@ -1,7 +1,7 @@
 package com.platypii.baseline;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * A baseline service that can be started and stopped

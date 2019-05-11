@@ -5,7 +5,7 @@ import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.Locale;

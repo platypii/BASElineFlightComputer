@@ -1,7 +1,7 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.cloud.CloudData;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Manages track state: recording, not uploaded, uploading, uploaded

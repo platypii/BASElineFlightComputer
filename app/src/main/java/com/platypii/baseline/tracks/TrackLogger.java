@@ -12,7 +12,7 @@ import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.StringBuilderUtil;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import java.io.BufferedWriter;
 import java.io.File;

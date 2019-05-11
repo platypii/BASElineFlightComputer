@@ -1,7 +1,7 @@
 package com.platypii.baseline.jarvis;
 
 import com.platypii.baseline.measurements.MLocation;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Determines the current flight mode
