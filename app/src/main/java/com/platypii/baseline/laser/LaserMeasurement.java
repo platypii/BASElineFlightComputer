@@ -31,7 +31,7 @@ public class LaserMeasurement {
         return String.format(Locale.US, "%.1f, %.1f", x, y);
     }
 
-    public static List<LaserMeasurement> parse(String pointString, boolean metric, boolean strict) throws ParseException {
+    public static List<LaserMeasurement> parse(@NonNull String pointString, boolean metric, boolean strict) throws ParseException {
         final List<LaserMeasurement> points = new ArrayList<>();
         final String[] lines = pointString.split("\n");
         final double units = metric ? 1 : Convert.FT;
@@ -68,6 +68,15 @@ public class LaserMeasurement {
         }
     }
 
+    public static CharSequence render(List<LaserMeasurement> points, boolean metric) {
+        final double units = metric ? 1 : 3.28084;
+        final StringBuilder sb = new StringBuilder();
+        for (LaserMeasurement point : points) {
+            sb.append(String.format(Locale.US, "%.1f, %.1f\n", point.x * units, point.y * units));
+        }
+        return sb;
+    }
+
     /**
      * There are three laser input formats:
      * Quadrant 2: 20,-100
@@ -89,6 +98,8 @@ public class LaserMeasurement {
                 //noinspection SuspiciousNameCombination
                 swapped.add(new LaserMeasurement(point.y, point.x));
             }
+            // Sort by horiz
+            Collections.sort(swapped, (l1, l2) -> Double.compare(l1.x, l2.x));
             return swapped;
         } else if (yRange.min >= 0 && yRange.max > 0) {
             // Quadrant 1: Assume lasering from bottom
@@ -103,15 +114,11 @@ public class LaserMeasurement {
             return reversed;
         } else {
             // Quadrant 2: default x,y
-            return points;
+            final List<LaserMeasurement> sorted = new ArrayList<>(points);
+            // Sort by horiz
+            Collections.sort(sorted, (l1, l2) -> Double.compare(l1.x, l2.x));
+            return sorted;
         }
     }
 
-    public static CharSequence render(List<LaserMeasurement> points) {
-        final StringBuilder sb = new StringBuilder();
-        for (LaserMeasurement point : points) {
-            sb.append(String.format(Locale.US, "%.1f, %.1f\n", point.x, point.y));
-        }
-        return sb;
-    }
 }

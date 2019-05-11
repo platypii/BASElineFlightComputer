@@ -85,6 +85,8 @@ public abstract class BaseActivity extends FragmentActivity {
             } else if (userClickedSignIn && event instanceof AuthState.SignedOut) {
                 Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
             }
+            // Clear laser layers
+            LaserLayers.getInstance().layers.clear();
         }
     }
 
@@ -246,8 +248,6 @@ public abstract class BaseActivity extends FragmentActivity {
         firebaseAnalytics.setUserId(null);
         // Notify listeners
         updateAuthState(new AuthState.SignedOut());
-        // Clear laser layers
-        LaserLayers.getInstance().layers.clear();
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,8 +26,10 @@ public class LaserViewFragment extends Fragment {
         if (laser != null) {
             final TextView laserName = view.findViewById(R.id.laserName);
             final TextView laserText = view.findViewById(R.id.laserText);
-            laserName.setText(laser.name);
-            laserText.setText(LaserMeasurement.render(laser.points));
+            final String units = Convert.metric ? " (m)" : " (ft)";
+            final String name = laser.name + units;
+            laserName.setText(name);
+            laserText.setText(LaserMeasurement.render(laser.points, Convert.metric));
         } else {
             Exceptions.report(new IllegalStateException("Failed to load laser"));
         }

@@ -213,13 +213,14 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserMeasure(LaserMeasurement meas) {
         // Parse lasers
-        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
+        final boolean metric = isMetric();
+        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), metric);
         // Add measurement to laser points
         points.add(meas);
         // Sort by horiz
         Collections.sort(points, (l1, l2) -> Double.compare(l1.x, l2.x));
         // Update text box
-        laserText.setText(LaserMeasurement.render(points));
+        laserText.setText(LaserMeasurement.render(points, metric));
         // Update chart in parent activity
         updateLayers();
     }

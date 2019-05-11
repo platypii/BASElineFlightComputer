@@ -84,5 +84,6 @@ public class LaserActivity extends BaseActivity {
         for (ProfileLayer layer : layers) {
             chart.removeLayer(layer);
         }
+        layers.clear();
     }
 }

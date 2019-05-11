@@ -8,14 +8,15 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface LaserApi {
 
     @GET("lasers.json")
     Call<List<LaserProfile>> getPublic();
 
-    @GET("users/{userId}/lasers.json")
-    Call<List<LaserProfile>> byUser(@Path("userId") String userId);
+    @GET("lasers.json")
+    Call<List<LaserProfile>> byUser(@Query("userid") String userId);
 
     @POST("lasers")
     Call<LaserProfile> post(@Body LaserProfile laserProfile);
