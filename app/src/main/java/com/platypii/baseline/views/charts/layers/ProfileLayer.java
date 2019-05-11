@@ -2,7 +2,6 @@ package com.platypii.baseline.views.charts.layers;
 
 import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.views.charts.Plot;
-import android.graphics.Paint;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 

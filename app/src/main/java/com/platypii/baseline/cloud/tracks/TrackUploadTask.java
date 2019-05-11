@@ -1,8 +1,8 @@
 package com.platypii.baseline.cloud.tracks;
 
-import com.platypii.baseline.cloud.tasks.AuthRequiredException;
 import com.platypii.baseline.cloud.UploadFailedException;
 import com.platypii.baseline.cloud.UploadTask;
+import com.platypii.baseline.cloud.tasks.AuthRequiredException;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.cloud.tasks.TaskTypes;

@@ -2,9 +2,9 @@ package com.platypii.baseline.audible;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 

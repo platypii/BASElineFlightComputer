@@ -1,7 +1,6 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.measurements.MLocation;
-
 import androidx.annotation.NonNull;
 import java.io.File;
 import java.util.List;

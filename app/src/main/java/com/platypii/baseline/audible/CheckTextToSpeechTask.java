@@ -10,9 +10,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.AsyncTask;
 import android.speech.tts.TextToSpeech;
-import androidx.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 
 /**
  * A background task to check for TTS data

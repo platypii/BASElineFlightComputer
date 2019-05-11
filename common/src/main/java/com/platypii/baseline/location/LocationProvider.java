@@ -4,11 +4,10 @@ import com.platypii.baseline.BaseService;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.RefreshRateEstimator;
-
 import android.content.Context;
 import android.os.AsyncTask;
-import androidx.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 

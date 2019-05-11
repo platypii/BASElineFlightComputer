@@ -12,14 +12,17 @@ import com.platypii.baseline.views.charts.layers.TrackProfileLayerRemote;
 import com.platypii.baseline.views.tracks.TrackListFragment;
 import com.platypii.baseline.views.tracks.TrackListItem;
 import com.platypii.baseline.views.tracks.TrackLoader;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.AdapterView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import java.io.File;
 
-import static com.platypii.baseline.views.tracks.TrackListItem.*;
+import static com.platypii.baseline.views.tracks.TrackListItem.ListTrackData;
+import static com.platypii.baseline.views.tracks.TrackListItem.ListTrackFile;
+import static com.platypii.baseline.views.tracks.TrackListItem.TYPE_TRACK_LOCAL;
+import static com.platypii.baseline.views.tracks.TrackListItem.TYPE_TRACK_REMOTE;
 
 public class TrackPickerFragment extends TrackListFragment {
     @Override

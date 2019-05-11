@@ -4,8 +4,8 @@ import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import androidx.annotation.Nullable;
 import android.util.Log;
+import androidx.annotation.Nullable;
 
 public class ForegroundService extends Service {
     private static final String TAG = "ForegroundService";

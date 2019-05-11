@@ -2,8 +2,8 @@ package com.platypii.baseline.places;
 
 import com.platypii.baseline.util.CSVHeader;
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

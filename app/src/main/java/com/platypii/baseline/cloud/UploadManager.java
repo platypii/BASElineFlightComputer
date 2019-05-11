@@ -7,8 +7,8 @@ import com.platypii.baseline.cloud.tracks.TrackUploadTask;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 

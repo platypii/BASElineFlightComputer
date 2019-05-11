@@ -8,8 +8,8 @@ import com.platypii.baseline.cloud.cache.LaserCache;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.laser.LaserProfile;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -30,6 +30,7 @@ public class LaserListing implements BaseService {
     public void start(@NonNull Context context) {
         this.context = context;
         cache.start(context);
+        listAsync(context, false);
         EventBus.getDefault().register(this);
     }
 

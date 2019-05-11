@@ -8,9 +8,9 @@ import com.platypii.baseline.views.charts.layers.Colors;
 import com.platypii.baseline.views.charts.layers.ProfileFocusLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
 import android.content.Context;
+import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.AttributeSet;
 import java.util.List;
 
 public class FlightProfile extends PlotView {

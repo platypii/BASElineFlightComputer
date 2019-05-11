@@ -3,7 +3,7 @@ package com.platypii.baseline.cloud.lasers;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.laser.LaserProfile;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 
 public class LaserUploadTaskType implements TaskType {

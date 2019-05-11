@@ -1,9 +1,9 @@
 package com.platypii.baseline.location;
 
 import com.platypii.baseline.util.Exceptions;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;

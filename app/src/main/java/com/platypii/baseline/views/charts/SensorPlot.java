@@ -6,8 +6,8 @@ import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.util.SyncedList;
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
+import androidx.annotation.NonNull;
 import java.util.Iterator;
 
 public class SensorPlot extends PlotSurface {

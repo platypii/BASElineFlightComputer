@@ -1,16 +1,16 @@
 package com.platypii.baseline.cloud.lasers;
 
 import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.tasks.AuthRequiredException;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.RetrofitClient;
+import com.platypii.baseline.cloud.tasks.AuthRequiredException;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.cloud.tasks.TaskTypes;
 import com.platypii.baseline.laser.LaserProfile;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import java.io.IOException;
 import retrofit2.Response;

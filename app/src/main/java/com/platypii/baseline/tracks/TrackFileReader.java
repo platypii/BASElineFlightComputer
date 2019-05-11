@@ -5,14 +5,21 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.CSVHeader;
 import com.platypii.baseline.util.kalman.Filter;
 import com.platypii.baseline.util.kalman.FilterKalman;
-import androidx.annotation.NonNull;
 import android.util.Log;
-import java.io.*;
+import androidx.annotation.NonNull;
+import java.io.BufferedReader;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-import static com.platypii.baseline.util.CSVParse.*;
+import static com.platypii.baseline.util.CSVParse.getColumnDate;
+import static com.platypii.baseline.util.CSVParse.getColumnDouble;
+import static com.platypii.baseline.util.CSVParse.getColumnLong;
 
 /**
  * Parse location data from track file

@@ -114,6 +114,7 @@
     <string name="notify_audible">Audible aktiviert</string>
 
     <!-- Laser -->
+    <string name="profile_name">Profilname</string>
     <string name="rangefinder_connected">Entfernungsmesser verbunden</string>
     <string name="rangefinder_searching">Entfernungsmesser suchen…</string>
     <string-array name="metric_modes">

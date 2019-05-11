@@ -6,18 +6,23 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.platypii.baseline.views.tracks.TrackListItem.*;
+import static com.platypii.baseline.views.tracks.TrackListItem.ListHeader;
+import static com.platypii.baseline.views.tracks.TrackListItem.ListTrackData;
+import static com.platypii.baseline.views.tracks.TrackListItem.ListTrackFile;
+import static com.platypii.baseline.views.tracks.TrackListItem.TYPE_HEADER;
+import static com.platypii.baseline.views.tracks.TrackListItem.TYPE_TRACK_LOCAL;
+import static com.platypii.baseline.views.tracks.TrackListItem.TYPE_TRACK_REMOTE;
 
 /**
  * Track adapter renders a list of tracks, both local and remote

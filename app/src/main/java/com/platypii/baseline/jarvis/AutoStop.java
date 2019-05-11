@@ -3,8 +3,8 @@ package com.platypii.baseline.jarvis;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import android.os.Handler;
-import androidx.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 
 /**
  * Automatically stop logging when landing is detected (after a known jump)

@@ -1,8 +1,8 @@
 package com.platypii.baseline.places;
 
 import com.platypii.baseline.util.IOUtil;
-import androidx.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

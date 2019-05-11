@@ -5,9 +5,9 @@ import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
 import android.content.Context;
 import android.graphics.Paint;
+import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.AttributeSet;
 import java.util.List;
 
 public class TimeChart extends PlotView {

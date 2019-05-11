@@ -9,13 +9,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import org.greenrobot.eventbus.EventBus;
 
-import static com.platypii.baseline.bluetooth.BluetoothState.*;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STATES;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
 
 /**
  * Class to manage a bluetooth laser rangefinder.

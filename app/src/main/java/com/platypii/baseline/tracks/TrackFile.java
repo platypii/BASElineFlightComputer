@@ -1,7 +1,7 @@
 package com.platypii.baseline.tracks;
 
-import androidx.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import java.io.File;
 
 /**

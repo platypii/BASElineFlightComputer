@@ -8,9 +8,9 @@ import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.views.charts.layers.EllipseLayer;
 import android.content.Context;
 import android.graphics.Paint;
+import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.AttributeSet;
 import java.util.List;
 
 public class PolarPlot extends PlotView {

@@ -5,15 +5,19 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.location.GpsStatus;
 import android.os.ParcelUuid;
-import androidx.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.UUID;
 
-import static com.platypii.baseline.bluetooth.BluetoothState.*;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_DISCONNECTED;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 
 /**
  * Thread that reads from bluetooth input stream, and turns into NMEA sentences

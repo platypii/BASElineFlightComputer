@@ -2,7 +2,7 @@ package com.platypii.baseline.views.charts.layers;
 
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackData;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class TrackProfileLayerRemote extends TrackProfileLayer {
     public final CloudData track;

@@ -1,7 +1,6 @@
 package com.platypii.baseline.location;
 
 import com.google.android.gms.maps.model.LatLng;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

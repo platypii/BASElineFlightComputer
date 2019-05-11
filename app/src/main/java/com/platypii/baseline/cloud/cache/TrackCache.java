@@ -1,7 +1,7 @@
 package com.platypii.baseline.cloud.cache;
 
 import com.platypii.baseline.cloud.CloudData;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;

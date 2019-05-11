@@ -1,10 +1,14 @@
 package com.platypii.baseline.laser;
 
-import android.bluetooth.*;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattService;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
 

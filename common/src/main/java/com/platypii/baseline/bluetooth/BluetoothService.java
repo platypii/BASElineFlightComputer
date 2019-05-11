@@ -11,16 +11,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.GpsStatus;
 import android.os.AsyncTask;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.greenrobot.eventbus.EventBus;
 
-import static com.platypii.baseline.bluetooth.BluetoothState.*;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_DISCONNECTED;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STARTING;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STATES;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 
 /**
  * Class to manage a bluetooth GPS receiver.

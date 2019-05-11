@@ -4,11 +4,11 @@ import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Bounds;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import org.greenrobot.eventbus.EventBus;
 
 public class FlightProfileTouchable extends FlightProfile {

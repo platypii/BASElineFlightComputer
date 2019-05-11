@@ -2,9 +2,9 @@ package com.platypii.baseline.views.charts;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
+import androidx.annotation.NonNull;
 
 /**
  * A general view for plotting data.

@@ -1,7 +1,7 @@
 package com.platypii.baseline.location;
 
-import androidx.annotation.NonNull;
 import android.util.Log;
+import androidx.annotation.NonNull;
 
 /**
  * Phone time is not necessarily the same as gps time.

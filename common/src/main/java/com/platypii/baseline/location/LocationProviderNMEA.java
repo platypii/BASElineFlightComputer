@@ -8,9 +8,9 @@ import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.location.GpsStatus;
 import android.location.LocationManager;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 
 class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
     protected final String TAG = "LocationProviderNMEA";

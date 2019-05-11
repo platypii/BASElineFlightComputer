@@ -4,14 +4,14 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.util.List;
 
 class BluetoothAdapter extends BaseAdapter {

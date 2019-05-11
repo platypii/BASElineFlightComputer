@@ -2,7 +2,7 @@ package com.platypii.baseline.views.charts.layers;
 
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class TrackProfileLayerLocal extends TrackProfileLayer {
     public final TrackFile track;

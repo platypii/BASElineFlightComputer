@@ -2,13 +2,13 @@ package com.platypii.baseline.views.map;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.MapFragment;
 import java.util.ArrayList;
 import java.util.List;

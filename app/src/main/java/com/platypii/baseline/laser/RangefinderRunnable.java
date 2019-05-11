@@ -7,19 +7,28 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothProfile;
-import android.bluetooth.le.*;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanRecord;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Collections;
 import java.util.List;
 
-import static com.platypii.baseline.bluetooth.BluetoothState.*;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_DISCONNECTED;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STARTING;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 
 /**
  * Thread that reads from bluetooth laser rangefinder.

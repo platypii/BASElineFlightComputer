@@ -2,8 +2,8 @@ package com.platypii.baseline.laser;
 
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
-import android.support.annotation.Nullable;
 import android.util.Log;
+import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;

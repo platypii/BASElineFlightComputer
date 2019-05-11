@@ -9,15 +9,14 @@ import com.platypii.baseline.util.RefreshRateEstimator;
 import com.platypii.baseline.util.Stat;
 import com.platypii.baseline.util.kalman.Filter;
 import com.platypii.baseline.util.kalman.FilterKalman;
-
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 import java.util.Arrays;
 import org.greenrobot.eventbus.EventBus;
 
