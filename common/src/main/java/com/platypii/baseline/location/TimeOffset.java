@@ -29,8 +29,12 @@ public class TimeOffset {
             Log.i(provider, "Initial time offset: " + offsetString(clockOffset));
             phoneOffsetMillis = clockOffset;
             initialized = true;
-        } else if (Math.abs(phoneOffsetMillis - clockOffset) > adjustThreshold) {
-            Log.w(provider, "Adjusting time offset: " + offsetString(clockOffset));
+        } else if (clockOffset - phoneOffsetMillis > adjustThreshold) {
+            Log.w(provider, "Adjusting time offset backward: " + offsetString(clockOffset));
+            phoneOffsetMillis = clockOffset;
+        } else if (clockOffset - phoneOffsetMillis < 0) {
+            // Adjusted phone time should never be behind gps time
+            Log.w(provider, "Adjusting time offset forward: " + offsetString(clockOffset));
             phoneOffsetMillis = clockOffset;
         } else if (Math.abs(phoneOffsetMillis - clockOffset) > warnThreshold) {
             Log.w(provider, "Warning time offset: " + offsetString(clockOffset));
