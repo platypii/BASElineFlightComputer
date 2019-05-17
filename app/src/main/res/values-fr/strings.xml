@@ -114,6 +114,9 @@
     <string name="notify_logging">Enregistrement activé</string>
 
     <!-- Laser -->
+    <string name="tracks">Pistes</string>
+    <string name="profiles">Profils</string>
+    <string name="new_profile">Nouveau profil</string>
     <string name="profile_name">Nom de profil</string>
     <string name="rangefinder_connected">Télémètre connecté</string>
     <string name="rangefinder_searching">Recherche de télémètre…</string>

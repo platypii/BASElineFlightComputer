@@ -34,12 +34,15 @@ public class LaserActivity extends BaseActivity {
         // Find views
         chart = findViewById(R.id.flightProfile);
 
-        // Load laser panel fragment
-        final LaserPanelFragment laserPanel = new LaserPanelFragment();
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.laserPanel, laserPanel)
-                .commit();
+        // Only add laser panel on first create
+        if (savedInstanceState == null) {
+            // Load laser panel fragment
+            final LaserPanelFragment laserPanel = new LaserPanelFragment();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.laserPanel, laserPanel)
+                    .commit();
+        }
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }

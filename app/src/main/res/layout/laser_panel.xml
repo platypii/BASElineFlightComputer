@@ -33,21 +33,21 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Add Track"/>
+                android:text="@string/tracks"/>
 
         <Button
                 android:id="@+id/chooseLaser"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Add Profile"/>
+                android:text="@string/profiles"/>
 
         <Button
                 android:id="@+id/addLaser"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="New Profile"/>
+                android:text="@string/new_profile"/>
 
     </LinearLayout>
 

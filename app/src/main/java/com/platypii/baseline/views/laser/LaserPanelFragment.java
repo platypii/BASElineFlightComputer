@@ -37,9 +37,9 @@ public class LaserPanelFragment extends ListFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.laser_panel, container, false);
-        view.findViewById(R.id.chooseTrack).setOnClickListener(this::chooseTrack);
-        view.findViewById(R.id.chooseLaser).setOnClickListener(this::chooseLaser);
-        view.findViewById(R.id.addLaser).setOnClickListener(this::clickAdd);
+        view.findViewById(R.id.chooseTrack).setOnClickListener(this::clickAddTrack);
+        view.findViewById(R.id.chooseLaser).setOnClickListener(this::clickAddProfile);
+        view.findViewById(R.id.addLaser).setOnClickListener(this::clickNewProfile);
         helpText = view.findViewById(R.id.helpProfiles);
         return view;
     }
@@ -95,7 +95,7 @@ public class LaserPanelFragment extends ListFragment {
         }
     }
 
-    private void chooseTrack(View view) {
+    private void clickAddTrack(View view) {
         firebaseAnalytics.logEvent("click_laser_track", null);
         final Fragment frag = new TrackPickerFragment();
         final Bundle args = new Bundle();
@@ -108,7 +108,7 @@ public class LaserPanelFragment extends ListFragment {
                 .commit();
     }
 
-    private void chooseLaser(View view) {
+    private void clickAddProfile(View view) {
         firebaseAnalytics.logEvent("click_laser_list", null);
         getFragmentManager()
                 .beginTransaction()
@@ -117,7 +117,7 @@ public class LaserPanelFragment extends ListFragment {
                 .commit();
     }
 
-    private void clickAdd(View view) {
+    private void clickNewProfile(View view) {
         firebaseAnalytics.logEvent("click_laser_add", null);
         getFragmentManager()
                 .beginTransaction()

@@ -114,6 +114,9 @@
     <string name="notify_logging">Logging data</string>
 
     <!-- Laser -->
+    <string name="tracks">Tracks</string>
+    <string name="profiles">Profiles</string>
+    <string name="new_profile">New Profile</string>
     <string name="profile_name">Profile name</string>
     <string name="rangefinder_connected">Rangefinder connected</string>
     <string name="rangefinder_searching">Searching for rangefinder…</string>
