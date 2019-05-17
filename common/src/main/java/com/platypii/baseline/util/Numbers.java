@@ -42,6 +42,27 @@ public class Numbers {
         }
     }
 
+    /**
+     * Parse a string into a double, but use null instead of exceptions or non-real
+     */
+    @Nullable
+    public static Double parseDoubleNull(@Nullable String str) {
+        if (str == null || str.isEmpty()) {
+            return null;
+        } else {
+            try {
+                final double value = Double.parseDouble(str);
+                if (Double.isNaN(value) || Double.isInfinite(value)) {
+                    return null;
+                } else {
+                    return value;
+                }
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+    }
+
     public static float parseFloat(@Nullable String str) {
         if (str == null || str.isEmpty()) {
             return Float.NaN;

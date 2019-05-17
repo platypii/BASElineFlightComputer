@@ -38,6 +38,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
+import static com.platypii.baseline.util.Numbers.parseDoubleNull;
 
 public class LaserEditFragment extends Fragment implements MyLocationListener {
 
@@ -115,27 +116,6 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         final Double alt = parseDoubleNull(laserAlt.getText().toString());
         final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
         return new LaserProfile("", AuthState.getUser(), name, false, alt, lat, lng, "app", points);
-    }
-
-    /**
-     * Parse a string into a double, but use null instead of exceptions or non-real
-     */
-    @Nullable
-    private static Double parseDoubleNull(@Nullable String str) {
-        if (str == null || str.isEmpty()) {
-            return null;
-        } else {
-            try {
-                final double value = Double.parseDouble(str);
-                if (Double.isNaN(value) || Double.isInfinite(value)) {
-                    return null;
-                } else {
-                    return value;
-                }
-            } catch (NumberFormatException e) {
-                return null;
-            }
-        }
     }
 
     private boolean isMetric() {
