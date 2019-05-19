@@ -26,7 +26,7 @@ public class TestTask implements Task {
             return true;
         }
     }
-    public static TestTaskType taskType = new TestTaskType();
+    public static final TestTaskType taskType = new TestTaskType();
 
     @Override
     public void run(@NonNull Context context) throws Exception {

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 public class PlaceTest {
 
-    Place kpow = new Place("Kpow", "", "USA", 47.239, -123.143, 84.2, "DZ", 30000);
+    private final Place kpow = new Place("Kpow", "", "USA", 47.239, -123.143, 84.2, "DZ", 30000, false);
 
     @Test
     public void place() {

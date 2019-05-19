@@ -20,7 +20,7 @@
     </LinearLayout>
 
     <include
-        android:layout_width="1dp"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         layout="@layout/info_panel"/>

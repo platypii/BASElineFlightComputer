@@ -1,22 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="#111111"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="0dp"
     tools:context="com.platypii.baseline.views.laser.LaserActivity">
 
     <com.platypii.baseline.views.charts.FlightProfileTouchable
         android:id="@+id/flightProfile"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"/>
+        android:layout_width="360dp"
+        android:layout_height="match_parent"/>
 
     <FrameLayout
-            android:id="@+id/laserPanel"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+        android:id="@+id/laserPanel"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
 
 </LinearLayout>

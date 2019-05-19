@@ -21,7 +21,7 @@ public class LaserActivity extends BaseActivity {
 
     private FlightProfile chart;
     // This is so we can keep track of profile layers in the chart
-    private List<ProfileLayer> layers = new ArrayList<>();
+    private final List<ProfileLayer> layers = new ArrayList<>();
 
     // TODO: remove static instance after debugging
     public static FirebaseAnalytics firebaseAnalytics;
