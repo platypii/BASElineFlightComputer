@@ -4,6 +4,7 @@ import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +24,7 @@ public class Tasks implements BaseService {
     private Context context;
 
     @NonNull
-    private final List<Task> pending = new ArrayList<>();
+    final List<Task> pending = new ArrayList<>();
     @Nullable
     private Task running = null;
 
@@ -42,6 +43,7 @@ public class Tasks implements BaseService {
             pending.add(task);
         }
         if (task.taskType().persistent()) {
+            // Only need to save if task was persistent
             PendingPreferences.save(context, pending);
         }
         tendQueue();
@@ -50,9 +52,10 @@ public class Tasks implements BaseService {
     private void tendQueue() {
         synchronized (pending) {
             Log.i(TAG, "Tending task queue: " + pending.size() + " tasks");
+            Log.d(TAG, "Tending task queue: " + TextUtils.join(",", pending));
             if (running == null && !pending.isEmpty()) {
                 // Start first pending task
-                running = pending.remove(0);
+                running = pending.get(0);
                 runAsync();
             }
         }
@@ -87,15 +90,20 @@ public class Tasks implements BaseService {
 
     private void runSuccess() {
         Log.i(TAG, "Task success: " + running);
-        running = null;
-        PendingPreferences.save(context, pending);
+        synchronized (pending) {
+            final Task removed = pending.remove(0);
+            if (running != removed) {
+                Exceptions.report(new IllegalStateException("Invalid pop: " + running + " != " + removed));
+            }
+            running = null;
+            PendingPreferences.save(context, pending);
+        }
         // Check for next pending task
         tendQueue();
     }
 
     private void runFailed() {
         synchronized (pending) {
-            pending.add(0, running);
             running = null;
         }
     }
@@ -104,20 +112,24 @@ public class Tasks implements BaseService {
      * Remove all tasks of a given type
      */
     public void removeType(@NonNull TaskType taskType) {
-        final ListIterator<Task> it = pending.listIterator();
-        while (it.hasNext()) {
-            final Task task = it.next();
-            if (task.taskType().name().equals(taskType.name())) {
-                it.remove();
+        synchronized (pending) {
+            final ListIterator<Task> it = pending.listIterator();
+            while (it.hasNext()) {
+                final Task task = it.next();
+                if (task.taskType().name().equals(taskType.name())) {
+                    it.remove();
+                }
             }
+            PendingPreferences.save(context, pending);
         }
-        PendingPreferences.save(context, pending);
     }
 
     @Override
     public void stop() {
-        PendingPreferences.save(context, pending);
-        pending.clear();
+        synchronized (pending) {
+            PendingPreferences.save(context, pending);
+            pending.clear();
+        }
     }
 
 }
