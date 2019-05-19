@@ -65,16 +65,12 @@ public class DownloadTask implements Runnable {
                 TrackAbbrv.abbreviate(trackFile, track.abbrvFile(context));
             }
             EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(track.track_id, trackFile));
-        } catch (AuthException e) {
-            Log.e(TAG, "Failed to download file - auth error", e);
-            Exceptions.report(e);
-            EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, "auth error"));
         } catch (IOException e) {
             Log.e(TAG, "Failed to download file", e);
             if (networkAvailable) {
                 Exceptions.report(e);
             }
-            EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, e.getMessage()));
+            EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, e.getMessage(), networkAvailable));
         }
     }
 

@@ -12,6 +12,7 @@ import com.platypii.baseline.views.charts.layers.TrackProfileLayerRemote;
 import com.platypii.baseline.views.tracks.TrackLoader;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class TrackDownloadFragment extends Fragment {
+    private static final String TAG = "TrackDownloadFrag";
 
     private CloudData track;
     private ProgressBar downloadProgress;
@@ -76,6 +78,7 @@ public class TrackDownloadFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDownloadFailure(@NonNull DownloadEvent.DownloadFailure event) {
         if (event.track_id.equals(track.track_id)) {
+            Log.w(TAG, "Track download failed " + event);
             Toast.makeText(getContext(), "Track download failed", Toast.LENGTH_LONG).show();
             // Return to main fragment
             final FragmentManager fm = getFragmentManager();

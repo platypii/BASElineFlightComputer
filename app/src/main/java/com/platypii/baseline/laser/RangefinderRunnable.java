@@ -63,22 +63,17 @@ class RangefinderRunnable implements Runnable {
         firebaseAnalytics = FirebaseAnalytics.getInstance(context);
     }
 
+    /**
+     * Scan for bluetooth LE devices that look like a rangefinder
+     */
     @Override
     public void run() {
         Log.i(TAG, "Rangefinder bluetooth thread starting");
         if (!bluetoothAdapter.isEnabled()) {
-            Log.w(TAG, "Bluetooth is not enabled");
+            Log.e(TAG, "Bluetooth is not enabled");
             return;
         }
         // Scan for rangefinders
-        // TODO: Set timeout
-        startScan();
-    }
-
-    /**
-     * Scan for bluetooth LE devices that look like a rangefinder
-     */
-    private void startScan() {
         Log.i(TAG, "Scanning for rangefinder");
         service.setState(BT_STARTING);
         bluetoothScanner = bluetoothAdapter.getBluetoothLeScanner();
@@ -86,10 +81,7 @@ class RangefinderRunnable implements Runnable {
             Log.e(TAG, "Failed to get bluetooth LE scanner");
             return;
         }
-        final ScanFilter scanFilter = new ScanFilter.Builder()
-//                .setManufacturerData(manufacturerId, manufacturerData)
-//                .setServiceUuid(new ParcelUuid(rangefinderService))
-                .build();
+        final ScanFilter scanFilter = new ScanFilter.Builder().build();
         final List<ScanFilter> scanFilters = Collections.singletonList(scanFilter);
         final ScanSettings scanSettings = new ScanSettings.Builder().build();
         scanCallback = new ScanCallback() {

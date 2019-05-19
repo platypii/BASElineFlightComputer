@@ -14,6 +14,7 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -236,6 +237,15 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         } else {
             laserStatus.setText(R.string.rangefinder_searching);
             laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RangefinderService.ENABLE_BLUETOOTH_CODE) {
+            // Notify rangefinder service that bluetooth was enabled
+            rangefinder.bluetoothStarted(getActivity());
         }
     }
 

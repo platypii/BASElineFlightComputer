@@ -34,7 +34,7 @@ public class LaserProfile {
 
     @NonNull
     public String locationString() {
-        if (isReal(lat) && isReal(lng)) {
+        if (isReal(lat) && isReal(lng) && isReal(alt)) {
             return Numbers.format6.format(lat) + ", " + Numbers.format6.format(lng) + ", " + Convert.distance(alt);
         } else if (isReal(alt)) {
             return Convert.distance(alt);

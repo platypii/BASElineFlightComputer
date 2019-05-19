@@ -14,8 +14,8 @@ public class NearestPlaceTest {
     @Test
     public void nearestPlace() {
         List<Place> placeList = new ArrayList<>();
-        placeList.add(new Place("Kpow", "", "USA", 47.239, -123.143, 84.2, "DZ", 30000));
-        placeList.add(new Place("Moab", "", "USA", 38.57, -109.55, 1300, "DZ", 30000));
+        placeList.add(new Place("Kpow", "", "USA", 47.239, -123.143, 84.2, "DZ", 30000, false));
+        placeList.add(new Place("Moab", "", "USA", 38.57, -109.55, 1300, "DZ", 30000, false));
         Places places = new Places() {
             @Override
             List<Place> getPlaces() {

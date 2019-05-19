@@ -56,6 +56,7 @@ public class TrackPickerFragment extends TrackListFragment {
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, frag)
+                .addToBackStack(null)
                 .commit();
     }
 

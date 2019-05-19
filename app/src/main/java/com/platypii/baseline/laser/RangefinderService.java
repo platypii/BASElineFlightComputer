@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import org.greenrobot.eventbus.EventBus;
 
@@ -25,7 +24,7 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
 public class RangefinderService implements BaseService {
     private static final String TAG = "RangefinderService";
 
-    private static final int ENABLE_BLUETOOTH_CODE = 13;
+    public static final int ENABLE_BLUETOOTH_CODE = 13;
 
     // Bluetooth state
     private int bluetoothState = BT_STOPPED;
@@ -55,31 +54,38 @@ public class RangefinderService implements BaseService {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void startAsync(@NonNull final Activity activity) {
         AsyncTask.execute(() -> {
-            bluetoothAdapter = getAdapter(activity);
+            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter != null) {
-                bluetoothRunnable = new RangefinderRunnable(this, activity, bluetoothAdapter);
-                bluetoothThread = new Thread(bluetoothRunnable);
-                bluetoothThread.start();
+                if (bluetoothAdapter.isEnabled()) {
+                    bluetoothRunnable = new RangefinderRunnable(this, activity, bluetoothAdapter);
+                    bluetoothThread = new Thread(bluetoothRunnable);
+                    bluetoothThread.start();
+                } else {
+                    // Turn on bluetooth
+                    Log.i(TAG, "Requesting to turn on bluetooth");
+                    final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    activity.startActivityForResult(enableBluetoothIntent, ENABLE_BLUETOOTH_CODE);
+                }
+            } else {
+                Log.w(TAG, "Bluetooth adapter not found");
             }
         });
     }
 
     /**
-     * Start the bluetooth service, and connect to gps receiver if selected
-     * @return true iff bluetooth service started successfully
+     * Parent activity should call this method if it detects bluetooth was enabled
      */
-    @Nullable
-    private BluetoothAdapter getAdapter(@NonNull Activity activity) {
-        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter == null) {
-            // Device not supported
-            Log.e(TAG, "Bluetooth not supported");
-        } else if (!bluetoothAdapter.isEnabled()) {
-            // Turn on bluetooth
-            final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            activity.startActivityForResult(enableBluetoothIntent, ENABLE_BLUETOOTH_CODE);
+    public void bluetoothStarted(@NonNull Activity activity) {
+        Log.i(TAG, "Bluetooth started late");
+        if (bluetoothAdapter.isEnabled()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bluetoothRunnable == null) {
+                bluetoothRunnable = new RangefinderRunnable(this, activity, bluetoothAdapter);
+                bluetoothThread = new Thread(bluetoothRunnable);
+                bluetoothThread.start();
+            }
+        } else {
+            Log.e(TAG, "Bluetooth supposedly started, but adapter not enabled.");
         }
-        return bluetoothAdapter;
     }
 
     public int getState() {
@@ -109,7 +115,7 @@ public class RangefinderService implements BaseService {
             }
             Log.i(TAG, "Rangefinder service stopped");
         } else {
-            Log.e(TAG, "Cannot stop rangefinder: runnable is null");
+            Log.w(TAG, "Cannot stop rangefinder: runnable is null");
         }
     }
 

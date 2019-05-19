@@ -29,9 +29,11 @@ public abstract class DownloadEvent {
     public static class DownloadFailure extends DownloadEvent {
         public final String track_id;
         public final String error;
-        public DownloadFailure(String track_id, String error) {
+        public final boolean networkAvailable;
+        public DownloadFailure(String track_id, String error, boolean networkAvailable) {
             this.track_id = track_id;
             this.error = error;
+            this.networkAvailable = networkAvailable;
         }
     }
 
