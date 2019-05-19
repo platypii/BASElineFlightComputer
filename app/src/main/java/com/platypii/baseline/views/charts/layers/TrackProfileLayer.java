@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 public class TrackProfileLayer extends ProfileLayer {
 
     public TrackProfileLayer(@NonNull String name, @NonNull TrackData trackData, @ColorInt int color) {
-        super(color);
+        super(name, name, color);
         // Load track data into time series
         profileSeries.reset();
         if (!trackData.data.isEmpty()) {
@@ -19,7 +19,6 @@ public class TrackProfileLayer extends ProfileLayer {
                 profileSeries.addPoint(x, y);
             }
         }
-        this.name = name;
     }
 
 }

@@ -3,19 +3,16 @@ package com.platypii.baseline.views.charts.layers;
 import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.laser.LaserProfile;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import java.util.List;
 
 public class LaserProfileLayer extends ProfileLayer {
 
-    @Nullable
+    @NonNull
     public LaserProfile laserProfile;
 
-    public LaserProfileLayer() {
-        super(Colors.nextColor());
-    }
     public LaserProfileLayer(@NonNull LaserProfile laserProfile) {
-        super(Colors.nextColor());
+        super(laserProfile.laser_id, laserProfile.name, Colors.nextColor());
+        this.laserProfile = laserProfile;
         loadLaser(laserProfile);
     }
 

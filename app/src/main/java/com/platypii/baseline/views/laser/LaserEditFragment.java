@@ -31,8 +31,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -56,7 +59,9 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
 
     // Edit layer gets recreated on save, and the active one gets left in LaserLayers
     @NonNull
-    private LaserProfileLayer editLayer = new LaserProfileLayer();
+    private LaserProfile laserProfile = newLaserProfile();
+    @NonNull
+    private LaserProfileLayer editLayer = new LaserProfileLayer(laserProfile);
 
     @Nullable
     private MLocation defaultLocation = null;
@@ -105,18 +110,31 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
 
     // Update chart in parent activity
     private void updateLayers() {
-        editLayer.loadLaser(getLaserProfile());
+        getLaserProfile();
+        editLayer.loadLaser(laserProfile);
         LaserLayers.getInstance().update(editLayer);
     }
 
+    /**
+     * Generate a new laser profile with a temporary laser id.
+     * Real laser id is returned later by the server.
+     */
     @NonNull
-    private LaserProfile getLaserProfile() {
-        final String name = laserName.getText().toString();
-        final Double lat = parseDoubleNull(laserLat.getText().toString());
-        final Double lng = parseDoubleNull(laserLon.getText().toString());
-        final Double alt = parseDoubleNull(laserAlt.getText().toString());
-        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
-        return new LaserProfile("new-profile", AuthState.getUser(), name, false, alt, lat, lng, "app", points);
+    private LaserProfile newLaserProfile() {
+        final String laserId = "tmp-" + UUID.randomUUID().toString();
+        return new LaserProfile(laserId, null, "", false, 0.0, Double.NaN, Double.NaN, "app", new ArrayList<>());
+    }
+
+    /**
+     * Load laser profile from form into LaserProfile
+     */
+    private void getLaserProfile() {
+        laserProfile.name = laserName.getText().toString();
+        laserProfile.user_id = AuthState.getUser();
+        laserProfile.lat = parseDoubleNull(laserLat.getText().toString());
+        laserProfile.lng = parseDoubleNull(laserLon.getText().toString());
+        laserProfile.alt = parseDoubleNull(laserAlt.getText().toString());
+        laserProfile.points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
     }
 
     private boolean isMetric() {
@@ -165,15 +183,15 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         firebaseAnalytics.logEvent("click_laser_edit_save", null);
         final String error = validate();
         if (error == null) {
-            // Publish laser as a new layer
-            final LaserProfile laserProfile = getLaserProfile();
-            updateLayers();
             // Save in background and return to profile list view
+            getLaserProfile();
             Services.tasks.add(new LaserUploadTask(laserProfile));
-            // Add to cloud cache
+            // Publish laser as a new layer
             Services.cloud.lasers.cache.add(laserProfile);
+            updateLayers();
             // Reset for next laser input
-            editLayer = new LaserProfileLayer();
+            laserProfile = newLaserProfile();
+            editLayer = new LaserProfileLayer(laserProfile);
             // Re-add edit layer since it will be removed on fragment stop
             LaserLayers.getInstance().add(editLayer);
             // Return to main fragment

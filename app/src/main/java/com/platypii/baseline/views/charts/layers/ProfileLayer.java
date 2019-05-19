@@ -5,17 +5,21 @@ import com.platypii.baseline.views.charts.Plot;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
-public class ProfileLayer extends ChartLayer {
+public abstract class ProfileLayer extends ChartLayer {
 
     private static final int AXIS_PROFILE = 0;
     protected final DataSeries profileSeries = new DataSeries();
     @NonNull
-    public String name = "";
+    public String id;
+    @NonNull
+    public String name;
     @ColorInt
     public final int color;
 
-    ProfileLayer(@ColorInt int color) {
+    ProfileLayer(@NonNull String id, @NonNull String name, @ColorInt int color) {
         this.color = color;
+        this.id = id;
+        this.name = name;
     }
 
     @Override
@@ -26,14 +30,13 @@ public class ProfileLayer extends ChartLayer {
 
     @Override
     public boolean equals(Object obj) {
-        // TODO: Check points too?
-        return obj instanceof ProfileLayer && ((ProfileLayer) obj).name.equals(name);
+        return obj instanceof ProfileLayer && ((ProfileLayer) obj).id.equals(id);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return "ProfileLayer(" + name + ")";
+        return "ProfileLayer(" + id + ", " + name + ")";
     }
 
 }

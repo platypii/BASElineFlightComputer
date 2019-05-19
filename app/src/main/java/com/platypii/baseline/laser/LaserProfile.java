@@ -5,21 +5,20 @@ import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
-
 import java.util.List;
 
 public class LaserProfile {
-    public final String laser_id;
+    public String laser_id;
     @Nullable
-    public final String user_id;
-    public final String name;
+    public String user_id;
+    public String name;
     @SerializedName("public")
-    public final boolean isPublic;
-    public final Double alt;
-    public final Double lat;
-    public final Double lng;
-    public final String source;
-    public final List<LaserMeasurement> points;
+    public boolean isPublic;
+    public Double alt;
+    public Double lat;
+    public Double lng;
+    public String source;
+    public List<LaserMeasurement> points;
 
     public LaserProfile(String laser_id, @Nullable String user_id, String name, boolean isPublic, Double alt, Double lat, Double lng, String source, List<LaserMeasurement> points) {
         this.laser_id = laser_id;

@@ -40,7 +40,12 @@ public class LaserUploadTask implements Task {
         final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
         final Response<LaserProfile> response = laserApi.post(laserProfile).execute();
         if (response.isSuccessful()) {
-            Log.i(TAG, "Laser POST successful, laser profile " + response.body());
+            final LaserProfile result = response.body();
+            Log.i(TAG, "Laser POST successful, laser profile " + result);
+            // Add laser profile to cache, and replace temp profile layer
+            Services.cloud.lasers.cache.add(result);
+            // Sneakily replace laser_id
+            laserProfile.laser_id = result.laser_id;
             // Update laser listing
             Services.cloud.lasers.listAsync(context, true);
         } else {
