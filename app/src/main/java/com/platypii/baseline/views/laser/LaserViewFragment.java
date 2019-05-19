@@ -22,19 +22,36 @@ public class LaserViewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.laser_view, container, false);
 
+        render(view);
+
+        return view;
+    }
+
+    private void render(@NonNull View view) {
         final LaserProfile laser = getLaser();
         if (laser != null) {
+            // Name
             final TextView laserName = view.findViewById(R.id.laserName);
+            laserName.setText(laser.name);
+            // Location
+            final TextView laserLocation = view.findViewById(R.id.laserLocation);
+            final String location = laser.locationString();
+            if (location.isEmpty()) {
+                laserLocation.setVisibility(View.GONE);
+            } else {
+                laserLocation.setVisibility(View.VISIBLE);
+                laserLocation.setText(location);
+            }
+            // Points label (show units)
+            final TextView laserMeasurementsLabel = view.findViewById(R.id.laserMeasurementsLabel);
+            final String units = Convert.metric ? "(m)" : "(ft)";
+            laserMeasurementsLabel.setText("Points " + units);
+            // Points
             final TextView laserText = view.findViewById(R.id.laserText);
-            final String units = Convert.metric ? " (m)" : " (ft)";
-            final String name = laser.name + units;
-            laserName.setText(name);
             laserText.setText(LaserMeasurement.render(laser.points, Convert.metric));
         } else {
             Exceptions.report(new IllegalStateException("Failed to load laser"));
         }
-
-        return view;
     }
 
     /**

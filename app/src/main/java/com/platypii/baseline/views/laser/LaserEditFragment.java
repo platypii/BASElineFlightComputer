@@ -109,13 +109,14 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         LaserLayers.getInstance().update(editLayer);
     }
 
+    @NonNull
     private LaserProfile getLaserProfile() {
         final String name = laserName.getText().toString();
         final Double lat = parseDoubleNull(laserLat.getText().toString());
         final Double lng = parseDoubleNull(laserLon.getText().toString());
         final Double alt = parseDoubleNull(laserAlt.getText().toString());
         final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
-        return new LaserProfile("", AuthState.getUser(), name, false, alt, lat, lng, "app", points);
+        return new LaserProfile("new-profile", AuthState.getUser(), name, false, alt, lat, lng, "app", points);
     }
 
     private boolean isMetric() {

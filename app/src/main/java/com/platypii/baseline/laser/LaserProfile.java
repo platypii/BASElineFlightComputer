@@ -3,6 +3,9 @@ package com.platypii.baseline.laser;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
+import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.Numbers;
+
 import java.util.List;
 
 public class LaserProfile {
@@ -28,6 +31,21 @@ public class LaserProfile {
         this.lng = lng;
         this.source = source;
         this.points = points;
+    }
+
+    @NonNull
+    public String locationString() {
+        if (isReal(lat) && isReal(lng)) {
+            return Numbers.format6.format(lat) + ", " + Numbers.format6.format(lng) + ", " + Convert.distance(alt);
+        } else if (isReal(alt)) {
+            return Convert.distance(alt);
+        } else {
+            return "";
+        }
+    }
+
+    private boolean isReal(Double value) {
+        return value != null && !Double.isNaN(value) && !Double.isInfinite(value);
     }
 
     @NonNull

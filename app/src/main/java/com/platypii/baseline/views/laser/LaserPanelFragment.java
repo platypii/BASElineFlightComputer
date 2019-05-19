@@ -5,6 +5,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.laser.LaserLayers;
+import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
@@ -13,6 +14,7 @@ import com.platypii.baseline.views.charts.layers.TrackProfileLayerRemote;
 import com.platypii.baseline.views.tracks.TrackListFragment;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class LaserPanelFragment extends ListFragment {
+    private static final String TAG = "LaserPanel";
+
     private final FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
 
     @Nullable
@@ -71,28 +75,35 @@ public class LaserPanelFragment extends ListFragment {
         final Object item = parent.getItemAtPosition(position);
         if (item instanceof LaserProfileLayer) {
             // Open view mode
-            final LaserProfileLayer layer = (LaserProfileLayer) item;
-            firebaseAnalytics.logEvent("click_laser_profile", null);
-            final Bundle bundle = new Bundle();
-            bundle.putString(LaserViewFragment.LASER_ID, layer.laserProfile.laser_id);
-            final Fragment frag = new LaserViewFragment();
-            frag.setArguments(bundle);
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.laserPanel, frag)
-                    .addToBackStack(null)
-                    .commit();
+            final LaserProfile laserProfile = ((LaserProfileLayer) item).laserProfile;
+            clickLaserProfile(laserProfile);
         } else if (item instanceof TrackProfileLayerLocal) {
             // Open local track file charts
             final TrackFile track = ((TrackProfileLayerLocal) item).track;
+            Log.i(TAG, "Opening local track profile " + track);
             Intents.openCharts(getContext(), track.file);
         } else if (item instanceof TrackProfileLayerRemote) {
             // Open cloud track charts
             final CloudData track = ((TrackProfileLayerRemote) item).track;
+            Log.i(TAG, "Opening cloud track profile " + track);
             Intents.openCharts(getContext(), track.abbrvFile(getContext()));
         } else {
             Exceptions.report(new IllegalStateException("Unexpected list item type " + item));
         }
+    }
+
+    private void clickLaserProfile(LaserProfile laserProfile) {
+        Log.i(TAG, "Opening laser profile " + laserProfile);
+        firebaseAnalytics.logEvent("click_laser_profile", null);
+        final Bundle bundle = new Bundle();
+        bundle.putString(LaserViewFragment.LASER_ID, laserProfile.laser_id);
+        final Fragment frag = new LaserViewFragment();
+        frag.setArguments(bundle);
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.laserPanel, frag)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void clickAddTrack(View view) {
