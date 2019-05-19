@@ -25,7 +25,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     private static final String TAG = "TrackRemoteActivity";
 
     @Nullable
-    private AlertDialog alertDialog;
+    private AlertDialog deleteConfirmation;
 
     private CloudData track;
 
@@ -94,12 +94,12 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         bundle.putString("track_id", track.track_id);
         firebaseAnalytics.logEvent("click_track_delete_remote_1", bundle);
         // Prompt user for confirmation
-        alertDialog = new AlertDialog.Builder(this)
+        deleteConfirmation = new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Delete this track?")
                 .setMessage(R.string.delete_remote)
-                .setPositiveButton("Delete", this)
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(R.string.action_delete, this)
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
@@ -177,9 +177,9 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     protected void onStop() {
         super.onStop();
         // Dismiss alert to prevent context leak
-        if (alertDialog != null) {
-            alertDialog.dismiss();
-            alertDialog = null;
+        if (deleteConfirmation != null) {
+            deleteConfirmation.dismiss();
+            deleteConfirmation = null;
         }
     }
 

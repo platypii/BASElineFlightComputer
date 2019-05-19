@@ -43,7 +43,7 @@ class ProfileAdapter extends BaseAdapter {
 
         // Update name
         final TextView nameView = convertView.findViewById(R.id.list_item_name);
-        nameView.setText(layer.name);
+        nameView.setText(layer.name());
         // Update color
         convertView.findViewById(R.id.list_item_color).setBackgroundColor(layer.color);
         // Bind delete button

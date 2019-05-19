@@ -43,7 +43,7 @@ public class LaserListing implements BaseService {
             final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
             // Public vs private based on sign in state
             final String userId = AuthState.getUser();
-            Log.i(TAG, "Listing laser profiles " + userId);
+            Log.i(TAG, "Listing laser profiles for user " + userId);
             final Call<List<LaserProfile>> laserCall = userId != null ? laserApi.byUser(userId) : laserApi.getPublic();
             laserCall.enqueue(new Callback<List<LaserProfile>>() {
                 @Override

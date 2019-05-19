@@ -9,18 +9,19 @@ public abstract class ProfileLayer extends ChartLayer {
 
     private static final int AXIS_PROFILE = 0;
     protected final DataSeries profileSeries = new DataSeries();
-    @NonNull
-    public String id;
-    @NonNull
-    public String name;
+
     @ColorInt
     public final int color;
 
-    ProfileLayer(@NonNull String id, @NonNull String name, @ColorInt int color) {
+    ProfileLayer(@ColorInt int color) {
         this.color = color;
-        this.id = id;
-        this.name = name;
     }
+
+    @NonNull
+    public abstract String id();
+
+    @NonNull
+    public abstract String name();
 
     @Override
     public void drawData(@NonNull Plot plot) {
@@ -30,13 +31,13 @@ public abstract class ProfileLayer extends ChartLayer {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof ProfileLayer && ((ProfileLayer) obj).id.equals(id);
+        return obj instanceof ProfileLayer && ((ProfileLayer) obj).id().equals(id());
     }
 
     @NonNull
     @Override
     public String toString() {
-        return "ProfileLayer(" + id + ", " + name + ")";
+        return "ProfileLayer(" + id() + ", " + name() + ")";
     }
 
 }
