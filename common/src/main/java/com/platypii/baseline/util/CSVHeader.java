@@ -9,10 +9,12 @@ public class CSVHeader {
 
     private final Map<String, Integer> columns = new HashMap<>();
 
-    public CSVHeader(@NonNull String line) {
-        final String[] header = line.split(",");
-        for (int i = 0; i < header.length; i++) {
-            columns.put(header[i], i);
+    public CSVHeader(@Nullable String line) {
+        if (line != null) {
+            final String[] header = line.split(",");
+            for (int i = 0; i < header.length; i++) {
+                columns.put(header[i], i);
+            }
         }
     }
 

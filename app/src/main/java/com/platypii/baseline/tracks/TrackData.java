@@ -17,7 +17,7 @@ public class TrackData {
     public final TrackStats stats;
 
     public TrackData(@NonNull File trackFile) {
-        final List<MLocation> all = TrackFileReader.readTrackFile(trackFile);
+        final List<MLocation> all = new TrackFileReader(trackFile).read();
         // Trim plane and ground
         data = TrackDataTrimmer.autoTrim(all);
         // Compute stats

@@ -27,17 +27,29 @@ import static com.platypii.baseline.util.CSVParse.getColumnLong;
 class TrackFileReader {
     private static final String TAG = "TrackFileReader";
 
+    private final File trackFile;
+
+    // State used while scanning track file
+    private Filter baroAltitudeFilter;
+    private Filter gpsAltitudeFilter;
+    private long baroLastNano;
+    private long gpsLastMillis;
+
+    TrackFileReader(@NonNull File trackFile) {
+        this.trackFile = trackFile;
+    }
+
     /**
      * Load track data from file into location data
      */
     @NonNull
-    static List<MLocation> readTrackFile(File trackFile) {
+    List<MLocation> read() {
         // Read file line by line
         // TODO minsdk19: InputStreamReader(,StandardCharsets.UTF_8)
         if (trackFile.getName().endsWith(".gz")) {
             // GZipped track file
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(trackFile))))) {
-                return readTrackReader(br);
+                return parse(br);
             } catch (EOFException e) {
                 // Still error but less verbose
                 Log.e(TAG, "Premature end of gzip track file " + trackFile + "\n" + e);
@@ -47,7 +59,7 @@ class TrackFileReader {
         } else {
             // Uncompressed CSV file
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(trackFile)))) {
-                return readTrackReader(br);
+                return parse(br);
             } catch (IOException e) {
                 Log.e(TAG, "Error reading track data from " + trackFile, e);
             }
@@ -56,13 +68,12 @@ class TrackFileReader {
     }
 
     @NonNull
-    private static List<MLocation> readTrackReader(BufferedReader br) throws IOException {
-        // Altitude kalman filters
-        final Filter baroAltitudeFilter = new FilterKalman();
-        final Filter gpsAltitudeFilter = new FilterKalman();
-
-        long baroLastNano = -1L;
-        long gpsLastMillis = -1L;
+    private List<MLocation> parse(@NonNull BufferedReader br) throws IOException {
+        // Reset initial state
+        baroAltitudeFilter = new FilterKalman();
+        gpsAltitudeFilter = new FilterKalman();
+        baroLastNano = -1L;
+        gpsLastMillis = -1L;
 
         final List<MLocation> data = new ArrayList<>();
 
@@ -80,7 +91,7 @@ class TrackFileReader {
         while ((line = br.readLine()) != null) {
             final String[] row = line.split(",");
             final Integer sensorIndex = columns.get("sensor");
-            if (sensorIndex == null) {
+            if (sensorIndex == null || sensorIndex >= row.length) {
                 // FlySight
                 final long millis = getColumnDate(row, columns, "time");
                 if (millis > 0) {
