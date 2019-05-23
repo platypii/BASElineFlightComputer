@@ -217,9 +217,6 @@ public abstract class BaseActivity extends FragmentActivity {
             final String userId = account.getId();
             firebaseAnalytics.setUserId(userId);
             updateAuthState(new AuthState.SignedIn(userId));
-
-            // Update track listing
-            Services.cloud.listing.listAsync(account.getIdToken(), false);
         } else {
             Exceptions.report(new NullPointerException("Sign in success, but account is null"));
         }

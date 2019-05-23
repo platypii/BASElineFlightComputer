@@ -1,5 +1,7 @@
 package com.platypii.baseline.cloud;
 
+import com.platypii.baseline.BuildConfig;
+
 import android.content.Context;
 import androidx.annotation.NonNull;
 import okhttp3.Headers;
@@ -19,6 +21,7 @@ public class RetrofitClient {
             final Interceptor authInterceptor = chain -> {
                 Request request = chain.request();
                 final Headers.Builder headerBuilder = request.headers().newBuilder();
+                headerBuilder.add("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME);
                 // Get auth token
                 if (AuthState.getUser() != null) {
                     final String authToken = AuthToken.getAuthToken(context);

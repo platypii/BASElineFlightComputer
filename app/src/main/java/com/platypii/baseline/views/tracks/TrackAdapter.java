@@ -52,7 +52,7 @@ public class TrackAdapter extends BaseAdapter {
             }
         }
         // Add cloud tracks
-        final List<CloudData> cloudTracks = Services.cloud.listing.cache.list();
+        final List<CloudData> cloudTracks = Services.cloud.tracks.cache.list();
         if (cloudTracks != null && !cloudTracks.isEmpty()) {
             updated.add(new ListHeader("Synced"));
             for (CloudData track : cloudTracks) {

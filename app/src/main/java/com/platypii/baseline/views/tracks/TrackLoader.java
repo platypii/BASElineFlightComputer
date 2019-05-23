@@ -16,7 +16,7 @@ public class TrackLoader {
         if (extras != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
             if (track_id != null) {
-                final CloudData track = Services.cloud.listing.cache.get(track_id);
+                final CloudData track = Services.cloud.tracks.cache.get(track_id);
                 if (track != null) {
                     return track;
                 } else {

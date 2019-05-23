@@ -42,9 +42,9 @@ class DeleteTask implements Runnable {
             deleteRemote(auth, track.trackUrl);
             Log.i(TAG, "Track delete successful: " + track.track_id);
             // Remove from track listing cache
-            Services.cloud.listing.cache.remove(track);
+            Services.cloud.tracks.cache.remove(track);
             // Update track list
-            Services.cloud.listing.listAsync(auth, true);
+            Services.cloud.tracks.listAsync(context, true);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteSuccess(track.track_id));
         } catch (IOException e) {
