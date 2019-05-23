@@ -31,25 +31,19 @@ public class Tasks implements BaseService {
     @Override
     public void start(@NonNull Context context) {
         this.context = context;
-        // Load pending from preferences
-        pending.addAll(PendingPreferences.load(context));
         // Start pending work
         tendQueue();
     }
 
-    public void add(Task task) {
+    public void add(@NonNull Task task) {
         Log.i(TAG, "Adding task " + task);
         synchronized (pending) {
             pending.add(task);
         }
-        if (task.taskType().persistent()) {
-            // Only need to save if task was persistent
-            PendingPreferences.save(context, pending);
-        }
         tendQueue();
     }
 
-    private void tendQueue() {
+    public void tendQueue() {
         synchronized (pending) {
             Log.i(TAG, "Tending task queue: " + pending.size() + " tasks");
             Log.d(TAG, "Tending task queue: " + TextUtils.join(",", pending));
@@ -96,7 +90,6 @@ public class Tasks implements BaseService {
                 Exceptions.report(new IllegalStateException("Invalid pop: " + running + " != " + removed));
             }
             running = null;
-            PendingPreferences.save(context, pending);
         }
         // Check for next pending task
         tendQueue();
@@ -120,14 +113,12 @@ public class Tasks implements BaseService {
                     it.remove();
                 }
             }
-            PendingPreferences.save(context, pending);
         }
     }
 
     @Override
     public void stop() {
         synchronized (pending) {
-            PendingPreferences.save(context, pending);
             pending.clear();
         }
     }

@@ -15,6 +15,4 @@ public interface Task {
 
     TaskType taskType();
 
-    String toJson();
-
 }

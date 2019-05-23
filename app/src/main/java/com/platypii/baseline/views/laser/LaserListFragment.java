@@ -1,7 +1,7 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
-import com.platypii.baseline.Services;
+import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
@@ -14,12 +14,12 @@ import android.widget.AdapterView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.ListFragment;
-import java.util.ArrayList;
-import java.util.List;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class LaserListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
-    private List<LaserProfile> lasers = new ArrayList<>();
     private LaserAdapter laserAdapter;
 
     @Override
@@ -31,14 +31,16 @@ public class LaserListFragment extends ListFragment implements AdapterView.OnIte
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
-        final List<LaserProfile> cloudLasers = Services.cloud.lasers.cache.list();
-        if (cloudLasers != null) {
-            lasers = cloudLasers;
-        }
         laserAdapter = new LaserAdapter(getContext());
-        laserAdapter.setLayers(lasers);
+        laserAdapter.populateItems();
         setListAdapter(laserAdapter);
         getListView().setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -51,6 +53,17 @@ public class LaserListFragment extends ListFragment implements AdapterView.OnIte
             final FragmentManager fm = getFragmentManager();
             if (fm != null) fm.popBackStack();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLaserSync(@NonNull LaserSyncEvent event) {
+        laserAdapter.populateItems();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
 }

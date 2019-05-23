@@ -8,6 +8,7 @@ import com.platypii.baseline.util.Numbers;
 import java.util.List;
 
 public class LaserProfile {
+    @NonNull
     public String laser_id;
     @Nullable
     public String user_id;
@@ -20,7 +21,7 @@ public class LaserProfile {
     public String source;
     public List<LaserMeasurement> points;
 
-    public LaserProfile(String laser_id, @Nullable String user_id, String name, boolean isPublic, Double alt, Double lat, Double lng, String source, List<LaserMeasurement> points) {
+    public LaserProfile(@NonNull String laser_id, @Nullable String user_id, String name, boolean isPublic, Double alt, Double lat, Double lng, String source, List<LaserMeasurement> points) {
         this.laser_id = laser_id;
         this.user_id = user_id;
         this.name = name;
@@ -47,10 +48,15 @@ public class LaserProfile {
         return value != null && !Double.isNaN(value) && !Double.isInfinite(value);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LaserProfile && ((LaserProfile) obj).laser_id.equals(laser_id);
+    }
+
     @NonNull
     @Override
     public String toString() {
-        return name;
+        return "LaserProfile(" + laser_id + ", " + name + ")";
     }
 
 }

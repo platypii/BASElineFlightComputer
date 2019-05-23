@@ -1,7 +1,7 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.BaseService;
-import com.platypii.baseline.cloud.lasers.LaserListing;
+import com.platypii.baseline.cloud.lasers.Lasers;
 import com.platypii.baseline.cloud.tracks.Tracks;
 
 import android.content.Context;
@@ -20,7 +20,7 @@ public class BaselineCloud implements BaseService {
     // REST objects
     public final Tracks tracks = new Tracks();
     private final UploadManager uploads = new UploadManager();
-    public final LaserListing lasers = new LaserListing();
+    public final Lasers lasers = new Lasers();
 
     public void deleteTrack(@NonNull Context context, @NonNull CloudData track) {
         new Thread(new DeleteTask(context, track)).start();

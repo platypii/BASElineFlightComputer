@@ -11,9 +11,8 @@ import java.util.List;
  */
 public class TrackCache extends LocalCache<CloudData> {
 
-    @Override
-    String keyPrefix() {
-        return "cloud.track";
+    public TrackCache() {
+        super("cloud.track");
     }
 
     /**

@@ -76,8 +76,8 @@ public abstract class AuthState {
     }
 
     @Override
-    public boolean equals(Object o) {
-        return o instanceof AuthState && o.toString().equals(toString());
+    public boolean equals(Object obj) {
+        return obj instanceof AuthState && obj.toString().equals(toString());
     }
 
 }

@@ -2,7 +2,7 @@ package com.platypii.baseline.cloud.lasers;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.RetrofitClient;
-import com.platypii.baseline.events.LaserDeleteEvent;
+import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.laser.LaserProfile;
 
@@ -46,16 +46,16 @@ public class LaserDeleteTask implements Runnable {
                 // Update laser list
                 Services.cloud.lasers.listAsync(context, true);
                 // Notify listeners
-                EventBus.getDefault().post(new LaserDeleteEvent.LaserDeleteSuccess(laser.laser_id));
+                EventBus.getDefault().post(new LaserSyncEvent.DeleteSuccess(laser.laser_id));
             } else {
                 Log.e(TAG, "Failed to delete laser " + laser.laser_id + " " + response.errorBody());
                 // Notify listeners
-                EventBus.getDefault().post(new LaserDeleteEvent.LaserDeleteFailure(laser.laser_id, response.errorBody().string()));
+                EventBus.getDefault().post(new LaserSyncEvent.DeleteFailure(laser.laser_id, response.errorBody().string()));
             }
         } catch (IOException e) {
             Log.e(TAG, "Failed to delete laser " + laser.laser_id, e);
             // Notify listeners
-            EventBus.getDefault().post(new LaserDeleteEvent.LaserDeleteFailure(laser.laser_id, e.getMessage()));
+            EventBus.getDefault().post(new LaserSyncEvent.DeleteFailure(laser.laser_id, e.getMessage()));
         }
     }
 

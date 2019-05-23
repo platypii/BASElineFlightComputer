@@ -11,9 +11,8 @@ import java.util.List;
  */
 public class LaserCache extends LocalCache<LaserProfile> {
 
-    @Override
-    String keyPrefix() {
-        return "cloud.laser";
+    public LaserCache(@NonNull String cacheName) {
+        super("cloud.laser." + cacheName);
     }
 
     /**

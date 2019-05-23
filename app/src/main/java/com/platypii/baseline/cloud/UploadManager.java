@@ -2,7 +2,7 @@ package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.tasks.TaskTypes;
+import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.cloud.tracks.TrackUploadTask;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.tracks.TrackFile;
@@ -31,7 +31,7 @@ class UploadManager implements BaseService {
      * Clear exiting track uploads, and re-add all local track files to task queue
      */
     private void uploadAll() {
-        Services.tasks.removeType(TaskTypes.trackUpload);
+        Services.tasks.removeType(TaskType.trackUpload);
         // Can't upload if you're not signed in
         if (AuthState.getUser() != null) {
             for (TrackFile track : Services.trackStore.getLocalTracks()) {
@@ -57,7 +57,7 @@ class UploadManager implements BaseService {
     @Subscribe
     public void onSignOut(@NonNull AuthState.SignedOut event) {
         // Cancel pending upload tasks
-        Services.tasks.removeType(TaskTypes.trackUpload);
+        Services.tasks.removeType(TaskType.trackUpload);
     }
 
     @Override

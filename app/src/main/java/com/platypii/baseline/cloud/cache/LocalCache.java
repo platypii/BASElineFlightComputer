@@ -15,14 +15,15 @@ import java.util.List;
 /**
  * Represents a local cache of a REST object store in the cloud.
  * Stored in shared preferences as JSON.
+ * Also manages request TTL.
  * @param <T> the java type of the items
  */
 public abstract class LocalCache<T> {
 
     // Preference keys
-    private final String CACHE_LAST_REQUEST = keyPrefix() + ".list.request_time";
-    private final String CACHE_LAST_UPDATE = keyPrefix() + ".list.update_time";
-    private final String CACHE_LIST = keyPrefix() + ".list";
+    private final String CACHE_LAST_REQUEST;
+    private final String CACHE_LAST_UPDATE;
+    private final String CACHE_LIST;
 
     // Minimum time between requests
     private static final long REQUEST_TTL = 30 * 1000; // milliseconds
@@ -31,11 +32,15 @@ public abstract class LocalCache<T> {
 
     private SharedPreferences prefs;
 
+    LocalCache(@NonNull String keyPrefix) {
+        CACHE_LAST_REQUEST = keyPrefix + ".list.request_time";
+        CACHE_LAST_UPDATE = keyPrefix + ".list.update_time";
+        CACHE_LIST = keyPrefix + ".list";
+    }
+
     public void start(@NonNull Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
-
-    abstract String keyPrefix();
 
     /**
      * Return Type of List<T>

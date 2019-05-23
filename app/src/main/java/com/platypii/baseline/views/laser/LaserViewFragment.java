@@ -6,7 +6,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.lasers.LaserDeleteTask;
-import com.platypii.baseline.events.LaserDeleteEvent;
+import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.util.Convert;
@@ -117,12 +117,13 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLaserDelete(@NonNull LaserDeleteEvent event) {
-        if (event instanceof LaserDeleteEvent.LaserDeleteSuccess) {
-            getFragmentManager().popBackStack();
-        } else {
-            Toast.makeText(getContext(), "Failed to delete profile", Toast.LENGTH_SHORT).show();
-        }
+    public void onLaserDeleteSuccess(@NonNull LaserSyncEvent.DeleteSuccess event) {
+        getFragmentManager().popBackStack();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLaserDeleteFailure(@NonNull LaserSyncEvent.DeleteFailure event) {
+        Toast.makeText(getContext(), "Failed to delete profile", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -134,7 +135,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
         if (bundle != null) {
             final String laserId = bundle.getString(LASER_ID);
             if (laserId != null) {
-                final LaserProfile laser = Services.cloud.lasers.cache.get(laserId);
+                final LaserProfile laser = Services.cloud.lasers.get(laserId);
                 if (laser != null) {
                     return laser;
                 } else {

@@ -148,6 +148,9 @@ public class Services {
 //            places.start(appContext);
 
             Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
+        } else if (initialized) {
+            // Every time an activity starts...
+            tasks.tendQueue();
         }
     }
 

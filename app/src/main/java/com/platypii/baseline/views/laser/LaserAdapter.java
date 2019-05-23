@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.laser.LaserProfile;
 import android.content.Context;
@@ -29,26 +30,38 @@ class LaserAdapter extends BaseAdapter {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setLayers(@NonNull List<LaserProfile> lasers) {
+    void populateItems() {
         final String userId = AuthState.getUser();
         items.clear();
-        if (userId != null && !lasers.isEmpty()) {
-            // Add my lasers
-            for (LaserProfile laser : lasers) {
-                if (userId.equals(laser.user_id)) {
-                    if (items.isEmpty()) {
-                        // Add header
-                        items.add(new LaserListItem.ListHeader("My Profiles"));
-                    }
-                    items.add(new LaserListItem.ListLaser(laser));
-                }
+        // Add unsynced lasers
+        final List<LaserProfile> unsynced = Services.cloud.lasers.unsynced.list();
+        if (unsynced != null && !unsynced.isEmpty()) {
+            items.add(new LaserListItem.ListHeader("Not synced"));
+            for (LaserProfile laser : unsynced) {
+                items.add(new LaserListItem.ListLaser(laser));
             }
         }
-        // Add public lasers
-        items.add(new LaserListItem.ListHeader("Public Profiles"));
-        for (LaserProfile laser : lasers) {
-            if (laser.user_id == null || !laser.user_id.equals(userId)) {
-                items.add(new LaserListItem.ListLaser(laser));
+        final List<LaserProfile> lasers = Services.cloud.lasers.cache.list();
+        if (lasers != null && !lasers.isEmpty()) {
+            // Add my lasers
+            if (userId != null) {
+                int myCount = 0;
+                for (LaserProfile laser : lasers) {
+                    if (userId.equals(laser.user_id)) {
+                        if (myCount++ == 0) {
+                            // Add header
+                            items.add(new LaserListItem.ListHeader("My Profiles"));
+                        }
+                        items.add(new LaserListItem.ListLaser(laser));
+                    }
+                }
+            }
+            // Add public lasers
+            items.add(new LaserListItem.ListHeader("Public Profiles"));
+            for (LaserProfile laser : lasers) {
+                if (laser.user_id == null || !laser.user_id.equals(userId)) {
+                    items.add(new LaserListItem.ListLaser(laser));
+                }
             }
         }
         notifyDataSetChanged();

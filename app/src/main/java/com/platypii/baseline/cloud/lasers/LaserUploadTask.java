@@ -6,13 +6,13 @@ import com.platypii.baseline.cloud.RetrofitClient;
 import com.platypii.baseline.cloud.tasks.AuthRequiredException;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
-import com.platypii.baseline.cloud.tasks.TaskTypes;
+import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.laser.LaserProfile;
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import com.google.gson.Gson;
 import java.io.IOException;
+import org.greenrobot.eventbus.EventBus;
 import retrofit2.Response;
 
 public class LaserUploadTask implements Task {
@@ -21,13 +21,13 @@ public class LaserUploadTask implements Task {
     @NonNull
     private final LaserProfile laserProfile;
 
-    public LaserUploadTask(@NonNull LaserProfile laserProfile) {
+    LaserUploadTask(@NonNull LaserProfile laserProfile) {
         this.laserProfile = laserProfile;
     }
 
     @Override
     public TaskType taskType() {
-        return TaskTypes.laserUpload;
+        return TaskType.laserUpload;
     }
 
     @Override
@@ -42,26 +42,24 @@ public class LaserUploadTask implements Task {
         if (response.isSuccessful()) {
             final LaserProfile result = response.body();
             Log.i(TAG, "Laser POST successful, laser profile " + result);
-            // Add laser profile to cache, and replace temp profile layer
+            // Add laser to cache, remove from unsynced, and update list
             Services.cloud.lasers.cache.add(result);
+            Services.cloud.lasers.unsynced.remove(laserProfile);
+            Services.cloud.lasers.listAsync(context, true);
             // Sneakily replace laser_id
             laserProfile.laser_id = result.laser_id;
-            // Update laser listing
-            Services.cloud.lasers.listAsync(context, true);
+            EventBus.getDefault().post(new LaserSyncEvent.UploadSuccess(result));
         } else {
-            throw new IOException("Laser upload failed: " + response.errorBody().string());
+            final String error = response.errorBody().string();
+            EventBus.getDefault().post(new LaserSyncEvent.UploadFailure(laserProfile, error));
+            throw new IOException("Laser upload failed: " + error);
         }
-    }
-
-    @Override
-    public String toJson() {
-        return new Gson().toJson(laserProfile);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return "LaserUpload(" + laserProfile.name + ")";
+        return "LaserUpload(" + laserProfile.laser_id + ", " + laserProfile.name + ")";
     }
 
 }

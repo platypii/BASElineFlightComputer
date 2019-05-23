@@ -11,7 +11,6 @@ import com.platypii.baseline.cloud.UploadFailedException;
 import com.platypii.baseline.cloud.tasks.AuthRequiredException;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
-import com.platypii.baseline.cloud.tasks.TaskTypes;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
@@ -48,7 +47,7 @@ public class TrackUploadTask implements Task {
 
     @Override
     public TaskType taskType() {
-        return TaskTypes.trackUpload;
+        return TaskType.trackUpload;
     }
 
     @Override
@@ -154,11 +153,6 @@ public class TrackUploadTask implements Task {
         }
         is.close();
         output.flush();
-    }
-
-    @Override
-    public String toJson() {
-        return new Gson().toJson(trackFile.file.getAbsolutePath());
     }
 
     @NonNull

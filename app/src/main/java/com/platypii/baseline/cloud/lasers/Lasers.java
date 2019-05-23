@@ -5,11 +5,13 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.RetrofitClient;
 import com.platypii.baseline.cloud.cache.LaserCache;
-import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.cloud.tasks.TaskType;
+import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.laser.LaserProfile;
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -20,17 +22,20 @@ import retrofit2.Response;
 /**
  * List lasers from the cloud
  */
-public class LaserListing implements BaseService {
-    private static final String TAG = "LaserListing";
+public class Lasers implements BaseService {
+    private static final String TAG = "Lasers";
 
     private Context context;
-    public final LaserCache cache = new LaserCache();
+    public final LaserCache cache = new LaserCache("cache");
+    public final LaserCache unsynced = new LaserCache("unsynced");
 
     @Override
     public void start(@NonNull Context context) {
         this.context = context;
         cache.start(context);
         listAsync(context, false);
+        unsynced.start(context);
+        uploadAll();
         EventBus.getDefault().register(this);
     }
 
@@ -52,7 +57,7 @@ public class LaserListing implements BaseService {
                     // Save laser listing to local cache
                     cache.update(lasers);
                     // Notify listeners
-                    EventBus.getDefault().post(new SyncEvent.ListingSuccess());
+                    EventBus.getDefault().post(new LaserSyncEvent.ListingSuccess());
                     Log.i(TAG, "Listing successful: " + lasers.size() + " laser profiles");
                 }
 
@@ -69,12 +74,44 @@ public class LaserListing implements BaseService {
         }
     }
 
+    public void addUnsynced(@NonNull LaserProfile laserProfile) {
+        unsynced.add(laserProfile);
+        if (AuthState.getUser() != null) {
+            Services.tasks.add(new LaserUploadTask(laserProfile));
+        }
+    }
+
+    /**
+     * Get profile from cache (fallback to unsynced)
+     */
+    @Nullable
+    public LaserProfile get(@NonNull String laser_id) {
+        final LaserProfile fromCache = cache.get(laser_id);
+        if (fromCache != null) {
+            return fromCache;
+        } else {
+            return unsynced.get(laser_id);
+        }
+    }
+
+    private void uploadAll() {
+        if (AuthState.getUser() != null) {
+            final List<LaserProfile> list = unsynced.list();
+            if (list != null) {
+                for (LaserProfile laserProfile : list) {
+                    Services.tasks.add(new LaserUploadTask(laserProfile));
+                }
+            }
+        }
+    }
+
     /**
      * Update laser listings on sign in
      */
     @Subscribe
     public void onSignIn(AuthState.SignedIn event) {
         listAsync(context, true);
+        uploadAll();
     }
 
     /**
@@ -89,6 +126,7 @@ public class LaserListing implements BaseService {
     @Override
     public void stop() {
         EventBus.getDefault().unregister(this);
+        Services.tasks.removeType(TaskType.laserUpload);
         context = null;
     }
 

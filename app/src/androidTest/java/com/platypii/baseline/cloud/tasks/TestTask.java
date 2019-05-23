@@ -12,21 +12,13 @@ public class TestTask implements Task {
     // Task will not complete until this is set to true
     boolean wait = true;
 
-    public static class TestTaskType implements TaskType {
+    public static class TestTaskType extends TaskType {
         @Override
         public String name() {
             return "test-task";
         }
-        @Override
-        public Task fromJson(@NonNull String json) {
-            return null;
-        }
-        @Override
-        public boolean persistent() {
-            return true;
-        }
     }
-    public static final TestTaskType taskType = new TestTaskType();
+    static final TestTaskType taskType = new TestTaskType();
 
     @Override
     public void run(@NonNull Context context) throws Exception {
@@ -39,12 +31,7 @@ public class TestTask implements Task {
 
     @Override
     public TaskType taskType() {
-        return new TestTaskType();
-    }
-
-    @Override
-    public String toJson() {
-        return null;
+        return taskType;
     }
 
 }

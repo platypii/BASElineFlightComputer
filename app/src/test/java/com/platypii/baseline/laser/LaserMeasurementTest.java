@@ -11,8 +11,12 @@ public class LaserMeasurementTest {
 
     @Test
     public void parse() throws ParseException {
-        List<LaserMeasurement> points = LaserMeasurement.parse("100,-100", true, true);
-        assertEquals(1, points.size());
+        assertEquals(1, LaserMeasurement.parse("100,-100", true, true).size());
+        assertEquals(2, LaserMeasurement.parse("100,-100\n50.0, -50.0", true, true).size());
+        assertEquals(2, LaserMeasurement.parse("100,-100\n50.0, -50.0\n", true, true).size());
+        assertEquals(1, LaserMeasurement.parse("100,-100,", true, false).size());
+        assertEquals(0, LaserMeasurement.parse("100,-100,22", true, false).size());
+        assertEquals(0, LaserMeasurement.parse("100,z", true, false).size());
     }
 
     @Test

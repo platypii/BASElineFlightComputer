@@ -38,7 +38,7 @@ public class LaserMeasurement {
         for (int i = 0; i < lines.length; i++) {
             final String line = lines[i];
             final String[] row = line.split(",");
-            if (row.length >= 2) {
+            if (row.length == 2) {
                 try {
                     final double x = Double.parseDouble(row[0]) * units;
                     final double y = Double.parseDouble(row[1]) * units;

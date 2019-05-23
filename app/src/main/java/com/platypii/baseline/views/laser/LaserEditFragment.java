@@ -3,7 +3,6 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.cloud.lasers.LaserUploadTask;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.laser.LaserMeasurement;
@@ -13,6 +12,7 @@ import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -186,9 +185,8 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         if (error == null) {
             // Save in background and return to profile list view
             getLaserProfile();
-            Services.tasks.add(new LaserUploadTask(laserProfile));
             // Publish laser as a new layer
-            Services.cloud.lasers.cache.add(laserProfile);
+            Services.cloud.lasers.addUnsynced(laserProfile);
             updateLayers();
             // Reset for next laser input
             laserProfile = newLaserProfile();

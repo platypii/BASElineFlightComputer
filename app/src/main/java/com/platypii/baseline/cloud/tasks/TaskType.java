@@ -1,22 +1,27 @@
 package com.platypii.baseline.cloud.tasks;
 
-import androidx.annotation.NonNull;
+public abstract class TaskType {
 
-public interface TaskType {
+    public static final TaskType laserUpload = new LaserTaskType();
+    public static final TaskType trackUpload = new TrackTaskType();
 
     /**
      * The name of this type of task
      */
-    String name();
+    abstract String name();
 
-    /**
-     * Parse from JSON into a Task of this type
-     */
-    Task fromJson(@NonNull String json);
+    public static class LaserTaskType extends TaskType {
+        @Override
+        String name() {
+            return "LaserUpload";
+        }
+    }
 
-    /**
-     * Return true if this task should be persisted across start/stops
-     */
-    boolean persistent();
+    public static class TrackTaskType extends TaskType {
+        @Override
+        String name() {
+            return "TrackUpload";
+        }
+    }
 
 }
