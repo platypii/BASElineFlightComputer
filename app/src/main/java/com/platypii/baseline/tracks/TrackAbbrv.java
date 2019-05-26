@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -20,8 +21,7 @@ public class TrackAbbrv {
     public static void abbreviate(@NonNull File trackFile, @NonNull File abbrvFile) {
         final long startTime = System.currentTimeMillis();
         // Read file line by line
-        // TODO minsdk19: InputStreamReader(,StandardCharsets.UTF_8)
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(trackFile))))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(trackFile)), StandardCharsets.UTF_8))) {
             try (FileWriter writer = new FileWriter(abbrvFile)) {
                 boolean firstLine = true;
                 String line;

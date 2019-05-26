@@ -68,7 +68,7 @@ class UineyeProtocol implements RangefinderProtocol {
     }
 
     @Override
-    public void processBytes(byte[] value) {
+    public void processBytes(@NonNull byte[] value) {
         sentenceIterator.addBytes(value);
         while (sentenceIterator.hasNext()) {
             processSentence(sentenceIterator.next());
@@ -80,7 +80,7 @@ class UineyeProtocol implements RangefinderProtocol {
         return rangefinderCharacteristic;
     }
 
-    private void processSentence(byte[] value) {
+    private void processSentence(@NonNull byte[] value) {
         if (Arrays.equals(value, laserHello)) {
             Log.i(TAG, "rf -> app: hello");
         } else if (Arrays.equals(value, heartbeat)) {
@@ -128,7 +128,7 @@ class UineyeProtocol implements RangefinderProtocol {
         }
     }
 
-    private void processMeasurement(byte[] value) {
+    private void processMeasurement(@NonNull byte[] value) {
         Log.d(TAG, "rf -> app: measure " + Util.byteArrayToHex(value));
 
         final double pitch = Util.bytesToShort(value[3], value[4]) * 0.1; // degrees

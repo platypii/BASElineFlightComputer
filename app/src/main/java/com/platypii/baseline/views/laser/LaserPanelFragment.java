@@ -13,6 +13,7 @@ import com.platypii.baseline.views.charts.layers.TrackProfileLayerLocal;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerRemote;
 import com.platypii.baseline.views.tracks.TrackListFragment;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,11 +32,17 @@ import org.greenrobot.eventbus.ThreadMode;
 public class LaserPanelFragment extends ListFragment {
     private static final String TAG = "LaserPanel";
 
-    private final FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+    private FirebaseAnalytics firebaseAnalytics;
 
     @Nullable
     private ProfileAdapter listAdapter;
     private View helpText;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,7 +76,7 @@ public class LaserPanelFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView parent, View view, int position, long id) {
+    public void onListItemClick(@NonNull ListView parent, View view, int position, long id) {
         super.onListItemClick(parent, view, position, id);
         final Object item = parent.getItemAtPosition(position);
         if (item instanceof LaserProfileLayer) {

@@ -25,6 +25,7 @@ public class LaserUploadTask implements Task {
         this.laserProfile = laserProfile;
     }
 
+    @NonNull
     @Override
     public TaskType taskType() {
         return TaskType.laserUpload;

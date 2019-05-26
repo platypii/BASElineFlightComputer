@@ -15,8 +15,11 @@ public class LaserProfile {
     public String name;
     @SerializedName("public")
     public boolean isPublic;
+    @Nullable
     public Double alt;
+    @Nullable
     public Double lat;
+    @Nullable
     public Double lng;
     public String source;
     public List<LaserMeasurement> points;
@@ -48,7 +51,7 @@ public class LaserProfile {
         return laser_id.startsWith("tmp-");
     }
 
-    private boolean isReal(Double value) {
+    private boolean isReal(@Nullable Double value) {
         return value != null && !Double.isNaN(value) && !Double.isInfinite(value);
     }
 

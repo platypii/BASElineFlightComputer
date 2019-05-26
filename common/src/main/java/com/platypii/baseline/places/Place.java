@@ -1,6 +1,7 @@
 package com.platypii.baseline.places;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -38,6 +39,7 @@ public class Place {
         return !objectType.isEmpty() && "BASE".contains(objectType);
     }
 
+    @Nullable
     private LatLng lazyLatLng = null;
     @NonNull
     public LatLng latLng() {

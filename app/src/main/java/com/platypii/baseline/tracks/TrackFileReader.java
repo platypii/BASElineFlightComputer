@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -27,13 +28,8 @@ import static com.platypii.baseline.util.CSVParse.getColumnLong;
 class TrackFileReader {
     private static final String TAG = "TrackFileReader";
 
+    @NonNull
     private final File trackFile;
-
-    // State used while scanning track file
-    private Filter baroAltitudeFilter;
-    private Filter gpsAltitudeFilter;
-    private long baroLastNano;
-    private long gpsLastMillis;
 
     TrackFileReader(@NonNull File trackFile) {
         this.trackFile = trackFile;
@@ -45,10 +41,9 @@ class TrackFileReader {
     @NonNull
     List<MLocation> read() {
         // Read file line by line
-        // TODO minsdk19: InputStreamReader(,StandardCharsets.UTF_8)
         if (trackFile.getName().endsWith(".gz")) {
             // GZipped track file
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(trackFile))))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(trackFile)), StandardCharsets.UTF_8))) {
                 return parse(br);
             } catch (EOFException e) {
                 // Still error but less verbose
@@ -58,7 +53,7 @@ class TrackFileReader {
             }
         } else {
             // Uncompressed CSV file
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(trackFile)))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(trackFile), StandardCharsets.UTF_8))) {
                 return parse(br);
             } catch (IOException e) {
                 Log.e(TAG, "Error reading track data from " + trackFile, e);
@@ -70,10 +65,11 @@ class TrackFileReader {
     @NonNull
     private List<MLocation> parse(@NonNull BufferedReader br) throws IOException {
         // Reset initial state
-        baroAltitudeFilter = new FilterKalman();
-        gpsAltitudeFilter = new FilterKalman();
-        baroLastNano = -1L;
-        gpsLastMillis = -1L;
+        // State used while scanning track file
+        final Filter baroAltitudeFilter = new FilterKalman();
+        final Filter gpsAltitudeFilter = new FilterKalman();
+        long baroLastNano = -1L;
+        long gpsLastMillis = -1L;
 
         final List<MLocation> data = new ArrayList<>();
 

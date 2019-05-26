@@ -13,6 +13,7 @@ public class TestTask implements Task {
     boolean wait = true;
 
     public static class TestTaskType extends TaskType {
+        @NonNull
         @Override
         public String name() {
             return "test-task";
@@ -29,6 +30,7 @@ public class TestTask implements Task {
         }
     }
 
+    @NonNull
     @Override
     public TaskType taskType() {
         return taskType;

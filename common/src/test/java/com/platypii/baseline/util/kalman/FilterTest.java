@@ -1,5 +1,6 @@
 package com.platypii.baseline.util.kalman;
 
+import androidx.annotation.NonNull;
 import java.util.Random;
 import org.junit.Test;
 
@@ -11,6 +12,7 @@ import static org.junit.Assert.assertEquals;
  */
 public abstract class FilterTest {
 
+    @NonNull
     public abstract Filter getFilter();
 
     @Test

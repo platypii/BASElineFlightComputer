@@ -19,6 +19,7 @@ import java.util.List;
  */
 class ProfileAdapter extends BaseAdapter {
 
+    @NonNull
     private final LayoutInflater inflater;
     private final List<ProfileLayer> layers = new ArrayList<>();
 
@@ -26,7 +27,7 @@ class ProfileAdapter extends BaseAdapter {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setLayers(List<ProfileLayer> layers) {
+    public void setLayers(@NonNull List<ProfileLayer> layers) {
         this.layers.clear();
         this.layers.addAll(layers);
         notifyDataSetChanged();

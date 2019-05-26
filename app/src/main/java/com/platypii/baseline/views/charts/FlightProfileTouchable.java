@@ -29,7 +29,7 @@ public class FlightProfileTouchable extends FlightProfile {
 
     private final ScaleGestureDetector scaler = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
         @Override
-        public boolean onScale(ScaleGestureDetector detector) {
+        public boolean onScale(@NonNull ScaleGestureDetector detector) {
             scaleFactor *= detector.getScaleFactor();
             scaleFactor = Math.max(1f, Math.min(scaleFactor, 10f));
             invalidate();
@@ -37,7 +37,7 @@ public class FlightProfileTouchable extends FlightProfile {
         }
     });
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
         final boolean superHandled = super.onTouchEvent(event);
         final boolean scalerHandled = scaler.onTouchEvent(event);
 

@@ -13,6 +13,7 @@ public interface Task {
      */
     void run(@NonNull Context context) throws Exception;
 
+    @NonNull
     TaskType taskType();
 
 }

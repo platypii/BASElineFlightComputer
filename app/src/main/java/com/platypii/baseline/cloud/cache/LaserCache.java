@@ -26,6 +26,7 @@ public class LaserCache extends LocalCache<LaserProfile> {
     /**
      * Return the unique id for an item
      */
+    @NonNull
     @Override
     String getId(@NonNull LaserProfile item) {
         return item.laser_id;

@@ -5,10 +5,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class IOUtil {
 
-    public static void copy(InputStream input, @NonNull OutputStream output) throws IOException {
+    public static void copy(@NonNull InputStream input, @NonNull OutputStream output) throws IOException {
         final byte[] buffer = new byte[1024];
         int bytesRead;
         while ((bytesRead = input.read(buffer)) != -1) {
@@ -25,7 +26,7 @@ public class IOUtil {
             output.write(buffer, 0, bytesRead);
         }
         input.close();
-        return output.toString("UTF-8"); // minsdk19 (StandardCharsets.UTF_8.name());
+        return output.toString(StandardCharsets.UTF_8.name());
     }
 
 }

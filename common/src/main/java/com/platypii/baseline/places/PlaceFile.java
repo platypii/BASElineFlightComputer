@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -49,7 +50,7 @@ class PlaceFile {
         Log.i(TAG, "Loading places from file (" + (file.length()>>10) + " KiB)");
         final List<Place> places = new ArrayList<>();
         // Read place file csv (gzipped)
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), StandardCharsets.UTF_8))) {
             // Parse header column
             String line = br.readLine();
             final CSVHeader columns = new CSVHeader(line);

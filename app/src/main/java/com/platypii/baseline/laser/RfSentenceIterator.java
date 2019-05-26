@@ -1,5 +1,6 @@
 package com.platypii.baseline.laser;
 
+import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +18,7 @@ class RfSentenceIterator implements Iterator<byte[]> {
 
     private int state = 0;
 
-    void addBytes(byte[] bytes) {
+    void addBytes(@NonNull byte[] bytes) {
         for (byte b : bytes) {
             addByte(b);
         }

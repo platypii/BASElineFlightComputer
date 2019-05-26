@@ -1,7 +1,7 @@
 package com.platypii.baseline.cloud.tasks;
 
 import android.content.Context;
-import androidx.test.InstrumentationRegistry;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +13,7 @@ public class TasksTest {
 
     @Test
     public void addRemove() {
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = ApplicationProvider.getApplicationContext();
         Tasks tasks = new Tasks();
         tasks.start(context);
         assertEquals(0, tasks.pending.size());

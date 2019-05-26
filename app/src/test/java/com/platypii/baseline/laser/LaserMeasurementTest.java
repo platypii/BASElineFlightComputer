@@ -1,5 +1,6 @@
 package com.platypii.baseline.laser;
 
+import androidx.annotation.NonNull;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class LaserMeasurementTest {
         assertEquals("50.0, -50.0\n100.0, -100.0\n", LaserMeasurement.render(reordered, true).toString());
     }
 
+    @NonNull
     private List<LaserMeasurement> testPoints() {
         List<LaserMeasurement> points = new ArrayList<>();
         points.add(new LaserMeasurement(100,-100));

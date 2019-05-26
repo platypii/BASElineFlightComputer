@@ -16,7 +16,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -58,7 +57,7 @@ public class Lasers implements BaseService {
             final Call<List<LaserProfile>> laserCall = userId != null ? laserApi.byUser(userId) : laserApi.getPublic();
             laserCall.enqueue(new Callback<List<LaserProfile>>() {
                 @Override
-                public void onResponse(Call<List<LaserProfile>> call, Response<List<LaserProfile>> response) {
+                public void onResponse(Call<List<LaserProfile>> call, @NonNull Response<List<LaserProfile>> response) {
                     final List<LaserProfile> lasers = response.body();
                     // Save laser listing to local cache
                     cache.update(lasers);

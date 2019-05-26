@@ -45,6 +45,7 @@ public class TrackUploadTask implements Task {
         this.trackFile = trackFile;
     }
 
+    @NonNull
     @Override
     public TaskType taskType() {
         return TaskType.trackUpload;
@@ -72,7 +73,7 @@ public class TrackUploadTask implements Task {
             Services.cloud.tracks.listAsync(context, true);
             Log.i(TAG, "Upload successful, track " + track.track_id);
             EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, track));
-        } catch (SocketException | SSLException | UnknownHostException e) {
+        } catch (@NonNull SocketException | SSLException | UnknownHostException e) {
             Log.w(TAG, "Failed to upload file, network exception", e);
             uploadFailed(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
         } catch (IOException e) {

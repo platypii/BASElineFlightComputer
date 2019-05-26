@@ -30,6 +30,7 @@ public class TrackLoader {
         }
     }
 
+    @NonNull
     public static Bundle trackBundle(@NonNull CloudData track) {
         final Bundle bundle = new Bundle();
         bundle.putString(EXTRA_TRACK_ID, track.track_id);

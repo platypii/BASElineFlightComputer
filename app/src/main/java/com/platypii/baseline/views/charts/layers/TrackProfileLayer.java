@@ -6,6 +6,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
 public class TrackProfileLayer extends ProfileLayer {
+    @NonNull
     private final String name;
 
     public TrackProfileLayer(@NonNull String name, @NonNull TrackData trackData, @ColorInt int color) {

@@ -45,6 +45,7 @@ interface BasePlot {
         drawData(plot);
     }
 
+    @NonNull
     Plot getPlot();
 
     /**

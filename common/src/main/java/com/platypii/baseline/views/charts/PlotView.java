@@ -29,6 +29,7 @@ public abstract class PlotView extends View implements BasePlot {
         plot.initBounds(1);
     }
 
+    @NonNull
     @Override
     public Plot getPlot() {
         return plot;

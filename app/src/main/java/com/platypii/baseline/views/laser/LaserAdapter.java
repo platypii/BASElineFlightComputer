@@ -23,6 +23,7 @@ import static com.platypii.baseline.views.laser.LaserListItem.TYPE_LASER;
  */
 class LaserAdapter extends BaseAdapter {
 
+    @NonNull
     private final LayoutInflater inflater;
     private final List<LaserListItem> items = new ArrayList<>();
 

@@ -86,7 +86,7 @@ class RangefinderRunnable implements Runnable {
         final ScanSettings scanSettings = new ScanSettings.Builder().build();
         scanCallback = new ScanCallback() {
             @Override
-            public void onScanResult(int callbackType, ScanResult result) {
+            public void onScanResult(int callbackType, @NonNull ScanResult result) {
                 super.onScanResult(callbackType, result);
                 if (service.getState() == BT_STARTING) {
                     final BluetoothDevice device = result.getDevice();

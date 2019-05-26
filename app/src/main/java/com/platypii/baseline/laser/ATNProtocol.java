@@ -46,7 +46,7 @@ class ATNProtocol implements RangefinderProtocol {
     }
 
     @Override
-    public void processBytes(byte[] value) {
+    public void processBytes(@NonNull byte[] value) {
         final String hex = Util.byteArrayToHex(value);
         if (value[0] == 16 && value[1] == 1) {
             // Check for bits we haven't seen before
@@ -87,7 +87,7 @@ class ATNProtocol implements RangefinderProtocol {
         }
     }
 
-    private void processMeasurement(byte[] value) {
+    private void processMeasurement(@NonNull byte[] value) {
         Log.d(TAG, "rf -> app: measure " + Util.byteArrayToHex(value));
 
         if (value[0] != 16 || value[1] != 1) {

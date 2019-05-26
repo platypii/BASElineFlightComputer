@@ -25,6 +25,7 @@ public abstract class LaserSyncEvent {
     }
 
     public static class DeleteSuccess extends LaserSyncEvent {
+        @NonNull
         public final LaserProfile laserProfile;
         public DeleteSuccess(@NonNull LaserProfile laserProfile) {
             this.laserProfile = laserProfile;

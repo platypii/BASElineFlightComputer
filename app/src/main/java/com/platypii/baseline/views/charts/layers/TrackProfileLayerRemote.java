@@ -5,6 +5,7 @@ import com.platypii.baseline.tracks.TrackData;
 import androidx.annotation.NonNull;
 
 public class TrackProfileLayerRemote extends TrackProfileLayer {
+    @NonNull
     public final CloudData track;
 
     public TrackProfileLayerRemote(@NonNull CloudData track, @NonNull TrackData trackData) {

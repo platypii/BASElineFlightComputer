@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
@@ -114,7 +115,7 @@ class BluetoothRunnable implements Runnable {
     private void processSentences() {
         try {
             final InputStream is = bluetoothSocket.getInputStream();
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String line;
             while (bluetooth.getState() == BT_CONNECTED && (line = reader.readLine()) != null) {
                 final String nmea = line.trim();

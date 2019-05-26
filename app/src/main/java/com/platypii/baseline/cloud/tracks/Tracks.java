@@ -41,7 +41,7 @@ public class Tracks implements BaseService {
             Log.i(TAG, "Listing tracks");
             trackApi.list().enqueue(new Callback<List<CloudData>>() {
                 @Override
-                public void onResponse(Call<List<CloudData>> call, Response<List<CloudData>> response) {
+                public void onResponse(Call<List<CloudData>> call, @NonNull Response<List<CloudData>> response) {
                     final List<CloudData> tracks = response.body();
                     // Save track listing to local cache
                     cache.update(tracks);

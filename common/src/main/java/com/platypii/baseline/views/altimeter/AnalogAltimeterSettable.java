@@ -40,6 +40,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
     private double altitudeOffset = 0;
 
     // Gestures
+    @NonNull
     private final GestureDetector gestures;
     private final Handler handler = new Handler();
     private static final int updateInterval = 30; // milliseconds
@@ -49,7 +50,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
         super(context, attrs);
         setLongClickable(true);
         setOnTouchListener(this);
-        gestures = new GestureDetector(getContext(), this);
+        gestures = new GestureDetector(context, this);
     }
 
     /**

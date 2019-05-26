@@ -8,8 +8,6 @@ import static org.junit.Assert.assertNull;
 public class CSVTest {
 
     private final String firstLine = "date,double,long";
-    private final String dataLine = "2018-11-04T16:20:00.99Z,3.14,1024";
-    private final String emptyLine = ",,";
 
     @Test
     public void parseHeader() {
@@ -24,7 +22,6 @@ public class CSVTest {
     @Test
     public void parseHeaderWithMapping() {
         CSVHeader header = new CSVHeader(firstLine);
-
         header.addMapping("long", "okay");
 
         assertEquals(Integer.valueOf(0), header.get("date"));
@@ -37,7 +34,7 @@ public class CSVTest {
     @Test
     public void parseLine() {
         CSVHeader columns = new CSVHeader(firstLine);
-        String[] row = dataLine.split(",");
+        String[] row = "2018-11-04T16:20:00.99Z,3.14,1024".split(",");
 
         assertEquals(1541348400990L, CSVParse.getColumnDate(row, columns, "date"));
         assertEquals(3.14, CSVParse.getColumnDouble(row, columns, "double"), 0.0001);
@@ -47,7 +44,7 @@ public class CSVTest {
     @Test
     public void parseLineEmpty() {
         CSVHeader columns = new CSVHeader(firstLine);
-        String[] row = emptyLine.split(",");
+        String[] row = ",,".split(",");
 
         assertEquals(-1L, CSVParse.getColumnDate(row, columns, "date"));
         assertEquals(Double.NaN, CSVParse.getColumnDouble(row, columns, "double"), 0.0001);

@@ -1,5 +1,7 @@
 package com.platypii.baseline.cloud.tasks;
 
+import androidx.annotation.NonNull;
+
 public abstract class TaskType {
 
     public static final TaskType laserUpload = new LaserTaskType();
@@ -8,9 +10,11 @@ public abstract class TaskType {
     /**
      * The name of this type of task
      */
+    @NonNull
     abstract String name();
 
     public static class LaserTaskType extends TaskType {
+        @NonNull
         @Override
         String name() {
             return "LaserUpload";
@@ -18,6 +22,7 @@ public abstract class TaskType {
     }
 
     public static class TrackTaskType extends TaskType {
+        @NonNull
         @Override
         String name() {
             return "TrackUpload";

@@ -31,6 +31,7 @@ public class LaserMeasurement {
         return String.format(Locale.US, "%.1f, %.1f", x, y);
     }
 
+    @NonNull
     public static List<LaserMeasurement> parse(@NonNull String pointString, boolean metric, boolean strict) throws ParseException {
         final List<LaserMeasurement> points = new ArrayList<>();
         final String[] lines = pointString.split("\n");
@@ -58,7 +59,8 @@ public class LaserMeasurement {
         return points;
     }
 
-    public static List<LaserMeasurement> parseSafe(String pointString, boolean metric) {
+    @NonNull
+    public static List<LaserMeasurement> parseSafe(@NonNull String pointString, boolean metric) {
         try {
             return parse(pointString, metric, false);
         } catch (ParseException e) {
@@ -68,6 +70,7 @@ public class LaserMeasurement {
         }
     }
 
+    @NonNull
     public static CharSequence render(List<LaserMeasurement> points, boolean metric) {
         final double units = metric ? 1 : 3.28084;
         final StringBuilder sb = new StringBuilder();
@@ -83,6 +86,7 @@ public class LaserMeasurement {
      * Quadrant 1: 20,100 (laser from bottom)
      * Quadrant 4: -100,20 (reversed y,x)
      */
+    @NonNull
     public static List<LaserMeasurement> reorder(List<LaserMeasurement> points) {
         // Find height and width range
         final Range xRange = new Range();

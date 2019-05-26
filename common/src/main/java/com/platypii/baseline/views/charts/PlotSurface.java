@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import androidx.annotation.NonNull;
 
 /**
  * A general view for plotting data.
@@ -103,6 +104,7 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
         }
     }
 
+    @NonNull
     @Override
     public Plot getPlot() {
         return plot;

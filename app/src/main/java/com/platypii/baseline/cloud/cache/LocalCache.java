@@ -21,8 +21,11 @@ import java.util.List;
 public abstract class LocalCache<T> {
 
     // Preference keys
+    @NonNull
     private final String CACHE_LAST_REQUEST;
+    @NonNull
     private final String CACHE_LAST_UPDATE;
+    @NonNull
     private final String CACHE_LIST;
 
     // Minimum time between requests

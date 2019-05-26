@@ -66,7 +66,7 @@ public class Plot {
     /**
      * Update bounds from dataBounds
      */
-    void updateBounds(BasePlot basePlot) {
+    void updateBounds(@NonNull BasePlot basePlot) {
         for (int i = 0; i < bounds.length; i++) {
             // Get plot-space bounds from subclass, and copy to bounds
             final Bounds plotBounds = basePlot.getBounds(dataBounds[i], i);

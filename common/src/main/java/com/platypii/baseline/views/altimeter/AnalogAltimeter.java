@@ -24,6 +24,7 @@ public class AnalogAltimeter extends View {
     // Avoid creating new objects unnecessarily
     protected final Paint paint = new Paint();
     private final RectF circ = new RectF();
+    @NonNull
     private final BlurMaskFilter blurMask;
     private final RectF digitalAltiBox = new RectF();
     private final Path hand = makeHand();
