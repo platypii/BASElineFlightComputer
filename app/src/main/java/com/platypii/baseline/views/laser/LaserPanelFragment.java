@@ -2,9 +2,9 @@ package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.ProfileLayerEvent;
-import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
@@ -35,7 +35,6 @@ public class LaserPanelFragment extends ListFragment {
 
     @Nullable
     private ProfileAdapter listAdapter;
-    private final LaserLayers layers = LaserLayers.getInstance();
     private View helpText;
 
     @Override
@@ -63,7 +62,7 @@ public class LaserPanelFragment extends ListFragment {
     public void onStart() {
         super.onStart();
         if (listAdapter != null) {
-            listAdapter.setLayers(layers.layers);
+            listAdapter.setLayers(Services.cloud.lasers.layers.layers);
         }
         updateViews();
         EventBus.getDefault().register(this);
@@ -138,7 +137,7 @@ public class LaserPanelFragment extends ListFragment {
     }
 
     private void updateViews() {
-        if (layers.layers.isEmpty()) {
+        if (Services.cloud.lasers.layers.layers.isEmpty()) {
             helpText.setVisibility(View.VISIBLE);
         } else {
             helpText.setVisibility(View.GONE);
@@ -148,7 +147,7 @@ public class LaserPanelFragment extends ListFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateLayers(ProfileLayerEvent event) {
         if (listAdapter != null) {
-            listAdapter.setLayers(layers.layers);
+            listAdapter.setLayers(Services.cloud.lasers.layers.layers);
         }
         updateViews();
     }

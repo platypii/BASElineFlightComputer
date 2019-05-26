@@ -4,7 +4,6 @@ import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,14 +15,6 @@ import org.greenrobot.eventbus.EventBus;
  */
 public class LaserLayers {
     private static final String TAG = "LaserLayers";
-    @Nullable
-    private static LaserLayers instance;
-    public static LaserLayers getInstance() {
-        if (instance == null) {
-            instance = new LaserLayers();
-        }
-        return instance;
-    }
 
     public final List<ProfileLayer> layers = new ArrayList<>();
 
@@ -40,15 +31,7 @@ public class LaserLayers {
         EventBus.getDefault().post(new ProfileLayerEvent.ProfileLayerUpdated(layer));
     }
 
-    public void remove(@NonNull ProfileLayer layer) {
-        if (layers.remove(layer)) {
-            EventBus.getDefault().post(new ProfileLayerEvent.ProfileLayerRemoved(layer));
-        } else {
-            Log.e(TAG, "Remove called on unknown layer");
-        }
-    }
-
-    public void removeById(@NonNull String id) {
+    public void remove(@NonNull String id) {
         for (Iterator<ProfileLayer> it = layers.iterator(); it.hasNext(); ) {
             final ProfileLayer layer = it.next();
             if (layer.id().equals(id)) {

@@ -3,7 +3,6 @@ package com.platypii.baseline.views;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.util.Exceptions;
 import android.Manifest;
 import android.content.Intent;
@@ -86,7 +85,7 @@ public abstract class BaseActivity extends FragmentActivity {
                 Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
             }
             // Clear laser layers
-            LaserLayers.getInstance().layers.clear();
+            Services.cloud.lasers.layers.layers.clear();
         }
     }
 

@@ -4,7 +4,6 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.events.BluetoothEvent;
-import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.laser.RangefinderService;
@@ -102,7 +101,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     @Override
     public void onStart() {
         super.onStart();
-        LaserLayers.getInstance().add(editLayer);
+        Services.cloud.lasers.layers.add(editLayer);
         rangefinder.start(getActivity());
         Services.location.addListener(this);
         EventBus.getDefault().register(this);
@@ -112,7 +111,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     private void updateLayers() {
         getLaserProfile();
         editLayer.loadLaser(laserProfile);
-        LaserLayers.getInstance().update(editLayer);
+        Services.cloud.lasers.layers.update(editLayer);
     }
 
     /**
@@ -192,7 +191,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             laserProfile = newLaserProfile();
             editLayer = new LaserProfileLayer(laserProfile);
             // Re-add edit layer since it will be removed on fragment stop
-            LaserLayers.getInstance().add(editLayer);
+            Services.cloud.lasers.layers.add(editLayer);
             // Return to main fragment
             final FragmentManager fm = getFragmentManager();
             if (fm != null) fm.popBackStack();
@@ -253,7 +252,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         EventBus.getDefault().unregister(this);
         Services.location.removeListener(this);
         rangefinder.stop();
-        LaserLayers.getInstance().remove(editLayer);
+        Services.cloud.lasers.layers.remove(editLayer.id());
     }
 
     @Override

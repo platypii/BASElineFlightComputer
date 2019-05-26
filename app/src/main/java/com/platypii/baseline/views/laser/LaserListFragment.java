@@ -1,8 +1,8 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.events.LaserSyncEvent;
-import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
@@ -49,7 +49,7 @@ public class LaserListFragment extends ListFragment implements AdapterView.OnIte
         if (item instanceof LaserListItem.ListLaser) {
             final LaserProfile laser = ((LaserListItem.ListLaser) item).laser;
             final ProfileLayer layer = new LaserProfileLayer(laser);
-            LaserLayers.getInstance().add(layer);
+            Services.cloud.lasers.layers.add(layer);
             final FragmentManager fm = getFragmentManager();
             if (fm != null) fm.popBackStack();
         }

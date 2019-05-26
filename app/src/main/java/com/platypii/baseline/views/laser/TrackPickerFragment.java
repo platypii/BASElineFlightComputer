@@ -1,8 +1,8 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.views.charts.layers.Colors;
@@ -61,7 +61,7 @@ public class TrackPickerFragment extends TrackListFragment {
     }
 
     private void addLayer(@NonNull ProfileLayer layer) {
-        LaserLayers.getInstance().add(layer);
+        Services.cloud.lasers.layers.add(layer);
         // Return to main fragment
         final FragmentManager fm = getFragmentManager();
         if (fm != null) fm.popBackStack();

@@ -7,11 +7,16 @@ import com.platypii.baseline.cloud.RetrofitClient;
 import com.platypii.baseline.cloud.cache.LaserCache;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.events.LaserSyncEvent;
+import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.views.charts.layers.ProfileLayer;
+
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -28,6 +33,7 @@ public class Lasers implements BaseService {
     private Context context;
     public final LaserCache cache = new LaserCache("cache");
     public final LaserCache unsynced = new LaserCache("unsynced");
+    public final LaserLayers layers = new LaserLayers();
 
     @Override
     public void start(@NonNull Context context) {
@@ -109,7 +115,7 @@ public class Lasers implements BaseService {
      * Update laser listings on sign in
      */
     @Subscribe
-    public void onSignIn(AuthState.SignedIn event) {
+    public void onSignIn(@NonNull AuthState.SignedIn event) {
         listAsync(context, true);
         uploadAll();
     }
@@ -118,9 +124,35 @@ public class Lasers implements BaseService {
      * Clear the laser list cache and fetch public on sign out
      */
     @Subscribe
-    public void onSignOut(AuthState.SignedOut event) {
+    public void onSignOut(@NonNull AuthState.SignedOut event) {
         cache.clear();
         listAsync(context, true);
+    }
+
+    @Subscribe
+    public void onLaserListing(@NonNull LaserSyncEvent.ListingSuccess event) {
+        // If lasers were deleted on server, layers should be removed.
+        // Make a list of items to be removed, so that we don't modify list while iterating.
+        final List<ProfileLayer> toRemove = new ArrayList<>();
+        for (ProfileLayer layer : layers.layers) {
+            if (cache.get(layer.id()) == null) {
+                toRemove.add(layer);
+            }
+        }
+        for (ProfileLayer layer : toRemove) {
+            layers.remove(layer.id());
+        }
+    }
+
+    @Subscribe
+    public void onLaserDelete(@NonNull LaserSyncEvent.DeleteSuccess event) {
+        // Remove from laser listing cache
+        unsynced.remove(event.laserProfile);
+        cache.remove(event.laserProfile);
+        // Update laser list
+        listAsync(context, true);
+        // Remove from layers
+        layers.remove(event.laserProfile.laser_id);
     }
 
     @Override

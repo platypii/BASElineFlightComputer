@@ -8,7 +8,7 @@ import java.util.List;
 // Sometimes 1 sentence takes 2 messages
 // Sometimes 2 sentences come in 1 message
 // Wait for bc-b7:
-public class RfSentenceIterator implements Iterator<byte[]> {
+class RfSentenceIterator implements Iterator<byte[]> {
 
     private final List<Byte> byteBuffer = new ArrayList<>();
 

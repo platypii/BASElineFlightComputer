@@ -2,6 +2,8 @@ package com.platypii.baseline.events;
 
 import com.platypii.baseline.laser.LaserProfile;
 
+import androidx.annotation.NonNull;
+
 /**
  * Indicates that a laser upload, list or delete has completed
  */
@@ -23,9 +25,9 @@ public abstract class LaserSyncEvent {
     }
 
     public static class DeleteSuccess extends LaserSyncEvent {
-        public final String laser_id;
-        public DeleteSuccess(String laser_id) {
-            this.laser_id = laser_id;
+        public final LaserProfile laserProfile;
+        public DeleteSuccess(@NonNull LaserProfile laserProfile) {
+            this.laserProfile = laserProfile;
         }
     }
     public static class DeleteFailure extends LaserSyncEvent {

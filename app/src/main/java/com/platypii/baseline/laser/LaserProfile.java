@@ -44,6 +44,10 @@ public class LaserProfile {
         }
     }
 
+    public boolean isLocal() {
+        return laser_id.startsWith("tmp-");
+    }
+
     private boolean isReal(Double value) {
         return value != null && !Double.isNaN(value) && !Double.isInfinite(value);
     }

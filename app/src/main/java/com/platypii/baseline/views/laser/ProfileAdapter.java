@@ -1,7 +1,7 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
-import com.platypii.baseline.laser.LaserLayers;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -49,7 +49,7 @@ class ProfileAdapter extends BaseAdapter {
         // Bind delete button
         convertView.findViewById(R.id.list_item_delete).setOnClickListener(v -> {
             // Remove from layers
-            LaserLayers.getInstance().remove(layer);
+            Services.cloud.lasers.layers.remove(layer.id());
         });
 
         return convertView;

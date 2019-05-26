@@ -109,10 +109,15 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
             final Bundle bundle = new Bundle();
             bundle.putString("laser_id", laser.laser_id);
             FirebaseAnalytics.getInstance(getContext()).logEvent("click_track_delete_remote_2", bundle);
-            // Disable delete button
-            getView().findViewById(R.id.laserDelete).setEnabled(false);
-            // Delete laser
-            new Thread(new LaserDeleteTask(getContext(), laser)).start();
+            if (laser.isLocal()) {
+                // Delete local only
+                Services.cloud.lasers.unsynced.remove(laser);
+                EventBus.getDefault().post(new LaserSyncEvent.DeleteSuccess(laser));
+            } else {
+                // Delete laser from server
+                getView().findViewById(R.id.laserDelete).setEnabled(false);
+                new Thread(new LaserDeleteTask(getContext(), laser)).start();
+            }
         }
     }
 
@@ -123,6 +128,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserDeleteFailure(@NonNull LaserSyncEvent.DeleteFailure event) {
+        getView().findViewById(R.id.laserDelete).setEnabled(true);
         Toast.makeText(getContext(), "Failed to delete profile", Toast.LENGTH_SHORT).show();
     }
 

@@ -1,8 +1,8 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.events.ProfileLayerEvent;
-import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.laser.RangefinderService;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.FlightProfile;
@@ -55,7 +55,7 @@ public class LaserActivity extends BaseActivity {
     public void onStart() {
         super.onStart();
         // Add all layers
-        for (ProfileLayer layer : LaserLayers.getInstance().layers) {
+        for (ProfileLayer layer : Services.cloud.lasers.layers.layers) {
             chart.addLayer(layer);
             layers.add(layer);
         }
