@@ -6,14 +6,25 @@ import androidx.annotation.NonNull;
 /**
  * Any background task
  */
-public interface Task {
+public abstract class Task {
+
+    /**
+     * Unique id for the task
+     */
+    @NonNull
+    public abstract String id();
 
     /**
      * Code to execute the task
      */
-    void run(@NonNull Context context) throws Exception;
+    public abstract void run(@NonNull Context context) throws Exception;
 
     @NonNull
-    TaskType taskType();
+    public abstract TaskType taskType();
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Task && ((Task) obj).id().equals(id());
+    }
 
 }

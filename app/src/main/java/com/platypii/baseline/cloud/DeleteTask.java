@@ -47,7 +47,7 @@ class DeleteTask implements Runnable {
             Services.cloud.tracks.listAsync(context, true);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteSuccess(track.track_id));
-        } catch (IOException e) {
+        } catch (AuthException | IOException e) {
             Log.e(TAG, "Failed to delete track " + track.track_id, e);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteFailure(track.track_id, "failed to delete track"));
@@ -60,7 +60,7 @@ class DeleteTask implements Runnable {
     /**
      * Send http delete to BASEline server
      */
-    private static void deleteRemote(String auth, String trackUrl) throws IOException {
+    private static void deleteRemote(String auth, String trackUrl) throws IOException, AuthException {
         final URL url = new URL(trackUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("DELETE");

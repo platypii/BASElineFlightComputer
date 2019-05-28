@@ -1,9 +1,10 @@
 package com.platypii.baseline.cloud.lasers;
 
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.RetrofitClient;
-import com.platypii.baseline.cloud.tasks.AuthRequiredException;
+import com.platypii.baseline.cloud.UploadFailedException;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.events.LaserSyncEvent;
@@ -15,7 +16,7 @@ import java.io.IOException;
 import org.greenrobot.eventbus.EventBus;
 import retrofit2.Response;
 
-public class LaserUploadTask implements Task {
+public class LaserUploadTask extends Task {
     private static final String TAG = "LaserUpload";
 
     @NonNull
@@ -27,14 +28,20 @@ public class LaserUploadTask implements Task {
 
     @NonNull
     @Override
+    public String id() {
+        return laserProfile.laser_id;
+    }
+
+    @NonNull
+    @Override
     public TaskType taskType() {
         return TaskType.laserUpload;
     }
 
     @Override
-    public void run(@NonNull Context context) throws AuthRequiredException, IOException {
+    public void run(@NonNull Context context) throws AuthException, IOException, UploadFailedException {
         if (AuthState.getUser() == null) {
-            throw new AuthRequiredException();
+            throw new AuthException("auth required");
         }
         Log.i(TAG, "Uploading laser profile " + laserProfile);
         // Make HTTP request
@@ -53,7 +60,7 @@ public class LaserUploadTask implements Task {
         } else {
             final String error = response.errorBody().string();
             EventBus.getDefault().post(new LaserSyncEvent.UploadFailure(laserProfile, error));
-            throw new IOException("Laser upload failed: " + error);
+            throw new UploadFailedException("Laser upload failed: " + error);
         }
     }
 

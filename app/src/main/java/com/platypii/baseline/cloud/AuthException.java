@@ -1,8 +1,6 @@
 package com.platypii.baseline.cloud;
 
-import java.io.IOException;
-
-public class AuthException extends IOException {
+public class AuthException extends Exception {
     public AuthException(String auth) {
         super("authorization error - auth: " + auth);
     }

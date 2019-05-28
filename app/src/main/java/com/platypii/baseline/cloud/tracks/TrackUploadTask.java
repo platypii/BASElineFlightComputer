@@ -8,7 +8,6 @@ import com.platypii.baseline.cloud.AuthToken;
 import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.cloud.UploadFailedException;
-import com.platypii.baseline.cloud.tasks.AuthRequiredException;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.events.SyncEvent;
@@ -34,7 +33,7 @@ import java.net.UnknownHostException;
 import javax.net.ssl.SSLException;
 import org.greenrobot.eventbus.EventBus;
 
-public class TrackUploadTask implements Task {
+public class TrackUploadTask extends Task {
     private static final String TAG = "UploadTask";
     private static final String postUrl = BaselineCloud.baselineServer + "/tracks";
 
@@ -47,14 +46,20 @@ public class TrackUploadTask implements Task {
 
     @NonNull
     @Override
+    public String id() {
+        return trackFile.getName();
+    }
+
+    @NonNull
+    @Override
     public TaskType taskType() {
         return TaskType.trackUpload;
     }
 
     @Override
-    public void run(@NonNull Context context) throws AuthRequiredException, UploadFailedException {
+    public void run(@NonNull Context context) throws AuthException, UploadFailedException {
         if (AuthState.getUser() == null) {
-            throw new AuthRequiredException();
+            throw new AuthException("auth required");
         }
         Log.i(TAG, "Uploading track " + trackFile);
         Services.trackStore.setUploading(trackFile);
@@ -92,14 +97,14 @@ public class TrackUploadTask implements Task {
         Services.trackStore.setNotUploaded(event.trackFile);
         // Notify listeners
         EventBus.getDefault().post(event);
-        throw new UploadFailedException(event);
+        throw new UploadFailedException(event.error);
     }
 
     /**
      * HTTP post track to baseline, parse response as CloudData
      */
     @NonNull
-    private static CloudData postTrack(@NonNull TrackFile trackFile, String auth) throws IOException, JsonSyntaxException {
+    private static CloudData postTrack(@NonNull TrackFile trackFile, String auth) throws AuthException, IOException, JsonSyntaxException {
         final long contentLength = trackFile.file.length();
         final String md5 = MD5.md5(trackFile.file);
         final URL url = new URL(postUrl);

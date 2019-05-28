@@ -24,8 +24,10 @@ public class RetrofitClient {
                 headerBuilder.add("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME);
                 // Get auth token
                 if (AuthState.getUser() != null) {
-                    final String authToken = AuthToken.getAuthToken(context);
-                    headerBuilder.add("Authorization", authToken);
+                    try {
+                        final String authToken = AuthToken.getAuthToken(context);
+                        headerBuilder.add("Authorization", authToken);
+                    } catch (AuthException ignored) {}
                 }
                 final Headers headers = headerBuilder.build();
                 request = request.newBuilder().headers(headers).build();

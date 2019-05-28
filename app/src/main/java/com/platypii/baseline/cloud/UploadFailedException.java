@@ -1,9 +1,9 @@
 package com.platypii.baseline.cloud;
 
-import com.platypii.baseline.events.SyncEvent;
+import androidx.annotation.NonNull;
 
 public class UploadFailedException extends Exception {
-    public UploadFailedException(SyncEvent.UploadFailure failure) {
-        super("upload failed: " + failure.error);
+    public UploadFailedException(@NonNull String error) {
+        super("upload failed: " + error);
     }
 }

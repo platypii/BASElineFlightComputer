@@ -125,6 +125,7 @@ public class Lasers implements BaseService {
     @Subscribe
     public void onSignOut(@NonNull AuthState.SignedOut event) {
         cache.clear();
+        Services.tasks.removeType(TaskType.laserUpload);
         listAsync(context, true);
     }
 

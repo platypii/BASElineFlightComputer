@@ -156,7 +156,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         final boolean metric = "meters".equals(laserUnits.toString());
         // Altitude is required
         if (laserAlt.getText().toString().isEmpty()) {
-            laserName.requestFocus();
+            laserAlt.requestFocus();
             return "Altitude needed for start performance";
         }
         // Validate points

@@ -65,7 +65,7 @@ public class DownloadTask implements Runnable {
                 TrackAbbrv.abbreviate(trackFile, track.abbrvFile(context));
             }
             EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(track.track_id, trackFile));
-        } catch (IOException e) {
+        } catch (AuthException | IOException e) {
             Log.e(TAG, "Failed to download file", e);
             if (networkAvailable) {
                 Exceptions.report(e);
@@ -77,7 +77,7 @@ public class DownloadTask implements Runnable {
     /**
      * HTTP get track from baseline
      */
-    private void downloadTrack(@NonNull String auth) throws IOException {
+    private void downloadTrack(@NonNull String auth) throws IOException, AuthException {
         final URL url = new URL(trackUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", auth);

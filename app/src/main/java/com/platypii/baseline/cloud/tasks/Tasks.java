@@ -2,6 +2,7 @@ package com.platypii.baseline.cloud.tasks;
 
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.text.TextUtils;
@@ -38,7 +39,11 @@ public class Tasks implements BaseService {
     public void add(@NonNull Task task) {
         Log.i(TAG, "Adding task " + task);
         synchronized (pending) {
-            pending.add(task);
+            if (!pending.contains(task)) {
+                pending.add(task);
+            } else {
+                Log.w(TAG, "Skipping duplicate task " + task);
+            }
         }
         tendQueue();
     }
@@ -66,7 +71,7 @@ public class Tasks implements BaseService {
                 running.run(context);
                 // Success
                 runSuccess();
-            } catch (AuthRequiredException e) {
+            } catch (AuthException e) {
                 // Wait for sign in
                 runFailed();
             } catch (Exception e) {
