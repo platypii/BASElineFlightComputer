@@ -9,7 +9,7 @@ public class TrackProfileLayerRemote extends TrackProfileLayer {
     public final CloudData track;
 
     public TrackProfileLayerRemote(@NonNull CloudData track, @NonNull TrackData trackData) {
-        super(track.getName(), trackData, Colors.nextColor());
+        super(track.track_id, track.getName(), trackData, Colors.nextColor());
         this.track = track;
     }
 

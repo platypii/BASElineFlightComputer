@@ -31,7 +31,7 @@ public class TrackPickerFragment extends TrackListFragment {
         switch (item.getType()) {
             case TYPE_TRACK_LOCAL:
                 final TrackFile trackFile = ((ListTrackFile) item).track;
-                final TrackProfileLayer trackLayer = new TrackProfileLayer(trackFile.getName(), new TrackData(trackFile.file), Colors.nextColor());
+                final TrackProfileLayer trackLayer = new TrackProfileLayer(trackFile.getName(), trackFile.getName(), new TrackData(trackFile.file), Colors.nextColor());
                 addLayer(trackLayer);
                 break;
             case TYPE_TRACK_REMOTE:

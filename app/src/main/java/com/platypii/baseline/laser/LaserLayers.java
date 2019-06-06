@@ -13,7 +13,6 @@ import org.greenrobot.eventbus.EventBus;
  * TODO: Persist
  */
 public class LaserLayers {
-    private static final String TAG = "LaserLayers";
 
     public final List<ProfileLayer> layers = new ArrayList<>();
 

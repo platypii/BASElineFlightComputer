@@ -7,10 +7,13 @@ import androidx.annotation.NonNull;
 
 public class TrackProfileLayer extends ProfileLayer {
     @NonNull
+    private final String id;
+    @NonNull
     private final String name;
 
-    public TrackProfileLayer(@NonNull String name, @NonNull TrackData trackData, @ColorInt int color) {
+    public TrackProfileLayer(@NonNull String id, @NonNull String name, @NonNull TrackData trackData, @ColorInt int color) {
         super(color);
+        this.id = id;
         this.name = name;
 
         // Load track data into time series
@@ -28,7 +31,7 @@ public class TrackProfileLayer extends ProfileLayer {
     @NonNull
     @Override
     public String id() {
-        return name;
+        return id;
     }
 
     @NonNull

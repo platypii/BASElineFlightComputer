@@ -46,7 +46,7 @@ public class FlightProfile extends PlotView {
     public void loadTrack(@NonNull TrackData trackData) {
         this.trackData = trackData.data;
 
-        final TrackProfileLayer trackLayer = new TrackProfileLayer("", trackData, Colors.defaultColor);
+        final TrackProfileLayer trackLayer = new TrackProfileLayer("", "", trackData, Colors.defaultColor);
         addLayer(trackLayer);
         focusLayer = new ProfileFocusLayer(trackData.data);
         addLayer(focusLayer);
