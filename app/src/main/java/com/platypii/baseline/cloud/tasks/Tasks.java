@@ -9,6 +9,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -71,7 +73,7 @@ public class Tasks implements BaseService {
                 running.run(context);
                 // Success
                 runSuccess();
-            } catch (AuthException e) {
+            } catch (AuthException | SocketException | UnknownHostException e) {
                 // Wait for sign in
                 runFailed();
             } catch (Exception e) {

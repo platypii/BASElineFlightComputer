@@ -13,7 +13,7 @@ public abstract class ProfileLayer extends ChartLayer {
     @ColorInt
     public final int color;
 
-    ProfileLayer(@ColorInt int color) {
+    protected ProfileLayer(@ColorInt int color) {
         this.color = color;
     }
 
@@ -37,7 +37,7 @@ public abstract class ProfileLayer extends ChartLayer {
     @NonNull
     @Override
     public String toString() {
-        return "ProfileLayer(" + id() + ", " + name() + ")";
+        return this.getClass().getSimpleName() + "(" + id() + ", " + name() + ")";
     }
 
 }

@@ -33,6 +33,8 @@ public class ChartsActivity extends BaseActivity {
 
     private TextView timeLabel;
     private TextView altitudeLabel;
+    private TextView horizontalDistLabel;
+    private TextView verticalDistLabel;
     private TextView horizontalSpeedLabel;
     private TextView verticalSpeedLabel;
     private TextView speedLabel;
@@ -54,6 +56,8 @@ public class ChartsActivity extends BaseActivity {
 
         timeLabel = findViewById(R.id.timeLabel);
         altitudeLabel = findViewById(R.id.altitudeLabel);
+        horizontalDistLabel = findViewById(R.id.hDistLabel);
+        verticalDistLabel = findViewById(R.id.vDistLabel);
         horizontalSpeedLabel = findViewById(R.id.hSpeedLabel);
         verticalSpeedLabel = findViewById(R.id.vSpeedLabel);
         speedLabel = findViewById(R.id.speedLabel);
@@ -161,6 +165,8 @@ public class ChartsActivity extends BaseActivity {
             // TODO: Date should have timezone
             timeLabel.setText(new Date(focus.millis).toString());
             altitudeLabel.setText(Convert.distance(focus.altitude_gps) + " MSL");
+            horizontalDistLabel.setText(Convert.distance(focus.distanceTo(stats.exit)));
+            verticalDistLabel.setText(Convert.distance(focus.altitude_gps - stats.exit.altitude_gps));
             horizontalSpeedLabel.setText(Convert.speed(focus.groundSpeed()));
             verticalSpeedLabel.setText(Convert.speed(focus.climb));
             speedLabel.setText(Convert.speed(focus.totalSpeed()));
@@ -177,9 +183,18 @@ public class ChartsActivity extends BaseActivity {
                 } else {
                     altitudeLabel.setText("");
                 }
+                if (stats.exit != null) {
+                    horizontalDistLabel.setText(Convert.distance(stats.exit.distanceTo(stats.land)));
+                    verticalDistLabel.setText(Convert.distance(stats.altitude.range()));
+                } else {
+                    horizontalDistLabel.setText("");
+                    verticalDistLabel.setText("");
+                }
             } else {
                 timeLabel.setText("");
                 altitudeLabel.setText("");
+                horizontalDistLabel.setText("");
+                verticalDistLabel.setText("");
             }
             horizontalSpeedLabel.setText("");
             verticalSpeedLabel.setText("");

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import org.greenrobot.eventbus.EventBus;
 
@@ -65,6 +66,9 @@ public class DownloadTask implements Runnable {
                 TrackAbbrv.abbreviate(trackFile, track.abbrvFile(context));
             }
             EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(track.track_id, trackFile));
+        } catch (SocketException e) {
+            Log.e(TAG, "Failed to download file", e);
+            EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, e.getMessage(), networkAvailable));
         } catch (AuthException | IOException e) {
             Log.e(TAG, "Failed to download file", e);
             if (networkAvailable) {

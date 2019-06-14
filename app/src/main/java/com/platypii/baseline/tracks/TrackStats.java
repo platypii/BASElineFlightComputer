@@ -12,10 +12,13 @@ public class TrackStats {
 
     public final Range altitude = new Range();
     public MLocation exit;
+    public MLocation land;
 
-    public TrackStats(@NonNull List<MLocation> trackData) {
+    TrackStats(@NonNull List<MLocation> trackData) {
         if (!trackData.isEmpty()) {
+            // TODO: Detect exit and landing
             exit = trackData.get(0);
+            land = trackData.get(trackData.size() - 1);
         }
         for (MLocation loc : trackData) {
             altitude.expand(loc.altitude_gps);

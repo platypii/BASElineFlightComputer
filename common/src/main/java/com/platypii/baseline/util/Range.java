@@ -22,6 +22,10 @@ public class Range {
         return Double.isNaN(min);
     }
 
+    public double range() {
+        return max - min;
+    }
+
     @NonNull
     @Override
     public String toString() {
