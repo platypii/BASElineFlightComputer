@@ -1,13 +1,12 @@
 package com.platypii.baseline.cloud.tasks;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 
 /**
  * Task used just for tests.
  */
-public class TestTask implements Task {
+public class TestTask extends Task {
 
     // Task will not complete until this is set to true
     boolean wait = true;
@@ -20,6 +19,12 @@ public class TestTask implements Task {
         }
     }
     static final TestTaskType taskType = new TestTaskType();
+
+    @NonNull
+    @Override
+    public String id() {
+        return "TestTask";
+    }
 
     @Override
     public void run(@NonNull Context context) throws Exception {

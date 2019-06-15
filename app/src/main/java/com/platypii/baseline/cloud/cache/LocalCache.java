@@ -48,11 +48,13 @@ public abstract class LocalCache<T> {
     /**
      * Return Type of List<T>
      */
+    @NonNull
     abstract Type listType();
 
     /**
      * Return the unique id for an item
      */
+    @NonNull
     abstract String getId(@NonNull T item);
 
     /**
@@ -74,7 +76,7 @@ public abstract class LocalCache<T> {
     }
 
     /**
-     * Return the most recent item data available
+     * Return a cache item by id
      */
     @Nullable
     public T get(@NonNull String id) {

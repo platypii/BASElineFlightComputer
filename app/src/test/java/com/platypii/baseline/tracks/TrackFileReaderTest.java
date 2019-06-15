@@ -1,5 +1,6 @@
 package com.platypii.baseline.tracks;
 
+import com.platypii.baseline.FileUtil;
 import com.platypii.baseline.measurements.MLocation;
 
 import java.io.File;
@@ -36,27 +37,16 @@ public class TrackFileReaderTest {
 
     @Test
     public void readTwice() throws IOException {
-        final TrackFileReader reader = new TrackFileReader(makeFile("millis,sensor,lat,lon,alt\n1,gps,2,3,4"));
+        final TrackFileReader reader = new TrackFileReader(FileUtil.makeFile("millis,sensor,lat,lon,alt\n1,gps,2,3,4"));
         assertEquals(1, reader.read().size());
         assertEquals(1, reader.read().size());
-    }
-
-    /**
-     * Write string to temp file
-     */
-    private File makeFile(String content) throws IOException {
-        final File file = File.createTempFile("testfile", ".csv");
-        final FileWriter writer = new FileWriter(file);
-        writer.write(content);
-        writer.close();
-        return file;
     }
 
     /**
      * Write string to temp file, and parse with TrackFileReader
      */
     private List<MLocation> parse(String content) throws IOException {
-        return new TrackFileReader(makeFile(content)).read();
+        return new TrackFileReader(FileUtil.makeFile(content)).read();
     }
 
 }

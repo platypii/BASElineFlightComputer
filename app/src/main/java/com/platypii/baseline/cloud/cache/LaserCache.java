@@ -18,6 +18,7 @@ public class LaserCache extends LocalCache<LaserProfile> {
     /**
      * Return Type of List<LaserProfile>
      */
+    @NonNull
     @Override
     Type listType() {
         return new TypeToken<List<LaserProfile>>(){}.getType();

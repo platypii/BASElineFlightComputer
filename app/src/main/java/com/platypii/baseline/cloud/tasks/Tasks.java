@@ -74,7 +74,7 @@ public class Tasks implements BaseService {
                 // Success
                 runSuccess();
             } catch (AuthException | SocketException | UnknownHostException e) {
-                // Wait for sign in
+                // Wait for sign in or network availability
                 runFailed();
             } catch (Exception e) {
                 if (Services.cloud.isNetworkAvailable()) {

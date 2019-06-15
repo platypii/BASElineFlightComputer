@@ -18,6 +18,7 @@ public class TrackCache extends LocalCache<CloudData> {
     /**
      * Return Type of List<CloudData>
      */
+    @NonNull
     @Override
     Type listType() {
         return new TypeToken<List<CloudData>>(){}.getType();
@@ -26,6 +27,7 @@ public class TrackCache extends LocalCache<CloudData> {
     /**
      * Return the unique id for an item
      */
+    @NonNull
     @Override
     String getId(@NonNull CloudData item) {
         return item.track_id;
