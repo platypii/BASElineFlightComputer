@@ -28,6 +28,10 @@ class LaserAdapter extends BaseAdapter {
     private final LayoutInflater inflater;
     private final List<LaserListItem> items = new ArrayList<>();
 
+    // Search filter
+    @NonNull
+    private String filter = "";
+
     LaserAdapter(@NonNull Context context) {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -36,11 +40,16 @@ class LaserAdapter extends BaseAdapter {
         final String userId = AuthState.getUser();
         items.clear();
         // Add unsynced lasers
+        int sectionCount = 0;
         final List<LaserProfile> unsynced = Services.cloud.lasers.unsynced.list();
         if (unsynced != null && !unsynced.isEmpty()) {
-            items.add(new LaserListItem.ListHeader("Not synced"));
             for (LaserProfile laser : unsynced) {
-                items.add(new LaserListItem.ListLaser(laser));
+                if (filterMatch(laser)) {
+                    if (sectionCount++ == 0) {
+                        items.add(new LaserListItem.ListHeader("Not synced"));
+                    }
+                    items.add(new LaserListItem.ListLaser(laser));
+                }
             }
         }
         final List<LaserProfile> lasers = Services.cloud.lasers.cache.list();
@@ -53,11 +62,10 @@ class LaserAdapter extends BaseAdapter {
             });
             // Add my lasers
             if (userId != null) {
-                int myCount = 0;
+                sectionCount = 0;
                 for (LaserProfile laser : lasers) {
-                    if (userId.equals(laser.user_id)) {
-                        if (myCount++ == 0) {
-                            // Add header
+                    if (userId.equals(laser.user_id) && filterMatch(laser)) {
+                        if (sectionCount++ == 0) {
                             items.add(new LaserListItem.ListHeader("My Profiles"));
                         }
                         items.add(new LaserListItem.ListLaser(laser));
@@ -65,14 +73,27 @@ class LaserAdapter extends BaseAdapter {
                 }
             }
             // Add public lasers
-            items.add(new LaserListItem.ListHeader("Public Profiles"));
+            sectionCount = 0;
             for (LaserProfile laser : lasers) {
-                if (laser.user_id == null || !laser.user_id.equals(userId)) {
+                if ((laser.user_id == null || !laser.user_id.equals(userId)) && filterMatch(laser)) {
+                    if (sectionCount++ == 0) {
+                        items.add(new LaserListItem.ListHeader("Public Profiles"));
+                    }
                     items.add(new LaserListItem.ListLaser(laser));
                 }
             }
         }
+    }
+
+    void setFilter(@NonNull String filter) {
+        this.filter = filter;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        populateItems();
+        super.notifyDataSetChanged();
     }
 
     @NonNull
@@ -140,6 +161,31 @@ class LaserAdapter extends BaseAdapter {
     @Override
     public int getItemViewType(int position) {
         return getItem(position).getType();
+    }
+
+    /**
+     * Return true if the track matches the search filter string
+     */
+    private boolean filterMatch(@NonNull LaserProfile laser) {
+        // Make a lower case super string of all properties we want to search
+        final StringBuilder sb = new StringBuilder();
+        sb.append(laser.name);
+        sb.append(' ');
+        if (laser.place != null) {
+            sb.append(laser.place.name);
+            sb.append(' ');
+            sb.append(laser.place.region);
+            sb.append(' ');
+            sb.append(laser.place.country);
+        }
+        final String superString = sb.toString().toLowerCase();
+        // Break into tokens
+        for (String token : filter.toLowerCase().split(" ")) {
+            if (!superString.contains(token)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

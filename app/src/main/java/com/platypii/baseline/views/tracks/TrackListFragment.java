@@ -61,7 +61,6 @@ public class TrackListFragment extends ListFragment implements AdapterView.OnIte
             @Override
             public void afterTextChanged(Editable s) {}
         });
-
     }
 
     @Override

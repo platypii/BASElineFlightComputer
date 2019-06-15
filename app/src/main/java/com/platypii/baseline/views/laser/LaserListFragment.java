@@ -7,10 +7,13 @@ import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.ListFragment;
@@ -20,21 +23,36 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class LaserListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
-    private LaserAdapter laserAdapter;
+    private LaserAdapter listAdapter;
+    private EditText searchBox;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.laser_list, container, false);
+        final View view = inflater.inflate(R.layout.laser_list, container, false);
+        searchBox = view.findViewById(R.id.laser_search);
+        return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
-        laserAdapter = new LaserAdapter(getContext());
-        laserAdapter.populateItems();
-        setListAdapter(laserAdapter);
+        listAdapter = new LaserAdapter(getContext());
+        listAdapter.populateItems();
+        setListAdapter(listAdapter);
         getListView().setOnItemClickListener(this);
+
+        searchBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                final String filter = searchBox.getText().toString().toLowerCase();
+                listAdapter.setFilter(filter);
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     @Override
@@ -45,7 +63,7 @@ public class LaserListFragment extends ListFragment implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        final LaserListItem item = laserAdapter.getItem(position);
+        final LaserListItem item = listAdapter.getItem(position);
         if (item instanceof LaserListItem.ListLaser) {
             final LaserProfile laser = ((LaserListItem.ListLaser) item).laser;
             final ProfileLayer layer = new LaserProfileLayer(laser);
@@ -57,7 +75,7 @@ public class LaserListFragment extends ListFragment implements AdapterView.OnIte
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserSync(@NonNull LaserSyncEvent event) {
-        laserAdapter.populateItems();
+        listAdapter.populateItems();
     }
 
     @Override
