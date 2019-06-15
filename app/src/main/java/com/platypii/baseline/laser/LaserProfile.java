@@ -3,6 +3,7 @@ package com.platypii.baseline.laser;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
+import com.platypii.baseline.places.Place;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
 import java.util.List;
@@ -21,6 +22,8 @@ public class LaserProfile {
     public Double lat;
     @Nullable
     public Double lng;
+    @Nullable
+    public Place place;
     public String source;
     public List<LaserMeasurement> points;
 

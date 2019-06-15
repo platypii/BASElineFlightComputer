@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.platypii.baseline.views.laser.LaserListItem.TYPE_HEADER;
@@ -44,6 +45,12 @@ class LaserAdapter extends BaseAdapter {
         }
         final List<LaserProfile> lasers = Services.cloud.lasers.cache.list();
         if (lasers != null && !lasers.isEmpty()) {
+            // Sort by country, by name
+            Collections.sort(lasers, (o1, o2) -> {
+                final String str1 = (o1.place == null ? "" : o1.place.country) + " " + o1.name;
+                final String str2 = (o2.place == null ? "" : o2.place.country) + " " + o2.name;
+                return str1.compareTo(str2);
+            });
             // Add my lasers
             if (userId != null) {
                 int myCount = 0;
@@ -98,8 +105,12 @@ class LaserAdapter extends BaseAdapter {
                 final TextView nameView = convertView.findViewById(R.id.list_item_name);
                 nameView.setText(laser.name);
                 // Update subtitle
-                // final TextView subView = convertView.findViewById(R.id.list_item_subtitle);
-                // TODO: subView.setText(laser.place);
+                 final TextView subView = convertView.findViewById(R.id.list_item_subtitle);
+                 if (laser.place != null) {
+                     subView.setText(laser.place.country);
+                 } else {
+                     subView.setText("");
+                 }
                 break;
         }
 
