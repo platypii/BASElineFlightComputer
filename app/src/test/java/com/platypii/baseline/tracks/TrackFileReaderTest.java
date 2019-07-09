@@ -3,8 +3,6 @@ package com.platypii.baseline.tracks;
 import com.platypii.baseline.FileUtil;
 import com.platypii.baseline.measurements.MLocation;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import org.junit.Test;

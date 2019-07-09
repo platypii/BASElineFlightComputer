@@ -70,6 +70,9 @@ class TrackFileReader {
         final Filter gpsAltitudeFilter = new FilterKalman();
         long baroLastNano = -1L;
         long gpsLastMillis = -1L;
+        boolean initAltGps = false;
+        boolean initAltBaro = false;
+        double baroOffset = 0; // gps altitude - pressure altitude
 
         final List<MLocation> data = new ArrayList<>();
 
@@ -117,16 +120,30 @@ class TrackFileReader {
                     final double dt = (millis - gpsLastMillis) * 0.001;
                     gpsAltitudeFilter.update(alt_gps, dt);
                 }
-                gpsLastMillis = millis;
+                // Integrate baro altitude
+                if (!Double.isNaN(alt_gps)) {
+                    if (initAltBaro && !initAltGps) {
+                        // Set the initial altitude offset
+                        baroOffset = alt_gps - baroAltitudeFilter.x();
+                    }
+                }
+                double integratedAlt;
+                if (initAltBaro && initAltGps) {
+                    integratedAlt = baroAltitudeFilter.x() + baroOffset;
+                } else {
+                    integratedAlt = alt_gps;
+                }
                 // Climb rate from baro or gps
                 double climb = baroAltitudeFilter.v();
                 if (baroLastNano < 0 || Double.isNaN(climb)) {
                     climb = gpsAltitudeFilter.v();
                 }
                 if (!Double.isNaN(lat) && !Double.isNaN(lon)) {
-                    final MLocation loc = new MLocation(millis, lat, lon, alt_gps, climb, vN, vE, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 0, 0);
+                    final MLocation loc = new MLocation(millis, lat, lon, integratedAlt, climb, vN, vE, Float.NaN, Float.NaN, Float.NaN, Float.NaN, 0, 0);
                     data.add(loc);
                 }
+                gpsLastMillis = millis;
+                initAltGps = true;
             } else if (row[sensorIndex].equals("alt")) {
                 // BASEline alti measurement
                 final long nano = getColumnLong(row, columns, "nano");
@@ -138,7 +155,13 @@ class TrackFileReader {
                     final double dt = (nano - baroLastNano) * 1E-9;
                     baroAltitudeFilter.update(pressureAltitude, dt);
                 }
+                // Integrate GPS altitude
+                if (!initAltBaro && initAltGps) {
+                    // Set the initial altitude offset
+                    baroOffset = gpsAltitudeFilter.x() - baroAltitudeFilter.x();
+                }
                 baroLastNano = nano;
+                initAltBaro = true;
             }
         }
 
