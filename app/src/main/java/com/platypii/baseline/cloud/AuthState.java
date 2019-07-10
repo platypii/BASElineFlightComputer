@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-// Save last sign in state so that sign in panel doesn't blink
 public abstract class AuthState {
     private static final String PREF_AUTH_USER = "auth_user";
 
@@ -36,6 +35,7 @@ public abstract class AuthState {
         }
     }
 
+    // Save last sign in state so that sign in panel doesn't blink
     @Nullable
     public static AuthState currentAuthState = null;
 

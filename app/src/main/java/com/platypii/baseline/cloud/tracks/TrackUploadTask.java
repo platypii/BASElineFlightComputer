@@ -7,12 +7,10 @@ import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.AuthToken;
 import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.cloud.UploadFailedException;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
 import com.platypii.baseline.util.MD5;
 
@@ -27,10 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.SocketException;
 import java.net.URL;
-import java.net.UnknownHostException;
-import javax.net.ssl.SSLException;
 import org.greenrobot.eventbus.EventBus;
 
 public class TrackUploadTask extends Task {
@@ -57,7 +52,7 @@ public class TrackUploadTask extends Task {
     }
 
     @Override
-    public void run(@NonNull Context context) throws AuthException, UploadFailedException {
+    public void run(@NonNull Context context) throws AuthException, IOException {
         if (AuthState.getUser() == null) {
             throw new AuthException("auth required");
         }
@@ -78,26 +73,14 @@ public class TrackUploadTask extends Task {
             Services.cloud.tracks.listAsync(context, true);
             Log.i(TAG, "Upload successful, track " + track.track_id);
             EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, track));
-        } catch (@NonNull SocketException | SSLException | UnknownHostException e) {
-            Log.w(TAG, "Failed to upload file, network exception", e);
-            uploadFailed(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
-        } catch (IOException e) {
-            uploadFailed(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
-        } catch (JsonSyntaxException e) {
-            Exceptions.report(e);
-            uploadFailed(new SyncEvent.UploadFailure(trackFile, "invalid response from server"));
+        } catch (IOException | JsonSyntaxException e) {
+            // Update track store
+            Services.trackStore.setNotUploaded(trackFile);
+            // Notify listeners
+            EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
+            // Re-throw exception to indicate Task failure
+            throw e;
         }
-    }
-
-    /**
-     * Update track store, notify listeners, and then throw exception to indicate Task failure.
-     */
-    private static void uploadFailed(@NonNull SyncEvent.UploadFailure event) throws UploadFailedException {
-        // Update track store
-        Services.trackStore.setNotUploaded(event.trackFile);
-        // Notify listeners
-        EventBus.getDefault().post(event);
-        throw new UploadFailedException(event.error);
     }
 
     /**

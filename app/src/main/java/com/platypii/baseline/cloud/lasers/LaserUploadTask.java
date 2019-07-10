@@ -4,7 +4,6 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.RetrofitClient;
-import com.platypii.baseline.cloud.UploadFailedException;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.events.LaserSyncEvent;
@@ -39,7 +38,7 @@ public class LaserUploadTask extends Task {
     }
 
     @Override
-    public void run(@NonNull Context context) throws AuthException, IOException, UploadFailedException {
+    public void run(@NonNull Context context) throws AuthException, IOException {
         if (AuthState.getUser() == null) {
             throw new AuthException("auth required");
         }
@@ -60,7 +59,7 @@ public class LaserUploadTask extends Task {
         } else {
             final String error = response.errorBody().string();
             EventBus.getDefault().post(new LaserSyncEvent.UploadFailure(laserProfile, error));
-            throw new UploadFailedException("Laser upload failed: " + error);
+            throw new IOException("Laser upload failed: " + error);
         }
     }
 

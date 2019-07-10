@@ -1,19 +1,21 @@
 package com.platypii.baseline.cloud.tasks;
 
 import com.platypii.baseline.BaseService;
-import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthException;
+import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import javax.net.ssl.SSLException;
 
 /**
  * Queue for tasks such as uploading to the cloud.
@@ -57,41 +59,43 @@ public class Tasks implements BaseService {
             if (running == null && !pending.isEmpty()) {
                 // Start first pending task
                 running = pending.get(0);
-                runAsync();
+                runAsync(running);
             }
         }
     }
 
     /**
-     * Run `running` task in a new thread
+     * Run task in a new thread
      */
-    private void runAsync() {
-        Log.i(TAG, "Running task: " + running);
+    private void runAsync(@NonNull Task task) {
+        Log.i(TAG, "Running task: " + task);
         new Thread(() -> {
+            FirebaseAnalytics.getInstance(context).logEvent("task_run", ABundle.of("task_name", task.toString()));
             // Run in background
             try {
-                running.run(context);
+                task.run(context);
                 // Success
-                runSuccess();
-            } catch (AuthException | SocketException | UnknownHostException e) {
+                runSuccess(task);
+            } catch (AuthException | SocketException | SSLException | UnknownHostException e) {
                 // Wait for sign in or network availability
-                runFailed();
+                runFailed(task, e, true);
             } catch (Exception e) {
-                if (Services.cloud.isNetworkAvailable()) {
-                    Log.e(TAG, "Task failed: " + running, e);
-                    Exceptions.report(e);
-                } else {
-                    Log.w(TAG, "Task failed, network unavailable: " + running, e);
-                }
-                runFailed();
+                runFailed(task, e, false);
                 // TODO: Try again later
             }
         }).start();
     }
 
-    private void runSuccess() {
-        Log.i(TAG, "Task success: " + running);
+    /**
+     * Called when a task completed successfully
+     */
+    private void runSuccess(@NonNull Task task) {
+        Log.i(TAG, "Task success: " + task);
+        FirebaseAnalytics.getInstance(context).logEvent("task_success", ABundle.of("task_name", task.toString()));
         synchronized (pending) {
+            if (running != task) {
+                Exceptions.report(new IllegalStateException("Invalid pop: " + running + " != " + task));
+            }
             final Task removed = pending.remove(0);
             if (running != removed) {
                 Exceptions.report(new IllegalStateException("Invalid pop: " + running + " != " + removed));
@@ -102,7 +106,15 @@ public class Tasks implements BaseService {
         tendQueue();
     }
 
-    private void runFailed() {
+    /**
+     * Called when a task failed
+     */
+    private void runFailed(@NonNull Task task, @NonNull Exception e, boolean networkError) {
+        Log.e(TAG, "Task failed: " + task, e);
+        FirebaseAnalytics.getInstance(context).logEvent("task_failed", ABundle.of("task_name", task.toString()));
+        if (!networkError) {
+            Exceptions.report(e);
+        }
         synchronized (pending) {
             running = null;
         }

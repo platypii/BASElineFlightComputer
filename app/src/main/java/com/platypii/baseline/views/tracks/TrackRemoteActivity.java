@@ -6,6 +6,7 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.BaseActivity;
 import android.app.AlertDialog;
@@ -65,9 +66,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
 
     private void clickOpen(View v) {
         // Analytics
-        final Bundle bundle = new Bundle();
-        bundle.putString("track_id", track.track_id);
-        firebaseAnalytics.logEvent("click_track_open", bundle);
+        firebaseAnalytics.logEvent("click_track_open", ABundle.of("track_id", track.track_id));
         // Open web app
         if (track.trackUrl != null) {
             Intents.openTrackUrl(this, track.trackUrl);
@@ -76,9 +75,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
 
     private void clickKml(View v) {
         // Analytics
-        final Bundle bundle = new Bundle();
-        bundle.putString("track_id", track.track_id);
-        firebaseAnalytics.logEvent("click_track_kml", bundle);
+        firebaseAnalytics.logEvent("click_track_kml", ABundle.of("track_id", track.track_id));
         if (track != null) {
             // Open google earth
             Intents.openTrackKml(this, track.trackKml);
@@ -90,9 +87,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     private void clickDelete(View v) {
         Log.i(TAG, "User clicked delete track " + track.track_id);
         // Analytics
-        final Bundle bundle = new Bundle();
-        bundle.putString("track_id", track.track_id);
-        firebaseAnalytics.logEvent("click_track_delete_remote_1", bundle);
+        firebaseAnalytics.logEvent("click_track_delete_remote_1", ABundle.of("track_id", track.track_id));
         // Prompt user for confirmation
         deleteConfirmation = new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -104,9 +99,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     }
 
     private void clickCharts(View v) {
-        final Bundle bundle = new Bundle();
-        bundle.putString("track_id", track.track_id);
-        firebaseAnalytics.logEvent("click_track_remote_charts", bundle);
+        firebaseAnalytics.logEvent("click_track_remote_charts", ABundle.of("track_id", track.track_id));
         // Open time chart activity
         Intents.openCharts(this, track);
     }
@@ -119,9 +112,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         if (which == DialogInterface.BUTTON_POSITIVE) {
             Log.i(TAG, "User confirmed delete track " + track.track_id);
             // Analytics
-            final Bundle bundle = new Bundle();
-            bundle.putString("track_id", track.track_id);
-            firebaseAnalytics.logEvent("click_track_delete_remote_2", bundle);
+            firebaseAnalytics.logEvent("click_track_delete_remote_2", ABundle.of("track_id", track.track_id));
             // Disable delete button
             findViewById(R.id.deleteButton).setEnabled(false);
             // Delete track
