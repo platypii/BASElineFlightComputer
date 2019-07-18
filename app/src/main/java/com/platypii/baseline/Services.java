@@ -145,7 +145,7 @@ public class Services {
             cloud.start(appContext);
 
             Log.i(TAG, "Starting place database");
-//            places.start(appContext);
+            places.start(appContext);
 
             Log.i(TAG, "Services started in " + (System.currentTimeMillis() - startTime) + " ms");
         } else if (initialized) {

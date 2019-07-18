@@ -1,6 +1,6 @@
 package com.platypii.baseline.cloud;
 
-import com.platypii.baseline.R;
+import com.platypii.baseline.common.R;
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;

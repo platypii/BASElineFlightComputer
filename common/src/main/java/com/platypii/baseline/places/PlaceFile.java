@@ -79,4 +79,11 @@ class PlaceFile {
         return places;
     }
 
+    void delete() {
+        // TODO: Possible race deleting file while parsing
+        if (file.exists() && !file.delete()) {
+            Log.w(TAG, "Failed to delete place file");
+        }
+    }
+
 }

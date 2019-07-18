@@ -1,6 +1,7 @@
 package com.platypii.baseline.places;
 
 import com.platypii.baseline.BaseService;
+import com.platypii.baseline.cloud.AuthState;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -10,6 +11,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * Manages the place database
@@ -17,6 +20,7 @@ import java.util.List;
 public class Places implements BaseService {
     private static final String TAG = "Places";
 
+    private Context context;
     private PlaceFile placeFile;
 
     public final NearestPlace nearestPlace = new NearestPlace(this);
@@ -27,21 +31,9 @@ public class Places implements BaseService {
 
     @Override
     public void start(@NonNull Context context) {
-        // Update places in background
-        AsyncTask.execute(() -> {
-            // Place file is stored on internal storage
-            placeFile = new PlaceFile(context);
-            // Fetch places from server, if we need to
-            if (!placeFile.isFresh()) {
-                try {
-                    FetchPlaces.get(placeFile.file);
-                } catch (IOException e) {
-                    Log.e(TAG, "Failed to fetch places", e);
-                }
-            } else {
-                Log.i(TAG, "Places file is already fresh");
-            }
-        });
+        this.context = context;
+        updateAsync(false);
+        EventBus.getDefault().register(this);
     }
 
     /**
@@ -77,7 +69,44 @@ public class Places implements BaseService {
         return filtered;
     }
 
+    /**
+     * Update places in background thread
+     */
+    private void updateAsync(boolean force) {
+        AsyncTask.execute(() -> {
+            if (placeFile == null) {
+                // Place file is stored on internal storage
+                placeFile = new PlaceFile(context);
+            }
+            // Fetch places from server, if we need to
+            if (force || !placeFile.isFresh()) {
+                try {
+                    FetchPlaces.get(context, placeFile.file);
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to fetch places", e);
+                }
+            } else {
+                Log.i(TAG, "Places file is already fresh");
+            }
+        });
+    }
+
+    @Subscribe
+    public void onSignIn(@NonNull AuthState.SignedIn event) {
+        updateAsync(true);
+    }
+
+    @Subscribe
+    public void onSignOut(@NonNull AuthState.SignedOut event) {
+        placeFile.delete();
+        places = null;
+        updateAsync(true);
+    }
+
     @Override
-    public void stop() {}
+    public void stop() {
+        EventBus.getDefault().unregister(this);
+        context = null;
+    }
 
 }

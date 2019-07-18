@@ -25,8 +25,7 @@ public class RetrofitClient {
                 // Get auth token
                 if (AuthState.getUser() != null) {
                     try {
-                        final String authToken = AuthToken.getAuthToken(context);
-                        headerBuilder.add("Authorization", authToken);
+                        headerBuilder.add("Authorization", AuthToken.getAuthToken(context));
                     } catch (AuthException ignored) {}
                 }
                 final Headers headers = headerBuilder.build();

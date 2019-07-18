@@ -1,6 +1,9 @@
 package com.platypii.baseline.places;
 
+import com.platypii.baseline.cloud.AuthException;
+import com.platypii.baseline.cloud.AuthToken;
 import com.platypii.baseline.util.IOUtil;
+import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import java.io.File;
@@ -25,11 +28,14 @@ class FetchPlaces {
     /**
      * Fetch places from BASEline server and saves it as a file
      */
-    static void get(@NonNull File placeFile) throws IOException {
+    static void get(@NonNull Context context, @NonNull File placeFile) throws IOException {
         Log.i(TAG, "Downloading places");
         final URL url = new URL(placesUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Accept-Encoding", "gzip");
+        try {
+            conn.setRequestProperty("Authorization", AuthToken.getAuthToken(context));
+        } catch (AuthException ignored) {}
 //        conn.setRequestProperty("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME); // Doesn't work in common lib
         // Send If-Modified-Since header to help with caching
         if (placeFile.exists()) {
