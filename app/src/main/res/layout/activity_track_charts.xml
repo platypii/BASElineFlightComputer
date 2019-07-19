@@ -10,78 +10,12 @@
     <include
         layout="@layout/chart_stats"/>
 
-    <!-- Legend -->
-    <LinearLayout
-        android:id="@+id/legend"
+    <fragment
+        android:id="@+id/charts"
+        android:layout_below="@id/chartStats"
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/chartStats">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Altitude"
-            android:textColor="#dd1111"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Speed"
-            android:textColor="#2222ff"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Glide"
-            android:textColor="#8f00ff"/>
-
-    </LinearLayout>
-
-    <com.platypii.baseline.views.charts.TimeChartTouchable
-        android:id="@+id/timeChart"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_below="@id/legend"/>
-
-    <TextView
-        android:id="@+id/flightProfileLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/timeChart"
-        android:layout_marginTop="8dp"
-        android:text="Distance"/>
-
-    <com.platypii.baseline.views.charts.FlightProfileTouchable
-        android:id="@+id/flightProfile"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/flightProfileLabel"/>
-
-    <TextView
-        android:id="@+id/polarLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/flightProfile"
-        android:layout_marginTop="8dp"
-        android:text="Speed"/>
-
-    <com.platypii.baseline.views.charts.PolarPlotTouchable
-        android:id="@+id/polarChart"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/polarLabel"/>
-
-    <ProgressBar
-        android:id="@+id/chartProgress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:indeterminate="true"/>
+        android:layout_height="match_parent"
+        android:name="com.platypii.baseline.views.charts.ChartsFragment" />
 
 </RelativeLayout>

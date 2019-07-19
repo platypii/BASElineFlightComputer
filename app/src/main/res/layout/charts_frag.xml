@@ -1,0 +1,14 @@
+<androidx.viewpager.widget.ViewPager
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chartPager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp"
+    tools:context="com.platypii.baseline.views.tracks.ChartsActivity">
+
+    <androidx.viewpager.widget.PagerTabStrip
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</androidx.viewpager.widget.ViewPager>

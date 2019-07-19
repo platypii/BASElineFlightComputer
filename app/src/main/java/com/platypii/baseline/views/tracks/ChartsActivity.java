@@ -3,34 +3,16 @@ package com.platypii.baseline.views.tracks;
 import com.platypii.baseline.R;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.tracks.TrackData;
-import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.tracks.TrackStats;
 import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.BaseActivity;
-import com.platypii.baseline.views.charts.FlightProfile;
-import com.platypii.baseline.views.charts.PolarPlot;
-import com.platypii.baseline.views.charts.TimeChart;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.Date;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class ChartsActivity extends BaseActivity {
-    private static final String TAG = "Charts";
-
-    private ProgressBar progress;
 
     private TextView timeLabel;
     private TextView altitudeLabel;
@@ -41,19 +23,10 @@ public class ChartsActivity extends BaseActivity {
     private TextView speedLabel;
     private TextView glideLabel;
 
-    private TimeChart timeChart;
-    private FlightProfile flightProfile;
-    private PolarPlot polarChart;
-
-    private TrackStats stats;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track_charts);
-
-        // Find views
-        progress = findViewById(R.id.chartProgress);
 
         timeLabel = findViewById(R.id.timeLabel);
         altitudeLabel = findViewById(R.id.altitudeLabel);
@@ -64,123 +37,31 @@ public class ChartsActivity extends BaseActivity {
         speedLabel = findViewById(R.id.speedLabel);
         glideLabel = findViewById(R.id.glideLabel);
 
-        timeChart = findViewById(R.id.timeChart);
-        flightProfile = findViewById(R.id.flightProfile);
-        polarChart = findViewById(R.id.polarChart);
-
         // Init chart stats
-        updateChartFocus(null);
-
-        // Load track from extras
-        try {
-            final TrackFile trackFile = TrackLoader.loadTrackFile(this);
-            Log.i(TAG, "Loading track data");
-            // Load async
-            new LoadTask(trackFile.file, this).execute();
-        } catch (Exception e) {
-            Exceptions.report(e);
-            finish();
-        }
-    }
-
-    private static class LoadTask extends AsyncTask<Void,Void,Void> {
-        @NonNull
-        private final WeakReference<ChartsActivity> activityRef;
-        private final File trackFile;
-
-        private LoadTask(File trackFile, ChartsActivity activity) {
-            this.trackFile = trackFile;
-            this.activityRef = new WeakReference<>(activity);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            final ChartsActivity activity = activityRef.get();
-            if (activity != null && !activity.isFinishing()) {
-                activity.loadData(trackFile);
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void v) {
-            final ChartsActivity activity = activityRef.get();
-            if (activity != null && !activity.isFinishing()) {
-                activity.doneLoading();
-            }
-        }
-    }
-
-    /**
-     * Load data into charts, called from LoadTask in background thread
-     */
-    private void loadData(@NonNull File trackFile) {
-        Log.i(TAG, "Loading track data from " + trackFile);
-        final TrackData trackData = new TrackData(trackFile);
-        stats = trackData.stats;
-        timeChart.loadTrack(trackData.data);
-        flightProfile.loadTrack(trackData);
-        polarChart.loadTrack(trackData.data);
-    }
-
-    /**
-     * Invalidate charts after data is loaded, called from LoadTask in UI thread
-     */
-    private void doneLoading() {
-        updateChartFocus(null);
-        timeChart.invalidate();
-        flightProfile.invalidate();
-        polarChart.invalidate();
-        progress.setVisibility(View.GONE);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onChartFocus(@NonNull ChartFocusEvent event) {
-        updateChartFocus(event.location);
-        // Notify child views
-        timeChart.onFocus(event.location);
-        flightProfile.onFocus(event.location);
-        polarChart.onFocus(event.location);
+        onChartFocus(null);
     }
 
     /**
      * Update views for focus event
      */
-    private void updateChartFocus(@Nullable MLocation focus) {
-        if (focus != null) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onChartFocus(ChartFocusEvent event) {
+        if (event != null && event.location != null) {
+            final MLocation loc = event.location;
             // TODO: Date should have timezone
-            timeLabel.setText(new Date(focus.millis).toString());
-            altitudeLabel.setText(Convert.distance(focus.altitude_gps) + " MSL");
-            horizontalDistLabel.setText(Convert.distance(focus.distanceTo(stats.exit)));
-            verticalDistLabel.setText(Convert.distance(focus.altitude_gps - stats.exit.altitude_gps));
-            horizontalSpeedLabel.setText(Convert.speed(focus.groundSpeed()));
-            verticalSpeedLabel.setText(Convert.speed(focus.climb));
-            speedLabel.setText(Convert.speed(focus.totalSpeed()));
-            glideLabel.setText(Convert.glide(focus.groundSpeed(), focus.climb, 1, true));
+            timeLabel.setText(new Date(loc.millis).toString());
+            altitudeLabel.setText(Convert.distance(loc.altitude_gps) + " MSL");
+//            horizontalDistLabel.setText(Convert.distance(loc.distanceTo(stats.exit))); // TODO
+//            verticalDistLabel.setText(Convert.distance(loc.altitude_gps - stats.exit.altitude_gps)); // TODO
+            horizontalSpeedLabel.setText(Convert.speed(loc.groundSpeed()));
+            verticalSpeedLabel.setText(Convert.speed(loc.climb));
+            speedLabel.setText(Convert.speed(loc.totalSpeed()));
+            glideLabel.setText(Convert.glide(loc.groundSpeed(), loc.climb, 1, true));
         } else {
-            if (stats != null) {
-                if (stats.exit != null) {
-                    timeLabel.setText(new Date(stats.exit.millis).toString());
-                } else {
-                    timeLabel.setText("");
-                }
-                if (!stats.altitude.isEmpty()) {
-                    altitudeLabel.setText(Convert.distance(stats.altitude.max - stats.altitude.min));
-                } else {
-                    altitudeLabel.setText("");
-                }
-                if (stats.exit != null) {
-                    horizontalDistLabel.setText(Convert.distance(stats.exit.distanceTo(stats.land)));
-                    verticalDistLabel.setText(Convert.distance(stats.altitude.range()));
-                } else {
-                    horizontalDistLabel.setText("");
-                    verticalDistLabel.setText("");
-                }
-            } else {
-                timeLabel.setText("");
-                altitudeLabel.setText("");
-                horizontalDistLabel.setText("");
-                verticalDistLabel.setText("");
-            }
+            timeLabel.setText("");
+            altitudeLabel.setText("");
+            horizontalDistLabel.setText("");
+            verticalDistLabel.setText("");
             horizontalSpeedLabel.setText("");
             verticalSpeedLabel.setText("");
             speedLabel.setText("");
