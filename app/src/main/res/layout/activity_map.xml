@@ -9,7 +9,7 @@
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.platypii.baseline.views.map.TouchableMapFragment" />
+        android:name="com.google.android.gms.maps.SupportMapFragment" />
 
     <com.platypii.baseline.views.altimeter.AnalogAltimeterSettable
         android:id="@+id/analogAltimeter"

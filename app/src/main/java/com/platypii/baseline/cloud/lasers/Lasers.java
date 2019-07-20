@@ -59,11 +59,15 @@ public class Lasers implements BaseService {
                 @Override
                 public void onResponse(Call<List<LaserProfile>> call, @NonNull Response<List<LaserProfile>> response) {
                     final List<LaserProfile> lasers = response.body();
-                    // Save laser listing to local cache
-                    cache.update(lasers);
-                    // Notify listeners
-                    EventBus.getDefault().post(new LaserSyncEvent.ListingSuccess());
-                    Log.i(TAG, "Listing successful: " + lasers.size() + " laser profiles");
+                    if (lasers != null) {
+                        // Save laser listing to local cache
+                        cache.update(lasers);
+                        // Notify listeners
+                        EventBus.getDefault().post(new LaserSyncEvent.ListingSuccess());
+                        Log.i(TAG, "Listing successful: " + lasers.size() + " laser profiles");
+                    } else {
+                        Log.e(TAG, "Failed to list laser profiles, null");
+                    }
                 }
 
                 @Override

@@ -38,8 +38,7 @@ public class TrackDownloadFragment extends Fragment {
 
         // Load track from arguments
         try {
-            final CloudData track = TrackLoader.loadTrack(getArguments());
-            this.track = track;
+            track = TrackLoader.loadCloudData(getArguments());
             // Start download
             AsyncTask.execute(new DownloadTask(getContext(), track));
         } catch (IllegalStateException e) {

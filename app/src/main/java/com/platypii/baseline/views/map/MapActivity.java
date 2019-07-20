@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.map;
 
+import com.google.android.gms.maps.SupportMapFragment;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.location.LandingZone;
@@ -35,7 +36,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private ImageButton homeButton;
     private ImageView crosshair;
 
-    private TouchableMapFragment mapFragment;
+    private SupportMapFragment mapFragment;
     private GoogleMap map; // Might be null if Google Play services APK is not available
 
     // Layers
@@ -72,7 +73,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         homeButton.setOnClickListener(homeButtonListener);
 
         // Initialize map
-        mapFragment = (TouchableMapFragment) getFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
@@ -238,12 +239,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         // Stop sensor updates
         Services.location.removeListener(this);
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mapFragment.removeOnTouchListeners();
     }
 
 }

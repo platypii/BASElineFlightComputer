@@ -43,11 +43,15 @@ public class Tracks implements BaseService {
                 @Override
                 public void onResponse(Call<List<CloudData>> call, @NonNull Response<List<CloudData>> response) {
                     final List<CloudData> tracks = response.body();
-                    // Save track listing to local cache
-                    cache.update(tracks);
-                    // Notify listeners
-                    EventBus.getDefault().post(new SyncEvent.ListingSuccess());
-                    Log.i(TAG, "Listing successful: " + tracks.size() + " tracks");
+                    if (tracks != null) {
+                        // Save track listing to local cache
+                        cache.update(tracks);
+                        // Notify listeners
+                        EventBus.getDefault().post(new SyncEvent.ListingSuccess());
+                        Log.i(TAG, "Listing successful: " + tracks.size() + " tracks");
+                    } else {
+                        Log.e(TAG, "Failed to list tracks, null");
+                    }
                 }
 
                 @Override

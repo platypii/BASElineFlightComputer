@@ -27,7 +27,7 @@ public class Intents {
      */
     public static void openTrackLocal(@NonNull Context context, @NonNull TrackFile trackFile) {
         final Intent intent = new Intent(context, TrackLocalActivity.class);
-        intent.putExtra(TrackLocalActivity.EXTRA_TRACK_FILE, trackFile.file.getName());
+        intent.putExtra(TrackLoader.EXTRA_TRACK_FILE, trackFile.file.getName());
         context.startActivity(intent);
     }
     public static void openTrackRemote(@NonNull Context context, @NonNull CloudData track) {
@@ -41,7 +41,7 @@ public class Intents {
      */
     public static void openCharts(@NonNull Context context, @NonNull File trackFile) {
         final Intent intent = new Intent(context, ChartsActivity.class);
-        intent.putExtra(TrackLocalActivity.EXTRA_TRACK_FILE, trackFile.getAbsolutePath());
+        intent.putExtra(TrackLoader.EXTRA_TRACK_FILE, trackFile.getAbsolutePath());
         context.startActivity(intent);
     }
     public static void openCharts(@NonNull Context context, @NonNull CloudData track) {

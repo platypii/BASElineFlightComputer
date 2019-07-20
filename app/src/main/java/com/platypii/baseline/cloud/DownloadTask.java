@@ -27,7 +27,7 @@ public class DownloadTask implements Runnable {
     @NonNull
     private final Context context;
     @NonNull
-    private final CloudData track;
+    private final String trackId;
     @NonNull
     private final String trackUrl;
     @NonNull
@@ -37,7 +37,7 @@ public class DownloadTask implements Runnable {
 
     public DownloadTask(@NonNull Context context, @NonNull CloudData track) {
         this.context = context;
-        this.track = track;
+        this.trackId = track.track_id;
         this.trackUrl = BaselineCloud.baselineServer + "/tracks/" + track.track_id + "/baseline-track.csv.gz";
         this.trackFile = track.localFile(context);
         this.abbrvFile = track.abbrvFile(context);
@@ -45,7 +45,7 @@ public class DownloadTask implements Runnable {
 
     @Override
     public void run() {
-        Log.i(TAG, "Downloading track " + track.track_id);
+        Log.i(TAG, "Downloading track " + trackId);
         // Check if file exists
         if (trackFile.exists()) {
             Log.e(TAG, "Overwriting existing track file " + trackFile);
@@ -59,22 +59,23 @@ public class DownloadTask implements Runnable {
                 // Make HTTP request
                 downloadTrack(authToken);
                 // TODO: Check file hash?
-                Log.i(TAG, "Download successful, track " + track.track_id);
+                Log.i(TAG, "Download successful, track " + trackId);
             }
             if (!abbrvFile.exists()) {
                 // Make abbrv file
-                TrackAbbrv.abbreviate(trackFile, track.abbrvFile(context));
+                Log.i(TAG, "Generating abbreviated track file " + abbrvFile);
+                TrackAbbrv.abbreviate(trackFile, abbrvFile);
             }
-            EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(track.track_id, trackFile));
+            EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(trackId, trackFile));
         } catch (SocketException e) {
             Log.e(TAG, "Failed to download file", e);
-            EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, e.getMessage(), networkAvailable));
+            EventBus.getDefault().post(new DownloadEvent.DownloadFailure(trackId, e, networkAvailable));
         } catch (AuthException | IOException e) {
             Log.e(TAG, "Failed to download file", e);
             if (networkAvailable) {
                 Exceptions.report(e);
             }
-            EventBus.getDefault().post(new DownloadEvent.DownloadFailure(track.track_id, e.getMessage(), networkAvailable));
+            EventBus.getDefault().post(new DownloadEvent.DownloadFailure(trackId, e, networkAvailable));
         }
     }
 
@@ -93,7 +94,7 @@ public class DownloadTask implements Runnable {
             if (status == 200) {
                 // Read body
                 final InputStream is = conn.getInputStream();
-                copy(track.track_id, is, trackFile, conn.getContentLength());
+                copy(trackId, is, trackFile, conn.getContentLength());
                 Log.i(TAG, "Track download successful");
             } else if (status == 401) {
                 throw new AuthException(auth);

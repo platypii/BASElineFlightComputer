@@ -21,7 +21,7 @@ class UploadManager implements BaseService {
 
     @Override
     public void start(@NonNull Context context) {
-        // Listen for track completion
+        // Listen for track logging stops
         EventBus.getDefault().register(this);
         // Check for queued tracks to upload
         uploadAll();
@@ -41,7 +41,7 @@ class UploadManager implements BaseService {
     }
 
     @Subscribe
-    public void onLoggingEvent(@NonNull LoggingEvent.LoggingStop event) {
+    public void onLoggingStop(@NonNull LoggingEvent.LoggingStop event) {
         if (AuthState.getUser() != null) {
             Log.i(TAG, "Auto syncing track " + event.trackFile);
             Services.tasks.add(new TrackUploadTask(event.trackFile));

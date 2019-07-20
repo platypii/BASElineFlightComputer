@@ -9,6 +9,7 @@ import com.platypii.baseline.cloud.lasers.LaserDeleteTask;
 import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 
@@ -85,9 +86,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
 
     private void delete(View view) {
         Log.i(TAG, "User clicked delete laser " + laser);
-        final Bundle bundle = new Bundle();
-        bundle.putString("laser_id", laser.laser_id);
-        FirebaseAnalytics.getInstance(getContext()).logEvent("click_laser_delete_1", bundle);
+        FirebaseAnalytics.getInstance(getContext()).logEvent("click_laser_delete_1", ABundle.of("laser_id", laser.laser_id));
         // Prompt user for confirmation
         deleteConfirmation = new AlertDialog.Builder(getContext())
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -105,10 +104,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
     public void onClick(DialogInterface dialog, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
             Log.i(TAG, "User confirmed delete laser " + laser.laser_id);
-            // Analytics
-            final Bundle bundle = new Bundle();
-            bundle.putString("laser_id", laser.laser_id);
-            FirebaseAnalytics.getInstance(getContext()).logEvent("click_track_delete_remote_2", bundle);
+            FirebaseAnalytics.getInstance(getContext()).logEvent("click_track_delete_remote_2", ABundle.of("laser_id", laser.laser_id));
             if (laser.isLocal()) {
                 // Delete local only
                 Services.cloud.lasers.unsynced.remove(laser);

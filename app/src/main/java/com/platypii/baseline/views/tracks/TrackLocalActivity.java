@@ -29,8 +29,6 @@ import org.greenrobot.eventbus.ThreadMode;
 public class TrackLocalActivity extends BaseActivity implements DialogInterface.OnClickListener {
     private static final String TAG = "TrackLocalActivity";
 
-    public static final String EXTRA_TRACK_FILE = "TRACK_FILE";
-
     private ProgressBar uploadProgress;
     private TextView alertLabel;
     private Button deleteButton;
@@ -52,7 +50,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
 
         // Load track from extras
         try {
-            trackFile = loadTrack();
+            trackFile = TrackLoader.loadTrackFile(this);
 
             // Update views
             filenameLabel.setText(trackFile.getName());
@@ -65,23 +63,6 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
         } catch (IllegalStateException e) {
             Exceptions.report(e);
             finish();
-        }
-    }
-
-    @NonNull
-    private TrackFile loadTrack() throws IllegalStateException {
-        // Load track from extras
-        final Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            final String extraTrackFile = extras.getString(EXTRA_TRACK_FILE);
-            if (extraTrackFile != null) {
-                final File trackDir = TrackFiles.getTrackDirectory(getApplicationContext());
-                return new TrackFile(new File(trackDir, extraTrackFile));
-            } else {
-                throw new IllegalStateException("Failed to load track file from extras");
-            }
-        } else {
-            throw new IllegalStateException("Failed to load extras");
         }
     }
 

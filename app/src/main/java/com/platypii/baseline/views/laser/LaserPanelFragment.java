@@ -7,6 +7,7 @@ import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerLocal;
@@ -101,10 +102,8 @@ public class LaserPanelFragment extends ListFragment {
     private void clickLaserProfile(LaserProfile laserProfile) {
         Log.i(TAG, "Opening laser profile " + laserProfile);
         firebaseAnalytics.logEvent("click_laser_profile", null);
-        final Bundle bundle = new Bundle();
-        bundle.putString(LaserViewFragment.LASER_ID, laserProfile.laser_id);
         final Fragment frag = new LaserViewFragment();
-        frag.setArguments(bundle);
+        frag.setArguments(ABundle.of(LaserViewFragment.LASER_ID, laserProfile.laser_id));
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, frag)
@@ -115,9 +114,7 @@ public class LaserPanelFragment extends ListFragment {
     private void clickAddTrack(View view) {
         firebaseAnalytics.logEvent("click_laser_track", null);
         final Fragment frag = new TrackPickerFragment();
-        final Bundle args = new Bundle();
-        args.putString(TrackListFragment.SEARCH_KEY, "Wingsuit BASE");
-        frag.setArguments(args);
+        frag.setArguments(ABundle.of(TrackListFragment.SEARCH_KEY, "Wingsuit BASE"));
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, frag)

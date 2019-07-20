@@ -37,7 +37,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
 
         // Load track from extras
         try {
-            track = TrackLoader.loadTrack(getIntent().getExtras());
+            track = TrackLoader.loadCloudData(getIntent().getExtras());
 
             // Setup button listeners
             findViewById(R.id.chartsButton).setOnClickListener(this::clickCharts);

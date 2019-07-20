@@ -49,7 +49,19 @@ public class TimeChart extends PlotView {
         for (MLocation loc : trackData) {
             altitudeSeries.addPoint(loc.millis, loc.altitude_gps);
             speedSeries.addPoint(loc.millis, loc.totalSpeed());
-            glideSeries.addPoint(loc.millis, loc.glideRatio());
+            glideSeries.addPoint(loc.millis, glide(loc));
+        }
+    }
+
+    /**
+     * Only use "good" glide numbers
+     */
+    private double glide(@NonNull MLocation point) {
+        final double glide = point.glideRatio();
+        if (point.groundSpeed() > 3.5 && point.climb < 0.5 && point.climb != 0.0 && 0 <= glide && glide <= 4) {
+            return glide;
+        } else {
+            return Double.NaN;
         }
     }
 

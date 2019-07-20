@@ -29,7 +29,7 @@ public class TrackDownloadActivity extends BaseActivity {
 
         // Load track from extras
         try {
-            track = TrackLoader.loadTrack(getIntent().getExtras());
+            track = TrackLoader.loadCloudData(getIntent().getExtras());
             // Start download
             AsyncTask.execute(new DownloadTask(this, track));
         } catch (IllegalStateException e) {

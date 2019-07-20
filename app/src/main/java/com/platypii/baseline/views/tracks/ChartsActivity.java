@@ -4,6 +4,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackData;
+import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackStats;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
@@ -71,31 +72,15 @@ public class ChartsActivity extends BaseActivity {
         updateChartFocus(null);
 
         // Load track from extras
-        final File trackFile = getTrackFile();
-        if (trackFile != null) {
+        try {
+            final TrackFile trackFile = TrackLoader.loadTrackFile(this);
             Log.i(TAG, "Loading track data");
             // Load async
-            new LoadTask(trackFile, this).execute();
-        } else {
-            Exceptions.report(new IllegalStateException("Failed to load track file from extras"));
-            // Finish activity
+            new LoadTask(trackFile.file, this).execute();
+        } catch (Exception e) {
+            Exceptions.report(e);
             finish();
         }
-    }
-
-    /**
-     * Gets the track file from activity extras
-     */
-    @Nullable
-    private File getTrackFile() {
-        final Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            final String extraTrackFile = extras.getString(TrackLocalActivity.EXTRA_TRACK_FILE);
-            if (extraTrackFile != null) {
-                return new File(extraTrackFile);
-            }
-        }
-        return null;
     }
 
     private static class LoadTask extends AsyncTask<Void,Void,Void> {

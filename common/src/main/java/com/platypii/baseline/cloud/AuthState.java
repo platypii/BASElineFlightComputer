@@ -63,16 +63,19 @@ public abstract class AuthState {
         }
     }
 
-    public static void setState(@NonNull Context context, AuthState state) {
+    public static void setState(@NonNull Context context, @NonNull AuthState state) {
         currentAuthState = state;
+        final String userId;
         if (currentAuthState instanceof SignedIn) {
-            final String userId = ((SignedIn) currentAuthState).userId;
-            // Save to preferences
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            final SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(PREF_AUTH_USER, userId);
-            editor.apply();
+            userId = ((SignedIn) currentAuthState).userId;
+        } else {
+            userId = null;
         }
+        // Save to preferences
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PREF_AUTH_USER, userId);
+        editor.apply();
     }
 
     @Override

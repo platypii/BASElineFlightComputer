@@ -1,17 +1,22 @@
 package com.platypii.baseline.views.tracks;
 
+import android.app.Activity;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.util.ABundle;
+import java.io.File;
 
 public class TrackLoader {
 
     public static final String EXTRA_TRACK_ID = "TRACK_ID";
+    public static final String EXTRA_TRACK_FILE = "TRACK_FILE";
 
     @NonNull
-    public static CloudData loadTrack(@Nullable Bundle extras) {
+    public static CloudData loadCloudData(@Nullable Bundle extras) {
         // Load track id from extras
         if (extras != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
@@ -31,10 +36,33 @@ public class TrackLoader {
     }
 
     @NonNull
+    public static TrackFile loadTrackFile(@NonNull Activity activity) {
+        return loadTrackFile(activity.getIntent().getExtras());
+    }
+
+    @NonNull
+    private static TrackFile loadTrackFile(@Nullable Bundle extras) {
+        // Load track file from extras
+        if (extras != null) {
+            final String extraTrackFile = extras.getString(EXTRA_TRACK_FILE);
+            if (extraTrackFile != null) {
+                return new TrackFile(new File(extraTrackFile));
+            } else {
+                throw new IllegalStateException("Failed to load track file from extras");
+            }
+        } else {
+            throw new IllegalStateException("Failed to load extras");
+        }
+    }
+
+    @NonNull
     public static Bundle trackBundle(@NonNull CloudData track) {
-        final Bundle bundle = new Bundle();
-        bundle.putString(EXTRA_TRACK_ID, track.track_id);
-        return bundle;
+        return ABundle.of(EXTRA_TRACK_ID, track.track_id);
+    }
+
+    @NonNull
+    public static Bundle trackBundle(@NonNull File file) {
+        return ABundle.of(EXTRA_TRACK_FILE, file.getAbsolutePath());
     }
 
 }
