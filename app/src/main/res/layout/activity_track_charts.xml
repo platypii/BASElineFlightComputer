@@ -10,6 +10,9 @@
     <include
         layout="@layout/chart_stats"/>
 
+    <include
+        layout="@layout/track_buttons_remote"/>
+
     <fragment
         android:id="@+id/charts"
         android:layout_below="@id/chartStats"

@@ -12,7 +12,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackData;
-import com.platypii.baseline.tracks.TrackStats;
 import com.platypii.baseline.views.charts.ChartsFragment;
 import com.platypii.baseline.views.charts.layers.Colors;
 

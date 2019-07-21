@@ -57,7 +57,6 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
             // Setup button listeners
             findViewById(R.id.exportButton).setOnClickListener(this::clickExport);
             findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
-            findViewById(R.id.chartsButton).setOnClickListener(this::clickCharts);
         } catch (IllegalStateException e) {
             Exceptions.report(e);
             finish();
@@ -105,12 +104,6 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
                 .setPositiveButton("Delete", this)
                 .setNegativeButton("Cancel", null)
                 .show();
-    }
-
-    private void clickCharts(View v) {
-        firebaseAnalytics.logEvent("click_track_local_charts", null);
-        // Open track charts activity
-        Intents.openCharts(this, trackFile.file);
     }
 
     /**

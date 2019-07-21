@@ -23,50 +23,6 @@
         android:layout_height="wrap_content"
         android:gravity="center" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/exportButton"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:drawableTop="@drawable/share"
-            android:text="@string/action_export"
-            style="@style/Widget.AppCompat.Button.Borderless" />
-
-        <Button
-            android:id="@+id/deleteButton"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:drawableTop="@drawable/button_delete"
-            android:text="@string/action_delete"
-            style="@style/Widget.AppCompat.Button.Borderless" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/chartsButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="5dp"
-            android:drawableTop="@drawable/charts"
-            android:text="@string/action_charts"
-            style="@style/Widget.AppCompat.Button.Borderless" />
-
-    </LinearLayout>
-
     <ProgressBar
         android:id="@+id/uploadProgress"
         style="?android:attr/progressBarStyleHorizontal"
@@ -87,11 +43,30 @@
         android:gravity="center"
         android:visibility="gone" />
 
-    <View
-        android:layout_height="0dp"
-        android:layout_width="0dp"
-        android:layout_weight="1"/>
-
     <include layout="@layout/sign_in_panel"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            layout="@layout/chart_stats"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
+
+        <include
+            layout="@layout/track_buttons_remote"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+    </LinearLayout>
+
+    <fragment
+        android:id="@+id/charts"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:name="com.platypii.baseline.views.charts.ChartsFragment" />
 
 </LinearLayout>

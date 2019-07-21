@@ -3,8 +3,6 @@ package com.platypii.baseline;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.views.tracks.ChartsActivity;
-import com.platypii.baseline.views.tracks.TrackDownloadActivity;
 import com.platypii.baseline.views.tracks.TrackLoader;
 import com.platypii.baseline.views.tracks.TrackLocalActivity;
 import com.platypii.baseline.views.tracks.TrackRemoteActivity;
@@ -17,7 +15,6 @@ import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
-import java.io.File;
 
 public class Intents {
     private static final String TAG = "Intents";
@@ -34,28 +31,6 @@ public class Intents {
         final Intent intent = new Intent(context, TrackRemoteActivity.class);
         intent.putExtra(TrackLoader.EXTRA_TRACK_ID, track.track_id);
         context.startActivity(intent);
-    }
-
-    /**
-     * Open track charts
-     */
-    public static void openCharts(@NonNull Context context, @NonNull File trackFile) {
-        final Intent intent = new Intent(context, ChartsActivity.class);
-        intent.putExtra(TrackLoader.EXTRA_TRACK_FILE, trackFile.getAbsolutePath());
-        context.startActivity(intent);
-    }
-    public static void openCharts(@NonNull Context context, @NonNull CloudData track) {
-        // Check if track data file exists
-        final File trackFile = track.abbrvFile(context);
-        if (trackFile.exists()) {
-            // File exists, open charts activity directly
-            openCharts(context, trackFile);
-        } else {
-            // File not downloaded to device, start TrackDownloadActivity
-            final Intent intent = new Intent(context, TrackDownloadActivity.class);
-            intent.putExtra(TrackLoader.EXTRA_TRACK_ID, track.track_id);
-            context.startActivity(intent);
-        }
     }
 
     /**

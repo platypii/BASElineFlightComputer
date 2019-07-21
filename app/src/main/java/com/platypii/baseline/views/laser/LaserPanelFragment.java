@@ -88,12 +88,12 @@ public class LaserPanelFragment extends ListFragment {
             // Open local track file charts
             final TrackFile track = ((TrackProfileLayerLocal) item).track;
             Log.i(TAG, "Opening local track profile " + track);
-            Intents.openCharts(getContext(), track.file);
+            Intents.openTrackLocal(getContext(), track);
         } else if (item instanceof TrackProfileLayerRemote) {
             // Open cloud track charts
             final CloudData track = ((TrackProfileLayerRemote) item).track;
             Log.i(TAG, "Opening cloud track profile " + track);
-            Intents.openCharts(getContext(), track.abbrvFile(getContext()));
+            Intents.openTrackRemote(getContext(), track);
         } else {
             Exceptions.report(new IllegalStateException("Unexpected list item type " + item));
         }

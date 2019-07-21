@@ -40,7 +40,6 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
             track = TrackLoader.loadCloudData(getIntent().getExtras());
 
             // Setup button listeners
-            findViewById(R.id.chartsButton).setOnClickListener(this::clickCharts);
             findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
             findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
             findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
@@ -96,12 +95,6 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
                 .setPositiveButton(R.string.action_delete, this)
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
-    }
-
-    private void clickCharts(View v) {
-        firebaseAnalytics.logEvent("click_track_remote_charts", ABundle.of("track_id", track.track_id));
-        // Open time chart activity
-        Intents.openCharts(this, track);
     }
 
     /**
