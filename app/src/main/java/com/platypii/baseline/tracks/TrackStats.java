@@ -1,5 +1,6 @@
 package com.platypii.baseline.tracks;
 
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Range;
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ public class TrackStats {
     public final Range altitude = new Range();
     public MLocation exit;
     public MLocation land;
+    public final LatLngBounds bounds;
 
     TrackStats(@NonNull List<MLocation> trackData) {
         if (!trackData.isEmpty()) {
@@ -20,9 +22,12 @@ public class TrackStats {
             exit = trackData.get(0);
             land = trackData.get(trackData.size() - 1);
         }
+        final LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
         for (MLocation loc : trackData) {
             altitude.expand(loc.altitude_gps);
+            boundsBuilder.include(loc.latLng());
         }
+        bounds = boundsBuilder.build();
     }
 
 }

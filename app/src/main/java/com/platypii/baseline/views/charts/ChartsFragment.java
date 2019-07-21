@@ -22,7 +22,7 @@ import java9.util.concurrent.CompletableFuture;
 public class ChartsFragment extends Fragment {
     private static final String TAG = "ChartsFrag";
 
-    CompletableFuture<TrackData> trackData = new CompletableFuture<>();
+    public CompletableFuture<TrackData> trackData = new CompletableFuture<>();
 
     @Nullable
     @Override

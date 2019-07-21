@@ -3,7 +3,7 @@ package com.platypii.baseline.views.charts;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.platypii.baseline.views.map.TrackMapFragment;
 
 public class ChartPagerAdapter extends FragmentPagerAdapter {
     ChartPagerAdapter(FragmentManager fm) {
@@ -20,7 +20,7 @@ public class ChartPagerAdapter extends FragmentPagerAdapter {
             case 2:
                 return new SpeedChartFragment();
             case 3:
-                return new SupportMapFragment();
+                return new TrackMapFragment();
             default:
                 return null;
         }
