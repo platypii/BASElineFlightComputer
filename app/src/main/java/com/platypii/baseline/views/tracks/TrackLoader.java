@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.tracks;
 
 import android.app.Activity;
+import androidx.fragment.app.Fragment;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import android.os.Bundle;
@@ -10,6 +11,9 @@ import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.ABundle;
 import java.io.File;
 
+/**
+ * Helpers for loading tracks between activities and fragments
+ */
 public class TrackLoader {
 
     public static final String EXTRA_TRACK_ID = "TRACK_ID";
@@ -38,6 +42,11 @@ public class TrackLoader {
     @NonNull
     public static TrackFile loadTrackFile(@NonNull Activity activity) {
         return loadTrackFile(activity.getIntent().getExtras());
+    }
+
+    @NonNull
+    public static TrackFile loadTrackFile(@NonNull Fragment fragment) {
+        return loadTrackFile(fragment.getArguments());
     }
 
     @NonNull

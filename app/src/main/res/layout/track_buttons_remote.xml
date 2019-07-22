@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="right">
 
@@ -10,6 +10,7 @@
         android:id="@+id/mapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawablePadding="6dp"
         android:drawableRight="@drawable/google_earth"
         android:text="@string/action_earth"
         style="@style/Widget.AppCompat.Button.Borderless" />
@@ -18,6 +19,7 @@
         android:id="@+id/openButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawablePadding="6dp"
         android:drawableRight="@drawable/browser"
         android:text="@string/action_open"
         style="@style/Widget.AppCompat.Button.Borderless" />
@@ -26,6 +28,7 @@
         android:id="@+id/deleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawablePadding="6dp"
         android:drawableRight="@drawable/button_delete"
         android:text="@string/action_delete"
         style="@style/Widget.AppCompat.Button.Borderless" />

@@ -51,13 +51,30 @@ public class TrackPickerFragment extends TrackListFragment {
     }
 
     private void downloadTrack(@NonNull CloudData track) {
-        final Fragment frag = new TrackDownloadFragment();
+        final TrackDownloadFragment frag = new TrackDownloadFragment();
         frag.setArguments(TrackLoader.trackBundle(track));
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, frag)
                 .addToBackStack(null)
                 .commit();
+        frag.trackFile.thenAccept(trackFile -> {
+            // Track download success, add to chart
+            final LaserActivity laserActivity = (LaserActivity) getActivity();
+            if (laserActivity != null) {
+                final ProfileLayer layer = new TrackProfileLayerRemote(track, new TrackData(trackFile));
+                Services.cloud.lasers.layers.add(layer);
+                // Return to main fragment
+                final FragmentManager fm = getFragmentManager();
+                if (fm != null) fm.popBackStack();
+            }
+        });
+        frag.trackFile.exceptionally(error -> {
+            // Return to main fragment
+            final FragmentManager fm = getFragmentManager();
+            if (fm != null) fm.popBackStack();
+            return null;
+        });
     }
 
     private void addLayer(@NonNull ProfileLayer layer) {

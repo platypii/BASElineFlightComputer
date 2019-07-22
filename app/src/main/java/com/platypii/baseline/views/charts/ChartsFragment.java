@@ -13,8 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import com.platypii.baseline.R;
 import com.platypii.baseline.tracks.TrackData;
+import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.views.tracks.TrackLocalActivity;
+import com.platypii.baseline.views.tracks.TrackLoader;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java9.util.concurrent.CompletableFuture;
@@ -37,37 +38,19 @@ public class ChartsFragment extends Fragment {
         viewPager.setAdapter(chartPagerAdapter);
 
         // Load track from extras
-        final File trackFile = getTrackFile();
-        if (trackFile != null) {
+        try {
+            final TrackFile trackFile = TrackLoader.loadTrackFile(this);
             Log.i(TAG, "Loading track data");
             // Load async
-            new LoadTask(trackFile, this).execute();
-        } else {
-            Exceptions.report(new IllegalStateException("Failed to load track file from extras"));
+            new LoadTask(trackFile.file, this).execute();
+        } catch (IllegalStateException e) {
+            Exceptions.report(e);
             // Finish activity
             final Activity activity = getActivity();
             if (activity != null) {
                 getActivity().finish();
             }
         }
-    }
-
-    /**
-     * Gets the track file from activity extras
-     */
-    @Nullable
-    private File getTrackFile() {
-        final Activity activity = getActivity();
-        if (activity != null) {
-            final Bundle extras = activity.getIntent().getExtras();
-            if (extras != null) {
-                final String extraTrackFile = extras.getString(TrackLocalActivity.EXTRA_TRACK_FILE);
-                if (extraTrackFile != null) {
-                    return new File(extraTrackFile);
-                }
-            }
-        }
-        return null;
     }
 
     private static class LoadTask extends AsyncTask<Void,Void,Void> {

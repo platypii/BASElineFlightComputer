@@ -1,14 +1,10 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
-import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.cloud.DownloadTask;
 import com.platypii.baseline.events.DownloadEvent;
-import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.views.charts.layers.ProfileLayer;
-import com.platypii.baseline.views.charts.layers.TrackProfileLayerRemote;
 import com.platypii.baseline.views.tracks.TrackLoader;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,12 +17,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import java.io.File;
+import java.io.IOException;
+import java9.util.concurrent.CompletableFuture;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class TrackDownloadFragment extends Fragment {
     private static final String TAG = "TrackDownloadFrag";
+
+    public CompletableFuture<File> trackFile = new CompletableFuture<>();
 
     private CloudData track;
     private ProgressBar downloadProgress;
@@ -63,15 +64,8 @@ public class TrackDownloadFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDownloadSuccess(@NonNull DownloadEvent.DownloadSuccess event) {
         if (event.track_id.equals(track.track_id)) {
-            // Track download success, add to chart
-            final LaserActivity laserActivity = (LaserActivity) getActivity();
-            if (laserActivity != null) {
-                final ProfileLayer layer = new TrackProfileLayerRemote(track, new TrackData(event.trackFile));
-                Services.cloud.lasers.layers.add(layer);
-                // Return to main fragment
-                final FragmentManager fm = getFragmentManager();
-                if (fm != null) fm.popBackStack();
-            }
+            // Track download success
+            trackFile.complete(event.trackFile);
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -79,9 +73,7 @@ public class TrackDownloadFragment extends Fragment {
         if (event.track_id.equals(track.track_id)) {
             Log.w(TAG, "Track download failed " + event);
             Toast.makeText(getContext(), "Track download failed", Toast.LENGTH_LONG).show();
-            // Return to main fragment
-            final FragmentManager fm = getFragmentManager();
-            if (fm != null) fm.popBackStack();
+            trackFile.completeExceptionally(event.error);
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.platypii.baseline.events.ChartFocusEvent;
-import com.platypii.baseline.tracks.TrackData;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -22,7 +21,7 @@ public class TimeChartFragment extends Fragment {
         // Get track data from parent fragment
         final Fragment parent = getParentFragment();
         if (parent instanceof ChartsFragment) {
-            ((ChartsFragment) parent).trackData.thenAccept((TrackData trackData) -> {
+            ((ChartsFragment) parent).trackData.thenAccept(trackData -> {
                 timeChart.loadTrack(trackData.data);
                 timeChart.postInvalidate();
             });

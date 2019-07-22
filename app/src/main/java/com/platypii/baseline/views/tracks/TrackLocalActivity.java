@@ -1,5 +1,7 @@
 package com.platypii.baseline.views.tracks;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.platypii.baseline.views.charts.ChartsFragment;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -49,6 +52,7 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
         // Load track from extras
         try {
             trackFile = TrackLoader.loadTrackFile(this);
+            loadCharts();
 
             // Update views
             filenameLabel.setText(trackFile.getName());
@@ -61,6 +65,19 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
             Exceptions.report(e);
             finish();
         }
+    }
+
+    /**
+     * Load charts fragment
+     */
+    private void loadCharts() {
+        final Fragment frag = new ChartsFragment();
+        frag.setArguments(TrackLoader.trackBundle(trackFile.file));
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.charts, frag)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
     }
 
     /**

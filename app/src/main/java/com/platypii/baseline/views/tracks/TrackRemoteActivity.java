@@ -1,5 +1,7 @@
 package com.platypii.baseline.views.tracks;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
@@ -18,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.platypii.baseline.views.charts.ChartsFragment;
+import com.platypii.baseline.views.laser.TrackDownloadFragment;
+import java.io.File;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -38,6 +43,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         // Load track from extras
         try {
             track = TrackLoader.loadCloudData(getIntent().getExtras());
+            loadCharts();
 
             // Setup button listeners
             findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
@@ -47,6 +53,35 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
             Exceptions.report(e);
             finish();
         }
+    }
+
+    /**
+     * Load charts fragment, or track downloader if needed
+     */
+    private void loadCharts() {
+        final Fragment frag;
+        // Check if track data file exists
+        final File trackFile = track.abbrvFile(this);
+        if (trackFile.exists()) {
+            // File exists, open charts fragment directly
+            frag = new ChartsFragment();
+            frag.setArguments(TrackLoader.trackBundle(trackFile));
+        } else {
+            // File not downloaded to device, start TrackDownloadFragment
+            frag = new TrackDownloadFragment();
+            frag.setArguments(TrackLoader.trackBundle(track));
+            ((TrackDownloadFragment) frag).trackFile.thenAccept(file -> {
+                loadCharts();
+            });
+//            ((TrackDownloadFragment) frag).trackFile.exceptionally(error -> {
+//                // TODO: Show download error
+//            });
+        }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.charts, frag)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
     }
 
     /**

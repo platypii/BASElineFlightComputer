@@ -29,7 +29,7 @@ public class TrackMapFragment extends SupportMapFragment implements OnMapReadyCa
         // Get track data from parent fragment
         final Fragment parent = getParentFragment();
         if (parent instanceof ChartsFragment) {
-            ((ChartsFragment) parent).trackData.thenAccept((TrackData trackData) -> {
+            ((ChartsFragment) parent).trackData.thenAccept(trackData -> {
                 loadTrack(map, trackData);
             });
         }
