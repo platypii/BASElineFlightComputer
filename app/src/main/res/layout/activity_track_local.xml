@@ -43,11 +43,10 @@
         android:gravity="center"
         android:visibility="gone" />
 
-    <include layout="@layout/sign_in_panel"/>
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
 
         <include
             layout="@layout/chart_stats"

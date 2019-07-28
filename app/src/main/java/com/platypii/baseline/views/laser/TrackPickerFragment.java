@@ -8,6 +8,7 @@ import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.views.charts.layers.Colors;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
+import com.platypii.baseline.views.charts.layers.TrackProfileLayerLocal;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerRemote;
 import com.platypii.baseline.views.tracks.TrackListFragment;
 import com.platypii.baseline.views.tracks.TrackListItem;
@@ -31,7 +32,7 @@ public class TrackPickerFragment extends TrackListFragment {
         switch (item.getType()) {
             case TYPE_TRACK_LOCAL:
                 final TrackFile trackFile = ((ListTrackFile) item).track;
-                final TrackProfileLayer trackLayer = new TrackProfileLayer(trackFile.getName(), trackFile.getName(), new TrackData(trackFile.file), Colors.nextColor());
+                final TrackProfileLayer trackLayer = new TrackProfileLayerLocal(trackFile);
                 addLayer(trackLayer);
                 break;
             case TYPE_TRACK_REMOTE:

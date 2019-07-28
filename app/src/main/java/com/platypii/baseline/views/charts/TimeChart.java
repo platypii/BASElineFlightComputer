@@ -99,7 +99,7 @@ public class TimeChart extends PlotView {
         plot.drawLine(AXIS_ALT, altitudeSeries, 1.5f);
         plot.paint.setColor(0xff0000ff);
         plot.drawLine(AXIS_SPEED, speedSeries, 1.5f);
-        plot.paint.setColor(0xff7f00ff);
+        plot.paint.setColor(0xff109bbf);
         plot.drawLine(AXIS_GLIDE, glideSeries, 1.5f);
     }
 

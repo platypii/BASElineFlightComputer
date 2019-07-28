@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.charts;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.platypii.baseline.events.ChartFocusEvent;
+import com.platypii.baseline.views.tracks.TrackRemoteActivity;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -18,10 +20,10 @@ public class FlightProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         flightProfile = new FlightProfileTouchable(getContext(), null);
-        // Get track data from parent fragment
-        final Fragment parent = getParentFragment();
-        if (parent instanceof ChartsFragment) {
-            ((ChartsFragment) parent).trackData.thenAccept(trackData -> {
+        // Get track data from parent activity
+        final Activity parent = getActivity();
+        if (parent instanceof TrackRemoteActivity) {
+            ((TrackRemoteActivity) parent).trackData.thenAccept(trackData -> {
                 flightProfile.loadTrack(trackData);
                 flightProfile.postInvalidate();
             });

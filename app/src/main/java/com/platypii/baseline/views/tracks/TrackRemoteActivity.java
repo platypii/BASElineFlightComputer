@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.tracks;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
@@ -8,6 +9,7 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.BaseActivity;
@@ -20,9 +22,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.platypii.baseline.views.charts.ChartStatsFragment;
 import com.platypii.baseline.views.charts.ChartsFragment;
 import com.platypii.baseline.views.laser.TrackDownloadFragment;
 import java.io.File;
+import java9.util.concurrent.CompletableFuture;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -34,6 +38,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     private AlertDialog deleteConfirmation;
 
     private CloudData track;
+    public final CompletableFuture<TrackData> trackData = new CompletableFuture<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +47,7 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
 
         // Load track from extras
         try {
-            track = TrackLoader.loadCloudData(getIntent().getExtras());
-            loadCharts();
+            loadTrack();
 
             // Setup button listeners
             findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
@@ -56,44 +60,61 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
     }
 
     /**
-     * Load charts fragment, or track downloader if needed
+     * Check if track file exists, and download or load charts
      */
-    private void loadCharts() {
-        final Fragment frag;
-        // Check if track data file exists
+    private void loadTrack() {
+        track = TrackLoader.loadCloudData(getIntent().getExtras());
         final File trackFile = track.abbrvFile(this);
         if (trackFile.exists()) {
-            // File exists, open charts fragment directly
-            frag = new ChartsFragment();
-            frag.setArguments(TrackLoader.trackBundle(trackFile));
+            loadCharts(trackFile);
         } else {
             // File not downloaded to device, start TrackDownloadFragment
-            frag = new TrackDownloadFragment();
+            final TrackDownloadFragment frag = new TrackDownloadFragment();
             frag.setArguments(TrackLoader.trackBundle(track));
-            ((TrackDownloadFragment) frag).trackFile.thenAccept(file -> {
-                loadCharts();
-            });
-//            ((TrackDownloadFragment) frag).trackFile.exceptionally(error -> {
+            frag.trackFile.thenAccept(this::loadCharts);
+//            frag.trackFile.exceptionally(error -> {
 //                // TODO: Show download error
 //            });
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.charts, frag)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .commit();
         }
-        getSupportFragmentManager()
+    }
+
+    /**
+     * Load chart fragments
+     */
+    private void loadCharts(@NonNull File trackFile) {
+        // Load track data async
+        new Thread(() -> {
+            trackData.complete(new TrackData(trackFile));
+        }).start();
+        // Load fragments
+        final FragmentManager fm = getSupportFragmentManager();
+        final Fragment charts = new ChartsFragment();
+        charts.setArguments(TrackLoader.trackBundle(trackFile));
+        fm
                 .beginTransaction()
-                .replace(R.id.charts, frag)
+                .replace(R.id.charts, charts)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
+        final Fragment stats = new ChartStatsFragment();
+        stats.setArguments(TrackLoader.trackBundle(trackFile));
+        fm
+                .beginTransaction()
+                .replace(R.id.chartStats, stats)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
     }
 
     /**
-     * Update view states (except for auth state)
+     * Update header
      */
     private void updateViews() {
         if (track != null) {
-            // Find views
-            final TextView trackDate = findViewById(R.id.trackDate);
             final TextView trackLocation = findViewById(R.id.trackLocation);
-
-            trackDate.setText(track.date_string);
             trackLocation.setText(track.location());
         }
     }

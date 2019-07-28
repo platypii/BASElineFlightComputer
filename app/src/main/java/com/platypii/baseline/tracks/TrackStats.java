@@ -1,5 +1,6 @@
 package com.platypii.baseline.tracks;
 
+import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Range;
@@ -14,6 +15,7 @@ public class TrackStats {
     public final Range altitude = new Range();
     public MLocation exit;
     public MLocation land;
+    @Nullable
     public final LatLngBounds bounds;
 
     TrackStats(@NonNull List<MLocation> trackData) {
@@ -21,13 +23,15 @@ public class TrackStats {
             // TODO: Detect exit and landing
             exit = trackData.get(0);
             land = trackData.get(trackData.size() - 1);
+            final LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
+            for (MLocation loc : trackData) {
+                altitude.expand(loc.altitude_gps);
+                boundsBuilder.include(loc.latLng());
+            }
+            bounds = boundsBuilder.build();
+        } else {
+            bounds = null;
         }
-        final LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
-        for (MLocation loc : trackData) {
-            altitude.expand(loc.altitude_gps);
-            boundsBuilder.include(loc.latLng());
-        }
-        bounds = boundsBuilder.build();
     }
 
 }

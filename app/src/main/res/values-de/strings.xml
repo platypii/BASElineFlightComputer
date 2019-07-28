@@ -18,7 +18,6 @@
     <string name="action_earth">Earth</string>
     <string name="action_delete">Löschen</string>
     <string name="action_export">Export</string>
-    <string name="action_charts">Graphen</string>
 
     <string name="upload_waiting">Warten bis zum Hochladen</string>
     <string name="uploading">Hochladen…</string>

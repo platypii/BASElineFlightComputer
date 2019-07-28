@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.map;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.views.charts.ChartsFragment;
 import com.platypii.baseline.views.charts.layers.Colors;
+import com.platypii.baseline.views.tracks.TrackRemoteActivity;
 
 public class TrackMapFragment extends SupportMapFragment implements OnMapReadyCallback {
 
@@ -26,10 +28,10 @@ public class TrackMapFragment extends SupportMapFragment implements OnMapReadyCa
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        // Get track data from parent fragment
-        final Fragment parent = getParentFragment();
-        if (parent instanceof ChartsFragment) {
-            ((ChartsFragment) parent).trackData.thenAccept(trackData -> {
+        // Get track data from parent activity
+        final Activity parent = getActivity();
+        if (parent instanceof TrackRemoteActivity) {
+            ((TrackRemoteActivity) parent).trackData.thenAccept(trackData -> {
                 loadTrack(map, trackData);
             });
         }
@@ -41,7 +43,9 @@ public class TrackMapFragment extends SupportMapFragment implements OnMapReadyCa
             polyline.add(point.latLng());
         }
         map.addPolyline(polyline);
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(trackData.stats.bounds, 2));
+        if (trackData.stats.bounds != null) {
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(trackData.stats.bounds, 2));
+        }
     }
 
 }

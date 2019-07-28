@@ -7,21 +7,21 @@
     android:gravity="right">
 
     <Button
-        android:id="@+id/mapButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawablePadding="6dp"
-        android:drawableRight="@drawable/google_earth"
-        android:text="@string/action_earth"
-        style="@style/Widget.AppCompat.Button.Borderless" />
-
-    <Button
         android:id="@+id/openButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"
         android:drawableRight="@drawable/browser"
         android:text="@string/action_open"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+    <Button
+        android:id="@+id/mapButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="6dp"
+        android:drawableRight="@drawable/google_earth"
+        android:text="@string/action_earth"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
     <Button
