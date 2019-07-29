@@ -167,7 +167,12 @@ public class Convert {
      */
     @NonNull
     public static String speed(double mps) {
-        return speed(mps, 1, true);
+        final double smallMps = metric ? 10 * KPH : 10 * MPH;
+        if (mps < smallMps) {
+            return speed(mps, 1, true);
+        } else {
+            return speed(mps, 0, true);
+        }
     }
     /**
      * Convert meters/second to local units

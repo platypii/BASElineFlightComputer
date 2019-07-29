@@ -16,7 +16,7 @@ class NearestPlaceLayer implements MapLayer {
                 .position(new LatLng(0, 0))
                 .visible(false)
                 .alpha(0.5f)
-                .anchor(0.5f, 0.5f)
+                .anchor(0.5f, 1f)
                 .flat(true)
         );
     }
@@ -28,7 +28,7 @@ class NearestPlaceLayer implements MapLayer {
             if (place != null) {
                 placeMarker.setVisible(true);
                 placeMarker.setPosition(place.latLng());
-                placeMarker.setIcon(PlaceIcons.icon(place.objectType));
+                placeMarker.setIcon(PlaceIcons.icon(place));
             }
         }
     }

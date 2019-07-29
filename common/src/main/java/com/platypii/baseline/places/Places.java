@@ -82,6 +82,7 @@ public class Places implements BaseService {
             if (force || !placeFile.isFresh()) {
                 try {
                     FetchPlaces.get(context, placeFile.file);
+                    places = null; // Force reload
                 } catch (IOException e) {
                     Log.e(TAG, "Failed to fetch places", e);
                 }

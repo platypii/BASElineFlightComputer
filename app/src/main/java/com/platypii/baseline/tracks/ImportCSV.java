@@ -1,6 +1,9 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthState;
+import com.platypii.baseline.cloud.tracks.TrackUploadTask;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -30,7 +33,13 @@ public class ImportCSV {
         final String intentType = intent.getType();
         if (intentType != null && (intentType.contains("text/comma-separated-values") || intentType.contains("text/csv"))) {
             final Uri uri = intent.getData();
-            AsyncTask.execute(() -> copyFile(context, uri));
+            AsyncTask.execute(() -> {
+                try {
+                    copyFile(context, uri);
+                } catch (SecurityException e) {
+                    Exceptions.report(e);
+                }
+            });
             return true;
         }
         return false;
@@ -53,6 +62,11 @@ public class ImportCSV {
             final InputStream is = content.openInputStream(uri);
             IOUtil.copy(is, os);
             Services.trackStore.setNotUploaded(destination);
+            if (AuthState.getUser() != null) {
+                Log.i(TAG, "Uploading imported track " + destination);
+                Services.tasks.add(new TrackUploadTask(destination));
+            }
+
         } catch (IOException e) {
             Log.e(TAG, "Failed to import CSV file", e);
         }
@@ -65,6 +79,9 @@ public class ImportCSV {
                 if (cursor != null && cursor.moveToFirst()) {
                     return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                 }
+            } catch (SecurityException e) {
+                // If we can't get filename, catch and report exception, but still try to copy bits
+                Exceptions.report(e);
             }
         }
         return null;

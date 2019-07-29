@@ -45,21 +45,19 @@ public class DownloadTask implements Runnable {
 
     @Override
     public void run() {
-        Log.i(TAG, "Downloading track " + trackId);
-        // Check if file exists
-        if (trackFile.exists()) {
-            Log.e(TAG, "Overwriting existing track file " + trackFile);
-        }
         // Check for network availability. Still try to download anyway, but don't report to firebase
         final boolean networkAvailable = Services.cloud.isNetworkAvailable();
         try {
             if (!trackFile.exists()) {
+                Log.i(TAG, "Downloading track " + trackId);
                 // Get auth token
                 final String authToken = AuthToken.getAuthToken(context);
                 // Make HTTP request
                 downloadTrack(authToken);
                 // TODO: Check file hash?
                 Log.i(TAG, "Download successful, track " + trackId);
+            } else {
+                Log.i(TAG, "Track file exists, skipping download " + trackFile);
             }
             if (!abbrvFile.exists()) {
                 // Make abbrv file

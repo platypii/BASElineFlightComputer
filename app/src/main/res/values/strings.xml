@@ -15,7 +15,7 @@
 
     <!-- Track Activity -->
     <string name="action_open">baseline.ws</string>
-    <string name="action_map">Map</string>
+    <string name="action_earth">Earth</string>
     <string name="action_delete">Delete</string>
     <string name="action_export">Export</string>
     <string name="action_charts">Charts</string>

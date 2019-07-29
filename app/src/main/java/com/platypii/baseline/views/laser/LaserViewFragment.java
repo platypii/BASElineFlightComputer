@@ -141,7 +141,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
                 if (laser != null) {
                     return laser;
                 } else {
-                    throw new IllegalStateException("Failed to load laser from arguments");
+                    throw new IllegalStateException("Failed to load laser " + laserId + " from arguments");
                 }
             } else {
                 throw new IllegalStateException("Failed to load laser id from arguments");

@@ -27,7 +27,7 @@ public class Intents {
      */
     public static void openTrackLocal(@NonNull Context context, @NonNull TrackFile trackFile) {
         final Intent intent = new Intent(context, TrackLocalActivity.class);
-        intent.putExtra(TrackLoader.EXTRA_TRACK_FILE, trackFile.file.getName());
+        intent.putExtra(TrackLoader.EXTRA_TRACK_FILE, trackFile.file.getAbsolutePath());
         context.startActivity(intent);
     }
     public static void openTrackRemote(@NonNull Context context, @NonNull CloudData track) {

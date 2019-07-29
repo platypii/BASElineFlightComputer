@@ -47,9 +47,9 @@ class PlacesLayer implements MapLayer {
                 .position(place.latLng())
                 .visible(true)
                 .alpha(0.5f)
-                .anchor(0.5f, 0.5f)
+                .anchor(0.5f, 1f)
                 .flat(true)
-                .icon(PlaceIcons.icon(place.objectType))
+                .icon(PlaceIcons.icon(place))
         );
         placeMarkers.put(place, placeMarker);
     }

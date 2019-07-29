@@ -45,11 +45,11 @@ public class NearestPlace {
         final List<Place> placeList = places.getPlaces();
         if (placeList != null) {
             Place best = null;
-            double bestDistance = Double.NaN;
+            double bestDistance = Double.POSITIVE_INFINITY;
             // Find closest place
             for (Place place : placeList) {
                 final double distance = Geo.fastDistance(loc.latitude, loc.longitude, place.lat, place.lng);
-                if (Double.isNaN(bestDistance) || (distance < bestDistance && distance < place.radius)) {
+                if (distance < place.radius && distance < bestDistance) {
                     best = place;
                     bestDistance = distance;
                 }

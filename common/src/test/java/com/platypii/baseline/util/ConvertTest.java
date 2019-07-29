@@ -70,8 +70,9 @@ public class ConvertTest {
     @Test
     public void convertSpeed() {
         assertEquals("0.0 mph", Convert.speed(0.0));
-        assertEquals("22.4 mph", Convert.speed(10.0));
-        assertEquals("223.7 mph", Convert.speed(100.0));
+        assertEquals("9.9 mph", Convert.speed(9.9 * Convert.MPH));
+        assertEquals("22 mph", Convert.speed(10.0));
+        assertEquals("224 mph", Convert.speed(100.0));
         assertEquals("224 mph", Convert.speed(100.0, 0, true));
         assertEquals("224", Convert.speed(100.0, 0, false));
         assertEquals("", Convert.speed(Double.NaN));

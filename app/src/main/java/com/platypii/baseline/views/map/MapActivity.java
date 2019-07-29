@@ -36,7 +36,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private ImageButton homeButton;
     private ImageView crosshair;
 
-    private SupportMapFragment mapFragment;
     private GoogleMap map; // Might be null if Google Play services APK is not available
 
     // Layers
@@ -73,7 +72,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         homeButton.setOnClickListener(homeButtonListener);
 
         // Initialize map
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 

@@ -45,7 +45,7 @@
             android:layout_weight="1"
             android:layout_margin="5dp"
             android:drawableTop="@drawable/google_earth"
-            android:text="@string/action_map"
+            android:text="@string/action_earth"
             style="@style/Widget.AppCompat.Button.Borderless" />
 
     </LinearLayout>

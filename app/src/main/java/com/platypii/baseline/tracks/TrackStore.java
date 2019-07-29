@@ -50,7 +50,7 @@ public class TrackStore implements BaseService {
     @NonNull
     public List<TrackFile> getLocalTracks() {
         if (!initialized) {
-            Log.e(TAG, "Track store not initialized");
+            Exceptions.report(new IllegalStateException("TrackStore not initialized before getLocalTracks()"));
         }
         final List<TrackFile> tracks = new ArrayList<>();
         for (TrackState state : trackState.values()) {
