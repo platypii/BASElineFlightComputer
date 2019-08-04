@@ -1,4 +1,4 @@
-<androidx.viewpager.widget.ViewPager
+<com.platypii.baseline.views.charts.NoSwipeViewPager
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/chartPager"
@@ -11,4 +11,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</androidx.viewpager.widget.ViewPager>
+</com.platypii.baseline.views.charts.NoSwipeViewPager>
