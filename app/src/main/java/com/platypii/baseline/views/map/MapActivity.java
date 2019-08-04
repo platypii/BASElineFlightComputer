@@ -7,6 +7,7 @@ import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.altimeter.AnalogAltimeterSettable;
 import android.content.pm.ActivityInfo;
@@ -25,11 +26,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
-public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener {
+public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener, PubSub.Subscriber<MAltitude> {
     private static final String TAG = "Map";
 
     private AnalogAltimeterSettable analogAltimeter;
@@ -210,8 +208,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     /**
      * Listen for altitude updates
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAltitudeEvent(MAltitude alt) {
+    @Override
+    public void apply(MAltitude alt) {
         updateAltimeter();
     }
 
@@ -223,8 +221,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     protected void onResume() {
         super.onResume();
         // Start sensor updates
+        Services.alti.altitudeEvents.subscribe(this);
         Services.location.addListener(this);
-        EventBus.getDefault().register(this);
         // Recenter on last location
         if (Services.location.lastLoc != null) {
             updateLocation();
@@ -237,7 +235,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         super.onPause();
         // Stop sensor updates
         Services.location.removeListener(this);
-        EventBus.getDefault().unregister(this);
+        Services.alti.altitudeEvents.unsubscribe(this);
     }
 
 }

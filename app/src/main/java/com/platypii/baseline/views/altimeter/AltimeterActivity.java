@@ -3,17 +3,15 @@ package com.platypii.baseline.views.altimeter;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MAltitude;
+import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.PolarPlotLive;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
-public class AltimeterActivity extends BaseActivity {
+public class AltimeterActivity extends BaseActivity implements PubSub.Subscriber<MAltitude> {
 
     private PolarPlotLive polar;
     private AnalogAltimeterSettable analogAltimeter;
@@ -39,8 +37,8 @@ public class AltimeterActivity extends BaseActivity {
     /**
      * Listen for altitude updates
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAltitudeEvent(MAltitude alt) {
+    @Override
+    public void apply(MAltitude alt) {
         updateFlightStats();
     }
 
@@ -48,7 +46,7 @@ public class AltimeterActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         // Start sensor updates
-        EventBus.getDefault().register(this);
+        Services.alti.altitudeEvents.subscribeMain(this);
         polar.start(Services.location, Services.alti);
         updateFlightStats();
     }
@@ -56,7 +54,7 @@ public class AltimeterActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         // Stop sensor updates
-        EventBus.getDefault().unregister(this);
+        Services.alti.altitudeEvents.unsubscribe(this);
         polar.stop();
     }
 }

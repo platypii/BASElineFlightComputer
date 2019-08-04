@@ -9,6 +9,7 @@ import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.measurements.Measurement;
 import com.platypii.baseline.sensors.MySensorListener;
 import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.util.StringBuilderUtil;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -21,14 +22,12 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.zip.GZIPOutputStream;
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Logs location, altitude, every scrap of data we can get to a file.
  * AKA- The Black Box flight recorder
  */
-public class TrackLogger implements MyLocationListener, MySensorListener, BaseService {
+public class TrackLogger implements MyLocationListener, MySensorListener, BaseService, PubSub.Subscriber<MPressure> {
     private static final String TAG = "TrackLogger";
 
     private boolean logging = false;
@@ -139,7 +138,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
         log.write(Measurement.header + "\n");
 
         // Start sensor updates
-        EventBus.getDefault().register(this);
+        Services.alti.baro.pressureEvents.subscribe(this);
         Services.location.addListener(this);
         Services.sensors.addListener(this);
 
@@ -154,7 +153,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
         stopTimeNano = System.nanoTime();
 
         // Stop sensor updates
-        EventBus.getDefault().unregister(this);
+        Services.alti.baro.pressureEvents.unsubscribe(this);
         Services.location.removeListener(this);
         Services.sensors.removeListener(this);
 
@@ -173,8 +172,8 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
     /**
      * Listen for altitude updates
      */
-    @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void onAltitudeEvent(@NonNull MPressure alt) {
+    @Override
+    public void apply(@NonNull MPressure alt) {
         if (!Double.isNaN(alt.pressure)) {
             logLine(alt.toRow());
         }

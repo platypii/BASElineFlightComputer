@@ -5,6 +5,7 @@ import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.util.RefreshRateEstimator;
 import com.platypii.baseline.util.Stat;
 import com.platypii.baseline.util.kalman.Filter;
@@ -18,7 +19,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.Arrays;
-import org.greenrobot.eventbus.EventBus;
 
 /**
  * Barometric altimeter with kalman filter.
@@ -27,6 +27,8 @@ import org.greenrobot.eventbus.EventBus;
  */
 public class BaroAltimeter implements BaseService, SensorEventListener {
     private static final String TAG = "BaroAltimeter";
+
+    public PubSub<MPressure> pressureEvents = new PubSub<>();
 
     private static final int sensorDelay = 100000; // microseconds
     @Nullable
@@ -136,7 +138,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
 
         // Publish official altitude measurement
         final MPressure myPressure = new MPressure(lastFixMillis, lastFixNano, pressure_altitude_filtered, climb, pressure);
-        EventBus.getDefault().post(myPressure);
+        pressureEvents.post(myPressure);
     }
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}

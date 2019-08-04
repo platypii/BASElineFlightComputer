@@ -7,6 +7,7 @@ import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
+import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.util.kalman.Filter;
 import com.platypii.baseline.util.kalman.FilterKalman;
 import android.content.Context;
@@ -15,9 +16,6 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * The main Altimeter class.
@@ -26,8 +24,10 @@ import org.greenrobot.eventbus.ThreadMode;
  *
  * TODO: Correct barometer drift with GPS
  */
-public class MyAltimeter implements BaseService, MyLocationListener {
+public class MyAltimeter implements BaseService, MyLocationListener, PubSub.Subscriber<MPressure> {
     private static final String TAG = "MyAltimeter";
+
+    public PubSub<MAltitude> altitudeEvents = new PubSub<>();
 
     private final LocationProvider location;
     private boolean started = false;
@@ -73,8 +73,8 @@ public class MyAltimeter implements BaseService, MyLocationListener {
             if (!started) {
                 // Start barometer
                 started = true;
-                EventBus.getDefault().register(MyAltimeter.this);
                 baro.start(context);
+                baro.pressureEvents.subscribe(this);
 
                 // Load ground level from preferences
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -107,8 +107,8 @@ public class MyAltimeter implements BaseService, MyLocationListener {
     /**
      * Process new barometer reading
      */
-    @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void onPressureEvent(@NonNull MPressure pressure) {
+    @Override
+    public void apply(@NonNull MPressure pressure) {
         if (!barometerEnabled) return;
 
         lastFixMillis = TimeOffset.phoneToGpsTime(pressure.millis); // Convert to GPS time
@@ -183,7 +183,7 @@ public class MyAltimeter implements BaseService, MyLocationListener {
         }
         // Create the measurement
         final MAltitude myAltitude = new MAltitude(lastFixMillis, altitude, climb);
-        EventBus.getDefault().post(myAltitude);
+        altitudeEvents.post(myAltitude);
     }
 
     /**
@@ -195,9 +195,9 @@ public class MyAltimeter implements BaseService, MyLocationListener {
 
     @Override
     public void stop() {
+        baro.pressureEvents.unsubscribe(this);
         baro.stop();
         location.removeListener(this);
-        EventBus.getDefault().unregister(this);
         if (started) {
             started = false;
         } else {

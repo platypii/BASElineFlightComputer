@@ -7,6 +7,7 @@ import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.util.PubSub;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,11 +16,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
-public class FlightStatsFragment extends Fragment implements MyLocationListener {
+public class FlightStatsFragment extends Fragment implements MyLocationListener, PubSub.Subscriber<MAltitude> {
 
     private TextView flightStatsVario;
     private TextView flightStatsSpeed;
@@ -57,8 +55,8 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener 
     /**
      * Listen for altitude updates
      */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAltitudeEvent(MAltitude alt) {
+    @Override
+    public void apply(MAltitude alt) {
         update();
     }
 
@@ -75,7 +73,7 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener 
         super.onResume();
         // Start sensor updates
         Services.location.addListener(this);
-        EventBus.getDefault().register(this);
+        Services.alti.altitudeEvents.subscribeMain(this);
         update();
     }
 
@@ -84,7 +82,7 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener 
         super.onPause();
         // Stop sensor updates
         Services.location.removeListener(this);
-        EventBus.getDefault().unregister(this);
+        Services.alti.altitudeEvents.unsubscribe(this);
     }
 
 }
