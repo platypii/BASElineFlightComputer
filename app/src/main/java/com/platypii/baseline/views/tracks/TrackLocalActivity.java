@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.tracks;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
@@ -8,9 +9,9 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.views.BaseActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -22,12 +23,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.platypii.baseline.views.charts.ChartStatsFragment;
 import com.platypii.baseline.views.charts.ChartsFragment;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class TrackLocalActivity extends BaseActivity implements DialogInterface.OnClickListener {
+public class TrackLocalActivity extends TrackDataActivity implements DialogInterface.OnClickListener {
     private static final String TAG = "TrackLocalActivity";
 
     private ProgressBar uploadProgress;
@@ -71,11 +73,22 @@ public class TrackLocalActivity extends BaseActivity implements DialogInterface.
      * Load charts fragment
      */
     private void loadCharts() {
-        final Fragment frag = new ChartsFragment();
-        frag.setArguments(TrackLoader.trackBundle(trackFile.file));
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.charts, frag)
+        // Load track data async
+        new Thread(() -> {
+            trackData.complete(new TrackData(trackFile.file));
+        }).start();
+        // Load fragments
+        final FragmentManager fm = getSupportFragmentManager();
+        final Fragment charts = new ChartsFragment();
+        charts.setArguments(TrackLoader.trackBundle(trackFile.file));
+        fm.beginTransaction()
+                .replace(R.id.charts, charts)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
+        final Fragment stats = new ChartStatsFragment();
+        stats.setArguments(TrackLoader.trackBundle(trackFile.file));
+        fm.beginTransaction()
+                .replace(R.id.chartStats, stats)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
     }

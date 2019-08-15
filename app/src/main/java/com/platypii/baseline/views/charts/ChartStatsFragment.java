@@ -8,13 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.platypii.baseline.R;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackStats;
 import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.views.tracks.TrackRemoteActivity;
+import com.platypii.baseline.views.tracks.TrackDataActivity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -24,6 +25,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class ChartStatsFragment extends Fragment {
 
+    @Nullable
     private TrackStats stats;
 
     private TextView timeLabel;
@@ -52,8 +54,8 @@ public class ChartStatsFragment extends Fragment {
         // Get track data from parent activity
         final Handler handler = new Handler();
         final Activity parent = getActivity();
-        if (parent instanceof TrackRemoteActivity) {
-            ((TrackRemoteActivity) parent).trackData.thenAccept(trackData -> {
+        if (parent instanceof TrackDataActivity) {
+            ((TrackDataActivity) parent).trackData.thenAccept(trackData -> {
                 this.stats = trackData.stats;
                 // Notify self to update (on main thread) now that data is ready
                 handler.post(() -> onChartFocus(null));
@@ -85,12 +87,17 @@ public class ChartStatsFragment extends Fragment {
             // TODO: Date should have timezone
             timeLabel.setText(timeFormat.format(new Date(focus.millis)));
             altitudeLabel.setText(Convert.distance(focus.altitude_gps) + " MSL");
-            horizontalDistLabel.setText(Convert.distance(focus.distanceTo(stats.exit)));
-            verticalDistLabel.setText(Convert.distance(focus.altitude_gps - stats.exit.altitude_gps));
-            horizontalSpeedLabel.setText(Convert.speed(focus.groundSpeed()));
-            verticalSpeedLabel.setText(Convert.speed(focus.climb));
             speedLabel.setText(Convert.speed(focus.totalSpeed()));
             glideLabel.setText(Convert.glide(focus.groundSpeed(), focus.climb, 1, true));
+            if (stats != null && stats.exit != null) {
+                horizontalDistLabel.setText(Convert.distance(focus.distanceTo(stats.exit)));
+                verticalDistLabel.setText(Convert.distance(focus.altitude_gps - stats.exit.altitude_gps));
+            } else {
+                horizontalDistLabel.setText("");
+                verticalDistLabel.setText("");
+            }
+            horizontalSpeedLabel.setText(Convert.speed(focus.groundSpeed()));
+            verticalSpeedLabel.setText(Convert.speed(focus.climb));
         } else {
             if (stats != null) {
                 if (stats.exit != null) {

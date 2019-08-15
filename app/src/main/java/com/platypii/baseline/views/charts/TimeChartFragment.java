@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.platypii.baseline.events.ChartFocusEvent;
-import com.platypii.baseline.views.tracks.TrackRemoteActivity;
+import com.platypii.baseline.views.tracks.TrackDataActivity;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -22,8 +22,8 @@ public class TimeChartFragment extends Fragment {
         timeChart = new TimeChartTouchable(getContext(), null);
         // Get track data from parent activity
         final Activity parent = getActivity();
-        if (parent instanceof TrackRemoteActivity) {
-            ((TrackRemoteActivity) parent).trackData.thenAccept(trackData -> {
+        if (parent instanceof TrackDataActivity) {
+            ((TrackDataActivity) parent).trackData.thenAccept(trackData -> {
                 timeChart.loadTrack(trackData.data);
                 timeChart.postInvalidate();
             });
@@ -44,7 +44,7 @@ public class TimeChartFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onChartFocus(ChartFocusEvent event) {
+    public void onChartFocus(@NonNull ChartFocusEvent event) {
         timeChart.onFocus(event.location);
     }
 

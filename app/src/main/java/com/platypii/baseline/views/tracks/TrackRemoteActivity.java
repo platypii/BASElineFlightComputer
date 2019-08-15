@@ -12,7 +12,6 @@ import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.views.BaseActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -26,19 +25,17 @@ import com.platypii.baseline.views.charts.ChartStatsFragment;
 import com.platypii.baseline.views.charts.ChartsFragment;
 import com.platypii.baseline.views.laser.TrackDownloadFragment;
 import java.io.File;
-import java9.util.concurrent.CompletableFuture;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class TrackRemoteActivity extends BaseActivity implements DialogInterface.OnClickListener {
+public class TrackRemoteActivity extends TrackDataActivity implements DialogInterface.OnClickListener {
     private static final String TAG = "TrackRemoteActivity";
 
     @Nullable
     private AlertDialog deleteConfirmation;
 
     private CloudData track;
-    public final CompletableFuture<TrackData> trackData = new CompletableFuture<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,15 +92,13 @@ public class TrackRemoteActivity extends BaseActivity implements DialogInterface
         final FragmentManager fm = getSupportFragmentManager();
         final Fragment charts = new ChartsFragment();
         charts.setArguments(TrackLoader.trackBundle(trackFile));
-        fm
-                .beginTransaction()
+        fm.beginTransaction()
                 .replace(R.id.charts, charts)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
         final Fragment stats = new ChartStatsFragment();
         stats.setArguments(TrackLoader.trackBundle(trackFile));
-        fm
-                .beginTransaction()
+        fm.beginTransaction()
                 .replace(R.id.chartStats, stats)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();

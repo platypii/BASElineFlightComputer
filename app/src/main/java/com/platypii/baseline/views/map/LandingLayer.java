@@ -23,7 +23,7 @@ class LandingLayer implements MapLayer {
     private final Polyline landingPath;
     private final List<LatLng> landingPoints = new ArrayList<>();
 
-    LandingLayer(GoogleMap map) {
+    LandingLayer(@NonNull GoogleMap map) {
         // Add projected landing zone
         landingMarker = map.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))

@@ -2,6 +2,7 @@ package com.platypii.baseline.views.map;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.places.Place;
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -16,7 +17,7 @@ class PlacesLayer implements MapLayer {
     private final GoogleMap map;
     private final Map<Place, Marker> placeMarkers = new HashMap<>();
 
-    PlacesLayer(GoogleMap map) {
+    PlacesLayer(@NonNull GoogleMap map) {
         this.map = map;
     }
 

@@ -340,6 +340,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "TXT":
                 // $GNTXT,01,01,02,ANTSTATUS=INIT*3B
             case "WP1":
+            case "WP4":
                 // $PQWP1,131955.93,03,0.728909016,-0.014442960,302.38,9338.27,3.23,3*24
             case "ZCD":
                 // Rockchip 3GR

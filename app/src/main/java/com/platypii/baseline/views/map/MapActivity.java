@@ -34,6 +34,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private ImageButton homeButton;
     private ImageView crosshair;
 
+    @Nullable
     private GoogleMap map; // Might be null if Google Play services APK is not available
 
     // Layers
@@ -71,7 +72,11 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
         // Initialize map
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        } else {
+            Log.e(TAG, "Failed to get map fragment");
+        }
     }
 
     /**
@@ -96,7 +101,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         }
 
         // Add map layers
-        addLayers();
+        addLayers(map);
         updateLayers();
 
         // Drag listener
@@ -130,7 +135,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         updateLayers();
     }
 
-    private void addLayers() {
+    private void addLayers(@NonNull GoogleMap map) {
         layers.add(new PlacesLayer(map));
         layers.add(new HomeLayer(map));
         layers.add(new LandingLayer(map));
@@ -174,7 +179,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     private void updateLocation() {
-        if (ready) {
+        if (ready && map != null) {
             final LatLng currentLoc = Services.location.lastLoc.latLng();
 
             // Update markers and overlays

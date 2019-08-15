@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.platypii.baseline.events.ChartFocusEvent;
-import com.platypii.baseline.views.tracks.TrackRemoteActivity;
+import com.platypii.baseline.views.tracks.TrackDataActivity;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -22,8 +22,8 @@ public class SpeedChartFragment extends Fragment {
         speedChart = new PolarPlotTouchable(getContext(), null);
         // Get track data from parent activity
         final Activity parent = getActivity();
-        if (parent instanceof TrackRemoteActivity) {
-            ((TrackRemoteActivity) parent).trackData.thenAccept(trackData -> {
+        if (parent instanceof TrackDataActivity) {
+            ((TrackDataActivity) parent).trackData.thenAccept(trackData -> {
                 speedChart.loadTrack(trackData.data);
                 speedChart.postInvalidate();
             });

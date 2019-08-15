@@ -19,7 +19,7 @@ class MyPositionLayer implements MapLayer {
     @NonNull
     private final BitmapDescriptor myposition2;
 
-    MyPositionLayer(GoogleMap map) {
+    MyPositionLayer(@NonNull GoogleMap map) {
         myposition1 = BitmapDescriptorFactory.fromResource(R.drawable.myposition1);
         myposition2 = BitmapDescriptorFactory.fromResource(R.drawable.myposition2);
 

@@ -23,7 +23,7 @@ class HomeLayer implements MapLayer {
     private final Polyline homePath;
     private final List<LatLng> homePoints = new ArrayList<>();
 
-    HomeLayer(GoogleMap map) {
+    HomeLayer(@NonNull GoogleMap map) {
         // Add home location pin
         homeMarker = map.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))
