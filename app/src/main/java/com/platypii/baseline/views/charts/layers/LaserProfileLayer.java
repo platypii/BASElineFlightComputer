@@ -34,10 +34,10 @@ public class LaserProfileLayer extends ProfileLayer {
         // Reorder to handle measuring from bottom
         final List<LaserMeasurement> points = LaserMeasurement.reorder(laserProfile.points);
         // Load laser data into time series
-        profileSeries.reset();
-        profileSeries.addPoint(0, 0);
+        dataSeries.reset();
+        dataSeries.addPoint(0, 0);
         for (LaserMeasurement point : points) {
-            profileSeries.addPoint(point.x, point.y);
+            dataSeries.addPoint(point.x, point.y);
         }
     }
 

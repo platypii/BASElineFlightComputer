@@ -34,17 +34,17 @@
         android:layout_below="@id/laserMeasurementsLabel"
         android:textIsSelectable="true"/>
 
-    <ImageButton
+    <Button
         android:id="@+id/laserDelete"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:padding="6dp"
-        android:src="@drawable/delete"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/action_delete"
+        android:drawablePadding="6dp"
+        android:drawableRight="@drawable/button_delete"
+        android:text="@string/action_delete"
         android:visibility="gone"
         style="@style/Widget.AppCompat.Button.Borderless" />
+
 
 </RelativeLayout>

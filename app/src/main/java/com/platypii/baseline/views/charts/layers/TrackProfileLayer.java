@@ -17,13 +17,12 @@ public class TrackProfileLayer extends ProfileLayer {
         this.name = name;
 
         // Load track data into time series
-        profileSeries.reset();
         if (!trackData.data.isEmpty()) {
             final MLocation start = trackData.data.get(0);
             for (MLocation loc : trackData.data) {
                 final double x = start.distanceTo(loc);
                 final double y = loc.altitude_gps - start.altitude_gps;
-                profileSeries.addPoint(x, y);
+                dataSeries.addPoint(x, y);
             }
         }
     }

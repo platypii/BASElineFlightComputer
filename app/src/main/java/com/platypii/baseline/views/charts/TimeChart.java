@@ -16,6 +16,7 @@ public class TimeChart extends PlotView {
     private static final int AXIS_SPEED = 1;
     private static final int AXIS_GLIDE = 2;
 
+    @Nullable
     List<MLocation> trackData;
 
     private final DataSeries altitudeSeries = new DataSeries();
@@ -29,7 +30,7 @@ public class TimeChart extends PlotView {
         super(context, attrs);
 
         final float density = getResources().getDisplayMetrics().density;
-        options.padding.top = (int) (4 * density);
+        options.padding.top = (int) (18 * density);
         options.padding.bottom = (int) (4 * density);
 
         options.axis.x = PlotOptions.axisTime();

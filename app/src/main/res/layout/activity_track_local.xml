@@ -48,10 +48,10 @@
         android:layout_height="wrap_content"
         android:baselineAligned="false">
 
-        <include
-            layout="@layout/chart_stats"
-            android:layout_height="wrap_content"
+        <FrameLayout
+            android:id="@+id/chartStats"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
         <include

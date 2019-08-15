@@ -19,6 +19,7 @@ public class PlotOptions {
     public final float density;
     final int axis_color = 0xffee0000;
     final int grid_color = 0xff555555;
+    final int grid_text_color = 0xff666666;
     final float font_size = 16;
 
     // Axis options
@@ -55,7 +56,7 @@ public class PlotOptions {
             }
             @Override
             public String format(double value) {
-                return Math.abs(value) < 0.1 ? "" : Convert.distance(value, 0, true);
+                return Math.abs(value) < 0.1 ? "" : Convert.distance(Math.abs(value), 0, true);
             }
         };
     }

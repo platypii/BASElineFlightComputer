@@ -15,6 +15,7 @@ import java.util.List;
 
 public class FlightProfile extends PlotView {
 
+    @Nullable
     List<MLocation> trackData;
 
     private final Bounds bounds = new Bounds();
@@ -27,7 +28,7 @@ public class FlightProfile extends PlotView {
         super(context, attrs);
 
         final float density = getResources().getDisplayMetrics().density;
-        options.padding.top = (int) (12 * density);
+        options.padding.top = (int) (18 * density);
         options.padding.bottom = (int) (4 * density);
         options.padding.left = (int) (density);
         options.padding.right = (int) (4 * density);
@@ -46,8 +47,7 @@ public class FlightProfile extends PlotView {
     public void loadTrack(@NonNull TrackData trackData) {
         this.trackData = trackData.data;
 
-        final TrackProfileLayer trackLayer = new TrackProfileLayer("", "", trackData, Colors.defaultColor);
-        addLayer(trackLayer);
+        addLayer(new TrackProfileLayer("", "", trackData, Colors.defaultColor));
         focusLayer = new ProfileFocusLayer(trackData.data);
         addLayer(focusLayer);
     }

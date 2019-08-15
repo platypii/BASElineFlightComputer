@@ -4,6 +4,9 @@ import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
 import androidx.annotation.NonNull;
 
+/**
+ * TrackProfileLayer for local track file
+ */
 public class TrackProfileLayerLocal extends TrackProfileLayer {
     @NonNull
     public final TrackFile track;

@@ -30,8 +30,8 @@ class PlotAxes {
      * Called when rendering the plot to draw the plot axis lines and labels.
      */
     void drawGridlines() {
-        plot.paint.setStrokeWidth(0);
-        plot.paint.setTextSize(20);
+        plot.paint.setStrokeWidth(plot.options.density);
+        plot.text.setTextSize(16 * plot.options.density);
         final Bounds realBounds = getRealBounds();
         drawXlines(realBounds);
         drawYlines(realBounds);
@@ -100,9 +100,9 @@ class PlotAxes {
         plot.paint.setColor(color);
         plot.canvas.drawLine(sx, 0, sx, plot.height, plot.paint);
         if (label != null) {
-            plot.paint.setColor(plot.options.grid_color);
-            plot.paint.setTextAlign(Paint.Align.LEFT);
-            plot.canvas.drawText(label, sx + 2 * plot.options.density, 10 * plot.options.density, plot.paint);
+            plot.text.setColor(plot.options.grid_text_color);
+            plot.text.setTextAlign(Paint.Align.LEFT);
+            plot.canvas.drawText(label, sx + 2 * plot.options.density, 14 * plot.options.density, plot.text);
         }
     }
     /**
@@ -113,28 +113,28 @@ class PlotAxes {
         plot.paint.setColor(color);
         plot.canvas.drawLine(0, sy, plot.width, sy, plot.paint);
         if (label != null) {
-            plot.paint.setColor(plot.options.grid_color);
+            plot.text.setColor(plot.options.grid_text_color);
             // Left align
-            plot.canvas.drawText(label, 2 * plot.options.density, sy - 2 * plot.options.density, plot.paint);
+            plot.canvas.drawText(label, 2 * plot.options.density, sy - 2 * plot.options.density, plot.text);
             // Right align
-            // text.setTextAlign(Paint.Align.RIGHT);
-            // canvas.drawText(label, right - 2 * density, sy - 2 * density, text);
+            // plot.text.setTextAlign(Paint.Align.RIGHT);
+            // plot.canvas.drawText(label, right - 2 * density, sy - 2 * density, plot.text);
         }
     }
 
 //    public void drawXtick(double x, String label) {
 //        final int sx = (int) plot.getX(x);
 //        final int sy = (int) plot.getY(0);
-//        plot.canvas.drawLine(sx, sy - 4 * plot.options.density, sx, sy + 4 * plot.options.density, paint);
-//        text.setTextAlign(Paint.Align.CENTER);
-//        plot.canvas.drawText(label, sx, sy + 19 * plot.options.density, text);
+//        plot.canvas.drawLine(sx, sy - 4 * plot.options.density, sx, sy + 4 * plot.options.density, plot.text);
+//        plot.text.setTextAlign(Paint.Align.CENTER);
+//        plot.canvas.drawText(label, sx, sy + 19 * plot.options.density, plot.text);
 //    }
 //    public void drawYtick(double y, String label) {
 //        final int sx = (int) plot.getX(0);
 //        final int sy = (int) plot.getY(y);
-//        plot.canvas.drawLine(sx - 4 * plot.options.density, sy, sx + 4 * plot.options.density, sy, paint);
-//        text.setTextAlign(Paint.Align.LEFT);
-//        plot.canvas.drawText(label, sx + 7 * plot.options.density, sy + 6 * plot.options.density, text);
+//        plot.canvas.drawLine(sx - 4 * plot.options.density, sy, sx + 4 * plot.options.density, sy, plot.text);
+//        plot.text.setTextAlign(Paint.Align.LEFT);
+//        plot.canvas.drawText(label, sx + 7 * plot.options.density, sy + 6 * plot.options.density, plot.text);
 //    }
 
     // Returns the bounds in plot-space, including padding

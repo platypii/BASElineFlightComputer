@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 
 public abstract class ProfileLayer extends ChartLayer {
 
-    private static final int AXIS_PROFILE = 0;
-    protected final DataSeries profileSeries = new DataSeries();
+    private static final int AXIS_DISTANCE = 0;
+    protected final DataSeries dataSeries = new DataSeries();
 
     @ColorInt
     public final int color;
@@ -26,7 +26,7 @@ public abstract class ProfileLayer extends ChartLayer {
     @Override
     public void drawData(@NonNull Plot plot) {
         plot.paint.setColor(color);
-        plot.drawLine(AXIS_PROFILE, profileSeries, 1.5f);
+        plot.drawLine(AXIS_DISTANCE, dataSeries, 1.5f);
     }
 
     @Override

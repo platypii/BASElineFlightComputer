@@ -17,14 +17,6 @@ public class FlightProfileTouchable extends FlightProfile {
 
     public FlightProfileTouchable(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        final float density = getResources().getDisplayMetrics().density;
-        options.padding.top = (int) (12 * density);
-        options.padding.bottom = (int) (4 * density);
-        options.padding.left = (int) (density);
-        options.padding.right = (int) (4 * density);
-
-        options.axis.x = options.axis.y = PlotOptions.axisDistance();
     }
 
     private final ScaleGestureDetector scaler = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -36,10 +28,11 @@ public class FlightProfileTouchable extends FlightProfile {
             return true;
         }
     });
+
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
-        final boolean superHandled = super.onTouchEvent(event);
-        final boolean scalerHandled = scaler.onTouchEvent(event);
+        super.onTouchEvent(event);
+        scaler.onTouchEvent(event);
 
         // Focus
         if (!scaler.isInProgress()) {
@@ -56,8 +49,7 @@ public class FlightProfileTouchable extends FlightProfile {
                 EventBus.getDefault().post(new ChartFocusEvent(null));
             }
         }
-
-        return true; // the event was handled
+        return true; // event was handled
     }
 
     /**
@@ -65,9 +57,9 @@ public class FlightProfileTouchable extends FlightProfile {
      */
     @Nullable
     private MLocation findClosest(double x, double y) {
+        MLocation closest = null;
         if (trackData != null && !trackData.isEmpty()) {
             final MLocation start = trackData.get(0);
-            MLocation closest = null;
             double closestDistance = Double.POSITIVE_INFINITY;
             for (MLocation loc : trackData) {
                 final double dx = start.distanceTo(loc) - x;
@@ -78,10 +70,8 @@ public class FlightProfileTouchable extends FlightProfile {
                     closestDistance = distance;
                 }
             }
-            return closest;
-        } else {
-            return null;
         }
+        return closest;
     }
 
     @NonNull

@@ -29,12 +29,10 @@ public class ProfileFocusLayer extends ChartLayer {
         if (focus != null && start != null) {
             final double x = start.distanceTo(focus);
             final double y = focus.altitude_gps - start.altitude_gps;
-            plot.paint.setColor(0xcceeeeee);
-            plot.paint.setStyle(Paint.Style.STROKE);
-            plot.paint.setStrokeJoin(Paint.Join.ROUND);
-            plot.paint.setStrokeWidth(plot.options.density);
-            plot.drawPoint(0, x, y, 2 * plot.options.density);
             plot.paint.setStyle(Paint.Style.FILL);
+            plot.paint.setColor(0x997f00ff);
+            plot.drawPoint(0, x, y, 4 * plot.options.density);
+            plot.paint.setColor(0xddeeeeee);
             plot.drawPoint(0, x, y, plot.options.density);
         }
     }
