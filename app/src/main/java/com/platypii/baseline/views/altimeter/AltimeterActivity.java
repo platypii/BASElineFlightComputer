@@ -5,7 +5,7 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.views.BaseActivity;
-import com.platypii.baseline.views.charts.PolarPlotLive;
+import com.platypii.baseline.views.charts.SpeedChartLive;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Window;
@@ -13,7 +13,7 @@ import android.view.WindowManager;
 
 public class AltimeterActivity extends BaseActivity implements PubSub.Subscriber<MAltitude> {
 
-    private PolarPlotLive polar;
+    private SpeedChartLive speedChart;
     private AnalogAltimeterSettable analogAltimeter;
 
     @Override
@@ -24,7 +24,7 @@ public class AltimeterActivity extends BaseActivity implements PubSub.Subscriber
         setContentView(R.layout.activity_altimeter);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        polar = findViewById(R.id.polar);
+        speedChart = findViewById(R.id.speed_chart_live);
         analogAltimeter = findViewById(R.id.analogAltimeter);
         analogAltimeter.setOverlay(false);
         analogAltimeter.setAlti(Services.alti);
@@ -47,7 +47,7 @@ public class AltimeterActivity extends BaseActivity implements PubSub.Subscriber
         super.onResume();
         // Start sensor updates
         Services.alti.altitudeEvents.subscribeMain(this);
-        polar.start(Services.location, Services.alti);
+        speedChart.start(Services.location, Services.alti);
         updateFlightStats();
     }
     @Override
@@ -55,6 +55,6 @@ public class AltimeterActivity extends BaseActivity implements PubSub.Subscriber
         super.onPause();
         // Stop sensor updates
         Services.alti.altitudeEvents.unsubscribe(this);
-        polar.stop();
+        speedChart.stop();
     }
 }

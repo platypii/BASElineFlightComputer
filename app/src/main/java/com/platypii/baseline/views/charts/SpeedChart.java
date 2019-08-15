@@ -4,35 +4,31 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.views.charts.layers.EllipseLayer;
+import com.platypii.baseline.views.charts.layers.SpeedDataLayer;
+import com.platypii.baseline.views.charts.layers.SpeedFocusLayer;
 import android.content.Context;
-import android.graphics.Paint;
 import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.List;
 
-public class PolarPlot extends PlotView {
+public class SpeedChart extends PlotView {
 
-    private static final int AXIS_POLAR = 0;
-    private final Bounds bounds = new Bounds();
-
+    @Nullable
     List<MLocation> trackData;
 
-    private final DataSeries speedSeries = new DataSeries();
-
+    private final Bounds bounds = new Bounds();
     private final Bounds inner = new Bounds();
     private final Bounds outer = new Bounds();
 
-    @Nullable
-    private MLocation focus;
+    private final SpeedFocusLayer focusLayer = new SpeedFocusLayer();
 
-    public PolarPlot(Context context, AttributeSet attrs) {
+    public SpeedChart(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         final float density = getResources().getDisplayMetrics().density;
-        options.padding.top = (int) (12 * density);
+        options.padding.top = (int) (18 * density);
         options.padding.bottom = (int) (4 * density);
         options.padding.left = (int) (density);
         options.padding.right = (int) (4 * density);
@@ -50,49 +46,21 @@ public class PolarPlot extends PlotView {
 
     public void loadTrack(@NonNull List<MLocation> trackData) {
         this.trackData = trackData;
-
-        // Load track data into time series
-        speedSeries.reset();
-        for (MLocation loc : trackData) {
-            speedSeries.addPoint(loc.groundSpeed(), loc.climb);
-        }
-
         // Add layers
         if (!trackData.isEmpty()) {
             addLayer(new EllipseLayer(options.density));
         }
+        addLayer(new SpeedDataLayer(trackData));
+        addLayer(focusLayer);
     }
 
     public void onFocus(@Nullable MLocation focus) {
-        this.focus = focus;
+        focusLayer.onFocus(focus);
         invalidate();
     }
 
     @Override
-    public void drawData(@NonNull Plot plot) {
-        if (trackData != null) {
-            if (trackData.isEmpty()) {
-                plot.text.setTextAlign(Paint.Align.CENTER);
-                plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, plot.text);
-            } else {
-                // Draw data
-                plot.paint.setColor(0xff7f00ff);
-                plot.paint.setStrokeJoin(Paint.Join.ROUND);
-                plot.drawLine(AXIS_POLAR, speedSeries, 1.5f);
-            }
-        }
-        // Draw focus
-        if (focus != null) {
-            final double x = focus.groundSpeed();
-            final double y = focus.climb;
-            plot.paint.setColor(0xcceeeeee);
-            plot.paint.setStyle(Paint.Style.STROKE);
-            plot.paint.setStrokeWidth(options.density);
-            plot.drawPoint(0, x, y, 2 * options.density);
-            plot.paint.setStyle(Paint.Style.FILL);
-            plot.drawPoint(0, x, y, options.density);
-        }
-    }
+    public void drawData(@NonNull Plot plot) {}
 
     // Always keep square aspect ratio
     @NonNull

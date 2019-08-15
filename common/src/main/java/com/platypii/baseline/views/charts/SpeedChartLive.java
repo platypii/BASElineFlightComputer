@@ -16,9 +16,9 @@ import android.util.AttributeSet;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
-public class PolarPlotLive extends PlotSurface implements MyLocationListener {
+public class SpeedChartLive extends PlotSurface implements MyLocationListener {
 
-    private static final int AXIS_POLAR = 0;
+    private static final int AXIS_SPEED = 0;
     private final EllipseLayer ellipses;
     private final Bounds inner = new Bounds();
     private final Bounds outer = new Bounds();
@@ -30,7 +30,7 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
     private LocationProvider locationService = null;
     private MyAltimeter altimeter = null;
 
-    public PolarPlotLive(Context context, AttributeSet attrs) {
+    public SpeedChartLive(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         final float density = getResources().getDisplayMetrics().density;
@@ -113,7 +113,7 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
                     float radius = 12f * (4000 - t) / 6000;
                     radius = Math.max(3, Math.min(radius, 12));
                     plot.paint.setColor(color);
-                    plot.drawPoint(AXIS_POLAR, vx, vy, radius);
+                    plot.drawPoint(AXIS_SPEED, vx, vy, radius);
                 }
             }
         }
@@ -136,7 +136,7 @@ public class PolarPlotLive extends PlotSurface implements MyLocationListener {
         radius = Math.max(3, Math.min(radius, 16));
         plot.paint.setColor(color);
         plot.paint.setStyle(Paint.Style.FILL);
-        plot.drawPoint(AXIS_POLAR, vx, vy, radius);
+        plot.drawPoint(AXIS_SPEED, vx, vy, radius);
     }
 
     private void drawSpeedLines(@NonNull Plot plot, double vx, double vy) {

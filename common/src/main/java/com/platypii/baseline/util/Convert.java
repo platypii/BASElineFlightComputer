@@ -247,7 +247,7 @@ public class Convert {
     }
 
     /**
-     * Convert.glide2 is used by PolarPlot, and uses empty string more than Convert.glide
+     * Convert.glide2 is used by SpeedChart, and uses empty string more than Convert.glide
      */
     @NonNull
     public static String glide2(double groundSpeed, double climb, int precision, boolean units) {

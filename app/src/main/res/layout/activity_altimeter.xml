@@ -7,8 +7,8 @@
     android:layout_height="match_parent"
     tools:context="com.platypii.baseline.views.altimeter.AltimeterActivity">
 
-    <com.platypii.baseline.views.charts.PolarPlotLive
-        android:id="@+id/polar"
+    <com.platypii.baseline.views.charts.SpeedChartLive
+        android:id="@+id/speed_chart_live"
         android:layout_width="180dp"
         android:layout_height="180dp"
         android:layout_alignParentBottom="true"

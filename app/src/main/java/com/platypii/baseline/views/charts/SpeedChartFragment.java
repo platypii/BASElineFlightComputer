@@ -15,11 +15,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class SpeedChartFragment extends Fragment {
 
-    private PolarPlot speedChart;
+    private SpeedChart speedChart;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        speedChart = new PolarPlotTouchable(getContext(), null);
+        speedChart = new SpeedChartTouchable(getContext(), null);
         // Get track data from parent activity
         final Activity parent = getActivity();
         if (parent instanceof TrackDataActivity) {

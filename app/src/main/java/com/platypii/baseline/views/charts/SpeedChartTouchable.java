@@ -10,11 +10,11 @@ import androidx.annotation.Nullable;
 import org.greenrobot.eventbus.EventBus;
 
 /**
- * Adds focus touching to polar plot
+ * Adds focus touching to speed chart
  */
-public class PolarPlotTouchable extends PolarPlot {
+public class SpeedChartTouchable extends SpeedChart {
 
-    public PolarPlotTouchable(Context context, AttributeSet attrs) {
+    public SpeedChartTouchable(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -41,8 +41,8 @@ public class PolarPlotTouchable extends PolarPlot {
      */
     @Nullable
     private MLocation findClosest(double x, double y) {
+        MLocation closest = null;
         if (trackData != null && !trackData.isEmpty()) {
-            MLocation closest = null;
             double closestDistance = Double.POSITIVE_INFINITY;
             for (MLocation loc : trackData) {
                 final double dx = loc.groundSpeed() - x;
@@ -53,10 +53,7 @@ public class PolarPlotTouchable extends PolarPlot {
                     closestDistance = distance;
                 }
             }
-            return closest;
-        } else {
-            return null;
         }
+        return closest;
     }
-
 }
