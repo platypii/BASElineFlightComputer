@@ -1,7 +1,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.platypii.baseline.views.tracks.TrackDownloadActivity"
+    tools:context="com.platypii.baseline.views.laser.TrackDownloadFragment"
     android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,16 +9,17 @@
     android:padding="0dp">
 
     <ProgressBar
-        android:id="@+id/downloadProgress"
+        android:id="@+id/download_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <TextView
+        android:id="@+id/download_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:gravity="center"
-        android:text="@string/downloading" />
+        android:text="@string/downloading"/>
 
 </LinearLayout>

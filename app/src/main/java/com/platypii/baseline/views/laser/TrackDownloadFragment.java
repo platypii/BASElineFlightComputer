@@ -16,9 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import java.io.File;
-import java.io.IOException;
 import java9.util.concurrent.CompletableFuture;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,7 +33,7 @@ public class TrackDownloadFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.track_download, container, false);
-        downloadProgress = view.findViewById(R.id.downloadProgress);
+        downloadProgress = view.findViewById(R.id.download_progress);
 
         // Load track from arguments
         try {

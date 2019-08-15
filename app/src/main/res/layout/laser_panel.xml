@@ -8,45 +8,45 @@
     tools:context="com.platypii.baseline.views.laser.LaserActivity">
 
     <TextView
-            android:id="@+id/helpProfiles"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:autoLink="web"
-            android:text="@string/help_profiles"/>
+        android:id="@+id/helpProfiles"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:autoLink="web"
+        android:text="@string/help_profiles"/>
 
     <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:divider="#444444"
-            android:dividerHeight="1dp" />
+        android:id="@+id/profiles_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="#444444"
+        android:dividerHeight="1dp"/>
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <Button
-                android:id="@+id/chooseTrack"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/tracks"/>
+            android:id="@+id/chooseTrack"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/tracks"/>
 
         <Button
-                android:id="@+id/chooseLaser"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/profiles"/>
+            android:id="@+id/chooseLaser"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/profiles"/>
 
         <Button
-                android:id="@+id/addLaser"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/new_profile"/>
+            android:id="@+id/addLaser"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/new_profile"/>
 
     </LinearLayout>
 

@@ -9,7 +9,7 @@
     android:padding="0dp">
 
     <fragment
-        android:id="@+id/trackList"
+        android:id="@+id/track_list_frag"
         android:name="com.platypii.baseline.views.tracks.TrackListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"

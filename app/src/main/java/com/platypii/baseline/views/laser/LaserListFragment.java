@@ -14,21 +14,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.ListFragment;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class LaserListFragment extends ListFragment implements AdapterView.OnItemClickListener {
+public class LaserListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private LaserAdapter listAdapter;
+    private ListView listView;
     private EditText searchBox;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.laser_list, container, false);
+        listView = view.findViewById(R.id.laser_list);
         searchBox = view.findViewById(R.id.laser_search);
         return view;
     }
@@ -39,8 +42,8 @@ public class LaserListFragment extends ListFragment implements AdapterView.OnIte
         // Initialize the ListAdapter
         listAdapter = new LaserAdapter(getContext());
         listAdapter.populateItems();
-        setListAdapter(listAdapter);
-        getListView().setOnItemClickListener(this);
+        listView.setAdapter(listAdapter);
+        listView.setOnItemClickListener(this);
 
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override

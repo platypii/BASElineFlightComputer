@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,13 +31,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class LaserPanelFragment extends ListFragment {
+public class LaserPanelFragment extends Fragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "LaserPanel";
 
     private FirebaseAnalytics firebaseAnalytics;
 
     @Nullable
     private ProfileAdapter listAdapter;
+    private ListView listView;
     private View helpText;
 
     @Override
@@ -51,6 +53,7 @@ public class LaserPanelFragment extends ListFragment {
         view.findViewById(R.id.chooseTrack).setOnClickListener(this::clickAddTrack);
         view.findViewById(R.id.chooseLaser).setOnClickListener(this::clickAddProfile);
         view.findViewById(R.id.addLaser).setOnClickListener(this::clickNewProfile);
+        listView = view.findViewById(R.id.profiles_list);
         helpText = view.findViewById(R.id.helpProfiles);
         return view;
     }
@@ -61,8 +64,9 @@ public class LaserPanelFragment extends ListFragment {
         // Initialize the ListAdapter
         final Activity laserActivity = getActivity();
         if (laserActivity != null) {
-            listAdapter = new ProfileAdapter(laserActivity);
-            setListAdapter(listAdapter);
+            listAdapter = new ProfileAdapter(laserActivity); // TODO: Don't pass activity to adapter
+            listView.setAdapter(listAdapter);
+            listView.setOnItemClickListener(this);
         }
     }
 
@@ -77,8 +81,7 @@ public class LaserPanelFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(@NonNull ListView parent, View view, int position, long id) {
-        super.onListItemClick(parent, view, position, id);
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final Object item = parent.getItemAtPosition(position);
         if (item instanceof LaserProfileLayer) {
             // Open view mode
