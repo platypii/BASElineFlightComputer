@@ -31,7 +31,10 @@ class PlaceFile {
     final File file;
 
     PlaceFile(@NonNull Context context) {
-        file = new File(context.getFilesDir(), placeFilename);
+        this(new File(context.getFilesDir(), placeFilename));
+    }
+    PlaceFile(@NonNull File file) {
+        this.file = file;
     }
 
     boolean exists() {
