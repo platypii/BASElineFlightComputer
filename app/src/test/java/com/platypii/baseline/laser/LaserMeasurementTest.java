@@ -11,13 +11,38 @@ import static org.junit.Assert.assertEquals;
 public class LaserMeasurementTest {
 
     @Test
-    public void parse() throws ParseException {
+    public void parseMetric() throws ParseException {
+        assertEquals(0, LaserMeasurement.parse("", true, false).size());
+        assertEquals(0, LaserMeasurement.parse(" ", true, false).size());
+        assertEquals(0, LaserMeasurement.parse("\n", true, false).size());
+        assertEquals(0, LaserMeasurement.parse("\n\n", true, false).size());
+        assertEquals(1, LaserMeasurement.parse("100 -100", true, true).size());
         assertEquals(1, LaserMeasurement.parse("100,-100", true, true).size());
-        assertEquals(2, LaserMeasurement.parse("100,-100\n50.0, -50.0", true, true).size());
-        assertEquals(2, LaserMeasurement.parse("100,-100\n50.0, -50.0\n", true, true).size());
-        assertEquals(1, LaserMeasurement.parse("100,-100,", true, false).size());
-        assertEquals(0, LaserMeasurement.parse("100,-100,22", true, false).size());
-        assertEquals(0, LaserMeasurement.parse("100,z", true, false).size());
+        assertEquals(1, LaserMeasurement.parse("100, -100", true, true).size());
+        assertEquals(1, LaserMeasurement.parse("100/-100", true, true).size());
+        assertEquals(1, LaserMeasurement.parse("  100,  -100  ", true, true).size());
+        assertEquals(2, LaserMeasurement.parse("100,-100\n20.0, -50.0", true, true).size());
+        assertEquals(2, LaserMeasurement.parse("100,-100\n20.0, -50.0\n", true, true).size());
+        assertEquals(2, LaserMeasurement.parse("100 -100\n20.0 -50.0\n", true, true).size());
+        assertEquals(2, LaserMeasurement.parse("100 -100\n  20.0  -50.0  ", true, true).size());
+    }
+
+    @Test
+    public void parseFreedom() throws ParseException {
+        assertEquals(1, LaserMeasurement.parse("100 200", false, true).size());
+        assertEquals(2, LaserMeasurement.parse("100 200\n20.0 -50.0", false, true).size());
+    }
+
+    @Test
+    public void parseErrors() throws ParseException {
+        assertEquals(0, LaserMeasurement.parse("100,-100,", true, false).size());
+        assertEquals(0, LaserMeasurement.parse("100,-100,333", true, false).size());
+        assertEquals(1, LaserMeasurement.parse("100,-100\nXXXX", true, false).size());
+        assertEquals(0, LaserMeasurement.parse("100,ZZZ", true, false).size());
+        assertEquals(0, LaserMeasurement.parse("100p 200q", true, false).size());
+        assertEquals(0, LaserMeasurement.parse("100 200ft", true, false).size());
+        assertEquals(0, LaserMeasurement.parse("100 200m", false, false).size());
+        assertEquals(0, LaserMeasurement.parse("100 200mm", false, false).size());
     }
 
     @Test

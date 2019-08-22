@@ -38,7 +38,7 @@ public class LaserMeasurement {
         final double units = metric ? 1 : Convert.FT;
         for (int i = 0; i < lines.length; i++) {
             final String line = lines[i];
-            final String[] row = line.split(",");
+            final String[] row = line.trim().split("[, /]+", -1);
             if (row.length == 2) {
                 try {
                     final double x = Double.parseDouble(row[0]) * units;

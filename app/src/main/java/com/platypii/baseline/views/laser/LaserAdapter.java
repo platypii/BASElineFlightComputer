@@ -4,6 +4,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.laser.LaserSearch;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +45,7 @@ class LaserAdapter extends BaseAdapter {
         final List<LaserProfile> unsynced = Services.cloud.lasers.unsynced.list();
         if (unsynced != null && !unsynced.isEmpty()) {
             for (LaserProfile laser : unsynced) {
-                if (filterMatch(laser)) {
+                if (LaserSearch.matchLaser(laser, filter)) {
                     if (sectionCount++ == 0) {
                         items.add(new LaserListItem.ListHeader("Not synced"));
                     }
@@ -64,7 +65,7 @@ class LaserAdapter extends BaseAdapter {
             if (userId != null) {
                 sectionCount = 0;
                 for (LaserProfile laser : lasers) {
-                    if (userId.equals(laser.user_id) && filterMatch(laser)) {
+                    if (userId.equals(laser.user_id) && LaserSearch.matchLaser(laser, filter)) {
                         if (sectionCount++ == 0) {
                             items.add(new LaserListItem.ListHeader("My Profiles"));
                         }
@@ -75,7 +76,7 @@ class LaserAdapter extends BaseAdapter {
             // Add public lasers
             sectionCount = 0;
             for (LaserProfile laser : lasers) {
-                if ((laser.user_id == null || !laser.user_id.equals(userId)) && filterMatch(laser)) {
+                if ((laser.user_id == null || !laser.user_id.equals(userId)) && LaserSearch.matchLaser(laser, filter)) {
                     if (sectionCount++ == 0) {
                         items.add(new LaserListItem.ListHeader("Public Profiles"));
                     }
@@ -161,31 +162,6 @@ class LaserAdapter extends BaseAdapter {
     @Override
     public int getItemViewType(int position) {
         return getItem(position).getType();
-    }
-
-    /**
-     * Return true if the track matches the search filter string
-     */
-    private boolean filterMatch(@NonNull LaserProfile laser) {
-        // Make a lower case super string of all properties we want to search
-        final StringBuilder sb = new StringBuilder();
-        sb.append(laser.name);
-        sb.append(' ');
-        if (laser.place != null) {
-            sb.append(laser.place.name);
-            sb.append(' ');
-            sb.append(laser.place.region);
-            sb.append(' ');
-            sb.append(laser.place.country);
-        }
-        final String superString = sb.toString().toLowerCase();
-        // Break into tokens
-        for (String token : filter.toLowerCase().split(" ")) {
-            if (!superString.contains(token)) {
-                return false;
-            }
-        }
-        return true;
     }
 
 }
