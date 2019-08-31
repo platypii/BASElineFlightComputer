@@ -11,6 +11,7 @@ public class ConvertTest {
 
     @Test
     public void convertAltitude() {
+        Convert.metric = false;
         assertEquals("0 ft", Convert.altitude(0.0));
         assertEquals("3.3 kft", Convert.altitude(1000.0));
         assertEquals("", Convert.altitude(Double.NaN));
@@ -19,6 +20,7 @@ public class ConvertTest {
 
     @Test
     public void convertDistance() {
+        Convert.metric = false;
         assertEquals("0 ft", Convert.distance(0.0));
         assertEquals("3 ft", Convert.distance(1.0));
         assertEquals("3.3 ft", Convert.distance(1.0, 1, true));
@@ -29,6 +31,7 @@ public class ConvertTest {
 
     @Test
     public void convertDistance2() {
+        Convert.metric = false;
         assertEquals("3200 feet", Convert.distance2(1000, 2));
         assertEquals("3280 feet", Convert.distance2(1000, 3));
         assertEquals("1 mile", Convert.distance2(1609.34, 1));
@@ -49,6 +52,7 @@ public class ConvertTest {
 
     @Test
     public void convertDistance3() {
+        Convert.metric = false;
         assertEquals("3 ft", Convert.distance3(1));
         assertEquals("3281 ft", Convert.distance3(1000));
         assertEquals("1 mi", Convert.distance3(1609.34));
@@ -69,6 +73,7 @@ public class ConvertTest {
 
     @Test
     public void convertSpeed() {
+        Convert.metric = false;
         assertEquals("0.0 mph", Convert.speed(0.0));
         assertEquals("9.9 mph", Convert.speed(9.9 * Convert.MPH));
         assertEquals("22 mph", Convert.speed(10.0));

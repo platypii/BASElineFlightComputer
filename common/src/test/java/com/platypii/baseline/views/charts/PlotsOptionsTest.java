@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.util.Convert;
+import java.util.TimeZone;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -40,9 +41,10 @@ public class PlotsOptionsTest {
 
     @Test
     public void axisTime() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Pacific/Honolulu"));
         PlotOptions.AxisOptions axis = PlotOptions.axisTime();
         assertEquals(60000, axis.major_units, 0.001);
-        assertEquals("16:20:00", axis.format(1200000));
+        assertEquals("16:20:00", axis.format(8400000));
     }
 
 }

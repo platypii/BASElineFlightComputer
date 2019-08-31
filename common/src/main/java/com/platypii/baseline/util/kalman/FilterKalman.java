@@ -25,7 +25,7 @@ public class FilterKalman implements Filter {
     private final Tensor2x2 a = new Tensor2x2(); // dt adjustment
 
     private final Tensor1x2 h = new Tensor1x2(); // Identity
-    private final Tensor2x2 temp = new Tensor2x2(); // Scratch space
+    private final Tensor2x2 p2 = new Tensor2x2(); // Temp error covariance
 
     private static final int INIT0 = 0; // No samples
     private static final int INIT1 = 1; // First sample, x initialized
@@ -47,6 +47,11 @@ public class FilterKalman implements Filter {
             Log.e(TAG, "Invalid update: z = NaN");
             return;
         }
+        // Ignore invalid time delta
+        if (dt <= 0 && filterState != INIT0) {
+            Log.e(TAG, "Invalid update: dt = " + dt);
+            return;
+        }
 
         // Filter initialization
         if (filterState == INIT0) {
@@ -57,22 +62,12 @@ public class FilterKalman implements Filter {
             filterState = INIT1;
             return;
         } else if (filterState == INIT1) {
-            if (dt <= 0) {
-                Log.e(TAG, "Invalid second update: dt = " + dt);
-                x.set(z, 0);
-            } else {
-                final double v = (z - x.p1) / dt;
-                x.set(z, v);
-                filterState = READY;
-            }
+            final double v = (z - x.p1) / dt;
+            x.set(z, v);
+            filterState = READY;
             return;
         }
 
-        // Ignore invalid time delta
-        if (dt <= 0) {
-            Log.e(TAG, "Invalid update: dt = " + dt);
-            return;
-        }
         // Warn on invalid kalman state
         if (!x.isReal()) {
             Log.w(TAG, "Invalid kalman state: x = " + x);
@@ -118,10 +113,10 @@ public class FilterKalman implements Filter {
 
         // Update error covariance
         // P = (1 - K * H) * P = P - K * H * P
-        k.dot(h, temp);
-        temp.dot(p, temp);
-        temp.scale(-1);
-        p.plus(temp, p);
+        k.dot(h, p2);
+        p2.dot(p, p2);
+        p2.scale(-1);
+        p.plus(p2, p);
     }
 
     @Override
