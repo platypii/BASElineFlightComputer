@@ -147,7 +147,7 @@ public class TrackUploadTask extends Task {
     @NonNull
     @Override
     public String toString() {
-        return "TrackUpload(" + trackFile.getName() + ")";
+        return "TrackUpload(" + id() + ", " + trackFile.getName() + ")";
     }
 
 }

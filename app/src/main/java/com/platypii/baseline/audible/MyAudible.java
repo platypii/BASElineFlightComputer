@@ -233,7 +233,7 @@ public class MyAudible implements BaseService {
             } else {
                 Log.w(TAG, "Stale GPS signal");
             }
-            if (gpsFix) {
+            if (gpsFix && speech != null) {
                 speech.speakNow("Signal lost");
             }
             gpsFix = false;

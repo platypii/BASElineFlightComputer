@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import org.greenrobot.eventbus.EventBus;
 
 /**
@@ -65,7 +66,7 @@ public class DownloadTask implements Runnable {
                 TrackAbbrv.abbreviate(trackFile, abbrvFile);
             }
             EventBus.getDefault().post(new DownloadEvent.DownloadSuccess(trackId, trackFile));
-        } catch (SocketException e) {
+        } catch (SocketException | UnknownHostException e) {
             Log.e(TAG, "Failed to download file", e);
             EventBus.getDefault().post(new DownloadEvent.DownloadFailure(trackId, e, networkAvailable));
         } catch (AuthException | IOException e) {

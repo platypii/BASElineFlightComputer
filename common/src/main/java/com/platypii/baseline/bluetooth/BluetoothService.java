@@ -198,8 +198,8 @@ public class BluetoothService implements BaseService {
             } else {
                 Log.e(TAG, "Cannot stop bluetooth: runnable is null: " + BT_STATES[bluetoothState]);
                 // Set state to stopped since it prevents getting stuck in state STOPPING
-                setState(BT_STOPPED);
             }
+            setState(BT_STOPPED);
         }
     }
 

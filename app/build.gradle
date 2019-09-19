@@ -32,18 +32,19 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.fragment:fragment:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.fragment:fragment:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.google.firebase:firebase-core:17.2.0'
     implementation 'com.google.firebase:firebase-perf:19.0.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
     implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.1' // minsdk24
     implementation 'org.greenrobot:eventbus:3.1.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.annotation:annotation:1.1.0'

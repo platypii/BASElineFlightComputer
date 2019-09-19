@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ public class Tasks implements BaseService {
                 task.run(context);
                 // Success
                 runSuccess(task);
-            } catch (AuthException | SocketException | SSLException | UnknownHostException e) {
+            } catch (AuthException | SocketException | SocketTimeoutException | SSLException | UnknownHostException e) {
                 // Wait for sign in or network availability
                 runFailed(task, e, true);
             } catch (Exception e) {

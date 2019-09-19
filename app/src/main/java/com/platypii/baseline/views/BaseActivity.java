@@ -112,10 +112,10 @@ public abstract class BaseActivity extends FragmentActivity {
 
     @Override
     protected void onStart() {
-        super.onStart();
-
-        // Start flight services
+        // Start flight services before calling super, otherwise fragments start first
         Services.start(this);
+
+        super.onStart();
 
         if (signInClient != null) {
             signInClient.silentSignIn().addOnCompleteListener(this::onSignInComplete);

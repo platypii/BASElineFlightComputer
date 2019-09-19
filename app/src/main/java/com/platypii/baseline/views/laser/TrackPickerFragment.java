@@ -5,7 +5,6 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.views.charts.layers.Colors;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerLocal;
@@ -16,7 +15,6 @@ import com.platypii.baseline.views.tracks.TrackLoader;
 import android.view.View;
 import android.widget.AdapterView;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import java.io.File;
 

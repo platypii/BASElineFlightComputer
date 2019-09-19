@@ -62,7 +62,7 @@ public class AnalogAltimeter extends View {
 
     public void setAltitude(double altitude) {
         this.altitude = altitude;
-        invalidate();
+        postInvalidate();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.platypii.baseline.places;
 
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.cloud.AuthState;
+import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -20,6 +21,7 @@ import org.greenrobot.eventbus.Subscribe;
 public class Places implements BaseService {
     private static final String TAG = "Places";
 
+    @Nullable
     private Context context;
     private PlaceFile placeFile;
 
@@ -73,6 +75,10 @@ public class Places implements BaseService {
      * Update places in background thread
      */
     private void updateAsync(boolean force) {
+        if (context == null) {
+            Exceptions.report(new NullPointerException("Null context in Places.updateAsync(" + force + ")"));
+            return;
+        }
         AsyncTask.execute(() -> {
             if (placeFile == null) {
                 // Place file is stored on internal storage

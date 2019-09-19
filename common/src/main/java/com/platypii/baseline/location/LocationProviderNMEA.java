@@ -262,6 +262,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "DSTAT":
                 // Samsung SM-G955U
                 // $AIDSTAT,3,3,3,2,-597,7
+            case "DTM":
+                // $GPDTM,P90,,0000.000025,S,00000.000002,E,0.979,W84*42
             case "GINESTATE":
                 // $ENGINESTATE,1*00
             case "EVT":
@@ -341,7 +343,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // $GNTXT,01,01,02,ANTSTATUS=INIT*3B
             case "WP1":
             case "WP4":
+            case "WP6":
                 // $PQWP1,131955.93,03,0.728909016,-0.014442960,302.38,9338.27,3.23,3*24
+                // $PQWP6,180809.00,00000000*16
             case "ZCD":
                 // Rockchip 3GR
                 // $PGJNR,3,3,09,09,64,11,21

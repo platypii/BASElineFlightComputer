@@ -8,11 +8,18 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * Parse location data from track file
+ * Parse data from CSV files
  */
 public class CSVParse {
     private static final String TAG = "CSVParse";
 
+    /**
+     * Return column value as double, else NaN
+     *
+     * @param row the split of the row
+     * @param columns the csv header mapping
+     * @param columnName the name of the column to retrieve
+     */
     public static double getColumnDouble(@NonNull String[] row, @NonNull CSVHeader columns, @NonNull String columnName) {
         final Integer index = columns.get(columnName);
         if (index != null && index < row.length) {
@@ -28,6 +35,13 @@ public class CSVParse {
         return Double.NaN;
     }
 
+    /**
+     * Return column value as long, else -1
+     *
+     * @param row the split of the row
+     * @param columns the csv header mapping
+     * @param columnName the name of the column to retrieve
+     */
     public static long getColumnLong(@NonNull String[] row, @NonNull CSVHeader columns, @NonNull String columnName) {
         final Integer index = columns.get(columnName);
         if (index != null && index < row.length) {
@@ -43,6 +57,14 @@ public class CSVParse {
         return -1L;
     }
 
+    /**
+     * Return column value parsed as ISO date, else -1
+     *
+     * @param row the split of the row
+     * @param columns the csv header mapping
+     * @param columnName the name of the column to retrieve
+     * @return date in milliseconds since the epoch
+     */
     public static long getColumnDate(@NonNull String[] row, @NonNull CSVHeader columns, @NonNull String columnName) {
         final Integer index = columns.get(columnName);
         if (index != null && index < row.length) {
@@ -58,6 +80,13 @@ public class CSVParse {
         return -1L;
     }
 
+    /**
+     * Return column value as string, else ""
+     *
+     * @param row the split of the row
+     * @param columns the csv header mapping
+     * @param columnName the name of the column to retrieve
+     */
     @NonNull
     public static String getColumnString(@NonNull String[] row, @NonNull CSVHeader columns, @NonNull String columnName) {
         final Integer index = columns.get(columnName);

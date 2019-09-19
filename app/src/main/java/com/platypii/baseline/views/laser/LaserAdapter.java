@@ -146,7 +146,11 @@ class LaserAdapter extends BaseAdapter {
 
     @Override
     public LaserListItem getItem(int position) {
-        return items.get(position);
+        if (items.size() <= position) {
+            return null;
+        } else {
+            return items.get(position);
+        }
     }
 
     @Override
@@ -161,7 +165,11 @@ class LaserAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return getItem(position).getType();
+        if (items.size() <= position) {
+            return TYPE_LASER;
+        } else {
+            return items.get(position).getType();
+        }
     }
 
 }
