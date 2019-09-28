@@ -197,7 +197,7 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
 
     private void updateGPS() {
         final MLocation loc = Services.location.lastLoc;
-        if (loc != null) {
+        if (loc != null && groundSpeedLabel != null) {
             satelliteLabel.setText("Satellites: " + loc.satellitesUsed + " used in fix, " + loc.satellitesInView + " visible");
             if (Numbers.isReal(loc.latitude)) {
                 latitudeLabel.setText(String.format(Locale.getDefault(), "Lat: %.6f", loc.latitude));

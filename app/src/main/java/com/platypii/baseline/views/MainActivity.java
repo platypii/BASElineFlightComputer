@@ -5,7 +5,6 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.tracks.ImportCSV;
-import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.altimeter.AltimeterActivity;
 import com.platypii.baseline.views.laser.LaserActivity;
 import com.platypii.baseline.views.map.MapActivity;
@@ -32,8 +31,11 @@ public class MainActivity extends BaseActivity {
     // public static final long startTimeMillis = System.currentTimeMillis();
     // public static final long startTimeNano = System.nanoTime();
 
+    @Nullable
     private Button recordButton;
+    @Nullable
     private Button audibleButton;
+    @Nullable
     private TextView clock;
 
     // Periodic UI updates
@@ -59,8 +61,6 @@ public class MainActivity extends BaseActivity {
 
         if (audibleButton != null) {
             audibleButton.setOnLongClickListener(audibleLongClickListener);
-        } else {
-            Exceptions.report(new NullPointerException("MainActivity.audibleButton is null"));
         }
     }
 
@@ -120,10 +120,14 @@ public class MainActivity extends BaseActivity {
 
     // Enables buttons and clock
     private void updateUIState() {
-        if (Services.logger.isLogging()) {
-            recordButton.setText(R.string.action_stop);
-            recordButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.square, 0, 0);
-
+        final boolean logging = Services.logger.isLogging();
+        // Update record button state
+        if (recordButton != null) {
+            recordButton.setText(logging ? R.string.action_stop : R.string.action_record);
+            recordButton.setCompoundDrawablesWithIntrinsicBounds(0, logging ? R.drawable.square : R.drawable.circle, 0, 0);
+        }
+        // Update clock state
+        if (logging) {
             // Start clock updates
             if (clockRunnable == null) {
                 clockRunnable = new Runnable() {
@@ -137,22 +141,14 @@ public class MainActivity extends BaseActivity {
                 handler.post(clockRunnable);
             }
         } else {
-            recordButton.setText(R.string.action_record);
-            recordButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.circle, 0, 0);
-            clock.setText("");
-
             // Stop clock updates
             if (clockRunnable != null) {
                 handler.removeCallbacks(clockRunnable);
                 clockRunnable = null;
             }
         }
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getBoolean("audible_enabled", false)) {
-            audibleButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio_on, 0, 0);
-        } else {
-            audibleButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio, 0, 0);
-        }
+        updateClock();
+        updateAudible();
         invalidateOptionsMenu();
     }
 
@@ -204,14 +200,30 @@ public class MainActivity extends BaseActivity {
      * Update the text view for timer
      */
     private void updateClock() {
-        if (Services.logger.isLogging()) {
-            Services.logger.getLogTime(clockBuilder);
-            clock.setText(clockBuilder);
-        } else {
-            clock.setText("");
+        if (clock != null) {
+            if (Services.logger.isLogging()) {
+                Services.logger.getLogTime(clockBuilder);
+                clock.setText(clockBuilder);
+            } else {
+                clock.setText("");
+            }
         }
     }
     private final StringBuilder clockBuilder = new StringBuilder();
+
+    /**
+     * Update audible button state
+     */
+    private void updateAudible() {
+        if (audibleButton != null) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs.getBoolean("audible_enabled", false)) {
+                audibleButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio_on, 0, 0);
+            } else {
+                audibleButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio, 0, 0);
+            }
+        }
+    }
 
     // Listen for events
     @Subscribe(threadMode = ThreadMode.MAIN)

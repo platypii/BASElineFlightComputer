@@ -45,7 +45,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(@NonNull ListView l, View v, int position, long id) {
+    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
         final BluetoothDevice device = (BluetoothDevice) l.getItemAtPosition(position);
         Log.i(TAG, "Bluetooth device selected: " + device.getName());
         final Activity activity = getActivity();

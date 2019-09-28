@@ -2,11 +2,13 @@ package com.platypii.baseline.util;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PubSub<T> {
+    private static final String TAG = "PubSub";
 
     private final List<Subscriber<T>> subs = new ArrayList<>();
     private final List<Subscriber<T>> mainSubs = new ArrayList<>();
@@ -43,7 +45,17 @@ public class PubSub<T> {
 
     public void unsubscribe(@NonNull Subscriber<T> sub) {
         synchronized (subs) {
-            subs.remove(sub);
+            if (!subs.remove(sub)) {
+                Log.e(TAG, "Unexpected listener unsubscribed");
+            }
+        }
+    }
+
+    public void unsubscribeMain(@NonNull Subscriber<T> sub) {
+        synchronized (mainSubs) {
+            if (!mainSubs.remove(sub)) {
+                Log.e(TAG, "Unexpected main listener unsubscribed");
+            }
         }
     }
 

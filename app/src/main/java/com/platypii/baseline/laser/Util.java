@@ -17,6 +17,9 @@ class Util {
         return (short) (((b1 & 0xff) << 8) | (b2 & 0xff));
     }
 
+    /**
+     * Sleep without exceptions
+     */
     static void sleep(long t) {
         try {
             Thread.sleep(t);

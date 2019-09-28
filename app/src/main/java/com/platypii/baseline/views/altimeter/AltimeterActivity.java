@@ -10,10 +10,13 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import androidx.annotation.Nullable;
 
 public class AltimeterActivity extends BaseActivity implements PubSub.Subscriber<MAltitude> {
 
+    @Nullable
     private SpeedChartLive speedChart;
+    @Nullable
     private AnalogAltimeterSettable analogAltimeter;
 
     @Override
@@ -31,7 +34,9 @@ public class AltimeterActivity extends BaseActivity implements PubSub.Subscriber
     }
 
     private void updateFlightStats() {
-        analogAltimeter.setAltitude(Services.alti.altitudeAGL());
+        if (analogAltimeter != null) {
+            analogAltimeter.setAltitude(Services.alti.altitudeAGL());
+        }
     }
 
     /**
@@ -47,14 +52,18 @@ public class AltimeterActivity extends BaseActivity implements PubSub.Subscriber
         super.onResume();
         // Start sensor updates
         Services.alti.altitudeEvents.subscribeMain(this);
-        speedChart.start(Services.location, Services.alti);
+        if (speedChart != null) {
+            speedChart.start(Services.location, Services.alti);
+        }
         updateFlightStats();
     }
     @Override
     protected void onPause() {
         super.onPause();
         // Stop sensor updates
-        Services.alti.altitudeEvents.unsubscribe(this);
-        speedChart.stop();
+        Services.alti.altitudeEvents.unsubscribeMain(this);
+        if (speedChart != null) {
+            speedChart.stop();
+        }
     }
 }

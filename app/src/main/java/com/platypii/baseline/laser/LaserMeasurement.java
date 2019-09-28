@@ -2,6 +2,7 @@ package com.platypii.baseline.laser;
 
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.Range;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -38,12 +39,19 @@ public class LaserMeasurement {
         final double units = metric ? 1 : Convert.FT;
         for (int i = 0; i < lines.length; i++) {
             final String line = lines[i];
-            final String[] row = line.trim().split("[, /]+", -1);
+            final String[] row = line.trim().split("[, \t/]+", -1);
             if (row.length == 2) {
                 try {
                     final double x = Double.parseDouble(row[0]) * units;
                     final double y = Double.parseDouble(row[1]) * units;
-                    points.add(new LaserMeasurement(x, y));
+                    if (Numbers.isReal(x) && Numbers.isReal(y)) {
+                        points.add(new LaserMeasurement(x, y));
+                    } else {
+                        Log.w(TAG, "Laser measurements must be real " + x + " " + y);
+                        if (strict) {
+                            throw new ParseException("Invalid measurement", i + 1);
+                        }
+                    }
                 } catch (NumberFormatException e) {
                     Log.w(TAG, "Error parsing laser profile " + e);
                     if (strict) {

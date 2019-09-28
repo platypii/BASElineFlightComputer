@@ -57,7 +57,7 @@ public class RangefinderService implements BaseService {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter != null) {
                 if (bluetoothAdapter.isEnabled()) {
-                    bluetoothRunnable = new RangefinderRunnable(this, activity, bluetoothAdapter);
+                    bluetoothRunnable = new RangefinderRunnable(this, activity.getApplicationContext(), bluetoothAdapter);
                     bluetoothThread = new Thread(bluetoothRunnable);
                     bluetoothThread.start();
                 } else {

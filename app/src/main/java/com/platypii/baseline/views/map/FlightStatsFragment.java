@@ -82,7 +82,7 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener,
         super.onPause();
         // Stop sensor updates
         Services.location.removeListener(this);
-        Services.alti.altitudeEvents.unsubscribe(this);
+        Services.alti.altitudeEvents.unsubscribeMain(this);
     }
 
 }

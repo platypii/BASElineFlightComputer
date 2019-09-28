@@ -24,6 +24,7 @@ public class LaserProfile {
     public Double lng;
     @Nullable
     public Place place;
+    @NonNull
     public String source;
     public List<LaserMeasurement> points;
 
@@ -33,7 +34,7 @@ public class LaserProfile {
             String name,
             boolean isPublic,
             @Nullable Double alt, @Nullable Double lat, @Nullable Double lng,
-            String source,
+            @NonNull String source,
             List<LaserMeasurement> points
     ) {
         this.laser_id = laser_id;

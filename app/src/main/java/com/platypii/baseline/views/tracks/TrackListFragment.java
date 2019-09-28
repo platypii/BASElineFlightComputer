@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,7 +23,9 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     public static final String SEARCH_KEY = "search_string";
     protected TrackAdapter listAdapter;
     private ListView listView;
+    @Nullable
     private EditText searchBox;
+    @Nullable
     private View tracksEmptyLabel;
 
     @Override
@@ -47,22 +50,24 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
         if (args != null) {
             final String filter = args.getString(SEARCH_KEY, "");
             if (!filter.isEmpty()) {
-                searchBox.setText(filter);
+                if (searchBox != null) searchBox.setText(filter);
                 listAdapter.setFilter(filter);
             }
         }
 
-        searchBox.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                final String filter = searchBox.getText().toString().toLowerCase();
-                listAdapter.setFilter(filter);
-            }
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
+        if (searchBox != null) {
+            searchBox.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    final String filter = searchBox.getText().toString().toLowerCase();
+                    listAdapter.setFilter(filter);
+                }
+                @Override
+                public void afterTextChanged(Editable s) {}
+            });
+        }
     }
 
     @Override
@@ -81,13 +86,9 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
         listAdapter.notifyDataSetChanged();
 
         // Handle no-tracks case
-        if (listAdapter.isEmpty()) {
-            tracksEmptyLabel.setVisibility(View.VISIBLE);
-            searchBox.setEnabled(false);
-        } else {
-            tracksEmptyLabel.setVisibility(View.GONE);
-            searchBox.setEnabled(true);
-        }
+        final boolean isEmpty = listAdapter.isEmpty();
+        if (tracksEmptyLabel != null) tracksEmptyLabel.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        if (searchBox != null) searchBox.setEnabled(!isEmpty);
     }
 
     @Override
@@ -99,6 +100,13 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        searchBox = null;
+        tracksEmptyLabel = null;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

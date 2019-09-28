@@ -31,9 +31,10 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private static final String TAG = "Map";
 
     private AnalogAltimeterSettable analogAltimeter;
+    @Nullable
     private ImageButton homeButton;
+    @Nullable
     private ImageView crosshair;
-
     @Nullable
     private GoogleMap map; // Might be null if Google Play services APK is not available
 
@@ -68,7 +69,9 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
         // Home button listener
         final ImageButton homeButton = findViewById(R.id.homeButton);
-        homeButton.setOnClickListener(homeButtonListener);
+        if (homeButton != null) {
+            homeButton.setOnClickListener(homeButtonListener);
+        }
 
         // Initialize map
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -146,8 +149,10 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     public void onCameraMoveStarted(int reason) {
         if (reason == REASON_GESTURE) {
             dragged = true;
-            crosshair.setVisibility(View.VISIBLE);
-            homeButton.setVisibility(View.VISIBLE);
+            if (crosshair != null && homeButton != null) {
+                crosshair.setVisibility(View.VISIBLE);
+                homeButton.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -192,8 +197,10 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
                 dragged = false;
                 lastDrag = 0;
                 // Hide crosshair
-                crosshair.setVisibility(View.GONE);
-                homeButton.setVisibility(View.GONE);
+                if (crosshair != null && homeButton != null) {
+                    crosshair.setVisibility(View.GONE);
+                    homeButton.setVisibility(View.GONE);
+                }
                 // Zoom based on altitude
                 final float zoom = MapOptions.getZoom();
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), MapOptions.zoomDuration(), null);

@@ -31,7 +31,7 @@
 
     <TextView
         android:id="@+id/altitudeLabel"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
@@ -75,14 +75,14 @@
 
         <TextView
             android:id="@+id/speedLabel"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
         <TextView
             android:id="@+id/glideLabel"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -115,14 +115,14 @@
 
         <TextView
             android:id="@+id/hDistLabel"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
         <TextView
             android:id="@+id/vDistLabel"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -155,14 +155,14 @@
 
         <TextView
             android:id="@+id/hSpeedLabel"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
         <TextView
             android:id="@+id/vSpeedLabel"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>

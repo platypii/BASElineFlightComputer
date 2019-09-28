@@ -19,6 +19,7 @@ public class LaserMeasurementTest {
         assertEquals(1, LaserMeasurement.parse("100 -100", true, true).size());
         assertEquals(1, LaserMeasurement.parse("100,-100", true, true).size());
         assertEquals(1, LaserMeasurement.parse("100, -100", true, true).size());
+        assertEquals(1, LaserMeasurement.parse("100\t-100", true, true).size());
         assertEquals(1, LaserMeasurement.parse("100/-100", true, true).size());
         assertEquals(1, LaserMeasurement.parse("  100,  -100  ", true, true).size());
         assertEquals(2, LaserMeasurement.parse("100,-100\n20.0, -50.0", true, true).size());
@@ -35,6 +36,9 @@ public class LaserMeasurementTest {
 
     @Test
     public void parseErrors() throws ParseException {
+        assertEquals(0, LaserMeasurement.parse("100,NaN", true, false).size());
+        assertEquals(0, LaserMeasurement.parse("100,Infinity", true, false).size());
+        assertEquals(0, LaserMeasurement.parse("100,-Infinity", true, false).size());
         assertEquals(0, LaserMeasurement.parse("100,-100,", true, false).size());
         assertEquals(0, LaserMeasurement.parse("100,-100,333", true, false).size());
         assertEquals(1, LaserMeasurement.parse("100,-100\nXXXX", true, false).size());

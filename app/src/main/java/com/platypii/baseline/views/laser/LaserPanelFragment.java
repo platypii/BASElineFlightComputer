@@ -37,13 +37,15 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
 
     @Nullable
     private ProfileAdapter listAdapter;
+    @Nullable
     private ListView listView;
+    @Nullable
     private View helpText;
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+        firebaseAnalytics = FirebaseAnalytics.getInstance(context);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
         final Activity laserActivity = getActivity();
-        if (laserActivity != null) {
+        if (laserActivity != null && listView != null) {
             listAdapter = new ProfileAdapter(laserActivity); // TODO: Don't pass activity to adapter
             listView.setAdapter(listAdapter);
             listView.setOnItemClickListener(this);
@@ -143,10 +145,9 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
     }
 
     private void updateViews() {
-        if (Services.cloud.lasers.layers.layers.isEmpty()) {
-            helpText.setVisibility(View.VISIBLE);
-        } else {
-            helpText.setVisibility(View.GONE);
+        if (helpText != null) {
+            boolean isEmpty = Services.cloud.lasers.layers.layers.isEmpty();
+            helpText.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -162,5 +163,12 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        listView = null;
+        helpText = null;
     }
 }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.views.tracks.TrackDataActivity;
@@ -15,6 +16,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class FlightProfileFragment extends Fragment {
 
+    @Nullable
     private FlightProfile flightProfile;
 
     @Override
@@ -43,9 +45,17 @@ public class FlightProfileFragment extends Fragment {
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        flightProfile = null;
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onChartFocus(ChartFocusEvent event) {
-        flightProfile.onFocus(event.location);
+        if (flightProfile != null) {
+            flightProfile.onFocus(event.location);
+        }
     }
 
 }

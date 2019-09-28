@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.views.tracks.TrackDataActivity;
@@ -15,6 +16,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class SpeedChartFragment extends Fragment {
 
+    @Nullable
     private SpeedChart speedChart;
 
     @Override
@@ -43,9 +45,17 @@ public class SpeedChartFragment extends Fragment {
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        speedChart = null;
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onChartFocus(ChartFocusEvent event) {
-        speedChart.onFocus(event.location);
+        if (speedChart != null) {
+            speedChart.onFocus(event.location);
+        }
     }
 
 }
