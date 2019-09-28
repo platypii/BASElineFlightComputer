@@ -42,9 +42,9 @@ public class SpeedChartTouchable extends SpeedChart {
     @Nullable
     private MLocation findClosest(double x, double y) {
         MLocation closest = null;
-        if (trackData != null && !trackData.isEmpty()) {
+        if (trackData != null && !trackData.data.isEmpty()) {
             double closestDistance = Double.POSITIVE_INFINITY;
-            for (MLocation loc : trackData) {
+            for (MLocation loc : trackData.data) {
                 final double dx = loc.groundSpeed() - x;
                 final double dy = -loc.climb + y;
                 final double distance = dx * dx + dy * dy; // distance squared

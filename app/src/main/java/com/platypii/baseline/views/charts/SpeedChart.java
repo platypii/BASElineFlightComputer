@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
@@ -11,12 +12,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import java.util.List;
 
 public class SpeedChart extends PlotView {
 
     @Nullable
-    List<MLocation> trackData;
+    TrackData trackData;
 
     private final Bounds bounds = new Bounds();
     private final Bounds inner = new Bounds();
@@ -44,10 +44,10 @@ public class SpeedChart extends PlotView {
         options.axis.x = options.axis.y = PlotOptions.axisSpeed();
     }
 
-    public void loadTrack(@NonNull List<MLocation> trackData) {
+    public void loadTrack(@NonNull TrackData trackData) {
         this.trackData = trackData;
         // Add layers
-        if (!trackData.isEmpty()) {
+        if (!trackData.data.isEmpty()) {
             addLayer(new EllipseLayer(options.density));
         }
         addLayer(new SpeedDataLayer(trackData));

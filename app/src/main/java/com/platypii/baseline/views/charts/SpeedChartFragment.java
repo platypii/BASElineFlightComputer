@@ -24,7 +24,7 @@ public class SpeedChartFragment extends Fragment {
         final Activity parent = getActivity();
         if (parent instanceof TrackDataActivity) {
             ((TrackDataActivity) parent).trackData.thenAccept(trackData -> {
-                speedChart.loadTrack(trackData.data);
+                speedChart.loadTrack(trackData);
                 speedChart.postInvalidate();
             });
         }

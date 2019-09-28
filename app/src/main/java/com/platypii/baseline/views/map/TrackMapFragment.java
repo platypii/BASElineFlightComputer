@@ -56,11 +56,28 @@ public class TrackMapFragment extends SupportMapFragment implements OnMapReadyCa
 
     private void loadTrack(@NonNull GoogleMap map, @NonNull TrackData trackData) {
         this.trackData = trackData.data;
-        final PolylineOptions polyline = new PolylineOptions().color(Colors.defaultColor);
-        for (MLocation point : trackData.data) {
-            polyline.add(point.latLng());
+        final PolylineOptions plane = new PolylineOptions().color(Colors.modePlane);
+        final PolylineOptions flight = new PolylineOptions().color(Colors.modeWingsuit);
+        final PolylineOptions canopy = new PolylineOptions().color(Colors.modeCanopy);
+        final PolylineOptions ground = new PolylineOptions().color(Colors.modeGround);
+        for (MLocation loc : trackData.data) {
+            if (loc.millis <= trackData.stats.exit.millis) {
+                plane.add(loc.latLng());
+            }
+            if (trackData.stats.exit.millis <= loc.millis && loc.millis <= trackData.stats.deploy.millis) {
+                flight.add(loc.latLng());
+            }
+            if (trackData.stats.deploy.millis <= loc.millis && loc.millis <= trackData.stats.land.millis) {
+                canopy.add(loc.latLng());
+            }
+            if (trackData.stats.land.millis <= loc.millis) {
+                ground.add(loc.latLng());
+            }
         }
-        map.addPolyline(polyline);
+        map.addPolyline(ground);
+        map.addPolyline(canopy);
+        map.addPolyline(flight);
+        map.addPolyline(plane);
         if (trackData.stats.bounds != null) {
             final float density = getResources().getDisplayMetrics().density;
             map.moveCamera(CameraUpdateFactory.newLatLngBounds(trackData.stats.bounds, (int) (20 * density)));
