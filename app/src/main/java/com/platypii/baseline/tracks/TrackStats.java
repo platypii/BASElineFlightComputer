@@ -14,15 +14,21 @@ public class TrackStats {
 
     public final Range altitude = new Range();
     public MLocation exit;
+    public MLocation deploy;
     public MLocation land;
+
     @Nullable
     public final LatLngBounds bounds;
 
     TrackStats(@NonNull List<MLocation> trackData) {
         if (!trackData.isEmpty()) {
-            // TODO: Detect exit and landing
-            exit = trackData.get(0);
-            land = trackData.get(trackData.size() - 1);
+            // Detect exit, deploy, land
+            final TrackLabels labels = TrackLabels.from(trackData);
+            if (labels != null) {
+                exit = trackData.get(labels.exit);
+                deploy = trackData.get(labels.deploy);
+                land = trackData.get(labels.land);
+            }
             final LatLngBounds.Builder boundsBuilder = LatLngBounds.builder();
             for (MLocation loc : trackData) {
                 altitude.expand(loc.altitude_gps);

@@ -12,9 +12,9 @@ public class FlightMode {
     static final int MODE_UNKNOWN = 0;
     static final int MODE_GROUND = 1;
     public static final int MODE_PLANE = 2;
-    private static final int MODE_WINGSUIT = 3;
-    private static final int MODE_FREEFALL = 4;
-    static final int MODE_CANOPY = 5;
+    public static final int MODE_WINGSUIT = 3;
+    public static final int MODE_FREEFALL = 4;
+    public static final int MODE_CANOPY = 5;
 
     /**
      * Human readable mode strings
@@ -26,7 +26,7 @@ public class FlightMode {
     /**
      * Predict flight mode based on instantaneous horizontal and vertical velocity.
      */
-    static int getMode(@NonNull MLocation loc) {
+    public static int getMode(@NonNull MLocation loc) {
         final double groundSpeed = loc.groundSpeed();
         final double climb = loc.climb;
 
