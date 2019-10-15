@@ -5,6 +5,7 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.audible.AudibleMinMaxPreference;
 import com.platypii.baseline.audible.AudibleMode;
 import com.platypii.baseline.audible.AudibleSettings;
+import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Numbers;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,15 +17,12 @@ import android.preference.SwitchPreference;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Locale;
 
 /**
  * This fragment shows the audible preferences
  */
 public class AudibleSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
-
-    private FirebaseAnalytics firebaseAnalytics;
 
     private ListPreference modePreference;
     private AudibleMinMaxPreference minPreference;
@@ -56,8 +54,6 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
         precisionPreference.setOnPreferenceChangeListener(this);
         intervalPreference.setOnPreferenceChangeListener(this);
         ratePreference.setOnPreferenceChangeListener(this);
-
-        firebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
 
         updateViews();
     }
@@ -95,10 +91,10 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
             case "audible_enabled":
                 final boolean audibleEnabled = (Boolean) value;
                 if (audibleEnabled) {
-                    firebaseAnalytics.logEvent("pref_start_audible", null);
+                    Analytics.logEvent(getActivity(), "pref_start_audible", null);
                     Services.audible.enableAudible();
                 } else {
-                    firebaseAnalytics.logEvent("pref_stop_audible", null);
+                    Analytics.logEvent(getActivity(), "pref_stop_audible", null);
                     Services.audible.disableAudible();
                 }
                 break;

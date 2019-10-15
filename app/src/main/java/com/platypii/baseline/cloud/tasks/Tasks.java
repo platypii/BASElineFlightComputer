@@ -3,13 +3,13 @@ package com.platypii.baseline.cloud.tasks;
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.util.ABundle;
+import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -71,7 +71,7 @@ public class Tasks implements BaseService {
     private void runAsync(@NonNull Task task) {
         Log.i(TAG, "Running task: " + task);
         new Thread(() -> {
-            FirebaseAnalytics.getInstance(context).logEvent("task_run", ABundle.of("task_name", task.toString()));
+            Analytics.logEvent(context, "task_run", ABundle.of("task_name", task.toString()));
             // Run in background
             try {
                 task.run(context);
@@ -92,10 +92,13 @@ public class Tasks implements BaseService {
      */
     private void runSuccess(@NonNull Task task) {
         Log.i(TAG, "Task success: " + task);
-        FirebaseAnalytics.getInstance(context).logEvent("task_success", ABundle.of("task_name", task.toString()));
+        Analytics.logEvent(context, "task_success", ABundle.of("task_name", task.toString()));
         synchronized (pending) {
             if (running != task) {
                 Exceptions.report(new IllegalStateException("Invalid pop: " + running + " != " + task));
+            }
+            if (pending.isEmpty()) {
+                Exceptions.report(new IllegalStateException("Invalid pop: " + running + " not in []"));
             }
             final Task removed = pending.remove(0);
             if (running != removed) {
@@ -112,7 +115,7 @@ public class Tasks implements BaseService {
      */
     private void runFailed(@NonNull Task task, @NonNull Exception e, boolean networkError) {
         Log.e(TAG, "Task failed: " + task, e);
-        FirebaseAnalytics.getInstance(context).logEvent("task_failed", ABundle.of("task_name", task.toString()));
+        Analytics.logEvent(context, "task_failed", ABundle.of("task_name", task.toString()));
         if (!networkError) {
             Exceptions.report(e);
         }
@@ -129,7 +132,7 @@ public class Tasks implements BaseService {
             final ListIterator<Task> it = pending.listIterator();
             while (it.hasNext()) {
                 final Task task = it.next();
-                if (task.taskType().name().equals(taskType.name())) {
+                if (task != running && task.taskType().name().equals(taskType.name())) {
                     it.remove();
                 }
             }

@@ -1,5 +1,6 @@
 package com.platypii.baseline.laser;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
@@ -24,6 +25,7 @@ public class LaserProfile {
     public Double lng;
     @Nullable
     public Place place;
+    @Keep
     @NonNull
     public String source;
     public List<LaserMeasurement> points;

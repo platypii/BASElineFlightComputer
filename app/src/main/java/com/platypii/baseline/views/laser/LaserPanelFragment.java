@@ -8,6 +8,7 @@ import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.ABundle;
+import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerLocal;
@@ -25,15 +26,12 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class LaserPanelFragment extends Fragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "LaserPanel";
-
-    private FirebaseAnalytics firebaseAnalytics;
 
     @Nullable
     private ProfileAdapter listAdapter;
@@ -45,7 +43,6 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(context);
     }
 
     @Override
@@ -105,7 +102,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
 
     private void clickLaserProfile(LaserProfile laserProfile) {
         Log.i(TAG, "Opening laser profile " + laserProfile);
-        firebaseAnalytics.logEvent("click_laser_profile", null);
+        Analytics.logEvent(getContext(), "click_laser_profile", null);
         final Fragment frag = new LaserViewFragment();
         frag.setArguments(ABundle.of(LaserViewFragment.LASER_ID, laserProfile.laser_id));
         getFragmentManager()
@@ -116,7 +113,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
     }
 
     private void clickAddTrack(View view) {
-        firebaseAnalytics.logEvent("click_laser_track", null);
+        Analytics.logEvent(getContext(), "click_laser_track", null);
         final Fragment frag = new TrackPickerFragment();
         frag.setArguments(ABundle.of(TrackListFragment.SEARCH_KEY, "Wingsuit BASE"));
         getFragmentManager()
@@ -127,7 +124,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
     }
 
     private void clickAddProfile(View view) {
-        firebaseAnalytics.logEvent("click_laser_list", null);
+        Analytics.logEvent(getContext(), "click_laser_list", null);
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, new LaserListFragment())
@@ -136,7 +133,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
     }
 
     private void clickNewProfile(View view) {
-        firebaseAnalytics.logEvent("click_laser_add", null);
+        Analytics.logEvent(getContext(), "click_laser_add", null);
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, new LaserEditFragment())

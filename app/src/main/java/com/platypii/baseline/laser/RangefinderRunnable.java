@@ -1,5 +1,6 @@
 package com.platypii.baseline.laser;
 
+import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Exceptions;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -20,7 +21,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,14 +53,10 @@ class RangefinderRunnable implements Runnable {
     @Nullable
     private RangefinderProtocol protocol;
 
-    @NonNull
-    private final FirebaseAnalytics firebaseAnalytics;
-
     RangefinderRunnable(@NonNull RangefinderService service, @NonNull Context context, @NonNull BluetoothAdapter bluetoothAdapter) {
         this.service = service;
         this.context = context;
         this.bluetoothAdapter = bluetoothAdapter;
-        firebaseAnalytics = FirebaseAnalytics.getInstance(context);
     }
 
     /**
@@ -118,7 +114,7 @@ class RangefinderRunnable implements Runnable {
         // Log event
         final Bundle bundle = new Bundle();
         bundle.putString("device_name", device.getName());
-        firebaseAnalytics.logEvent("rangefinder_found", bundle);
+        Analytics.logEvent(context, "rangefinder_found", bundle);
     }
 
     private void stopScan() {

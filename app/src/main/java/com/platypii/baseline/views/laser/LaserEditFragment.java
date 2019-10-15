@@ -9,6 +9,7 @@ import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.laser.RangefinderService;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 
@@ -29,7 +30,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,8 +43,6 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 import static com.platypii.baseline.util.Numbers.parseDoubleNull;
 
 public class LaserEditFragment extends Fragment implements MyLocationListener {
-
-    private final FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
 
     private final RangefinderService rangefinder = new RangefinderService();
 
@@ -179,7 +177,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     }
 
     private void laserSave(View view) {
-        firebaseAnalytics.logEvent("click_laser_edit_save", null);
+        Analytics.logEvent(getContext(), "click_laser_edit_save", null);
         final String error = validate();
         if (error == null) {
             // Save in background and return to profile list view
@@ -202,7 +200,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     }
 
     private void laserCancel(View view) {
-        firebaseAnalytics.logEvent("click_laser_edit_cancel", null);
+        Analytics.logEvent(getContext(), "click_laser_edit_cancel", null);
         final FragmentManager fm = getFragmentManager();
         if (fm != null) fm.popBackStack();
     }

@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
  */
 public class TestTask extends Task {
 
+    private final String id;
+
     // Task will not complete until this is set to true
     boolean wait = true;
 
@@ -20,10 +22,14 @@ public class TestTask extends Task {
     }
     static final TestTaskType taskType = new TestTaskType();
 
+    TestTask(String id) {
+        this.id = id;
+    }
+
     @NonNull
     @Override
     public String id() {
-        return "TestTask";
+        return id;
     }
 
     @Override

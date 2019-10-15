@@ -11,6 +11,7 @@ import com.platypii.baseline.laser.LaserProfile;
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import com.google.gson.Gson;
 import java.io.IOException;
 import org.greenrobot.eventbus.EventBus;
 import retrofit2.Response;
@@ -59,7 +60,8 @@ public class LaserUploadTask extends Task {
         } else {
             final String error = response.errorBody().string();
             EventBus.getDefault().post(new LaserSyncEvent.UploadFailure(laserProfile, error));
-            throw new IOException("Laser upload failed: " + error);
+            final String json = new Gson().toJson(laserProfile);
+            throw new IOException("Laser upload failed: " + error + "\n" + json);
         }
     }
 

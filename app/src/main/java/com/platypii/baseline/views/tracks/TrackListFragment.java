@@ -110,7 +110,7 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSyncEvent(SyncEvent event) {
+    public void onSyncEvent(@NonNull SyncEvent event) {
         updateList();
     }
 

@@ -41,7 +41,6 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
         listAdapter = new LaserAdapter(getContext());
-        listAdapter.populateItems();
         listView.setAdapter(listAdapter);
         listView.setOnItemClickListener(this);
 
@@ -78,7 +77,7 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserSync(@NonNull LaserSyncEvent event) {
-        listAdapter.populateItems();
+        listAdapter.notifyDataSetChanged();
     }
 
     @Override

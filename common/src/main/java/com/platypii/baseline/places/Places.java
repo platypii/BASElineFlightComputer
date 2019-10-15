@@ -75,19 +75,20 @@ public class Places implements BaseService {
      * Update places in background thread
      */
     private void updateAsync(boolean force) {
-        if (context == null) {
+        final Context ctx = context;
+        if (ctx == null) {
             Exceptions.report(new NullPointerException("Null context in Places.updateAsync(" + force + ")"));
             return;
         }
         AsyncTask.execute(() -> {
             if (placeFile == null) {
                 // Place file is stored on internal storage
-                placeFile = new PlaceFile(context);
+                placeFile = new PlaceFile(ctx);
             }
             // Fetch places from server, if we need to
             if (force || !placeFile.isFresh()) {
                 try {
-                    FetchPlaces.get(context, placeFile.file);
+                    FetchPlaces.get(ctx, placeFile.file);
                     places = null; // Force reload
                 } catch (IOException e) {
                     Log.e(TAG, "Failed to fetch places", e);

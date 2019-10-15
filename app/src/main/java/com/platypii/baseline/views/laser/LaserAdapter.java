@@ -35,9 +35,10 @@ class LaserAdapter extends BaseAdapter {
 
     LaserAdapter(@NonNull Context context) {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        populateItems();
     }
 
-    void populateItems() {
+    private void populateItems() {
         final String userId = AuthState.getUser();
         items.clear();
         // Add unsynced lasers

@@ -2,6 +2,7 @@ package com.platypii.baseline.views.bluetooth;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Exceptions;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
@@ -12,7 +13,6 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -54,7 +54,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
             final Bundle bundle = new Bundle();
             bundle.putString("device_id", device.getAddress());
             bundle.putString("device_name", device.getName());
-            FirebaseAnalytics.getInstance(activity).logEvent("bluetooth_selected", bundle);
+            Analytics.logEvent(activity, "bluetooth_selected", bundle);
             // Save device preference
             Services.bluetooth.preferences.save(activity, true, device.getAddress(), device.getName());
             Services.bluetooth.restart(activity);

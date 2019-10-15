@@ -12,15 +12,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class BluetoothActivity extends BaseActivity {
     private static final String TAG = "BluetoothActivity";
-
-    private FirebaseAnalytics firebaseAnalytics;
 
     private ImageView bluetoothPhoto;
     private Switch bluetoothSwitch;
@@ -30,8 +27,6 @@ public class BluetoothActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth);
-
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         bluetoothPhoto = findViewById(R.id.bluetooth_photo);
         bluetoothSwitch = findViewById(R.id.bluetooth_switch);

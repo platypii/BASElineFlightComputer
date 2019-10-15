@@ -293,9 +293,13 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // split[6]: Stdev of latitude error (meters)
                 // split[7]: Stdev of longitude error (meters)
                 // split[8]: Stdev of altitude error (meters)
+            case "HDT":
+                // $GPHDT,,T*1B
             case "JNR":
             case "MSG":
                 // $BDMSG,ENGI_MSG,RPUSH,00059*00
+            case "NL":
+                // $PTNL,GGK,182653.00,101119,5328.7509266,N,11329.1214325,W,1,12,2.7,EHT654.213,M*63
             case "NVD":
             case "8EX1":
                 // HTC One M8
@@ -312,6 +316,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "RMT":
                 // Samsung SM-G935F
                 // $PGRMT,GLO Software Version 3.00,,,,,,,,
+            case "SHR":
+                // $PASHR,HPR,182652.00,43.22690,33.82954,,0.0038,0.0000,1,2,0.400,4.5*1D
             case "TK010":
             case "TK011":
                 // XGPS-160
@@ -346,6 +352,8 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "WP6":
                 // $PQWP1,131955.93,03,0.728909016,-0.014442960,302.38,9338.27,3.23,3*24
                 // $PQWP6,180809.00,00000000*16
+            case "WS1":
+                // $PQWS1,140116.00,1,250*33
             case "ZCD":
                 // Rockchip 3GR
                 // $PGJNR,3,3,09,09,64,11,21

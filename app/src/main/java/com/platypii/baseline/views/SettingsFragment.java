@@ -5,6 +5,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.jarvis.AutoStop;
+import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.bluetooth.BluetoothActivity;
 import android.content.Intent;
@@ -16,7 +17,6 @@ import android.preference.SwitchPreference;
 import android.util.Log;
 import android.view.View;
 import androidx.annotation.NonNull;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -26,8 +26,6 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
     private static final String TAG = "Settings";
-
-    private FirebaseAnalytics firebaseAnalytics;
 
     private SwitchPreference metricPreference;
     private Preference bluetoothPreference;
@@ -39,8 +37,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_general);
         setHasOptionsMenu(true);
-
-        firebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
 
         metricPreference = (SwitchPreference) findPreference("metric_enabled");
         metricPreference.setOnPreferenceChangeListener(this);
@@ -129,15 +125,15 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public boolean onPreferenceClick(@NonNull Preference preference) {
         if (preference.getKey().equals("audible_settings")) {
             // Open audible settings activity
-            firebaseAnalytics.logEvent("click_audible_settings", null);
+            Analytics.logEvent(getActivity(), "click_audible_settings", null);
             startActivity(new Intent(getActivity(), AudibleSettingsActivity.class));
         } else if (preference.getKey().equals("bluetooth_settings")) {
             // Open bluetooth settings activity
-            firebaseAnalytics.logEvent("click_bluetooth_settings", null);
+            Analytics.logEvent(getActivity(), "click_bluetooth_settings", null);
             startActivity(new Intent(getActivity(), BluetoothActivity.class));
         } else if (preference.getKey().equals("sensor_info")) {
             // Open sensor activity
-            firebaseAnalytics.logEvent("click_sensors", null);
+            Analytics.logEvent(getActivity(), "click_sensors", null);
             startActivity(new Intent(getActivity(), SensorActivity.class));
         } else if (preference.getKey().equals("sign_in")) {
             // Handle sign in/out click
@@ -149,11 +145,11 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             }
         } else if (preference.getKey().equals("help_page")) {
             // Handle help page click
-            firebaseAnalytics.logEvent("click_help", null);
+            Analytics.logEvent(getActivity(), "click_help", null);
             Intents.openHelpUrl(getActivity());
         } else if (preference.getKey().equals("privacy_page")) {
             // Handle privacy policy page click
-            firebaseAnalytics.logEvent("click_privacy", null);
+            Analytics.logEvent(getActivity(), "click_privacy", null);
             Intents.openPrivacyUrl(getActivity());
         }
         return false;
