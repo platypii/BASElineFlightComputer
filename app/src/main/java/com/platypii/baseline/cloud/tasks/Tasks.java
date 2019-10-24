@@ -102,7 +102,11 @@ public class Tasks implements BaseService {
             }
             final Task removed = pending.remove(0);
             if (running != removed) {
-                Exceptions.report(new IllegalStateException("Invalid pop: " + running + " != " + removed));
+                if (running != null && running.equals(removed)) {
+                    Exceptions.report(new IllegalStateException("Invalid pop (same same): " + running + " != " + removed));
+                } else {
+                    Exceptions.report(new IllegalStateException("Invalid pop (different): " + running + " != " + removed));
+                }
             }
             running = null;
         }

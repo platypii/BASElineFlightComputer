@@ -117,6 +117,7 @@
     <string name="profiles">Profiles</string>
     <string name="new_profile">New Profile</string>
     <string name="profile_name">Profile name</string>
+    <string name="profile_location">Latitude, longitude, altitude</string>
     <string name="rangefinder_connected">Rangefinder connected</string>
     <string name="rangefinder_searching">Searching for rangefinder…</string>
     <string-array name="metric_modes">

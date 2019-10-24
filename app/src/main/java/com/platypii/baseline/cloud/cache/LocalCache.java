@@ -128,11 +128,15 @@ public abstract class LocalCache<T> {
      * Set the listing cache, and set last update time
      */
     public void update(@NonNull List<T> items) {
-        final String json = new Gson().toJson(items);
-        final SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong(CACHE_LAST_UPDATE, System.currentTimeMillis());
-        editor.putString(CACHE_LIST, json);
-        editor.apply();
+        try {
+            final String json = new Gson().toJson(items);
+            final SharedPreferences.Editor editor = prefs.edit();
+            editor.putLong(CACHE_LAST_UPDATE, System.currentTimeMillis());
+            editor.putString(CACHE_LIST, json);
+            editor.apply();
+        } catch (Exception e) {
+            Exceptions.report(e); // Usually JSON serialization error
+        }
     }
 
     /**

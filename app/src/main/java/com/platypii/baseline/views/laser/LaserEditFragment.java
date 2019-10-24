@@ -8,10 +8,11 @@ import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.laser.NewLaserForm;
 import com.platypii.baseline.laser.RangefinderService;
+import com.platypii.baseline.location.Geocoder;
 import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.measurements.LatLngAlt;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Analytics;
-import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 
 import android.app.Activity;
@@ -20,6 +21,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,17 +44,15 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
-import static com.platypii.baseline.util.Numbers.parseDoubleNull;
 
 public class LaserEditFragment extends Fragment implements MyLocationListener {
+    private static final String TAG = "LaserEditFrag";
 
     private final RangefinderService rangefinder = new RangefinderService();
 
     private EditText laserName;
     private Spinner laserUnits;
-    private EditText laserLat;
-    private EditText laserLng;
-    private EditText laserAlt;
+    private EditText laserLocation;
     private EditText laserText;
     private TextView laserStatus;
 
@@ -70,9 +70,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         final View view = inflater.inflate(R.layout.laser_edit, container, false);
         laserName = view.findViewById(R.id.laserName);
         laserUnits = view.findViewById(R.id.laserUnits);
-        laserLat = view.findViewById(R.id.laserLat);
-        laserLng = view.findViewById(R.id.laserLng);
-        laserAlt = view.findViewById(R.id.laserAlt);
+        laserLocation = view.findViewById(R.id.laserLocation);
         laserText = view.findViewById(R.id.laserText);
         laserStatus = view.findViewById(R.id.laserStatus);
         loadForm();
@@ -122,7 +120,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     @NonNull
     private LaserProfile newLaserProfile() {
         final String laserId = "tmp-" + UUID.randomUUID().toString();
-        return new LaserProfile(laserId, null, "", false, 0.0, Double.NaN, Double.NaN, "app", new ArrayList<>());
+        return new LaserProfile(laserId, null, "", false, 0.0, null, null, "app", new ArrayList<>());
     }
 
     /**
@@ -131,9 +129,17 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     private void getLaserProfile() {
         laserProfile.name = laserName.getText().toString();
         laserProfile.user_id = AuthState.getUser();
-        laserProfile.lat = parseDoubleNull(laserLat.getText().toString());
-        laserProfile.lng = parseDoubleNull(laserLng.getText().toString());
-        laserProfile.alt = parseDoubleNull(laserAlt.getText().toString());
+        try {
+            final LatLngAlt lla = Geocoder.parse(laserLocation.getText().toString());
+            laserProfile.lat = lla.lat;
+            laserProfile.lng = lla.lng;
+            laserProfile.alt = lla.alt;
+        } catch (ParseException e) {
+            Log.w(TAG, "Failed to parse laser profile: " + e.getMessage());
+            laserProfile.lat = null;
+            laserProfile.lng = null;
+            laserProfile.alt = 0.0;
+        }
         laserProfile.points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
     }
 
@@ -155,10 +161,15 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             return "Name cannot be empty";
         }
         final boolean metric = "meters".equals(laserUnits.toString());
-        // Altitude is required
-        if (laserAlt.getText().toString().isEmpty()) {
-            laserAlt.requestFocus();
-            return "Altitude needed for start performance";
+        // Check for invalid location
+        final String location = laserLocation.getText().toString().trim();
+        if (!location.isEmpty()) {
+            try {
+                Geocoder.parse(location);
+            } catch (ParseException e) {
+                laserLocation.requestFocus();
+                return e.getMessage();
+            }
         }
         // Validate points
         final String pointString = laserText.getText().toString();
@@ -265,9 +276,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             final NewLaserForm form = NewLaserForm.load(context);
             laserName.setText(form.name);
             laserUnits.setSelection(form.metric ? 0 : 1);
-            laserLat.setText(form.lat);
-            laserLng.setText(form.lng);
-            laserAlt.setText(form.alt);
+            laserLocation.setText(form.latLngAlt);
             laserText.setText(form.points);
         }
     }
@@ -278,9 +287,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             new NewLaserForm(
                     laserName.getText().toString(),
                     isMetric(),
-                    laserLat.getText().toString(),
-                    laserLng.getText().toString(),
-                    laserAlt.getText().toString(),
+                    laserLocation.getText().toString(),
                     laserText.getText().toString()
             ).save(context);
         }
@@ -289,9 +296,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     private void clearForm() {
         laserName.setText("");
         laserUnits.setSelection(0);
-        laserLat.setText("");
-        laserLng.setText("");
-        laserAlt.setText("");
+        laserLocation.setText("");
         laserText.setText("");
     }
 
@@ -303,9 +308,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             if (activity != null) {
                 activity.runOnUiThread(() -> {
                     // Fill in lat,lon
-                    laserLat.setText(Numbers.format6.format(loc.latitude));
-                    laserLng.setText(Numbers.format6.format(loc.longitude));
-                    laserAlt.setText(Numbers.format2.format(loc.altitude_gps));
+                    laserLocation.setText(LatLngAlt.formatLatLngAlt(loc.latitude, loc.longitude, loc.altitude_gps));
                 });
             }
         }

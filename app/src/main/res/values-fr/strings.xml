@@ -117,6 +117,7 @@
     <string name="profiles">Profils</string>
     <string name="new_profile">Nouveau profil</string>
     <string name="profile_name">Nom de profil</string>
+    <string name="profile_location">Latitude, longitude, altitude</string>
     <string name="rangefinder_connected">Télémètre connecté</string>
     <string name="rangefinder_searching">Recherche de télémètre…</string>
     <string-array name="metric_modes">

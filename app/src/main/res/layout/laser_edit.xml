@@ -34,31 +34,13 @@
             android:layout_height="wrap_content">
 
         <EditText
-                android:id="@+id/laserLat"
+                android:id="@+id/laserLocation"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:inputType="numberDecimal"
-                android:hint="Latitude"/>
-
-        <EditText
-                android:id="@+id/laserLng"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:inputType="numberDecimal"
-                android:hint="Longitude"/>
-
-        <EditText
-                android:id="@+id/laserAlt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:inputType="numberDecimal"
-                android:hint="Altitude"/>
+                android:inputType="text"
+                android:hint="@string/profile_location"/>
 
     </LinearLayout>
 
@@ -89,7 +71,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Cancel"/>
+                android:text="@android:string/cancel"/>
 
         <Button
                 android:id="@+id/laserSave"

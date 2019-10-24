@@ -4,6 +4,7 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
+import com.platypii.baseline.measurements.LatLngAlt;
 import com.platypii.baseline.places.Place;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
@@ -52,13 +53,7 @@ public class LaserProfile {
 
     @NonNull
     public String locationString() {
-        if (isReal(lat) && isReal(lng) && isReal(alt)) {
-            return Numbers.format6.format(lat) + ", " + Numbers.format6.format(lng) + ", " + Convert.distance(alt);
-        } else if (isReal(alt)) {
-            return Convert.distance(alt);
-        } else {
-            return "";
-        }
+        return LatLngAlt.formatLatLngAlt(lat, lng, alt);
     }
 
     public boolean isLocal() {
