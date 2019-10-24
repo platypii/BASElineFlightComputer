@@ -6,6 +6,7 @@ import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.laser.NewLaserForm;
 import com.platypii.baseline.laser.RangefinderService;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
@@ -14,6 +15,7 @@ import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -49,7 +51,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     private EditText laserName;
     private Spinner laserUnits;
     private EditText laserLat;
-    private EditText laserLon;
+    private EditText laserLng;
     private EditText laserAlt;
     private EditText laserText;
     private TextView laserStatus;
@@ -69,10 +71,11 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         laserName = view.findViewById(R.id.laserName);
         laserUnits = view.findViewById(R.id.laserUnits);
         laserLat = view.findViewById(R.id.laserLat);
-        laserLon = view.findViewById(R.id.laserLon);
+        laserLng = view.findViewById(R.id.laserLng);
         laserAlt = view.findViewById(R.id.laserAlt);
         laserText = view.findViewById(R.id.laserText);
         laserStatus = view.findViewById(R.id.laserStatus);
+        loadForm();
         view.findViewById(R.id.laserSave).setOnClickListener(this::laserSave);
         view.findViewById(R.id.laserCancel).setOnClickListener(this::laserCancel);
         laserText.addTextChangedListener(new TextWatcher() {
@@ -129,7 +132,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         laserProfile.name = laserName.getText().toString();
         laserProfile.user_id = AuthState.getUser();
         laserProfile.lat = parseDoubleNull(laserLat.getText().toString());
-        laserProfile.lng = parseDoubleNull(laserLon.getText().toString());
+        laserProfile.lng = parseDoubleNull(laserLng.getText().toString());
         laserProfile.alt = parseDoubleNull(laserAlt.getText().toString());
         laserProfile.points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
     }
@@ -188,6 +191,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             // Reset for next laser input
             laserProfile = newLaserProfile();
             editLayer = new LaserProfileLayer(laserProfile);
+            clearForm();
             // Re-add edit layer since it will be removed on fragment stop
             Services.cloud.lasers.layers.add(editLayer);
             // Return to main fragment
@@ -201,6 +205,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
 
     private void laserCancel(View view) {
         Analytics.logEvent(getContext(), "click_laser_edit_cancel", null);
+        clearForm();
         final FragmentManager fm = getFragmentManager();
         if (fm != null) fm.popBackStack();
     }
@@ -251,6 +256,43 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         Services.location.removeListener(this);
         rangefinder.stop();
         Services.cloud.lasers.layers.remove(editLayer.id());
+        saveForm();
+    }
+
+    private void loadForm() {
+        final Context context = getContext();
+        if (context != null) {
+            final NewLaserForm form = NewLaserForm.load(context);
+            laserName.setText(form.name);
+            laserUnits.setSelection(form.metric ? 0 : 1);
+            laserLat.setText(form.lat);
+            laserLng.setText(form.lng);
+            laserAlt.setText(form.alt);
+            laserText.setText(form.points);
+        }
+    }
+
+    private void saveForm() {
+        final Context context = getContext();
+        if (context != null) {
+            new NewLaserForm(
+                    laserName.getText().toString(),
+                    isMetric(),
+                    laserLat.getText().toString(),
+                    laserLng.getText().toString(),
+                    laserAlt.getText().toString(),
+                    laserText.getText().toString()
+            ).save(context);
+        }
+    }
+
+    private void clearForm() {
+        laserName.setText("");
+        laserUnits.setSelection(0);
+        laserLat.setText("");
+        laserLng.setText("");
+        laserAlt.setText("");
+        laserText.setText("");
     }
 
     @Override
@@ -262,7 +304,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
                 activity.runOnUiThread(() -> {
                     // Fill in lat,lon
                     laserLat.setText(Numbers.format6.format(loc.latitude));
-                    laserLon.setText(Numbers.format6.format(loc.longitude));
+                    laserLng.setText(Numbers.format6.format(loc.longitude));
                     laserAlt.setText(Numbers.format2.format(loc.altitude_gps));
                 });
             }

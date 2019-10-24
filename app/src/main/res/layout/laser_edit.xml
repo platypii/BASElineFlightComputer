@@ -39,16 +39,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:hint="Latitude"/>
 
         <EditText
-                android:id="@+id/laserLon"
+                android:id="@+id/laserLng"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:hint="Longitude"/>
 
         <EditText
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:hint="Altitude"/>
 
     </LinearLayout>
