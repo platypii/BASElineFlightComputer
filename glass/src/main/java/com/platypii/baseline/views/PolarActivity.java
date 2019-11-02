@@ -1,14 +1,14 @@
 package com.platypii.baseline.views;
 
 import com.platypii.baseline.Services;
-import com.platypii.baseline.views.charts.PolarPlotLive;
+import com.platypii.baseline.views.charts.SpeedChartLive;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
 public class PolarActivity extends BaseActivity {
 
-    private PolarPlotLive polar;
+    private SpeedChartLive polar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,7 +16,7 @@ public class PolarActivity extends BaseActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        polar = new PolarPlotLive(this, null);
+        polar = new SpeedChartLive(this, null);
         setContentView(polar);
     }
 
