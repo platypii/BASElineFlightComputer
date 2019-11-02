@@ -36,15 +36,25 @@ public class Permissions {
     }
 
     public static boolean hasLocationPermissions(@NonNull Context context) {
-        return context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED;
+        } else {
+            return true;
+        }
     }
 
     public static boolean hasFineLocationPermissions(@NonNull Context context) {
-        return context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PERMISSION_GRANTED;
+        } else {
+            return true;
+        }
     }
 
     public static void requestLocationPermissions(@NonNull Activity activity) {
-        activity.requestPermissions(locationPermissions, RC_LOCATION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity.requestPermissions(locationPermissions, RC_LOCATION);
+        }
     }
 
     /**
