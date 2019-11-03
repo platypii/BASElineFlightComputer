@@ -165,7 +165,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void clickAudible(View v) {
-        if (Services.audible.isEnabled()) {
+        if (Services.audible.settings.isEnabled) {
             // Stop audible
             firebaseAnalytics.logEvent("click_stop_audible", null);
             Services.audible.disableAudible();

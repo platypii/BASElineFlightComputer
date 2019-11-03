@@ -139,7 +139,7 @@ public class Services {
                 new CheckTextToSpeechTask(activity).execute();
             }
 
-            Log.i(TAG, "Starting notification bar service");
+            Log.i(TAG, "Starting notification service");
             notifications.start(appContext);
 
             Log.i(TAG, "Starting task manager");
@@ -202,7 +202,7 @@ public class Services {
      */
     private static synchronized void stopIfIdle() {
         if (initialized && startCount == 0) {
-            if (!logger.isLogging() && !audible.isEnabled()) {
+            if (!logger.isLogging() && !audible.settings.isEnabled) {
                 Log.i(TAG, "All activities have stopped. Stopping services.");
                 // Stop services
                 places.stop();
@@ -222,7 +222,7 @@ public class Services {
                 if (logger.isLogging()) {
                     Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
                 }
-                if (audible.isEnabled()) {
+                if (audible.settings.isEnabled) {
                     Log.w(TAG, "All activities have stopped, but audible still active. Leaving services running.");
                 }
                 // Try again periodically

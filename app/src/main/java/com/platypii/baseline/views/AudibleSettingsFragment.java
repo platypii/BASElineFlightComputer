@@ -7,6 +7,7 @@ import com.platypii.baseline.audible.AudibleMode;
 import com.platypii.baseline.audible.AudibleSettings;
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Numbers;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -24,6 +25,7 @@ import java.util.Locale;
  */
 public class AudibleSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
+    private AudibleSettings settings;
     private ListPreference modePreference;
     private AudibleMinMaxPreference minPreference;
     private AudibleMinMaxPreference maxPreference;
@@ -36,6 +38,8 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_audible);
         setHasOptionsMenu(true);
+
+        settings = Services.audible.settings;
 
         final SwitchPreference enabledPreference = (SwitchPreference) findPreference("audible_enabled");
         final SwitchPreference quietPreference = (SwitchPreference) findPreference("audible_quiet");
@@ -68,20 +72,20 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
      * Set summaries and adjust defaults
      */
     private void updateViews() {
-        final AudibleMode mode = AudibleSettings.mode;
-        final int precision = AudibleSettings.precision;
+        final AudibleMode mode = settings.mode;
+        final int precision = settings.precision;
         modePreference.setSummary(mode.name);
         minPreference.setTitle(mode.minimumTitle());
         maxPreference.setTitle(mode.maximumTitle());
-        minPreference.setSummary(mode.renderDisplay(AudibleSettings.min, precision));
-        maxPreference.setSummary(mode.renderDisplay(AudibleSettings.max, precision));
+        minPreference.setSummary(mode.renderDisplay(settings.min, precision));
+        maxPreference.setSummary(mode.renderDisplay(settings.max, precision));
         if (precision <= 0) {
             precisionPreference.setSummary(String.format(Locale.getDefault(), "%d decimal places", precision));
         } else {
-            precisionPreference.setSummary(String.format(Locale.getDefault(), "%."+precision+"f decimal places", (float) precision));
+            precisionPreference.setSummary(String.format(Locale.getDefault(), "%." + precision + "f decimal places", (float) precision));
         }
-        intervalPreference.setSummary("Every " + AudibleSettings.speechInterval + " sec");
-        ratePreference.setSummary(String.format(Locale.getDefault(), "%.2fx", AudibleSettings.speechRate));
+        intervalPreference.setSummary("Every " + settings.speechInterval + " sec");
+        ratePreference.setSummary(String.format(Locale.getDefault(), "%.2fx", settings.speechRate));
     }
 
     @Override
@@ -99,33 +103,33 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
                 }
                 break;
             case "audible_quiet":
-                Services.audible.preferenceQuiet = (Boolean) value;
+                Services.audible.settings.airplaneMode = (Boolean) value;
                 break;
             case "audible_mode":
                 final String audibleMode = (String) value;
                 final String previousAudibleMode = modePreference.getValue();
                 if (!audibleMode.equals(previousAudibleMode)) {
-                    AudibleSettings.setAudibleMode(audibleMode);
-                    minPreference.setValue(AudibleSettings.mode.defaultMin);
-                    maxPreference.setValue(AudibleSettings.mode.defaultMax);
+                    settings.setAudibleMode(audibleMode);
+                    minPreference.setValue(settings.mode.defaultMin);
+                    maxPreference.setValue(settings.mode.defaultMax);
                     precisionPreference.setText(null);
-                    precisionPreference.setDefaultValue(AudibleSettings.mode.defaultPrecision);
+                    precisionPreference.setDefaultValue(settings.mode.defaultPrecision);
                     updateViews();
-                    if (Services.audible.isEnabled()) {
-                        Services.audible.speakNow(AudibleSettings.mode.name);
+                    if (Services.audible.settings.isEnabled) {
+                        Services.audible.speakNow(settings.mode.name);
                     }
                 }
                 break;
             case "audible_min":
                 final float min = (Float) value;
                 if (!Numbers.isReal(min)) return false;
-                AudibleSettings.min = min;
+                settings.min = min;
                 updateViews();
                 break;
             case "audible_max":
                 final float max = (Float) value;
                 if (!Numbers.isReal(max)) return false;
-                AudibleSettings.max = max;
+                settings.max = max;
                 updateViews();
                 break;
             case "audible_precision":
@@ -137,19 +141,19 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
                     Toast.makeText(getActivity(), "Precision cannot be greater than 8", Toast.LENGTH_SHORT).show();
                     return false;
                 }
-                AudibleSettings.precision = precision;
+                settings.precision = precision;
                 updateViews();
                 break;
             case "audible_interval":
                 final float speechInterval = Numbers.parseFloat((String) value);
                 if (!Numbers.isReal(speechInterval)) return false;
-                AudibleSettings.speechInterval = speechInterval;
+                settings.speechInterval = speechInterval;
                 updateViews();
                 break;
             case "audible_rate":
                 final float speechRate = Numbers.parseFloat((String) value);
                 if (!Numbers.isReal(speechRate)) return false;
-                AudibleSettings.speechRate = speechRate;
+                settings.speechRate = speechRate;
                 updateViews();
                 break;
         }

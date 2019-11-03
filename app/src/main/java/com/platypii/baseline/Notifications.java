@@ -3,6 +3,7 @@ package com.platypii.baseline;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.views.MainActivity;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -44,7 +45,7 @@ class Notifications implements BaseService {
             service.setAction(ForegroundService.ACTION_START_LOGGING);
             context.startService(service);
         }
-        if (Services.audible.isEnabled()) {
+        if (Services.audible.settings.isEnabled) {
             final Intent service = new Intent(context, ForegroundService.class);
             service.setAction(ForegroundService.ACTION_START_AUDIBLE);
             context.startService(service);

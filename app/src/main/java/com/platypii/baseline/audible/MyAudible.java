@@ -6,6 +6,7 @@ import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.jarvis.FlightMode;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -21,6 +22,7 @@ import org.greenrobot.eventbus.EventBus;
 public class MyAudible implements BaseService {
     private static final String TAG = "Audible";
 
+    public final AudibleSettings settings = new AudibleSettings();
     private SharedPreferences prefs;
 
     @Nullable
@@ -29,10 +31,7 @@ public class MyAudible implements BaseService {
     private AudibleThread audibleThread;
 
     private boolean isInitialized = false;
-    private boolean isEnabled = false;
 
-    // Airplane mode detection enabled?
-    public boolean preferenceQuiet = true;
     // When was the last time we announced airplane mode?
     private long airplaneAnnounceTime;
     private static final long AIRPLANE_ANNOUNCE_INTERVAL = 30000; // 30 seconds
@@ -48,6 +47,8 @@ public class MyAudible implements BaseService {
         Log.i(TAG, "Initializing audible");
         if (!isInitialized) {
             isInitialized = true;
+            prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            settings.load(prefs);
             startAsync(context);
         } else {
             Log.w(TAG, "Audible initialized twice");
@@ -59,12 +60,8 @@ public class MyAudible implements BaseService {
         // Audible thread has a handler, which needs to be created in looper thread
         audibleThread = new AudibleThread();
         AsyncTask.execute(() -> {
-            prefs = PreferenceManager.getDefaultSharedPreferences(context);
             speech = new Speech(context);
-            AudibleSettings.load(prefs);
-            isEnabled = prefs.getBoolean("audible_enabled", false);
-            preferenceQuiet = prefs.getBoolean("audible_quiet", true);
-            if (isEnabled) {
+            if (settings.isEnabled) {
                 enableAudible();
             }
         });
@@ -88,7 +85,7 @@ public class MyAudible implements BaseService {
         } else {
             Log.e(TAG, "Failed to start audible: audible not initialized");
         }
-        isEnabled = true;
+        settings.isEnabled = true;
         if (prefs != null) {
             final SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("audible_enabled", true);
@@ -105,7 +102,7 @@ public class MyAudible implements BaseService {
         } else {
             Log.e(TAG, "Failed to stop audible: audible not initialized");
         }
-        isEnabled = false;
+        settings.isEnabled = false;
         if (prefs != null) {
             final SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("audible_enabled", false);
@@ -119,7 +116,7 @@ public class MyAudible implements BaseService {
      */
     private void speakModeWhenReady() {
         if (speech != null) {
-            speech.speakWhenReady(AudibleSettings.mode.name);
+            speech.speakWhenReady(settings.mode.name);
         } else {
             Log.e(TAG, "speakModeWhenReady called but speech is null");
         }
@@ -129,7 +126,7 @@ public class MyAudible implements BaseService {
      * Make a special announcement
      */
     public void speakNow(String text) {
-        if (!isEnabled) {
+        if (!settings.isEnabled) {
             Log.e(TAG, "Should never speak when audible is disabled");
             Exceptions.report(new IllegalStateException("MyAudible.speakNow should never speak when audible is disabled"));
         }
@@ -158,9 +155,10 @@ public class MyAudible implements BaseService {
      * Returns the text of what to say for the current measurement mode.
      * This function mostly just handles airplane mode checks.
      */
-    private @NonNull String getMeasurement() {
+    @NonNull
+    private String getMeasurement() {
         // First, check for airplane mode
-        if (preferenceQuiet && Services.flightComputer.flightMode == FlightMode.MODE_PLANE) {
+        if (settings.airplaneMode && Services.flightComputer.flightMode == FlightMode.MODE_PLANE) {
             // Announce every N seconds
             final long delta = System.currentTimeMillis() - airplaneAnnounceTime;
             if (AIRPLANE_ANNOUNCE_INTERVAL < delta) {
@@ -181,26 +179,27 @@ public class MyAudible implements BaseService {
     /**
      * Get the text of what to say for the current measurement value
      */
-    private @NonNull String getMeasurementSample() {
-        final AudibleSample sample = AudibleSettings.mode.currentSample(AudibleSettings.precision);
+    @NonNull
+    private String getMeasurementSample() {
+        final AudibleSample sample = settings.mode.currentSample(settings.precision);
         // Check for fresh signal (not applicable to vertical speed)
-        if (AudibleSettings.mode.id.equals("vertical_speed") || goodGpsFix()) {
+        if (settings.mode.id.equals("vertical_speed") || goodGpsFix()) {
             // Check for real valued sample
             if (Numbers.isReal(sample.value)) {
-                if (sample.value < AudibleSettings.min) {
+                if (sample.value < settings.min) {
                     if (boundaryState != STATE_MIN) {
                         boundaryState = STATE_MIN;
                         return "min";
                     } else {
-                        Log.i(TAG, "Not speaking: min, mode = " + AudibleSettings.mode.id + " sample = " + sample);
+                        Log.i(TAG, "Not speaking: min, mode = " + settings.mode.id + " sample = " + sample);
                         return "";
                     }
-                } else if (AudibleSettings.max < sample.value) {
+                } else if (settings.max < sample.value) {
                     if (boundaryState != STATE_MAX) {
                         boundaryState = STATE_MAX;
                         return "max";
                     } else {
-                        Log.i(TAG, "Not speaking: max, mode = " + AudibleSettings.mode.id + " sample = " + sample);
+                        Log.i(TAG, "Not speaking: max, mode = " + settings.mode.id + " sample = " + sample);
                         return "";
                     }
                 } else {
@@ -208,17 +207,13 @@ public class MyAudible implements BaseService {
                     return sample.phrase;
                 }
             } else {
-                Log.w(TAG, "Not speaking: no signal, mode = " + AudibleSettings.mode.id + " sample = " + sample);
+                Log.w(TAG, "Not speaking: no signal, mode = " + settings.mode.id + " sample = " + sample);
                 return "";
             }
         } else {
-            Log.w(TAG, "Not speaking: stale signal, mode = " + AudibleSettings.mode.id + " sample = " + sample);
+            Log.w(TAG, "Not speaking: stale signal, mode = " + settings.mode.id + " sample = " + sample);
             return "";
         }
-    }
-
-    public boolean isEnabled() {
-        return isEnabled;
     }
 
     /**
@@ -240,7 +235,10 @@ public class MyAudible implements BaseService {
         }
         return gpsFix;
     }
-    /** True iff the last measurement was a good fix */
+
+    /**
+     * True iff the last measurement was a good fix
+     */
     private boolean gpsFix = false;
 
     /**
@@ -249,7 +247,7 @@ public class MyAudible implements BaseService {
     @Override
     public void stop() {
         if (isInitialized) {
-            if (isEnabled) {
+            if (settings.isEnabled) {
                 disableAudible();
             }
             audibleThread = null;

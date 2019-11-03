@@ -3,8 +3,8 @@ package com.platypii.baseline.audible.modes;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.audible.AudibleMode;
 import com.platypii.baseline.audible.AudibleSample;
-import com.platypii.baseline.audible.AudibleSettings;
 import com.platypii.baseline.util.Convert;
+
 import androidx.annotation.NonNull;
 
 public class GlideRatioMode extends AudibleMode {
@@ -20,7 +20,7 @@ public class GlideRatioMode extends AudibleMode {
     public @NonNull
     AudibleSample currentSample(int precision) {
         final double glideRatio = Services.location.glideRatio();
-        String glideRatioString = Convert.glide(Services.location.groundSpeed(), Services.alti.climb, AudibleSettings.precision, false);
+        String glideRatioString = Convert.glide(Services.location.groundSpeed(), Services.alti.climb, precision, false);
         if (glideRatioString.equals(Convert.GLIDE_STATIONARY)) {
             if (stationary) {
                 // Only say stationary once

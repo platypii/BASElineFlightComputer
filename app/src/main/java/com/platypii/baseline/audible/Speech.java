@@ -1,5 +1,7 @@
 package com.platypii.baseline.audible;
 
+import com.platypii.baseline.Services;
+
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -27,7 +29,7 @@ class Speech implements TextToSpeech.OnInitListener {
         if (text != null && text.length() > 0) {
             if (isReady) {
                 Log.i(TAG, "Saying: " + text);
-                tts.setSpeechRate(AudibleSettings.speechRate);
+                tts.setSpeechRate(Services.audible.settings.speechRate);
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
             } else {
                 Log.e(TAG, "Speech not ready. Discarding message: " + text);
@@ -39,7 +41,7 @@ class Speech implements TextToSpeech.OnInitListener {
         if (text != null && text.length() > 0) {
             if (isReady) {
                 Log.i(TAG, "Saying when ready: " + text);
-                tts.setSpeechRate(AudibleSettings.speechRate);
+                tts.setSpeechRate(Services.audible.settings.speechRate);
                 tts.speak(text, TextToSpeech.QUEUE_ADD, null);
             } else {
                 Log.i(TAG, "Speech not ready. Queueing message: " + text);

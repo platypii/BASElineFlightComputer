@@ -212,16 +212,16 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
                 Log.e(TAG, "Failed to write to track file " + trackFile, e);
                 Exceptions.report(e);
             }
-        } else if (!line.contains(",gps,")) {
-            // TODO: Figure out why gps sometimes does this
-            Exceptions.report(new IllegalStateException("Attempted to log after closing file: " + line));
+        } else {
+            // TODO: Figure out why gps and sensors sometimes do this
+            Log.e(TAG, "Attempted to log after closing file: " + line);
         }
     }
 
     @Override
     public void stop() {
         if (logging) {
-            Log.e(TAG, "TrackLogger.stop() called, but still logging");
+            Log.w(TAG, "TrackLogger.stop() called, but still logging");
         }
     }
 

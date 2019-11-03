@@ -2,6 +2,7 @@ package com.platypii.baseline.jarvis;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
+
 import android.os.Handler;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -116,7 +117,7 @@ public class AutoStop {
         // If audible enabled, say landing detected
         if (preferenceEnabled) {
             // If audible enabled, disable
-            if (Services.audible.isEnabled()) {
+            if (Services.audible.settings.isEnabled) {
                 Services.audible.disableAudible();
             }
             // If logging enabled, disable

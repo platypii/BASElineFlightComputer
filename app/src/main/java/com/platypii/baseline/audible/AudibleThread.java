@@ -1,6 +1,7 @@
 package com.platypii.baseline.audible;
 
 import com.platypii.baseline.Services;
+
 import android.os.Handler;
 import android.util.Log;
 
@@ -18,7 +19,7 @@ class AudibleThread {
         @Override
         public void run() {
             Services.audible.speak();
-            final int delay = (int) (AudibleSettings.speechInterval * 1000);
+            final int delay = (int) (Services.audible.settings.speechInterval * 1000);
             handler.postDelayed(this, delay);
         }
     };
@@ -26,7 +27,7 @@ class AudibleThread {
     public void start() {
         if (!isRunning) {
             Log.i(TAG, "Starting audible");
-            final int delay = (int) (AudibleSettings.speechInterval * 1000);
+            final int delay = (int) (Services.audible.settings.speechInterval * 1000);
             handler.postDelayed(audibleThread, delay);
             // handler.post(audibleThread);
             isRunning = true;

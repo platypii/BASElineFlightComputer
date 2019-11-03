@@ -343,6 +343,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // $PMTKTSX1,181512,0.000,0.293,44.717,4af30000,-3.324382,0.000099,-0.000850,-0.207713,0.386944*40
             case "TKVER":
                 // $PMTKVER,AXN_3.70,1312,MNL_VER_16092901ALPS05_3.70_20,df54,116,MNLfn_ver,03,HAL_ver,0.2,MNLD_ver,0.4*62
+            case "TI":
+                // Samsung S10e
+                // $PSTI,001,0*1F
             case "TIS":
                 // Samsung Note7
                 // $PSTIS,*61
