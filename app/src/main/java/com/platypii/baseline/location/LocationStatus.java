@@ -4,6 +4,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothState;
 import com.platypii.baseline.util.StringBuilderUtil;
+
 import android.util.Log;
 
 /**

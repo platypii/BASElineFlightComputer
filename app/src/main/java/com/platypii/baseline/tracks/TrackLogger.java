@@ -11,6 +11,7 @@ import com.platypii.baseline.sensors.MySensorListener;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.util.StringBuilderUtil;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -199,6 +200,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
 
     /**
      * Write a measurement to the track file
+     *
      * @param line the measurement to store
      */
     private synchronized void logLine(@NonNull String line) {

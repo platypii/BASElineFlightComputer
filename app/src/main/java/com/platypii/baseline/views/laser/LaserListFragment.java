@@ -6,6 +6,7 @@ import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
+
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;

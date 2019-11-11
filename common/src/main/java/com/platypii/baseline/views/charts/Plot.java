@@ -4,6 +4,7 @@ import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.util.IntBounds;
 import com.platypii.baseline.views.charts.layers.ChartLayer;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -90,6 +91,7 @@ public class Plot {
 
     /**
      * Draws a point (input given in plot-space)
+     *
      * @param radius the width of the path
      */
     public void drawPoint(int axis, double x, double y, float radius) {
@@ -116,6 +118,7 @@ public class Plot {
 
     /**
      * Draws a series of points (input given in plot-space)
+     *
      * @param series the data series to draw
      * @param radius the width of the path
      */
@@ -146,6 +149,7 @@ public class Plot {
 
     /**
      * Returns a path representing the data
+     *
      * @param series the data series to draw
      */
     @NonNull
@@ -210,6 +214,7 @@ public class Plot {
         final double ppm_x = (width - padding.right - padding.left) / (bounds[axis].x.max - bounds[axis].x.min); // pixels per meter
         return (float) (padding.left + (x - bounds[axis].x.min) * ppm_x);
     }
+
     public float getX(double x) {
         return getX(0, x);
     }
@@ -231,6 +236,7 @@ public class Plot {
         final double ppm_y = (height - padding.bottom - padding.top) / (bounds[axis].y.max - bounds[axis].y.min); // pixels per meter
         return (float) (height - padding.bottom - (y - bounds[axis].y.min) * ppm_y);
     }
+
     public float getY(double y) {
         return getY(0, y);
     }

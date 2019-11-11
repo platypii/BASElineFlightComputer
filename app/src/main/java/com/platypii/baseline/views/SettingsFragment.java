@@ -8,6 +8,7 @@ import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.bluetooth.BluetoothActivity;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -162,11 +163,13 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         EventBus.getDefault().register(this);
         updateViews();
     }
+
     @Override
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAuthEvent(AuthState event) {
         updateViews();

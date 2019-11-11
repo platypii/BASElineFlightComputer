@@ -2,6 +2,7 @@ package com.platypii.baseline.util;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,8 +16,10 @@ public class MD5 {
     private static final String TAG = "MD5";
 
     /**
-     * Compute MD5 hash of a file
+     * Compute MD5 hash of a file.
+     * Does not throw exceptions, just returns null.
      */
+    @Nullable
     public static String md5(@NonNull File file) {
         try {
             final MessageDigest md = MessageDigest.getInstance("MD5");

@@ -1,6 +1,8 @@
 package com.platypii.baseline.location;
 
 import com.platypii.baseline.measurements.LatLngAlt;
+
+import androidx.annotation.Nullable;
 import java.text.ParseException;
 import org.junit.Test;
 
@@ -64,6 +66,7 @@ public class GeocoderTest {
         }
     }
 
+    @Nullable
     private String error(String str) {
         try {
             Geocoder.parse(str);

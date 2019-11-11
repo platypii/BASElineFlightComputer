@@ -4,6 +4,7 @@ import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
+
 import android.content.Context;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
@@ -41,6 +42,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
 
     /**
      * Start location updates
+     *
      * @param context The Application context
      */
     @Override
@@ -119,14 +121,21 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
                     hAcc, pdop, hdop, vdop, satellitesUsed, satellitesInView));
         }
     }
+
     @Override
-    public void onProviderDisabled(String provider) {}
+    public void onProviderDisabled(String provider) {
+    }
+
     @Override
-    public void onProviderEnabled(String provider) {}
+    public void onProviderEnabled(String provider) {
+    }
+
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
 
     private GpsStatus gpsStatus;
+
     @Override
     public void onGpsStatusChanged(int event) {
         switch (event) {

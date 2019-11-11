@@ -1,6 +1,7 @@
 package com.platypii.baseline.events;
 
 import com.platypii.baseline.measurements.MLocation;
+
 import androidx.annotation.Nullable;
 
 /**

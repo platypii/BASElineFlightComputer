@@ -222,7 +222,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLaserMeasure(LaserMeasurement meas) {
+    public void onLaserMeasure(@NonNull LaserMeasurement meas) {
         // Parse lasers
         final boolean metric = isMetric();
         final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), metric);

@@ -20,6 +20,7 @@ public class SyncedList<T> implements Iterable<T> {
 
     /**
      * Adds a new value to the end of the list
+     *
      * @param value the new value to add
      */
     public void append(T value) {
@@ -65,6 +66,7 @@ public class SyncedList<T> implements Iterable<T> {
 
     /**
      * Returns the number of elements in this list
+     *
      * @return the number of elements in this list
      */
     public int size() {

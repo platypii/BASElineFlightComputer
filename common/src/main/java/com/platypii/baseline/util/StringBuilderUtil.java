@@ -7,7 +7,7 @@ public class StringBuilderUtil {
     /**
      * Acts like StringBuilder.append(String.format("%.2f", x)) but avoids allocating any memory.
      */
-    public static void format2f(StringBuilder sb, float x) {
+    public static void format2f(@NonNull StringBuilder sb, float x) {
         final int x100 = Math.round(x * 100);
         final int whole = x100 / 100;
         final int tenths = x100 / 10 % 10;
@@ -18,7 +18,7 @@ public class StringBuilderUtil {
         sb.append(hundredths);
     }
 
-    public static void format3f(StringBuilder sb, double x) {
+    public static void format3f(@NonNull StringBuilder sb, double x) {
         final long x1000 = Math.round(x * 1000);
         final long whole = x1000 / 1000;
         final long tenths = x1000 / 100 % 10;

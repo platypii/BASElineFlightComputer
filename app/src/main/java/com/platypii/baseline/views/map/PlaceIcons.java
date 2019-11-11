@@ -1,10 +1,11 @@
 package com.platypii.baseline.views.map;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.places.Place;
+
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.platypii.baseline.places.Place;
 
 public class PlaceIcons {
 
@@ -17,14 +18,20 @@ public class PlaceIcons {
     private static final BitmapDescriptor other = BitmapDescriptorFactory.fromResource(R.drawable.ic_pin);
 
     @NonNull
-    public static BitmapDescriptor icon(Place place) {
+    public static BitmapDescriptor icon(@NonNull Place place) {
         switch (place.objectType) {
-            case "B": return b;
-            case "A": return a;
-            case "S": return s;
-            case "E": return place.wingsuitable ? ws : e;
-            case "DZ": return dz;
-            default: return other;
+            case "B":
+                return b;
+            case "A":
+                return a;
+            case "S":
+                return s;
+            case "E":
+                return place.wingsuitable ? ws : e;
+            case "DZ":
+                return dz;
+            default:
+                return other;
         }
     }
 

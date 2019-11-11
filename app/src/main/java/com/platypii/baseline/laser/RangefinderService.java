@@ -3,6 +3,7 @@ package com.platypii.baseline.laser;
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.util.Exceptions;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,7 +31,9 @@ public class RangefinderService implements BaseService {
     // Bluetooth state
     private int bluetoothState = BT_STOPPED;
     private BluetoothAdapter bluetoothAdapter;
+    @Nullable
     private RangefinderRunnable bluetoothRunnable;
+    @Nullable
     private Thread bluetoothThread;
 
     @Override
@@ -102,7 +106,7 @@ public class RangefinderService implements BaseService {
     public synchronized void stop() {
         Log.i(TAG, "Stopping rangefinder service");
         // Stop thread
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bluetoothRunnable != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bluetoothRunnable != null && bluetoothThread != null) {
             bluetoothRunnable.stop();
             try {
                 bluetoothThread.join(1000);

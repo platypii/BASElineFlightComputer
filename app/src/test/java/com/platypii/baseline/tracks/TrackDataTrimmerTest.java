@@ -1,6 +1,8 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.measurements.MLocation;
+
+import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -19,7 +21,7 @@ public class TrackDataTrimmerTest {
         assertEquals(200, trimmed.size());
     }
 
-    private void addPoints(List<MLocation> list, double climb, int count) {
+    private void addPoints(@NonNull List<MLocation> list, double climb, int count) {
         for (int i = 0; i < count; i++) {
             list.add(new MLocation(0L, 0.0, 1.0, 2.0, climb, 0.0, 0.0, 0f, 0f, 0f, 0f, 0, 0));
         }

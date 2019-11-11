@@ -3,6 +3,7 @@ package com.platypii.baseline.views.altimeter;
 import com.platypii.baseline.common.R;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
+
 import android.content.Context;
 import android.graphics.BlurMaskFilter;
 import android.graphics.BlurMaskFilter.Blur;
@@ -117,8 +118,8 @@ public class AnalogAltimeter extends View {
         int major_i = 0;
         for (double theta = 0; theta < 2 * Math.PI; theta += options.major_angle) {
             double r = radius * 0.86;
-            float x = (float)(center_x + r * Math.sin(theta));
-            float y = (float)(center_y - r * Math.cos(theta)) + 9 * scale_factor;
+            float x = (float) (center_x + r * Math.sin(theta));
+            float y = (float) (center_y - r * Math.cos(theta)) + 9 * scale_factor;
             canvas.drawText(Integer.toString(major_i), x, y, paint);
             major_i++;
         }
@@ -135,10 +136,10 @@ public class AnalogAltimeter extends View {
         for (double theta = 0; theta < 2 * Math.PI; theta += options.major_angle) {
             final double r1 = radius * 0.60;
             final double r2 = radius * 0.75;
-            final float x1 = (float)(center_x + r1 * Math.sin(theta));
-            final float y1 = (float)(center_y - r1 * Math.cos(theta));
-            final float x2 = (float)(center_x + r2 * Math.sin(theta));
-            final float y2 = (float)(center_y - r2 * Math.cos(theta));
+            final float x1 = (float) (center_x + r1 * Math.sin(theta));
+            final float y1 = (float) (center_y - r1 * Math.cos(theta));
+            final float x2 = (float) (center_x + r2 * Math.sin(theta));
+            final float y2 = (float) (center_y - r2 * Math.cos(theta));
             canvas.drawLine(x1, y1, x2, y2, paint);
         }
 
@@ -147,10 +148,10 @@ public class AnalogAltimeter extends View {
         for (double theta = options.major_angle / 2; theta < 2 * Math.PI; theta += options.major_angle) {
             final double r1 = radius * 0.65;
             final double r2 = radius * 0.71;
-            final float x1 = (float)(center_x + r1 * Math.sin(theta));
-            final float y1 = (float)(center_y - r1 * Math.cos(theta));
-            final float x2 = (float)(center_x + r2 * Math.sin(theta));
-            final float y2 = (float)(center_y - r2 * Math.cos(theta));
+            final float x1 = (float) (center_x + r1 * Math.sin(theta));
+            final float y1 = (float) (center_y - r1 * Math.cos(theta));
+            final float x2 = (float) (center_x + r2 * Math.sin(theta));
+            final float y2 = (float) (center_y - r2 * Math.cos(theta));
             canvas.drawLine(x1, y1, x2, y2, paint);
         }
 
@@ -159,10 +160,10 @@ public class AnalogAltimeter extends View {
         for (double theta = options.major_angle / 4; theta < 2 * Math.PI; theta += options.major_angle / 2) {
             final double r1 = radius * 0.65;
             final double r2 = radius * 0.68;
-            final float x1 = (float)(center_x + r1 * Math.sin(theta));
-            final float y1 = (float)(center_y - r1 * Math.cos(theta));
-            final float x2 = (float)(center_x + r2 * Math.sin(theta));
-            final float y2 = (float)(center_y - r2 * Math.cos(theta));
+            final float x1 = (float) (center_x + r1 * Math.sin(theta));
+            final float y1 = (float) (center_y - r1 * Math.cos(theta));
+            final float x2 = (float) (center_x + r2 * Math.sin(theta));
+            final float y2 = (float) (center_y - r2 * Math.cos(theta));
             canvas.drawLine(x1, y1, x2, y2, paint);
         }
 
@@ -208,7 +209,8 @@ public class AnalogAltimeter extends View {
         }
     }
 
-    @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int originalWidth = MeasureSpec.getSize(widthMeasureSpec);
         final int originalHeight = MeasureSpec.getSize(heightMeasureSpec);
         int finalWidth, finalHeight;

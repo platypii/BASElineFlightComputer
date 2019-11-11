@@ -3,6 +3,7 @@ package com.platypii.baseline.places;
 import com.platypii.baseline.location.Geo;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.List;

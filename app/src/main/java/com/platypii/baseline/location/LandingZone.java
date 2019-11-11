@@ -3,6 +3,7 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -24,6 +25,7 @@ public class LandingZone {
     /**
      * Computes the estimated landing location based on current location and velocity
      */
+    @Nullable
     public static LatLng getLandingLocation() {
         // Compute time to ground
         final double timeToGround = timeToGround();

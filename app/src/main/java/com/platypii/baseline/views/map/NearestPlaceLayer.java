@@ -2,6 +2,8 @@ package com.platypii.baseline.views.map;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.places.Place;
+
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -11,7 +13,7 @@ class NearestPlaceLayer implements MapLayer {
 
     private final Marker placeMarker;
 
-    NearestPlaceLayer(GoogleMap map) {
+    NearestPlaceLayer(@NonNull GoogleMap map) {
         placeMarker = map.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))
                 .visible(false)

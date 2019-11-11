@@ -2,6 +2,7 @@ package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.places.Place;
 import com.platypii.baseline.tracks.TrackFiles;
+
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

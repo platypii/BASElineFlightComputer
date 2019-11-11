@@ -8,6 +8,7 @@ import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.laser.LaserProfile;
+
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;

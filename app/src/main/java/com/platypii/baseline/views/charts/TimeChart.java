@@ -3,6 +3,7 @@ package com.platypii.baseline.views.charts;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
+
 import android.content.Context;
 import android.graphics.Paint;
 import android.util.AttributeSet;

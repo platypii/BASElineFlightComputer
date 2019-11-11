@@ -4,6 +4,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.util.Exceptions;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -200,7 +201,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
     }
 
-    private void onSignInComplete(Task<GoogleSignInAccount> task) {
+    private void onSignInComplete(@NonNull Task<GoogleSignInAccount> task) {
         try {
             account = task.getResult(ApiException.class);
             onSignInSuccess();
@@ -209,6 +210,7 @@ public abstract class BaseActivity extends FragmentActivity {
         }
         userClickedSignIn = false;
     }
+
     private void onSignInSuccess() {
         // Signed in successfully, show authenticated UI.
         if (account != null) {
@@ -222,6 +224,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
         // Notify listeners
     }
+
     private void onSignInFailure(@NonNull ApiException e) {
         if (e.getStatusCode() == CommonStatusCodes.NETWORK_ERROR) {
             // Don't sign out for network errors, base jumpers often have poor signal

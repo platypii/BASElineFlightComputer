@@ -19,8 +19,7 @@ public class BluetoothPreferences {
     @Nullable
     public String preferenceDeviceName = null;
 
-    public void load(@NonNull Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    public void load(@NonNull SharedPreferences prefs) {
         preferenceEnabled = prefs.getBoolean(PREF_BT_ENABLED, preferenceEnabled);
         preferenceDeviceId = prefs.getString(PREF_BT_DEVICE_ID, preferenceDeviceId);
         preferenceDeviceName = prefs.getString(PREF_BT_DEVICE_NAME, preferenceDeviceName);

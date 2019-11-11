@@ -4,6 +4,7 @@ import com.platypii.baseline.BaseService;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.RefreshRateEstimator;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -33,6 +34,7 @@ public abstract class LocationProvider implements BaseService {
 
     /**
      * Start location updates
+     *
      * @param context The Application context
      */
     @Override

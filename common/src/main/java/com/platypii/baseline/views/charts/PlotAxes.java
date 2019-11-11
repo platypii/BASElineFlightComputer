@@ -3,6 +3,7 @@ package com.platypii.baseline.views.charts;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.IntBounds;
 import com.platypii.baseline.util.Numbers;
+
 import android.graphics.Paint;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -42,6 +43,7 @@ class PlotAxes {
      * Default behavior is to draw grid lines for the nearest order of magnitude along the axis
      */
     private static final int MAX_LINES = 80;
+
     private void drawXlines(@NonNull Bounds realBounds) {
         final int magnitude_x = (int) Math.log10((realBounds.x.max - realBounds.x.min) / plot.options.axis.x.major_units);
         final double step_x = plot.options.axis.x.major_units * Numbers.pow(10, magnitude_x);
@@ -65,6 +67,7 @@ class PlotAxes {
             }
         }
     }
+
     private void drawYlines(@NonNull Bounds realBounds) {
         final int magnitude_y = (int) Math.log10((realBounds.y.max - realBounds.y.min) / plot.options.axis.y.major_units);
         final double step_y = plot.options.axis.y.major_units * Numbers.pow(10, magnitude_y); // grid spacing in plot-space
@@ -105,6 +108,7 @@ class PlotAxes {
             plot.canvas.drawText(label, sx + 2 * plot.options.density, 14 * plot.options.density, plot.text);
         }
     }
+
     /**
      * Draws a Y grid line (horizontal)
      */
@@ -139,6 +143,7 @@ class PlotAxes {
 
     // Returns the bounds in plot-space, including padding
     private final Bounds realBounds = new Bounds();
+
     @NonNull
     private Bounds getRealBounds() {
         final IntBounds padding = plot.options.padding;

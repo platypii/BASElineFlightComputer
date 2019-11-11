@@ -2,6 +2,7 @@ package com.platypii.baseline.views.charts.layers;
 
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.views.charts.Plot;
+
 import android.graphics.Paint;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

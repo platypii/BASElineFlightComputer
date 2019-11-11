@@ -6,6 +6,7 @@ import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.cloud.tracks.TrackUploadTask;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.tracks.TrackFile;
+
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;

@@ -12,9 +12,11 @@ public abstract class LaserListItem {
 
     public static class ListHeader extends LaserListItem {
         final String name;
+
         ListHeader(String name) {
             this.name = name;
         }
+
         @Override
         public int getType() {
             return TYPE_HEADER;
@@ -23,9 +25,11 @@ public abstract class LaserListItem {
 
     public static class ListLaser extends LaserListItem {
         public final LaserProfile laser;
+
         ListLaser(LaserProfile laser) {
             this.laser = laser;
         }
+
         @Override
         public int getType() {
             return TYPE_LASER;

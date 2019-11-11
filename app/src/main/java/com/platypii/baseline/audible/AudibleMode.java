@@ -36,6 +36,7 @@ public abstract class AudibleMode {
     public String minimumTitle() {
         return "Minimum " + unitsName;
     }
+
     @NonNull
     public String maximumTitle() {
         return "Maximum " + unitsName;

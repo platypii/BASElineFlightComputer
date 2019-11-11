@@ -1,6 +1,7 @@
 package com.platypii.baseline.measurements;
 
 import com.platypii.baseline.util.Numbers;
+
 import androidx.annotation.NonNull;
 
 /**
@@ -17,9 +18,11 @@ public class MAccel extends MSensor {
     public float x() {
         return acc;
     }
+
     public float y() {
         return Float.NaN;
     }
+
     public float z() {
         return Float.NaN;
     }

@@ -1,6 +1,7 @@
 package com.platypii.baseline.cloud.cache;
 
 import com.platypii.baseline.laser.LaserProfile;
+
 import androidx.annotation.NonNull;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;

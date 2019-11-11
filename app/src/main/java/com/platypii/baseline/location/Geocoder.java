@@ -2,6 +2,7 @@ package com.platypii.baseline.location;
 
 import com.platypii.baseline.measurements.LatLngAlt;
 import com.platypii.baseline.util.Numbers;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.text.ParseException;

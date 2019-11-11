@@ -14,9 +14,11 @@ public abstract class TrackListItem {
 
     public static class ListHeader extends TrackListItem {
         final String name;
+
         ListHeader(String name) {
             this.name = name;
         }
+
         @Override
         public int getType() {
             return TYPE_HEADER;
@@ -25,9 +27,11 @@ public abstract class TrackListItem {
 
     public static class ListTrackFile extends TrackListItem {
         public final TrackFile track;
+
         ListTrackFile(TrackFile track) {
             this.track = track;
         }
+
         @Override
         public int getType() {
             return TYPE_TRACK_LOCAL;
@@ -36,9 +40,11 @@ public abstract class TrackListItem {
 
     public static class ListTrackData extends TrackListItem {
         public final CloudData track;
+
         ListTrackData(CloudData track) {
             this.track = track;
         }
+
         @Override
         public int getType() {
             return TYPE_TRACK_REMOTE;

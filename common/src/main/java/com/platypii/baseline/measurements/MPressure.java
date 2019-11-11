@@ -1,6 +1,7 @@
 package com.platypii.baseline.measurements;
 
 import com.platypii.baseline.util.Numbers;
+
 import androidx.annotation.NonNull;
 import java.util.Locale;
 

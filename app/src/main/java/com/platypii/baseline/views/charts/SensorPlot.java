@@ -5,6 +5,7 @@ import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.util.SyncedList;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ public class SensorPlot extends PlotSurface {
 
     /**
      * Load a list of sensor readings into the plot
+     *
      * @param history A list of sensor measurements
      */
     public void loadHistory(SyncedList<MSensor> history) {

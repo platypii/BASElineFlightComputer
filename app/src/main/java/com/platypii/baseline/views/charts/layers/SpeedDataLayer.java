@@ -4,6 +4,7 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.views.charts.Plot;
+
 import android.graphics.Paint;
 import androidx.annotation.NonNull;
 

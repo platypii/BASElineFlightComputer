@@ -44,7 +44,7 @@ public class TrackAbbrv {
         } catch (IOException e) {
             Log.e(TAG, "Error abbreviated track data from " + trackFileGz + " to " + abbrvFile, e);
         }
-        Log.i(TAG, "Abbreviated track " + (trackFileGz.length()>>10) + "kb -> " + (abbrvFile.length()>>10) + "kb in " + (System.currentTimeMillis() - startTime) + "ms");
+        Log.i(TAG, "Abbreviated track " + (trackFileGz.length() >> 10) + "kb -> " + (abbrvFile.length() >> 10) + "kb in " + (System.currentTimeMillis() - startTime) + "ms");
     }
 
 }

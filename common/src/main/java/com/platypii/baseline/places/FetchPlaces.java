@@ -3,6 +3,7 @@ package com.platypii.baseline.places;
 import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.AuthToken;
 import com.platypii.baseline.util.IOUtil;
+
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -35,7 +36,8 @@ class FetchPlaces {
         conn.setRequestProperty("Accept-Encoding", "gzip");
         try {
             conn.setRequestProperty("Authorization", AuthToken.getAuthToken(context));
-        } catch (AuthException ignored) {}
+        } catch (AuthException ignored) {
+        }
 //        conn.setRequestProperty("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME); // Doesn't work in common lib
         // Send If-Modified-Since header to help with caching
         if (placeFile.exists()) {
@@ -51,7 +53,7 @@ class FetchPlaces {
                 // Read body to place file
                 final OutputStream os = new FileOutputStream(placeFile);
                 IOUtil.copy(conn.getInputStream(), os);
-                Log.i(TAG, "Places downloaded to file " + placeFile + " (" + (placeFile.length()>>10) + " KiB)");
+                Log.i(TAG, "Places downloaded to file " + placeFile + " (" + (placeFile.length() >> 10) + " KiB)");
             } else if (status == 304) {
                 Log.e(TAG, "Places file not modified");
             } else {
@@ -64,6 +66,7 @@ class FetchPlaces {
 
     /**
      * Formats a Date as an http compatible date string (rfc 2616)
+     *
      * @param millis milliseconds since the epoch
      */
     private static String httpDateString(long millis) {

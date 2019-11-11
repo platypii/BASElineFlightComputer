@@ -1,6 +1,7 @@
 package com.platypii.baseline.cloud.cache;
 
 import com.platypii.baseline.util.Exceptions;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -16,6 +17,7 @@ import java.util.List;
  * Represents a local cache of a REST object store in the cloud.
  * Stored in shared preferences as JSON.
  * Also manages request TTL.
+ *
  * @param <T> the java type of the items
  */
 public abstract class LocalCache<T> {

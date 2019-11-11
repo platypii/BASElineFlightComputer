@@ -11,6 +11,7 @@ import com.platypii.baseline.events.SyncEvent;
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,6 +23,7 @@ public class Tracks implements BaseService {
     private static final String TAG = "Tracks";
 
     public final TrackCache cache = new TrackCache();
+    @Nullable
     private Context context;
 
     @Override
@@ -34,8 +36,8 @@ public class Tracks implements BaseService {
     /**
      * Query baseline server for track listing asynchronously
      */
-    public void listAsync(@NonNull Context context, boolean force) {
-        if (force || cache.shouldRequest()) {
+    public void listAsync(@Nullable Context context, boolean force) {
+        if (context != null && (force || cache.shouldRequest())) {
             cache.request();
             final TrackApi trackApi = RetrofitClient.getRetrofit(context).create(TrackApi.class);
             Log.i(TAG, "Listing tracks");

@@ -10,15 +10,18 @@ import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.SyncedList;
 import com.platypii.baseline.views.charts.layers.EllipseLayer;
+
 import android.content.Context;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class SpeedChartLive extends PlotSurface implements MyLocationListener {
 
     private static final int AXIS_SPEED = 0;
+    @NonNull
     private final EllipseLayer ellipses;
     private final Bounds inner = new Bounds();
     private final Bounds outer = new Bounds();
@@ -27,7 +30,9 @@ public class SpeedChartLive extends PlotSurface implements MyLocationListener {
     private static final long window = 15000; // The size of the view window, in milliseconds
     private final SyncedList<MLocation> history = new SyncedList<>();
 
+    @Nullable
     private LocationProvider locationService = null;
+    @Nullable
     private MyAltimeter altimeter = null;
 
     public SpeedChartLive(Context context, AttributeSet attrs) {
@@ -140,7 +145,7 @@ public class SpeedChartLive extends PlotSurface implements MyLocationListener {
     }
 
     private void drawSpeedLines(@NonNull Plot plot, double vx, double vy) {
-        final double v = Math.sqrt(vx*vx + vy*vy);
+        final double v = Math.sqrt(vx * vx + vy * vy);
         final float sx = plot.getX(vx);
         final float sy = plot.getY(vy);
         final float cx = plot.getX(0);
@@ -165,7 +170,7 @@ public class SpeedChartLive extends PlotSurface implements MyLocationListener {
     }
 
     private void drawSpeedLabels(@NonNull Plot plot, double vx, double vy) {
-        final double v = Math.sqrt(vx*vx + vy*vy);
+        final double v = Math.sqrt(vx * vx + vy * vy);
         final float sx = plot.getX(vx);
         final float sy = plot.getY(vy);
         final float cx = plot.getX(0);
@@ -203,6 +208,7 @@ public class SpeedChartLive extends PlotSurface implements MyLocationListener {
 
     /**
      * Darken a color by linear scaling of each color * (factor / 256)
+     *
      * @param color argb color 0xff5000be
      * @param factor scale factor out of 256
      * @return darkened color
@@ -224,9 +230,12 @@ public class SpeedChartLive extends PlotSurface implements MyLocationListener {
         // Start listening for location updates
         locationService.addListener(this);
     }
+
     public void stop() {
         // Stop listening for location updates
-        locationService.removeListener(this);
+        if (locationService != null) {
+            locationService.removeListener(this);
+        }
     }
 
     @Override

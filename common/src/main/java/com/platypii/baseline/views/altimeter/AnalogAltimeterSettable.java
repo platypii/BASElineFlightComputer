@@ -5,6 +5,7 @@ import com.platypii.baseline.common.R;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
+
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -106,12 +107,15 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
         update();
     }
 
-    /** Listen for gestures */
+    /**
+     * Listen for gestures
+     */
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         gestures.onTouchEvent(event);
         return false;
     }
+
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         if (groundLevelMode == MODE_SET) {
@@ -124,14 +128,17 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
         }
         return true;
     }
+
     @Override
     public boolean onDown(MotionEvent e) {
         velocity = 0;
         return true;
     }
+
     private static final int SWIPE_MIN_DISTANCE = 50;
     private static final int SWIPE_THRESHOLD_VELOCITY = 100;
     private static final float DECELERATION = 6;
+
     @Override
     public boolean onFling(@NonNull MotionEvent e1, @NonNull MotionEvent e2, float velocityX, final float velocityY) {
         if (groundLevelMode == MODE_SET && Math.abs(e1.getY() - e2.getY()) > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
@@ -142,6 +149,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
         }
         return true;
     }
+
     private final Runnable flinger = new Runnable() {
         public void run() {
             if (groundLevelMode == MODE_SET) {
@@ -190,6 +198,7 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
         }
         altitudeOffset = 0;
     }
+
     private final Runnable reaper = () -> {
         if (groundLevelMode != MODE_ALTI) {
             setGroundLevelMode(MODE_ALTI);
@@ -199,7 +208,9 @@ public class AnalogAltimeterSettable extends AnalogAltimeter implements GestureD
     };
 
     @Override
-    public void onShowPress(MotionEvent e) {}
+    public void onShowPress(MotionEvent e) {
+    }
+
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
         return true;

@@ -1,6 +1,7 @@
 package com.platypii.baseline.sensors;
 
 import com.platypii.baseline.measurements.Measurement;
+
 import androidx.annotation.NonNull;
 
 /**

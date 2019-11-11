@@ -1,6 +1,7 @@
 package com.platypii.baseline.measurements;
 
 import com.platypii.baseline.util.Numbers;
+
 import androidx.annotation.NonNull;
 
 /**
@@ -19,9 +20,11 @@ public class MRotation extends MSensor {
     public float x() {
         return rotX;
     }
+
     public float y() {
         return rotY;
     }
+
     public float z() {
         return rotZ;
     }

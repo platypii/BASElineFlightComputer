@@ -1,5 +1,12 @@
 package com.platypii.baseline.views.charts;
 
+import com.platypii.baseline.R;
+import com.platypii.baseline.events.ChartFocusEvent;
+import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.tracks.TrackStats;
+import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.views.tracks.TrackDataActivity;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,12 +17,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.platypii.baseline.R;
-import com.platypii.baseline.events.ChartFocusEvent;
-import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.tracks.TrackStats;
-import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.views.tracks.TrackDataActivity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;

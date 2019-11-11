@@ -1,6 +1,7 @@
 package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.common.R;
+
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -23,7 +24,8 @@ public class AuthToken {
     /**
      * Get google auth token. Blocking!
      */
-    public static @NonNull String getAuthToken(@NonNull Context context) throws AuthException {
+    @NonNull
+    public static String getAuthToken(@NonNull Context context) throws AuthException {
         final long startTime = System.currentTimeMillis();
         final GoogleSignInClient signInClient = getClient(context);
         final Task<GoogleSignInAccount> futureAccount = signInClient.silentSignIn();
@@ -54,6 +56,7 @@ public class AuthToken {
         }
     }
 
+    @NonNull
     private static GoogleSignInClient getClient(@NonNull Context context) {
         // Prepare google sign options
         final String serverClientId = context.getString(R.string.server_client_id);

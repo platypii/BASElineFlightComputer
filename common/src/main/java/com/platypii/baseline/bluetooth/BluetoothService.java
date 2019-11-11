@@ -4,6 +4,7 @@ import com.platypii.baseline.BaseService;
 import com.platypii.baseline.common.R;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.util.Exceptions;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -46,6 +47,7 @@ public class BluetoothService implements BaseService {
     private BluetoothAdapter bluetoothAdapter;
     @Nullable
     private BluetoothRunnable bluetoothRunnable;
+    @Nullable
     private Thread bluetoothThread;
 
     // Bluetooth device battery level
@@ -90,6 +92,7 @@ public class BluetoothService implements BaseService {
 
     /**
      * Start the bluetooth service, and connect to gps receiver if selected
+     *
      * @return true iff bluetooth service started successfully
      */
     @Nullable
@@ -180,7 +183,7 @@ public class BluetoothService implements BaseService {
         if (bluetoothState != BT_STOPPED) {
             Log.i(TAG, "Stopping bluetooth service");
             // Stop thread
-            if (bluetoothRunnable != null) {
+            if (bluetoothRunnable != null && bluetoothThread != null) {
                 bluetoothRunnable.stop();
                 try {
                     bluetoothThread.join(1000);
@@ -225,6 +228,7 @@ public class BluetoothService implements BaseService {
     public void addNmeaListener(GpsStatus.NmeaListener nmeaListener) {
         listeners.add(nmeaListener);
     }
+
     public void removeNmeaListener(GpsStatus.NmeaListener nmeaListener) {
         listeners.remove(nmeaListener);
     }

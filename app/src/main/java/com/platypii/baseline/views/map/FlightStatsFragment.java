@@ -8,6 +8,7 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.PubSub;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;

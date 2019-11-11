@@ -3,6 +3,7 @@ package com.platypii.baseline.audible.modes;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.audible.AudibleSample;
 import com.platypii.baseline.util.Convert;
+
 import androidx.annotation.NonNull;
 
 public class HorizontalSpeedMode extends SpeedMode {

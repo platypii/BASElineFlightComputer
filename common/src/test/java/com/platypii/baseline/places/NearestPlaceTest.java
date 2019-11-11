@@ -2,6 +2,8 @@ package com.platypii.baseline.places;
 
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
+
+import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -28,6 +30,7 @@ public class NearestPlaceTest {
         assertEquals("Kpow (2 mi)", nearestPlace.getString(shelton));
     }
 
+    @NonNull
     private Places makePlaces() {
         List<Place> placeList = new ArrayList<>();
         placeList.add(kpow);

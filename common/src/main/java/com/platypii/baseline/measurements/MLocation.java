@@ -5,6 +5,7 @@ import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
+
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
@@ -108,7 +109,7 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
     }
 
     public double glideRatio() {
-        return - groundSpeed() / climb;
+        return -groundSpeed() / climb;
     }
 
     public double glideAngle() {
@@ -127,6 +128,7 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
     public double bearingTo(@NonNull MLocation dest) {
         return Geo.bearing(latitude, longitude, dest.latitude, dest.longitude);
     }
+
     public double bearingTo(@NonNull LatLng dest) {
         return Geo.bearing(latitude, longitude, dest.latitude, dest.longitude);
     }
@@ -134,6 +136,7 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
     public double distanceTo(@NonNull MLocation dest) {
         return Geo.distance(latitude, longitude, dest.latitude, dest.longitude);
     }
+
     public double distanceTo(@NonNull LatLng dest) {
         return Geo.distance(latitude, longitude, dest.latitude, dest.longitude);
     }

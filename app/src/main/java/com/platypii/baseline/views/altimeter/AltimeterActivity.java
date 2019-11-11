@@ -6,6 +6,7 @@ import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.SpeedChartLive;
+
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Window;
@@ -57,6 +58,7 @@ public class AltimeterActivity extends BaseActivity implements PubSub.Subscriber
         }
         updateFlightStats();
     }
+
     @Override
     protected void onPause() {
         super.onPause();

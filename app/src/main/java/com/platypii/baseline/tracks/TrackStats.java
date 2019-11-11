@@ -1,10 +1,11 @@
 package com.platypii.baseline.tracks;
 
-import androidx.annotation.Nullable;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Range;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.List;
 
 /**

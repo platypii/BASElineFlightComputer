@@ -5,6 +5,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

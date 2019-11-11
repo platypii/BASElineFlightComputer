@@ -8,11 +8,13 @@ public interface Filter {
 
     // Official altitude data
     double x(); // Meters AGL
+
     double v(); // Rate of climb m/s
     // public abstract double a(); // TODO: Vertical acceleration
 
     /**
      * Process a new measurement
+     *
      * @param z the measurement
      * @param dt the change in time since the last measurement. 0 for first reading.
      */

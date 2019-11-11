@@ -1,13 +1,12 @@
 package com.platypii.baseline.laser;
 
+import com.platypii.baseline.measurements.LatLngAlt;
+import com.platypii.baseline.places.Place;
+
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
-import com.platypii.baseline.measurements.LatLngAlt;
-import com.platypii.baseline.places.Place;
-import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Numbers;
 import java.util.List;
 
 public class LaserProfile {

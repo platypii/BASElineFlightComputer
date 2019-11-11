@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.map;
 
 import com.platypii.baseline.Services;
+
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -40,7 +41,7 @@ class MapOptions {
             return zooms[0];
         } else if (index < alts.length - 1) {
             // Linear interpolation
-            return zooms[index+1] - (float) ((alts[index+1] - altitude) * (zooms[index+1] - zooms[index]) / (alts[index+1] - alts[index]));
+            return zooms[index + 1] - (float) ((alts[index + 1] - altitude) * (zooms[index + 1] - zooms[index]) / (alts[index + 1] - alts[index]));
         } else {
             return zooms[alts.length - 1];
         }
@@ -48,6 +49,7 @@ class MapOptions {
 
     /**
      * Determine the zoom animation duration based on GPS refresh rate and MAX_DURATION
+     *
      * @return the zoom duration in milliseconds
      */
     static int zoomDuration() {

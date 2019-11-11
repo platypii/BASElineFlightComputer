@@ -6,6 +6,7 @@ import com.platypii.baseline.measurements.MGravity;
 import com.platypii.baseline.measurements.MRotation;
 import com.platypii.baseline.measurements.MSensor;
 import com.platypii.baseline.util.SyncedList;
+
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -64,9 +65,13 @@ public class MySensorManager implements SensorEventListener, BaseService {
         });
     }
 
-    /** SensorEventListener */
+    /**
+     * SensorEventListener
+     */
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
     @Override
     public void onSensorChanged(@NonNull SensorEvent event) {
         final long t = event.timestamp; // nano
@@ -77,7 +82,7 @@ public class MySensorManager implements SensorEventListener, BaseService {
         // Update sensor histories
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                measurement = new MAccel(t, (float) Math.sqrt(x*x + y*y + z*z));
+                measurement = new MAccel(t, (float) Math.sqrt(x * x + y * y + z * z));
                 break;
             case Sensor.TYPE_GRAVITY:
                 measurement = new MGravity(t, x, y, z);

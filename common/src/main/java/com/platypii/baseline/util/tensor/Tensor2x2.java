@@ -27,6 +27,7 @@ public class Tensor2x2 {
     /**
      * this plus mat -> output
      * Writes to an output tensor because we want to avoid allocating memory. Self is ok.
+     *
      * @param mat the matrix to dot against
      * @param output matrix to store the output (this okay)
      */
@@ -40,6 +41,7 @@ public class Tensor2x2 {
     /**
      * this dot mat -> output
      * Writes to an output tensor because we want to avoid allocating memory. Self is ok.
+     *
      * @param mat the matrix to dot against
      * @param output matrix to store the output (this okay)
      */
@@ -52,6 +54,7 @@ public class Tensor2x2 {
     /**
      * this dot mat -> output
      * Writes to an output tensor because we want to avoid allocating memory. Self is ok.
+     *
      * @param mat the matrix to dot against
      * @param output matrix to store the output (this okay)
      */
@@ -69,6 +72,7 @@ public class Tensor2x2 {
     /**
      * this dot mat^T -> output
      * Writes to an output tensor because we want to avoid allocating memory. Self is ok.
+     *
      * @param mat the matrix to dot against
      * @param output matrix to store the output (this okay)
      */

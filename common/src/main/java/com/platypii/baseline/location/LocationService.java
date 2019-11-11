@@ -3,6 +3,7 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.measurements.MLocation;
+
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -53,6 +54,7 @@ public class LocationService extends LocationProvider {
     };
     private final MyLocationListener androidListener = new MyLocationListener() {
         private int overrideCount = 0;
+
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
             // Only use android location if we aren't getting NMEA
@@ -66,6 +68,7 @@ public class LocationService extends LocationProvider {
                 updateLocation(loc);
             }
         }
+
         private boolean isPower2(int n) {
             return (n & (n - 1)) == 0;
         }

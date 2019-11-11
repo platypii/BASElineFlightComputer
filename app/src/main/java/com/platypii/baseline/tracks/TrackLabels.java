@@ -3,11 +3,14 @@ package com.platypii.baseline.tracks;
 import com.platypii.baseline.jarvis.FlightMode;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Exceptions;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.List;
 
-import static com.platypii.baseline.jarvis.FlightMode.*;
+import static com.platypii.baseline.jarvis.FlightMode.MODE_CANOPY;
+import static com.platypii.baseline.jarvis.FlightMode.MODE_FREEFALL;
+import static com.platypii.baseline.jarvis.FlightMode.MODE_WINGSUIT;
 
 class TrackLabels {
 
@@ -39,6 +42,7 @@ class TrackLabels {
      * Find exit and land index by minimizing "in-flight" error.
      * Return as a TrackLabels with deploy set to 0.
      */
+    @Nullable
     private static TrackLabels findExitLand(@NonNull List<MLocation> points) {
         final int n = points.size();
         // Cumulative in-flight distribution

@@ -3,6 +3,7 @@ package com.platypii.baseline.audible.modes;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.audible.AudibleSample;
 import com.platypii.baseline.util.Convert;
+
 import androidx.annotation.NonNull;
 
 public class VerticalSpeedMode extends SpeedMode {
@@ -11,8 +12,9 @@ public class VerticalSpeedMode extends SpeedMode {
         super("vertical_speed", "Vertical Speed", -140 * Convert.MPHf, 0);
     }
 
+    @NonNull
     @Override
-    public @NonNull AudibleSample currentSample(int precision) {
+    public AudibleSample currentSample(int precision) {
         final double verticalSpeed = Services.alti.climb;
         final String verticalSpeedString;
         if (verticalSpeed > 0) {

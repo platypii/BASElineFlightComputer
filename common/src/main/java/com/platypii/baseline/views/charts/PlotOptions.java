@@ -2,6 +2,7 @@ package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.IntBounds;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.text.SimpleDateFormat;
@@ -37,6 +38,7 @@ public class PlotOptions {
         @NonNull
         AxisOptions y = new AxisOptions();
     }
+
     static class AxisOptions {
         // Major units are the smallest unit that will get a major grid line
         // We sometimes use a multiple of major units too
@@ -49,11 +51,13 @@ public class PlotOptions {
         }
     }
 
+    @NonNull
     static AxisOptions axisDistance() {
         return new PlotOptions.AxisOptions() {
             {
                 major_units = Convert.metric ? 1 : Convert.FT;
             }
+
             @Override
             public String format(double value) {
                 return Math.abs(value) < 0.1 ? "" : Convert.distance(Math.abs(value), 0, true);
@@ -61,12 +65,15 @@ public class PlotOptions {
         };
     }
 
+    @NonNull
     static AxisOptions axisTime() {
         return new PlotOptions.AxisOptions() {
             private final SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.US);
+
             {
                 major_units = 60000; // 1 Minute
             }
+
             @Override
             public String format(double value) {
                 return format.format((long) value);
@@ -74,11 +81,13 @@ public class PlotOptions {
         };
     }
 
+    @NonNull
     static AxisOptions axisSpeed() {
         return new PlotOptions.AxisOptions() {
             {
                 major_units = Convert.metric ? Convert.KPH : Convert.MPH;
             }
+
             @Override
             public String format(double value) {
                 final double absValue = Math.abs(value);

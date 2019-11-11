@@ -2,6 +2,7 @@ package com.platypii.baseline.laser;
 
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
+
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Iterator;

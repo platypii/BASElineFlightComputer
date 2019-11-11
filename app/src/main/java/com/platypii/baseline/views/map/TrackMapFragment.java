@@ -1,5 +1,13 @@
 package com.platypii.baseline.views.map;
 
+import com.platypii.baseline.R;
+import com.platypii.baseline.events.ChartFocusEvent;
+import com.platypii.baseline.location.Geo;
+import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.tracks.TrackData;
+import com.platypii.baseline.views.charts.layers.Colors;
+import com.platypii.baseline.views.tracks.TrackDataActivity;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,18 +18,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.*;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import com.platypii.baseline.R;
-import com.platypii.baseline.events.ChartFocusEvent;
-import com.platypii.baseline.location.Geo;
-import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.tracks.TrackData;
-import com.platypii.baseline.views.charts.layers.Colors;
-import com.platypii.baseline.views.tracks.TrackDataActivity;
 
 public class TrackMapFragment extends SupportMapFragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
     private static final String TAG = "TrackMapFrag";
@@ -117,9 +122,9 @@ public class TrackMapFragment extends SupportMapFragment implements OnMapReadyCa
      * Performs a search for the nearest data point
      */
     @Nullable
-    private MLocation findClosest(LatLng focus) {
+    private MLocation findClosest(@Nullable LatLng focus) {
         MLocation closest = null;
-        if (trackData != null && !trackData.isEmpty()) {
+        if (focus != null && trackData != null && !trackData.isEmpty()) {
             double closestDistance = Double.POSITIVE_INFINITY;
             for (MLocation loc : trackData) {
                 final double distance = Geo.fastDistance(loc.latitude, loc.longitude, focus.latitude, focus.longitude);

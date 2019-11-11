@@ -5,6 +5,7 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.laser.LaserSearch;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -128,12 +129,12 @@ class LaserAdapter extends BaseAdapter {
                 final TextView nameView = convertView.findViewById(R.id.list_item_name);
                 nameView.setText(laser.name);
                 // Update subtitle
-                 final TextView subView = convertView.findViewById(R.id.list_item_subtitle);
-                 if (laser.place != null) {
-                     subView.setText(laser.place.country);
-                 } else {
-                     subView.setText("");
-                 }
+                final TextView subView = convertView.findViewById(R.id.list_item_subtitle);
+                if (laser.place != null) {
+                    subView.setText(laser.place.country);
+                } else {
+                    subView.setText("");
+                }
                 break;
         }
 

@@ -7,6 +7,7 @@ import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.views.charts.layers.Colors;
 import com.platypii.baseline.views.charts.layers.ProfileFocusLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import androidx.annotation.NonNull;
@@ -58,7 +59,8 @@ public class FlightProfile extends PlotView {
     }
 
     @Override
-    public void drawData(@NonNull Plot plot) {}
+    public void drawData(@NonNull Plot plot) {
+    }
 
     @NonNull
     @Override

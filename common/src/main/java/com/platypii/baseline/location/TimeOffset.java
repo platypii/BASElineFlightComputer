@@ -20,6 +20,7 @@ public class TimeOffset {
 
     /**
      * Update the time offset based on a received gps signal
+     *
      * @param provider the name of the gps source so we can log
      * @param gpsTime gps time in milliseconds
      */
@@ -41,6 +42,7 @@ public class TimeOffset {
         }
     }
 
+    @NonNull
     private static String offsetString(long clockOffset) {
         if (clockOffset < 0) {
             return "phone behind gps by " + (-clockOffset) + "ms";

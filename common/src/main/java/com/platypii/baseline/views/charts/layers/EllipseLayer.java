@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.charts.layers;
 
 import com.platypii.baseline.views.charts.Plot;
+
 import android.graphics.BlurMaskFilter;
 import android.graphics.Paint;
 import android.os.Build;

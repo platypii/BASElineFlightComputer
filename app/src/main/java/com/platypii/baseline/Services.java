@@ -19,6 +19,7 @@ import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.views.BaseActivity;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -44,7 +45,9 @@ public class Services {
     private static int startCount = 0;
     private static boolean initialized = false;
 
-    /** A handler to shut down services after activity has stopped */
+    /**
+     * A handler to shut down services after activity has stopped
+     */
     private static final Handler handler = new Handler();
     private static final int shutdownDelay = 10000;
     private static final Runnable stopRunnable = Services::stopIfIdle;
@@ -77,6 +80,7 @@ public class Services {
             created = true;
         }
     }
+
     private static boolean created = false;
 
     public static void start(@NonNull Activity activity) {
@@ -178,6 +182,7 @@ public class Services {
     private static synchronized boolean inc() {
         return startCount++ == 0;
     }
+
     /**
      * Decrement startCount, and return true if 1 -> 0, meaning stop services
      */
@@ -239,10 +244,10 @@ public class Services {
         AutoStop.preferenceEnabled = prefs.getBoolean("auto_stop_enabled", true);
 
         // Sign in state
-        AuthState.loadFromPreferences(context);
+        AuthState.loadFromPreferences(prefs);
 
         // Bluetooth
-        bluetooth.preferences.load(context);
+        bluetooth.preferences.load(prefs);
 
         // Home location
         final double home_latitude = Numbers.parseDouble(prefs.getString("home_latitude", null));

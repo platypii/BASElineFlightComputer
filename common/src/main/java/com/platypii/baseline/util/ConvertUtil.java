@@ -1,5 +1,6 @@
 package com.platypii.baseline.util;
 
+import androidx.annotation.NonNull;
 import java.util.Arrays;
 
 /**
@@ -12,6 +13,7 @@ class ConvertUtil {
     /**
      * Format a double using a given precision (significant digits)
      */
+    @NonNull
     static String formatDouble(double value, int precision) {
         // Switch negative, so that we floor toward zero
         if (value < 0) return "-" + formatDouble(-value, precision);
@@ -48,6 +50,7 @@ class ConvertUtil {
     /**
      * Truncate to at most 2 int digits
      */
+    @NonNull
     static String formatInt(double value, int precision) {
         // Switch negative, so that we floor toward zero
         if (value < 0) return "-" + formatInt(-value, precision);

@@ -2,12 +2,14 @@ package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.views.charts.layers.ChartLayer;
+
 import androidx.annotation.NonNull;
 
 interface BasePlot {
 
     /**
      * Add a chart layer
+     *
      * @param layer chart layer to add
      */
     default void addLayer(@NonNull ChartLayer layer) {
@@ -16,6 +18,7 @@ interface BasePlot {
 
     /**
      * Remove a chart layer
+     *
      * @param layer chart layer to remove
      */
     default void removeLayer(@NonNull ChartLayer layer) {
@@ -57,6 +60,7 @@ interface BasePlot {
     /**
      * Override this method to set the view bounds in plot-space.
      * It's okay for subclasses to use bounds as working space, or return dataBounds directly.
+     *
      * @param dataBounds the data bounds from the last render pass
      * @return the view bounds, in plot-space
      */

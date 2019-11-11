@@ -9,18 +9,23 @@ public abstract class ProfileLayerEvent {
 
     public static class ProfileLayerAdded extends ProfileLayerEvent {
         public final ProfileLayer layer;
+
         public ProfileLayerAdded(ProfileLayer layer) {
             this.layer = layer;
         }
     }
+
     public static class ProfileLayerUpdated extends ProfileLayerEvent {
         public final ProfileLayer layer;
+
         public ProfileLayerUpdated(ProfileLayer layer) {
             this.layer = layer;
         }
     }
+
     public static class ProfileLayerRemoved extends ProfileLayerEvent {
         public final ProfileLayer layer;
+
         public ProfileLayerRemoved(ProfileLayer layer) {
             this.layer = layer;
         }

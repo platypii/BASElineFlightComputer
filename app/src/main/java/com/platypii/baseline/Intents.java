@@ -6,6 +6,7 @@ import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.tracks.TrackLoader;
 import com.platypii.baseline.views.tracks.TrackLocalActivity;
 import com.platypii.baseline.views.tracks.TrackRemoteActivity;
+
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -27,6 +28,7 @@ public class Intents {
         intent.putExtra(TrackLoader.EXTRA_TRACK_FILE, trackFile.file.getAbsolutePath());
         context.startActivity(intent);
     }
+
     public static void openTrackRemote(@NonNull Context context, @NonNull CloudData track) {
         final Intent intent = new Intent(context, TrackRemoteActivity.class);
         intent.putExtra(TrackLoader.EXTRA_TRACK_ID, track.track_id);

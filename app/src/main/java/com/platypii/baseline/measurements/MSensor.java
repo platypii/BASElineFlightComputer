@@ -15,7 +15,9 @@ public abstract class MSensor extends Measurement {
     float acc = Float.NaN;
 
     public abstract float x();
+
     public abstract float y();
+
     public abstract float z();
 
 }

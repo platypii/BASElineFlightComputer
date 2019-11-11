@@ -1,6 +1,7 @@
 package com.platypii.baseline.places;
 
 import com.platypii.baseline.util.CSVHeader;
+
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ class PlaceFile {
     PlaceFile(@NonNull Context context) {
         this(new File(context.getFilesDir(), placeFilename));
     }
+
     PlaceFile(@NonNull File file) {
         this.file = file;
     }
@@ -50,7 +52,7 @@ class PlaceFile {
      */
     @NonNull
     List<Place> parse() throws IOException {
-        Log.i(TAG, "Loading places from file (" + (file.length()>>10) + " KiB)");
+        Log.i(TAG, "Loading places from file (" + (file.length() >> 10) + " KiB)");
         final List<Place> places = new ArrayList<>();
         // Read place file csv (gzipped)
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), StandardCharsets.UTF_8))) {

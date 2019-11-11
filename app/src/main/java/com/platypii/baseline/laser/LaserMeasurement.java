@@ -4,6 +4,7 @@ import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.Range;
+
 import android.util.Log;
 import androidx.annotation.NonNull;
 import java.text.ParseException;
@@ -79,7 +80,7 @@ public class LaserMeasurement {
     }
 
     @NonNull
-    public static CharSequence render(List<LaserMeasurement> points, boolean metric) {
+    public static CharSequence render(@NonNull List<LaserMeasurement> points, boolean metric) {
         final double units = metric ? 1 : 3.28084;
         final StringBuilder sb = new StringBuilder();
         for (LaserMeasurement point : points) {
@@ -95,7 +96,7 @@ public class LaserMeasurement {
      * Quadrant 4: -100,20 (reversed y,x)
      */
     @NonNull
-    public static List<LaserMeasurement> reorder(List<LaserMeasurement> points) {
+    public static List<LaserMeasurement> reorder(@NonNull List<LaserMeasurement> points) {
         // Find height and width range
         final Range xRange = new Range();
         final Range yRange = new Range();
@@ -120,7 +121,7 @@ public class LaserMeasurement {
                 reversed.add(new LaserMeasurement(xRange.max - point.x, point.y - yRange.max));
             }
             // Add reversed 0,0
-            reversed.add(new LaserMeasurement(xRange.max, - yRange.max));
+            reversed.add(new LaserMeasurement(xRange.max, -yRange.max));
             // Sort by horiz
             Collections.sort(reversed, (l1, l2) -> Double.compare(l1.x, l2.x));
             return reversed;

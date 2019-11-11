@@ -5,6 +5,7 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.location.LocationStatus;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;

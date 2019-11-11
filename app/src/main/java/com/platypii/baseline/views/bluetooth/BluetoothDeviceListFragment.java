@@ -4,6 +4,7 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Exceptions;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
@@ -70,6 +71,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
         EventBus.getDefault().register(this);
         updateDeviceList();
     }
+
     @Override
     public void onPause() {
         super.onPause();

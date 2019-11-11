@@ -1,6 +1,7 @@
 package com.platypii.baseline.util.tensor;
 
 import com.platypii.baseline.util.Numbers;
+
 import androidx.annotation.NonNull;
 import java.util.Locale;
 
@@ -30,6 +31,7 @@ public class Tensor2x1 {
     /**
      * this dot mat -> output
      * Writes to an output tensor because we want to avoid allocating memory.
+     *
      * @param mat the matrix to dot against
      * @param output matrix to store the output
      */

@@ -6,6 +6,7 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothState;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.views.BaseActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -78,6 +79,7 @@ public class BluetoothActivity extends BaseActivity {
         EventBus.getDefault().register(this);
         updateViews();
     }
+
     @Override
     public void onPause() {
         super.onPause();

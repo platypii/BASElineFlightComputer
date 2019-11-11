@@ -3,6 +3,7 @@ package com.platypii.baseline.tracks;
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.util.Exceptions;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -23,7 +24,7 @@ public class TrackStore implements BaseService {
     private static final String TAG = "TrackStore";
 
     // Local track files
-    private final Map<TrackFile,TrackState> trackState = new HashMap<>();
+    private final Map<TrackFile, TrackState> trackState = new HashMap<>();
     private boolean initialized = false;
 
     @Override
@@ -68,7 +69,8 @@ public class TrackStore implements BaseService {
     }
 
     @Override
-    public void stop() {}
+    public void stop() {
+    }
 
     void setRecording(@NonNull TrackFile trackFile) {
         trackState.put(trackFile, new TrackState.TrackRecording());
@@ -127,6 +129,7 @@ public class TrackStore implements BaseService {
 
     /**
      * Delete local track file
+     *
      * @return true if track is deleted
      */
     public boolean delete(@NonNull TrackFile trackFile) {

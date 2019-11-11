@@ -3,6 +3,7 @@ package com.platypii.baseline.views.charts;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Bounds;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;

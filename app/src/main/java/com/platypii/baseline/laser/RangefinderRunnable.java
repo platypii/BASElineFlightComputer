@@ -2,6 +2,7 @@ package com.platypii.baseline.laser;
 
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Exceptions;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -88,7 +89,7 @@ class RangefinderRunnable implements Runnable {
                     final BluetoothDevice device = result.getDevice();
                     final ScanRecord record = result.getScanRecord();
                     if (ATNProtocol.isATN(device)) {
-                        Log.i(TAG, "ATN rangefinder found, connecting to: " +  device.getName());
+                        Log.i(TAG, "ATN rangefinder found, connecting to: " + device.getName());
                         connect(device);
                         protocol = new ATNProtocol(bluetoothGatt);
                     } else if (UineyeProtocol.isUineye(device, record)) {

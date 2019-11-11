@@ -2,6 +2,7 @@ package com.platypii.baseline.views.charts.layers;
 
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
+
 import androidx.annotation.NonNull;
 
 /**

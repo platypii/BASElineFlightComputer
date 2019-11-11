@@ -5,6 +5,7 @@ import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Exceptions;
+
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;

@@ -1,6 +1,8 @@
 package com.platypii.baseline.jarvis;
 
 import com.platypii.baseline.measurements.MLocation;
+
+import androidx.annotation.NonNull;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -19,11 +21,12 @@ public class FlightModeTest {
         assertEquals("", getMode(getLoc(15, 20)));
     }
 
+    @NonNull
     private MLocation getLoc(double climb, double groundspeed) {
         return new MLocation(0L, 0.0, 0.0, 0.0, climb, groundspeed, 0.0, 0f, 0f, 0f, 0f, 0, 0);
     }
 
-    private String getMode(MLocation loc) {
+    private String getMode(@NonNull MLocation loc) {
         return FlightMode.getModeString(FlightMode.getMode(loc));
     }
 

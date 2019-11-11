@@ -1,14 +1,15 @@
 package com.platypii.baseline.views.tracks;
 
-import android.app.Activity;
-import androidx.fragment.app.Fragment;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.util.ABundle;
+
+import android.app.Activity;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.platypii.baseline.tracks.TrackFile;
-import com.platypii.baseline.util.ABundle;
+import androidx.fragment.app.Fragment;
 import java.io.File;
 
 /**

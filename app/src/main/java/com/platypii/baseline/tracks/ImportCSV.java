@@ -5,6 +5,7 @@ import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.tracks.TrackUploadTask;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ public class ImportCSV {
 
     /**
      * Check if activity was opened with a CSV file, and import if so
+     *
      * @return true if a track was imported
      */
     public static boolean importIntent(@NonNull Context context, @NonNull Intent intent) {
@@ -73,7 +75,7 @@ public class ImportCSV {
     }
 
     @Nullable
-    private static String resolveFileName(@NonNull ContentResolver contentResolver, Uri uri) {
+    private static String resolveFileName(@NonNull ContentResolver contentResolver, @NonNull Uri uri) {
         if ("content".equals(uri.getScheme())) {
             try (Cursor cursor = contentResolver.query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {

@@ -6,6 +6,7 @@ import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
+
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -60,6 +61,7 @@ public class FlightComputer implements BaseService, MyLocationListener {
      * When audible or logging is started, we should start the autostop session.
      * When both stop, we should stop autostop.
      * Synchronized to prevent racism, and blocking okay because always called in async thread.
+     *
      * @param started whether the audible/logger is starting or stopping
      */
     private synchronized void updateAutoStop(boolean started) {

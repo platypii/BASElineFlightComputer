@@ -10,6 +10,7 @@ import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.SyncedList;
 import com.platypii.baseline.views.charts.SensorPlot;
+
 import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -186,6 +187,7 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
         fallrateLabel.setText("Fallrate: " + Convert.speed(-Services.alti.climb, 2, true));
     }
 
+    @NonNull
     private String altimeterSource() {
         final boolean hasBaro = Services.alti.baro_sample_count > 0;
         final boolean hasGps = Services.alti.gps_sample_count > 0;

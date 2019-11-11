@@ -14,6 +14,7 @@ import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerLocal;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerRemote;
 import com.platypii.baseline.views.tracks.TrackListFragment;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -100,7 +101,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
         }
     }
 
-    private void clickLaserProfile(LaserProfile laserProfile) {
+    private void clickLaserProfile(@NonNull LaserProfile laserProfile) {
         Log.i(TAG, "Opening laser profile " + laserProfile);
         Analytics.logEvent(getContext(), "click_laser_profile", null);
         final Fragment frag = new LaserViewFragment();

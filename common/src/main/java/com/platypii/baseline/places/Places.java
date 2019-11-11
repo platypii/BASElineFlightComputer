@@ -3,6 +3,7 @@ package com.platypii.baseline.places;
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.util.Exceptions;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -23,6 +24,7 @@ public class Places implements BaseService {
 
     @Nullable
     private Context context;
+    @Nullable
     private PlaceFile placeFile;
 
     public final NearestPlace nearestPlace = new NearestPlace(this);
@@ -106,7 +108,9 @@ public class Places implements BaseService {
 
     @Subscribe
     public void onSignOut(@NonNull AuthState.SignedOut event) {
-        placeFile.delete();
+        if (placeFile != null) {
+            placeFile.delete();
+        }
         places = null;
         updateAsync(true);
     }

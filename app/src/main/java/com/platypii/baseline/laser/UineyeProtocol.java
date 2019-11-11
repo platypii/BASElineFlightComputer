@@ -1,6 +1,7 @@
 package com.platypii.baseline.laser;
 
 import com.platypii.baseline.views.laser.LaserActivity;
+
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;

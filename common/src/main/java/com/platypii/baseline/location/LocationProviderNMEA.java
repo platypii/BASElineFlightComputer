@@ -5,6 +5,7 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
+
 import android.content.Context;
 import android.location.GpsStatus;
 import android.location.LocationManager;
@@ -52,6 +53,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
     /**
      * Start location updates
+     *
      * @param context The Application context
      */
     @Override
@@ -84,6 +86,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
      * NMEA strings are trimmed, validated, and then parsed into NMEA commands.
      * Location and velocity data is set as NMEA commands arrive.
      * Location is officially updated when we receive the RMC "recommended minimum data" command.
+     *
      * @param timestamp milliseconds
      * @param nmea the NMEA string
      */

@@ -29,6 +29,7 @@ import retrofit2.Response;
 public class Lasers implements BaseService {
     private static final String TAG = "Lasers";
 
+    @Nullable
     private Context context;
     public final LaserCache cache = new LaserCache("cache");
     public final LaserCache unsynced = new LaserCache("unsynced");
@@ -47,8 +48,8 @@ public class Lasers implements BaseService {
     /**
      * Query baseline server for laser listing asynchronously
      */
-    void listAsync(@NonNull Context context, boolean force) {
-        if (force || cache.shouldRequest()) {
+    void listAsync(@Nullable Context context, boolean force) {
+        if (context != null && (force || cache.shouldRequest())) {
             cache.request();
             final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
             // Public vs private based on sign in state

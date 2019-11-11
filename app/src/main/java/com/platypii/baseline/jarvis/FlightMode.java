@@ -1,6 +1,7 @@
 package com.platypii.baseline.jarvis;
 
 import com.platypii.baseline.measurements.MLocation;
+
 import androidx.annotation.NonNull;
 
 /**

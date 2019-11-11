@@ -1,6 +1,7 @@
 package com.platypii.baseline.measurements;
 
 import com.platypii.baseline.util.Numbers;
+
 import androidx.annotation.NonNull;
 
 /**
@@ -19,9 +20,11 @@ public class MGravity extends MSensor {
     public float x() {
         return gX;
     }
+
     public float y() {
         return gY;
     }
+
     public float z() {
         return gZ;
     }

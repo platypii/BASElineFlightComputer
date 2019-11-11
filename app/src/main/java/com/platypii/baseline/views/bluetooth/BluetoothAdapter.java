@@ -2,6 +2,7 @@ package com.platypii.baseline.views.bluetooth;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.view.LayoutInflater;

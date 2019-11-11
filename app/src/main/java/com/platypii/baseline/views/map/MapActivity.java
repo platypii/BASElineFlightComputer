@@ -1,6 +1,5 @@
 package com.platypii.baseline.views.map;
 
-import com.google.android.gms.maps.SupportMapFragment;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.location.LandingZone;
@@ -10,6 +9,7 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.altimeter.AnalogAltimeterSettable;
+
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
@@ -160,6 +161,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     public void onCameraMove() {
         updateLayers();
     }
+
     @Override
     public void onCameraIdle() {
         if (dragged) {

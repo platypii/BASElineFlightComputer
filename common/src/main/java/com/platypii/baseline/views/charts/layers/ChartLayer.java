@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.charts.layers;
 
 import com.platypii.baseline.views.charts.Plot;
+
 import androidx.annotation.NonNull;
 
 public abstract class ChartLayer {

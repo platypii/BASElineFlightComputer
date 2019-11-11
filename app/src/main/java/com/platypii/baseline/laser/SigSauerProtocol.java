@@ -1,6 +1,7 @@
 package com.platypii.baseline.laser;
 
 import com.platypii.baseline.views.laser.LaserActivity;
+
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -97,7 +98,7 @@ class SigSauerProtocol implements RangefinderProtocol {
         }
     }
 
-    private void processMeasurement(String str) {
+    private void processMeasurement(@NonNull String str) {
         Log.d(TAG, "rf -> app: measure " + str);
         final String[] split = str.split(",");
 
@@ -126,7 +127,7 @@ class SigSauerProtocol implements RangefinderProtocol {
     /**
      * Check checksum
      */
-    private boolean validate(String str) {
+    private boolean validate(@NonNull String str) {
         int sum = 0;
         for (int i = 0; i < str.length() - 3; i++) {
             sum ^= str.charAt(i);

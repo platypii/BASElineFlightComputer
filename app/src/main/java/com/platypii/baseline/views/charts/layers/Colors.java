@@ -8,15 +8,15 @@ public class Colors {
     public static final int defaultColor = 0xff7f00ff; // Default track color
 
     @ColorInt
-    public static final int modeGround =   0xff995522;
+    public static final int modeGround = 0xff995522;
     @ColorInt
-    public static final int modePlane =    0xffdd2222;
+    public static final int modePlane = 0xffdd2222;
     @ColorInt
     public static final int modeFreefall = 0xff1111ee;
     @ColorInt
     public static final int modeWingsuit = 0xff6b00ff;
     @ColorInt
-    public static final int modeCanopy =   0xff11dd11;
+    public static final int modeCanopy = 0xff11dd11;
 
     @ColorInt
     private static final int[] colors = {

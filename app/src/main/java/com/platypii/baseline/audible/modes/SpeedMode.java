@@ -2,6 +2,7 @@ package com.platypii.baseline.audible.modes;
 
 import com.platypii.baseline.audible.AudibleMode;
 import com.platypii.baseline.util.Convert;
+
 import androidx.annotation.NonNull;
 
 abstract class SpeedMode extends AudibleMode {
@@ -25,6 +26,7 @@ abstract class SpeedMode extends AudibleMode {
      * Generate the text to be spoken for speed.
      * Shortens 0.00 to 0
      */
+    @NonNull
     static String shortSpeed(double speed, int precision) {
         if (Math.abs(speed) < Math.pow(.1, precision) / 2) {
             return "0";

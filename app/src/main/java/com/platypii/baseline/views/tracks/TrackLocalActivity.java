@@ -1,8 +1,5 @@
 package com.platypii.baseline.views.tracks;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
@@ -12,6 +9,9 @@ import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.views.charts.ChartStatsFragment;
+import com.platypii.baseline.views.charts.ChartsFragment;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -23,8 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.platypii.baseline.views.charts.ChartStatsFragment;
-import com.platypii.baseline.views.charts.ChartsFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

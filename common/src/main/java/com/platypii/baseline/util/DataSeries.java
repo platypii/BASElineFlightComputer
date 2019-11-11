@@ -18,13 +18,16 @@ public class DataSeries implements Iterable<DataSeries.Point> {
     public static class Point {
         public double x;
         public double y;
+
         Point(double x, double y) {
             this.x = x;
             this.y = y;
         }
+
         boolean isNaN() {
             return Double.isNaN(x) || Double.isInfinite(x) || Double.isNaN(y) || Double.isInfinite(y);
         }
+
         @NonNull
         @Override
         public String toString() {
@@ -63,15 +66,18 @@ public class DataSeries implements Iterable<DataSeries.Point> {
     public Iterator<Point> iterator() {
         return new Iterator<Point>() {
             private int i = 0;
+
             public boolean hasNext() {
                 return i < n;
             }
+
             public Point next() {
                 if (i < n)
                     return points.get(i++);
                 else
                     throw new NoSuchElementException();
             }
+
             public void remove() {
                 throw new UnsupportedOperationException();
             }

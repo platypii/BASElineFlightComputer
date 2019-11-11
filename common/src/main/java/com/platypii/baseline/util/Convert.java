@@ -59,6 +59,7 @@ public class Convert {
 
     /**
      * Convert meters to local units
+     *
      * @param m meters
      * @return distance string in local units
      */
@@ -66,8 +67,10 @@ public class Convert {
     public static String distance(double m) {
         return distance(m, 0, true);
     }
+
     /**
      * Convert meters to local units
+     *
      * @param m meters
      * @param precision number of decimal places
      * @param units show the units?
@@ -86,16 +89,18 @@ public class Convert {
                 // Faster special case for integers
                 return Math.round(localValue) + unitString;
             } else {
-                return String.format("%."+precision+"f%s", localValue, unitString);
+                return String.format("%." + precision + "f%s", localValue, unitString);
             }
         }
     }
 
     /**
      * Shortened distance intended to be spoken, with units
+     *
      * @param m meters
      * @param precision number of decimal places
      */
+    @NonNull
     public static String distance2(double m, int precision) {
         if (Double.isNaN(m)) {
             return "";
@@ -134,8 +139,10 @@ public class Convert {
 
     /**
      * Shortened distance intended to be displayed, with units
+     *
      * @param m meters
      */
+    @NonNull
     public static String distance3(double m) {
         if (Double.isNaN(m)) {
             return "";
@@ -162,6 +169,7 @@ public class Convert {
 
     /**
      * Convert meters/second to local units
+     *
      * @param mps meters per second
      * @return speed string in local units
      */
@@ -174,8 +182,10 @@ public class Convert {
             return speed(mps, 0, true);
         }
     }
+
     /**
      * Convert meters/second to local units
+     *
      * @param mps meters per second
      * @param precision number of decimal places
      * @param units show the units?
@@ -194,7 +204,7 @@ public class Convert {
                 // Faster special case for integers
                 return Math.round(localValue) + unitString;
             } else {
-                return String.format("%."+precision+"f%s", localValue, unitString);
+                return String.format("%." + precision + "f%s", localValue, unitString);
             }
         }
     }
@@ -275,6 +285,7 @@ public class Convert {
         }
     }
 
+    @NonNull
     public static String pressure(double hPa) {
         if (Double.isNaN(hPa))
             return "";
@@ -305,9 +316,11 @@ public class Convert {
 
     /**
      * Convert degrees to int degrees
+     *
      * @param degrees angle in degrees
      * @return angle in degrees
      */
+    @NonNull
     public static String angle(double degrees) {
         // Check for non numbers
         if (Double.isNaN(degrees) || Double.isInfinite(degrees)) return "";
@@ -318,9 +331,11 @@ public class Convert {
 
     /**
      * Convert yaw angle to a human readable format
+     *
      * @param degrees yaw angle in degrees
      * @return "15 right" (degrees)
      */
+    @NonNull
     public static String angle2(double degrees) {
         // Adjust range to -180..180
         degrees = (degrees + 540) % 360 - 180;
@@ -367,6 +382,7 @@ public class Convert {
 
     /**
      * Convert the bearing to a human readable format, with more precision
+     *
      * @param degrees bearing in degrees
      * @return "40° (NE)"
      */

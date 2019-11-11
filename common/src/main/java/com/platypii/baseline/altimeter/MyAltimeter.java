@@ -10,6 +10,7 @@ import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.util.kalman.Filter;
 import com.platypii.baseline.util.kalman.FilterKalman;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -27,6 +28,7 @@ import androidx.annotation.NonNull;
 public class MyAltimeter implements BaseService, MyLocationListener, PubSub.Subscriber<MPressure> {
     private static final String TAG = "MyAltimeter";
 
+    @NonNull
     public PubSub<MAltitude> altitudeEvents = new PubSub<>();
 
     private final LocationProvider location;
@@ -65,6 +67,7 @@ public class MyAltimeter implements BaseService, MyLocationListener, PubSub.Subs
     /**
      * Initializes altimeter services, if not already running.
      * Starts async in a background thread
+     *
      * @param context The Application context
      */
     @Override

@@ -1,6 +1,7 @@
 package com.platypii.baseline.location;
 
 import com.platypii.baseline.util.Exceptions;
+
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +20,7 @@ class NMEA {
 
     /**
      * Parse DDDMM.MMMM,N into decimal degrees
+     *
      * @param dm The latitude or longitude in "DDDMM.MMMM" format
      * @param nsew The modifier "N", "S", "E", or "W"
      * @return The latitude or longitude in decimal degrees

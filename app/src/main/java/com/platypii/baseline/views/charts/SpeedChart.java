@@ -8,6 +8,7 @@ import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.charts.layers.EllipseLayer;
 import com.platypii.baseline.views.charts.layers.SpeedDataLayer;
 import com.platypii.baseline.views.charts.layers.SpeedFocusLayer;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import androidx.annotation.NonNull;
@@ -60,7 +61,8 @@ public class SpeedChart extends PlotView {
     }
 
     @Override
-    public void drawData(@NonNull Plot plot) {}
+    public void drawData(@NonNull Plot plot) {
+    }
 
     // Always keep square aspect ratio
     @NonNull

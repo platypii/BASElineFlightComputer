@@ -1,6 +1,7 @@
 package com.platypii.baseline.events;
 
 import com.platypii.baseline.tracks.TrackFile;
+
 import androidx.annotation.NonNull;
 
 /**
@@ -19,6 +20,7 @@ public abstract class LoggingEvent {
     public static class LoggingStop extends LoggingEvent {
         @NonNull
         public final TrackFile trackFile;
+
         public LoggingStop(@NonNull TrackFile trackFile) {
             this.started = false;
             this.trackFile = trackFile;

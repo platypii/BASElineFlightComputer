@@ -9,6 +9,7 @@ import com.platypii.baseline.views.altimeter.AltimeterActivity;
 import com.platypii.baseline.views.laser.LaserActivity;
 import com.platypii.baseline.views.map.MapActivity;
 import com.platypii.baseline.views.tracks.TrackListActivity;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -69,6 +70,7 @@ public class MainActivity extends BaseActivity {
         super.onNewIntent(intent);
         doImport(intent);
     }
+
     private void doImport(@NonNull Intent intent) {
         final boolean importing = ImportCSV.importIntent(this, intent);
         if (importing) {
@@ -209,6 +211,7 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
+
     private final StringBuilder clockBuilder = new StringBuilder();
 
     /**
@@ -230,6 +233,7 @@ public class MainActivity extends BaseActivity {
     public void onLoggingEvent(LoggingEvent event) {
         updateUIState();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAudibleEvent(AudibleEvent event) {
         updateUIState();

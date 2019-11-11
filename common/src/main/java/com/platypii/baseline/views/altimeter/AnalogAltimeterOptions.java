@@ -23,7 +23,7 @@ class AnalogAltimeterOptions {
         this.max_altitude = max_altitude;
         // Precompute angle for drawing
         breakoff_angle = (float) (360 * breakoff_altitude / max_altitude);
-        deploy_angle   = (float) (360 * deploy_altitude / max_altitude);
+        deploy_angle = (float) (360 * deploy_altitude / max_altitude);
         harddeck_angle = (float) (360 * harddeck_altitude / max_altitude);
         major_angle = (float) (2.0 * Math.PI * major_units / max_altitude);
     }

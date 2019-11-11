@@ -6,6 +6,7 @@ import com.platypii.baseline.cloud.DownloadTask;
 import com.platypii.baseline.events.DownloadEvent;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.tracks.TrackLoader;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,7 +26,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class TrackDownloadFragment extends Fragment {
     private static final String TAG = "TrackDownloadFrag";
 
-    public CompletableFuture<File> trackFile = new CompletableFuture<>();
+    public final CompletableFuture<File> trackFile = new CompletableFuture<>();
 
     private CloudData track;
     private ProgressBar downloadProgress;
@@ -66,6 +67,7 @@ public class TrackDownloadFragment extends Fragment {
             trackFile.complete(event.trackFile);
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDownloadFailure(@NonNull DownloadEvent.DownloadFailure event) {
         if (event.track_id.equals(track.track_id)) {
@@ -74,6 +76,7 @@ public class TrackDownloadFragment extends Fragment {
             trackFile.completeExceptionally(event.error);
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDownloadProgress(@NonNull DownloadEvent.DownloadProgress event) {
         if (event.track_id.equals(track.track_id)) {

@@ -78,6 +78,7 @@ class BluetoothRunnable implements Runnable {
     /**
      * Connect to gps receiver.
      * Precondition: bluetooth enabled and preferenceDeviceId != null
+     *
      * @return true iff bluetooth socket was connect successfully
      */
     private boolean connect() {

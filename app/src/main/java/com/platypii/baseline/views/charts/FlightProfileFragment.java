@@ -1,5 +1,8 @@
 package com.platypii.baseline.views.charts;
 
+import com.platypii.baseline.events.ChartFocusEvent;
+import com.platypii.baseline.views.tracks.TrackDataActivity;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,8 +11,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.platypii.baseline.events.ChartFocusEvent;
-import com.platypii.baseline.views.tracks.TrackDataActivity;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -52,7 +53,7 @@ public class FlightProfileFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onChartFocus(ChartFocusEvent event) {
+    public void onChartFocus(@NonNull ChartFocusEvent event) {
         if (flightProfile != null) {
             flightProfile.onFocus(event.location);
         }

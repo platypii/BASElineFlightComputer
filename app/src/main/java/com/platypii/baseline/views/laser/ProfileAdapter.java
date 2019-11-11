@@ -3,6 +3,7 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

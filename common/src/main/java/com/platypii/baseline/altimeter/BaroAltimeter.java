@@ -10,6 +10,7 @@ import com.platypii.baseline.util.RefreshRateEstimator;
 import com.platypii.baseline.util.Stat;
 import com.platypii.baseline.util.kalman.Filter;
 import com.platypii.baseline.util.kalman.FilterKalman;
+
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 public class BaroAltimeter implements BaseService, SensorEventListener {
     private static final String TAG = "BaroAltimeter";
 
+    @NonNull
     public PubSub<MPressure> pressureEvents = new PubSub<>();
 
     private static final int sensorDelay = 100000; // microseconds
@@ -54,6 +56,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
     /**
      * Initializes altimeter services, if not already running.
      * Starts async in a background thread
+     *
      * @param context The Application context
      */
     @Override
@@ -140,8 +143,10 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         final MPressure myPressure = new MPressure(lastFixMillis, lastFixNano, pressure_altitude_filtered, climb, pressure);
         pressureEvents.post(myPressure);
     }
+
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
 
     // Physical constants and ISA standard atmosphere
     private static final double pressure0 = SensorManager.PRESSURE_STANDARD_ATMOSPHERE; // ISA pressure 1013.25 hPa

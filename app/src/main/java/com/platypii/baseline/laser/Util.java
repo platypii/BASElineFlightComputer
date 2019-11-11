@@ -1,8 +1,11 @@
 package com.platypii.baseline.laser;
 
+import androidx.annotation.NonNull;
+
 class Util {
 
-    static String byteArrayToHex(byte[] a) {
+    @NonNull
+    static String byteArrayToHex(@NonNull byte[] a) {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < a.length; i++) {
             if (i > 0) {
@@ -23,6 +26,7 @@ class Util {
     static void sleep(long t) {
         try {
             Thread.sleep(t);
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException ignored) {
+        }
     }
 }

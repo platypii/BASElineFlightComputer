@@ -3,6 +3,7 @@ package com.platypii.baseline.audible;
 import com.platypii.baseline.R;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.BaseActivity;
+
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -17,7 +18,7 @@ import androidx.annotation.NonNull;
 /**
  * A background task to check for TTS data
  */
-public class CheckTextToSpeechTask extends AsyncTask<Void,Void,Boolean> {
+public class CheckTextToSpeechTask extends AsyncTask<Void, Void, Boolean> {
     private static final String TAG = "TextToSpeech";
 
     private final Activity activity;

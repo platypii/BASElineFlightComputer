@@ -3,6 +3,7 @@ package com.platypii.baseline.tracks;
 import com.platypii.baseline.FileUtil;
 import com.platypii.baseline.measurements.MLocation;
 
+import androidx.annotation.NonNull;
 import java.io.IOException;
 import java.util.List;
 import org.junit.Test;
@@ -43,6 +44,7 @@ public class TrackFileReaderTest {
     /**
      * Write string to temp file, and parse with TrackFileReader
      */
+    @NonNull
     private List<MLocation> parse(String content) throws IOException {
         return new TrackFileReader(FileUtil.makeFile(content)).read();
     }

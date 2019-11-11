@@ -6,6 +6,7 @@ import com.platypii.baseline.audible.modes.NavigationMode;
 import com.platypii.baseline.audible.modes.TotalSpeedMode;
 import com.platypii.baseline.audible.modes.VerticalSpeedMode;
 import com.platypii.baseline.util.Exceptions;
+
 import androidx.annotation.NonNull;
 
 /**

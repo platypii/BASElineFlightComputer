@@ -2,6 +2,7 @@ package com.platypii.baseline.views.charts.layers;
 
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackData;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 

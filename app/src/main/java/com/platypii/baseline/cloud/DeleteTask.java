@@ -3,6 +3,7 @@ package com.platypii.baseline.cloud;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.util.Exceptions;
+
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;

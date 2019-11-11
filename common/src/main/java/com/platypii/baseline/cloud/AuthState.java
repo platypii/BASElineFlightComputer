@@ -16,6 +16,7 @@ public abstract class AuthState {
             return "SignedOut";
         }
     }
+
     public static class SigningIn extends AuthState {
         @NonNull
         @Override
@@ -23,11 +24,14 @@ public abstract class AuthState {
             return "SigningIn";
         }
     }
+
     public static class SignedIn extends AuthState {
         final String userId;
+
         public SignedIn(String userId) {
             this.userId = userId;
         }
+
         @NonNull
         @Override
         public String toString() {
@@ -42,9 +46,8 @@ public abstract class AuthState {
     /**
      * Load currentAuthState from preferences, if needed
      */
-    public static void loadFromPreferences(@NonNull Context context) {
+    public static void loadFromPreferences(@NonNull SharedPreferences prefs) {
         if (currentAuthState == null) {
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             final String userId = prefs.getString(PREF_AUTH_USER, null);
             if (userId != null) {
                 currentAuthState = new SignedIn(userId);

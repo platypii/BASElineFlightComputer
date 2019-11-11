@@ -41,6 +41,7 @@ public class Place {
 
     @Nullable
     private LatLng lazyLatLng = null;
+
     @NonNull
     public LatLng latLng() {
         if (lazyLatLng == null) {

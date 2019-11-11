@@ -1,6 +1,7 @@
 package com.platypii.baseline.views;
 
 import com.platypii.baseline.R;
+
 import android.os.Bundle;
 
 /**

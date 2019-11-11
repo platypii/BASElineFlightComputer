@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.util.Exceptions;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -39,12 +40,15 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
     // SurfaceView stuff:
     // Secondary drawing thread
     private DrawingThread drawingThread;
+
     private class DrawingThread extends Thread {
         private final SurfaceHolder _surfaceHolder;
         private boolean running = false;
+
         DrawingThread(final SurfaceHolder surfaceHolder) {
             _surfaceHolder = surfaceHolder;
         }
+
         @Override
         public void run() {
             while (running) {
@@ -76,18 +80,23 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
                 // Frame limiting
                 try {
                     Thread.sleep(refreshRateMillis);
-                } catch (InterruptedException ignored) {}
+                } catch (InterruptedException ignored) {
+                }
             }
         }
     }
+
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         drawingThread = new DrawingThread(holder);
         drawingThread.running = true;
         drawingThread.start();
     }
+
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         // we have to tell thread to shut down & wait for it to finish, or else

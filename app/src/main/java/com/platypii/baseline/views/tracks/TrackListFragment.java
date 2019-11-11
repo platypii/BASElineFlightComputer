@@ -2,6 +2,7 @@ package com.platypii.baseline.views.tracks;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.events.SyncEvent;
+
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -87,8 +88,12 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
 
         // Handle no-tracks case
         final boolean isEmpty = listAdapter.isEmpty();
-        if (tracksEmptyLabel != null) tracksEmptyLabel.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-        if (searchBox != null) searchBox.setEnabled(!isEmpty);
+        if (tracksEmptyLabel != null) {
+            tracksEmptyLabel.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        }
+        if (searchBox != null) {
+            searchBox.setEnabled(!isEmpty);
+        }
     }
 
     @Override
