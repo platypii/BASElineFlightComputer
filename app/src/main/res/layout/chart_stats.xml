@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/darkText"
-            android:text="altitude"/>
+            android:text="@string/chart_altitude"/>
     </LinearLayout>
 
     <TextView
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/darkText"
-            android:text="speed"/>
+            android:text="@string/chart_speed"/>
 
         <View
             android:layout_width="14dp"
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/darkText"
-            android:text="glide"/>
+            android:text="@string/chart_gilde"/>
 
     </LinearLayout>
 

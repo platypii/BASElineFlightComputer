@@ -38,6 +38,7 @@ public class ChartStatsFragment extends Fragment {
     private TextView speedLabel;
     private TextView glideLabel;
 
+    @NonNull
     private SimpleDateFormat timeFormat = new SimpleDateFormat("EEE dd MMM yyyy HH:mm:ss", Locale.US);
 
     @Override
@@ -82,7 +83,7 @@ public class ChartStatsFragment extends Fragment {
      * Update views for focus event
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onChartFocus(ChartFocusEvent event) {
+    public void onChartFocus(@Nullable ChartFocusEvent event) {
         if (event != null && event.location != null) {
             final MLocation focus = event.location;
             // TODO: Date should have timezone

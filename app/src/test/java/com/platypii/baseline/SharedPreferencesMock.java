@@ -15,6 +15,7 @@ public class SharedPreferencesMock implements SharedPreferences {
     private final Map<String, Object> preferencesMap = new HashMap<>();
     private final Set<OnSharedPreferenceChangeListener> listeners = new HashSet<>();
 
+    @NonNull
     @Override
     public Map<String, ?> getAll() {
         return new HashMap<>(preferencesMap);
@@ -64,6 +65,7 @@ public class SharedPreferencesMock implements SharedPreferences {
         return preferencesMap.containsKey(key);
     }
 
+    @NonNull
     @Override
     public Editor edit() {
         return new EditorImpl();
@@ -85,49 +87,57 @@ public class SharedPreferencesMock implements SharedPreferences {
         private final Map<String, Object> newValuesMap = new HashMap<>();
         private boolean shouldClear = false;
 
+        @NonNull
         @Override
-        public Editor putString(final String key, @Nullable final String value) {
+        public Editor putString(@NonNull final String key, @Nullable final String value) {
             newValuesMap.put(key, value);
             return this;
         }
 
+        @NonNull
         @Override
-        public Editor putStringSet(final String key, @Nullable final Set<String> values) {
+        public Editor putStringSet(@NonNull final String key, @Nullable final Set<String> values) {
             newValuesMap.put(key, (values != null) ? new HashSet<>(values) : null);
             return this;
         }
 
+        @NonNull
         @Override
-        public Editor putInt(final String key, final int value) {
+        public Editor putInt(@NonNull final String key, final int value) {
             newValuesMap.put(key, value);
             return this;
         }
 
+        @NonNull
         @Override
-        public Editor putLong(final String key, final long value) {
+        public Editor putLong(@NonNull final String key, final long value) {
             newValuesMap.put(key, value);
             return this;
         }
 
+        @NonNull
         @Override
-        public Editor putFloat(final String key, final float value) {
+        public Editor putFloat(@NonNull final String key, final float value) {
             newValuesMap.put(key, value);
             return this;
         }
 
+        @NonNull
         @Override
-        public Editor putBoolean(final String key, final boolean value) {
+        public Editor putBoolean(@NonNull final String key, final boolean value) {
             newValuesMap.put(key, value);
             return this;
         }
 
+        @NonNull
         @Override
-        public Editor remove(final String key) {
+        public Editor remove(@NonNull final String key) {
             // 'this' is marker for remove operation
             newValuesMap.put(key, this);
             return this;
         }
 
+        @NonNull
         @Override
         public Editor clear() {
             shouldClear = true;
@@ -158,6 +168,7 @@ public class SharedPreferencesMock implements SharedPreferences {
         /**
          * @return changed keys list
          */
+        @NonNull
         private List<String> applyNewValues() {
             final List<String> changedKeys = new ArrayList<>();
             for (Map.Entry<String, Object> entry : newValuesMap.entrySet()) {

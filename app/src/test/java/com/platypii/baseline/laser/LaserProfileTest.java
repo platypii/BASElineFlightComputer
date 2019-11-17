@@ -1,6 +1,7 @@
 package com.platypii.baseline.laser;
 
 import com.platypii.baseline.util.Convert;
+
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import org.junit.Test;

@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 public class FlightMode {
 
     static final int MODE_UNKNOWN = 0;
-    static final int MODE_GROUND = 1;
+    public static final int MODE_GROUND = 1;
     public static final int MODE_PLANE = 2;
     public static final int MODE_WINGSUIT = 3;
     public static final int MODE_FREEFALL = 4;

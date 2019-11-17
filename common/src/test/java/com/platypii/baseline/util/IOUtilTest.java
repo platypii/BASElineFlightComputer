@@ -1,6 +1,9 @@
 package com.platypii.baseline.util;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

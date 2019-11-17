@@ -193,7 +193,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
             updateLayers();
 
             // Center map on user's location
-            if (dragged && lastDrag > 0 && System.currentTimeMillis() - lastDrag > MapOptions.SNAP_BACK_TIME) {
+            if (dragged && lastDrag > 0 && System.currentTimeMillis() - lastDrag > MapOptions.snapbackTime()) {
                 Log.i(TAG, "Snapping back to current location");
                 // Snap back to point
                 dragged = false;

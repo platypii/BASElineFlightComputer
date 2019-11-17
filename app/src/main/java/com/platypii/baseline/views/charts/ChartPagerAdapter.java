@@ -2,6 +2,7 @@ package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.views.map.TrackMapFragment;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -11,6 +12,7 @@ public class ChartPagerAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
+    @NonNull
     @Override
     public Fragment getItem(int position) {
         switch (position) {

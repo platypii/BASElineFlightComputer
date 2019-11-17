@@ -7,20 +7,12 @@ import androidx.annotation.NonNull;
  * Task used just for tests.
  */
 public class TestTask extends Task {
+    static final TaskType taskType = new TaskType("test-task");
 
     private final String id;
 
     // Task will not complete until this is set to true
     boolean wait = true;
-
-    public static class TestTaskType extends TaskType {
-        @NonNull
-        @Override
-        public String name() {
-            return "test-task";
-        }
-    }
-    static final TestTaskType taskType = new TestTaskType();
 
     TestTask(String id) {
         this.id = id;

@@ -2,6 +2,7 @@ package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.cloud.MockCloudData;
+
 import java.io.File;
 import java.nio.file.Files;
 import org.junit.Test;

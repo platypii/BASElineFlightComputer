@@ -30,6 +30,10 @@
     <string name="error_export_intent">Failed to export track file</string>
     <string name="error_map_intent">Failed to open google earth</string>
 
+    <string name="chart_altitude">altitude</string>
+    <string name="chart_speed">speed</string>
+    <string name="chart_gilde">glide</string>
+
     <!-- Auth -->
     <string name="signin_prompt">Sign in with google to sync tracks with\nhttps://baseline.ws/</string>
     <string name="signin_success">Signed in</string>
@@ -85,6 +89,7 @@
     <string name="bluetooth_devices">Devices</string>
     <string name="bluetooth_pair">Pair</string>
     <string name="error_bluetooth_intent">Failed to open bluetooth settings</string>
+    <string name="bluetooth_selected">Selected</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Settings</string>
@@ -118,6 +123,7 @@
     <string name="new_profile">New Profile</string>
     <string name="profile_name">Profile name</string>
     <string name="profile_location">Latitude, longitude, altitude</string>
+    <string name="save">Save</string>
     <string name="rangefinder_connected">Rangefinder connected</string>
     <string name="rangefinder_searching">Searching for rangefinder…</string>
     <string-array name="metric_modes">

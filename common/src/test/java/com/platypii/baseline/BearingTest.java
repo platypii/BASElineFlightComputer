@@ -1,6 +1,7 @@
 package com.platypii.baseline;
 
 import com.platypii.baseline.measurements.MLocation;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

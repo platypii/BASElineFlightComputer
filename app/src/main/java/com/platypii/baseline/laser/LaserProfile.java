@@ -50,17 +50,20 @@ public class LaserProfile {
         this.points = points;
     }
 
+    /**
+     * Format the location lat, lng, alt. Empty string if not defined.
+     */
     @NonNull
     public String locationString() {
-        return LatLngAlt.formatLatLngAlt(lat, lng, alt);
+        if (lat != null && lng != null && alt != null) {
+            return LatLngAlt.formatLatLngAlt(lat, lng, alt);
+        } else {
+            return "";
+        }
     }
 
     public boolean isLocal() {
         return laser_id.startsWith("tmp-");
-    }
-
-    private boolean isReal(@Nullable Double value) {
-        return value != null && !Double.isNaN(value) && !Double.isInfinite(value);
     }
 
     @Override

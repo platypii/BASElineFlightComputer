@@ -29,7 +29,7 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:src="@drawable/check"
-        android:contentDescription="checkmark"
+        android:contentDescription="@string/bluetooth_selected"
         android:indeterminate="true"
         android:visibility="gone"
         android:layout_alignParentRight="true"

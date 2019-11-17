@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.map;
 
 import com.platypii.baseline.Services;
+import com.platypii.baseline.jarvis.FlightMode;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -13,9 +14,6 @@ class MapOptions {
     static final LatLng defaultLatLng = new LatLng(47.239, -123.143); // kpow
     // usa: LatLng(41.2, -120.5)
     static final float defaultZoom = 6;
-
-    // Time from last drag to snap back to user location
-    static final long SNAP_BACK_TIME = 3500; // millis
 
     // Maximum camera animation duration
     private static final int MAX_ANIMATION_DURATION = 900; // millis
@@ -44,6 +42,17 @@ class MapOptions {
             return zooms[index + 1] - (float) ((alts[index + 1] - altitude) * (zooms[index + 1] - zooms[index]) / (alts[index + 1] - alts[index]));
         } else {
             return zooms[alts.length - 1];
+        }
+    }
+
+    /**
+     * Time from last drag to snap back to user location, in milliseconds
+     */
+    static long snapbackTime() {
+        if (Services.flightComputer.flightMode == FlightMode.MODE_GROUND) {
+            return 15000;
+        } else {
+            return 3500;
         }
     }
 
