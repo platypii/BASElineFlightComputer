@@ -1,5 +1,6 @@
 package com.platypii.baseline.views;
 
+import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
@@ -192,10 +193,8 @@ public abstract class BaseActivity extends FragmentActivity {
                 // Notify services that TTS is ready
                 Services.onTtsLoaded(this);
             } else {
-                // missing data, install it
-                final Intent installIntent = new Intent();
-                installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-                startActivity(installIntent);
+                // Missing data, install it
+                Intents.installTts(this);
             }
         }
 

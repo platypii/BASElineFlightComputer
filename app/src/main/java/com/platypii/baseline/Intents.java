@@ -12,6 +12,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -143,6 +144,22 @@ public class Intents {
         } catch (Exception e) {
             Log.e(TAG, "Failed to open android bluetooth settings", e);
             Toast.makeText(context, R.string.error_bluetooth_intent, Toast.LENGTH_SHORT).show();
+            Exceptions.report(e);
+        }
+    }
+
+    /**
+     * Prompt user to install tts data
+     */
+    public static void installTts(@NonNull Context context) {
+        try {
+            final Intent installIntent = new Intent();
+            installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+            context.startActivity(installIntent);
+        } catch (ActivityNotFoundException e) {
+            Log.w(TAG, "Failed to install TTS data", e);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to install TTS data", e);
             Exceptions.report(e);
         }
     }

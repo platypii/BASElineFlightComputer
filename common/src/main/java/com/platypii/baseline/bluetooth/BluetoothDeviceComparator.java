@@ -14,7 +14,8 @@ public class BluetoothDeviceComparator implements Comparator<BluetoothDevice> {
     }
 
     private int score(@NonNull BluetoothDevice device) {
-        if (device.getName().contains("GPS")) {
+        final String deviceName = device.getName();
+        if (deviceName != null && deviceName.contains("GPS")) {
             return 1;
         } else {
             return 0;

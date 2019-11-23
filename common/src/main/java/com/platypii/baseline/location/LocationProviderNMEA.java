@@ -193,7 +193,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 if (locationError != LocationCheck.INVALID_NAN) {
                     if (locationError == LocationCheck.INVALID_ZERO) {
                         // So common we don't even need to report it
-                        Log.e(NMEA_TAG, LocationCheck.message[locationError] + ": " + latitude + "," + longitude);
+                        Log.w(NMEA_TAG, LocationCheck.message[locationError] + ": " + latitude + "," + longitude);
                     } else if (locationError == LocationCheck.INVALID_RANGE) {
                         Exceptions.report(new NMEAException(LocationCheck.message[locationError] + ": " + latitude + "," + longitude));
                     } else {

@@ -99,7 +99,7 @@ public class DownloadTask implements Runnable {
             } else if (status == 401) {
                 throw new AuthException(auth);
             } else {
-                throw new IOException("http status code " + status);
+                throw new IOException("Failed to download track " + trackId + " http status code " + status);
             }
         } catch (IOException e) {
             Log.e(TAG, "Exception while downloading track " + trackUrl, e);

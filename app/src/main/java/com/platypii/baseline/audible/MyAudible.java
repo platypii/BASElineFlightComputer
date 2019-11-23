@@ -46,7 +46,6 @@ public class MyAudible implements BaseService {
     public void start(@NonNull Context context) {
         Log.i(TAG, "Initializing audible");
         if (!isInitialized) {
-            isInitialized = true;
             prefs = PreferenceManager.getDefaultSharedPreferences(context);
             settings.load(prefs);
             startAsync(context);
@@ -61,6 +60,7 @@ public class MyAudible implements BaseService {
         audibleThread = new AudibleThread();
         AsyncTask.execute(() -> {
             speech = new Speech(context);
+            isInitialized = true;
             if (settings.isEnabled) {
                 enableAudible();
             }
