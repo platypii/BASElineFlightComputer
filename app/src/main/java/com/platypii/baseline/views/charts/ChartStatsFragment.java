@@ -60,7 +60,7 @@ public class ChartStatsFragment extends Fragment {
             ((TrackDataActivity) parent).trackData.thenAccept(trackData -> {
                 this.stats = trackData.stats;
                 // Notify self to update (on main thread) now that data is ready
-                handler.post(() -> onChartFocus(null));
+                handler.post(() -> onUnFocus(null));
             });
         }
 
@@ -83,52 +83,53 @@ public class ChartStatsFragment extends Fragment {
      * Update views for focus event
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onChartFocus(@Nullable ChartFocusEvent event) {
-        if (event != null && event.location != null) {
-            final MLocation focus = event.location;
-            // TODO: Date should have timezone
-            timeLabel.setText(timeFormat.format(new Date(focus.millis)));
-            altitudeLabel.setText(Convert.distance(focus.altitude_gps) + " MSL");
-            speedLabel.setText(Convert.speed(focus.totalSpeed()));
-            glideLabel.setText(Convert.glide(focus.groundSpeed(), focus.climb, 1, true));
-            if (stats != null && stats.exit != null) {
-                horizontalDistLabel.setText(Convert.distance(focus.distanceTo(stats.exit)));
-                verticalDistLabel.setText(Convert.distance(focus.altitude_gps - stats.exit.altitude_gps));
-            } else {
-                horizontalDistLabel.setText("");
-                verticalDistLabel.setText("");
-            }
-            horizontalSpeedLabel.setText(Convert.speed(focus.groundSpeed()));
-            verticalSpeedLabel.setText(Convert.speed(focus.climb));
+    public void onTrackFocus(@NonNull ChartFocusEvent.TrackFocused event) {
+        final MLocation focus = event.location;
+        // TODO: Date should have timezone
+        timeLabel.setText(timeFormat.format(new Date(focus.millis)));
+        altitudeLabel.setText(Convert.distance(focus.altitude_gps) + " MSL");
+        speedLabel.setText(Convert.speed(focus.totalSpeed()));
+        glideLabel.setText(Convert.glide(focus.groundSpeed(), focus.climb, 1, true));
+        if (stats != null && stats.exit != null) {
+            horizontalDistLabel.setText(Convert.distance(focus.distanceTo(stats.exit)));
+            verticalDistLabel.setText(Convert.distance(focus.altitude_gps - stats.exit.altitude_gps));
         } else {
-            if (stats != null) {
-                if (stats.exit != null) {
-                    timeLabel.setText(timeFormat.format(new Date(stats.exit.millis)));
-                } else {
-                    timeLabel.setText("");
-                }
-                if (!stats.altitude.isEmpty()) {
-                    altitudeLabel.setText(Convert.distance(stats.altitude.max - stats.altitude.min));
-                } else {
-                    altitudeLabel.setText("");
-                }
-                if (stats.exit != null) {
-                    horizontalDistLabel.setText(Convert.distance(stats.exit.distanceTo(stats.land)));
-                    verticalDistLabel.setText(Convert.distance(stats.altitude.range()));
-                } else {
-                    horizontalDistLabel.setText("");
-                    verticalDistLabel.setText("");
-                }
+            horizontalDistLabel.setText("");
+            verticalDistLabel.setText("");
+        }
+        horizontalSpeedLabel.setText(Convert.speed(focus.groundSpeed()));
+        verticalSpeedLabel.setText(Convert.speed(focus.climb));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUnFocus(@Nullable ChartFocusEvent.Unfocused event) {
+        if (stats != null) {
+            if (stats.exit != null) {
+                timeLabel.setText(timeFormat.format(new Date(stats.exit.millis)));
             } else {
                 timeLabel.setText("");
+            }
+            if (!stats.altitude.isEmpty()) {
+                altitudeLabel.setText(Convert.distance(stats.altitude.max - stats.altitude.min));
+            } else {
                 altitudeLabel.setText("");
+            }
+            if (stats.exit != null) {
+                horizontalDistLabel.setText(Convert.distance(stats.exit.distanceTo(stats.land)));
+                verticalDistLabel.setText(Convert.distance(stats.altitude.range()));
+            } else {
                 horizontalDistLabel.setText("");
                 verticalDistLabel.setText("");
             }
-            horizontalSpeedLabel.setText("");
-            verticalSpeedLabel.setText("");
-            speedLabel.setText("");
-            glideLabel.setText("");
+        } else {
+            timeLabel.setText("");
+            altitudeLabel.setText("");
+            horizontalDistLabel.setText("");
+            verticalDistLabel.setText("");
         }
+        horizontalSpeedLabel.setText("");
+        verticalSpeedLabel.setText("");
+        speedLabel.setText("");
+        glideLabel.setText("");
     }
 }

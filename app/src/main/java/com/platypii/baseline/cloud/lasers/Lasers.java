@@ -9,6 +9,7 @@ import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.laser.LaserLayers;
 import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 
 import android.content.Context;
@@ -140,7 +141,7 @@ public class Lasers implements BaseService {
         // Make a list of items to be removed, so that we don't modify list while iterating.
         final List<ProfileLayer> toRemove = new ArrayList<>();
         for (ProfileLayer layer : layers.layers) {
-            if (cache.get(layer.id()) == null) {
+            if (layer instanceof LaserProfileLayer && cache.get(layer.id()) == null) {
                 toRemove.add(layer);
             }
         }

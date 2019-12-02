@@ -1,84 +1,85 @@
 <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="0dp"
-        tools:context="com.platypii.baseline.views.laser.LaserEditFragment">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="0dp"
+    tools:context="com.platypii.baseline.views.laser.LaserEditFragment">
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <EditText
-                android:id="@+id/laserName"
-                android:inputType="text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:hint="@string/profile_name"/>
+            android:id="@+id/laserName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/profile_name"
+            android:inputType="text"
+            android:maxLength="40"
+            android:singleLine="true" />
 
         <Spinner
-                android:id="@+id/laserUnits"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:entries="@array/metric_modes"
-                android:entryValues="@array/metric_modes_values"/>
+            android:id="@+id/laserUnits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/metric_modes"
+            android:entryValues="@array/metric_modes_values" />
 
     </LinearLayout>
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <EditText
-                android:id="@+id/laserLocation"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:inputType="text"
-                android:hint="@string/profile_location"/>
+            android:id="@+id/laserLocation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/profile_location"
+            android:inputType="text"
+            android:singleLine="true" />
 
     </LinearLayout>
 
     <EditText
-            android:id="@+id/laserText"
-            android:inputType="textMultiLine"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="top"
-            android:background="@android:color/transparent"
-            android:hint="10,-100"/>
+        android:id="@+id/laserText"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:gravity="top"
+        android:hint="10,-100"
+        android:inputType="textMultiLine" />
 
     <TextView
-            android:id="@+id/laserStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawablePadding="10dp"
-            android:text=""/>
+        android:id="@+id/laserStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawablePadding="10dp"
+        android:text="" />
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <Button
-                android:id="@+id/laserCancel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@android:string/cancel"/>
+            android:id="@+id/laserCancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/cancel" />
 
         <Button
-                android:id="@+id/laserSave"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/save"/>
+            android:id="@+id/laserSave"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/save" />
 
     </LinearLayout>
 

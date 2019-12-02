@@ -88,7 +88,7 @@ public class TrackMapFragment extends SupportMapFragment implements OnMapReadyCa
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onChartFocus(@NonNull ChartFocusEvent event) {
+    public void onTrackFocus(@NonNull ChartFocusEvent.TrackFocused event) {
         final MLocation focus = event.location;
         if (focus != null && map != null) {
             Log.i(TAG, "Focusing track map on " + focus);
@@ -109,25 +109,30 @@ public class TrackMapFragment extends SupportMapFragment implements OnMapReadyCa
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUnFocus(@NonNull ChartFocusEvent.Unfocused event) {
+        if (focusMarker != null) {
+            focusMarker.setVisible(false);
+        }
+    }
+
     @Override
     public void onMapClick(LatLng focus) {
-        // Find closest point
-        final MLocation closest = findClosest(focus);
-        EventBus.getDefault().post(new ChartFocusEvent(closest));
+        EventBus.getDefault().post(findClosest(focus));
     }
 
     /**
      * Performs a search for the nearest data point
      */
-    @Nullable
-    private MLocation findClosest(@Nullable LatLng focus) {
-        MLocation closest = null;
+    @NonNull
+    private ChartFocusEvent findClosest(@Nullable LatLng focus) {
+        ChartFocusEvent closest = new ChartFocusEvent.Unfocused();
         if (focus != null && trackData != null && !trackData.isEmpty()) {
             double closestDistance = Double.POSITIVE_INFINITY;
             for (MLocation loc : trackData) {
                 final double distance = Geo.fastDistance(loc.latitude, loc.longitude, focus.latitude, focus.longitude);
                 if (distance < closestDistance) {
-                    closest = loc;
+                    closest = new ChartFocusEvent.TrackFocused(loc, trackData);
                     closestDistance = distance;
                 }
             }

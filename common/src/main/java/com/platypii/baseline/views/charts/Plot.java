@@ -34,7 +34,7 @@ public class Plot {
     Bounds[] bounds;
 
     // Chart layers
-    final List<ChartLayer> layers = new ArrayList<>();
+    public final List<ChartLayer> layers = new ArrayList<>();
 
 
     // Avoid creating new objects unnecessarily

@@ -11,11 +11,14 @@ public class TrackProfileLayer extends ProfileLayer {
     private final String id;
     @NonNull
     private final String name;
+    @NonNull
+    public final TrackData trackData;
 
     public TrackProfileLayer(@NonNull String id, @NonNull String name, @NonNull TrackData trackData, @ColorInt int color) {
         super(color);
         this.id = id;
         this.name = name;
+        this.trackData = trackData;
 
         // Load track data into time series
         if (!trackData.data.isEmpty()) {

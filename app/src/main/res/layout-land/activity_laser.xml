@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="#111111"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     android:padding="0dp"
     tools:context="com.platypii.baseline.views.laser.LaserActivity">
 
@@ -14,10 +13,24 @@
         android:layout_width="360dp"
         android:layout_height="match_parent"/>
 
+    <TextView
+        android:id="@+id/flightProfileStats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/flightProfile"
+        android:layout_marginTop="20dp"
+        android:gravity="right"
+        android:padding="5dp"
+        android:textSize="22sp"
+        android:background="@drawable/panel"
+        android:visibility="gone"
+        tools:ignore="RtlHardcoded" />
+
     <FrameLayout
         android:id="@+id/laserPanel"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_toEndOf="@id/flightProfile"
+        android:layout_alignParentEnd="true"/>
 
-</LinearLayout>
+</RelativeLayout>

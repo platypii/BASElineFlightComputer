@@ -53,9 +53,16 @@ public class TimeChartFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onChartFocus(@NonNull ChartFocusEvent event) {
+    public void onTrackFocus(@NonNull ChartFocusEvent.TrackFocused event) {
         if (timeChart != null) {
             timeChart.onFocus(event.location);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUnFocus(@NonNull ChartFocusEvent.Unfocused event) {
+        if (timeChart != null) {
+            timeChart.onFocus(null);
         }
     }
 

@@ -8,7 +8,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import java.util.Collections;
 import org.greenrobot.eventbus.EventBus;
 
@@ -38,15 +37,13 @@ public class TimeChartTouchable extends TimeChart {
                 break;
             case MotionEvent.ACTION_UP:
                 // Clear chart focus event
-                EventBus.getDefault().post(new ChartFocusEvent(null));
+                EventBus.getDefault().post(new ChartFocusEvent.Unfocused());
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (event.getPointerCount() == 1) {
                     final long millis = (long) plot.getXinverse(0, event.getX());
-                    // Find nearest data point
-                    final MLocation closest = findClosest(millis);
-                    // Emit chart focus event
-                    EventBus.getDefault().post(new ChartFocusEvent(closest));
+                    // Find nearest data point, and emit chart focus event
+                    EventBus.getDefault().post(findClosest(millis));
                 } else if (event.getPointerCount() == 2) {
                     float x1 = event.getX(0);
                     float x2 = event.getX(1);
@@ -74,16 +71,16 @@ public class TimeChartTouchable extends TimeChart {
     /**
      * Performs a binary search for the nearest data point
      */
-    @Nullable
-    private MLocation findClosest(long millis) {
+    @NonNull
+    private ChartFocusEvent findClosest(long millis) {
         if (trackData != null && !trackData.isEmpty()) {
             touchLocation.millis = millis;
             int closest_index = Collections.binarySearch(trackData, touchLocation);
             if (closest_index < 0) closest_index = -closest_index - 1;
             if (closest_index == trackData.size()) closest_index--;
-            return trackData.get(closest_index);
+            return new ChartFocusEvent.TrackFocused(trackData.get(closest_index), trackData);
         } else {
-            return null;
+            return new ChartFocusEvent.Unfocused();
         }
     }
 

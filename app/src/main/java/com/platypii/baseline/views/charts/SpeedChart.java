@@ -6,8 +6,8 @@ import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.charts.layers.EllipseLayer;
+import com.platypii.baseline.views.charts.layers.ProfileFocusLayer;
 import com.platypii.baseline.views.charts.layers.SpeedDataLayer;
-import com.platypii.baseline.views.charts.layers.SpeedFocusLayer;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -23,7 +23,7 @@ public class SpeedChart extends PlotView {
     private final Bounds inner = new Bounds();
     private final Bounds outer = new Bounds();
 
-    private final SpeedFocusLayer focusLayer = new SpeedFocusLayer();
+    private final ProfileFocusLayer focusLayer = new ProfileFocusLayer();
 
     public SpeedChart(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -56,7 +56,11 @@ public class SpeedChart extends PlotView {
     }
 
     public void onFocus(@Nullable MLocation focus) {
-        focusLayer.onFocus(focus);
+        if (focus != null) {
+            focusLayer.onFocus(focus.groundSpeed(), focus.climb);
+        } else {
+            focusLayer.onFocus(Double.NaN, Double.NaN);
+        }
         invalidate();
     }
 

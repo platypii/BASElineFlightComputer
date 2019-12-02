@@ -1,6 +1,8 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.events.ChartFocusEvent;
+import com.platypii.baseline.views.charts.layers.Colors;
+import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
 import com.platypii.baseline.views.tracks.TrackDataActivity;
 
 import android.app.Activity;
@@ -27,7 +29,7 @@ public class FlightProfileFragment extends Fragment {
         final Activity parent = getActivity();
         if (parent instanceof TrackDataActivity) {
             ((TrackDataActivity) parent).trackData.thenAccept(trackData -> {
-                flightProfile.loadTrack(trackData);
+                flightProfile.addLayer(new TrackProfileLayer("", "", trackData, Colors.defaultColor));
                 flightProfile.postInvalidate();
             });
         }
@@ -55,7 +57,7 @@ public class FlightProfileFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onChartFocus(@NonNull ChartFocusEvent event) {
         if (flightProfile != null) {
-            flightProfile.onFocus(event.location);
+            flightProfile.onChartFocus(event);
         }
     }
 

@@ -1,29 +1,23 @@
 package com.platypii.baseline.views.charts;
 
+import com.platypii.baseline.events.ChartFocusEvent;
+import com.platypii.baseline.laser.LaserMeasurement;
 import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
-import com.platypii.baseline.views.charts.layers.Colors;
 import com.platypii.baseline.views.charts.layers.ProfileFocusLayer;
-import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import java.util.List;
 
 public class FlightProfile extends PlotView {
-
-    @Nullable
-    List<MLocation> trackData;
 
     private final Bounds bounds = new Bounds();
     private final Bounds inner = new Bounds();
     private final Bounds outer = new Bounds();
 
-    private ProfileFocusLayer focusLayer;
+    final ProfileFocusLayer focusLayer;
 
     public FlightProfile(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -43,18 +37,28 @@ public class FlightProfile extends PlotView {
         outer.y.max = 100;
 
         options.axis.x = options.axis.y = PlotOptions.axisDistance();
-    }
 
-    public void loadTrack(@NonNull TrackData trackData) {
-        this.trackData = trackData.data;
-
-        addLayer(new TrackProfileLayer("", "", trackData, Colors.defaultColor));
-        focusLayer = new ProfileFocusLayer(trackData.data);
+        focusLayer = new ProfileFocusLayer();
         addLayer(focusLayer);
     }
 
-    public void onFocus(@Nullable MLocation focus) {
-        focusLayer.onFocus(focus);
+    public void onChartFocus(@NonNull ChartFocusEvent focus) {
+        if (focus instanceof ChartFocusEvent.LaserFocused) {
+            final LaserMeasurement point = ((ChartFocusEvent.LaserFocused) focus).point;
+            focusLayer.onFocus(point.x, point.y);
+        } else if (focus instanceof ChartFocusEvent.TrackFocused) {
+            final ChartFocusEvent.TrackFocused trackFocus = (ChartFocusEvent.TrackFocused) focus;
+            if (!trackFocus.track.isEmpty()) {
+                final MLocation start = trackFocus.track.get(0);
+                final double x = start.distanceTo(trackFocus.location);
+                final double y = trackFocus.location.altitude_gps - start.altitude_gps;
+                focusLayer.onFocus(x, y);
+            } else {
+                focusLayer.onFocus(Double.NaN, Double.NaN);
+            }
+        } else {
+            focusLayer.onFocus(Double.NaN, Double.NaN);
+        }
         invalidate();
     }
 
