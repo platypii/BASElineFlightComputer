@@ -20,7 +20,7 @@ public class TasksTest {
     }
 
     @Test
-    public void deDup() throws InterruptedException {
+    public void deDup() {
         Tasks tasks = new Tasks();
         tasks.start(null);
         assertEquals(0, tasks.pending.size());

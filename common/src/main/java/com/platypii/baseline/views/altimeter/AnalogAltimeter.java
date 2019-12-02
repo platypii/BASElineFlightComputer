@@ -20,7 +20,6 @@ public class AnalogAltimeter extends View {
     private double altitude = 0.0;
 
     private final AnalogAltimeterOptions options;
-    private boolean overlay = false;
 
     // Avoid creating new objects unnecessarily
     protected final Paint paint = new Paint();
@@ -57,10 +56,6 @@ public class AnalogAltimeter extends View {
         return hand;
     }
 
-    public void setOverlay(boolean overlay) {
-        this.overlay = overlay;
-    }
-
     public void setAltitude(double altitude) {
         this.altitude = altitude;
         postInvalidate();
@@ -81,19 +76,11 @@ public class AnalogAltimeter extends View {
         final float scale_factor = radius / 200;
 
         // Draw face
-        if (overlay) {
-            paint.setColor(0xccdddddd);
-            paint.setStyle(Paint.Style.FILL);
-            canvas.drawCircle(center_x, center_y, radius, paint);
-        } else {
-            paint.setColor(0xff000000);
-            canvas.drawCircle(center_x, center_y, radius, paint);
-            paint.setColor(0xffdddddd);
-            paint.setStyle(Paint.Style.FILL);
-            paint.setMaskFilter(blurMask); // inset
-            canvas.drawCircle(center_x, center_y, radius, paint);
-            paint.setMaskFilter(null);
-        }
+        paint.setColor(0xffdddddd);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setMaskFilter(blurMask); // inset
+        canvas.drawCircle(center_x, center_y, radius, paint);
+        paint.setMaskFilter(null);
 
         // Draw alerts
         // 2-color: 0xffff5533, 0xffdddd55

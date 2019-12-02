@@ -4,13 +4,9 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.MyLocationListener;
-import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
-import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.views.BaseActivity;
-import com.platypii.baseline.views.altimeter.AnalogAltimeterSettable;
 
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,10 +24,9 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener, PubSub.Subscriber<MAltitude> {
+public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener {
     private static final String TAG = "Map";
 
-    private AnalogAltimeterSettable analogAltimeter;
     @Nullable
     private ImageButton homeButton;
     @Nullable
@@ -59,14 +54,9 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_map);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        analogAltimeter = findViewById(R.id.analogAltimeter);
         homeButton = findViewById(R.id.homeButton);
         crosshair = findViewById(R.id.crosshair);
-
-        analogAltimeter.setOverlay(true);
-        analogAltimeter.setAlti(Services.alti);
 
         // Home button listener
         final ImageButton homeButton = findViewById(R.id.homeButton);
@@ -219,29 +209,15 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     private final Runnable updateLocationRunnable = this::updateLocation;
 
-    /**
-     * Listen for altitude updates
-     */
-    @Override
-    public void apply(MAltitude alt) {
-        updateAltimeter();
-    }
-
-    private void updateAltimeter() {
-        analogAltimeter.setAltitude(Services.alti.altitudeAGL());
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
         // Start sensor updates
-        Services.alti.altitudeEvents.subscribe(this);
         Services.location.addListener(this);
         // Recenter on last location
         if (Services.location.lastLoc != null) {
             updateLocation();
         }
-        updateAltimeter();
     }
 
     @Override
@@ -249,7 +225,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         super.onPause();
         // Stop sensor updates
         Services.location.removeListener(this);
-        Services.alti.altitudeEvents.unsubscribe(this);
     }
 
 }

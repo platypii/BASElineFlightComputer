@@ -17,7 +17,7 @@ public class PlaceTest {
         assertEquals(-123.143, kpow.latLng().longitude, 0.001);
         assertEquals("Kpow", kpow.toString());
         assertEquals("Kpow, USA", kpow.niceString());
-        assertEquals("Kpow, USA", kpow.shortName());
+        assertEquals("Kpow", kpow.shortName());
         assertFalse(kpow.isBASE());
     }
 

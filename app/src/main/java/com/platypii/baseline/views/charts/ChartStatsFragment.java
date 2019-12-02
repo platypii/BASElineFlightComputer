@@ -39,7 +39,7 @@ public class ChartStatsFragment extends Fragment {
     private TextView glideLabel;
 
     @NonNull
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("EEE dd MMM yyyy HH:mm:ss", Locale.US);
+    private final SimpleDateFormat timeFormat = new SimpleDateFormat("EEE dd MMM yyyy HH:mm:ss", Locale.US);
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

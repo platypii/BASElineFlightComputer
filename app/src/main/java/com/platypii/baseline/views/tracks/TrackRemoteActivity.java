@@ -86,9 +86,7 @@ public class TrackRemoteActivity extends TrackDataActivity implements DialogInte
      */
     private void loadCharts(@NonNull File trackFile) {
         // Load track data async
-        new Thread(() -> {
-            trackData.complete(new TrackData(trackFile));
-        }).start();
+        new Thread(() -> trackData.complete(new TrackData(trackFile))).start();
         // Load fragments
         final FragmentManager fm = getSupportFragmentManager();
         final Fragment charts = new ChartsFragment();

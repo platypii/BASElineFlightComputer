@@ -75,9 +75,7 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
      */
     private void loadCharts() {
         // Load track data async
-        new Thread(() -> {
-            trackData.complete(new TrackData(trackFile.file));
-        }).start();
+        new Thread(() -> trackData.complete(new TrackData(trackFile.file))).start();
         // Load fragments
         final FragmentManager fm = getSupportFragmentManager();
         final Fragment charts = new ChartsFragment();

@@ -30,7 +30,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
     private static final String TAG = "BaroAltimeter";
 
     @NonNull
-    public PubSub<MPressure> pressureEvents = new PubSub<>();
+    public final PubSub<MPressure> pressureEvents = new PubSub<>();
 
     private static final int sensorDelay = 100000; // microseconds
     @Nullable

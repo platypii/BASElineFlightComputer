@@ -51,9 +51,7 @@ public class TrackMapFragment extends SupportMapFragment implements OnMapReadyCa
         // Get track data from parent activity
         final Activity parent = getActivity();
         if (parent instanceof TrackDataActivity) {
-            ((TrackDataActivity) parent).trackData.thenAccept(trackData -> {
-                loadTrack(map, trackData);
-            });
+            ((TrackDataActivity) parent).trackData.thenAccept(trackData -> loadTrack(map, trackData));
         }
         // Listen for touch
         map.setOnMapClickListener(this);

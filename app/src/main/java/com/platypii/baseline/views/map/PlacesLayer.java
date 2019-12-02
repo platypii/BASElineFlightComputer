@@ -30,7 +30,7 @@ class PlacesLayer implements MapLayer {
         // Remove out of bounds places
         final Iterator<Map.Entry<Place, Marker>> it = placeMarkers.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<Place, Marker> entry = it.next();
+            final Map.Entry<Place, Marker> entry = it.next();
             if (!places.contains(entry.getKey())) {
                 // Remove from HashMap and GoogleMap
                 entry.getValue().remove();
@@ -53,6 +53,7 @@ class PlacesLayer implements MapLayer {
                 .anchor(0.5f, 1f)
                 .flat(true)
                 .icon(PlaceIcons.icon(place))
+                .title(place.shortName())
         );
         placeMarkers.put(place, placeMarker);
     }

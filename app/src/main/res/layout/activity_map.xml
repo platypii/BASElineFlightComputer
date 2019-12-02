@@ -11,12 +11,6 @@
         android:layout_height="match_parent"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
 
-    <com.platypii.baseline.views.altimeter.AnalogAltimeterSettable
-        android:id="@+id/analogAltimeter"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:layout_gravity="right|bottom" />
-
     <fragment
         android:id="@+id/flightStatsFragment"
         android:name="com.platypii.baseline.views.map.FlightStatsFragment"

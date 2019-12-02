@@ -64,7 +64,7 @@ public class Place {
         if (name.isEmpty()) {
             return country;
         } else {
-            return name + ", " + country;
+            return name;
         }
     }
 

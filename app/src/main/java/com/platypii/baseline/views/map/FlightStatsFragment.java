@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 
 public class FlightStatsFragment extends Fragment implements MyLocationListener, PubSub.Subscriber<MAltitude> {
 
+    private TextView flightStatsAlti;
     private TextView flightStatsVario;
     private TextView flightStatsSpeed;
     private TextView flightStatsGlide;
@@ -27,6 +28,7 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener,
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.flight_stats, container, false);
+        flightStatsAlti = view.findViewById(R.id.flightStatsAlti);
         flightStatsVario = view.findViewById(R.id.flightStatsVario);
         flightStatsSpeed = view.findViewById(R.id.flightStatsSpeed);
         flightStatsGlide = view.findViewById(R.id.flightStatsGlide);
@@ -34,6 +36,7 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener,
     }
 
     private void update() {
+        flightStatsAlti.setText(Convert.altitude(Services.alti.altitude));
         if (Services.alti.climb < 0) {
             flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp, 0, 0, 0);
             flightStatsVario.setText(Convert.speed(-Services.alti.climb));

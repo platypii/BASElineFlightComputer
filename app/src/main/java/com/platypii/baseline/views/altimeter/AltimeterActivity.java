@@ -30,7 +30,6 @@ public class AltimeterActivity extends BaseActivity implements PubSub.Subscriber
 
         speedChart = findViewById(R.id.speed_chart_live);
         analogAltimeter = findViewById(R.id.analogAltimeter);
-        analogAltimeter.setOverlay(false);
         analogAltimeter.setAlti(Services.alti);
     }
 

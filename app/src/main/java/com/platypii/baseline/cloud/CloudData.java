@@ -62,7 +62,7 @@ public class CloudData {
     public String getName() {
         final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         final String shortDate = df.format(new Date(date));
-        final String shortLocation = place == null ? "" : place.shortName();
+        final String shortLocation = place == null ? "" : place.niceString();
         return shortDate + " " + shortLocation;
     }
 

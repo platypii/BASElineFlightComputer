@@ -29,7 +29,7 @@ public class MyAltimeter implements BaseService, MyLocationListener, PubSub.Subs
     private static final String TAG = "MyAltimeter";
 
     @NonNull
-    public PubSub<MAltitude> altitudeEvents = new PubSub<>();
+    public final PubSub<MAltitude> altitudeEvents = new PubSub<>();
 
     private final LocationProvider location;
     private boolean started = false;
