@@ -73,7 +73,7 @@ public class TrackUploadTask extends Task {
             Services.cloud.tracks.listAsync(context, true);
             Log.i(TAG, "Upload successful, track " + track.track_id);
             EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, track));
-        } catch (IOException | JsonSyntaxException e) {
+        } catch (Exception e) {
             // Update track store
             Services.trackStore.setNotUploaded(trackFile);
             // Notify listeners

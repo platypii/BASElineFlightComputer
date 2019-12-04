@@ -48,9 +48,10 @@ public class TrackRemoteActivity extends TrackDataActivity implements DialogInte
             loadTrack();
 
             // Setup button listeners
-            findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
             findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
+            findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
             findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+            setupMenu();
         } catch (IllegalStateException e) {
             Exceptions.report(e);
             finish();

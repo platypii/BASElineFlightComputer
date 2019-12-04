@@ -134,6 +134,10 @@ public class TrackStore implements BaseService {
      */
     public boolean delete(@NonNull TrackFile trackFile) {
         Log.w(TAG, "Deleting track file " + trackFile);
+        if (isUploading(trackFile)) {
+            Exceptions.report(new IllegalStateException("Failed to delete, upload in progress"));
+            return false;
+        }
         if (!trackFile.file.exists()) {
             Exceptions.report(new FileNotFoundException("Trying to delete missing track file"));
             return true;

@@ -1,4 +1,4 @@
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.platypii.baseline.views.tracks.TrackRemoteActivity"
@@ -12,35 +12,51 @@
         android:id="@+id/trackLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/trackOptionsMenu"
         android:layout_marginBottom="4dp"
         android:textStyle="bold"
         android:textSize="20sp"
         android:textColor="#dddddd" />
 
-    <LinearLayout
+    <ImageButton
+        android:id="@+id/trackOptionsMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/more_vert"
+        android:contentDescription="Menu"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+    <FrameLayout
+        android:id="@+id/chartStats"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
-
-        <FrameLayout
-            android:id="@+id/chartStats"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-
-        <include
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            layout="@layout/track_buttons_remote"/>
-
-    </LinearLayout>
+        android:layout_below="@id/trackLocation"/>
 
     <FrameLayout
         android:id="@+id/charts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_below="@id/chartStats"
+        android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+    <!-- Must be at bottom of layout to be on top -->
+    <FrameLayout
+        android:id="@+id/trackMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/trackOptionsMenu"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
+
+        <include
+            layout="@layout/track_buttons_remote"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="end"/>
+
+    </FrameLayout>
+
+</RelativeLayout>

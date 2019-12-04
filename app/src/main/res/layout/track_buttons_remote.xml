@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#ff333333"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="right">
+    android:gravity="end">
 
     <Button
         android:id="@+id/openButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"
-        android:drawableRight="@drawable/browser"
+        android:drawableEnd="@drawable/browser"
         android:text="@string/action_open"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
@@ -20,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"
-        android:drawableRight="@drawable/google_earth"
+        android:drawableEnd="@drawable/google_earth"
         android:text="@string/action_earth"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
@@ -29,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"
-        android:drawableRight="@drawable/button_delete"
+        android:drawableEnd="@drawable/button_delete"
         android:text="@string/action_delete"
         style="@style/Widget.AppCompat.Button.Borderless" />
 

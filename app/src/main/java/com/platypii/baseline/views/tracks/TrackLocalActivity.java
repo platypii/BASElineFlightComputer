@@ -64,6 +64,7 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
             // Setup button listeners
             findViewById(R.id.exportButton).setOnClickListener(this::clickExport);
             findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+            setupMenu();
         } catch (IllegalStateException e) {
             Exceptions.report(e);
             finish();
@@ -148,7 +149,9 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
     }
 
     private void deleteLocal() {
-        if (Services.trackStore.delete(trackFile)) {
+        if (Services.trackStore.isUploading(trackFile)) {
+            Toast.makeText(getApplicationContext(), "Delete failed, upload in progress", Toast.LENGTH_LONG).show();
+        } else if (Services.trackStore.delete(trackFile)) {
             // Exit activity
             finish();
         } else {

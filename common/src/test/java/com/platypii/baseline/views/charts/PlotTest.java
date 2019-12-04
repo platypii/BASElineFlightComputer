@@ -10,7 +10,7 @@ public class PlotTest {
 
     @Test
     public void plot() {
-        PlotOptions options = new PlotOptions(1);
+        PlotOptions options = new PlotOptions(1, 1);
         Plot plot = new Plot(options);
         plot.initBounds(1);
         assertNull(plot.canvas);

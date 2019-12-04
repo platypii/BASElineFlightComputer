@@ -1,4 +1,4 @@
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.platypii.baseline.views.tracks.TrackLocalActivity"
@@ -10,17 +10,29 @@
 
     <TextView
         android:id="@+id/filename"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/trackOptionsMenu"
         android:textStyle="bold"
         android:gravity="center"
         android:textSize="20sp"
         android:textColor="#dddddd" />
 
+    <ImageButton
+        android:id="@+id/trackOptionsMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/more_vert"
+        android:contentDescription="Menu"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
     <TextView
         android:id="@+id/filesize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/filename"
         android:gravity="center" />
 
     <ProgressBar
@@ -28,9 +40,9 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/filesize"
         android:padding="5dp"
-        android:layout_gravity="center"
-        android:gravity="center"
         android:visibility="gone" />
 
     <TextView
@@ -38,33 +50,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/uploadProgress"
         android:drawablePadding="5dp"
-        android:layout_gravity="center"
-        android:gravity="center"
         android:visibility="gone" />
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/chartStats"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:baselineAligned="false">
-
-        <FrameLayout
-            android:id="@+id/chartStats"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-
-        <include
-            layout="@layout/track_buttons_local"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"/>
-
-    </LinearLayout>
+        android:layout_below="@id/alert_message"/>
 
     <FrameLayout
         android:id="@+id/charts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_below="@id/chartStats"
+        android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+    <!-- Must be at bottom of layout to be on top -->
+    <FrameLayout
+        android:id="@+id/trackMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/trackOptionsMenu"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
+
+        <include
+            layout="@layout/track_buttons_local"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="end"/>
+
+    </FrameLayout>
+
+</RelativeLayout>
