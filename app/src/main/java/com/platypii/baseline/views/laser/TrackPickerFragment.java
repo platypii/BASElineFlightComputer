@@ -15,6 +15,7 @@ import com.platypii.baseline.views.tracks.TrackLoader;
 
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import java.io.File;
@@ -51,14 +52,14 @@ public class TrackPickerFragment extends TrackListFragment {
     }
 
     private void downloadTrack(@NonNull CloudData track) {
-        final TrackDownloadFragment frag = new TrackDownloadFragment();
-        frag.setArguments(TrackLoader.trackBundle(track));
+        final TrackDownloadFragment downloadFrag = new TrackDownloadFragment();
+        downloadFrag.setArguments(TrackLoader.trackBundle(track));
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.laserPanel, frag)
+                .replace(R.id.laserPanel, downloadFrag)
                 .addToBackStack(null)
                 .commit();
-        frag.trackFile.thenAccept(trackFile -> {
+        downloadFrag.trackFile.thenAccept(trackFile -> {
             // Track download success, add to chart
             final LaserActivity laserActivity = (LaserActivity) getActivity();
             if (laserActivity != null) {
@@ -69,8 +70,9 @@ public class TrackPickerFragment extends TrackListFragment {
                 if (fm != null) fm.popBackStack();
             }
         });
-        frag.trackFile.exceptionally(error -> {
+        downloadFrag.trackFile.exceptionally(error -> {
             // Return to main fragment
+            Toast.makeText(getContext(), "Track download failed", Toast.LENGTH_LONG).show();
             final FragmentManager fm = getFragmentManager();
             if (fm != null) fm.popBackStack();
             return null;

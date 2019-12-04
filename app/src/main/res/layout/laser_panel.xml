@@ -32,6 +32,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:lines="1"
             android:text="@string/tracks"/>
 
         <Button
@@ -39,6 +40,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:lines="1"
             android:text="@string/profiles"/>
 
         <Button
@@ -46,6 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:lines="1"
             android:text="@string/new_profile"/>
 
     </LinearLayout>

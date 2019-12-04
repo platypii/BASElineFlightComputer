@@ -67,15 +67,15 @@ public class TrackRemoteActivity extends TrackDataActivity implements DialogInte
             loadCharts(trackFile);
         } else {
             // File not downloaded to device, start TrackDownloadFragment
-            final TrackDownloadFragment frag = new TrackDownloadFragment();
-            frag.setArguments(TrackLoader.trackBundle(track));
-            frag.trackFile.thenAccept(this::loadCharts);
-//            frag.trackFile.exceptionally(error -> {
+            final TrackDownloadFragment downloadFrag = new TrackDownloadFragment();
+            downloadFrag.setArguments(TrackLoader.trackBundle(track));
+            downloadFrag.trackFile.thenAccept(this::loadCharts);
+//            downloadFrag.trackFile.exceptionally(error -> {
 //                // TODO: Show download error
 //            });
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.charts, frag)
+                    .replace(R.id.charts, downloadFrag)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commit();
         }

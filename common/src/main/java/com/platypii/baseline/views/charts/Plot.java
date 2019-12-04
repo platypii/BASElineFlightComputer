@@ -48,7 +48,7 @@ public class Plot {
         paint.setDither(true);
         paint.setStrokeJoin(Paint.Join.ROUND);
         text.setAntiAlias(true);
-        text.setTextSize(options.font_size * options.density);
+        text.setTextSize(options.font_size);
         text.setColor(0xffcccccc);
     }
 

@@ -64,6 +64,7 @@ public class SpeedChartLive extends PlotSurface implements MyLocationListener {
 
     @Override
     public void drawData(@NonNull Plot plot) {
+        options.padding.right = (int) (plot.options.font_size * 5);
         if (locationService != null) {
             final long currentTime = TimeOffset.phoneToGpsTime(System.currentTimeMillis());
             final MLocation loc = locationService.lastLoc;
@@ -180,20 +181,20 @@ public class SpeedChartLive extends PlotSurface implements MyLocationListener {
         plot.text.setColor(0xff888888);
         if (sy - cy < -44 * options.density || 18 * options.density < sy - cy) {
             // Horizontal speed label
-            plot.canvas.drawText(Convert.speed(vx, 0, true), sx + 3 * options.density, cy + 16 * options.density, plot.text);
+            plot.canvas.drawText(Convert.speed(vx, 0, true), sx + 3 * options.density, cy + options.font_size, plot.text);
         }
         if (42 * options.density < sx - cx) {
             // Vertical speed label
-            plot.canvas.drawText(Convert.speed(Math.abs(vy), 0, true), cx + 3 * options.density, sy + 16 * options.density, plot.text);
+            plot.canvas.drawText(Convert.speed(Math.abs(vy), 0, true), cx + 3 * options.density, sy + options.font_size, plot.text);
         }
 
         // Draw total speed label
         plot.text.setColor(0xffcccccc);
         plot.text.setTextAlign(Paint.Align.LEFT);
         final String totalSpeed = Convert.speed(v);
-        plot.canvas.drawText(totalSpeed, sx + 6 * options.density, sy + 22 * options.density, plot.text);
+        plot.canvas.drawText(totalSpeed, sx + 6 * options.density, sy + options.font_size + 6 * options.density, plot.text);
         final String glideRatio = Convert.glide2(vx, vy, 2, true);
-        plot.canvas.drawText(glideRatio, sx + 6 * options.density, sy + 40 * options.density, plot.text);
+        plot.canvas.drawText(glideRatio, sx + 6 * options.density, sy + 2 * options.font_size + 8 * options.density, plot.text);
     }
 
     // Always keep square aspect ratio

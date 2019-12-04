@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_alti"
-        android:drawablePadding="2dp"
+        android:drawablePadding="4dp"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceLargeInverse"
         android:textColor="#ffffffff" />
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_arrow_downward_white_24dp"
-        android:drawablePadding="2dp"
+        android:drawablePadding="4dp"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceLargeInverse"
         android:textColor="#ffffffff" />
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_arrow_forward_white_24dp"
-        android:drawablePadding="2dp"
+        android:drawablePadding="4dp"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceLargeInverse"
         android:textColor="#ffffffff" />
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_glide"
-        android:drawablePadding="2dp"
+        android:drawablePadding="4dp"
         android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceLargeInverse"
         android:textColor="#ffffffff" />

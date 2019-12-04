@@ -21,7 +21,8 @@ public abstract class PlotSurface extends SurfaceView implements SurfaceHolder.C
 
     // Plot drawing options
     private final float density = getResources().getDisplayMetrics().density;
-    final PlotOptions options = new PlotOptions(density);
+    private final float fontscale = getResources().getConfiguration().fontScale;
+    final PlotOptions options = new PlotOptions(density, fontscale);
 
     // Object to store the plot state and drawing primitives
     private final Plot plot = new Plot(options);

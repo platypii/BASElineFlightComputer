@@ -10,6 +10,8 @@
         android:id="@+id/laserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/laserDelete"
         android:textSize="22sp"
         android:textStyle="bold"/>
 
@@ -39,9 +41,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:drawablePadding="6dp"
-        android:drawableRight="@drawable/button_delete"
+        android:drawableEnd="@drawable/button_delete"
         android:text="@string/action_delete"
         android:visibility="gone"
         style="@style/Widget.AppCompat.Button.Borderless" />

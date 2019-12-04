@@ -32,7 +32,7 @@ class PlotAxes {
      */
     void drawGridlines() {
         plot.paint.setStrokeWidth(plot.options.density);
-        plot.text.setTextSize(16 * plot.options.density);
+        plot.text.setTextSize(plot.options.font_size);
         final Bounds realBounds = getRealBounds();
         drawXlines(realBounds);
         drawYlines(realBounds);
@@ -105,7 +105,7 @@ class PlotAxes {
         if (label != null) {
             plot.text.setColor(plot.options.grid_text_color);
             plot.text.setTextAlign(Paint.Align.LEFT);
-            plot.canvas.drawText(label, sx + 2 * plot.options.density, 14 * plot.options.density, plot.text);
+            plot.canvas.drawText(label, sx + 2 * plot.options.density, plot.options.font_size - 2 * plot.options.density, plot.text);
         }
     }
 

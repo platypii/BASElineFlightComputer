@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -30,11 +31,13 @@ public class TrackDownloadFragment extends Fragment {
 
     private CloudData track;
     private ProgressBar downloadProgress;
+    private TextView downloadStatus;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.track_download, container, false);
         downloadProgress = view.findViewById(R.id.download_progress);
+        downloadStatus = view.findViewById(R.id.download_status);
 
         // Load track from arguments
         try {
@@ -72,7 +75,8 @@ public class TrackDownloadFragment extends Fragment {
     public void onDownloadFailure(@NonNull DownloadEvent.DownloadFailure event) {
         if (event.track_id.equals(track.track_id)) {
             Log.w(TAG, "Track download failed " + event);
-            Toast.makeText(getContext(), "Track download failed", Toast.LENGTH_LONG).show();
+            downloadProgress.setVisibility(View.GONE);
+            downloadStatus.setText("Track download failed");
             trackFile.completeExceptionally(event.error);
         }
     }
