@@ -19,7 +19,7 @@ public class PlotOptions {
     // Drawing options
     public final float density;
     final int axis_color = 0xffee0000;
-    final int grid_color = 0xff555555;
+    public final int grid_color = 0xff555555;
     final int grid_text_color = 0xff666666;
     final float font_size;
 

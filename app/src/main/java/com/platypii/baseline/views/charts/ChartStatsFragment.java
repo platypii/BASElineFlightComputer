@@ -92,13 +92,22 @@ public class ChartStatsFragment extends Fragment {
         glideLabel.setText(Convert.glide(focus.groundSpeed(), focus.climb, 1, true));
         if (stats != null && stats.exit != null) {
             horizontalDistLabel.setText(Convert.distance(focus.distanceTo(stats.exit)));
-            verticalDistLabel.setText(Convert.distance(focus.altitude_gps - stats.exit.altitude_gps));
+            final double vdist = focus.altitude_gps - stats.exit.altitude_gps;
+            if (vdist < 0) {
+                verticalDistLabel.setText("↓ " + Convert.distance(-vdist));
+            } else {
+                verticalDistLabel.setText("↑ " + Convert.distance(vdist));
+            }
         } else {
             horizontalDistLabel.setText("");
             verticalDistLabel.setText("");
         }
         horizontalSpeedLabel.setText(Convert.speed(focus.groundSpeed()));
-        verticalSpeedLabel.setText(Convert.speed(focus.climb));
+        if (focus.climb < 0) {
+            verticalSpeedLabel.setText("↓ " + Convert.speed(-focus.climb));
+        } else {
+            verticalSpeedLabel.setText("↑ " + Convert.speed(focus.climb));
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

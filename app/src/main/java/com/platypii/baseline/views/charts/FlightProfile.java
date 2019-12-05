@@ -5,6 +5,7 @@ import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
+import com.platypii.baseline.views.charts.layers.DiagonalLayer;
 import com.platypii.baseline.views.charts.layers.ProfileFocusLayer;
 
 import android.content.Context;
@@ -40,6 +41,7 @@ public class FlightProfile extends PlotView {
 
         focusLayer = new ProfileFocusLayer();
         addLayer(focusLayer);
+        addLayer(new DiagonalLayer());
     }
 
     public void onChartFocus(@NonNull ChartFocusEvent focus) {
