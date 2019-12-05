@@ -13,8 +13,7 @@ import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.places.Places;
 import com.platypii.baseline.sensors.MySensorManager;
-import com.platypii.baseline.tracks.TrackLogger;
-import com.platypii.baseline.tracks.TrackStore;
+import com.platypii.baseline.tracks.Tracks;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
@@ -56,8 +55,7 @@ public class Services {
     private static boolean ttsLoaded = false;
 
     // Services
-    public static final TrackLogger logger = new TrackLogger();
-    public static final TrackStore trackStore = new TrackStore();
+    public static final Tracks tracks = new Tracks();
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final LocationService location = new LocationService(bluetooth);
     public static final MyAltimeter alti = location.alti;
@@ -104,11 +102,8 @@ public class Services {
                 bluetooth.start(activity);
             }
 
-            Log.i(TAG, "Starting track store service");
-            trackStore.start(appContext);
-
-            Log.i(TAG, "Starting logger service");
-            logger.start(appContext);
+            Log.i(TAG, "Starting tracks service");
+            tracks.start(appContext);
 
             Log.i(TAG, "Starting location service");
             // Note: Activity.checkSelfPermission added in minsdk 23
@@ -202,7 +197,7 @@ public class Services {
      */
     private static synchronized void stopIfIdle() {
         if (initialized && startCount == 0) {
-            if (!logger.isLogging() && !audible.settings.isEnabled) {
+            if (!tracks.logger.isLogging() && !audible.settings.isEnabled) {
                 Log.i(TAG, "All activities have stopped. Stopping services.");
                 // Stop services
                 places.stop();
@@ -214,12 +209,11 @@ public class Services {
                 alti.stop();
                 sensors.stop();
                 location.stop();
-                logger.stop();
-                trackStore.stop();
+                tracks.stop();
                 bluetooth.stop();
                 initialized = false;
             } else {
-                if (logger.isLogging()) {
+                if (tracks.logger.isLogging()) {
                     Log.w(TAG, "All activities have stopped, but still recording track. Leaving services running.");
                 }
                 if (audible.settings.isEnabled) {

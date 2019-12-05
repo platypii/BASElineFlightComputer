@@ -41,7 +41,7 @@ public class ForegroundService extends Service {
         } else if (ACTION_CLICK_STOP.equals(action)) {
             Log.i(TAG, "User clicked notification stop action");
             // Stop audible and logging
-            Services.logger.stopLogging();
+            Services.tracks.logger.stopLogging();
             Services.audible.disableAudible();
         } else {
             Log.e(TAG, "unexpected action: " + action);

@@ -40,7 +40,7 @@ class Notifications implements BaseService {
         EventBus.getDefault().register(this);
 
         // Update initial state
-        if (Services.logger.isLogging()) {
+        if (Services.tracks.logger.isLogging()) {
             final Intent service = new Intent(context, ForegroundService.class);
             service.setAction(ForegroundService.ACTION_START_LOGGING);
             context.startService(service);
@@ -96,7 +96,7 @@ class Notifications implements BaseService {
                 .addAction(stopAction);
         // Log timer
         if (logging) {
-            builder = builder.setUsesChronometer(true).setWhen(Services.logger.getStartTime());
+            builder = builder.setUsesChronometer(true).setWhen(Services.tracks.logger.getStartTime());
         }
         // Caption
         if (logging && audible) {

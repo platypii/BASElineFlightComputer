@@ -1,7 +1,7 @@
 package com.platypii.baseline.events;
 
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackMetadata;
 
 /**
  * Indicates that a track upload has completed, or sync status has changed
@@ -20,9 +20,9 @@ public abstract class SyncEvent {
 
     public static class UploadSuccess extends SyncEvent {
         public final TrackFile trackFile;
-        public final CloudData cloudData;
+        public final TrackMetadata cloudData;
 
-        public UploadSuccess(TrackFile trackFile, CloudData cloudData) {
+        public UploadSuccess(TrackFile trackFile, TrackMetadata cloudData) {
             this.trackFile = trackFile;
             this.cloudData = cloudData;
         }

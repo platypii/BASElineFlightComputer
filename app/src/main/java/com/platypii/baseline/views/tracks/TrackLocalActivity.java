@@ -4,10 +4,10 @@ import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.charts.ChartStatsFragment;
 import com.platypii.baseline.views.charts.ChartsFragment;
@@ -99,13 +99,13 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
     private void updateViews() {
         if (trackFile != null) {
             // Check if upload completed
-            final CloudData cloudData = Services.trackStore.getCloudData(trackFile);
+            final TrackMetadata cloudData = Services.tracks.store.getCloudData(trackFile);
             if (cloudData != null) {
                 // Track uploaded, open TrackRemoteActivity
                 Intents.openTrackRemote(this, cloudData);
                 finish();
-            } else if (Services.trackStore.isUploading(trackFile)) {
-                uploadProgress.setProgress(Services.trackStore.getUploadProgress(trackFile));
+            } else if (Services.tracks.store.isUploading(trackFile)) {
+                uploadProgress.setProgress(Services.tracks.store.getUploadProgress(trackFile));
                 uploadProgress.setMax((int) trackFile.file.length());
                 uploadProgress.setVisibility(View.VISIBLE);
                 alertLabel.setText(R.string.uploading);
@@ -149,9 +149,9 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
     }
 
     private void deleteLocal() {
-        if (Services.trackStore.isUploading(trackFile)) {
+        if (Services.tracks.store.isUploading(trackFile)) {
             Toast.makeText(getApplicationContext(), "Delete failed, upload in progress", Toast.LENGTH_LONG).show();
-        } else if (Services.trackStore.delete(trackFile)) {
+        } else if (Services.tracks.store.delete(trackFile)) {
             // Exit activity
             finish();
         } else {
@@ -179,7 +179,6 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
     public void onUploadFailure(@NonNull SyncEvent.UploadFailure event) {
         if (event.trackFile.getName().equals(trackFile.getName())) {
             Log.e(TAG, "Failed to upload track: " + event.error);
-            Toast.makeText(getApplicationContext(), "Track sync failed", Toast.LENGTH_LONG).show();
             updateViews();
         }
     }

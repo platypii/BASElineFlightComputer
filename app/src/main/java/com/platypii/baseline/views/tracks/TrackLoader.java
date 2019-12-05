@@ -1,8 +1,8 @@
 package com.platypii.baseline.views.tracks;
 
 import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.util.ABundle;
 
 import android.app.Activity;
@@ -21,12 +21,12 @@ public class TrackLoader {
     public static final String EXTRA_TRACK_FILE = "TRACK_FILE";
 
     @NonNull
-    public static CloudData loadCloudData(@Nullable Bundle extras) {
+    public static TrackMetadata loadCloudData(@Nullable Bundle extras) {
         // Load track id from extras
         if (extras != null) {
             final String track_id = extras.getString(EXTRA_TRACK_ID);
             if (track_id != null) {
-                final CloudData track = Services.cloud.tracks.cache.get(track_id);
+                final TrackMetadata track = Services.tracks.cache.get(track_id);
                 if (track != null) {
                     return track;
                 } else {
@@ -41,7 +41,7 @@ public class TrackLoader {
     }
 
     @NonNull
-    public static TrackFile loadTrackFile(@NonNull Activity activity) {
+    static TrackFile loadTrackFile(@NonNull Activity activity) {
         return loadTrackFile(activity.getIntent().getExtras());
     }
 
@@ -66,7 +66,7 @@ public class TrackLoader {
     }
 
     @NonNull
-    public static Bundle trackBundle(@NonNull CloudData track) {
+    public static Bundle trackBundle(@NonNull TrackMetadata track) {
         return ABundle.of(EXTRA_TRACK_ID, track.track_id);
     }
 

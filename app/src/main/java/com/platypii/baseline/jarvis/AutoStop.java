@@ -121,8 +121,8 @@ public class AutoStop {
                 Services.audible.disableAudible();
             }
             // If logging enabled, disable
-            if (Services.logger.isLogging()) {
-                Services.logger.stopLogging();
+            if (Services.tracks.logger.isLogging()) {
+                Services.tracks.logger.stopLogging();
             } else {
                 Log.e(TAG, "Landing detected, but logger not logging");
             }

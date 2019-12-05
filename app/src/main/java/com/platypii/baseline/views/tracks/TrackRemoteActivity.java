@@ -4,9 +4,9 @@ import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackData;
+import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.charts.ChartStatsFragment;
@@ -36,7 +36,7 @@ public class TrackRemoteActivity extends TrackDataActivity implements DialogInte
     @Nullable
     private AlertDialog deleteConfirmation;
 
-    private CloudData track;
+    private TrackMetadata track;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,7 +166,7 @@ public class TrackRemoteActivity extends TrackDataActivity implements DialogInte
 
     private void deleteRemote() {
         // Delete on baseline server
-        Services.cloud.deleteTrack(this, track);
+        Services.tracks.deleteTrack(this, track);
     }
 
     // Listen for deletion of this track

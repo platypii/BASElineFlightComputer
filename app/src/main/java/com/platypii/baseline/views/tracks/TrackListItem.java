@@ -1,7 +1,7 @@
 package com.platypii.baseline.views.tracks;
 
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackMetadata;
 
 public abstract class TrackListItem {
 
@@ -39,9 +39,9 @@ public abstract class TrackListItem {
     }
 
     public static class ListTrackData extends TrackListItem {
-        public final CloudData track;
+        public final TrackMetadata track;
 
-        ListTrackData(CloudData track) {
+        ListTrackData(TrackMetadata track) {
             this.track = track;
         }
 

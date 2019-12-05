@@ -111,18 +111,18 @@ public class MainActivity extends BaseActivity {
             bundle.putFloat("lat", (float) Services.location.lastLoc.latitude);
             bundle.putFloat("lon", (float) Services.location.lastLoc.longitude);
         }
-        if (!Services.logger.isLogging()) {
+        if (!Services.tracks.logger.isLogging()) {
             firebaseAnalytics.logEvent("click_logging_start", bundle);
-            Services.logger.startLogging();
+            Services.tracks.logger.startLogging();
         } else {
             firebaseAnalytics.logEvent("click_logging_stop", bundle);
-            Services.logger.stopLogging();
+            Services.tracks.logger.stopLogging();
         }
     }
 
     // Enables buttons and clock
     private void updateUIState() {
-        final boolean logging = Services.logger.isLogging();
+        final boolean logging = Services.tracks.logger.isLogging();
         // Update record button state
         if (recordButton != null) {
             recordButton.setText(logging ? R.string.action_stop : R.string.action_record);
@@ -135,7 +135,7 @@ public class MainActivity extends BaseActivity {
                 clockRunnable = new Runnable() {
                     public void run() {
                         updateClock();
-                        if (Services.logger.isLogging()) {
+                        if (Services.tracks.logger.isLogging()) {
                             handler.postDelayed(this, clockUpdateInterval);
                         }
                     }
@@ -203,8 +203,8 @@ public class MainActivity extends BaseActivity {
      */
     private void updateClock() {
         if (clock != null) {
-            if (Services.logger.isLogging()) {
-                Services.logger.getLogTime(clockBuilder);
+            if (Services.tracks.logger.isLogging()) {
+                Services.tracks.logger.getLogTime(clockBuilder);
                 clock.setText(clockBuilder);
             } else {
                 clock.setText("");

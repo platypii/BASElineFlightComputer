@@ -1,12 +1,13 @@
-package com.platypii.baseline.cloud.tracks;
+package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.cloud.RetrofitClient;
 import com.platypii.baseline.cloud.cache.TrackCache;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.cloud.DeleteTask;
+import com.platypii.baseline.tracks.cloud.TrackApi;
 
 import android.content.Context;
 import android.util.Log;
@@ -22,14 +23,21 @@ import retrofit2.Response;
 public class Tracks implements BaseService {
     private static final String TAG = "Tracks";
 
+    public final TrackLogger logger = new TrackLogger();
+    public final TrackStore store = new TrackStore();
     public final TrackCache cache = new TrackCache();
+    final UploadManager uploads = new UploadManager();
+
     @Nullable
     private Context context;
 
     @Override
     public void start(@NonNull Context context) {
         this.context = context;
+        logger.start(context);
+        store.start(context);
         cache.start(context);
+        uploads.start(context);
         EventBus.getDefault().register(this);
     }
 
@@ -41,10 +49,10 @@ public class Tracks implements BaseService {
             cache.request();
             final TrackApi trackApi = RetrofitClient.getRetrofit(context).create(TrackApi.class);
             Log.i(TAG, "Listing tracks");
-            trackApi.list().enqueue(new Callback<List<CloudData>>() {
+            trackApi.list().enqueue(new Callback<List<TrackMetadata>>() {
                 @Override
-                public void onResponse(Call<List<CloudData>> call, @NonNull Response<List<CloudData>> response) {
-                    final List<CloudData> tracks = response.body();
+                public void onResponse(Call<List<TrackMetadata>> call, @NonNull Response<List<TrackMetadata>> response) {
+                    final List<TrackMetadata> tracks = response.body();
                     if (tracks != null) {
                         // Save track listing to local cache
                         cache.update(tracks);
@@ -57,7 +65,7 @@ public class Tracks implements BaseService {
                 }
 
                 @Override
-                public void onFailure(Call<List<CloudData>> call, Throwable e) {
+                public void onFailure(Call<List<TrackMetadata>> call, Throwable e) {
                     final boolean networkAvailable = Services.cloud.isNetworkAvailable();
                     if (networkAvailable) {
                         Log.e(TAG, "Failed to list tracks", e);
@@ -67,6 +75,10 @@ public class Tracks implements BaseService {
                 }
             });
         }
+    }
+
+    public void deleteTrack(@NonNull Context context, @NonNull TrackMetadata track) {
+        new Thread(new DeleteTask(context, track)).start();
     }
 
     /**
@@ -88,6 +100,10 @@ public class Tracks implements BaseService {
     @Override
     public void stop() {
         EventBus.getDefault().unregister(this);
+        uploads.stop();
+        cache.stop();
+        store.stop();
+        logger.stop();
         context = null;
     }
 

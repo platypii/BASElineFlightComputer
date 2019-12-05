@@ -3,10 +3,10 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.laser.LaserProfile;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Exceptions;
@@ -93,7 +93,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
             Intents.openTrackLocal(getContext(), track);
         } else if (item instanceof TrackProfileLayerRemote) {
             // Open cloud track charts
-            final CloudData track = ((TrackProfileLayerRemote) item).track;
+            final TrackMetadata track = ((TrackProfileLayerRemote) item).track;
             Log.i(TAG, "Opening cloud track profile " + track);
             Intents.openTrackRemote(getContext(), track);
         } else {

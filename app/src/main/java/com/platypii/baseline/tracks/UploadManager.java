@@ -1,11 +1,10 @@
-package com.platypii.baseline.cloud;
+package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.tasks.TaskType;
-import com.platypii.baseline.cloud.tracks.TrackUploadTask;
 import com.platypii.baseline.events.LoggingEvent;
-import com.platypii.baseline.tracks.TrackFile;
 
 import android.content.Context;
 import android.util.Log;
@@ -31,11 +30,11 @@ class UploadManager implements BaseService {
     /**
      * Clear exiting track uploads, and re-add all local track files to task queue
      */
-    private void uploadAll() {
+    void uploadAll() {
         Services.tasks.removeType(TaskType.trackUpload);
         // Can't upload if you're not signed in
         if (AuthState.getUser() != null) {
-            for (TrackFile track : Services.trackStore.getLocalTracks()) {
+            for (TrackFile track : Services.tracks.store.getLocalTracks()) {
                 Services.tasks.add(new TrackUploadTask(track));
             }
         }

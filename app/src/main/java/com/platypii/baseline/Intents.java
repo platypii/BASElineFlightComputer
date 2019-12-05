@@ -1,7 +1,7 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.tracks.TrackLoader;
 import com.platypii.baseline.views.tracks.TrackLocalActivity;
@@ -30,7 +30,7 @@ public class Intents {
         context.startActivity(intent);
     }
 
-    public static void openTrackRemote(@NonNull Context context, @NonNull CloudData track) {
+    public static void openTrackRemote(@NonNull Context context, @NonNull TrackMetadata track) {
         final Intent intent = new Intent(context, TrackRemoteActivity.class);
         intent.putExtra(TrackLoader.EXTRA_TRACK_ID, track.track_id);
         context.startActivity(intent);
@@ -74,7 +74,7 @@ public class Intents {
 
 //    /** Share link to baseline.ws */
 //    public static void shareTrack(@NonNull Context context, TrackFile trackFile) {
-//        final CloudData cloudData = trackFile.getCloudData();
+//        final TrackMetadata cloudData = trackFile.getCloudData();
 //        if (cloudData != null) {
 //            final SimpleDateFormat format = new SimpleDateFormat("EEE MMM d yyyy, h:mma z", Locale.US);
 //            final String date = format.format(trackFile.getDate());
@@ -82,7 +82,7 @@ public class Intents {
 //            final Intent intent = new Intent();
 //            intent.setAction(Intent.ACTION_SEND);
 //            intent.putExtra(Intent.EXTRA_SUBJECT, "BASEline Track " + date);
-//            intent.putExtra(Intent.EXTRA_TEXT, trackFile.getCloudData().trackUrl);
+//            intent.putExtra(Intent.EXTRA_TEXT, cloudData.trackUrl);
 //            intent.setType("text/plain");
 //            context.startActivity(Intent.createChooser(intent, "Share Track"));
 //        } else {

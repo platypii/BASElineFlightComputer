@@ -1,7 +1,6 @@
-package com.platypii.baseline.cloud;
+package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.places.Place;
-import com.platypii.baseline.tracks.TrackFiles;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -14,7 +13,7 @@ import java.util.Locale;
 /**
  * Class representing online track info
  */
-public class CloudData {
+public class TrackMetadata {
     public final String track_id;
     public final long date;
     public final String date_string;
@@ -23,7 +22,7 @@ public class CloudData {
     @Nullable
     public final Place place;
 
-    CloudData(String track_id, long date, String date_string, String trackUrl, String trackKml, @Nullable Place place) {
+    TrackMetadata(String track_id, long date, String date_string, String trackUrl, String trackKml, @Nullable Place place) {
         this.track_id = track_id;
         this.date = date;
         this.date_string = date_string;
@@ -68,7 +67,7 @@ public class CloudData {
 
     @Override
     public boolean equals(Object cd) {
-        return cd instanceof CloudData && ((CloudData) cd).track_id.equals(track_id);
+        return cd instanceof TrackMetadata && ((TrackMetadata) cd).track_id.equals(track_id);
     }
 
 }

@@ -1,9 +1,9 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
-import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.cloud.DownloadTask;
 import com.platypii.baseline.events.DownloadEvent;
+import com.platypii.baseline.tracks.TrackMetadata;
+import com.platypii.baseline.tracks.cloud.DownloadTask;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.tracks.TrackLoader;
 
@@ -28,7 +28,7 @@ public class TrackDownloadFragment extends Fragment {
 
     public final CompletableFuture<File> trackFile = new CompletableFuture<>();
 
-    private CloudData track;
+    private TrackMetadata track;
     private ProgressBar downloadProgress;
     private TextView downloadStatus;
 

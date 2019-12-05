@@ -2,7 +2,6 @@ package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.cloud.tracks.TrackUploadTask;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.IOUtil;
 
@@ -63,7 +62,7 @@ public class ImportCSV {
         try (OutputStream os = new GZIPOutputStream(new FileOutputStream(destination.file))) {
             final InputStream is = content.openInputStream(uri);
             IOUtil.copy(is, os);
-            Services.trackStore.setNotUploaded(destination);
+            Services.tracks.store.setNotUploaded(destination);
             if (AuthState.getUser() != null) {
                 Log.i(TAG, "Uploading imported track " + destination);
                 Services.tasks.add(new TrackUploadTask(destination));

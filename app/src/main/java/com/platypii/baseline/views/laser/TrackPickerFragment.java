@@ -2,9 +2,9 @@ package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerLocal;
@@ -36,7 +36,7 @@ public class TrackPickerFragment extends TrackListFragment {
                 addLayer(trackLayer);
                 break;
             case TYPE_TRACK_REMOTE:
-                final CloudData track = ((ListTrackData) item).track;
+                final TrackMetadata track = ((ListTrackData) item).track;
                 // Check if track is already downloaded
                 final File abbrv = track.abbrvFile(getContext());
                 if (abbrv.exists()) {
@@ -51,7 +51,7 @@ public class TrackPickerFragment extends TrackListFragment {
         }
     }
 
-    private void downloadTrack(@NonNull CloudData track) {
+    private void downloadTrack(@NonNull TrackMetadata track) {
         final TrackDownloadFragment downloadFrag = new TrackDownloadFragment();
         downloadFrag.setArguments(TrackLoader.trackBundle(track));
         getFragmentManager()

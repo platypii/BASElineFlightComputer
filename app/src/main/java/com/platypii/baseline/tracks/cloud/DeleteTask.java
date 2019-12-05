@@ -1,7 +1,10 @@
-package com.platypii.baseline.cloud;
+package com.platypii.baseline.tracks.cloud;
 
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthException;
+import com.platypii.baseline.cloud.AuthToken;
 import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.util.Exceptions;
 
 import android.content.Context;
@@ -15,15 +18,15 @@ import org.greenrobot.eventbus.EventBus;
 /**
  * Delete tracks from the cloud
  */
-class DeleteTask implements Runnable {
+public class DeleteTask implements Runnable {
     private static final String TAG = "DeleteTask";
 
     @NonNull
     private final Context context;
     @NonNull
-    private final CloudData track;
+    private final TrackMetadata track;
 
-    DeleteTask(@NonNull Context context, @NonNull CloudData track) {
+    public DeleteTask(@NonNull Context context, @NonNull TrackMetadata track) {
         this.context = context;
         this.track = track;
     }
@@ -43,9 +46,9 @@ class DeleteTask implements Runnable {
             deleteRemote(auth, track.trackUrl);
             Log.i(TAG, "Track delete successful: " + track.track_id);
             // Remove from track listing cache
-            Services.cloud.tracks.cache.remove(track);
+            Services.tracks.cache.remove(track);
             // Update track list
-            Services.cloud.tracks.listAsync(context, true);
+            Services.tracks.listAsync(context, true);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.DeleteSuccess(track.track_id));
         } catch (AuthException | IOException e) {

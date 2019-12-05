@@ -3,8 +3,8 @@ package com.platypii.baseline.views.tracks;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackFile;
+import com.platypii.baseline.tracks.TrackMetadata;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -45,7 +45,7 @@ public class TrackAdapter extends BaseAdapter {
     private void populateItems() {
         final List<TrackListItem> updated = new ArrayList<>();
         // Add local tracks
-        final List<TrackFile> localTracks = Services.trackStore.getLocalTracks();
+        final List<TrackFile> localTracks = Services.tracks.store.getLocalTracks();
         if (!localTracks.isEmpty()) {
             updated.add(new ListHeader("Not synced"));
             for (TrackFile track : localTracks) {
@@ -53,10 +53,10 @@ public class TrackAdapter extends BaseAdapter {
             }
         }
         // Add cloud tracks
-        final List<CloudData> cloudTracks = Services.cloud.tracks.cache.list();
+        final List<TrackMetadata> cloudTracks = Services.tracks.cache.list();
         if (cloudTracks != null && !cloudTracks.isEmpty()) {
             updated.add(new ListHeader("Synced"));
-            for (CloudData track : cloudTracks) {
+            for (TrackMetadata track : cloudTracks) {
                 if (filterMatch(track)) {
                     updated.add(new ListTrackData(track));
                 }
@@ -104,9 +104,9 @@ public class TrackAdapter extends BaseAdapter {
                 itemSizeView.setText(trackFile.getSize());
 
                 // Update based on logging and sync state
-                if (Services.trackStore.isUploading(trackFile)) {
+                if (Services.tracks.store.isUploading(trackFile)) {
                     // Show upload progress
-                    final int progress = Services.trackStore.getUploadProgress(trackFile);
+                    final int progress = Services.tracks.store.getUploadProgress(trackFile);
                     final int filesize = (int) trackFile.file.length();
                     itemSpinner.setProgress(progress);
                     itemSpinner.setMax(filesize);
@@ -116,7 +116,7 @@ public class TrackAdapter extends BaseAdapter {
                 }
                 break;
             case TYPE_TRACK_REMOTE:
-                final CloudData trackData = ((ListTrackData) item).track;
+                final TrackMetadata trackData = ((ListTrackData) item).track;
                 final TextView itemNameView2 = convertView.findViewById(R.id.list_item_name);
                 final TextView itemSizeView2 = convertView.findViewById(R.id.list_item_subtitle);
                 final ProgressBar itemSpinner2 = convertView.findViewById(R.id.list_spinner);
@@ -148,7 +148,7 @@ public class TrackAdapter extends BaseAdapter {
                 Intents.openTrackLocal(context, trackFile);
                 break;
             case TYPE_TRACK_REMOTE:
-                final CloudData trackData = ((ListTrackData) item).track;
+                final TrackMetadata trackData = ((ListTrackData) item).track;
                 Intents.openTrackRemote(context, trackData);
                 break;
         }
@@ -178,7 +178,7 @@ public class TrackAdapter extends BaseAdapter {
      * Return true if the track matches the search filter string
      * TODO: Search track.stats.plan.name
      */
-    private boolean filterMatch(@NonNull CloudData track) {
+    private boolean filterMatch(@NonNull TrackMetadata track) {
         // Make a lower case super string of all properties we want to search
         final StringBuilder sb = new StringBuilder();
         if (track.place != null) {

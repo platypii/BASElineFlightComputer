@@ -1,7 +1,7 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.BaseService;
-import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.util.Exceptions;
 
 import android.content.Context;
@@ -76,7 +76,7 @@ public class TrackStore implements BaseService {
         trackState.put(trackFile, new TrackState.TrackRecording());
     }
 
-    public void setNotUploaded(@NonNull TrackFile trackFile) {
+    void setNotUploaded(@NonNull TrackFile trackFile) {
         trackState.put(trackFile, new TrackState.TrackNotUploaded(trackFile));
     }
 
@@ -89,7 +89,7 @@ public class TrackStore implements BaseService {
         }
     }
 
-    public void setUploadSuccess(@NonNull TrackFile trackFile, @NonNull CloudData cloudData) {
+    void setUploadSuccess(@NonNull TrackFile trackFile, @NonNull TrackMetadata cloudData) {
         trackState.put(trackFile, new TrackState.TrackUploaded(cloudData));
     }
 
@@ -103,7 +103,7 @@ public class TrackStore implements BaseService {
         }
     }
 
-    public void setUploadProgress(@NonNull TrackFile trackFile, int bytesCopied) {
+    void setUploadProgress(@NonNull TrackFile trackFile, int bytesCopied) {
         final TrackState state = trackState.get(trackFile);
         if (state instanceof TrackState.TrackUploading) {
             ((TrackState.TrackUploading) state).progress = bytesCopied;
@@ -118,7 +118,7 @@ public class TrackStore implements BaseService {
     }
 
     @Nullable
-    public CloudData getCloudData(@NonNull TrackFile trackFile) {
+    public TrackMetadata getCloudData(@NonNull TrackFile trackFile) {
         final TrackState state = trackState.get(trackFile);
         if (state instanceof TrackState.TrackUploaded) {
             return ((TrackState.TrackUploaded) state).cloudData;
@@ -146,6 +146,8 @@ public class TrackStore implements BaseService {
         if (trackFile.file.delete()) {
             // Remove from store
             trackState.remove(trackFile);
+            // Reload local tracks
+            Services.tracks.uploads.uploadAll();
             return true;
         } else {
             return false;

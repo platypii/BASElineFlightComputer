@@ -1,8 +1,5 @@
 package com.platypii.baseline.tracks;
 
-import com.platypii.baseline.cloud.CloudData;
-import com.platypii.baseline.cloud.MockCloudData;
-
 import java.io.File;
 import java.nio.file.Files;
 import org.junit.Test;
@@ -34,7 +31,7 @@ public class TrackStoreTest {
         store.setUploadProgress(trackFile, 1000);
         assertEquals(1000, store.getUploadProgress(trackFile));
 
-        CloudData cloudData = new MockCloudData();
+        TrackMetadata cloudData = new MockTrackMetadata();
         store.setUploadSuccess(trackFile, cloudData);
         assertFalse(store.isUploading(trackFile));
         assertEquals(cloudData, store.getCloudData(trackFile));

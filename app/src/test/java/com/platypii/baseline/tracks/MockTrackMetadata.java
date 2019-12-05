@@ -1,9 +1,10 @@
-package com.platypii.baseline.cloud;
+package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.places.Place;
+import com.platypii.baseline.tracks.TrackMetadata;
 
-public class MockCloudData extends CloudData {
-    public MockCloudData() {
+public class MockTrackMetadata extends TrackMetadata {
+    public MockTrackMetadata() {
         super(
                 "1234",
                 System.currentTimeMillis(),

@@ -1,7 +1,5 @@
 package com.platypii.baseline.tracks;
 
-import com.platypii.baseline.cloud.CloudData;
-
 import androidx.annotation.NonNull;
 
 /**
@@ -33,9 +31,9 @@ class TrackState {
 
     static class TrackUploaded extends TrackState {
         @NonNull
-        final CloudData cloudData;
+        final TrackMetadata cloudData;
 
-        TrackUploaded(@NonNull CloudData cloudData) {
+        TrackUploaded(@NonNull TrackMetadata cloudData) {
             this.cloudData = cloudData;
         }
     }

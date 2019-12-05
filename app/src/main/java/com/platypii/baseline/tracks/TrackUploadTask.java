@@ -1,4 +1,4 @@
-package com.platypii.baseline.cloud.tracks;
+package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.Services;
@@ -6,11 +6,9 @@ import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.AuthToken;
 import com.platypii.baseline.cloud.BaselineCloud;
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.events.SyncEvent;
-import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.util.IOUtil;
 import com.platypii.baseline.util.MD5;
 
@@ -35,7 +33,7 @@ public class TrackUploadTask extends Task {
     @NonNull
     private final TrackFile trackFile;
 
-    public TrackUploadTask(@NonNull TrackFile trackFile) {
+    TrackUploadTask(@NonNull TrackFile trackFile) {
         this.trackFile = trackFile;
     }
 
@@ -57,25 +55,25 @@ public class TrackUploadTask extends Task {
             throw new AuthException("auth required");
         }
         Log.i(TAG, "Uploading track " + trackFile);
-        Services.trackStore.setUploading(trackFile);
+        Services.tracks.store.setUploading(trackFile);
         try {
             // Get auth token
             final String authToken = AuthToken.getAuthToken(context);
             // Make HTTP request
-            final CloudData track = postTrack(trackFile, authToken);
+            final TrackMetadata track = postTrack(trackFile, authToken);
             // Remove from track store
-            Services.trackStore.setUploadSuccess(trackFile, track);
+            Services.tracks.store.setUploadSuccess(trackFile, track);
             // Move track to synced directory
             trackFile.archive(track.localFile(context));
             // Add to cloud cache
-            Services.cloud.tracks.cache.add(track);
+            Services.tracks.cache.add(track);
             // Update track listing
-            Services.cloud.tracks.listAsync(context, true);
+            Services.tracks.listAsync(context, true);
             Log.i(TAG, "Upload successful, track " + track.track_id);
             EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, track));
         } catch (Exception e) {
             // Update track store
-            Services.trackStore.setNotUploaded(trackFile);
+            Services.tracks.store.setNotUploaded(trackFile);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
             // Re-throw exception to indicate Task failure
@@ -84,10 +82,10 @@ public class TrackUploadTask extends Task {
     }
 
     /**
-     * HTTP post track to baseline, parse response as CloudData
+     * HTTP post track to baseline, parse response as TrackMetadata
      */
     @NonNull
-    private static CloudData postTrack(@NonNull TrackFile trackFile, String auth) throws AuthException, IOException, JsonSyntaxException {
+    private static TrackMetadata postTrack(@NonNull TrackFile trackFile, String auth) throws AuthException, IOException, JsonSyntaxException {
         final long contentLength = trackFile.file.length();
         final String md5 = MD5.md5(trackFile.file);
         final URL url = new URL(postUrl);
@@ -113,7 +111,7 @@ public class TrackUploadTask extends Task {
             if (status == 200) {
                 // Read body
                 final String body = IOUtil.toString(conn.getInputStream());
-                return new Gson().fromJson(body, CloudData.class);
+                return new Gson().fromJson(body, TrackMetadata.class);
             } else if (status == 401) {
                 throw new AuthException(auth);
             } else {
@@ -137,7 +135,7 @@ public class TrackUploadTask extends Task {
             bytesCopied += bytesRead;
 
             // Update upload progress state
-            Services.trackStore.setUploadProgress(trackFile, bytesCopied);
+            Services.tracks.store.setUploadProgress(trackFile, bytesCopied);
             EventBus.getDefault().post(new SyncEvent.UploadProgress(trackFile, bytesCopied));
         }
         is.close();

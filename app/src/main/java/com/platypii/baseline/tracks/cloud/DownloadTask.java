@@ -1,9 +1,13 @@
-package com.platypii.baseline.cloud;
+package com.platypii.baseline.tracks.cloud;
 
 import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthException;
+import com.platypii.baseline.cloud.AuthToken;
+import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.events.DownloadEvent;
 import com.platypii.baseline.tracks.TrackAbbrv;
+import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.util.Exceptions;
 
 import android.content.Context;
@@ -37,7 +41,7 @@ public class DownloadTask implements Runnable {
     @NonNull
     private final File abbrvFile;
 
-    public DownloadTask(@NonNull Context context, @NonNull CloudData track) {
+    public DownloadTask(@NonNull Context context, @NonNull TrackMetadata track) {
         this.context = context;
         this.trackId = track.track_id;
         this.trackUrl = BaselineCloud.baselineServer + "/tracks/" + track.track_id + "/baseline-track.csv.gz";

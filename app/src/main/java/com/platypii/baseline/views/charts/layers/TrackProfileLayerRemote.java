@@ -1,7 +1,7 @@
 package com.platypii.baseline.views.charts.layers;
 
-import com.platypii.baseline.cloud.CloudData;
 import com.platypii.baseline.tracks.TrackData;
+import com.platypii.baseline.tracks.TrackMetadata;
 
 import androidx.annotation.NonNull;
 
@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
  */
 public class TrackProfileLayerRemote extends TrackProfileLayer {
     @NonNull
-    public final CloudData track;
+    public final TrackMetadata track;
 
-    public TrackProfileLayerRemote(@NonNull CloudData track, @NonNull TrackData trackData) {
+    public TrackProfileLayerRemote(@NonNull TrackMetadata track, @NonNull TrackData trackData) {
         super(track.track_id, track.getName(), trackData, Colors.nextColor());
         this.track = track;
     }

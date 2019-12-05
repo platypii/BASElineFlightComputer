@@ -1,6 +1,6 @@
-package com.platypii.baseline.cloud.tracks;
+package com.platypii.baseline.tracks.cloud;
 
-import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.tracks.TrackMetadata;
 
 import androidx.annotation.NonNull;
 import java.util.List;
@@ -11,6 +11,6 @@ public interface TrackApi {
 
     @NonNull
     @GET("/v1/tracks")
-    Call<List<CloudData>> list();
+    Call<List<TrackMetadata>> list();
 
 }

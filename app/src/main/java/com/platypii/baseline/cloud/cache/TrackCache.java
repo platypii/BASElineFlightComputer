@@ -1,6 +1,6 @@
 package com.platypii.baseline.cloud.cache;
 
-import com.platypii.baseline.cloud.CloudData;
+import com.platypii.baseline.tracks.TrackMetadata;
 
 import androidx.annotation.NonNull;
 import com.google.gson.reflect.TypeToken;
@@ -10,19 +10,19 @@ import java.util.List;
 /**
  * Local track list cache
  */
-public class TrackCache extends LocalCache<CloudData> {
+public class TrackCache extends LocalCache<TrackMetadata> {
 
     public TrackCache() {
         super("cloud.track");
     }
 
     /**
-     * Return Type of List<CloudData>
+     * Return Type of List<TrackMetadata>
      */
     @NonNull
     @Override
     Type listType() {
-        return new TypeToken<List<CloudData>>(){}.getType();
+        return new TypeToken<List<TrackMetadata>>(){}.getType();
     }
 
     /**
@@ -30,7 +30,7 @@ public class TrackCache extends LocalCache<CloudData> {
      */
     @NonNull
     @Override
-    String getId(@NonNull CloudData item) {
+    String getId(@NonNull TrackMetadata item) {
         return item.track_id;
     }
 

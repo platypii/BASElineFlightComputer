@@ -5,7 +5,6 @@ import com.platypii.baseline.measurements.MLocation;
 import androidx.annotation.NonNull;
 import java.io.File;
 import java.util.List;
-import java9.util.concurrent.CompletableFuture;
 
 /**
  * Parse location data from track file
@@ -26,11 +25,11 @@ public class TrackData {
         stats = new TrackStats(data);
     }
 
-    @NonNull
-    public static CompletableFuture<TrackData> fromTrackFileAsync(@NonNull File trackFile) {
-        final CompletableFuture<TrackData> future = new CompletableFuture<>();
-        new Thread(() -> future.complete(new TrackData(trackFile))).start();
-        return future;
-    }
+//    @NonNull
+//    public static CompletableFuture<TrackData> fromTrackFileAsync(@NonNull File trackFile) {
+//        final CompletableFuture<TrackData> future = new CompletableFuture<>();
+//        new Thread(() -> future.complete(new TrackData(trackFile))).start();
+//        return future;
+//    }
 
 }

@@ -1,5 +1,6 @@
 package com.platypii.baseline.cloud.cache;
 
+import com.platypii.baseline.BaseService;
 import com.platypii.baseline.util.Exceptions;
 
 import android.content.Context;
@@ -20,7 +21,7 @@ import java.util.List;
  *
  * @param <T> the java type of the items
  */
-public abstract class LocalCache<T> {
+public abstract class LocalCache<T> implements BaseService {
 
     // Preference keys
     @NonNull
@@ -43,6 +44,7 @@ public abstract class LocalCache<T> {
         CACHE_LIST = keyPrefix + ".list";
     }
 
+    @Override
     public void start(@NonNull Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
@@ -161,6 +163,10 @@ public abstract class LocalCache<T> {
         editor.remove(CACHE_LAST_UPDATE);
         editor.remove(CACHE_LIST);
         editor.apply();
+    }
+
+    @Override
+    public void stop() {
     }
 
 }
