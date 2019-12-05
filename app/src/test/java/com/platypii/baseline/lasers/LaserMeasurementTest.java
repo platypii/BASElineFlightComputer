@@ -1,4 +1,4 @@
-package com.platypii.baseline.laser;
+package com.platypii.baseline.lasers;
 
 import androidx.annotation.NonNull;
 import java.text.ParseException;

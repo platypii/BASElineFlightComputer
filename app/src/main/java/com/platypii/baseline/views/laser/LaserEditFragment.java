@@ -4,10 +4,10 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.events.BluetoothEvent;
-import com.platypii.baseline.laser.LaserMeasurement;
-import com.platypii.baseline.laser.LaserProfile;
-import com.platypii.baseline.laser.NewLaserForm;
-import com.platypii.baseline.laser.RangefinderService;
+import com.platypii.baseline.lasers.LaserMeasurement;
+import com.platypii.baseline.lasers.LaserProfile;
+import com.platypii.baseline.lasers.NewLaserForm;
+import com.platypii.baseline.lasers.rangefinder.RangefinderService;
 import com.platypii.baseline.location.Geocoder;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.LatLngAlt;
@@ -100,7 +100,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     @Override
     public void onStart() {
         super.onStart();
-        Services.cloud.lasers.layers.add(editLayer);
+        Services.lasers.layers.add(editLayer);
         rangefinder.start(getActivity());
         Services.location.addListener(this);
         EventBus.getDefault().register(this);
@@ -110,7 +110,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     private void updateLayers() {
         getLaserProfile();
         editLayer.loadLaser(laserProfile);
-        Services.cloud.lasers.layers.update(editLayer);
+        Services.lasers.layers.update(editLayer);
     }
 
     /**
@@ -197,14 +197,14 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             // Save in background and return to profile list view
             getLaserProfile();
             // Publish laser as a new layer
-            Services.cloud.lasers.addUnsynced(laserProfile);
+            Services.lasers.addUnsynced(laserProfile);
             updateLayers();
             // Reset for next laser input
             laserProfile = newLaserProfile();
             editLayer = new LaserProfileLayer(laserProfile);
             clearForm();
             // Re-add edit layer since it will be removed on fragment stop
-            Services.cloud.lasers.layers.add(editLayer);
+            Services.lasers.layers.add(editLayer);
             // Return to main fragment
             final FragmentManager fm = getFragmentManager();
             if (fm != null) fm.popBackStack();
@@ -266,7 +266,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         EventBus.getDefault().unregister(this);
         Services.location.removeListener(this);
         rangefinder.stop();
-        Services.cloud.lasers.layers.remove(editLayer.id());
+        Services.lasers.layers.remove(editLayer.id());
         saveForm();
     }
 

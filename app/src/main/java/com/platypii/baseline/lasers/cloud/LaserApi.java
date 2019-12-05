@@ -1,6 +1,6 @@
-package com.platypii.baseline.cloud.lasers;
+package com.platypii.baseline.lasers.cloud;
 
-import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.lasers.LaserProfile;
 
 import androidx.annotation.NonNull;
 import java.util.List;

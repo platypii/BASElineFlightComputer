@@ -9,7 +9,8 @@ import androidx.annotation.NonNull;
 public abstract class Task {
 
     /**
-     * Unique id for the task
+     * Unique id for the task.
+     * Tasks are de-duped by id when added to Tasks service.
      */
     @NonNull
     public abstract String id();

@@ -1,4 +1,4 @@
-package com.platypii.baseline.laser;
+package com.platypii.baseline.lasers.rangefinder;
 
 import java.util.UUID;
 

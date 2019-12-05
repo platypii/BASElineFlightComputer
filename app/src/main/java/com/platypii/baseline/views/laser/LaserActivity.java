@@ -4,7 +4,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.events.ProfileLayerEvent;
-import com.platypii.baseline.laser.RangefinderService;
+import com.platypii.baseline.lasers.rangefinder.RangefinderService;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.BaseActivity;
@@ -62,7 +62,7 @@ public class LaserActivity extends BaseActivity {
     public void onStart() {
         super.onStart();
         // Add all layers
-        for (ProfileLayer layer : Services.cloud.lasers.layers.layers) {
+        for (ProfileLayer layer : Services.lasers.layers.layers) {
             flightProfile.addLayer(layer);
         }
         EventBus.getDefault().register(this);

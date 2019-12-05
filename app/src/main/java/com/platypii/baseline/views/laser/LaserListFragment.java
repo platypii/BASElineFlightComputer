@@ -3,7 +3,7 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.LaserSyncEvent;
-import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.lasers.LaserProfile;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 
@@ -70,7 +70,7 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
         if (item instanceof LaserListItem.ListLaser) {
             final LaserProfile laser = ((LaserListItem.ListLaser) item).laser;
             final ProfileLayer layer = new LaserProfileLayer(laser);
-            Services.cloud.lasers.layers.add(layer);
+            Services.lasers.layers.add(layer);
             final FragmentManager fm = getFragmentManager();
             if (fm != null) fm.popBackStack();
         }

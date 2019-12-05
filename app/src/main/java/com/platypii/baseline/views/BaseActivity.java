@@ -87,7 +87,7 @@ public abstract class BaseActivity extends FragmentActivity {
                 Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
             }
             // Clear laser layers
-            Services.cloud.lasers.layers.layers.clear();
+            Services.lasers.layers.layers.clear();
         }
     }
 

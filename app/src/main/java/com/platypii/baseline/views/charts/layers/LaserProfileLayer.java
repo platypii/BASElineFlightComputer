@@ -1,7 +1,7 @@
 package com.platypii.baseline.views.charts.layers;
 
-import com.platypii.baseline.laser.LaserMeasurement;
-import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.lasers.LaserMeasurement;
+import com.platypii.baseline.lasers.LaserProfile;
 
 import androidx.annotation.NonNull;
 import java.util.List;

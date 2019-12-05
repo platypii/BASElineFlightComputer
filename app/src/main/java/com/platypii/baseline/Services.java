@@ -9,6 +9,7 @@ import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.cloud.tasks.Tasks;
 import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.jarvis.FlightComputer;
+import com.platypii.baseline.lasers.Lasers;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.places.Places;
@@ -56,6 +57,7 @@ public class Services {
 
     // Services
     public static final Tracks tracks = new Tracks();
+    public static final Lasers lasers = new Lasers();
     public static final BluetoothService bluetooth = new BluetoothService();
     public static final LocationService location = new LocationService(bluetooth);
     public static final MyAltimeter alti = location.alti;
@@ -104,6 +106,9 @@ public class Services {
 
             Log.i(TAG, "Starting tracks service");
             tracks.start(appContext);
+
+            Log.i(TAG, "Starting lasers service");
+            lasers.start(appContext);
 
             Log.i(TAG, "Starting location service");
             // Note: Activity.checkSelfPermission added in minsdk 23
@@ -209,6 +214,7 @@ public class Services {
                 alti.stop();
                 sensors.stop();
                 location.stop();
+                lasers.stop();
                 tracks.stop();
                 bluetooth.stop();
                 initialized = false;

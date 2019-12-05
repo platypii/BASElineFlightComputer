@@ -1,4 +1,4 @@
-package com.platypii.baseline.laser;
+package com.platypii.baseline.lasers;
 
 import com.platypii.baseline.measurements.LatLngAlt;
 import com.platypii.baseline.places.Place;

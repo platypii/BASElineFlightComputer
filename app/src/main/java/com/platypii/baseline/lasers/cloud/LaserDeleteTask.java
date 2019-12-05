@@ -1,8 +1,8 @@
-package com.platypii.baseline.cloud.lasers;
+package com.platypii.baseline.lasers.cloud;
 
 import com.platypii.baseline.cloud.RetrofitClient;
 import com.platypii.baseline.events.LaserSyncEvent;
-import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.lasers.LaserProfile;
 
 import android.content.Context;
 import android.util.Log;

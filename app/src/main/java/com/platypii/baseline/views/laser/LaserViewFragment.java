@@ -3,10 +3,10 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.cloud.lasers.LaserDeleteTask;
 import com.platypii.baseline.events.LaserSyncEvent;
-import com.platypii.baseline.laser.LaserMeasurement;
-import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.lasers.LaserMeasurement;
+import com.platypii.baseline.lasers.LaserProfile;
+import com.platypii.baseline.lasers.cloud.LaserDeleteTask;
 import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Convert;
@@ -107,7 +107,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
             Analytics.logEvent(getContext(), "click_track_delete_remote_2", ABundle.of("laser_id", laser.laser_id));
             if (laser.isLocal()) {
                 // Delete local only
-                Services.cloud.lasers.unsynced.remove(laser);
+                Services.lasers.unsynced.remove(laser);
                 EventBus.getDefault().post(new LaserSyncEvent.DeleteSuccess(laser));
             } else {
                 // Delete laser from server
@@ -137,7 +137,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
         if (bundle != null) {
             final String laserId = bundle.getString(LASER_ID);
             if (laserId != null) {
-                final LaserProfile laser = Services.cloud.lasers.get(laserId);
+                final LaserProfile laser = Services.lasers.get(laserId);
                 if (laser != null) {
                     return laser;
                 } else {

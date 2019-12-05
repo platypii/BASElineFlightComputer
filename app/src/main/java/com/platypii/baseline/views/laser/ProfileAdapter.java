@@ -51,7 +51,7 @@ class ProfileAdapter extends BaseAdapter {
         // Bind delete button
         convertView.findViewById(R.id.list_item_delete).setOnClickListener(v -> {
             // Remove from layers
-            Services.cloud.lasers.layers.remove(layer.id());
+            Services.lasers.layers.remove(layer.id());
         });
 
         return convertView;

@@ -1,8 +1,8 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.events.ChartFocusEvent;
-import com.platypii.baseline.laser.LaserMeasurement;
-import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.lasers.LaserMeasurement;
+import com.platypii.baseline.lasers.LaserProfile;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.Bounds;

@@ -1,4 +1,4 @@
-package com.platypii.baseline.laser;
+package com.platypii.baseline.lasers;
 
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
@@ -19,7 +19,7 @@ public class LaserMeasurement {
     public final double x; // meters
     public final double y; // meters
 
-    LaserMeasurement(double x, double y) {
+    public LaserMeasurement(double x, double y) {
         this.x = x;
         this.y = y;
         if (x < 0) {

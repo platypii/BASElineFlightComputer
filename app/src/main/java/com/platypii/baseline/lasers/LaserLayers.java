@@ -1,4 +1,4 @@
-package com.platypii.baseline.laser;
+package com.platypii.baseline.lasers;
 
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;

@@ -1,6 +1,6 @@
 package com.platypii.baseline.events;
 
-import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.lasers.LaserProfile;
 
 import androidx.annotation.NonNull;
 

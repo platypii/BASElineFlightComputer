@@ -61,14 +61,11 @@ public class TrackPickerFragment extends TrackListFragment {
                 .commit();
         downloadFrag.trackFile.thenAccept(trackFile -> {
             // Track download success, add to chart
-            final LaserActivity laserActivity = (LaserActivity) getActivity();
-            if (laserActivity != null) {
-                final ProfileLayer layer = new TrackProfileLayerRemote(track, new TrackData(trackFile));
-                Services.cloud.lasers.layers.add(layer);
-                // Return to main fragment
-                final FragmentManager fm = getFragmentManager();
-                if (fm != null) fm.popBackStack();
-            }
+            final ProfileLayer layer = new TrackProfileLayerRemote(track, new TrackData(trackFile));
+            addLayer(layer);
+            // Pop twice to go back to laser panel
+            final FragmentManager fm = getFragmentManager();
+            if (fm != null) fm.popBackStack();
         });
         downloadFrag.trackFile.exceptionally(error -> {
             // Return to main fragment
@@ -80,7 +77,7 @@ public class TrackPickerFragment extends TrackListFragment {
     }
 
     private void addLayer(@NonNull ProfileLayer layer) {
-        Services.cloud.lasers.layers.add(layer);
+        Services.lasers.layers.add(layer);
         // Return to main fragment
         final FragmentManager fm = getFragmentManager();
         if (fm != null) fm.popBackStack();

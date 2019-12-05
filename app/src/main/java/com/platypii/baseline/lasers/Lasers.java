@@ -1,4 +1,4 @@
-package com.platypii.baseline.cloud.lasers;
+package com.platypii.baseline.lasers;
 
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
@@ -7,8 +7,9 @@ import com.platypii.baseline.cloud.RetrofitClient;
 import com.platypii.baseline.cloud.cache.LaserCache;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.events.LaserSyncEvent;
-import com.platypii.baseline.laser.LaserLayers;
-import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.events.SyncEvent;
+import com.platypii.baseline.lasers.cloud.LaserApi;
+import com.platypii.baseline.lasers.cloud.LaserUploadTask;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 
@@ -49,7 +50,7 @@ public class Lasers implements BaseService {
     /**
      * Query baseline server for laser listing asynchronously
      */
-    void listAsync(@Nullable Context context, boolean force) {
+    public void listAsync(@Nullable Context context, boolean force) {
         if (context != null && (force || cache.shouldRequest())) {
             cache.request();
             final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
@@ -159,6 +160,15 @@ public class Lasers implements BaseService {
         listAsync(context, true);
         // Remove from layers
         layers.remove(event.laserProfile.laser_id);
+    }
+
+    /**
+     * Listen for track delete because we need to delete from laser layers.
+     */
+    @Subscribe
+    public void onTrackDelete(@NonNull SyncEvent.DeleteSuccess event) {
+        // Remove from layers
+        layers.remove(event.track_id);
     }
 
     @Override

@@ -3,8 +3,8 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.laser.LaserProfile;
-import com.platypii.baseline.laser.LaserSearch;
+import com.platypii.baseline.lasers.LaserProfile;
+import com.platypii.baseline.lasers.LaserSearch;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -44,7 +44,7 @@ class LaserAdapter extends BaseAdapter {
         items.clear();
         // Add unsynced lasers
         int sectionCount = 0;
-        final List<LaserProfile> unsynced = Services.cloud.lasers.unsynced.list();
+        final List<LaserProfile> unsynced = Services.lasers.unsynced.list();
         if (unsynced != null && !unsynced.isEmpty()) {
             for (LaserProfile laser : unsynced) {
                 if (LaserSearch.matchLaser(laser, filter)) {
@@ -55,7 +55,7 @@ class LaserAdapter extends BaseAdapter {
                 }
             }
         }
-        final List<LaserProfile> lasers = Services.cloud.lasers.cache.list();
+        final List<LaserProfile> lasers = Services.lasers.cache.list();
         if (lasers != null && !lasers.isEmpty()) {
             // Sort by country, by name
             Collections.sort(lasers, (o1, o2) -> {

@@ -1,6 +1,6 @@
 package com.platypii.baseline.events;
 
-import com.platypii.baseline.laser.LaserMeasurement;
+import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.measurements.MLocation;
 
 import androidx.annotation.NonNull;

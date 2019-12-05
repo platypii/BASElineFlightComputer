@@ -4,7 +4,7 @@ import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.ProfileLayerEvent;
-import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.lasers.LaserProfile;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.util.ABundle;
@@ -73,7 +73,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
     public void onStart() {
         super.onStart();
         if (listAdapter != null) {
-            listAdapter.setLayers(Services.cloud.lasers.layers.layers);
+            listAdapter.setLayers(Services.lasers.layers.layers);
         }
         updateViews();
         EventBus.getDefault().register(this);
@@ -144,7 +144,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
 
     private void updateViews() {
         if (helpText != null) {
-            boolean isEmpty = Services.cloud.lasers.layers.layers.isEmpty();
+            boolean isEmpty = Services.lasers.layers.layers.isEmpty();
             helpText.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         }
     }
@@ -152,7 +152,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateLayers(ProfileLayerEvent event) {
         if (listAdapter != null) {
-            listAdapter.setLayers(Services.cloud.lasers.layers.layers);
+            listAdapter.setLayers(Services.lasers.layers.layers);
         }
         updateViews();
     }

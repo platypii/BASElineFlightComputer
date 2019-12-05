@@ -1,4 +1,4 @@
-package com.platypii.baseline.cloud.lasers;
+package com.platypii.baseline.lasers.cloud;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthException;
@@ -7,7 +7,7 @@ import com.platypii.baseline.cloud.RetrofitClient;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.events.LaserSyncEvent;
-import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.lasers.LaserProfile;
 
 import android.content.Context;
 import android.util.Log;
@@ -23,7 +23,7 @@ public class LaserUploadTask extends Task {
     @NonNull
     private final LaserProfile laserProfile;
 
-    LaserUploadTask(@NonNull LaserProfile laserProfile) {
+    public LaserUploadTask(@NonNull LaserProfile laserProfile) {
         this.laserProfile = laserProfile;
     }
 
@@ -52,9 +52,9 @@ public class LaserUploadTask extends Task {
             final LaserProfile result = response.body();
             Log.i(TAG, "Laser POST successful, laser profile " + result);
             // Add laser to cache, remove from unsynced, and update list
-            Services.cloud.lasers.cache.add(result);
-            Services.cloud.lasers.unsynced.remove(laserProfile);
-            Services.cloud.lasers.listAsync(context, true);
+            Services.lasers.cache.add(result);
+            Services.lasers.unsynced.remove(laserProfile);
+            Services.lasers.listAsync(context, true);
             // Sneakily replace laser_id
             laserProfile.laser_id = result.laser_id;
             EventBus.getDefault().post(new LaserSyncEvent.UploadSuccess(result));

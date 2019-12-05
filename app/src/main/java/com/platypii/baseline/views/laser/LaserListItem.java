@@ -1,6 +1,6 @@
 package com.platypii.baseline.views.laser;
 
-import com.platypii.baseline.laser.LaserProfile;
+import com.platypii.baseline.lasers.LaserProfile;
 
 public abstract class LaserListItem {
 

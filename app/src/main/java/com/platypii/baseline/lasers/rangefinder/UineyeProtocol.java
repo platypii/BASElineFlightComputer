@@ -1,5 +1,6 @@
-package com.platypii.baseline.laser;
+package com.platypii.baseline.lasers.rangefinder;
 
+import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.views.laser.LaserActivity;
 
 import android.bluetooth.BluetoothDevice;
