@@ -39,6 +39,7 @@ public class Tracks implements BaseService {
         cache.start(context);
         uploads.start(context);
         EventBus.getDefault().register(this);
+        listAsync(context, false);
     }
 
     /**

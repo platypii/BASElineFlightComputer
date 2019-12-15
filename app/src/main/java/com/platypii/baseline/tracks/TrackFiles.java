@@ -18,7 +18,7 @@ import java.util.Locale;
  * Unsynced track files are stored in the top level directory.
  * Synced track files are moved to the "synced" directory.
  */
-public class TrackFiles {
+class TrackFiles {
     private static final String TAG = "TrackFiles";
 
     @NonNull
@@ -46,7 +46,7 @@ public class TrackFiles {
         }
     }
 
-    public static File getTrackDirectory(@NonNull Context context) {
+    static File getTrackDirectory(@NonNull Context context) {
         final String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             return context.getExternalFilesDir(null);
