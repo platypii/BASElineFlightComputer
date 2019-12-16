@@ -8,6 +8,12 @@
     android:orientation="vertical"
     android:padding="0dp">
 
+    <View
+        android:id="@+id/strut"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true"/>
+
     <TextView
         android:id="@+id/filename"
         android:layout_width="wrap_content"
@@ -23,57 +29,69 @@
         android:id="@+id/trackOptionsMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_toStartOf="@id/strut"
         android:src="@drawable/more_vert"
         android:contentDescription="Menu"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
     <TextView
         android:id="@+id/filesize"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/strut"
         android:layout_below="@id/filename"
         android:gravity="center" />
 
     <ProgressBar
         android:id="@+id/uploadProgress"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/strut"
         android:layout_below="@id/filesize"
         android:padding="5dp"
         android:visibility="gone" />
 
     <TextView
         android:id="@+id/alert_message"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/strut"
         android:layout_below="@id/uploadProgress"
         android:drawablePadding="5dp"
+        android:gravity="center"
         android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/chartStats"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/strut"
         android:layout_below="@id/alert_message"/>
 
     <FrameLayout
         android:id="@+id/charts"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_below="@id/chartStats"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/strut"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"/>
 
     <!-- Must be at bottom of layout to be on top -->
     <FrameLayout
         android:id="@+id/trackMenu"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/trackOptionsMenu"
-        android:layout_alignParentEnd="true"
+        android:layout_toStartOf="@id/strut"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:visibility="gone">
 
