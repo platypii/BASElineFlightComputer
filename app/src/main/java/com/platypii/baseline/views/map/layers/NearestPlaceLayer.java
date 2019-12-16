@@ -1,19 +1,23 @@
-package com.platypii.baseline.views.map;
+package com.platypii.baseline.views.map.layers;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.places.Place;
+import com.platypii.baseline.views.map.PlaceIcons;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-class NearestPlaceLayer implements MapLayer {
+class NearestPlaceLayer extends MapLayer {
 
-    private final Marker placeMarker;
+    @Nullable
+    private Marker placeMarker;
 
-    NearestPlaceLayer(@NonNull GoogleMap map) {
+    @Override
+    public void onAdd(@NonNull GoogleMap map) {
         placeMarker = map.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))
                 .visible(false)
@@ -25,7 +29,7 @@ class NearestPlaceLayer implements MapLayer {
 
     @Override
     public void update() {
-        if (Services.location.lastLoc != null) {
+        if (placeMarker != null && Services.location.lastLoc != null) {
             final Place place = Services.places.nearestPlace.cached(Services.location.lastLoc);
             if (place != null) {
                 placeMarker.setVisible(true);

@@ -19,14 +19,13 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener {
     private static final String TAG = "Map";
 
+    @Nullable
+    private MapFragment mapFragment;
     @Nullable
     private ImageButton homeButton;
     @Nullable
@@ -34,10 +33,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     @Nullable
     private GoogleMap map; // Might be null if Google Play services APK is not available
 
-    // Layers
-    private final List<MapLayer> layers = new ArrayList<>();
-    // Used to limit number of layer updates
-    private long lastLayerUpdate = 0;
+    // Limit the number of layer updates
+    private long lastLayerUpdate = 0; // timestamp
     private static final long maxLayerUpdateDuration = 500; // don't update layers more than once every 500ms
 
     // Activity state
@@ -65,7 +62,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         }
 
         // Initialize map
-        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         } else {
@@ -80,23 +77,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
         this.map = map;
-        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        // Center priority: current location, home location, default location
-        if (Services.location.lastLoc != null) {
-            final LatLng center = Services.location.lastLoc.latLng();
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(center, MapOptions.getZoom()));
-            Log.i(TAG, "Centering map on " + center);
-        } else if (LandingZone.homeLoc != null) {
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(LandingZone.homeLoc, MapOptions.defaultZoom));
-            Log.w(TAG, "Centering map on home " + LandingZone.homeLoc);
-        } else {
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, MapOptions.defaultZoom));
-            Log.w(TAG, "Centering map on default " + MapOptions.defaultLatLng);
-        }
-
-        // Add map layers
-        addLayers(map);
-        updateLayers();
 
         // Drag listener
         map.setOnCameraMoveStartedListener(this);
@@ -126,14 +106,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     private void setHome(@Nullable LatLng home) {
         Log.i(TAG, "Setting home location: " + home);
         LandingZone.setHomeLocation(this, home);
-        updateLayers();
-    }
-
-    private void addLayers(@NonNull GoogleMap map) {
-        layers.add(new PlacesLayer(map));
-        layers.add(new HomeLayer(map));
-        layers.add(new LandingLayer(map));
-        layers.add(new MyPositionLayer(map));
+        updateLayers(true);
     }
 
     @Override
@@ -149,7 +122,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     @Override
     public void onCameraMove() {
-        updateLayers();
+        updateLayers(false);
     }
 
     @Override
@@ -165,13 +138,11 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         runOnUiThread(updateLocationRunnable);
     }
 
-    private void updateLayers() {
+    private void updateLayers(boolean force) {
         // Only update layers once per second
-        if (System.currentTimeMillis() - lastLayerUpdate > maxLayerUpdateDuration) {
+        if (mapFragment != null && (force || System.currentTimeMillis() - lastLayerUpdate > maxLayerUpdateDuration)) {
             lastLayerUpdate = System.currentTimeMillis();
-            for (MapLayer layer : layers) {
-                layer.update();
-            }
+            mapFragment.updateLayers();
         }
     }
 
@@ -180,7 +151,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
             final LatLng currentLoc = Services.location.lastLoc.latLng();
 
             // Update markers and overlays
-            updateLayers();
+            updateLayers(false);
 
             // Center map on user's location
             if (dragged && lastDrag > 0 && System.currentTimeMillis() - lastDrag > MapOptions.snapbackTime()) {
@@ -212,7 +183,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     @Override
     protected void onResume() {
         super.onResume();
-        // Start sensor updates
+        // Start location updates
         Services.location.addListener(this);
         // Recenter on last location
         if (Services.location.lastLoc != null) {
@@ -223,7 +194,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     @Override
     protected void onPause() {
         super.onPause();
-        // Stop sensor updates
+        // Stop location updates
         Services.location.removeListener(this);
     }
 

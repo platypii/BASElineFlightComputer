@@ -1,10 +1,11 @@
-package com.platypii.baseline.views.map;
+package com.platypii.baseline.views.map.layers;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.location.LandingZone;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -16,15 +17,16 @@ import com.google.android.gms.maps.model.RoundCap;
 import java.util.ArrayList;
 import java.util.List;
 
-class LandingLayer implements MapLayer {
+public class LandingLayer extends MapLayer {
 
-    @NonNull
-    private final Marker landingMarker;
-    @NonNull
-    private final Polyline landingPath;
+    @Nullable
+    private Marker landingMarker;
+    @Nullable
+    private Polyline landingPath;
     private final List<LatLng> landingPoints = new ArrayList<>();
 
-    LandingLayer(@NonNull GoogleMap map) {
+    @Override
+    public void onAdd(@NonNull GoogleMap map) {
         // Add projected landing zone
         landingMarker = map.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))
@@ -45,19 +47,21 @@ class LandingLayer implements MapLayer {
 
     @Override
     public void update() {
-        final LatLng landingLocation = LandingZone.getLandingLocation();
-        if (landingLocation != null) {
-            final LatLng currentLoc = Services.location.lastLoc.latLng();
-            landingMarker.setPosition(landingLocation);
-            landingMarker.setVisible(true);
-            landingPoints.clear();
-            landingPoints.add(currentLoc);
-            landingPoints.add(landingLocation);
-            landingPath.setPoints(landingPoints);
-            landingPath.setVisible(true);
-        } else {
-            landingMarker.setVisible(false);
-            landingPath.setVisible(false);
+        if (landingMarker != null && landingPath != null) {
+            final LatLng landingLocation = LandingZone.getLandingLocation();
+            if (landingLocation != null) {
+                final LatLng currentLoc = Services.location.lastLoc.latLng();
+                landingMarker.setPosition(landingLocation);
+                landingMarker.setVisible(true);
+                landingPoints.clear();
+                landingPoints.add(currentLoc);
+                landingPoints.add(landingLocation);
+                landingPath.setPoints(landingPoints);
+                landingPath.setVisible(true);
+            } else {
+                landingMarker.setVisible(false);
+                landingPath.setVisible(false);
+            }
         }
     }
 }

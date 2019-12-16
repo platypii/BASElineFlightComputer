@@ -1,10 +1,11 @@
-package com.platypii.baseline.views.map;
+package com.platypii.baseline.views.map.layers;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.util.Numbers;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -12,18 +13,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-class MyPositionLayer implements MapLayer {
+public class MyPositionLayer extends MapLayer {
 
-    private final Marker myPositionMarker;
+    @Nullable
+    private Marker myPositionMarker;
     @NonNull
-    private final BitmapDescriptor myposition1;
+    private final BitmapDescriptor myposition1 = BitmapDescriptorFactory.fromResource(R.drawable.myposition1);
     @NonNull
-    private final BitmapDescriptor myposition2;
+    private final BitmapDescriptor myposition2 = BitmapDescriptorFactory.fromResource(R.drawable.myposition2);
 
-    MyPositionLayer(@NonNull GoogleMap map) {
-        myposition1 = BitmapDescriptorFactory.fromResource(R.drawable.myposition1);
-        myposition2 = BitmapDescriptorFactory.fromResource(R.drawable.myposition2);
-
+    @Override
+    public void onAdd(@NonNull GoogleMap map) {
         myPositionMarker = map.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))
                 .visible(false)
@@ -35,7 +35,7 @@ class MyPositionLayer implements MapLayer {
 
     @Override
     public void update() {
-        if (Services.location.isFresh()) {
+        if (myPositionMarker != null && Services.location.isFresh()) {
             myPositionMarker.setVisible(true);
             myPositionMarker.setPosition(Services.location.lastLoc.latLng());
             final double groundSpeed = Services.location.groundSpeed();

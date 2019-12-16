@@ -1,10 +1,11 @@
-package com.platypii.baseline.views.map;
+package com.platypii.baseline.views.map.layers;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.location.LandingZone;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -16,15 +17,16 @@ import com.google.android.gms.maps.model.RoundCap;
 import java.util.ArrayList;
 import java.util.List;
 
-class HomeLayer implements MapLayer {
+public class HomeLayer extends MapLayer {
 
-    @NonNull
-    private final Marker homeMarker;
-    @NonNull
-    private final Polyline homePath;
+    @Nullable
+    private Marker homeMarker;
+    @Nullable
+    private Polyline homePath;
     private final List<LatLng> homePoints = new ArrayList<>();
 
-    HomeLayer(@NonNull GoogleMap map) {
+    @Override
+    public void onAdd(@NonNull GoogleMap map) {
         // Add home location pin
         homeMarker = map.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))
@@ -45,21 +47,23 @@ class HomeLayer implements MapLayer {
 
     @Override
     public void update() {
-        final LatLng home = LandingZone.homeLoc;
-        if (home != null) {
-            homeMarker.setPosition(home);
-            homeMarker.setVisible(true);
-            if (Services.location.lastLoc != null) {
-                final LatLng currentLoc = Services.location.lastLoc.latLng();
-                homePoints.clear();
-                homePoints.add(currentLoc);
-                homePoints.add(LandingZone.homeLoc);
-                homePath.setPoints(homePoints);
-                homePath.setVisible(true);
+        if (homeMarker != null && homePath != null) {
+            final LatLng home = LandingZone.homeLoc;
+            if (home != null) {
+                homeMarker.setPosition(home);
+                homeMarker.setVisible(true);
+                if (Services.location.lastLoc != null) {
+                    final LatLng currentLoc = Services.location.lastLoc.latLng();
+                    homePoints.clear();
+                    homePoints.add(currentLoc);
+                    homePoints.add(LandingZone.homeLoc);
+                    homePath.setPoints(homePoints);
+                    homePath.setVisible(true);
+                }
+            } else {
+                homeMarker.setVisible(false);
+                homePath.setVisible(false);
             }
-        } else {
-            homeMarker.setVisible(false);
-            homePath.setVisible(false);
         }
     }
 
