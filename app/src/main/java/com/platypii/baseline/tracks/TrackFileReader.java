@@ -3,8 +3,8 @@ package com.platypii.baseline.tracks;
 import com.platypii.baseline.altimeter.BaroAltimeter;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.CSVHeader;
-import com.platypii.baseline.util.kalman.Filter;
-import com.platypii.baseline.util.kalman.FilterKalman;
+import com.platypii.baseline.util.filters.Filter;
+import com.platypii.baseline.util.filters.FilterKalman;
 
 import android.util.Log;
 import androidx.annotation.NonNull;

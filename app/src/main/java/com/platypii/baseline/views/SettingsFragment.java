@@ -124,34 +124,41 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     @Override
     public boolean onPreferenceClick(@NonNull Preference preference) {
-        if (preference.getKey().equals("audible_settings")) {
-            // Open audible settings activity
-            Analytics.logEvent(getActivity(), "click_audible_settings", null);
-            startActivity(new Intent(getActivity(), AudibleSettingsActivity.class));
-        } else if (preference.getKey().equals("bluetooth_settings")) {
-            // Open bluetooth settings activity
-            Analytics.logEvent(getActivity(), "click_bluetooth_settings", null);
-            startActivity(new Intent(getActivity(), BluetoothActivity.class));
-        } else if (preference.getKey().equals("sensor_info")) {
-            // Open sensor activity
-            Analytics.logEvent(getActivity(), "click_sensors", null);
-            startActivity(new Intent(getActivity(), SensorActivity.class));
-        } else if (preference.getKey().equals("sign_in")) {
-            // Handle sign in/out click
-            final BaseActivity activity = (BaseActivity) getActivity();
-            if (AuthState.getUser() != null) {
-                activity.clickSignOut();
-            } else {
-                activity.clickSignIn();
-            }
-        } else if (preference.getKey().equals("help_page")) {
-            // Handle help page click
-            Analytics.logEvent(getActivity(), "click_help", null);
-            Intents.openHelpUrl(getActivity());
-        } else if (preference.getKey().equals("privacy_page")) {
-            // Handle privacy policy page click
-            Analytics.logEvent(getActivity(), "click_privacy", null);
-            Intents.openPrivacyUrl(getActivity());
+        switch (preference.getKey()) {
+            case "audible_settings":
+                // Open audible settings activity
+                Analytics.logEvent(getActivity(), "click_audible_settings", null);
+                startActivity(new Intent(getActivity(), AudibleSettingsActivity.class));
+                break;
+            case "bluetooth_settings":
+                // Open bluetooth settings activity
+                Analytics.logEvent(getActivity(), "click_bluetooth_settings", null);
+                startActivity(new Intent(getActivity(), BluetoothActivity.class));
+                break;
+            case "sensor_info":
+                // Open sensor activity
+                Analytics.logEvent(getActivity(), "click_sensors", null);
+                startActivity(new Intent(getActivity(), SensorActivity.class));
+                break;
+            case "sign_in":
+                // Handle sign in/out click
+                final BaseActivity activity = (BaseActivity) getActivity();
+                if (AuthState.getUser() != null) {
+                    activity.clickSignOut();
+                } else {
+                    activity.clickSignIn();
+                }
+                break;
+            case "help_page":
+                // Handle help page click
+                Analytics.logEvent(getActivity(), "click_help", null);
+                Intents.openHelpUrl(getActivity());
+                break;
+            case "privacy_page":
+                // Handle privacy policy page click
+                Analytics.logEvent(getActivity(), "click_privacy", null);
+                Intents.openPrivacyUrl(getActivity());
+                break;
         }
         return false;
     }

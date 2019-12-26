@@ -8,8 +8,8 @@ import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.util.RefreshRateEstimator;
 import com.platypii.baseline.util.Stat;
-import com.platypii.baseline.util.kalman.Filter;
-import com.platypii.baseline.util.kalman.FilterKalman;
+import com.platypii.baseline.util.filters.Filter;
+import com.platypii.baseline.util.filters.FilterKalman;
 
 import android.content.Context;
 import android.hardware.Sensor;

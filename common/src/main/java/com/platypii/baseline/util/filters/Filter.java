@@ -1,4 +1,4 @@
-package com.platypii.baseline.util.kalman;
+package com.platypii.baseline.util.filters;
 
 /**
  * Abstract representation of a filter (eg- Low pass, high pass, moving average, kalman, etc)

@@ -8,8 +8,8 @@ import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.util.PubSub;
-import com.platypii.baseline.util.kalman.Filter;
-import com.platypii.baseline.util.kalman.FilterKalman;
+import com.platypii.baseline.util.filters.Filter;
+import com.platypii.baseline.util.filters.FilterKalman;
 
 import android.content.Context;
 import android.content.SharedPreferences;

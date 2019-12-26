@@ -1,4 +1,4 @@
-package com.platypii.baseline.util.kalman;
+package com.platypii.baseline.util.filters;
 
 import androidx.annotation.NonNull;
 

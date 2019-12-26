@@ -1,4 +1,4 @@
-package com.platypii.baseline.util.kalman;
+package com.platypii.baseline.util.filters;
 
 import com.platypii.baseline.util.tensor.Tensor1x2;
 import com.platypii.baseline.util.tensor.Tensor2x1;
