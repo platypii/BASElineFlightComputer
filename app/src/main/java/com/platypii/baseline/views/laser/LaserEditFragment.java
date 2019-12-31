@@ -3,7 +3,7 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.events.RangefinderEvent;
 import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.lasers.LaserProfile;
 import com.platypii.baseline.lasers.NewLaserForm;
@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,12 +50,14 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     private static final String TAG = "LaserEditFrag";
 
     private final RangefinderService rangefinder = new RangefinderService();
+    private static boolean rangefinderEnabled = false;
 
     private EditText laserName;
     private Spinner laserUnits;
     private EditText laserLocation;
     private EditText laserText;
     private TextView laserStatus;
+    private ImageButton laserConnect;
 
     // Edit layer gets recreated on save, and the active one gets left in LaserLayers
     @NonNull
@@ -73,7 +76,9 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         laserLocation = view.findViewById(R.id.laserLocation);
         laserText = view.findViewById(R.id.laserText);
         laserStatus = view.findViewById(R.id.laserStatus);
-        view.findViewById(R.id.laserClear).setOnClickListener(this::laserClear);
+        laserConnect = view.findViewById(R.id.laserConnect);
+        laserConnect.setOnClickListener(this::clickLaserConnect);
+        view.findViewById(R.id.laserClear).setOnClickListener(this::clickLaserClear);
         loadForm();
         view.findViewById(R.id.laserSave).setOnClickListener(this::laserSave);
         view.findViewById(R.id.laserCancel).setOnClickListener(this::laserCancel);
@@ -102,9 +107,15 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     public void onStart() {
         super.onStart();
         Services.lasers.layers.add(editLayer);
-        rangefinder.start(getActivity());
         Services.location.addListener(this);
         EventBus.getDefault().register(this);
+        if (rangefinderEnabled) {
+            final Activity activity = getActivity();
+            if (activity != null) {
+                rangefinder.start(activity);
+            }
+        }
+        updateRangefinder();
     }
 
     // Update chart in parent activity
@@ -215,11 +226,29 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         }
     }
 
-    private void laserClear(View view) {
+    /**
+     * Called when user clicks rangefinder button
+     */
+    private void clickLaserConnect(View view) {
+        Analytics.logEvent(getContext(), "click_laser_edit_connect", null);
+        rangefinderEnabled = true;
+        final Activity activity = getActivity();
+        if (activity != null) {
+            rangefinder.start(activity);
+        }
+    }
+
+    /**
+     * Clear points button
+     */
+    private void clickLaserClear(View view) {
         Analytics.logEvent(getContext(), "click_laser_edit_clear", null);
         laserText.setText("");
     }
 
+    /**
+     * Cancel laser: clear form and return
+     */
     private void laserCancel(View view) {
         Analytics.logEvent(getContext(), "click_laser_edit_cancel", null);
         clearForm();
@@ -243,17 +272,23 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onBluetoothEvent(BluetoothEvent event) {
+    public void onBluetoothEvent(@NonNull RangefinderEvent event) {
         updateRangefinder();
     }
 
     private void updateRangefinder() {
-        if (rangefinder.getState() == BT_CONNECTED) {
-            laserStatus.setText(R.string.rangefinder_connected);
-            laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
+        if (rangefinderEnabled) {
+            laserConnect.setVisibility(View.GONE);
+            if (rangefinder.getState() == BT_CONNECTED) {
+                laserStatus.setText(R.string.rangefinder_connected);
+                laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
+            } else {
+                laserStatus.setText(R.string.rangefinder_searching);
+                laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
+            }
+            laserStatus.setVisibility(View.VISIBLE);
         } else {
-            laserStatus.setText(R.string.rangefinder_searching);
-            laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
+            laserStatus.setVisibility(View.GONE);
         }
     }
 
@@ -264,16 +299,6 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             // Notify rangefinder service that bluetooth was enabled
             rangefinder.bluetoothStarted(getActivity());
         }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-        Services.location.removeListener(this);
-        rangefinder.stop();
-        Services.lasers.layers.remove(editLayer.id());
-        saveForm();
     }
 
     private void loadForm() {
@@ -318,5 +343,17 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
                 });
             }
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+        Services.location.removeListener(this);
+        if (rangefinderEnabled) {
+            rangefinder.stop();
+        }
+        Services.lasers.layers.remove(editLayer.id());
+        saveForm();
     }
 }

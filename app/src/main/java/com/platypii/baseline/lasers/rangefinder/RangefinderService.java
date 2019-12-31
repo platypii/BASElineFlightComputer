@@ -1,7 +1,7 @@
 package com.platypii.baseline.lasers.rangefinder;
 
 import com.platypii.baseline.BaseService;
-import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.events.RangefinderEvent;
 import com.platypii.baseline.util.Exceptions;
 
 import android.app.Activity;
@@ -29,6 +29,7 @@ public class RangefinderService implements BaseService {
     public static final int ENABLE_BLUETOOTH_CODE = 13;
 
     // Bluetooth state
+    private boolean started = false;
     private int bluetoothState = BT_STOPPED;
     private BluetoothAdapter bluetoothAdapter;
     @Nullable
@@ -38,6 +39,10 @@ public class RangefinderService implements BaseService {
 
     @Override
     public void start(@NonNull Context context) {
+        if (started) {
+            Exceptions.report(new IllegalStateException("Rangefinder started twice"));
+            return;
+        }
         if (!(context instanceof Activity)) {
             Exceptions.report(new ClassCastException("Rangefinder context must be an activity"));
             return;
@@ -45,6 +50,7 @@ public class RangefinderService implements BaseService {
         final Activity activity = (Activity) context;
         // TODO: Check for location permission? Can't scan without location permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            started = true;
             startAsync(activity);
         } else {
             Log.e(TAG, "Android 5.0+ required for bluetooth LE");
@@ -52,7 +58,7 @@ public class RangefinderService implements BaseService {
     }
 
     /**
-     * Starts bluetooth in an asynctask.
+     * Starts bluetooth in an async thread.
      * Even though we're mostly just starting the bluetooth thread, calling getAdapter can be slow.
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -99,14 +105,14 @@ public class RangefinderService implements BaseService {
     void setState(int state) {
         Log.d(TAG, "Rangefinder bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         bluetoothState = state;
-        EventBus.getDefault().post(new BluetoothEvent());
+        EventBus.getDefault().post(new RangefinderEvent());
     }
 
     @Override
     public synchronized void stop() {
         Log.i(TAG, "Stopping rangefinder service");
         // Stop thread
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bluetoothRunnable != null && bluetoothThread != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && started && bluetoothRunnable != null && bluetoothThread != null) {
             bluetoothRunnable.stop();
             try {
                 bluetoothThread.join(1000);
@@ -117,9 +123,11 @@ public class RangefinderService implements BaseService {
             } catch (InterruptedException e) {
                 Log.e(TAG, "Bluetooth thread interrupted while waiting for it to die", e);
             }
+            setState(BT_STOPPED);
+            started = false;
             Log.i(TAG, "Rangefinder service stopped");
         } else {
-            Log.w(TAG, "Cannot stop rangefinder: runnable is null");
+            Log.w(TAG, "Cannot stop rangefinder");
         }
     }
 

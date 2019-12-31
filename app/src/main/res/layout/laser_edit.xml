@@ -65,6 +65,16 @@
         android:drawablePadding="10dp"
         android:text="" />
 
+    <ImageButton
+        android:id="@+id/laserConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/laserButtons"
+        android:src="@drawable/bluetooth"
+        android:contentDescription="Connect bluetooth laser"
+        style="@style/Widget.AppCompat.Button.Borderless"/>
+
     <LinearLayout
         android:id="@+id/laserButtons"
         android:layout_width="match_parent"
