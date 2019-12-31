@@ -73,6 +73,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         laserLocation = view.findViewById(R.id.laserLocation);
         laserText = view.findViewById(R.id.laserText);
         laserStatus = view.findViewById(R.id.laserStatus);
+        view.findViewById(R.id.laserClear).setOnClickListener(this::laserClear);
         loadForm();
         view.findViewById(R.id.laserSave).setOnClickListener(this::laserSave);
         view.findViewById(R.id.laserCancel).setOnClickListener(this::laserCancel);
@@ -212,6 +213,11 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             // Form error
             Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void laserClear(View view) {
+        Analytics.logEvent(getContext(), "click_laser_edit_clear", null);
+        laserText.setText("");
     }
 
     private void laserCancel(View view) {
