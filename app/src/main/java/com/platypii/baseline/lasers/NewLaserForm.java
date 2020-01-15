@@ -22,10 +22,17 @@ public class NewLaserForm {
 
     public void save(@NonNull Context context) {
         final SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        edit.putString("new_laser_form.name", name);
-        edit.putBoolean("new_laser_form.metric", metric);
-        edit.putString("new_laser_form.latlngalt", latLngAlt);
-        edit.putString("new_laser_form.points", points);
+        if (name.isEmpty() && points.isEmpty()) {
+            edit.remove("new_laser_form.name");
+            edit.remove("new_laser_form.metric");
+            edit.remove("new_laser_form.latlngalt");
+            edit.remove("new_laser_form.points");
+        } else {
+            edit.putString("new_laser_form.name", name);
+            edit.putBoolean("new_laser_form.metric", metric);
+            edit.putString("new_laser_form.latlngalt", latLngAlt);
+            edit.putString("new_laser_form.points", points);
+        }
         edit.apply();
     }
 

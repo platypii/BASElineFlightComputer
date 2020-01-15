@@ -13,6 +13,7 @@ import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.LatLngAlt;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Analytics;
+import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 
 import android.app.Activity;
@@ -39,6 +40,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -78,10 +80,19 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         laserStatus = view.findViewById(R.id.laserStatus);
         laserConnect = view.findViewById(R.id.laserConnect);
         laserConnect.setOnClickListener(this::clickLaserConnect);
-        view.findViewById(R.id.laserClear).setOnClickListener(this::clickLaserClear);
-        loadForm();
+        view.findViewById(R.id.laserClear).setOnClickListener(this::clickClear);
+        view.findViewById(R.id.laserSort).setOnClickListener(this::clickSort);
         view.findViewById(R.id.laserSave).setOnClickListener(this::laserSave);
         view.findViewById(R.id.laserCancel).setOnClickListener(this::laserCancel);
+
+        // Set spinner to match default units
+        if (!Convert.metric) {
+            laserUnits.setSelection(1);
+        }
+        // Load saved draft
+        loadForm();
+
+        // Change listeners
         laserText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -241,9 +252,24 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     /**
      * Clear points button
      */
-    private void clickLaserClear(View view) {
+    private void clickClear(View view) {
         Analytics.logEvent(getContext(), "click_laser_edit_clear", null);
         laserText.setText("");
+    }
+
+    /**
+     * Sort points button
+     */
+    private void clickSort(View view) {
+        Analytics.logEvent(getContext(), "click_laser_edit_sort", null);
+        // Sort by horizontal distance
+        final boolean metric = isMetric();
+        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), metric);
+        Collections.sort(points, (l1, l2) -> Double.compare(l1.x, l2.x));
+        // Update text box
+        laserText.setText(LaserMeasurement.render(points, metric));
+        // Update chart in parent activity
+        updateLayers();
     }
 
     /**
@@ -258,15 +284,15 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserMeasure(@NonNull LaserMeasurement meas) {
-        // Parse lasers
+        // Insert newline if needed
+        if (!laserText.getText().toString().endsWith("\n")) {
+            laserText.append("\n");
+        }
         final boolean metric = isMetric();
-        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), metric);
-        // Add measurement to laser points
-        points.add(meas);
-        // Sort by horiz
-        Collections.sort(points, (l1, l2) -> Double.compare(l1.x, l2.x));
-        // Update text box
-        laserText.setText(LaserMeasurement.render(points, metric));
+        final double units = metric ? 1 : 3.28084;
+        // Append measurement to laser text
+        final String line = String.format(Locale.US, "%.1f, %.1f\n", meas.x * units, meas.y * units);
+        laserText.append(line);
         // Update chart in parent activity
         updateLayers();
     }
@@ -326,7 +352,6 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
 
     private void clearForm() {
         laserName.setText("");
-        laserUnits.setSelection(0);
         laserLocation.setText("");
         laserText.setText("");
     }
