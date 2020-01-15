@@ -32,7 +32,7 @@ interface BasePlot {
         plot.updateBounds(this);
 
         // Background
-        plot.canvas.drawColor(0xff000000);
+        plot.canvas.drawColor(plot.options.background_color);
 
         // Draw grid lines
         plot.axes.drawGridlines();

@@ -31,6 +31,8 @@ import static com.platypii.baseline.views.tracks.TrackListItem.TYPE_TRACK_REMOTE
 public class TrackAdapter extends BaseAdapter {
 
     @NonNull
+    private final Context context;
+    @NonNull
     private final LayoutInflater inflater;
     private List<TrackListItem> items;
 
@@ -38,6 +40,7 @@ public class TrackAdapter extends BaseAdapter {
     private String filter = "";
 
     TrackAdapter(@NonNull Context context) {
+        this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         populateItems();
     }
@@ -100,6 +103,7 @@ public class TrackAdapter extends BaseAdapter {
                 final TextView itemNameView = convertView.findViewById(R.id.list_item_name);
                 final TextView itemSizeView = convertView.findViewById(R.id.list_item_subtitle);
                 final ProgressBar itemSpinner = convertView.findViewById(R.id.list_spinner);
+                final View itemCheck = convertView.findViewById(R.id.list_check);
                 itemNameView.setText(trackFile.getName());
                 itemSizeView.setText(trackFile.getSize());
 
@@ -114,15 +118,22 @@ public class TrackAdapter extends BaseAdapter {
                 } else {
                     itemSpinner.setVisibility(View.GONE);
                 }
+                itemCheck.setVisibility(View.GONE);
                 break;
             case TYPE_TRACK_REMOTE:
                 final TrackMetadata trackData = ((ListTrackData) item).track;
                 final TextView itemNameView2 = convertView.findViewById(R.id.list_item_name);
                 final TextView itemSizeView2 = convertView.findViewById(R.id.list_item_subtitle);
                 final ProgressBar itemSpinner2 = convertView.findViewById(R.id.list_spinner);
+                final View itemCheck2 = convertView.findViewById(R.id.list_check);
                 itemNameView2.setText(trackData.date_string);
                 itemSizeView2.setText(trackData.location());
                 itemSpinner2.setVisibility(View.GONE);
+                if (trackData.abbrvFile(context).exists() || trackData.localFile(context).exists()) {
+                    itemCheck2.setVisibility(View.VISIBLE);
+                } else {
+                    itemCheck2.setVisibility(View.GONE);
+                }
                 break;
         }
 

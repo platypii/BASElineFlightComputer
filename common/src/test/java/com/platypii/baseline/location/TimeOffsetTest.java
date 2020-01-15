@@ -5,7 +5,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Ensure that we are syncing time correctly
+ * Ensure that we are syncing time correctly.
+ * TODO: This test occasionally fails due to race condition on calling System.currentTimeMillis.
  */
 public class TimeOffsetTest {
 
