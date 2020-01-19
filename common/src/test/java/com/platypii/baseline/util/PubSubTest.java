@@ -12,24 +12,33 @@ public class PubSubTest {
 
     @Test
     public void subscribe() {
-        PubSub<String> events = new PubSub<>();
+        final PubSub<String> events = new PubSub<>();
         events.subscribe((msg) -> assertEquals("BASE", msg));
         events.post("BASE");
     }
 
     @Test
     public void subscribeMain() {
-        PubSub<String> events = new PubSub<>();
+        final PubSub<String> events = new PubSub<>();
         events.subscribeMain((msg) -> assertEquals("BASE", msg));
         events.post("BASE");
     }
 
     @Test
     public void unsubscribe() {
-        PubSub<String> events = new PubSub<>();
+        final PubSub<String> events = new PubSub<>();
         PubSub.Subscriber<String> listener = (msg) -> fail();
         events.subscribe(listener);
         events.unsubscribe(listener);
+        events.post("BASE");
+    }
+
+    @Test
+    public void unsubscribeMain() {
+        final PubSub<String> events = new PubSub<>();
+        PubSub.Subscriber<String> listener = (msg) -> fail();
+        events.subscribeMain(listener);
+        events.unsubscribeMain(listener);
         events.post("BASE");
     }
 

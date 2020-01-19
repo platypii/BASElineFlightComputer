@@ -60,17 +60,18 @@ class TrackLabels {
         }
         if (median >= 0) {
             int exit = 0;
-            for (int i = 0; i < median + 1; i++) {
+            for (int i = 0; i <= median; i++) {
                 if (exit - 2 * cum[exit] < i - 2 * cum[i]) {
                     exit = i;
                 }
             }
-            int land = 0;
-            for (int i = median; i < n; i++) {
+            int land = median;
+            for (int i = median; i <= n; i++) {
                 if (2 * cum[land] - land < 2 * cum[i] - i) {
                     land = i;
                 }
             }
+            land--;
             return new TrackLabels(exit, 0, land);
         } else {
             return null;
@@ -85,17 +86,17 @@ class TrackLabels {
         // Cumulative in-flight distribution
         final int[] freefallCum = new int[n + 1];
         final int[] canopyCum = new int[n + 1];
-        for (int i = exit; i < land; i++) {
+        for (int i = exit; i <= land; i++) {
             freefallCum[i + 1] = freefallCum[i] + (freefall(FlightMode.getMode(points.get(i))) ? 1 : 0);
             canopyCum[i + 1] = canopyCum[i] + (canopy(FlightMode.getMode(points.get(i))) ? 1 : 0);
         }
         int deploy = exit;
-        for (int i = exit; i < land; i++) {
-            if (deploy - freefallCum[deploy] - canopyCum[deploy] < i - freefallCum[i] - canopyCum[i]) {
+        for (int i = exit; i <= land; i++) {
+            if (freefallCum[deploy] - canopyCum[deploy] < freefallCum[i] - canopyCum[i]) {
                 deploy = i;
             }
         }
-        return deploy;
+        return deploy - 1;
     }
 
     private static boolean inFlight(int mode) {

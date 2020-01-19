@@ -3,6 +3,7 @@ package com.platypii.baseline.util;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Ensure that we are mathing correctly
@@ -78,6 +79,21 @@ public class NumbersTest {
         assertEquals(Double.NaN, Numbers.parseDouble("X"), 0.1);
         assertEquals(Double.NaN, Numbers.parseDouble("NaN"), 0.1);
         assertEquals(Double.NaN, Numbers.parseDouble(null), 0.1);
+    }
+
+    @Test
+    public void parseDoubleNull() {
+        assertEquals(-2, Numbers.parseDoubleNull("-2"), 0.1);
+        assertEquals(-1, Numbers.parseDoubleNull("-1"), 0.1);
+        assertEquals(0, Numbers.parseDoubleNull("0"), 0.1);
+        assertEquals(1, Numbers.parseDoubleNull("1"), 0.1);
+        assertEquals(2, Numbers.parseDoubleNull("2"), 0.1);
+        assertNull(Numbers.parseDoubleNull(""));
+        assertEquals(0.0, Numbers.parseDoubleNull("0.0"), 0.1);
+        assertEquals(0.1, Numbers.parseDoubleNull("0.1"), 0.1);
+        assertNull(Numbers.parseDoubleNull("X"));
+        assertNull(Numbers.parseDoubleNull("NaN"));
+        assertNull(Numbers.parseDoubleNull(null));
     }
 
 }

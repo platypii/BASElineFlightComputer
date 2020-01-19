@@ -86,7 +86,7 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
 
         // Sanity checks
         // assert event.sensor.getType() == Sensor.TYPE_PRESSURE;
-        if (event.values.length == 0 || Double.isNaN(event.values[0])) {
+        if (event.values.length == 0 || Double.isNaN(event.values[0]) || event.values[0] == 0) {
             Log.e(TAG, "Invalid update: " + Arrays.toString(event.values));
             return;
         }

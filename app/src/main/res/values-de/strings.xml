@@ -123,6 +123,8 @@
     <string name="new_profile">Neues Profil</string>
     <string name="profile_name">Profilname</string>
     <string name="profile_location">Breite, Länge, Höhe</string>
+    <string name="clear">Löschen</string>
+    <string name="sort">Sortieren</string>
     <string name="save">Speichern</string><!-- Sichern -->
     <string name="rangefinder_connected">Entfernungsmesser verbunden</string>
     <string name="rangefinder_searching">Entfernungsmesser suchen…</string>

@@ -123,6 +123,8 @@
     <string name="new_profile">Nouveau profil</string>
     <string name="profile_name">Nom de profil</string>
     <string name="profile_location">Latitude, longitude, altitude</string>
+    <string name="clear">Effacer</string>
+    <string name="sort">Trier</string>
     <string name="save">Enregistrer</string>
     <string name="rangefinder_connected">Télémètre connecté</string>
     <string name="rangefinder_searching">Recherche de télémètre…</string>
