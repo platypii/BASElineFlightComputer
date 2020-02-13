@@ -99,7 +99,7 @@ class NMEA {
     /**
      * Returns true if the checksum is valid
      */
-    static void validate(@NonNull String nmea) throws NMEAException {
+    static boolean validate(@NonNull String nmea) {
         final int starIndex = nmea.lastIndexOf('*');
         final int length = nmea.length();
         // Ensure that:
@@ -108,16 +108,12 @@ class NMEA {
         // - ends with checksum
         // Could use regex ^\\$.*\\*[0-9a-fA-F]{2} but this is faster:
         if (length < 8 || nmea.charAt(0) != '$' || starIndex != length - 3) {
-            if (nmea.startsWith("$PGLOR,") || nmea.startsWith("$AIDSTAT,")) {
-                // Some commands omit or truncate checksum, no need to report it
-                return;
-            } else {
-                throw new NMEAException("Invalid NMEA sentence: " + nmea);
-            }
+            Log.e(TAG, "Invalid NMEA sentence: " + nmea);
+            return false;
         }
         // Special commands that don't checksum
-        if (nmea.startsWith("$AIDSTAT") && nmea.endsWith("*00")) return;
-        if (nmea.startsWith("$ENGINESTATE") && nmea.endsWith("*00")) return;
+        if (nmea.startsWith("$AIDSTAT") && nmea.endsWith("*00")) return false;
+        if (nmea.startsWith("$ENGINESTATE") && nmea.endsWith("*00")) return false;
 
         // Compute checksum
         short checksum1 = 0;
@@ -126,8 +122,10 @@ class NMEA {
         }
         final short checksum2 = Short.parseShort(nmea.substring(starIndex + 1), 16);
         if (checksum1 != checksum2) {
-            throw new NMEAChecksumException(String.format(Locale.US, "Invalid NMEA checksum: %02X != %02X for sentence: %s", checksum1, checksum2, nmea));
+            Log.e(TAG, String.format(Locale.US, "Invalid NMEA checksum: %02X != %02X for sentence: %s", checksum1, checksum2, nmea));
+            return false;
         }
+        return true;
     }
 
     /**

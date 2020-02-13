@@ -250,37 +250,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
             case "ACC":
             case "ACCURACY":
                 // $GNACCURACY,0.8*1E
-            case "AMCLK":
-                // Samsung SM-G390F
-                // $PSAMCLK,1955,40841247,0,9690613,-2232227,408412467
-            case "AMDLERR":
-                // $PSAMDLERR,11,1,0x37F*55
-            case "AMDLOK":
-                // $PSAMDLOK,30,0x 0,0x3FF*2F
-            case "AMID":
-                // $PSAMID,SLL_2.0.0_B14_ls18.J,
             case "ATT":
                 // $GPATT,45.781233,10.862333,1796.3,45.0,2.6,2.6,*72
                 // $GPATT,lat,lon,alt,bear?,???,???
-            case "DSTAT":
-                // Samsung SM-G955U
-                // $AIDSTAT,3,3,3,2,-597,7
-            case "DTM":
-                // $GPDTM,P90,,0000.000025,S,00000.000002,E,0.979,W84*42
-            case "GINESTATE":
-                // $ENGINESTATE,1*00
-            case "EVT":
-                // LG-E460
-                // $GPEVT,19052017,234044.807,19,,,,
-                // split[1]: Date: 19052017 = 19 May 2017
-            case "GDC":
-                // $PCGDC,SETMODE,76,0*0F
-            case "GDS":
-                // Fly FS451
-                // $PCGDS,EPH sow 407586: 1 3 6 9 11 12 14 17 19 22 23 25 31 32--AS:,1995387692*6A
-            case "GDV":
-                // Fly FS451
-                // $PCGDV,Version 0.0 Build 3 Date 13/05/2013 *48
             case "GLG":
                 // $GPGLG,VER2,GNSS,130616,171913.0,85,4737.550964,N,12219.566617,W,96.0,38.5,2.0,0.0,13.0,TP,Seoul,,,15,3,,*5C
                 // $GPGLG,version,provider,???,???,???,lat,lat,lon,lon,...
@@ -296,81 +268,9 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // split[6]: Stdev of latitude error (meters)
                 // split[7]: Stdev of longitude error (meters)
                 // split[8]: Stdev of altitude error (meters)
-            case "HDT":
-                // $GPHDT,,T*1B
-            case "JNR":
-            case "MSG":
-                // $BDMSG,ENGI_MSG,RPUSH,00059*00
-            case "NL":
-                // $PTNL,GGK,182653.00,101119,5328.7509266,N,11329.1214325,W,1,12,2.7,EHT654.213,M*63
-            case "NVD":
-            case "8EX1":
-                // HTC One M8
-                // $LK8EX1,96660,99999,-4,17,1053,*0D
-            case "LOR":
-                // Samsung Galaxy S6, S7
-                // $PGLOR,0,HLA,123444.00,L,,Al,,A,,H,,,M,1,Ac,0,Gr,0,S,,,Sx,,,T,0,Tr,,Mn,0*33
-                // $PGLOR,1,FIX,1.0,1.0*20
-                // $PGLOR,2,SIO,TxERR,0,RxERR,0,TxCNT,461,RxCNT,4416,MLFRMPKT,0,DTMS,997,DTIN,5,11,DTOUT,100,987,HATMD,26*20
-                // $PGLOR,2,SAT,3,3,G17,033,1F,R24,020,17,G29,026,1F*2F
-                // $PGLOR,3,PWR,mA,36.4,RFTm,1000,OscTm,1000,MeasTm,1000,UTC,123444.00*32
-                // $PGLOR,6,STA,122301.03,0.000,0.000,-270,236,9999,0,P,F,L,1,C,0,S,0000,0,2,R,0000,TPeF,19,2122,LC,,*13
-                // $PGLOR,SPL,20160704142257.8,STATUS,2*38
-            case "RMT":
-                // Samsung SM-G935F
-                // $PGRMT,GLO Software Version 3.00,,,,,,,,
-            case "SHR":
-                // $PASHR,HPR,182652.00,43.22690,33.82954,,0.0038,0.0000,1,2,0.400,4.5*1D
-            case "TK010":
-            case "TK011":
-                // XGPS-160
-                // $PMTK010,002
-                // $PMTK011,MTKGPS
-            case "TKAGC":
-                // Asus ZenFone 3
-                // $PMTKAGC,165141.000,2897,3107,80,0*4A
-            case "TKCLK":
-                // $PMTKCLK,115719.000,-342.0*54
-            case "TKGALM":
-            case "TKGEPH":
-                // Infinix HOT 4
-                // $PMTKGALM,31,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-                // $PMTKGEPH,13,0,1,1,0,1,1,1,0,1,0,0,0,1,0,2,0,1,0,1,0,0,0,1,0,0,0,0,1,0,1,0,0
-            case "TKSUPL":
-                // $PMTKSUPL,185321.000,tPEf,EPO*7B
-            case "TKTSX1":
-                // ZVI
-                // $PMTKTSX1,181512,0.000,0.293,44.717,4af30000,-3.324382,0.000099,-0.000850,-0.207713,0.386944*40
-            case "TKVER":
-                // $PMTKVER,AXN_3.70,1312,MNL_VER_16092901ALPS05_3.70_20,df54,116,MNLfn_ver,03,HAL_ver,0.2,MNLD_ver,0.4*62
-            case "TI":
-                // Samsung S10e
-                // $PSTI,001,0*1F
-            case "TIS":
-                // Samsung Note7
-                // $PSTIS,*61
-            case "TXO":
-                // $MVTXO,174538.51,-350.548714,*6C
-            case "TXT":
-                // $GNTXT,01,01,02,ANTSTATUS=INIT*3B
-            case "WP1":
-            case "WP4":
-            case "WP6":
-                // $PQWP1,131955.93,03,0.728909016,-0.014442960,302.38,9338.27,3.23,3*24
-                // $PQWP6,180809.00,00000000*16
-            case "WS1":
-                // $PQWS1,140116.00,1,250*33
-            case "ZCD":
-                // Rockchip 3GR
-                // $PGJNR,3,3,09,09,64,11,21
-                // $PGNVD,2,1137580,1138164,419442.000,0.612,0.11,-0.01,5,31.0,0,0.0,0,4.6,130,68,15
-                // $GNZCD,682.617,+
-            case "ZDA":
-                // $GPZDA,115729.61,18,06,2016,,*62
-                // timestamp, day, month, year, local zone, local zone minutes
                 break;
             default:
-                Exceptions.report(new NMEAException("Unknown NMEA command " + command + ": " + nmea));
+                // Log.d(TAG, "Unknown NMEA command " + command + ": " + nmea);
         }
     }
 

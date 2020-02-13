@@ -158,7 +158,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             laserProfile.lng = lla.lng;
             laserProfile.alt = lla.alt;
         } catch (ParseException e) {
-            Log.w(TAG, "Failed to parse laser profile: " + e.getMessage());
+            Log.w(TAG, "Failed to parse laser profile location: " + e.getMessage());
             laserProfile.lat = null;
             laserProfile.lng = null;
             laserProfile.alt = 0.0;
