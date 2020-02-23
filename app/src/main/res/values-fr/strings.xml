@@ -24,6 +24,8 @@
     <string name="downloading">Téléchargement…</string>
     <string name="search">Recherche…</string>
 
+    <string name="download_failed">Piste téléchargement a échoué</string>
+
     <string name="delete_local">Voulez-vous vraiment supprimer cette piste?</string>
     <string name="delete_remote">Voulez-vous vraiment supprimer cette piste?</string>
 

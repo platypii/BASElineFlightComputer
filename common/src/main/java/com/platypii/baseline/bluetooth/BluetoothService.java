@@ -91,9 +91,7 @@ public class BluetoothService implements BaseService {
     }
 
     /**
-     * Start the bluetooth service, and connect to gps receiver if selected
-     *
-     * @return true iff bluetooth service started successfully
+     * Get bluetooth adapter, request bluetooth if needed
      */
     @Nullable
     private BluetoothAdapter getAdapter(@NonNull Activity activity) {

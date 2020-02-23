@@ -10,6 +10,7 @@ import java.util.List;
 
 import static com.platypii.baseline.jarvis.FlightMode.MODE_CANOPY;
 import static com.platypii.baseline.jarvis.FlightMode.MODE_FREEFALL;
+import static com.platypii.baseline.jarvis.FlightMode.MODE_PLANE;
 import static com.platypii.baseline.jarvis.FlightMode.MODE_WINGSUIT;
 
 class TrackLabels {
@@ -104,7 +105,7 @@ class TrackLabels {
     }
 
     private static boolean freefall(int mode) {
-        return mode == MODE_FREEFALL || mode == MODE_WINGSUIT;
+        return mode == MODE_FREEFALL || mode == MODE_WINGSUIT || mode == MODE_PLANE;
     }
 
     private static boolean canopy(int mode) {

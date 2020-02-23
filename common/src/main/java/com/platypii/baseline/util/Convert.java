@@ -285,12 +285,15 @@ public class Convert {
         }
     }
 
+    /**
+     * Convert pressure to nice hPa string in default locale
+     */
     @NonNull
     public static String pressure(double hPa) {
         if (Double.isNaN(hPa))
             return "";
         else
-            return String.format(Locale.US, "%.2f hPa", hPa);
+            return String.format(Locale.getDefault(), "%.2f hPa", hPa);
     }
 
 //    /**

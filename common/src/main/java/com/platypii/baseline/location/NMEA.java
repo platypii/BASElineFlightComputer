@@ -97,7 +97,8 @@ class NMEA {
     }
 
     /**
-     * Returns true if the checksum is valid
+     * Returns true if the checksum is valid.
+     * Logs errors for invalid sentences.
      */
     static boolean validate(@NonNull String nmea) {
         final int starIndex = nmea.lastIndexOf('*');

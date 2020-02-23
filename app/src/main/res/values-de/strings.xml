@@ -24,6 +24,8 @@
     <string name="downloading">Wird heruntergeladen…</string>
     <string name="search">Suchen…</string>
 
+    <string name="download_failed">Dateidownload fehlgeschlagen</string>
+
     <string name="delete_local">Möchten sie diese Daten wirklich von diesem Geraet löschen? Die Daten wurden noch nicht online synchronisiert.</string>
     <string name="delete_remote">Möchten sie diese Daten wirklich von diesem BASEline löschen?</string>
 

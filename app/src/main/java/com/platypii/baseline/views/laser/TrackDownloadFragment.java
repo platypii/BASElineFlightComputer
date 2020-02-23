@@ -75,7 +75,7 @@ public class TrackDownloadFragment extends Fragment {
         if (event.track_id.equals(track.track_id)) {
             Log.w(TAG, "Track download failed " + event);
             downloadProgress.setVisibility(View.GONE);
-            downloadStatus.setText("Track download failed");
+            downloadStatus.setText(R.string.download_failed);
             trackFile.completeExceptionally(event.error);
         }
     }

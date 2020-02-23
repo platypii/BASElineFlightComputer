@@ -24,6 +24,8 @@
     <string name="downloading">Downloading…</string>
     <string name="search">Search…</string>
 
+    <string name="download_failed">Track download failed</string>
+
     <string name="delete_local">Are you sure you want to delete this track from the local device? It has not been synced online yet.</string>
     <string name="delete_remote">Are you sure you want to delete this track from BASEline?</string>
 

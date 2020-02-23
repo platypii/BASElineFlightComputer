@@ -112,12 +112,10 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         }
 
         try {
-            // Validate NMEA sentence and throw errors
-            NMEA.validate(nmea);
-
-            handleNmea(timestamp, nmea);
-        } catch (NMEAChecksumException e) {
-            Log.e(TAG, e.getMessage());
+            // Validate NMEA sentence, ignore invalid
+            if (NMEA.validate(nmea)) {
+                handleNmea(timestamp, nmea);
+            }
         } catch (Exception e) {
             Exceptions.report(new NMEAException("Exception while handling NMEA: " + nmea, e));
         }

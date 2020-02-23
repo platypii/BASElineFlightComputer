@@ -3,6 +3,7 @@ package com.platypii.baseline.lasers;
 import androidx.annotation.NonNull;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
@@ -46,12 +47,13 @@ public class LaserMeasurementTest {
         assertEquals(0, LaserMeasurement.parse("100p 200q", true, false).size());
         assertEquals(0, LaserMeasurement.parse("100 200ft", true, false).size());
         assertEquals(0, LaserMeasurement.parse("100 200m", false, false).size());
+        assertEquals(0, LaserMeasurement.parse("100 200mm", true, false).size());
         assertEquals(0, LaserMeasurement.parse("100 200mm", false, false).size());
     }
 
     @Test
     public void render() {
-        List<LaserMeasurement> points = testPoints();
+        final List<LaserMeasurement> points = testPoints();
         // Metric
         assertEquals("100.0, -100.0\n", LaserMeasurement.render(points, true).toString());
         // Imperial
@@ -60,18 +62,18 @@ public class LaserMeasurementTest {
 
     @Test
     public void reorder() {
-        List<LaserMeasurement> points = testPoints();
+        final List<LaserMeasurement> points = testPoints();
         points.add(new LaserMeasurement(50, -50));
         assertEquals("100.0, -100.0\n50.0, -50.0\n", LaserMeasurement.render(points, true).toString());
 
         // Sort quadrant 2
-        List<LaserMeasurement> reordered = LaserMeasurement.reorder(points);
+        final List<LaserMeasurement> reordered = LaserMeasurement.reorder(points);
         assertEquals("50.0, -50.0\n100.0, -100.0\n", LaserMeasurement.render(reordered, true).toString());
     }
 
     @NonNull
     private List<LaserMeasurement> testPoints() {
-        List<LaserMeasurement> points = new ArrayList<>();
+        final List<LaserMeasurement> points = new ArrayList<>();
         points.add(new LaserMeasurement(100,-100));
         return points;
     }

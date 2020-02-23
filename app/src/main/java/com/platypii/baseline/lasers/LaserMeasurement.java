@@ -90,6 +90,8 @@ public class LaserMeasurement {
     }
 
     /**
+     * Reorder laser points to handle out-of-order and lasering from bottom.
+     *
      * There are three laser input formats:
      * Quadrant 2: 20,-100
      * Quadrant 1: 20,100 (laser from bottom)
