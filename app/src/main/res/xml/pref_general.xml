@@ -26,7 +26,7 @@
 
     <Preference
         android:key="bluetooth_settings"
-        android:widgetLayout="@layout/icon_bluetooth"
+        android:widgetLayout="@layout/icon_bluetooth_off"
         android:summary="@string/pref_bluetooth_description"
         android:title="@string/pref_bluetooth"/>
 

@@ -117,7 +117,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         if (Services.bluetooth.preferences.preferenceEnabled) {
             bluetoothPreference.setWidgetLayoutResource(R.layout.icon_bluetooth_on);
         } else {
-            bluetoothPreference.setWidgetLayoutResource(R.layout.icon_bluetooth);
+            bluetoothPreference.setWidgetLayoutResource(R.layout.icon_bluetooth_off);
         }
         bluetoothPreference.setSummary(Services.bluetooth.getStatusMessage(activity));
     }
