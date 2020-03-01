@@ -4,6 +4,10 @@ import androidx.annotation.NonNull;
 
 class Util {
 
+    /**
+     * Convert a byte array into a human readable hex string.
+     * "foo".getBytes() -> "66-6f-6f"
+     */
     @NonNull
     static String byteArrayToHex(@NonNull byte[] a) {
         final StringBuilder sb = new StringBuilder();

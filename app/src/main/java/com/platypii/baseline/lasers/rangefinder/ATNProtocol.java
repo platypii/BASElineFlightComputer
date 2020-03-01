@@ -96,11 +96,14 @@ class ATNProtocol implements RangefinderProtocol {
             throw new IllegalArgumentException("Invalid measurement prefix " + Util.byteArrayToHex(value));
         }
 
-        double total = Util.bytesToShort(value[3], value[4]) * 0.5; // meters
-        double pitch = Util.bytesToShort(value[5], value[6]) * 0.1; // degrees
+        final boolean metric = (value[2] & 0x01) == 0;
+        final double units = metric ? 1 : 0.9144; // yards or meters
 
-        double horiz = total * Math.cos(Math.toRadians(pitch)); // meters
-        double vert = total * Math.sin(Math.toRadians(pitch)); // meters
+        final double total = Util.bytesToShort(value[3], value[4]) * 0.5 * units; // meters
+        final double pitch = Util.bytesToShort(value[5], value[6]) * 0.1; // degrees
+
+        final double horiz = total * Math.cos(Math.toRadians(pitch)); // meters
+        final double vert = total * Math.sin(Math.toRadians(pitch)); // meters
 
         if (horiz < 0) {
             throw new IllegalArgumentException("Invalid horizontal distance " + total + " " + pitch + " " + horiz + " " + vert);
