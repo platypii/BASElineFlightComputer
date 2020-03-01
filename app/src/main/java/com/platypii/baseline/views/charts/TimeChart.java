@@ -77,6 +77,7 @@ public class TimeChart extends PlotView {
         if (trackData != null) {
             if (trackData.isEmpty()) {
                 plot.text.setTextAlign(Paint.Align.CENTER);
+                //noinspection IntegerDivisionInFloatingPointContext
                 plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, plot.text);
             } else {
                 // Draw track data

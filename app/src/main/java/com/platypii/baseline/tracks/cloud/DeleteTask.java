@@ -49,12 +49,12 @@ public class DeleteTask implements Runnable {
             } else {
                 Log.e(TAG, "Failed to delete track " + track.track_id + " " + response.code() + " " + response.errorBody());
                 // Notify listeners
-                EventBus.getDefault().post(new SyncEvent.DeleteFailure(track.track_id, "failed to delete track: " + response.errorBody().string()));
+                EventBus.getDefault().post(new SyncEvent.DeleteFailure(track.track_id, response.errorBody().string()));
             }
         } catch (IOException e) {
             Log.e(TAG, "Failed to delete track " + track + " " + e);
             // Notify listeners
-            EventBus.getDefault().post(new SyncEvent.DeleteFailure(track.track_id, "failed to delete track: " + e.getMessage()));
+            EventBus.getDefault().post(new SyncEvent.DeleteFailure(track.track_id, e.getMessage()));
         }
     }
 

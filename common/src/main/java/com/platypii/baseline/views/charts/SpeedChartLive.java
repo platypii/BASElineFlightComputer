@@ -88,6 +88,7 @@ public class SpeedChartLive extends PlotSurface implements MyLocationListener {
                 // Draw "no gps signal"
                 ellipses.setEnabled(false);
                 plot.text.setTextAlign(Paint.Align.CENTER);
+                //noinspection IntegerDivisionInFloatingPointContext
                 plot.canvas.drawText("no gps signal", plot.width / 2, plot.height / 2, plot.text);
             }
         }

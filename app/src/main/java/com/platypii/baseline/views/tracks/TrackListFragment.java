@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.tracks;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.Services;
 import com.platypii.baseline.events.SyncEvent;
 
 import android.os.Bundle;
@@ -72,14 +73,21 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        // Listen for sync updates
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
         // Update the views
         updateList();
-
-        // Listen for sync updates
-        EventBus.getDefault().register(this);
+        // Update tracks async, since users of this activity probably care about fresh data
+        Services.tracks.listAsync(getContext(), false);
     }
 
     private void updateList() {
@@ -102,8 +110,8 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         EventBus.getDefault().unregister(this);
     }
 

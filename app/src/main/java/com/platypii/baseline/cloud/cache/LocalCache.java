@@ -32,9 +32,9 @@ public abstract class LocalCache<T> implements BaseService {
     private final String CACHE_LIST;
 
     // Minimum time between requests
-    private static final long REQUEST_TTL = 30 * 1000; // milliseconds
+    private static final long REQUEST_TTL = 30 * 1000; // 30 seconds
     // Maximum lifetime of a successful listing
-    private static final long UPDATE_TTL = 5 * 60 * 1000; // milliseconds
+    private static final long UPDATE_TTL = 5 * 60 * 1000; // 5 minutes
 
     private SharedPreferences prefs;
 

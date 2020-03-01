@@ -46,7 +46,7 @@ public class Tracks implements BaseService {
      * Query baseline server for track listing asynchronously
      */
     public void listAsync(@Nullable Context context, boolean force) {
-        if (context != null && (force || cache.shouldRequest())) {
+        if (context != null && AuthState.getUser() != null && (force || cache.shouldRequest())) {
             cache.request();
             final TrackApi trackApi = RetrofitClient.getRetrofit(context).create(TrackApi.class);
             Log.i(TAG, "Listing tracks");
@@ -75,6 +75,8 @@ public class Tracks implements BaseService {
                     }
                 }
             });
+        } else if (force) {
+            Log.e(TAG, "Force listing called, but context or user unavailable " + context + " " + AuthState.getUser());
         }
     }
 
@@ -87,7 +89,7 @@ public class Tracks implements BaseService {
      */
     @Subscribe
     public void onSignIn(@NonNull AuthState.SignedIn event) {
-        listAsync(context, false);
+        listAsync(context, true);
     }
 
     /**

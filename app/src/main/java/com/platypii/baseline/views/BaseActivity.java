@@ -21,11 +21,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import org.greenrobot.eventbus.EventBus;
 
 public abstract class BaseActivity extends FragmentActivity {
     private final String TAG = getClass().getSimpleName();
@@ -60,34 +60,39 @@ public abstract class BaseActivity extends FragmentActivity {
     }
 
     /**
-     * Update sign in state, notify listeners, and update shared UI.
+     * Set sign in state, notify listeners, and update shared UI.
      * Only updates on state change. Views should get auth state from AuthState directly.
      */
-    private void updateAuthState(@NonNull AuthState event) {
+    private void setAuthState(@NonNull AuthState event) {
         if (!event.equals(AuthState.currentAuthState)) {
             AuthState.setState(this, event);
-            // Notify listeners
-            EventBus.getDefault().post(event);
-            // Update sign in panel state
-            if (signInPanel != null) {
-                if (event instanceof AuthState.SignedIn) {
-                    signInPanel.setVisibility(View.GONE);
-                } else if (event instanceof AuthState.SigningIn) {
-                    signInSpinner.setVisibility(View.VISIBLE);
-                    signInPanel.setVisibility(View.VISIBLE);
-                } else if (event instanceof AuthState.SignedOut) {
-                    signInSpinner.setVisibility(View.GONE);
-                    signInPanel.setVisibility(View.VISIBLE);
-                }
+        }
+        updateAuthState();
+        // Show toasts
+        if (userClickedSignIn && event instanceof AuthState.SignedIn) {
+            Toast.makeText(this, R.string.signin_success, Toast.LENGTH_LONG).show();
+        } else if (userClickedSignIn && event instanceof AuthState.SignedOut) {
+            Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
+        }
+        // Clear laser layers
+        Services.lasers.layers.layers.clear();
+    }
+
+    /**
+     * Update sign in panel state in the UI.
+     */
+    private void updateAuthState() {
+        if (signInPanel != null) {
+            if (AuthState.getUser() != null) {
+                signInPanel.setVisibility(View.GONE);
+            } else {
+                signInPanel.setVisibility(View.VISIBLE);
             }
-            // Show toasts
-            if (userClickedSignIn && event instanceof AuthState.SignedIn) {
-                Toast.makeText(this, R.string.signin_success, Toast.LENGTH_LONG).show();
-            } else if (userClickedSignIn && event instanceof AuthState.SignedOut) {
-                Toast.makeText(this, R.string.signin_failed, Toast.LENGTH_LONG).show();
+            if (AuthState.signingIn) {
+                signInSpinner.setVisibility(View.VISIBLE);
+            } else {
+                signInSpinner.setVisibility(View.GONE);
             }
-            // Clear laser layers
-            Services.lasers.layers.layers.clear();
         }
     }
 
@@ -157,7 +162,8 @@ public abstract class BaseActivity extends FragmentActivity {
             userClickedSignIn = true;
 
             // Notify sign in listeners
-            updateAuthState(new AuthState.SigningIn());
+            AuthState.signingIn = true;
+            updateAuthState();
 
             final Intent signInIntent = signInClient.getSignInIntent();
             startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -201,6 +207,7 @@ public abstract class BaseActivity extends FragmentActivity {
     }
 
     private void onSignInComplete(@NonNull Task<GoogleSignInAccount> task) {
+        AuthState.signingIn = false;
         try {
             account = task.getResult(ApiException.class);
             onSignInSuccess();
@@ -216,12 +223,10 @@ public abstract class BaseActivity extends FragmentActivity {
             Log.i(TAG, "Sign in successful for user " + account.getDisplayName());
             final String userId = account.getId();
             firebaseAnalytics.setUserId(userId);
-            updateAuthState(new AuthState.SignedIn(userId));
+            setAuthState(new AuthState.SignedIn(userId));
         } else {
             Exceptions.report(new NullPointerException("Sign in success, but account is null"));
         }
-
-        // Notify listeners
     }
 
     private void onSignInFailure(@NonNull ApiException e) {
@@ -234,8 +239,12 @@ public abstract class BaseActivity extends FragmentActivity {
         } else if (e.getStatusCode() == CommonStatusCodes.SIGN_IN_REQUIRED) {
             Log.i(TAG, "Not signed in");
             signedOut();
+        } else if (e.getStatusCode() == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
+            Log.i(TAG, "Sign in canceled");
+            userClickedSignIn = false;
+            signedOut();
         } else {
-            Log.w(TAG, "Sign in failed: " + CommonStatusCodes.getStatusCodeString(e.getStatusCode()));
+            Log.e(TAG, "Sign in failed: " + e.getStatusCode() + " " + CommonStatusCodes.getStatusCodeString(e.getStatusCode()));
             signedOut();
         }
     }
@@ -245,7 +254,7 @@ public abstract class BaseActivity extends FragmentActivity {
         account = null;
         firebaseAnalytics.setUserId(null);
         // Notify listeners
-        updateAuthState(new AuthState.SignedOut());
+        setAuthState(new AuthState.SignedOut());
     }
 
     @Override

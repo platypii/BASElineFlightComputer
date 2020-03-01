@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import org.greenrobot.eventbus.EventBus;
 
 public abstract class AuthState {
     private static final String PREF_AUTH_USER = "auth_user";
@@ -14,14 +15,6 @@ public abstract class AuthState {
         @Override
         public String toString() {
             return "SignedOut";
-        }
-    }
-
-    public static class SigningIn extends AuthState {
-        @NonNull
-        @Override
-        public String toString() {
-            return "SigningIn";
         }
     }
 
@@ -42,6 +35,8 @@ public abstract class AuthState {
     // Save last sign in state so that sign in panel doesn't blink
     @Nullable
     public static AuthState currentAuthState = null;
+
+    public static boolean signingIn = false;
 
     /**
      * Load currentAuthState from preferences, if needed
@@ -66,6 +61,9 @@ public abstract class AuthState {
         }
     }
 
+    /**
+     * Call this frequently, but will only emit on state changes
+     */
     public static void setState(@NonNull Context context, @NonNull AuthState state) {
         currentAuthState = state;
         final String userId;
@@ -79,6 +77,8 @@ public abstract class AuthState {
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PREF_AUTH_USER, userId);
         editor.apply();
+        // Notify listeners
+        EventBus.getDefault().post(state);
     }
 
     @Override

@@ -32,8 +32,8 @@ class TrackDataTrimmer {
             }
         }
         // Conform to list bounds
-        index_start = index_start - margin_size < 0 ? 0 : index_start - margin_size;
-        index_end = index_end + margin_size + 1 > n ? n : index_end + margin_size + 1;
+        index_start = Math.max(index_start - margin_size, 0);
+        index_end = Math.min(index_end + margin_size + 1, n);
         return points.subList(index_start, index_end);
     }
 
