@@ -1,5 +1,8 @@
 # BASEline Flight Computer
 
+[![pipeline status](https://gitlab.com/baselinews/BASElineFlightComputer/badges/master/pipeline.svg)](https://gitlab.com/baselinews/BASElineFlightComputer/pipelines)
+[![mit license](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 BASEline Flight Computer is an android app that uses phone sensors to provide audible and visual feedback on speed and position, as well as logging data for later analysis.
 
 https://baseline.ws/

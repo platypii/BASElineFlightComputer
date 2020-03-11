@@ -1,0 +1,12 @@
+default:
+  image: circleci/android:api-28
+
+build:
+  stage: build
+  script:
+    - ./gradlew compileDebugSources
+
+test:
+  stage: test
+  script:
+    - ./gradlew testDebugUnitTest
