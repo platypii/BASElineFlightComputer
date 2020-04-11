@@ -106,7 +106,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
         Analytics.logEvent(getContext(), "click_laser_profile", null);
         final Fragment frag = new LaserViewFragment();
         frag.setArguments(ABundle.of(LaserViewFragment.LASER_ID, laserProfile.laser_id));
-        getFragmentManager()
+        getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, frag)
                 .addToBackStack(null)
@@ -117,7 +117,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
         Analytics.logEvent(getContext(), "click_laser_track", null);
         final Fragment frag = new TrackPickerFragment();
         frag.setArguments(ABundle.of(TrackListFragment.SEARCH_KEY, "Wingsuit BASE"));
-        getFragmentManager()
+        getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, frag)
                 .addToBackStack(null)
@@ -126,7 +126,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
 
     private void clickAddProfile(View view) {
         Analytics.logEvent(getContext(), "click_laser_list", null);
-        getFragmentManager()
+        getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, new LaserListFragment())
                 .addToBackStack(null)
@@ -135,7 +135,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
 
     private void clickNewProfile(View view) {
         Analytics.logEvent(getContext(), "click_laser_add", null);
-        getFragmentManager()
+        getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, new LaserEditFragment())
                 .addToBackStack(null)

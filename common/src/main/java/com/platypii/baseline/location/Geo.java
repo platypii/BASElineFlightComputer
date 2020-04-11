@@ -70,9 +70,9 @@ public class Geo {
     public static LatLng moveDirection(double latitude, double longitude, double bearing, double distance) {
         final double d = distance / R;
 
-        final double lat = radians(latitude);
-        final double lon = radians(longitude);
-        final double bear = radians(bearing);
+        final double lat = Math.toRadians(latitude);
+        final double lon = Math.toRadians(longitude);
+        final double bear = Math.toRadians(bearing);
 
         // Precompute trig
         final double sin_d = Math.sin(d);
@@ -84,21 +84,13 @@ public class Geo {
         final double lat2 = Math.asin(sin_lat * cos_d + sin_d_cos_lat * Math.cos(bear));
         final double lon2 = lon + Math.atan2(Math.sin(bear) * sin_d_cos_lat, cos_d - sin_lat * Math.sin(lat2));
 
-        final double lat3 = degrees(lat2);
-        final double lon3 = mod360(degrees(lon2));
+        final double lat3 = Math.toDegrees(lat2);
+        final double lon3 = mod360(Math.toDegrees(lon2));
 
         return new LatLng(lat3, lon3);
     }
 
     // Helpers
-    private static double radians(double degrees) {
-        return degrees * Math.PI / 180.0;
-    }
-
-    private static double degrees(double radians) {
-        return radians * 180.0 / Math.PI;
-    }
-
     private static double mod360(double degrees) {
         return ((degrees + 540) % 360) - 180;
     }

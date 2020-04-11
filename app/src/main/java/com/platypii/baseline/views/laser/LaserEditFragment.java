@@ -35,7 +35,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -229,8 +228,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             // Re-add edit layer since it will be removed on fragment stop
             Services.lasers.layers.add(editLayer);
             // Return to main fragment
-            final FragmentManager fm = getFragmentManager();
-            if (fm != null) fm.popBackStack();
+            getParentFragmentManager().popBackStack();
         } else {
             // Form error
             Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
@@ -278,8 +276,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     private void laserCancel(View view) {
         Analytics.logEvent(getContext(), "click_laser_edit_cancel", null);
         clearForm();
-        final FragmentManager fm = getFragmentManager();
-        if (fm != null) fm.popBackStack();
+        getParentFragmentManager().popBackStack();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

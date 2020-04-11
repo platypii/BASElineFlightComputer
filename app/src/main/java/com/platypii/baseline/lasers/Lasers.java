@@ -10,6 +10,7 @@ import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.lasers.cloud.LaserApi;
 import com.platypii.baseline.lasers.cloud.LaserUploadTask;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 
@@ -53,36 +54,40 @@ public class Lasers implements BaseService {
     public void listAsync(@Nullable Context context, boolean force) {
         if (context != null && (force || cache.shouldRequest())) {
             cache.request();
-            final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
-            // Public vs private based on sign in state
-            final String userId = AuthState.getUser();
-            Log.i(TAG, "Listing laser profiles for user " + userId);
-            final Call<List<LaserProfile>> laserCall = userId != null ? laserApi.byUser(userId) : laserApi.getPublic();
-            laserCall.enqueue(new Callback<List<LaserProfile>>() {
-                @Override
-                public void onResponse(Call<List<LaserProfile>> call, @NonNull Response<List<LaserProfile>> response) {
-                    final List<LaserProfile> lasers = response.body();
-                    if (lasers != null) {
-                        // Save laser listing to local cache
-                        cache.update(lasers);
-                        // Notify listeners
-                        EventBus.getDefault().post(new LaserSyncEvent.ListingSuccess());
-                        Log.i(TAG, "Listing successful: " + lasers.size() + " laser profiles");
-                    } else {
-                        Log.e(TAG, "Failed to list laser profiles, null");
+            try {
+                final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
+                // Public vs private based on sign in state
+                final String userId = AuthState.getUser();
+                Log.i(TAG, "Listing laser profiles for user " + userId);
+                final Call<List<LaserProfile>> laserCall = userId != null ? laserApi.byUser(userId) : laserApi.getPublic();
+                laserCall.enqueue(new Callback<List<LaserProfile>>() {
+                    @Override
+                    public void onResponse(Call<List<LaserProfile>> call, @NonNull Response<List<LaserProfile>> response) {
+                        final List<LaserProfile> lasers = response.body();
+                        if (lasers != null) {
+                            // Save laser listing to local cache
+                            cache.update(lasers);
+                            // Notify listeners
+                            EventBus.getDefault().post(new LaserSyncEvent.ListingSuccess());
+                            Log.i(TAG, "Listing successful: " + lasers.size() + " laser profiles");
+                        } else {
+                            Log.e(TAG, "Failed to list laser profiles, null");
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<List<LaserProfile>> call, Throwable e) {
-                    final boolean networkAvailable = Services.cloud.isNetworkAvailable();
-                    if (networkAvailable) {
-                        Log.e(TAG, "Failed to list laser profiles", e);
-                    } else {
-                        Log.w(TAG, "Failed to list laser profiles, network not available", e);
+                    @Override
+                    public void onFailure(Call<List<LaserProfile>> call, Throwable e) {
+                        final boolean networkAvailable = Services.cloud.isNetworkAvailable();
+                        if (networkAvailable) {
+                            Log.e(TAG, "Failed to list laser profiles", e);
+                        } else {
+                            Log.w(TAG, "Failed to list laser profiles, network not available", e);
+                        }
                     }
-                }
-            });
+                });
+            } catch (Exception e) {
+                Exceptions.report(e);
+            }
         }
     }
 

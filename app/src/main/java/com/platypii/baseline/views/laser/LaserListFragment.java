@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -71,8 +70,7 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
             final LaserProfile laser = ((LaserListItem.ListLaser) item).laser;
             final ProfileLayer layer = new LaserProfileLayer(laser);
             Services.lasers.layers.add(layer);
-            final FragmentManager fm = getFragmentManager();
-            if (fm != null) fm.popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 

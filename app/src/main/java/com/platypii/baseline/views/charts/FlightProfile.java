@@ -18,7 +18,7 @@ public class FlightProfile extends PlotView {
     private final Bounds inner = new Bounds();
     private final Bounds outer = new Bounds();
 
-    final ProfileFocusLayer focusLayer;
+    final ProfileFocusLayer focusLayer = new ProfileFocusLayer();
 
     public FlightProfile(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -39,7 +39,6 @@ public class FlightProfile extends PlotView {
 
         options.axis.x = options.axis.y = PlotOptions.axisDistance();
 
-        focusLayer = new ProfileFocusLayer();
         addLayer(focusLayer);
         addLayer(new DiagonalLayer());
     }

@@ -49,7 +49,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
             render(view);
         } catch (IllegalStateException e) {
             Exceptions.report(e);
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
 
         return view;
@@ -119,7 +119,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserDeleteSuccess(@NonNull LaserSyncEvent.DeleteSuccess event) {
-        getFragmentManager().popBackStack();
+        getParentFragmentManager().popBackStack();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

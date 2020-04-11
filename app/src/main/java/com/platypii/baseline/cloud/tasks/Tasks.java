@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -79,7 +80,7 @@ public class Tasks implements BaseService {
                 task.run(context);
                 // Success
                 runSuccess(task);
-            } catch (AuthException | SocketException | SocketTimeoutException | SSLException | UnknownHostException e) {
+            } catch (AuthException | ProtocolException | SocketException | SocketTimeoutException | SSLException | UnknownHostException e) {
                 // Wait for sign in or network availability
                 runFailed(task, e, true);
             } catch (Exception e) {
@@ -96,13 +97,15 @@ public class Tasks implements BaseService {
         Log.i(TAG, "Task success: " + task);
         Analytics.logEvent(context, "task_success", ABundle.of("task_name", task.toString()));
         synchronized (pending) {
+            Task removed = null;
             if (running != task) {
                 Exceptions.report(new IllegalStateException("Invalid pop: " + running + " != " + task));
             }
             if (pending.isEmpty()) {
                 Exceptions.report(new IllegalStateException("Invalid pop: " + running + " not in []"));
+            } else {
+                removed = pending.remove(0);
             }
-            final Task removed = pending.remove(0);
             if (running != removed) {
                 if (running != null && running.equals(removed)) {
                     Exceptions.report(new IllegalStateException("Invalid pop (same same): " + running + " != " + removed));

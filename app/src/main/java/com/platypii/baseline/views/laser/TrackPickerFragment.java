@@ -9,6 +9,7 @@ import com.platypii.baseline.views.charts.layers.ProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerLocal;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayerRemote;
+import com.platypii.baseline.views.tracks.TrackDownloadFragment;
 import com.platypii.baseline.views.tracks.TrackListFragment;
 import com.platypii.baseline.views.tracks.TrackListItem;
 import com.platypii.baseline.views.tracks.TrackLoader;
@@ -17,7 +18,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
 import java.io.File;
 
 import static com.platypii.baseline.views.tracks.TrackListItem.ListTrackData;
@@ -54,7 +54,7 @@ public class TrackPickerFragment extends TrackListFragment {
     private void downloadTrack(@NonNull TrackMetadata track) {
         final TrackDownloadFragment downloadFrag = new TrackDownloadFragment();
         downloadFrag.setArguments(TrackLoader.trackBundle(track));
-        getFragmentManager()
+        getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, downloadFrag)
                 .addToBackStack(null)
@@ -64,14 +64,12 @@ public class TrackPickerFragment extends TrackListFragment {
             final ProfileLayer layer = new TrackProfileLayerRemote(track, new TrackData(trackFile));
             addLayer(layer);
             // Pop twice to go back to laser panel
-            final FragmentManager fm = getFragmentManager();
-            if (fm != null) fm.popBackStack();
+            getParentFragmentManager().popBackStack();
         });
         downloadFrag.trackFile.exceptionally(error -> {
             // Return to main fragment
             Toast.makeText(getContext(), "Track download failed", Toast.LENGTH_LONG).show();
-            final FragmentManager fm = getFragmentManager();
-            if (fm != null) fm.popBackStack();
+            getParentFragmentManager().popBackStack();
             return null;
         });
     }
@@ -79,7 +77,6 @@ public class TrackPickerFragment extends TrackListFragment {
     private void addLayer(@NonNull ProfileLayer layer) {
         Services.lasers.layers.add(layer);
         // Return to main fragment
-        final FragmentManager fm = getFragmentManager();
-        if (fm != null) fm.popBackStack();
+        getParentFragmentManager().popBackStack();
     }
 }

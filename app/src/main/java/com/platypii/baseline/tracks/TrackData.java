@@ -11,6 +11,8 @@ import java.util.List;
  */
 public class TrackData {
 
+    private final String name;
+
     @NonNull
     public final List<MLocation> data;
 
@@ -18,6 +20,7 @@ public class TrackData {
     public final TrackStats stats;
 
     public TrackData(@NonNull File trackFile) {
+        name = trackFile.getName();
         final List<MLocation> all = new TrackFileReader(trackFile).read();
         // Trim plane and ground
         data = TrackDataTrimmer.autoTrim(all);
@@ -31,5 +34,11 @@ public class TrackData {
 //        new Thread(() -> future.complete(new TrackData(trackFile))).start();
 //        return future;
 //    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }

@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 public class ChartPagerAdapter extends FragmentPagerAdapter {
-    ChartPagerAdapter(FragmentManager fm) {
+    ChartPagerAdapter(@NonNull FragmentManager fm) {
         super(fm);
     }
 

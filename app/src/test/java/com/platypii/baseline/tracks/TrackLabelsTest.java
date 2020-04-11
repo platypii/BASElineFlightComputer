@@ -3,6 +3,7 @@ package com.platypii.baseline.tracks;
 import com.platypii.baseline.jarvis.FlightMode;
 import com.platypii.baseline.measurements.MLocation;
 
+import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -38,6 +39,7 @@ public class TrackLabelsTest {
         assertEquals(6, labels.land);
     }
 
+    @NonNull
     private MLocation point(long millis, int flightMode) {
         switch (flightMode) {
             case FlightMode.MODE_GROUND:

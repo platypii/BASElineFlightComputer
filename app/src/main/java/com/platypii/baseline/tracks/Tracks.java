@@ -8,6 +8,7 @@ import com.platypii.baseline.cloud.cache.TrackCache;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.cloud.DeleteTask;
 import com.platypii.baseline.tracks.cloud.TrackApi;
+import com.platypii.baseline.util.Exceptions;
 
 import android.content.Context;
 import android.util.Log;
@@ -48,33 +49,37 @@ public class Tracks implements BaseService {
     public void listAsync(@Nullable Context context, boolean force) {
         if (context != null && AuthState.getUser() != null && (force || cache.shouldRequest())) {
             cache.request();
-            final TrackApi trackApi = RetrofitClient.getRetrofit(context).create(TrackApi.class);
-            Log.i(TAG, "Listing tracks");
-            trackApi.list().enqueue(new Callback<List<TrackMetadata>>() {
-                @Override
-                public void onResponse(Call<List<TrackMetadata>> call, @NonNull Response<List<TrackMetadata>> response) {
-                    final List<TrackMetadata> tracks = response.body();
-                    if (tracks != null) {
-                        // Save track listing to local cache
-                        cache.update(tracks);
-                        // Notify listeners
-                        EventBus.getDefault().post(new SyncEvent.ListingSuccess());
-                        Log.i(TAG, "Listing successful: " + tracks.size() + " tracks");
-                    } else {
-                        Log.e(TAG, "Failed to list tracks, null");
+            try {
+                final TrackApi trackApi = RetrofitClient.getRetrofit(context).create(TrackApi.class);
+                Log.i(TAG, "Listing tracks");
+                trackApi.list().enqueue(new Callback<List<TrackMetadata>>() {
+                    @Override
+                    public void onResponse(Call<List<TrackMetadata>> call, @NonNull Response<List<TrackMetadata>> response) {
+                        final List<TrackMetadata> tracks = response.body();
+                        if (tracks != null) {
+                            // Save track listing to local cache
+                            cache.update(tracks);
+                            // Notify listeners
+                            EventBus.getDefault().post(new SyncEvent.ListingSuccess());
+                            Log.i(TAG, "Listing successful: " + tracks.size() + " tracks");
+                        } else {
+                            Log.e(TAG, "Failed to list tracks, null");
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<List<TrackMetadata>> call, Throwable e) {
-                    final boolean networkAvailable = Services.cloud.isNetworkAvailable();
-                    if (networkAvailable) {
-                        Log.e(TAG, "Failed to list tracks", e);
-                    } else {
-                        Log.w(TAG, "Failed to list tracks, network not available", e);
+                    @Override
+                    public void onFailure(Call<List<TrackMetadata>> call, Throwable e) {
+                        final boolean networkAvailable = Services.cloud.isNetworkAvailable();
+                        if (networkAvailable) {
+                            Log.e(TAG, "Failed to list tracks", e);
+                        } else {
+                            Log.w(TAG, "Failed to list tracks, network not available", e);
+                        }
                     }
-                }
-            });
+                });
+            } catch (Exception e) {
+                Exceptions.report(e);
+            }
         } else if (force) {
             Log.e(TAG, "Force listing called, but context or user unavailable " + context + " " + AuthState.getUser());
         }
