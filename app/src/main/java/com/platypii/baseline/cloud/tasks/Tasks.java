@@ -83,7 +83,7 @@ public class Tasks implements BaseService {
             } catch (AuthException | ProtocolException | SocketException | SocketTimeoutException | SSLException | UnknownHostException e) {
                 // Wait for sign in or network availability
                 runFailed(task, e, true);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 runFailed(task, e, false);
                 // TODO: Try again later
             }
@@ -122,7 +122,7 @@ public class Tasks implements BaseService {
     /**
      * Called when a task failed
      */
-    private void runFailed(@NonNull Task task, @NonNull Exception e, boolean networkError) {
+    private void runFailed(@NonNull Task task, @NonNull Throwable e, boolean networkError) {
         Log.e(TAG, "Task failed: " + task, e);
         Analytics.logEvent(context, "task_failed", ABundle.of("task_name", task.toString()));
         if (!networkError) {

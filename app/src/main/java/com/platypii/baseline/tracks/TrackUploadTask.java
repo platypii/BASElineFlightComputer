@@ -71,7 +71,7 @@ public class TrackUploadTask extends Task {
             Services.tracks.listAsync(context, true);
             Log.i(TAG, "Upload successful, track " + track.track_id);
             EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, track));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             // Update track store
             Services.tracks.store.setNotUploaded(trackFile);
             // Notify listeners

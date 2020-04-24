@@ -85,7 +85,7 @@ public class Lasers implements BaseService {
                         }
                     }
                 });
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Exceptions.report(e);
             }
         }

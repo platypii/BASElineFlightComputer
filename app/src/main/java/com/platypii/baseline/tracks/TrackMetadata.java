@@ -70,4 +70,10 @@ public class TrackMetadata {
         return cd instanceof TrackMetadata && ((TrackMetadata) cd).track_id.equals(track_id);
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return track_id;
+    }
+
 }

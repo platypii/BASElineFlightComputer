@@ -77,7 +77,7 @@ public class Tracks implements BaseService {
                         }
                     }
                 });
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Exceptions.report(e);
             }
         } else if (force) {
