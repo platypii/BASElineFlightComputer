@@ -101,9 +101,11 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
         }
     }
 
+    /**
+     * Open laser profile view
+     */
     private void clickLaserProfile(@NonNull LaserProfile laserProfile) {
-        Log.i(TAG, "Opening laser profile " + laserProfile);
-        Analytics.logEvent(getContext(), "click_laser_profile", null);
+        Analytics.logEvent(getContext(), "click_laser_profile", ABundle.of("laser_id", laserProfile.laser_id));
         final Fragment frag = new LaserViewFragment();
         frag.setArguments(ABundle.of(LaserViewFragment.LASER_ID, laserProfile.laser_id));
         getParentFragmentManager()
@@ -113,8 +115,11 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
                 .commit();
     }
 
+    /**
+     * Open track picker
+     */
     private void clickAddTrack(View view) {
-        Analytics.logEvent(getContext(), "click_laser_track", null);
+        Analytics.logEvent(getContext(), "click_laser_add_track", null);
         final Fragment frag = new TrackPickerFragment();
         frag.setArguments(ABundle.of(TrackListFragment.SEARCH_KEY, "Wingsuit BASE"));
         getParentFragmentManager()
@@ -124,8 +129,11 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
                 .commit();
     }
 
+    /**
+     * Open laser profile picker
+     */
     private void clickAddProfile(View view) {
-        Analytics.logEvent(getContext(), "click_laser_list", null);
+        Analytics.logEvent(getContext(), "click_laser_add_profile", null);
         getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, new LaserListFragment())
@@ -133,8 +141,11 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
                 .commit();
     }
 
+    /**
+     * Open new laser profile panel
+     */
     private void clickNewProfile(View view) {
-        Analytics.logEvent(getContext(), "click_laser_add", null);
+        Analytics.logEvent(getContext(), "click_laser_new_profile", null);
         getParentFragmentManager()
                 .beginTransaction()
                 .replace(R.id.laserPanel, new LaserEditFragment())

@@ -107,10 +107,14 @@ public class Tasks implements BaseService {
                 removed = pending.remove(0);
             }
             if (running != removed) {
-                if (running != null && running.equals(removed)) {
-                    Exceptions.report(new IllegalStateException("Invalid pop (same same): " + running + " != " + removed));
+                if (running == null) {
+                    Exceptions.report(new IllegalStateException("Invalid pop (run null): null != " + removed));
+                } else if (removed == null) {
+                    Exceptions.report(new IllegalStateException("Invalid pop (pop null): " + running + " != null"));
+                } else if (running.equals(removed)) {
+                    Exceptions.report(new IllegalStateException("Invalid pop (same same): " + running + " @ " + running.createdAt + " != " + removed + " @ " + removed.createdAt));
                 } else {
-                    Exceptions.report(new IllegalStateException("Invalid pop (different): " + running + " != " + removed));
+                    Exceptions.report(new IllegalStateException("Invalid pop (different): " + running + " @ " + running.createdAt + " != " + removed + " @ " + removed.createdAt));
                 }
             }
             running = null;
@@ -137,11 +141,12 @@ public class Tasks implements BaseService {
      * Remove all tasks of a given type
      */
     public void removeType(@NonNull TaskType taskType) {
+        Exceptions.log("Tasks remove type type " + taskType);
         synchronized (pending) {
             final ListIterator<Task> it = pending.listIterator();
             while (it.hasNext()) {
                 final Task task = it.next();
-                if (task != running && task.taskType().name().equals(taskType.name())) {
+                if (!task.equals(running) && task.taskType().name().equals(taskType.name())) {
                     it.remove();
                 }
             }

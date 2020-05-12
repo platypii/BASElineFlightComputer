@@ -21,4 +21,10 @@ public class TaskType {
     String name() {
         return name;
     }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return name;
+    }
 }

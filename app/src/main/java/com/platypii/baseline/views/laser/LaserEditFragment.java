@@ -241,6 +241,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     private void clickLaserConnect(View view) {
         Analytics.logEvent(getContext(), "click_laser_edit_connect", null);
         rangefinderEnabled = true;
+        updateRangefinder();
         final Activity activity = getActivity();
         if (activity != null) {
             rangefinder.start(activity);
@@ -282,7 +283,8 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserMeasure(@NonNull LaserMeasurement meas) {
         // Insert newline if needed
-        if (!laserText.getText().toString().endsWith("\n")) {
+        final String text = laserText.getText().toString();
+        if (!text.isEmpty() && !text.endsWith("\n")) {
             laserText.append("\n");
         }
         final boolean metric = isMetric();
@@ -299,6 +301,9 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         updateRangefinder();
     }
 
+    /**
+     * Update rangefinder status views
+     */
     private void updateRangefinder() {
         if (rangefinderEnabled) {
             laserConnect.setVisibility(View.GONE);
@@ -311,16 +316,24 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             }
             laserStatus.setVisibility(View.VISIBLE);
         } else {
+            laserConnect.setVisibility(View.VISIBLE);
             laserStatus.setVisibility(View.GONE);
         }
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RangefinderService.ENABLE_BLUETOOTH_CODE) {
-            // Notify rangefinder service that bluetooth was enabled
-            rangefinder.bluetoothStarted(getActivity());
+            if (resultCode == Activity.RESULT_OK) {
+                // Notify rangefinder service that bluetooth was enabled
+                rangefinder.bluetoothStarted(getActivity());
+            } else {
+                Log.w(TAG, "Failed to enable bluetooth");
+                rangefinderEnabled = false;
+                rangefinder.stop();
+                updateRangefinder();
+            }
         }
     }
 

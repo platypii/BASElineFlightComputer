@@ -1,6 +1,7 @@
 package com.platypii.baseline.lasers.rangefinder;
 
 import com.platypii.baseline.BaseService;
+import com.platypii.baseline.bluetooth.BluetoothState;
 import com.platypii.baseline.events.RangefinderEvent;
 import com.platypii.baseline.util.Exceptions;
 
@@ -16,8 +17,10 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import org.greenrobot.eventbus.EventBus;
 
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STARTING;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STATES;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 
 /**
  * Class to manage a bluetooth laser rangefinder.
@@ -29,8 +32,8 @@ public class RangefinderService implements BaseService {
     public static final int ENABLE_BLUETOOTH_CODE = 13;
 
     // Bluetooth state
-    private boolean started = false;
     private int bluetoothState = BT_STOPPED;
+    @Nullable
     private BluetoothAdapter bluetoothAdapter;
     @Nullable
     private RangefinderRunnable bluetoothRunnable;
@@ -39,7 +42,7 @@ public class RangefinderService implements BaseService {
 
     @Override
     public void start(@NonNull Context context) {
-        if (started) {
+        if (BluetoothState.started(bluetoothState)) {
             Exceptions.report(new IllegalStateException("Rangefinder started twice"));
             return;
         }
@@ -50,7 +53,7 @@ public class RangefinderService implements BaseService {
         final Activity activity = (Activity) context;
         // TODO: Check for location permission? Can't scan without location permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            started = true;
+            setState(BT_STARTING);
             startAsync(activity);
         } else {
             Log.e(TAG, "Android 5.0+ required for bluetooth LE");
@@ -87,14 +90,14 @@ public class RangefinderService implements BaseService {
      */
     public void bluetoothStarted(@NonNull Activity activity) {
         Log.i(TAG, "Bluetooth started late");
-        if (bluetoothAdapter.isEnabled()) {
+        if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bluetoothRunnable == null) {
                 bluetoothRunnable = new RangefinderRunnable(this, activity, bluetoothAdapter);
                 bluetoothThread = new Thread(bluetoothRunnable);
                 bluetoothThread.start();
             }
         } else {
-            Log.e(TAG, "Bluetooth supposedly started, but adapter not enabled.");
+            Exceptions.report(new IllegalStateException("Bluetooth supposedly started, but adapter not enabled"));
         }
     }
 
@@ -111,8 +114,12 @@ public class RangefinderService implements BaseService {
     @Override
     public synchronized void stop() {
         Log.i(TAG, "Stopping rangefinder service");
-        // Stop thread
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && started && bluetoothRunnable != null && bluetoothThread != null) {
+        if (!BluetoothState.started(bluetoothState)) {
+            Log.e(TAG, "Rangefinder service not started");
+        }
+        setState(BT_STOPPING);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bluetoothRunnable != null && bluetoothThread != null) {
+            // Stop thread
             bluetoothRunnable.stop();
             try {
                 bluetoothThread.join(1000);
@@ -120,15 +127,13 @@ public class RangefinderService implements BaseService {
                 // Thread is dead, clean up
                 bluetoothRunnable = null;
                 bluetoothThread = null;
+                Log.i(TAG, "Rangefinder service stopped cleanly");
+                setState(BT_STOPPED);
             } catch (InterruptedException e) {
                 Log.e(TAG, "Bluetooth thread interrupted while waiting for it to die", e);
             }
-            setState(BT_STOPPED);
-            started = false;
-            Log.i(TAG, "Rangefinder service stopped");
-        } else {
-            Log.w(TAG, "Cannot stop rangefinder");
         }
+        setState(BT_STOPPED);
     }
 
 }

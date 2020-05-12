@@ -81,7 +81,6 @@ public class SharedPreferencesMock implements SharedPreferences {
         listeners.remove(listener);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public class EditorImpl implements Editor {
 
         private final Map<String, Object> newValuesMap = new HashMap<>();

@@ -62,7 +62,7 @@ public class Lasers implements BaseService {
                 final Call<List<LaserProfile>> laserCall = userId != null ? laserApi.byUser(userId) : laserApi.getPublic();
                 laserCall.enqueue(new Callback<List<LaserProfile>>() {
                     @Override
-                    public void onResponse(Call<List<LaserProfile>> call, @NonNull Response<List<LaserProfile>> response) {
+                    public void onResponse(@NonNull Call<List<LaserProfile>> call, @NonNull Response<List<LaserProfile>> response) {
                         final List<LaserProfile> lasers = response.body();
                         if (lasers != null) {
                             // Save laser listing to local cache
@@ -76,7 +76,7 @@ public class Lasers implements BaseService {
                     }
 
                     @Override
-                    public void onFailure(Call<List<LaserProfile>> call, Throwable e) {
+                    public void onFailure(@NonNull Call<List<LaserProfile>> call, @NonNull Throwable e) {
                         final boolean networkAvailable = Services.cloud.isNetworkAvailable();
                         if (networkAvailable) {
                             Log.e(TAG, "Failed to list laser profiles", e);

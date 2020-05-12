@@ -97,6 +97,10 @@ class TrackLabels {
                 deploy = i;
             }
         }
+        if (deploy <= 0) {
+            Exceptions.report(new IndexOutOfBoundsException("Deploy out of bounds " + deploy + " e=" + exit + " l=" + land + " s=" + points.size()));
+            return 0;
+        }
         return deploy - 1;
     }
 

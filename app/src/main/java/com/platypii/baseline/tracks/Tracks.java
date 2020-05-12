@@ -54,7 +54,7 @@ public class Tracks implements BaseService {
                 Log.i(TAG, "Listing tracks");
                 trackApi.list().enqueue(new Callback<List<TrackMetadata>>() {
                     @Override
-                    public void onResponse(Call<List<TrackMetadata>> call, @NonNull Response<List<TrackMetadata>> response) {
+                    public void onResponse(@NonNull Call<List<TrackMetadata>> call, @NonNull Response<List<TrackMetadata>> response) {
                         final List<TrackMetadata> tracks = response.body();
                         if (tracks != null) {
                             // Save track listing to local cache
@@ -68,7 +68,7 @@ public class Tracks implements BaseService {
                     }
 
                     @Override
-                    public void onFailure(Call<List<TrackMetadata>> call, Throwable e) {
+                    public void onFailure(@NonNull Call<List<TrackMetadata>> call, @NonNull Throwable e) {
                         final boolean networkAvailable = Services.cloud.isNetworkAvailable();
                         if (networkAvailable) {
                             Log.e(TAG, "Failed to list tracks", e);

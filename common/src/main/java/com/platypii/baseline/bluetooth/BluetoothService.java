@@ -42,7 +42,6 @@ public class BluetoothService implements BaseService {
     public final BluetoothPreferences preferences = new BluetoothPreferences();
 
     // Bluetooth state
-    private boolean started = false;
     private int bluetoothState = BT_STOPPED;
     @Nullable
     private BluetoothAdapter bluetoothAdapter;
@@ -59,7 +58,7 @@ public class BluetoothService implements BaseService {
 
     @Override
     public void start(@NonNull Context context) {
-        if (started) {
+        if (BluetoothState.started(bluetoothState)) {
             Exceptions.report(new IllegalStateException("Bluetooth started twice"));
             return;
         }
@@ -68,7 +67,6 @@ public class BluetoothService implements BaseService {
             return;
         }
         final Activity activity = (Activity) context;
-        started = true;
         if (bluetoothState == BT_STOPPED) {
             setState(BT_STARTING);
             // Start bluetooth thread
@@ -207,7 +205,6 @@ public class BluetoothService implements BaseService {
                 // Set state to stopped since it prevents getting stuck in state STOPPING
             }
             setState(BT_STOPPED);
-            started = false;
         }
     }
 

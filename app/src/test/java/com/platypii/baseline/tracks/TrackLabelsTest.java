@@ -5,6 +5,8 @@ import com.platypii.baseline.measurements.MLocation;
 
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
@@ -22,16 +24,24 @@ public class TrackLabelsTest {
     }
 
     @Test
-    public void labelsFromPoints() {
-        final List<MLocation> points = new ArrayList<>();
-        points.add(point(0, FlightMode.MODE_GROUND));
-        points.add(point(1000, FlightMode.MODE_GROUND));
-        points.add(point(2000, FlightMode.MODE_WINGSUIT));
-        points.add(point(3000, FlightMode.MODE_WINGSUIT));
-        points.add(point(4000, FlightMode.MODE_WINGSUIT));
-        points.add(point(5000, FlightMode.MODE_CANOPY));
-        points.add(point(6000, FlightMode.MODE_CANOPY));
-        points.add(point(7000, FlightMode.MODE_GROUND));
+    public void singleton() {
+        final List<MLocation> points = Collections.singletonList(point(0, FlightMode.MODE_WINGSUIT));
+        final TrackLabels labels = TrackLabels.from(points);
+        assertNull(labels);
+    }
+
+    @Test
+    public void labels() {
+        final List<MLocation> points = Arrays.asList(
+                point(0, FlightMode.MODE_GROUND),
+                point(1000, FlightMode.MODE_GROUND),
+                point(2000, FlightMode.MODE_WINGSUIT),
+                point(3000, FlightMode.MODE_WINGSUIT),
+                point(4000, FlightMode.MODE_WINGSUIT),
+                point(5000, FlightMode.MODE_CANOPY),
+                point(6000, FlightMode.MODE_CANOPY),
+                point(7000, FlightMode.MODE_GROUND)
+        );
         final TrackLabels labels = TrackLabels.from(points);
         assertNotNull(labels);
         assertEquals(2, labels.exit);
@@ -39,6 +49,23 @@ public class TrackLabelsTest {
         assertEquals(6, labels.land);
     }
 
+    @Test
+    public void canopyOnly() {
+        final List<MLocation> points = Arrays.asList(
+                point(7000, FlightMode.MODE_CANOPY),
+                point(8000, FlightMode.MODE_CANOPY),
+                point(9000, FlightMode.MODE_CANOPY)
+        );
+        final TrackLabels labels = TrackLabels.from(points);
+        assertNotNull(labels);
+        assertEquals(0, labels.exit);
+        assertEquals(0, labels.deploy);
+        assertEquals(2, labels.land);
+    }
+
+    /**
+     * Generate a point with a given flight mode
+     */
     @NonNull
     private MLocation point(long millis, int flightMode) {
         switch (flightMode) {

@@ -121,7 +121,7 @@ public class LaserActivity extends BaseActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RangefinderService.ENABLE_BLUETOOTH_CODE) {
             // Send activity result to fragment

@@ -111,7 +111,11 @@ class RangefinderRunnable implements Runnable {
         stopScan();
         service.setState(BT_CONNECTING);
         // Connect to device
-        bluetoothGatt = device.connectGatt(context, true, gattCallback);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // minsdk 23
+            bluetoothGatt = device.connectGatt(context, true, gattCallback, BluetoothDevice.TRANSPORT_LE);
+        } else {
+            bluetoothGatt = device.connectGatt(context, true, gattCallback);
+        }
         // Log event
         final Bundle bundle = new Bundle();
         bundle.putString("device_name", device.getName());
@@ -131,23 +135,32 @@ class RangefinderRunnable implements Runnable {
     private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            super.onConnectionStateChange(gatt, status, newState);
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                Log.i(TAG, "Rangefinder connected");
-                // TODO: Do we need to discover services? Or can we just connect?
-                bluetoothGatt.discoverServices();
-                service.setState(BT_CONNECTED);
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.i(TAG, "Rangefinder disconnected");
-                service.setState(BT_DISCONNECTED);
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                if (newState == BluetoothProfile.STATE_CONNECTED) {
+                    Log.i(TAG, "Rangefinder connected");
+                    // TODO: If we have connected to a device before, skip discover services and connect directly.
+                    bluetoothGatt.discoverServices();
+                    service.setState(BT_CONNECTED);
+                } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                    Log.i(TAG, "Rangefinder disconnected");
+                    service.setState(BT_DISCONNECTED);
+                    gatt.close();
+                } else {
+                    // Connecting or disconnecting state
+                    Log.i(TAG, "Rangefinder state " + newState);
+                }
             } else {
-                Log.i(TAG, "Rangefinder state " + newState);
+                gatt.close();
+                if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                    Log.i(TAG, "Rangefinder remote disconnect");
+                } else {
+                    Log.e(TAG, "Bluetooth connection state error " + status + " " + newState);
+                }
             }
         }
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            super.onServicesDiscovered(gatt, status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.i(TAG, "Rangefinder bluetooth services discovered");
                 protocol.onServicesDiscovered();

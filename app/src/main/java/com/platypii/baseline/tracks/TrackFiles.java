@@ -46,6 +46,7 @@ class TrackFiles {
         }
     }
 
+    @Nullable
     static File getTrackDirectory(@NonNull Context context) {
         final String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {

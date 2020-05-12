@@ -2,11 +2,13 @@ package com.platypii.baseline.cloud.tasks;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import java.util.Date;
 
 /**
  * Any background task
  */
 public abstract class Task {
+    final Date createdAt = new Date();
 
     /**
      * Unique id for the task.

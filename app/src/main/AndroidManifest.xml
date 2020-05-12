@@ -105,7 +105,9 @@
                 android:resource="@xml/file_provider_paths"/>
         </provider>
 
-        <service android:name=".ForegroundService"/>
+        <service
+            android:name=".ForegroundService"
+            android:foregroundServiceType="location"/>
 
     </application>
 

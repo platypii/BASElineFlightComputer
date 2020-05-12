@@ -42,12 +42,12 @@ public class LocationStatus {
             }
         } else {
             // Internal GPS, or bluetooth connected:
-            if (Services.location.lastFixDuration() < 0) {
+            final long lastFixDuration = Services.location.lastFixDuration();
+            if (lastFixDuration < 0) {
                 // No fix yet
                 message = "GPS searching...";
                 icon = R.drawable.status_red;
             } else {
-                final long lastFixDuration = Services.location.lastFixDuration();
                 // TODO: Use better method to determine signal.
                 // Take into account acc and dop
                 // How many of the last X expected fixes have we missed?

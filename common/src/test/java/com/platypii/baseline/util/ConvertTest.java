@@ -155,6 +155,10 @@ public class ConvertTest {
         assertEquals("225° (SW)", Convert.bearing2(-135.0));
         assertEquals("270° (W)", Convert.bearing2(-90.0));
         assertEquals("300° (NW)", Convert.bearing2(660.0));
+        assertEquals("300° (NW)", Convert.bearing2(1020.0));
+        assertEquals("300° (NW)", Convert.bearing2(-60.0));
+        assertEquals("300° (NW)", Convert.bearing2(-420.0));
+        assertEquals("300° (NW)", Convert.bearing2(-780.0));
         assertEquals("", Convert.bearing2(Double.NaN));
     }
 

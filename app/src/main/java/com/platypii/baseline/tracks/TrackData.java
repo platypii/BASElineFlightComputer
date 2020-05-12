@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class TrackData {
 
+    @NonNull
     private final String name;
 
     @NonNull
