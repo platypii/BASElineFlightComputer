@@ -30,6 +30,9 @@ public class LocationStatus {
             // Bluetooth enabled, but not connected
             icon = R.drawable.warning;
             switch (Services.bluetooth.getState()) {
+                case BluetoothState.BT_STARTING:
+                    message = "GPS bluetooth starting...";
+                    break;
                 case BluetoothState.BT_CONNECTING:
                     message = "GPS bluetooth connecting...";
                     break;

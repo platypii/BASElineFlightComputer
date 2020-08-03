@@ -1,5 +1,6 @@
 package com.platypii.baseline.lasers.rangefinder;
 
+import com.platypii.baseline.bluetooth.BluetoothUtil;
 import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.views.laser.LaserActivity;
 
@@ -19,6 +20,9 @@ import androidx.annotation.RequiresApi;
 import java.util.Arrays;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
+
+import static com.platypii.baseline.bluetooth.BluetoothUtil.byteArrayToHex;
+import static com.platypii.baseline.bluetooth.BluetoothUtil.bytesToShort;
 
 /**
  * This class contains ids, commands, and decoders for Uineye / Hawkeye laser rangefinders.
@@ -65,7 +69,8 @@ class UineyeProtocol implements RangefinderProtocol {
     @Override
     public void onServicesDiscovered() {
         sendHello();
-        Util.sleep(200); // TODO: Is this needed?
+        // TODO: don't sleep. correct behavior is to wait for async write completion.
+        BluetoothUtil.sleep(200);
         requestRangefinderService();
     }
 
@@ -93,7 +98,7 @@ class UineyeProtocol implements RangefinderProtocol {
         } else if (value[0] == 23 && value[1] == 0) {
             processMeasurement(value);
         } else {
-            Log.w(TAG, "rf -> app: unknown " + Util.byteArrayToHex(value));
+            Log.w(TAG, "rf -> app: unknown " + byteArrayToHex(value));
         }
     }
 
@@ -131,12 +136,12 @@ class UineyeProtocol implements RangefinderProtocol {
     }
 
     private void processMeasurement(@NonNull byte[] value) {
-        Log.d(TAG, "rf -> app: measure " + Util.byteArrayToHex(value));
+        Log.d(TAG, "rf -> app: measure " + byteArrayToHex(value));
 
-        final double pitch = Util.bytesToShort(value[3], value[4]) * 0.1; // degrees
+        final double pitch = bytesToShort(value[3], value[4]) * 0.1; // degrees
 //        final double total = Util.bytesToShort(value[5], value[6]) * 0.1; // meters
-        double vert = Util.bytesToShort(value[7], value[8]) * 0.1; // meters
-        double horiz = Util.bytesToShort(value[9], value[10]) * 0.1; // meters
+        double vert = bytesToShort(value[7], value[8]) * 0.1; // meters
+        double horiz = bytesToShort(value[9], value[10]) * 0.1; // meters
 //        double bearing = (value[22] & 0xff) * 360.0 / 256.0; // degrees
         if (pitch < 0) {
             vert = -vert;
@@ -168,7 +173,7 @@ class UineyeProtocol implements RangefinderProtocol {
                 final SparseArray<byte[]> mfg = record.getManufacturerSpecificData();
                 for (int i = 0; i < mfg.size(); i++) {
                     final String key = "mfg_" + mfg.keyAt(i);
-                    final String hex = Util.byteArrayToHex(mfg.valueAt(i));
+                    final String hex = byteArrayToHex(mfg.valueAt(i));
                     bundle.putString(key, hex);
                 }
                 LaserActivity.firebaseAnalytics.logEvent("manufacturer_data", bundle);

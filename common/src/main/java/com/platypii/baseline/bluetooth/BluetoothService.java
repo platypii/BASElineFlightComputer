@@ -3,6 +3,7 @@ package com.platypii.baseline.bluetooth;
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.common.R;
 import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.util.Exceptions;
 
 import android.app.Activity;
@@ -46,7 +47,7 @@ public class BluetoothService implements BaseService {
     @Nullable
     private BluetoothAdapter bluetoothAdapter;
     @Nullable
-    private BluetoothRunnable bluetoothRunnable;
+    private Stoppable bluetoothRunnable;
     @Nullable
     private Thread bluetoothThread;
 
@@ -227,12 +228,12 @@ public class BluetoothService implements BaseService {
         }
     }
 
-    public void addNmeaListener(GpsStatus.NmeaListener nmeaListener) {
-        listeners.add(nmeaListener);
+    public void addNmeaListener(GpsStatus.NmeaListener listener) {
+        listeners.add(listener);
     }
 
-    public void removeNmeaListener(GpsStatus.NmeaListener nmeaListener) {
-        listeners.remove(nmeaListener);
+    public void removeNmeaListener(GpsStatus.NmeaListener listener) {
+        listeners.remove(listener);
     }
 
 }

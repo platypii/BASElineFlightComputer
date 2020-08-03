@@ -1,15 +1,15 @@
-package com.platypii.baseline.lasers.rangefinder;
+package com.platypii.baseline.bluetooth;
 
 import androidx.annotation.NonNull;
 
-class Util {
+public class BluetoothUtil {
 
     /**
      * Convert a byte array into a human readable hex string.
      * "foo".getBytes() -> "66-6f-6f"
      */
     @NonNull
-    static String byteArrayToHex(@NonNull byte[] a) {
+    public static String byteArrayToHex(@NonNull byte[] a) {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < a.length; i++) {
             if (i > 0) {
@@ -20,14 +20,14 @@ class Util {
         return sb.toString();
     }
 
-    static short bytesToShort(byte b1, byte b2) {
+    public static short bytesToShort(byte b1, byte b2) {
         return (short) (((b1 & 0xff) << 8) | (b2 & 0xff));
     }
 
     /**
      * Sleep without exceptions
      */
-    static void sleep(long t) {
+    public static void sleep(long t) {
         try {
             Thread.sleep(t);
         } catch (InterruptedException ignored) {

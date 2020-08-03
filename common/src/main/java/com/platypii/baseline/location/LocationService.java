@@ -24,6 +24,7 @@ public class LocationService extends LocationProvider {
     // If we are getting NMEA, we can disable android location provider
     private boolean nmeaReceived = false;
 
+    @NonNull
     private final BluetoothService bluetooth;
 
     // LocationService owns the alti, because it solved the circular dependency problem
@@ -36,7 +37,7 @@ public class LocationService extends LocationProvider {
     @NonNull
     private final LocationProviderBluetooth locationProviderBluetooth;
 
-    public LocationService(BluetoothService bluetooth) {
+    public LocationService(@NonNull BluetoothService bluetooth) {
         this.bluetooth = bluetooth;
         locationProviderNMEA = new LocationProviderNMEA(alti);
         locationProviderAndroid = new LocationProviderAndroid(alti);

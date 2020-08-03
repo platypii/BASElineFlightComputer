@@ -14,6 +14,9 @@ import androidx.annotation.RequiresApi;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
 
+import static com.platypii.baseline.bluetooth.BluetoothUtil.byteArrayToHex;
+import static com.platypii.baseline.bluetooth.BluetoothUtil.bytesToShort;
+
 /**
  * This class contains ids, commands, and decoders for ATN laser rangefinders.
  */
@@ -49,7 +52,7 @@ class ATNProtocol implements RangefinderProtocol {
 
     @Override
     public void processBytes(@NonNull byte[] value) {
-        final String hex = Util.byteArrayToHex(value);
+        final String hex = byteArrayToHex(value);
         if (value[0] == 16 && value[1] == 1) {
             // Check for bits we haven't seen before
             if ((value[2] & 0x4e) != 0) {
@@ -90,17 +93,17 @@ class ATNProtocol implements RangefinderProtocol {
     }
 
     private void processMeasurement(@NonNull byte[] value) {
-        Log.d(TAG, "rf -> app: measure " + Util.byteArrayToHex(value));
+        Log.d(TAG, "rf -> app: measure " + byteArrayToHex(value));
 
         if (value[0] != 16 || value[1] != 1) {
-            throw new IllegalArgumentException("Invalid measurement prefix " + Util.byteArrayToHex(value));
+            throw new IllegalArgumentException("Invalid measurement prefix " + byteArrayToHex(value));
         }
 
         final boolean metric = (value[2] & 0x01) == 0;
         final double units = metric ? 1 : 0.9144; // yards or meters
 
-        final double total = Util.bytesToShort(value[3], value[4]) * 0.5 * units; // meters
-        final double pitch = Util.bytesToShort(value[5], value[6]) * 0.1; // degrees
+        final double total = bytesToShort(value[3], value[4]) * 0.5 * units; // meters
+        final double pitch = bytesToShort(value[5], value[6]) * 0.1; // degrees
 
         final double horiz = total * Math.cos(Math.toRadians(pitch)); // meters
         final double vert = total * Math.sin(Math.toRadians(pitch)); // meters

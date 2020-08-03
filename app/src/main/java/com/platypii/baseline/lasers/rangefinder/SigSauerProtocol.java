@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
 
+import static com.platypii.baseline.bluetooth.BluetoothUtil.byteArrayToHex;
+
 /**
  * This class contains ids, commands, and decoders for Sig Sauer laser rangefinders.
  */
@@ -160,7 +162,7 @@ class SigSauerProtocol implements RangefinderProtocol {
                 final SparseArray<byte[]> mfg = record.getManufacturerSpecificData();
                 for (int i = 0; i < mfg.size(); i++) {
                     final String key = "mfg_" + mfg.keyAt(i);
-                    final String hex = Util.byteArrayToHex(mfg.valueAt(i));
+                    final String hex = byteArrayToHex(mfg.valueAt(i));
                     bundle.putString(key, hex);
                 }
                 LaserActivity.firebaseAnalytics.logEvent("manufacturer_data", bundle);

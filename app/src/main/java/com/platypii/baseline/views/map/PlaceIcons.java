@@ -15,6 +15,7 @@ public class PlaceIcons {
     private static final BitmapDescriptor e = BitmapDescriptorFactory.fromResource(R.drawable.shadow_e);
     private static final BitmapDescriptor ws = BitmapDescriptorFactory.fromResource(R.drawable.shadow_ws);
     private static final BitmapDescriptor dz = BitmapDescriptorFactory.fromResource(R.drawable.shadow_dz);
+    private static final BitmapDescriptor pg = BitmapDescriptorFactory.fromResource(R.drawable.shadow_pg);
     private static final BitmapDescriptor other = BitmapDescriptorFactory.fromResource(R.drawable.ic_pin);
 
     @NonNull
@@ -30,6 +31,8 @@ public class PlaceIcons {
                 return place.wingsuitable ? ws : e;
             case "DZ":
                 return dz;
+            case "PG":
+                return pg;
             default:
                 return other;
         }
