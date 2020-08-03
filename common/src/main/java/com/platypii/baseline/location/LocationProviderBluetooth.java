@@ -62,6 +62,7 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
         }
         // Start NMEA updates
         bluetooth.nmeaUpdates.subscribe(this);
+        bluetooth.locationUpdates.subscribe(this::updateLocation);
     }
 
     @Override
@@ -69,5 +70,6 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
         Log.i(TAG, "Stopping bluetooth location service");
         super.stop();
         bluetooth.nmeaUpdates.unsubscribe(this);
+        bluetooth.locationUpdates.unsubscribe(this::updateLocation);
     }
 }

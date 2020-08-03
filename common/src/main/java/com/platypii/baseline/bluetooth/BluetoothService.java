@@ -2,6 +2,7 @@ package com.platypii.baseline.bluetooth;
 
 import com.platypii.baseline.common.R;
 import com.platypii.baseline.location.NMEA;
+import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.PubSub;
 
@@ -34,6 +35,7 @@ public class BluetoothService {
     private static final String TAG = "Bluetooth";
 
     public final PubSub<NMEA> nmeaUpdates = new PubSub<>();
+    public final PubSub<MLocation> locationUpdates = new PubSub<>();
 
     // Android shared preferences for bluetooth
     public final BluetoothPreferences preferences = new BluetoothPreferences();
@@ -42,6 +44,8 @@ public class BluetoothService {
     private BluetoothAdapter bluetoothAdapter;
     @Nullable
     private BluetoothRunnable bluetoothRunnable;
+    @Nullable
+    private MohawkRunnable mohawkRunnable;
     @Nullable
     private Thread bluetoothThread;
 
@@ -61,13 +65,22 @@ public class BluetoothService {
             }
             bluetoothAdapter = getAdapter(activity);
             if (bluetoothAdapter != null) {
-                bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
-                bluetoothThread = new Thread(bluetoothRunnable);
+                if (isMohawk()) {
+                    mohawkRunnable = new MohawkRunnable(BluetoothService.this, bluetoothAdapter, activity.getApplicationContext());
+                    bluetoothThread = new Thread(mohawkRunnable);
+                } else {
+                    bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
+                    bluetoothThread = new Thread(bluetoothRunnable);
+                }
                 bluetoothThread.start();
             }
         } else {
             Exceptions.report(new IllegalStateException("Bluetooth already started: " + BT_STATES[getState()]));
         }
+    }
+
+    private boolean isMohawk() {
+        return "Mohawk".equals(preferences.preferenceDeviceName);
     }
 
     /**
@@ -116,7 +129,13 @@ public class BluetoothService {
     }
 
     public int getState() {
-        return bluetoothRunnable != null ? bluetoothRunnable.bluetoothState : BT_STOPPED;
+        if (bluetoothRunnable != null) {
+            return bluetoothRunnable.bluetoothState;
+        } else if (mohawkRunnable != null) {
+            return mohawkRunnable.bluetoothState;
+        } else {
+            return BT_STOPPED;
+        }
     }
 
     /**
