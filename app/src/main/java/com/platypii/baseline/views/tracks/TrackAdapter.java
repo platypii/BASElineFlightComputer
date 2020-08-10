@@ -5,6 +5,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.tracks.TrackFile;
 import com.platypii.baseline.tracks.TrackMetadata;
+import com.platypii.baseline.tracks.TrackSearch;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -60,7 +61,7 @@ public class TrackAdapter extends BaseAdapter {
         if (cloudTracks != null && !cloudTracks.isEmpty()) {
             updated.add(new ListHeader("Synced"));
             for (TrackMetadata track : cloudTracks) {
-                if (filterMatch(track)) {
+                if (TrackSearch.matchTrack(track, filter)) {
                     updated.add(new ListTrackData(track));
                 }
             }
@@ -127,7 +128,7 @@ public class TrackAdapter extends BaseAdapter {
                 final ProgressBar itemSpinner2 = convertView.findViewById(R.id.list_spinner);
                 final View itemCheck2 = convertView.findViewById(R.id.list_check);
                 itemNameView2.setText(trackData.date_string);
-                itemSizeView2.setText(trackData.location());
+                itemSizeView2.setText(trackData.subtitle());
                 itemSpinner2.setVisibility(View.GONE);
                 if (trackData.abbrvFile(context).exists() || trackData.localFile(context).exists()) {
                     itemCheck2.setVisibility(View.VISIBLE);
@@ -183,41 +184,6 @@ public class TrackAdapter extends BaseAdapter {
     @Override
     public int getItemViewType(int position) {
         return getItem(position).getType();
-    }
-
-    /**
-     * Return true if the track matches the search filter string
-     * TODO: Search track.stats.plan.name
-     */
-    private boolean filterMatch(@NonNull TrackMetadata track) {
-        // Make a lower case super string of all properties we want to search
-        final StringBuilder sb = new StringBuilder();
-        if (track.place != null) {
-            sb.append(track.place.name);
-            sb.append(' ');
-            sb.append(track.place.region);
-            sb.append(' ');
-            sb.append(track.place.country);
-            sb.append(' ');
-            sb.append(track.place.objectType);
-            if (track.place.wingsuitable) {
-                sb.append(" wingsuit");
-            }
-            if ("DZ".equals(track.place.objectType)) {
-                sb.append(" skydive");
-            }
-            if (track.place.isBASE()) {
-                sb.append(" BASE");
-            }
-        }
-        final String superString = sb.toString().toLowerCase();
-        // Break into tokens
-        for (String token : filter.toLowerCase().split(" ")) {
-            if (!superString.contains(token)) {
-                return false;
-            }
-        }
-        return true;
     }
 
 }

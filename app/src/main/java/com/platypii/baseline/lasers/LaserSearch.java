@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 public class LaserSearch {
 
     /**
-     * Return true if the track matches the search filter string
+     * Return true if the laser profile matches the search filter string
      */
     public static boolean matchLaser(@NonNull LaserProfile laser, @NonNull String filter) {
         // Make a lower case super string of all properties we want to search

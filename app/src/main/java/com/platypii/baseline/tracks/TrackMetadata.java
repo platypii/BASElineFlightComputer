@@ -21,6 +21,10 @@ public class TrackMetadata {
     public final String trackKml;
     @Nullable
     public final Place place;
+    @Nullable
+    public String suit;
+    @Nullable
+    public String canopy;
 
     TrackMetadata(String track_id, long date, String date_string, String trackUrl, String trackKml, @Nullable Place place) {
         this.track_id = track_id;
@@ -55,6 +59,21 @@ public class TrackMetadata {
     @NonNull
     public String location() {
         return place == null ? "" : place.niceString();
+    }
+
+    /**
+     * Returns "Place - Suit"
+     */
+    public String subtitle() {
+        if (place != null && suit != null) {
+            return place.niceString() + " (" + suit + ")";
+        } else if (place != null) {
+            return place.niceString();
+        } else if (suit != null) {
+            return "(" + suit + ")";
+        } else {
+            return "";
+        }
     }
 
     @NonNull
