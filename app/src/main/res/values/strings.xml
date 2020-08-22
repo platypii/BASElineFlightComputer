@@ -148,4 +148,7 @@ https://baseline.ws/help/app#profiles
         ]]>
     </string>
 
+    <!-- Errors -->
+    <string name="error_open_browser">Failed to open browser</string>
+
 </resources>

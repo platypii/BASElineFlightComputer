@@ -43,7 +43,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.google.firebase:firebase-core:17.4.4'
+    implementation 'com.google.firebase:firebase-core:17.5.0'
     implementation 'com.google.firebase:firebase-perf:19.0.8'
     implementation('com.squareup.okhttp3:okhttp') { version { strictly '3.12.12'  } } // Needed for android 19
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

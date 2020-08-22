@@ -10,7 +10,7 @@ import java.util.List;
 
 import static com.platypii.baseline.jarvis.FlightMode.MODE_CANOPY;
 import static com.platypii.baseline.jarvis.FlightMode.MODE_FREEFALL;
-import static com.platypii.baseline.jarvis.FlightMode.MODE_PLANE;
+import static com.platypii.baseline.jarvis.FlightMode.MODE_GROUND;
 import static com.platypii.baseline.jarvis.FlightMode.MODE_WINGSUIT;
 
 class TrackLabels {
@@ -49,7 +49,7 @@ class TrackLabels {
         // Cumulative in-flight distribution
         final int[] cum = new int[n + 1];
         for (int i = 0; i < n; i++) {
-            cum[i + 1] = cum[i] + (inFlight(FlightMode.getMode(points.get(i))) ? 1 : 0);
+            cum[i + 1] = cum[i] + inFlight(FlightMode.getMode(points.get(i)));
         }
         // Find median index
         int median = -1;
@@ -84,16 +84,15 @@ class TrackLabels {
      */
     private static int findDeploy(@NonNull List<MLocation> points, int exit, int land) {
         final int n = points.size();
-        // Cumulative in-flight distribution
+        // Cumulative in-freefall distribution
         final int[] freefallCum = new int[n + 1];
-        final int[] canopyCum = new int[n + 1];
         for (int i = exit; i <= land; i++) {
-            freefallCum[i + 1] = freefallCum[i] + (freefall(FlightMode.getMode(points.get(i))) ? 1 : 0);
-            canopyCum[i + 1] = canopyCum[i] + (canopy(FlightMode.getMode(points.get(i))) ? 1 : 0);
+            freefallCum[i + 1] = freefallCum[i] + inFreefall(FlightMode.getMode(points.get(i)));
         }
         int deploy = exit;
         for (int i = exit; i <= land; i++) {
-            if (freefallCum[deploy] - canopyCum[deploy] < freefallCum[i] - canopyCum[i]) {
+            // #correct = c(i) + (land - i - total + c(i)) ~= 2 c(i) - i
+            if (2 * freefallCum[deploy] - deploy < 2 * freefallCum[i] - i) {
                 deploy = i;
             }
         }
@@ -104,16 +103,12 @@ class TrackLabels {
         return deploy - 1;
     }
 
-    private static boolean inFlight(int mode) {
-        return mode == MODE_FREEFALL || mode == MODE_WINGSUIT || mode == MODE_CANOPY;
+    private static int inFlight(int mode) {
+        return mode == MODE_FREEFALL || mode == MODE_WINGSUIT || mode == MODE_CANOPY ? 1 : 0;
     }
 
-    private static boolean freefall(int mode) {
-        return mode == MODE_FREEFALL || mode == MODE_WINGSUIT || mode == MODE_PLANE;
-    }
-
-    private static boolean canopy(int mode) {
-        return mode == MODE_CANOPY;
+    private static int inFreefall(int mode) {
+        return mode == MODE_GROUND || mode == MODE_CANOPY ? 0 : 1;
     }
 
 }

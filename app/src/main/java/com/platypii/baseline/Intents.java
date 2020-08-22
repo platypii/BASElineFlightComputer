@@ -59,9 +59,9 @@ public class Intents {
             Log.e(TAG, "Failed to open KML file in google earth", e);
             Toast.makeText(context, R.string.error_map_intent, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Exceptions.report(e);
             Log.e(TAG, "Failed to open KML file in google earth", e);
             Toast.makeText(context, R.string.error_map_intent, Toast.LENGTH_SHORT).show();
+            Exceptions.report(e);
         }
     }
 
@@ -114,20 +114,30 @@ public class Intents {
      * Open help page in browser
      */
     public static void openHelpUrl(@NonNull Context context) {
-        final Uri uri = Uri.parse("https://baseline.ws/help/app");
-        Log.i(TAG, "Opening help url " + uri);
-        final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        context.startActivity(intent);
+        try {
+            final Uri uri = Uri.parse("https://baseline.ws/help/app");
+            Log.i(TAG, "Opening help url " + uri);
+            final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(context, R.string.error_open_browser, Toast.LENGTH_SHORT).show();
+            Exceptions.report(e);
+        }
     }
 
     /**
      * Open privacy policy page in browser
      */
     public static void openPrivacyUrl(@NonNull Context context) {
-        final Uri uri = Uri.parse("https://baseline.ws/privacy");
-        Log.i(TAG, "Opening privacy url " + uri);
-        final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        context.startActivity(intent);
+        try {
+            final Uri uri = Uri.parse("https://baseline.ws/privacy");
+            Log.i(TAG, "Opening privacy url " + uri);
+            final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(context, R.string.error_open_browser, Toast.LENGTH_SHORT).show();
+            Exceptions.report(e);
+        }
     }
 
     public static void openBluetoothSettings(@NonNull Context context) {

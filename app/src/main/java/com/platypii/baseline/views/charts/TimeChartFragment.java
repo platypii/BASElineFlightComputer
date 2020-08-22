@@ -27,7 +27,7 @@ public class TimeChartFragment extends Fragment {
         final Activity parent = getActivity();
         if (parent instanceof TrackDataActivity) {
             ((TrackDataActivity) parent).trackData.thenAccept(trackData -> {
-                timeChart.loadTrack(trackData.data);
+                timeChart.loadTrack(trackData);
                 timeChart.postInvalidate();
             });
         }

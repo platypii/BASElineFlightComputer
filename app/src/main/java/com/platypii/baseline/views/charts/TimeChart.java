@@ -1,15 +1,16 @@
 package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.DataSeries;
+import com.platypii.baseline.views.charts.layers.FlightModeLayer;
 
 import android.content.Context;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import java.util.List;
 
 public class TimeChart extends PlotView {
 
@@ -18,7 +19,7 @@ public class TimeChart extends PlotView {
     private static final int AXIS_GLIDE = 2;
 
     @Nullable
-    List<MLocation> trackData;
+    TrackData trackData;
 
     private final DataSeries altitudeSeries = new DataSeries();
     private final DataSeries speedSeries = new DataSeries();
@@ -32,7 +33,7 @@ public class TimeChart extends PlotView {
 
         final float density = getResources().getDisplayMetrics().density;
         options.padding.top = (int) (18 * density);
-        options.padding.bottom = (int) (4 * density);
+        options.padding.bottom = (int) (6 * density);
 
         options.axis.x = PlotOptions.axisTime();
         options.axis.y = PlotOptions.axisDistance();
@@ -41,18 +42,20 @@ public class TimeChart extends PlotView {
         plot.initBounds(3);
     }
 
-    public void loadTrack(@NonNull List<MLocation> trackData) {
+    public void loadTrack(@NonNull TrackData trackData) {
         this.trackData = trackData;
 
         // Load track data into individual time series
         altitudeSeries.reset();
         speedSeries.reset();
         glideSeries.reset();
-        for (MLocation loc : trackData) {
+        for (MLocation loc : trackData.data) {
             altitudeSeries.addPoint(loc.millis, loc.altitude_gps);
             speedSeries.addPoint(loc.millis, loc.totalSpeed());
             glideSeries.addPoint(loc.millis, glide(loc));
         }
+
+        addLayer(new FlightModeLayer(trackData));
     }
 
     /**
@@ -75,7 +78,7 @@ public class TimeChart extends PlotView {
     @Override
     public void drawData(@NonNull Plot plot) {
         if (trackData != null) {
-            if (trackData.isEmpty()) {
+            if (trackData.data.isEmpty()) {
                 plot.text.setTextAlign(Paint.Align.CENTER);
                 //noinspection IntegerDivisionInFloatingPointContext
                 plot.canvas.drawText("no track data", plot.width / 2, plot.height / 2, plot.text);
@@ -99,11 +102,11 @@ public class TimeChart extends PlotView {
     private void drawTrackData(@NonNull Plot plot) {
         // Draw data series
         plot.paint.setColor(0xffff0000);
-        plot.drawLine(AXIS_ALT, altitudeSeries, 1.5f);
+        plot.drawLine(AXIS_ALT, altitudeSeries, 1.2f);
         plot.paint.setColor(0xff0000ff);
-        plot.drawLine(AXIS_SPEED, speedSeries, 1.5f);
+        plot.drawLine(AXIS_SPEED, speedSeries, 1.2f);
         plot.paint.setColor(0xff109bbf);
-        plot.drawLine(AXIS_GLIDE, glideSeries, 1.5f);
+        plot.drawLine(AXIS_GLIDE, glideSeries, 1.2f);
     }
 
     @NonNull

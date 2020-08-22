@@ -73,12 +73,12 @@ public class TimeChartTouchable extends TimeChart {
      */
     @NonNull
     private ChartFocusEvent findClosest(long millis) {
-        if (trackData != null && !trackData.isEmpty()) {
+        if (trackData != null && !trackData.data.isEmpty()) {
             touchLocation.millis = millis;
-            int closest_index = Collections.binarySearch(trackData, touchLocation);
+            int closest_index = Collections.binarySearch(trackData.data, touchLocation);
             if (closest_index < 0) closest_index = -closest_index - 1;
-            if (closest_index == trackData.size()) closest_index--;
-            return new ChartFocusEvent.TrackFocused(trackData.get(closest_index), trackData);
+            if (closest_index == trackData.data.size()) closest_index--;
+            return new ChartFocusEvent.TrackFocused(trackData.data.get(closest_index), trackData.data);
         } else {
             return new ChartFocusEvent.Unfocused();
         }

@@ -41,4 +41,7 @@ public class TrackStats {
         }
     }
 
+    public boolean isDefined() {
+        return exit != null && deploy != null && land != null;
+    }
 }

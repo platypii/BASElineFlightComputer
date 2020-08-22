@@ -7,7 +7,9 @@ import com.platypii.baseline.views.charts.layers.Colors;
 
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.RoundCap;
 
 public class TrackLayer extends MapLayer {
 
@@ -20,10 +22,31 @@ public class TrackLayer extends MapLayer {
 
     @Override
     public void onAdd(@NonNull GoogleMap map) {
-        final PolylineOptions plane = new PolylineOptions().color(Colors.modePlane);
-        final PolylineOptions flight = new PolylineOptions().color(Colors.modeWingsuit);
-        final PolylineOptions canopy = new PolylineOptions().color(Colors.modeCanopy);
-        final PolylineOptions ground = new PolylineOptions().color(Colors.modeGround);
+        final RoundCap rc = new RoundCap();
+        final PolylineOptions plane = new PolylineOptions()
+                .width(8)
+                .startCap(rc)
+                .endCap(rc)
+                .jointType(JointType.ROUND)
+                .color(Colors.modePlane);
+        final PolylineOptions flight = new PolylineOptions()
+                .width(8)
+                .startCap(rc)
+                .endCap(rc)
+                .jointType(JointType.ROUND)
+                .color(Colors.modeWingsuit);
+        final PolylineOptions canopy = new PolylineOptions()
+                .width(8)
+                .startCap(rc)
+                .endCap(rc)
+                .jointType(JointType.ROUND)
+                .color(Colors.modeCanopy);
+        final PolylineOptions ground = new PolylineOptions()
+                .width(8)
+                .startCap(rc)
+                .endCap(rc)
+                .jointType(JointType.ROUND)
+                .color(Colors.modeGround);
         for (MLocation loc : trackData.data) {
             if (loc == null) {
                 Exceptions.report(new NullPointerException("Unexpected null location for track " + trackData));

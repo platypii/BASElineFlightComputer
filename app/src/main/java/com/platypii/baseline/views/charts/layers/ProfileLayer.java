@@ -27,7 +27,7 @@ public abstract class ProfileLayer extends ChartLayer {
     @Override
     public void drawData(@NonNull Plot plot) {
         plot.paint.setColor(color);
-        plot.drawLine(AXIS_DISTANCE, dataSeries, 1.5f);
+        plot.drawLine(AXIS_DISTANCE, dataSeries, 1.2f);
     }
 
     @Override

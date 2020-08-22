@@ -38,12 +38,12 @@ public class SpeedDataLayer extends ChartLayer {
     public void drawData(@NonNull Plot plot) {
         plot.paint.setStrokeCap(Paint.Cap.ROUND);
         plot.paint.setColor(Colors.modeGround);
-        plot.drawLine(AXIS_SPEED, ground, 1.5f);
+        plot.drawLine(AXIS_SPEED, ground, 1.2f);
         plot.paint.setColor(Colors.modePlane);
-        plot.drawLine(AXIS_SPEED, plane, 1.5f);
+        plot.drawLine(AXIS_SPEED, plane, 1.2f);
         plot.paint.setColor(Colors.modeCanopy);
-        plot.drawLine(AXIS_SPEED, canopy, 1.5f);
+        plot.drawLine(AXIS_SPEED, canopy, 1.2f);
         plot.paint.setColor(Colors.modeWingsuit);
-        plot.drawLine(AXIS_SPEED, flight, 1.5f);
+        plot.drawLine(AXIS_SPEED, flight, 1.2f);
     }
 }
