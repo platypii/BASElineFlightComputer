@@ -55,11 +55,11 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="left|center_vertical"
+        android:gravity="start|center_vertical"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
         android:drawablePadding="10dp"
-        android:drawableLeft="@drawable/bluetooth_pair"
+        android:drawableStart="@drawable/ic_bluetooth_pair"
         android:onClick="clickPair"
         android:text="@string/bluetooth_pair"/>
 

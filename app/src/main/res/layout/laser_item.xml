@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:padding="6dp"
-        android:src="@drawable/x"
+        android:src="@drawable/ic_x"
         android:contentDescription="@string/action_delete"/>
 
 </LinearLayout>

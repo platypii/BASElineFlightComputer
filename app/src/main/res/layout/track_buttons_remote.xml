@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"
-        android:drawableEnd="@drawable/google_earth"
+        android:drawableEnd="@drawable/ic_earth"
         android:text="@string/action_earth"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
