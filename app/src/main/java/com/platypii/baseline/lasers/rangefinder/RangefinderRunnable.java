@@ -27,7 +27,6 @@ import java.util.List;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
-import static com.platypii.baseline.bluetooth.BluetoothState.BT_DISCONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STARTING;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 
@@ -73,6 +72,12 @@ class RangefinderRunnable implements Runnable {
         // Scan for rangefinders
         Log.i(TAG, "Scanning for rangefinder");
         service.setState(BT_STARTING);
+        scan();
+        // TODO: this whole run() is fast, probably shouldn't even be a Runnable
+        Log.i(TAG, "RangefinderRunnable finished");
+    }
+
+    private void scan() {
         bluetoothScanner = bluetoothAdapter.getBluetoothLeScanner();
         if (bluetoothScanner == null) {
             Log.e(TAG, "Failed to get bluetooth LE scanner");
@@ -142,9 +147,8 @@ class RangefinderRunnable implements Runnable {
                     bluetoothGatt.discoverServices();
                     service.setState(BT_CONNECTED);
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                    Log.i(TAG, "Rangefinder disconnected");
-                    service.setState(BT_DISCONNECTED);
                     gatt.close();
+                    disconnected();
                 } else {
                     // Connecting or disconnecting state
                     Log.i(TAG, "Rangefinder state " + newState);
@@ -178,6 +182,12 @@ class RangefinderRunnable implements Runnable {
             }
         }
     };
+
+    private void disconnected() {
+        Log.i(TAG, "Rangefinder disconnected");
+        service.setState(BT_CONNECTING);
+        // TODO: Scan? Or wait for auto-connect?
+    }
 
     void stop() {
         // Close bluetooth socket

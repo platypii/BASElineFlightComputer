@@ -7,13 +7,12 @@ public class BluetoothState {
     public static final int BT_STARTING = 1;
     public static final int BT_CONNECTING = 2;
     public static final int BT_CONNECTED = 3;
-    public static final int BT_DISCONNECTED = 4;
-    public static final int BT_STOPPING = 5;
+    public static final int BT_STOPPING = 4;
 
     public static boolean started(int state) {
-        return state == BT_STARTING || state == BT_CONNECTING || state == BT_CONNECTED || state == BT_DISCONNECTED;
+        return state == BT_STARTING || state == BT_CONNECTING || state == BT_CONNECTED;
     }
 
-    public static final String[] BT_STATES = {"BT_STOPPED", "BT_STARTING", "BT_CONNECTING", "BT_CONNECTED", "BT_DISCONNECTED", "BT_STOPPING"};
+    public static final String[] BT_STATES = {"BT_STOPPED", "BT_STARTING", "BT_CONNECTING", "BT_CONNECTED", "BT_STOPPING"};
 
 }

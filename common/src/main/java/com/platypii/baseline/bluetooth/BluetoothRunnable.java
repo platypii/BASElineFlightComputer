@@ -16,7 +16,6 @@ import java.util.UUID;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
-import static com.platypii.baseline.bluetooth.BluetoothState.BT_DISCONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 
@@ -58,7 +57,7 @@ class BluetoothRunnable implements Stoppable {
             }
             // Are we restarting or stopping?
             if (service.getState() != BT_STOPPING) {
-                service.setState(BT_DISCONNECTED);
+                service.setState(BT_CONNECTING);
                 // Sleep before reconnect
                 try {
                     Thread.sleep(reconnectDelay);

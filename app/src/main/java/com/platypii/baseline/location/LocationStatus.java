@@ -36,9 +36,6 @@ public class LocationStatus {
                 case BluetoothState.BT_CONNECTING:
                     message = "GPS bluetooth connecting...";
                     break;
-                case BluetoothState.BT_DISCONNECTED:
-                    message = "GPS bluetooth not connected";
-                    break;
                 default:
                     message = "GPS bluetooth not connected";
                     Log.e(TAG, "Bluetooth inconsistent state: preference enabled, state = " + Services.bluetooth.getState());

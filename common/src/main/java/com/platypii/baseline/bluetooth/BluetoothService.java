@@ -23,7 +23,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
-import static com.platypii.baseline.bluetooth.BluetoothState.BT_DISCONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STARTING;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STATES;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
@@ -59,7 +58,7 @@ public class BluetoothService implements BaseService {
     @Override
     public void start(@NonNull Context context) {
         if (BluetoothState.started(bluetoothState)) {
-            Exceptions.report(new IllegalStateException("Bluetooth started twice"));
+            Exceptions.report(new IllegalStateException("Bluetooth started twice " + BT_STATES[bluetoothState]));
             return;
         }
         if (!(context instanceof Activity)) {
@@ -138,7 +137,8 @@ public class BluetoothService implements BaseService {
         if (bluetoothState == BT_STOPPING && state == BT_CONNECTING) {
             Log.e(TAG, "Invalid bluetooth state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         }
-        if (bluetoothState == state) {
+        if (bluetoothState == state && state != BT_CONNECTING) {
+            // Only allowed self-transition is connecting -> connecting
             Log.e(TAG, "Null state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         }
         Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
@@ -170,8 +170,6 @@ public class BluetoothService implements BaseService {
                     return context.getString(R.string.bluetooth_status_connecting);
                 case BT_CONNECTED:
                     return context.getString(R.string.bluetooth_status_connected);
-                case BT_DISCONNECTED:
-                    return context.getString(R.string.bluetooth_status_disconnected);
                 case BT_STOPPING:
                     return context.getString(R.string.bluetooth_status_stopping);
                 default:
