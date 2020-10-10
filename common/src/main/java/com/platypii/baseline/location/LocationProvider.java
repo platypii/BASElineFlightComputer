@@ -33,6 +33,12 @@ public abstract class LocationProvider implements BaseService {
     protected abstract String providerName();
 
     /**
+     * String description of the GPS device
+     */
+    @NonNull
+    protected abstract String dataSource();
+
+    /**
      * Start location updates
      *
      * @param context The Application context

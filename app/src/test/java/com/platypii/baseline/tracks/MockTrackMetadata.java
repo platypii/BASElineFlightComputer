@@ -1,7 +1,6 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.places.Place;
-import com.platypii.baseline.tracks.TrackMetadata;
 
 public class MockTrackMetadata extends TrackMetadata {
     public MockTrackMetadata() {
@@ -11,7 +10,8 @@ public class MockTrackMetadata extends TrackMetadata {
                 "2018ish",
                 "https://baseline.ws/tracks/1234/track.csv",
                 "https://baseline.ws/tracks/1234/track.kml",
-                new Place("TestExit", "", "Norway", 59.033, 6.586, Double.NaN, "E", 2000, true)
+                new Place("TestExit", "", "Norway", 59.033, 6.586, Double.NaN, "E", 2000, true),
+                null
         );
     }
 }

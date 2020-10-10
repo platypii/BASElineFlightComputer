@@ -20,19 +20,22 @@ public class TrackMetadata {
     public final String trackUrl;
     public final String trackKml;
     @Nullable
+    public final String jumpType;
+    @Nullable
     public final Place place;
     @Nullable
     public String suit;
     @Nullable
     public String canopy;
 
-    TrackMetadata(String track_id, long date, String date_string, String trackUrl, String trackKml, @Nullable Place place) {
+    TrackMetadata(String track_id, long date, String date_string, String trackUrl, String trackKml, @Nullable Place place, @Nullable String jumpType) {
         this.track_id = track_id;
         this.date = date;
         this.date_string = date_string;
         this.trackUrl = trackUrl;
         this.trackKml = trackKml;
         this.place = place;
+        this.jumpType = jumpType;
     }
 
     /**
@@ -82,6 +85,22 @@ public class TrackMetadata {
         final String shortDate = df.format(new Date(date));
         final String shortLocation = place == null ? "" : place.niceString();
         return shortDate + " " + shortLocation;
+    }
+
+    public boolean isBASE() {
+        if (jumpType != null) {
+            return "BASE".equals(jumpType);
+        } else {
+            return place != null && place.isBASE();
+        }
+    }
+
+    public boolean isSkydive() {
+        if (jumpType != null) {
+            return "Skydive".equals(jumpType);
+        } else {
+            return place != null && "DZ".equals(place.objectType);
+        }
     }
 
     @Override

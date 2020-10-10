@@ -4,12 +4,12 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.platypii.baseline"
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 109
         versionName "4.16-beta"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -43,8 +43,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.google.firebase:firebase-core:17.5.0'
-    implementation 'com.google.firebase:firebase-perf:19.0.8'
+    implementation 'com.google.firebase:firebase-core:17.5.1'
+    implementation 'com.google.firebase:firebase-perf:19.0.9'
     implementation('com.squareup.okhttp3:okhttp') { version { strictly '3.12.12'  } } // Needed for android 19
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'

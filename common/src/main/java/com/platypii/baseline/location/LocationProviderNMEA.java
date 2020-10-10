@@ -9,12 +9,13 @@ import com.platypii.baseline.util.Numbers;
 import android.content.Context;
 import android.location.GpsStatus;
 import android.location.LocationManager;
+import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
-    protected final String TAG = "LocationProviderNMEA";
+    protected final String TAG = "ProviderNMEA";
     private static final String NMEA_TAG = "NMEA";
 
     private final MyAltimeter alti;
@@ -45,6 +46,12 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     @Override
     protected String providerName() {
         return TAG;
+    }
+
+    @NonNull
+    @Override
+    protected String dataSource() {
+        return "NMEA " + Build.MANUFACTURER + " " + Build.MODEL;
     }
 
     LocationProviderNMEA(MyAltimeter alti) {
@@ -93,7 +100,14 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     @Override
     public void onNmeaReceived(long timestamp, String nmea) {
         // Log.v(NMEA_TAG, "[" + timestamp + "] " + nmea.trim()); // Trim because logcat fails on trailing \0
+        if (nmea.charAt(0) == '$') {
+            handleNmea(timestamp, nmea);
+        } else {
+            Log.e(NMEA_TAG, "Failed to parse " + nmea.trim());
+        }
+    }
 
+    private void handleNmea(long timestamp, String nmea) {
         nmea = NMEA.cleanNmea(nmea);
         if (nmea.length() < 8) {
             return;
@@ -114,14 +128,14 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         try {
             // Validate NMEA sentence, ignore invalid
             if (NMEA.validate(nmea)) {
-                handleNmea(timestamp, nmea);
+                parseNmea(nmea);
             }
         } catch (Exception e) {
             Exceptions.report(new NMEAException("Exception while handling NMEA: " + nmea, e));
         }
     }
 
-    void handleNmea(long timestamp, @NonNull String nmea) throws NMEAException {
+    private void parseNmea(@NonNull String nmea) throws NMEAException {
         // Parse NMEA command
         final String[] split = NMEA.splitNmea(nmea);
         final String command = split[0].substring(3);

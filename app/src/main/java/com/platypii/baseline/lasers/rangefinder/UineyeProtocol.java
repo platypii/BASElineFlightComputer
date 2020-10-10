@@ -138,10 +138,12 @@ class UineyeProtocol implements RangefinderProtocol {
     private void processMeasurement(@NonNull byte[] value) {
         Log.d(TAG, "rf -> app: measure " + byteArrayToHex(value));
 
-        final double pitch = bytesToShort(value[3], value[4]) * 0.1; // degrees
-//        final double total = Util.bytesToShort(value[5], value[6]) * 0.1; // meters
-        double vert = bytesToShort(value[7], value[8]) * 0.1; // meters
-        double horiz = bytesToShort(value[9], value[10]) * 0.1; // meters
+        final boolean metric = value[21] == 0x01;
+        final double units = metric ? 1 : 0.9144; // yards or meters
+        final double pitch = bytesToShort(value[3], value[4]) * 0.1 * units; // degrees
+//        final double total = Util.bytesToShort(value[5], value[6]) * 0.1 * units; // meters
+        double vert = bytesToShort(value[7], value[8]) * 0.1 * units; // meters
+        double horiz = bytesToShort(value[9], value[10]) * 0.1 * units; // meters
 //        double bearing = (value[22] & 0xff) * 360.0 / 256.0; // degrees
         if (pitch < 0) {
             vert = -vert;

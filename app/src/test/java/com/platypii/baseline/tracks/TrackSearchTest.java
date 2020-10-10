@@ -11,7 +11,7 @@ public class TrackSearchTest {
 
     @Test
     public void matchTrack() {
-        final TrackMetadata track = new TrackMetadata("tid", 10000000L, "nowish", "http", "kml", null);
+        final TrackMetadata track = new TrackMetadata("tid", 10000000L, "nowish", "http", "kml", null, null);
         track.suit = "Corvid";
         track.canopy = "OSP";
         assertTrue(TrackSearch.matchTrack(track, ""));
@@ -27,13 +27,21 @@ public class TrackSearchTest {
 
     @Test
     public void matchTrackWithPlace() {
-        final TrackMetadata trackNoPlace = new TrackMetadata("tid", 10000000L, "nowish", "http", "kml", null);
+        final TrackMetadata trackNoPlace = new TrackMetadata("tid", 10000000L, "nowish", "http", "kml", null, null);
         assertFalse(TrackSearch.matchTrack(trackNoPlace, "Norway"));
         final Place place = new Place("Fjord", "", "Norway", 68.165,16.593, 1364, "E", 1000, true);
-        final TrackMetadata track = new TrackMetadata("tid", 10000000L, "nowish", "http", "kml", place);
+        final TrackMetadata track = new TrackMetadata("tid", 10000000L, "nowish", "http", "kml", place, null);
         assertTrue(TrackSearch.matchTrack(track, "Fjord"));
         assertTrue(TrackSearch.matchTrack(track, "Norway"));
         assertTrue(TrackSearch.matchTrack(track, "Fjord Norway"));
         assertTrue(TrackSearch.matchTrack(track, "fjo no"));
+    }
+
+    @Test
+    public void matchTrackJumpType() {
+        final Place place = new Place("Fjord", "", "Norway", 68.165,16.593, 1364, "E", 1000, true);
+        final TrackMetadata track = new TrackMetadata("tid", 10000000L, "nowish", "http", "kml", place, "Skydive");
+        assertTrue(TrackSearch.matchTrack(track, "Sky"));
+        assertFalse(TrackSearch.matchTrack(track, "BASE"));
     }
 }

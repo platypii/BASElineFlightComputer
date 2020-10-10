@@ -5,6 +5,7 @@ import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.measurements.MLocation;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
 
@@ -87,6 +88,19 @@ public class LocationService extends LocationProvider {
     @Override
     protected String providerName() {
         return TAG;
+    }
+
+    @NonNull
+    @Override
+    public String dataSource() {
+        // TODO: Baro?
+        if (locationMode == LOCATION_ANDROID) {
+            return Build.MANUFACTURER + " " + Build.MODEL;
+        } else if (locationMode == LOCATION_BLUETOOTH) {
+            return locationProviderBluetooth.dataSource();
+        } else {
+            return "None";
+        }
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -34,6 +35,12 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     @Override
     protected String providerName() {
         return TAG;
+    }
+
+    @NonNull
+    @Override
+    protected String dataSource() {
+        return "Android " + Build.MANUFACTURER + " " + Build.MODEL;
     }
 
     LocationProviderAndroid(MyAltimeter alti) {

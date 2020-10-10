@@ -22,10 +22,10 @@ public class TrackSearch {
             if (track.place.wingsuitable) {
                 sb.append(" wingsuit");
             }
-            if ("DZ".equals(track.place.objectType)) {
+            if (track.isSkydive()) {
                 sb.append(" skydive");
             }
-            if (track.place.isBASE()) {
+            if (track.isBASE()) {
                 sb.append(" BASE");
             }
         }

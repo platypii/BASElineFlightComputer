@@ -137,6 +137,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
 
         // Write header
         log.write(Measurement.header + "\n");
+        log.write("# " + Services.location.dataSource() + "\n");
 
         // Start sensor updates
         Services.alti.baro.pressureEvents.subscribe(this);

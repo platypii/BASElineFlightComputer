@@ -120,11 +120,9 @@ class BluetoothRunnable implements Stoppable {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String line;
             while (service.getState() == BT_CONNECTED && (line = reader.readLine()) != null) {
-                final String nmea = line.trim();
-                // Log.v(TAG, "Got line: " + nmea);
                 // Update listeners
                 for (GpsStatus.NmeaListener listener : service.listeners) {
-                    listener.onNmeaReceived(System.currentTimeMillis(), nmea);
+                    listener.onNmeaReceived(System.currentTimeMillis(), line);
                 }
             }
         } catch (IOException e) {
