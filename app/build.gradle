@@ -10,8 +10,8 @@ android {
         applicationId "com.platypii.baseline"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 109
-        versionName "4.16-beta"
+        versionCode 110
+        versionName "4.16"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
