@@ -14,6 +14,7 @@ import com.platypii.baseline.measurements.LatLngAlt;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.StringUtil;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 
 import android.app.Activity;
@@ -21,7 +22,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +69,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     @NonNull
     private LaserProfile laserProfile = newLaserProfile();
     @NonNull
-    private LaserProfileLayer editLayer = new LaserProfileLayer(laserProfile);
+    private LaserProfileLayer editLayer = new LaserProfileLayer(laserProfile, 0xffee1111, 2f);
 
     @Nullable
     private MLocation defaultLocation = null;
@@ -146,7 +151,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     }
 
     /**
-     * Load laser profile from form into LaserProfile
+     * Load laser profile from form into laserProfile
      */
     private void getLaserProfile() {
         laserProfile.name = laserName.getText().toString();
@@ -177,6 +182,9 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
      */
     @Nullable
     private String validate() {
+        // Clear highlights and remove excess lines
+        final String pointString = laserText.getText().toString().trim() + "\n";
+        laserText.setText(pointString);
         // Validate name
         if (laserName.getText().toString().isEmpty()) {
             laserName.requestFocus();
@@ -194,7 +202,6 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             }
         }
         // Validate points
-        final String pointString = laserText.getText().toString();
         if (pointString.isEmpty()) {
             laserText.requestFocus();
             return "Measurements cannot be empty";
@@ -207,6 +214,19 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             }
         } catch (ParseException e) {
             laserText.requestFocus();
+            // Highlight line
+            final int start = StringUtil.lineStartIndex(pointString, e.getErrorOffset());
+            final int end = StringUtil.lineStartIndex(pointString, e.getErrorOffset() + 1);
+            if (start < end) {
+                final Spannable span = new SpannableString(pointString);
+                final int highLightColor = getResources().getColor(android.R.color.holo_red_dark);
+                final ForegroundColorSpan highlight = new ForegroundColorSpan(highLightColor);
+                span.setSpan(highlight, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                laserText.setText(span);
+            } else {
+                Log.w(TAG, "No line " + e.getErrorOffset() + " " + pointString);
+            }
+            laserText.setSelection(end - 1);
             return "Invalid measurements, line " + e.getErrorOffset();
         }
         return null;
@@ -223,7 +243,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             updateLayers();
             // Reset for next laser input
             laserProfile = newLaserProfile();
-            editLayer = new LaserProfileLayer(laserProfile);
+            editLayer = new LaserProfileLayer(laserProfile, 0xffee1111, 2f);
             clearForm();
             // Re-add edit layer since it will be removed on fragment stop
             Services.lasers.layers.add(editLayer);
@@ -231,7 +251,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             getParentFragmentManager().popBackStack();
         } else {
             // Form error
-            Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -289,8 +309,9 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         }
         final boolean metric = isMetric();
         final double units = metric ? 1 : 3.28084;
+        final String unitLabel = metric ? "m" : "ft";
         // Append measurement to laser text
-        final String line = String.format(Locale.US, "%.1f, %.1f\n", meas.x * units, meas.y * units);
+        final String line = String.format(Locale.US, "%.1f %s, %.1f %s\n", meas.x * units, unitLabel, meas.y * units, unitLabel);
         laserText.append(line);
         // Update chart in parent activity
         updateLayers();

@@ -14,6 +14,7 @@ public class Convert {
 
     // Convert to standard metric (1000 * FT = 304.8 * M)
     public static final double FT = 0.3048;
+    public static final double YD = 0.9144;
     public static final double MPH = 0.44704;
     public static final double KPH = 0.277778;
     private static final double MILE = 1609.34;

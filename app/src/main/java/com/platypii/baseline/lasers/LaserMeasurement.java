@@ -37,14 +37,19 @@ public class LaserMeasurement {
     public static List<LaserMeasurement> parse(@NonNull String pointString, boolean metric, boolean strict) throws ParseException {
         final List<LaserMeasurement> points = new ArrayList<>();
         final String[] lines = pointString.split("\n");
-        final double units = metric ? 1 : Convert.FT;
         for (int i = 0; i < lines.length; i++) {
-            final String line = lines[i];
-            final String[] row = line.trim().split("[, \t/]+", -1);
+            final String line = lines[i].trim();
+            final String[] row;
+            if (line.contains(",") || line.contains("/")) {
+                row = line.split("[ \t]*[,/][ \t]*", -1);
+            } else {
+                // Split on space
+                row = line.split("[ \t]+", -1);
+            }
             if (row.length == 2) {
                 try {
-                    final double x = Double.parseDouble(row[0]) * units;
-                    final double y = Double.parseDouble(row[1]) * units;
+                    final double x = toNumber(row[0], metric);
+                    final double y = toNumber(row[1], metric);
                     if (Numbers.isReal(x) && Numbers.isReal(y)) {
                         points.add(new LaserMeasurement(x, y));
                     } else {
@@ -68,6 +73,9 @@ public class LaserMeasurement {
         return points;
     }
 
+    /**
+     * Parse liberally, never throw
+     */
     @NonNull
     public static List<LaserMeasurement> parseSafe(@NonNull String pointString, boolean metric) {
         try {
@@ -136,4 +144,18 @@ public class LaserMeasurement {
         }
     }
 
+    private static double toNumber(String str, boolean metric) {
+        if (str.isEmpty()) {
+            return Double.NaN;
+        } else if (str.endsWith("m")) {
+            return Double.parseDouble(str.substring(0, str.length() - 1));
+        } else if (str.endsWith("ft")) {
+            return Double.parseDouble(str.substring(0, str.length() - 2)) * Convert.FT;
+        } else if (str.endsWith("yd")) {
+            return Double.parseDouble(str.substring(0, str.length() - 2)) * Convert.YD;
+        } else {
+            final double units = metric ? 1 : Convert.FT;
+            return Double.parseDouble(str) * units;
+        }
+    }
 }

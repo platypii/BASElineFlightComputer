@@ -92,27 +92,27 @@ public class Plot {
     /**
      * Draws a point (input given in plot-space)
      *
-     * @param radius the width of the path
+     * @param strokeWidth the stroke width of the path
      */
-    public void drawPoint(int axis, double x, double y, float radius) {
+    public void drawPoint(int axis, double x, double y, float strokeWidth) {
         dataBounds[axis].expandBounds(x, y);
         // Screen coordinates
         float sx = getX(axis, x);
         float sy = getY(axis, y);
         // canvas.drawPoint(x, y, paint);
-        canvas.drawCircle(sx, sy, radius * options.density, paint);
+        canvas.drawCircle(sx, sy, strokeWidth * options.density, paint);
     }
 
 //    /**
 //     * Draws a series of points as dots
 //     * @param series the data series to draw
-//     * @param radius the width of the path
+//     * @param strokeWidth the width of the path
 //     */
-//    void drawPoints(@NonNull DataSeries series, float radius) {
+//    void drawPoints(@NonNull DataSeries series, float strokeWidth) {
 //        paint.setStyle(Paint.Style.FILL);
 //        for (DataSeries.Point point : series) {
 //            dataBounds.expandBounds(point.x, point.y);
-//            canvas.drawCircle(getX(point.x), getY(point.y), radius * options.density, paint);
+//            canvas.drawCircle(getX(point.x), getY(point.y), strokeWidth * options.density, paint);
 //        }
 //    }
 
@@ -120,12 +120,12 @@ public class Plot {
      * Draws a series of points (input given in plot-space)
      *
      * @param series the data series to draw
-     * @param radius the width of the path
+     * @param strokeWidth the stroke width of the path
      */
-    public void drawLine(int axis, @NonNull DataSeries series, float radius) {
+    public void drawLine(int axis, @NonNull DataSeries series, float strokeWidth) {
         if (series.size() > 0) {
             paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(2 * radius * options.density);
+            paint.setStrokeWidth(2 * strokeWidth * options.density);
             // dataBounds will be expanded in renderPath
             final Path line = renderPath(axis, series);
             canvas.drawPath(line, paint);

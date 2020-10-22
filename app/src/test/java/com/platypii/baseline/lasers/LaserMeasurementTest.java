@@ -35,6 +35,19 @@ public class LaserMeasurementTest {
     }
 
     @Test
+    public void parseWithUnits() throws ParseException {
+        assertEquals(100, LaserMeasurement.parse("100 m, -100 m", true, true).get(0).x, 0.01);
+        assertEquals(100, LaserMeasurement.parse("100 m, -100 m", false, true).get(0).x, 0.01);
+        assertEquals(30.48, LaserMeasurement.parse("100 ft, -100 ft", true, true).get(0).x, 0.01);
+        assertEquals(30.48, LaserMeasurement.parse("100 ft, -100 ft", false, true).get(0).x, 0.01);
+        assertEquals(91.44, LaserMeasurement.parse("100 yd, -100 yd", true, true).get(0).x, 0.01);
+        assertEquals(91.44, LaserMeasurement.parse("100 yd, -100 yd", false, true).get(0).x, 0.01);
+        assertEquals(0, LaserMeasurement.parse("100 unitz, -100 unitz", false, false).size());
+        assertEquals(100, LaserMeasurement.parse("100m -100m", true, true).get(0).x, 0.01);
+        assertEquals(30.48, LaserMeasurement.parse("100ft -100ft", true, true).get(0).x, 0.01);
+    }
+
+    @Test
     public void parseErrors() throws ParseException {
         assertEquals(0, LaserMeasurement.parse("100,NaN", true, false).size());
         assertEquals(0, LaserMeasurement.parse("100,Infinity", true, false).size());
@@ -44,8 +57,6 @@ public class LaserMeasurementTest {
         assertEquals(1, LaserMeasurement.parse("100,-100\nXXXX", true, false).size());
         assertEquals(0, LaserMeasurement.parse("100,ZZZ", true, false).size());
         assertEquals(0, LaserMeasurement.parse("100p 200q", true, false).size());
-        assertEquals(0, LaserMeasurement.parse("100 200ft", true, false).size());
-        assertEquals(0, LaserMeasurement.parse("100 200m", false, false).size());
         assertEquals(0, LaserMeasurement.parse("100 200mm", true, false).size());
         assertEquals(0, LaserMeasurement.parse("100 200mm", false, false).size());
     }

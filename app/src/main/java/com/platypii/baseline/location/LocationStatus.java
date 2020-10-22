@@ -54,7 +54,7 @@ public class LocationStatus {
                 if (lastFixDuration > 10000) {
                     message = "GPS last fix " + lastFixDuration / 1000L + "s";
                     icon = R.drawable.status_red;
-                } else if (lastFixDuration > 2000) {
+                } else if (lastFixDuration > 1100) {
                     message = "GPS last fix " + lastFixDuration / 1000L + "s";
                     icon = R.drawable.status_yellow;
                     satellites = Services.location.lastLoc.satellitesUsed;
@@ -65,7 +65,12 @@ public class LocationStatus {
                         icon = R.drawable.status_blue;
                     } else {
                         sb.append("GPS ");
-                        icon = R.drawable.status_green;
+                        if (Services.location.refreshRate.refreshRate < 2) {
+                            // 1 hz is not enough
+                            icon = R.drawable.status_yellow;
+                        } else {
+                            icon = R.drawable.status_green;
+                        }
                     }
                     StringBuilderUtil.format2f(sb, Services.location.refreshRate.refreshRate);
                     sb.append("Hz");

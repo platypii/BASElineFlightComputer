@@ -3,6 +3,7 @@ package com.platypii.baseline.views.charts.layers;
 import com.platypii.baseline.util.DataSeries;
 import com.platypii.baseline.views.charts.Plot;
 
+import android.graphics.Paint;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
@@ -13,9 +14,15 @@ public abstract class ProfileLayer extends ChartLayer {
 
     @ColorInt
     public final int color;
+    public final float strokeWidth;
 
     protected ProfileLayer(@ColorInt int color) {
+        this(color, 1.2f);
+    }
+
+    protected ProfileLayer(@ColorInt int color, float strokeWidth) {
         this.color = color;
+        this.strokeWidth = strokeWidth;
     }
 
     @NonNull
@@ -27,7 +34,8 @@ public abstract class ProfileLayer extends ChartLayer {
     @Override
     public void drawData(@NonNull Plot plot) {
         plot.paint.setColor(color);
-        plot.drawLine(AXIS_DISTANCE, dataSeries, 1.2f);
+        plot.paint.setStrokeCap(Paint.Cap.ROUND);
+        plot.drawLine(AXIS_DISTANCE, dataSeries, strokeWidth);
     }
 
     @Override
