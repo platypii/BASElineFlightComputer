@@ -2,6 +2,7 @@ package com.platypii.baseline.lasers;
 
 import com.platypii.baseline.measurements.LatLngAlt;
 import com.platypii.baseline.places.Place;
+import com.platypii.baseline.util.Range;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -64,6 +65,34 @@ public class LaserProfile {
 
     public boolean isLocal() {
         return laser_id.startsWith("tmp-");
+    }
+
+    /**
+     * Quadrant 1: laser from bottom
+     * Quadrant 2: default x,y
+     * Quadrant 4: reversed y,x
+     * @return 0 if invalid
+     */
+    public int quadrant() {
+        if (points.isEmpty()) {
+            return 2;
+        }
+        // Find height and width range
+        final Range xRange = new Range();
+        final Range yRange = new Range();
+        for (LaserMeasurement point : points) {
+            xRange.expand(point.x);
+            yRange.expand(point.y);
+        }
+        if (xRange.min >= 0 && yRange.max <= 0) {
+            return 2; // default x,y
+        } else if (xRange.max <= 0 && yRange.min >= 0) {
+            return 4; // reversed y,x
+        } else if (xRange.min >= 0 && yRange.min >= 0) {
+            return 1; // laser from bottom
+        } else {
+            return 0; // invalid laser
+        }
     }
 
     @Override

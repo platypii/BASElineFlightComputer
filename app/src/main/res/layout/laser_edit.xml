@@ -68,7 +68,7 @@
         android:layout_height="52dp"
         android:layout_alignParentEnd="true"
         android:layout_below="@id/laserClear"
-        android:src="@drawable/ic_sort"
+        android:src="@drawable/sort"
         android:scaleType="fitCenter"
         android:padding="14dp"
         android:contentDescription="@string/sort"
@@ -85,6 +85,16 @@
         android:padding="12dp"
         android:contentDescription="@string/rangefinder_connect"
         style="@style/Widget.AppCompat.Button.Borderless"/>
+
+    <TextView
+        android:id="@+id/laserWarning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@id/laserText"
+        android:drawableStart="@drawable/ic_warning"
+        android:drawablePadding="8dp"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/laserStatus"

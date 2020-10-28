@@ -64,6 +64,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     private EditText laserText;
     private TextView laserStatus;
     private ImageButton laserConnect;
+    private TextView laserWarning;
 
     // Edit layer gets recreated on save, and the active one gets left in LaserLayers
     @NonNull
@@ -84,6 +85,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         laserStatus = view.findViewById(R.id.laserStatus);
         laserConnect = view.findViewById(R.id.laserConnect);
         laserConnect.setOnClickListener(this::clickLaserConnect);
+        laserWarning = view.findViewById(R.id.laserWarning);
         view.findViewById(R.id.laserClear).setOnClickListener(this::clickClear);
         view.findViewById(R.id.laserSort).setOnClickListener(this::clickSort);
         view.findViewById(R.id.laserSave).setOnClickListener(this::laserSave);
@@ -168,6 +170,16 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             laserProfile.alt = 0.0;
         }
         laserProfile.points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
+        final int quadrant = laserProfile.quadrant();
+        if (quadrant == 0) {
+            laserWarning.setText("quadrant");
+            laserWarning.setVisibility(View.VISIBLE);
+        } else if (quadrant == 1) {
+            laserWarning.setText("bottom");
+            laserWarning.setVisibility(View.VISIBLE);
+        } else {
+            laserWarning.setVisibility(View.GONE);
+        }
     }
 
     private boolean isMetric() {

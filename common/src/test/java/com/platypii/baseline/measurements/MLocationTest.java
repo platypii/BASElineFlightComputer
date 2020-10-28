@@ -11,9 +11,6 @@ public class MLocationTest {
     private final MLocation seattle = new MLocation(1541348400990L, 47.60, -122.33, 100.0, -2.0, 3.0, 4.0, 0f, 0f, 0f, 0f, 0, 0);
     private final LatLng la = new LatLng(34.0, -118.2);
 
-    private final double bearing = 165.66;
-    private final double distance = 1551093.52;
-
     @Test
     public void dummy() {
         MLocation dummy = new MLocation();
@@ -35,16 +32,17 @@ public class MLocationTest {
 
     @Test
     public void bearings() {
-        assertEquals(bearing, seattle.bearingTo(la), 0.01);
+        assertEquals(165.66, seattle.bearingTo(la), 0.01);
     }
 
     @Test
     public void distances() {
-        assertEquals(distance, seattle.distanceTo(la), 0.01);
+        assertEquals(1551093.52, seattle.distanceTo(la), 0.01);
         assertEquals(0, seattle.distanceTo(seattle), 0.01);
         assertEquals(0, seattle.distanceTo(seattle.latLng()), 0.01);
     }
 
+    @SuppressWarnings("EqualsWithItself")
     @Test
     public void comparison() {
         assertTrue(seattle.equals(seattle));

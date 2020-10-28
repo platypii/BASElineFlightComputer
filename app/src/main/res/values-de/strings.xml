@@ -14,6 +14,7 @@
     <string name="action_settings">Einstellungen</string>
 
     <!-- Track Activity -->
+    <string name="menu">Menü</string>
     <string name="action_open">baseline.ws</string>
     <string name="action_earth">Earth</string>
     <string name="action_delete">Löschen</string>

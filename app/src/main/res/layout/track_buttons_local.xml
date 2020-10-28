@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"
-        android:drawableEnd="@drawable/ic_share"
+        android:drawableEnd="@drawable/share"
         android:text="@string/action_export"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
