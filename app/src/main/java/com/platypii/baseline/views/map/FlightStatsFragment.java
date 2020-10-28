@@ -2,6 +2,7 @@ package com.platypii.baseline.views.map;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.databinding.FlightStatsBinding;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
@@ -14,43 +15,35 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 public class FlightStatsFragment extends Fragment implements MyLocationListener, PubSub.Subscriber<MAltitude> {
 
-    private TextView flightStatsAlti;
-    private TextView flightStatsVario;
-    private TextView flightStatsSpeed;
-    private TextView flightStatsGlide;
+    private FlightStatsBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.flight_stats, container, false);
-        flightStatsAlti = view.findViewById(R.id.flightStatsAlti);
-        flightStatsVario = view.findViewById(R.id.flightStatsVario);
-        flightStatsSpeed = view.findViewById(R.id.flightStatsSpeed);
-        flightStatsGlide = view.findViewById(R.id.flightStatsGlide);
-        return view;
+        binding = FlightStatsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     private void update() {
-        flightStatsAlti.setText(Convert.altitude(Services.alti.altitude));
+        binding.flightStatsAlti.setText(Convert.altitude(Services.alti.altitude));
         if (Services.alti.climb < 0) {
-            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp, 0, 0, 0);
-            flightStatsVario.setText(Convert.speed(-Services.alti.climb));
+            binding.flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp, 0, 0, 0);
+            binding.flightStatsVario.setText(Convert.speed(-Services.alti.climb));
         } else {
-            flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward_white_24dp, 0, 0, 0);
-            flightStatsVario.setText(Convert.speed(Services.alti.climb));
+            binding.flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward_white_24dp, 0, 0, 0);
+            binding.flightStatsVario.setText(Convert.speed(Services.alti.climb));
         }
         final double groundSpeed = Services.location.groundSpeed();
         if (Numbers.isReal(groundSpeed)) {
-            flightStatsSpeed.setText(Convert.speed(groundSpeed));
-            flightStatsGlide.setText(Convert.glide(groundSpeed, Services.alti.climb, 2, true));
+            binding.flightStatsSpeed.setText(Convert.speed(groundSpeed));
+            binding.flightStatsGlide.setText(Convert.glide(groundSpeed, Services.alti.climb, 2, true));
         } else {
-            flightStatsSpeed.setText("");
-            flightStatsGlide.setText("");
+            binding.flightStatsSpeed.setText("");
+            binding.flightStatsGlide.setText("");
         }
     }
 

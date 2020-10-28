@@ -2,13 +2,13 @@ package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.databinding.ActivityLaserBinding;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.lasers.rangefinder.RangefinderService;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.BaseActivity;
-import com.platypii.baseline.views.charts.FlightProfile;
 import com.platypii.baseline.views.charts.layers.ChartLayer;
 import com.platypii.baseline.views.charts.layers.ProfileLayer;
 
@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -30,8 +29,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class LaserActivity extends BaseActivity {
     private static final String TAG = "LaserActivity";
 
-    private FlightProfile flightProfile;
-    private TextView flightProfileStats;
+    private ActivityLaserBinding binding;
 
     // TODO: remove static instance after debugging
     public static FirebaseAnalytics firebaseAnalytics;
@@ -39,11 +37,8 @@ public class LaserActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_laser);
-
-        // Find views
-        flightProfile = findViewById(R.id.flightProfile);
-        flightProfileStats = findViewById(R.id.flightProfileStats);
+        binding = ActivityLaserBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Only add laser panel on first create
         if (savedInstanceState == null) {
@@ -63,7 +58,7 @@ public class LaserActivity extends BaseActivity {
         super.onStart();
         // Add all layers
         for (ProfileLayer layer : Services.lasers.layers.layers) {
-            flightProfile.addLayer(layer);
+            binding.flightProfile.addLayer(layer);
         }
         EventBus.getDefault().register(this);
     }
@@ -71,53 +66,53 @@ public class LaserActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void addLayer(@NonNull ProfileLayerEvent.ProfileLayerAdded event) {
         Log.i(TAG, "Adding profile layer " + event.layer);
-        flightProfile.addLayer(event.layer);
-        flightProfile.invalidate();
+        binding.flightProfile.addLayer(event.layer);
+        binding.flightProfile.invalidate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void removeLayer(@NonNull ProfileLayerEvent.ProfileLayerRemoved event) {
         Log.i(TAG, "Removing profile layer " + event.layer);
-        flightProfile.removeLayer(event.layer);
-        flightProfile.invalidate();
+        binding.flightProfile.removeLayer(event.layer);
+        binding.flightProfile.invalidate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateLayer(ProfileLayerEvent.ProfileLayerUpdated event) {
-        flightProfile.invalidate();
+        binding.flightProfile.invalidate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onTrackFocus(@NonNull ChartFocusEvent.TrackFocused event) {
-        flightProfile.onChartFocus(event);
+        binding.flightProfile.onChartFocus(event);
         if (!event.track.isEmpty()) {
             final MLocation start = event.track.get(0);
             final double x = start.distanceTo(event.location);
             final double y = event.location.altitude_gps - start.altitude_gps;
             final String yStr = y < 0 ? Convert.distance(-y) + "↓" : Convert.distance(y) + "↑";
-            flightProfileStats.setText(String.format("%s →\n%s", Convert.distance(x), yStr));
-            flightProfileStats.setVisibility(View.VISIBLE);
+            binding.flightProfileStats.setText(String.format("%s →\n%s", Convert.distance(x), yStr));
+            binding.flightProfileStats.setVisibility(View.VISIBLE);
         } else {
-            flightProfileStats.setText("");
-            flightProfileStats.setVisibility(View.GONE);
+            binding.flightProfileStats.setText("");
+            binding.flightProfileStats.setVisibility(View.GONE);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserFocus(@NonNull ChartFocusEvent.LaserFocused event) {
-        flightProfile.onChartFocus(event);
+        binding.flightProfile.onChartFocus(event);
         final double x = event.point.x;
         final double y = event.point.y;
         final String yStr = y < 0 ? Convert.distance(-y) + "↓" : Convert.distance(y) + "↑";
-        flightProfileStats.setText(String.format("%s →\n%s", Convert.distance(x), yStr));
-        flightProfileStats.setVisibility(View.VISIBLE);
+        binding.flightProfileStats.setText(String.format("%s →\n%s", Convert.distance(x), yStr));
+        binding.flightProfileStats.setVisibility(View.VISIBLE);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUnFocus(@NonNull ChartFocusEvent.Unfocused event) {
-        flightProfile.onChartFocus(event);
-        flightProfileStats.setText("");
-        flightProfileStats.setVisibility(View.GONE);
+        binding.flightProfile.onChartFocus(event);
+        binding.flightProfileStats.setText("");
+        binding.flightProfileStats.setVisibility(View.GONE);
     }
 
     @Override
@@ -137,9 +132,9 @@ public class LaserActivity extends BaseActivity {
         super.onStop();
         EventBus.getDefault().unregister(this);
         // Remove all chart profile layers
-        final List<ChartLayer> layers = new ArrayList<>(flightProfile.getPlot().layers);
+        final List<ChartLayer> layers = new ArrayList<>(binding.flightProfile.getPlot().layers);
         for (ChartLayer layer : layers) {
-            flightProfile.removeLayer(layer);
+            binding.flightProfile.removeLayer(layer);
         }
     }
 }

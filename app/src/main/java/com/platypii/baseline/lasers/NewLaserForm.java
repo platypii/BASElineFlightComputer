@@ -39,11 +39,16 @@ public class NewLaserForm {
     @NonNull
     public static NewLaserForm load(@NonNull Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        // Android adds white space because XML so trim it
+        String pointsString = prefs.getString("new_laser_form.points", "").trim();
+        if (!pointsString.isEmpty()) {
+            pointsString += "\n";
+        }
         return new NewLaserForm(
                 prefs.getString("new_laser_form.name", ""),
                 prefs.getBoolean("new_laser_form.metric", Convert.metric),
                 prefs.getString("new_laser_form.latlngalt", ""),
-                prefs.getString("new_laser_form.points", "")
+                pointsString
         );
     }
 

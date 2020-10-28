@@ -1,7 +1,7 @@
 package com.platypii.baseline.views.laser;
 
-import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.databinding.LaserListBinding;
 import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.lasers.LaserProfile;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
@@ -14,8 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import org.greenrobot.eventbus.EventBus;
@@ -25,15 +23,12 @@ import org.greenrobot.eventbus.ThreadMode;
 public class LaserListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private LaserAdapter listAdapter;
-    private ListView listView;
-    private EditText searchBox;
+    private LaserListBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.laser_list, container, false);
-        listView = view.findViewById(R.id.laser_list);
-        searchBox = view.findViewById(R.id.laser_search);
-        return view;
+        binding = LaserListBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -41,15 +36,15 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
         listAdapter = new LaserAdapter(getContext());
-        listView.setAdapter(listAdapter);
-        listView.setOnItemClickListener(this);
+        binding.laserList.setAdapter(listAdapter);
+        binding.laserList.setOnItemClickListener(this);
 
-        searchBox.addTextChangedListener(new TextWatcher() {
+        binding.laserSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                final String filter = searchBox.getText().toString().toLowerCase();
+                final String filter = binding.laserSearch.getText().toString().toLowerCase();
                 listAdapter.setFilter(filter);
             }
             @Override

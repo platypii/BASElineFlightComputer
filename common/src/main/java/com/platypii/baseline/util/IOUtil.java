@@ -18,6 +18,7 @@ public class IOUtil {
         output.flush();
     }
 
+    @NonNull
     public static String toString(@NonNull InputStream input) throws IOException {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final byte[] buffer = new byte[1024];

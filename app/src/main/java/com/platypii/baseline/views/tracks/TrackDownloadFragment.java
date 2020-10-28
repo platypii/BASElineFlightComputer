@@ -1,11 +1,11 @@
 package com.platypii.baseline.views.tracks;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.databinding.TrackDownloadBinding;
 import com.platypii.baseline.events.DownloadEvent;
 import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.tracks.cloud.DownloadTask;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.views.tracks.TrackLoader;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,8 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import java.io.File;
@@ -27,16 +25,12 @@ public class TrackDownloadFragment extends Fragment {
     private static final String TAG = "TrackDownloadFrag";
 
     public final CompletableFuture<File> trackFile = new CompletableFuture<>();
-
     private TrackMetadata track;
-    private ProgressBar downloadProgress;
-    private TextView downloadStatus;
+    private TrackDownloadBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.track_download, container, false);
-        downloadProgress = view.findViewById(R.id.download_progress);
-        downloadStatus = view.findViewById(R.id.download_status);
+        binding = TrackDownloadBinding.inflate(inflater, container, false);
 
         // Load track from arguments
         try {
@@ -47,7 +41,7 @@ public class TrackDownloadFragment extends Fragment {
             Exceptions.report(e);
         }
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -74,8 +68,8 @@ public class TrackDownloadFragment extends Fragment {
     public void onDownloadFailure(@NonNull DownloadEvent.DownloadFailure event) {
         if (event.track_id.equals(track.track_id)) {
             Log.w(TAG, "Track download failed " + event);
-            downloadProgress.setVisibility(View.GONE);
-            downloadStatus.setText(R.string.download_failed);
+            binding.downloadProgress.setVisibility(View.GONE);
+            binding.downloadStatus.setText(R.string.download_failed);
             trackFile.completeExceptionally(event.error);
         }
     }
@@ -84,8 +78,8 @@ public class TrackDownloadFragment extends Fragment {
     public void onDownloadProgress(@NonNull DownloadEvent.DownloadProgress event) {
         if (event.track_id.equals(track.track_id)) {
             // Update progress indicator
-            downloadProgress.setProgress(event.progress);
-            downloadProgress.setMax(event.total);
+            binding.downloadProgress.setProgress(event.progress);
+            binding.downloadProgress.setMax(event.total);
         }
     }
 

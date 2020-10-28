@@ -1,7 +1,7 @@
 package com.platypii.baseline.views.tracks;
 
-import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.databinding.TrackListBinding;
 import com.platypii.baseline.events.SyncEvent;
 
 import android.os.Bundle;
@@ -11,10 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,19 +21,12 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
 
     public static final String SEARCH_KEY = "search_string";
     protected TrackAdapter listAdapter;
-    private ListView listView;
-    @Nullable
-    private EditText searchBox;
-    @Nullable
-    private View tracksEmptyLabel;
+    private TrackListBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.track_list, container, false);
-        listView = view.findViewById(R.id.track_list);
-        searchBox = view.findViewById(R.id.track_search);
-        tracksEmptyLabel = view.findViewById(R.id.tracks_empty);
-        return view;
+        binding = TrackListBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -44,32 +34,30 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
         listAdapter = new TrackAdapter(getActivity());
-        listView.setAdapter(listAdapter);
-        listView.setOnItemClickListener(this);
+        binding.trackList.setAdapter(listAdapter);
+        binding.trackList.setOnItemClickListener(this);
 
         // Load filter string from arguments
         final Bundle args = getArguments();
         if (args != null) {
             final String filter = args.getString(SEARCH_KEY, "");
             if (!filter.isEmpty()) {
-                if (searchBox != null) searchBox.setText(filter);
+                if (binding.trackSearch != null) binding.trackSearch.setText(filter);
                 listAdapter.setFilter(filter);
             }
         }
 
-        if (searchBox != null) {
-            searchBox.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    final String filter = searchBox.getText().toString().toLowerCase();
-                    listAdapter.setFilter(filter);
-                }
-                @Override
-                public void afterTextChanged(Editable s) {}
-            });
-        }
+        binding.trackSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                final String filter = binding.trackSearch.getText().toString().toLowerCase();
+                listAdapter.setFilter(filter);
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     @Override
@@ -96,12 +84,8 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
 
         // Handle no-tracks case
         final boolean isEmpty = listAdapter.isEmpty();
-        if (tracksEmptyLabel != null) {
-            tracksEmptyLabel.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-        }
-        if (searchBox != null) {
-            searchBox.setEnabled(!isEmpty);
-        }
+        binding.tracksEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        binding.trackSearch.setEnabled(!isEmpty);
     }
 
     @Override
@@ -113,13 +97,6 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        searchBox = null;
-        tracksEmptyLabel = null;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

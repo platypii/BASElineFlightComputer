@@ -3,6 +3,7 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
+import com.platypii.baseline.databinding.LaserViewBinding;
 import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.lasers.LaserProfile;
@@ -19,7 +20,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,51 +37,47 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
 
     @Nullable
     private AlertDialog deleteConfirmation;
+    private LaserViewBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.laser_view, container, false);
+        binding = LaserViewBinding.inflate(inflater, container, false);
         EventBus.getDefault().register(this);
 
         try {
             // Get laser profile from fragment arguments
             laser = getLaser();
-            render(view);
+            render();
         } catch (IllegalStateException e) {
             Exceptions.report(e);
             getParentFragmentManager().popBackStack();
         }
 
-        return view;
+        return binding.getRoot();
     }
 
-    private void render(@NonNull View view) {
+    private void render() {
         // Bind delete button
-        final View deleteButton = view.findViewById(R.id.laserDelete);
-        deleteButton.setOnClickListener(this::delete);
+        binding.laserDelete.setOnClickListener(this::delete);
         if (laser.user_id != null && laser.user_id.equals(AuthState.getUser())) {
-            deleteButton.setVisibility(View.VISIBLE);
+            binding.laserDelete.setVisibility(View.VISIBLE);
         }
 
         // Name
-        final TextView laserName = view.findViewById(R.id.laserName);
-        laserName.setText(laser.name);
+        binding.laserName.setText(laser.name);
         // Location
-        final TextView laserLocation = view.findViewById(R.id.laserLocation);
         final String location = laser.locationString();
         if (location.isEmpty()) {
-            laserLocation.setVisibility(View.GONE);
+            binding.laserLocation.setVisibility(View.GONE);
         } else {
-            laserLocation.setVisibility(View.VISIBLE);
-            laserLocation.setText(location);
+            binding.laserLocation.setVisibility(View.VISIBLE);
+            binding.laserLocation.setText(location);
         }
         // Points label (show units)
-        final TextView laserMeasurementsLabel = view.findViewById(R.id.laserMeasurementsLabel);
         final String units = Convert.metric ? "(m)" : "(ft)";
-        laserMeasurementsLabel.setText("Points " + units);
+        binding.laserMeasurementsLabel.setText("Points " + units);
         // Points
-        final TextView laserText = view.findViewById(R.id.laserText);
-        laserText.setText(LaserMeasurement.render(laser.points, Convert.metric));
+        binding.laserText.setText(LaserMeasurement.render(laser.points, Convert.metric));
     }
 
     private void delete(View view) {
@@ -111,7 +107,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
                 EventBus.getDefault().post(new LaserSyncEvent.DeleteSuccess(laser));
             } else {
                 // Delete laser from server
-                getView().findViewById(R.id.laserDelete).setEnabled(false);
+                binding.laserDelete.setEnabled(false);
                 new Thread(new LaserDeleteTask(getContext(), laser)).start();
             }
         }
@@ -124,7 +120,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserDeleteFailure(@NonNull LaserSyncEvent.DeleteFailure event) {
-        getView().findViewById(R.id.laserDelete).setEnabled(true);
+        binding.laserDelete.setEnabled(true);
         Toast.makeText(getContext(), "Failed to delete profile", Toast.LENGTH_SHORT).show();
     }
 

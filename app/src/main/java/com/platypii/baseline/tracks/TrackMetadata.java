@@ -67,6 +67,7 @@ public class TrackMetadata {
     /**
      * Returns "Place - Suit"
      */
+    @NonNull
     public String subtitle() {
         if (place != null && suit != null) {
             return place.niceString() + " (" + suit + ")";

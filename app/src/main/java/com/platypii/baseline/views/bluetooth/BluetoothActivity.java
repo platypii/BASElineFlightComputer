@@ -4,15 +4,13 @@ import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothState;
+import com.platypii.baseline.databinding.ActivityBluetoothBinding;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.views.BaseActivity;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.Switch;
-import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -20,32 +18,27 @@ import org.greenrobot.eventbus.ThreadMode;
 public class BluetoothActivity extends BaseActivity {
     private static final String TAG = "BluetoothActivity";
 
-    private ImageView bluetoothPhoto;
-    private Switch bluetoothSwitch;
-    private TextView bluetoothStatus;
+    private ActivityBluetoothBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bluetooth);
-
-        bluetoothPhoto = findViewById(R.id.bluetooth_photo);
-        bluetoothSwitch = findViewById(R.id.bluetooth_switch);
-        bluetoothStatus = findViewById(R.id.bluetooth_status);
+        binding = ActivityBluetoothBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
     }
 
     private void updateViews() {
         if (Services.bluetooth.preferences.preferenceDeviceName != null && Services.bluetooth.preferences.preferenceDeviceName.startsWith("XGPS160")) {
-            bluetoothPhoto.setVisibility(View.VISIBLE);
+            binding.bluetoothPhoto.setVisibility(View.VISIBLE);
         } else {
-            bluetoothPhoto.setVisibility(View.GONE);
+            binding.bluetoothPhoto.setVisibility(View.GONE);
         }
-        bluetoothSwitch.setChecked(Services.bluetooth.preferences.preferenceEnabled);
-        bluetoothStatus.setText(Services.bluetooth.getStatusMessage(this));
+        binding.bluetoothSwitch.setChecked(Services.bluetooth.preferences.preferenceEnabled);
+        binding.bluetoothStatus.setText(Services.bluetooth.getStatusMessage(this));
         if (Services.bluetooth.getState() == BluetoothState.BT_CONNECTED) {
-            bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
+            binding.bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
         } else {
-            bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
+            binding.bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
         }
     }
 

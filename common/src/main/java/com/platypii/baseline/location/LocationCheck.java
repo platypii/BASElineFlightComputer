@@ -34,7 +34,7 @@ public class LocationCheck {
             } else if (latitude_abs > 90.0 || longitude_abs > 180.0) {
                 // Lat/lon out of bounds. Likely parsing error.
                 return INVALID_RANGE;
-            } else if (latitude_abs < 0.1) {
+            } else if (latitude_abs < 0.1 || latitude_abs == 90.0) {
                 // No BASE jumps on the equator?
                 return UNLIKELY_LAT;
             } else if (longitude_abs < 0.1 && (latitude < 4 || 55 < latitude)) {

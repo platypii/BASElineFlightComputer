@@ -1,6 +1,6 @@
 package com.platypii.baseline.views.charts;
 
-import com.platypii.baseline.R;
+import com.platypii.baseline.databinding.ChartStatsBinding;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackStats;
@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -29,29 +28,14 @@ public class ChartStatsFragment extends Fragment {
     @Nullable
     private TrackStats stats;
 
-    private TextView timeLabel;
-    private TextView altitudeLabel;
-    private TextView horizontalDistLabel;
-    private TextView verticalDistLabel;
-    private TextView horizontalSpeedLabel;
-    private TextView verticalSpeedLabel;
-    private TextView speedLabel;
-    private TextView glideLabel;
+    private ChartStatsBinding binding;
 
     @NonNull
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("EEE dd MMM yyyy HH:mm:ss", Locale.US);
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.chart_stats, container, false);
-        timeLabel = view.findViewById(R.id.timeLabel);
-        altitudeLabel = view.findViewById(R.id.altitudeLabel);
-        horizontalDistLabel = view.findViewById(R.id.hDistLabel);
-        verticalDistLabel = view.findViewById(R.id.vDistLabel);
-        horizontalSpeedLabel = view.findViewById(R.id.hSpeedLabel);
-        verticalSpeedLabel = view.findViewById(R.id.vSpeedLabel);
-        speedLabel = view.findViewById(R.id.speedLabel);
-        glideLabel = view.findViewById(R.id.glideLabel);
+        binding = ChartStatsBinding.inflate(inflater, container, false);
 
         // Get track data from parent activity
         final Handler handler = new Handler();
@@ -64,7 +48,7 @@ public class ChartStatsFragment extends Fragment {
             });
         }
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -86,27 +70,27 @@ public class ChartStatsFragment extends Fragment {
     public void onTrackFocus(@NonNull ChartFocusEvent.TrackFocused event) {
         final MLocation focus = event.location;
         // TODO: Date should have timezone
-        timeLabel.setText(timeFormat.format(new Date(focus.millis)));
-        altitudeLabel.setText(Convert.distance(focus.altitude_gps) + " MSL");
-        speedLabel.setText(Convert.speed(focus.totalSpeed()));
-        glideLabel.setText(Convert.glide(focus.groundSpeed(), focus.climb, 1, true));
+        binding.timeLabel.setText(timeFormat.format(new Date(focus.millis)));
+        binding.altitudeLabel.setText(Convert.distance(focus.altitude_gps) + " MSL");
+        binding.speedLabel.setText(Convert.speed(focus.totalSpeed()));
+        binding.glideLabel.setText(Convert.glide(focus.groundSpeed(), focus.climb, 1, true));
         if (stats != null && stats.exit != null) {
-            horizontalDistLabel.setText(Convert.distance(focus.distanceTo(stats.exit)));
+            binding.horizontalDistLabel.setText(Convert.distance(focus.distanceTo(stats.exit)));
             final double vdist = focus.altitude_gps - stats.exit.altitude_gps;
             if (vdist < 0) {
-                verticalDistLabel.setText("↓ " + Convert.distance(-vdist));
+                binding.verticalDistLabel.setText("↓ " + Convert.distance(-vdist));
             } else {
-                verticalDistLabel.setText("↑ " + Convert.distance(vdist));
+                binding.verticalDistLabel.setText("↑ " + Convert.distance(vdist));
             }
         } else {
-            horizontalDistLabel.setText("");
-            verticalDistLabel.setText("");
+            binding.horizontalDistLabel.setText("");
+            binding.verticalDistLabel.setText("");
         }
-        horizontalSpeedLabel.setText(Convert.speed(focus.groundSpeed()));
+        binding.horizontalSpeedLabel.setText(Convert.speed(focus.groundSpeed()));
         if (focus.climb < 0) {
-            verticalSpeedLabel.setText("↓ " + Convert.speed(-focus.climb));
+            binding.verticalSpeedLabel.setText("↓ " + Convert.speed(-focus.climb));
         } else {
-            verticalSpeedLabel.setText("↑ " + Convert.speed(focus.climb));
+            binding.verticalSpeedLabel.setText("↑ " + Convert.speed(focus.climb));
         }
     }
 
@@ -114,31 +98,31 @@ public class ChartStatsFragment extends Fragment {
     public void onUnFocus(@Nullable ChartFocusEvent.Unfocused event) {
         if (stats != null) {
             if (stats.exit != null) {
-                timeLabel.setText(timeFormat.format(new Date(stats.exit.millis)));
+                binding.timeLabel.setText(timeFormat.format(new Date(stats.exit.millis)));
             } else {
-                timeLabel.setText("");
+                binding.timeLabel.setText("");
             }
             if (!stats.altitude.isEmpty()) {
-                altitudeLabel.setText(Convert.distance(stats.altitude.max - stats.altitude.min));
+                binding.altitudeLabel.setText(Convert.distance(stats.altitude.max - stats.altitude.min));
             } else {
-                altitudeLabel.setText("");
+                binding.altitudeLabel.setText("");
             }
             if (stats.exit != null) {
-                horizontalDistLabel.setText(Convert.distance(stats.exit.distanceTo(stats.land)));
-                verticalDistLabel.setText(Convert.distance(stats.altitude.range()));
+                binding.horizontalDistLabel.setText(Convert.distance(stats.exit.distanceTo(stats.land)));
+                binding.verticalDistLabel.setText(Convert.distance(stats.altitude.range()));
             } else {
-                horizontalDistLabel.setText("");
-                verticalDistLabel.setText("");
+                binding.horizontalDistLabel.setText("");
+                binding.verticalDistLabel.setText("");
             }
         } else {
-            timeLabel.setText("");
-            altitudeLabel.setText("");
-            horizontalDistLabel.setText("");
-            verticalDistLabel.setText("");
+            binding.timeLabel.setText("");
+            binding.altitudeLabel.setText("");
+            binding.horizontalDistLabel.setText("");
+            binding.verticalDistLabel.setText("");
         }
-        horizontalSpeedLabel.setText("");
-        verticalSpeedLabel.setText("");
-        speedLabel.setText("");
-        glideLabel.setText("");
+        binding.horizontalSpeedLabel.setText("");
+        binding.verticalSpeedLabel.setText("");
+        binding.speedLabel.setText("");
+        binding.glideLabel.setText("");
     }
 }

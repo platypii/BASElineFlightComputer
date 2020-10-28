@@ -69,6 +69,7 @@ class FetchPlaces {
      *
      * @param millis milliseconds since the epoch
      */
+    @NonNull
     private static String httpDateString(long millis) {
         final Date date = new Date(millis);
         final SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);

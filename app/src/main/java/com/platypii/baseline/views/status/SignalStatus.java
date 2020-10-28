@@ -1,7 +1,7 @@
 package com.platypii.baseline.views.status;
 
-import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.databinding.StatusPanelBinding;
 import com.platypii.baseline.location.LocationStatus;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import java.util.Locale;
 
@@ -20,8 +19,7 @@ import java.util.Locale;
  */
 public class SignalStatus extends BaseStatus implements MyLocationListener {
 
-    private TextView signalStatus;
-    private TextView satelliteStatus;
+    private StatusPanelBinding binding;
 
     // Periodic UI updates
     private static final int signalUpdateInterval = 200; // milliseconds
@@ -35,10 +33,8 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.status_panel, container, false);
-        signalStatus = view.findViewById(R.id.signalStatus);
-        satelliteStatus = view.findViewById(R.id.satelliteStatus);
-        return view;
+        binding = StatusPanelBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -61,13 +57,13 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
      */
     private void update() {
         LocationStatus.updateStatus();
-        signalStatus.setCompoundDrawablesWithIntrinsicBounds(LocationStatus.icon, 0, 0, 0);
-        signalStatus.setText(LocationStatus.message);
+        binding.signalStatus.setCompoundDrawablesWithIntrinsicBounds(LocationStatus.icon, 0, 0, 0);
+        binding.signalStatus.setText(LocationStatus.message);
         if (LocationStatus.satellites > 0) {
-            satelliteStatus.setText(String.format(Locale.US, "%d", LocationStatus.satellites));
-            satelliteStatus.setVisibility(View.VISIBLE);
+            binding.satelliteStatus.setText(String.format(Locale.US, "%d", LocationStatus.satellites));
+            binding.satelliteStatus.setVisibility(View.VISIBLE);
         } else {
-            satelliteStatus.setVisibility(View.GONE);
+            binding.satelliteStatus.setVisibility(View.GONE);
         }
     }
 

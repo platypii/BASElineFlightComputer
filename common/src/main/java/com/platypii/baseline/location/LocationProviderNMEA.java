@@ -202,24 +202,15 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
                 // Sanity checks
                 final int locationError = LocationCheck.validate(latitude, longitude);
-                if (locationError != LocationCheck.INVALID_NAN) {
-                    if (locationError == LocationCheck.INVALID_ZERO) {
-                        // So common we don't even need to report it
-                        Log.w(NMEA_TAG, LocationCheck.message[locationError] + ": " + latitude + "," + longitude);
-                    } else if (locationError == LocationCheck.INVALID_RANGE) {
-                        Exceptions.report(new NMEAException(LocationCheck.message[locationError] + ": " + latitude + "," + longitude));
-                    } else {
-                        // Warnings
-                        if (locationError == LocationCheck.UNLIKELY_LAT || locationError == LocationCheck.UNLIKELY_LON) {
-                            // Unlikely location, but still update
-                            Exceptions.report(new NMEAException(LocationCheck.message[locationError] + ": " + latitude + "," + longitude));
-                        }
-                        if (lastFixMillis <= 0) {
-                            Log.w(NMEA_TAG, "Invalid timestamp " + lastFixMillis + ", nmea: " + nmea);
-                        }
-                        // Update the official location!
-                        updateLocation();
+                if (locationError == LocationCheck.VALID) {
+                    // Warnings
+                    if (lastFixMillis <= 0) {
+                        Log.w(NMEA_TAG, "Invalid timestamp " + lastFixMillis + ", nmea: " + nmea);
                     }
+                    // Update the official location!
+                    updateLocation();
+                } else {
+                    Log.w(NMEA_TAG, LocationCheck.message[locationError] + ": " + latitude + "," + longitude);
                 }
                 break;
             case "GNS":

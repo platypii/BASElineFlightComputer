@@ -3,6 +3,7 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.databinding.LaserPanelBinding;
 import com.platypii.baseline.events.ProfileLayerEvent;
 import com.platypii.baseline.lasers.LaserProfile;
 import com.platypii.baseline.tracks.TrackFile;
@@ -23,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -36,10 +36,7 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
 
     @Nullable
     private ProfileAdapter listAdapter;
-    @Nullable
-    private ListView listView;
-    @Nullable
-    private View helpText;
+    private LaserPanelBinding binding;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -48,13 +45,11 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.laser_panel, container, false);
-        view.findViewById(R.id.chooseTrack).setOnClickListener(this::clickAddTrack);
-        view.findViewById(R.id.chooseLaser).setOnClickListener(this::clickAddProfile);
-        view.findViewById(R.id.addLaser).setOnClickListener(this::clickNewProfile);
-        listView = view.findViewById(R.id.profiles_list);
-        helpText = view.findViewById(R.id.helpProfiles);
-        return view;
+        binding = LaserPanelBinding.inflate(inflater, container, false);
+        binding.chooseTrack.setOnClickListener(this::clickAddTrack);
+        binding.chooseLaser.setOnClickListener(this::clickAddProfile);
+        binding.addLaser.setOnClickListener(this::clickNewProfile);
+        return binding.getRoot();
     }
 
     @Override
@@ -62,10 +57,10 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
         super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
         final Activity laserActivity = getActivity();
-        if (laserActivity != null && listView != null) {
+        if (laserActivity != null && binding.profilesList != null) {
             listAdapter = new ProfileAdapter(laserActivity); // TODO: Don't pass activity to adapter
-            listView.setAdapter(listAdapter);
-            listView.setOnItemClickListener(this);
+            binding.profilesList.setAdapter(listAdapter);
+            binding.profilesList.setOnItemClickListener(this);
         }
     }
 
@@ -154,9 +149,9 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
     }
 
     private void updateViews() {
-        if (helpText != null) {
+        if (binding.helpProfiles != null) {
             boolean isEmpty = Services.lasers.layers.layers.isEmpty();
-            helpText.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+            binding.helpProfiles.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -172,12 +167,5 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        listView = null;
-        helpText = null;
     }
 }

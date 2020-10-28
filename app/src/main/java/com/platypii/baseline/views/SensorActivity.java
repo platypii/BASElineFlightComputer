@@ -1,7 +1,7 @@
 package com.platypii.baseline.views;
 
-import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.databinding.ActivitySensorsBinding;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
@@ -13,11 +13,11 @@ import com.platypii.baseline.views.charts.SensorPlot;
 
 import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,41 +29,9 @@ import org.greenrobot.eventbus.ThreadMode;
 @SuppressLint("SetTextI18n")
 public class SensorActivity extends BaseActivity implements MyLocationListener {
 
-    // Altimeter
-    private TextView altiSourceLabel;
-    private TextView altitudeLabel;
-    private TextView altitudeAglLabel;
-    // Barometer
-    private TextView pressureLabel;
-    private TextView pressureAltitudeLabel;
-    private TextView pressureAltitudeFilteredLabel;
-    private TextView fallrateLabel;
-    // GPS
-    private TextView gpsSourceLabel;
-    private TextView bluetoothStatusLabel;
-    private TextView satelliteLabel;
-    private TextView lastFixLabel;
-    private TextView latitudeLabel;
-    private TextView longitudeLabel;
-    private TextView gpsAltitudeLabel;
-    private TextView gpsFallrateLabel;
-    private TextView hAccLabel;
-    private TextView pdopLabel;
-    private TextView hdopLabel;
-    private TextView vdopLabel;
-    private TextView groundSpeedLabel;
-    private TextView totalSpeedLabel;
-    private TextView glideRatioLabel;
-    private TextView glideAngleLabel;
-    private TextView bearingLabel;
-    // Misc
-    private TextView flightModeLabel;
-    private TextView placeLabel;
+    private ActivitySensorsBinding binding;
 
-    // Sensors
-    private LinearLayout sensorLayout;
-
-    // Periodic UI updates    
+    // Periodic UI updates
     private final Handler handler = new Handler();
     private final int updateInterval = 100; // in milliseconds
     @Nullable
@@ -73,46 +41,10 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setContentView(R.layout.activity_sensors);
-
-        // Find UI elements:
-        // Altimeter
-        altiSourceLabel = findViewById(R.id.altiSourceLabel);
-        altitudeLabel = findViewById(R.id.altitudeLabel);
-        altitudeAglLabel = findViewById(R.id.altitudeAglLabel);
-
-        // Barometer
-        pressureLabel = findViewById(R.id.pressureLabel);
-        pressureAltitudeLabel = findViewById(R.id.pressureAltitudeLabel);
-        pressureAltitudeFilteredLabel = findViewById(R.id.pressureAltitudeFilteredLabel);
-        fallrateLabel = findViewById(R.id.fallrateLabel);
-
-        // GPS
-        gpsSourceLabel = findViewById(R.id.gpsSourceLabel);
-        bluetoothStatusLabel = findViewById(R.id.bluetoothStatusLabel);
-        satelliteLabel = findViewById(R.id.satelliteLabel);
-        lastFixLabel = findViewById(R.id.lastFixLabel);
-        latitudeLabel = findViewById(R.id.latitudeLabel);
-        longitudeLabel = findViewById(R.id.longitudeLabel);
-        gpsAltitudeLabel = findViewById(R.id.gpsAltitudeLabel);
-        gpsFallrateLabel = findViewById(R.id.gpsFallrateLabel);
-        hAccLabel = findViewById(R.id.hAccLabel);
-        pdopLabel = findViewById(R.id.pdopLabel);
-        hdopLabel = findViewById(R.id.hdopLabel);
-        vdopLabel = findViewById(R.id.vdopLabel);
-        groundSpeedLabel = findViewById(R.id.groundSpeedLabel);
-        totalSpeedLabel = findViewById(R.id.totalSpeedLabel);
-        glideRatioLabel = findViewById(R.id.glideRatioLabel);
-        glideAngleLabel = findViewById(R.id.glideAngleLabel);
-        bearingLabel = findViewById(R.id.bearingLabel);
-
-        // Misc
-        flightModeLabel = findViewById(R.id.flightModeLabel);
-        placeLabel = findViewById(R.id.placeLabel);
+        binding = ActivitySensorsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Sensors
-        sensorLayout = findViewById(R.id.sensorLayout);
-        // TextView sensorsLabel = (TextView)findViewById(R.id.sensorsLabel);
         // sensorsLabel.setText("Sensors: \n" + MySensorManager.getSensorsString());
 
         if (Services.sensors.isEnabled()) {
@@ -162,29 +94,28 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
         if (history != null) {
             final TextView textView = new TextView(this);
             textView.setText(label);
-            sensorLayout.addView(textView);
+            binding.sensorLayout.addView(textView);
 
             final SensorPlot plot = new SensorPlot(this, null);
             plot.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 180));
             plot.loadHistory(history);
-
-            sensorLayout.addView(plot);
+            binding.sensorLayout.addView(plot);
         }
     }
 
     private void updateAltimeter() {
-        altiSourceLabel.setText("Data source: " + altimeterSource());
-        altitudeLabel.setText("Altitude MSL: " + Convert.distance(Services.alti.altitude, 2, true));
-        altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(Services.alti.altitudeAGL(), 2, true) + " AGL");
+        binding.altiSourceLabel.setText("Data source: " + altimeterSource());
+        binding.altitudeLabel.setText("Altitude MSL: " + Convert.distance(Services.alti.altitude, 2, true));
+        binding.altitudeAglLabel.setText("Altitude AGL: " + Convert.distance(Services.alti.altitudeAGL(), 2, true) + " AGL");
 
-        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate.refreshRate));
-        pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(Services.alti.baro.pressure_altitude_raw, 2, true));
+        binding.pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate.refreshRate));
+        binding.pressureAltitudeLabel.setText("Pressure altitude raw: " + Convert.distance(Services.alti.baro.pressure_altitude_raw, 2, true));
         if (Double.isNaN(Services.alti.baro.pressure_altitude_filtered)) {
-            pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: ");
+            binding.pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: ");
         } else {
-            pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(Services.alti.baro.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(Services.alti.baro.model_error.var()), 2, true));
+            binding.pressureAltitudeFilteredLabel.setText("Pressure altitude filtered: " + Convert.distance(Services.alti.baro.pressure_altitude_filtered, 2, true) + " +/- " + Convert.distance(Math.sqrt(Services.alti.baro.model_error.var()), 2, true));
         }
-        fallrateLabel.setText("Fallrate: " + Convert.speed(-Services.alti.climb, 2, true));
+        binding.fallrateLabel.setText("Fallrate: " + Convert.speed(-Services.alti.climb, 2, true));
     }
 
     @NonNull
@@ -199,31 +130,31 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
 
     private void updateGPS() {
         final MLocation loc = Services.location.lastLoc;
-        if (loc != null && groundSpeedLabel != null) {
-            satelliteLabel.setText("Satellites: " + loc.satellitesUsed + " used in fix, " + loc.satellitesInView + " visible");
+        if (loc != null) {
+            binding.satelliteLabel.setText("Satellites: " + loc.satellitesUsed + " used in fix, " + loc.satellitesInView + " visible");
             if (Numbers.isReal(loc.latitude)) {
-                latitudeLabel.setText(String.format(Locale.getDefault(), "Lat: %.6f", loc.latitude));
+                binding.latitudeLabel.setText(String.format(Locale.getDefault(), "Lat: %.6f", loc.latitude));
             } else {
-                latitudeLabel.setText("Lat: ");
+                binding.latitudeLabel.setText("Lat: ");
             }
             if (Numbers.isReal(loc.latitude)) {
-                longitudeLabel.setText(String.format(Locale.getDefault(), "Long: %.6f", loc.longitude));
+                binding.longitudeLabel.setText(String.format(Locale.getDefault(), "Long: %.6f", loc.longitude));
             } else {
-                longitudeLabel.setText("Long: ");
+                binding.longitudeLabel.setText("Long: ");
             }
-            gpsAltitudeLabel.setText("GPS altitude: " + Convert.distance(loc.altitude_gps, 2, true));
-            gpsFallrateLabel.setText("GPS fallrate: " + Convert.speed(-Services.alti.gpsClimb(), 2, true));
-            hAccLabel.setText("hAcc: " + Convert.distance(loc.hAcc));
-            pdopLabel.setText(String.format(Locale.getDefault(), "pdop: %.1f", loc.pdop));
-            hdopLabel.setText(String.format(Locale.getDefault(), "hdop: %.1f", loc.hdop));
-            vdopLabel.setText(String.format(Locale.getDefault(), "vdop: %.1f", loc.vdop));
-            groundSpeedLabel.setText("Ground speed: " + Convert.speed(loc.groundSpeed(), 2, true));
-            totalSpeedLabel.setText("Total speed: " + Convert.speed(loc.totalSpeed(), 2, true));
-            glideRatioLabel.setText("Glide ratio: " + Convert.glide(loc.groundSpeed(), loc.climb, 2, true));
-            glideAngleLabel.setText("Glide angle: " + Convert.angle(loc.glideAngle()));
-            bearingLabel.setText("Bearing: " + Convert.bearing2(loc.bearing()));
-            flightModeLabel.setText("Flight mode: " + Services.flightComputer.getModeString());
-            placeLabel.setText("Location: " + Services.places.nearestPlace.getString(loc));
+            binding.gpsAltitudeLabel.setText("GPS altitude: " + Convert.distance(loc.altitude_gps, 2, true));
+            binding.gpsFallrateLabel.setText("GPS fallrate: " + Convert.speed(-Services.alti.gpsClimb(), 2, true));
+            binding.hAccLabel.setText("hAcc: " + Convert.distance(loc.hAcc));
+            binding.pdopLabel.setText(String.format(Locale.getDefault(), "pdop: %.1f", loc.pdop));
+            binding.hdopLabel.setText(String.format(Locale.getDefault(), "hdop: %.1f", loc.hdop));
+            binding.vdopLabel.setText(String.format(Locale.getDefault(), "vdop: %.1f", loc.vdop));
+            binding.groundSpeedLabel.setText("Ground speed: " + Convert.speed(loc.groundSpeed(), 2, true));
+            binding.totalSpeedLabel.setText("Total speed: " + Convert.speed(loc.totalSpeed(), 2, true));
+            binding.glideRatioLabel.setText("Glide ratio: " + Convert.glide(loc.groundSpeed(), loc.climb, 2, true));
+            binding.glideAngleLabel.setText("Glide angle: " + Convert.angle(loc.glideAngle()));
+            binding.bearingLabel.setText("Bearing: " + Convert.bearing2(loc.bearing()));
+            binding.flightModeLabel.setText("Flight mode: " + Services.flightComputer.getModeString());
+            binding.placeLabel.setText("Location: " + Services.places.nearestPlace.getString(loc));
         }
     }
 
@@ -233,9 +164,9 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
     private void update() {
         // Bluetooth battery level needs to be continuously updated
         if (Services.bluetooth.preferences.preferenceEnabled) {
-            gpsSourceLabel.setText("Data source: Bluetooth GPS");
+            binding.gpsSourceLabel.setText("Data source: Bluetooth GPS");
             if (Services.bluetooth.preferences.preferenceDeviceName == null) {
-                bluetoothStatusLabel.setText("Bluetooth: (not selected)");
+                binding.bluetoothStatusLabel.setText("Bluetooth: (not selected)");
             } else {
                 String status = "Bluetooth: " + Services.bluetooth.preferences.preferenceDeviceName; // TODO: Model name
                 if (Services.bluetooth.charging) {
@@ -244,12 +175,12 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
                     final int powerLevel = (int) (Services.bluetooth.powerLevel * 100);
                     status += " " + powerLevel + "%";
                 }
-                bluetoothStatusLabel.setText(status);
-                bluetoothStatusLabel.setVisibility(View.VISIBLE);
+                binding.bluetoothStatusLabel.setText(status);
+                binding.bluetoothStatusLabel.setVisibility(View.VISIBLE);
             }
         } else {
-            gpsSourceLabel.setText("Data source: Phone GPS");
-            bluetoothStatusLabel.setVisibility(View.GONE);
+            binding.gpsSourceLabel.setText("Data source: " + Build.MANUFACTURER + " " + Build.MODEL);
+            binding.bluetoothStatusLabel.setVisibility(View.GONE);
         }
         // Last fix needs to be updated continuously since it shows time since last fix
         final long lastFixDuration = Services.location.lastFixDuration();
@@ -261,22 +192,23 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
                 frac = Math.max(0, Math.min(frac, 1));
                 final int b = (int) (0xb0 * frac); // blue
                 final int gb = b + 0x100 * b; // blue + green
-                lastFixLabel.setTextColor(0xffb00000 + gb);
+                binding.lastFixLabel.setTextColor(0xffb00000 + gb);
             } else {
-                lastFixLabel.setTextColor(0xffb0b0b0);
+                binding.lastFixLabel.setTextColor(0xffb0b0b0);
             }
             String lastFix = (lastFixDuration / 1000) + "s";
             final float refreshRate = Services.location.refreshRate.refreshRate;
             if (refreshRate > 0) {
                 lastFix += String.format(Locale.getDefault(), " (%.2fHz)", refreshRate);
             }
-            lastFixLabel.setText("Last fix: " + lastFix);
+            binding.lastFixLabel.setText("Last fix: " + lastFix);
         } else {
-            lastFixLabel.setTextColor(0xffb0b0b0);
-            lastFixLabel.setText("Last fix: ");
+            binding.lastFixLabel.setTextColor(0xffb0b0b0);
+            binding.lastFixLabel.setText("Last fix: ");
         }
         // Altitude refresh rate
-        pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)", Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate.refreshRate));
+        binding.pressureLabel.setText(String.format(Locale.getDefault(), "Pressure: %s (%.2fHz)",
+                Convert.pressure(Services.alti.baro.pressure), Services.alti.baro.refreshRate.refreshRate));
     }
 
     @Override

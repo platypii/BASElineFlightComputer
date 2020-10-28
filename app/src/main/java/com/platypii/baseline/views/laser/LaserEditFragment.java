@@ -3,6 +3,7 @@ package com.platypii.baseline.views.laser;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
+import com.platypii.baseline.databinding.LaserEditBinding;
 import com.platypii.baseline.events.RangefinderEvent;
 import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.lasers.LaserProfile;
@@ -32,10 +33,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,13 +55,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     private final RangefinderService rangefinder = new RangefinderService();
     private static boolean rangefinderEnabled = false;
 
-    private EditText laserName;
-    private Spinner laserUnits;
-    private EditText laserLocation;
-    private EditText laserText;
-    private TextView laserStatus;
-    private ImageButton laserConnect;
-    private TextView laserWarning;
+    private LaserEditBinding binding;
 
     // Edit layer gets recreated on save, and the active one gets left in LaserLayers
     @NonNull
@@ -77,29 +68,23 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.laser_edit, container, false);
-        laserName = view.findViewById(R.id.laserName);
-        laserUnits = view.findViewById(R.id.laserUnits);
-        laserLocation = view.findViewById(R.id.laserLocation);
-        laserText = view.findViewById(R.id.laserText);
-        laserStatus = view.findViewById(R.id.laserStatus);
-        laserConnect = view.findViewById(R.id.laserConnect);
-        laserConnect.setOnClickListener(this::clickLaserConnect);
-        laserWarning = view.findViewById(R.id.laserWarning);
-        view.findViewById(R.id.laserClear).setOnClickListener(this::clickClear);
-        view.findViewById(R.id.laserSort).setOnClickListener(this::clickSort);
-        view.findViewById(R.id.laserSave).setOnClickListener(this::laserSave);
-        view.findViewById(R.id.laserCancel).setOnClickListener(this::laserCancel);
+        binding = LaserEditBinding.inflate(inflater, container, false);
+
+        binding.laserConnect.setOnClickListener(this::clickLaserConnect);
+        binding.laserClear.setOnClickListener(this::clickClear);
+        binding.laserSort.setOnClickListener(this::clickSort);
+        binding.laserSave.setOnClickListener(this::laserSave);
+        binding.laserCancel.setOnClickListener(this::laserCancel);
 
         // Set spinner to match default units
         if (!Convert.metric) {
-            laserUnits.setSelection(1);
+            binding.laserUnits.setSelection(1);
         }
         // Load saved draft
         loadForm();
 
         // Change listeners
-        laserText.addTextChangedListener(new TextWatcher() {
+        binding.laserText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
@@ -109,7 +94,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
                 updateLayers();
             }
         });
-        laserUnits.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.laserUnits.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 updateLayers();
@@ -117,7 +102,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -156,10 +141,10 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
      * Load laser profile from form into laserProfile
      */
     private void getLaserProfile() {
-        laserProfile.name = laserName.getText().toString();
+        laserProfile.name = binding.laserName.getText().toString();
         laserProfile.user_id = AuthState.getUser();
         try {
-            final LatLngAlt lla = Geocoder.parse(laserLocation.getText().toString());
+            final LatLngAlt lla = Geocoder.parse(binding.laserLocation.getText().toString());
             laserProfile.lat = lla.lat;
             laserProfile.lng = lla.lng;
             laserProfile.alt = lla.alt;
@@ -169,21 +154,21 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             laserProfile.lng = null;
             laserProfile.alt = 0.0;
         }
-        laserProfile.points = LaserMeasurement.parseSafe(laserText.getText().toString(), isMetric());
+        laserProfile.points = LaserMeasurement.parseSafe(binding.laserText.getText().toString(), isMetric());
         final int quadrant = laserProfile.quadrant();
         if (quadrant == 0) {
-            laserWarning.setText("quadrant");
-            laserWarning.setVisibility(View.VISIBLE);
+            binding.laserWarning.setText("quadrant");
+            binding.laserWarning.setVisibility(View.VISIBLE);
         } else if (quadrant == 1) {
-            laserWarning.setText("bottom");
-            laserWarning.setVisibility(View.VISIBLE);
+            binding.laserWarning.setText("bottom");
+            binding.laserWarning.setVisibility(View.VISIBLE);
         } else {
-            laserWarning.setVisibility(View.GONE);
+            binding.laserWarning.setVisibility(View.GONE);
         }
     }
 
     private boolean isMetric() {
-        final int position = laserUnits.getSelectedItemPosition();
+        final int position = binding.laserUnits.getSelectedItemPosition();
         final String[] values = getResources().getStringArray(R.array.metric_modes_values);
         final String value = values[position];
         return "meters".equals(value);
@@ -195,37 +180,37 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     @Nullable
     private String validate() {
         // Clear highlights and remove excess lines
-        final String pointString = laserText.getText().toString().trim() + "\n";
-        laserText.setText(pointString);
+        final String pointString = binding.laserText.getText().toString().trim() + "\n";
+        binding.laserText.setText(pointString);
         // Validate name
-        if (laserName.getText().toString().isEmpty()) {
-            laserName.requestFocus();
+        if (binding.laserName.getText().toString().isEmpty()) {
+            binding.laserName.requestFocus();
             return "Name cannot be empty";
         }
-        final boolean metric = "meters".equals(laserUnits.toString());
+        final boolean metric = "meters".equals(binding.laserUnits.toString());
         // Check for invalid location
-        final String location = laserLocation.getText().toString().trim();
+        final String location = binding.laserLocation.getText().toString().trim();
         if (!location.isEmpty()) {
             try {
                 Geocoder.parse(location);
             } catch (ParseException e) {
-                laserLocation.requestFocus();
+                binding.laserLocation.requestFocus();
                 return e.getMessage();
             }
         }
         // Validate points
         if (pointString.isEmpty()) {
-            laserText.requestFocus();
+            binding.laserText.requestFocus();
             return "Measurements cannot be empty";
         }
         try {
             final int count = LaserMeasurement.parse(pointString, metric, true).size();
             if (count == 0) {
-                laserText.requestFocus();
+                binding.laserText.requestFocus();
                 return "Measurements cannot be empty";
             }
         } catch (ParseException e) {
-            laserText.requestFocus();
+            binding.laserText.requestFocus();
             // Highlight line
             final int start = StringUtil.lineStartIndex(pointString, e.getErrorOffset());
             final int end = StringUtil.lineStartIndex(pointString, e.getErrorOffset() + 1);
@@ -234,11 +219,11 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
                 final int highLightColor = getResources().getColor(android.R.color.holo_red_dark);
                 final ForegroundColorSpan highlight = new ForegroundColorSpan(highLightColor);
                 span.setSpan(highlight, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                laserText.setText(span);
+                binding.laserText.setText(span);
             } else {
                 Log.w(TAG, "No line " + e.getErrorOffset() + " " + pointString);
             }
-            laserText.setSelection(end - 1);
+            binding.laserText.setSelection(end - 1);
             return "Invalid measurements, line " + e.getErrorOffset();
         }
         return null;
@@ -285,7 +270,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
      */
     private void clickClear(View view) {
         Analytics.logEvent(getContext(), "click_laser_edit_clear", null);
-        laserText.setText("");
+        binding.laserText.setText("");
     }
 
     /**
@@ -295,10 +280,10 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         Analytics.logEvent(getContext(), "click_laser_edit_sort", null);
         // Sort by horizontal distance
         final boolean metric = isMetric();
-        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(laserText.getText().toString(), metric);
+        final List<LaserMeasurement> points = LaserMeasurement.parseSafe(binding.laserText.getText().toString(), metric);
         Collections.sort(points, (l1, l2) -> Double.compare(l1.x, l2.x));
         // Update text box
-        laserText.setText(LaserMeasurement.render(points, metric));
+        binding.laserText.setText(LaserMeasurement.render(points, metric));
         // Update chart in parent activity
         updateLayers();
     }
@@ -315,16 +300,16 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLaserMeasure(@NonNull LaserMeasurement meas) {
         // Insert newline if needed
-        final String text = laserText.getText().toString();
+        final String text = binding.laserText.getText().toString();
         if (!text.isEmpty() && !text.endsWith("\n")) {
-            laserText.append("\n");
+            binding.laserText.append("\n");
         }
         final boolean metric = isMetric();
         final double units = metric ? 1 : 3.28084;
         final String unitLabel = metric ? "m" : "ft";
         // Append measurement to laser text
         final String line = String.format(Locale.US, "%.1f %s, %.1f %s\n", meas.x * units, unitLabel, meas.y * units, unitLabel);
-        laserText.append(line);
+        binding.laserText.append(line);
         // Update chart in parent activity
         updateLayers();
     }
@@ -339,18 +324,18 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
      */
     private void updateRangefinder() {
         if (rangefinderEnabled) {
-            laserConnect.setVisibility(View.GONE);
+            binding.laserConnect.setVisibility(View.GONE);
             if (rangefinder.getState() == BT_CONNECTED) {
-                laserStatus.setText(R.string.rangefinder_connected);
-                laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
+                binding.laserStatus.setText(R.string.rangefinder_connected);
+                binding.laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
             } else {
-                laserStatus.setText(R.string.rangefinder_searching);
-                laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
+                binding.laserStatus.setText(R.string.rangefinder_searching);
+                binding.laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
             }
-            laserStatus.setVisibility(View.VISIBLE);
+            binding.laserStatus.setVisibility(View.VISIBLE);
         } else {
-            laserConnect.setVisibility(View.VISIBLE);
-            laserStatus.setVisibility(View.GONE);
+            binding.laserConnect.setVisibility(View.VISIBLE);
+            binding.laserStatus.setVisibility(View.GONE);
         }
     }
 
@@ -374,10 +359,10 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         final Context context = getContext();
         if (context != null) {
             final NewLaserForm form = NewLaserForm.load(context);
-            laserName.setText(form.name);
-            laserUnits.setSelection(form.metric ? 0 : 1);
-            laserLocation.setText(form.latLngAlt);
-            laserText.setText(form.points);
+            binding.laserName.setText(form.name);
+            binding.laserUnits.setSelection(form.metric ? 0 : 1);
+            binding.laserLocation.setText(form.latLngAlt);
+            binding.laserText.setText(form.points);
         }
     }
 
@@ -385,18 +370,18 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         final Context context = getContext();
         if (context != null) {
             new NewLaserForm(
-                    laserName.getText().toString(),
+                    binding.laserName.getText().toString(),
                     isMetric(),
-                    laserLocation.getText().toString(),
-                    laserText.getText().toString()
+                    binding.laserLocation.getText().toString(),
+                    binding.laserText.getText().toString()
             ).save(context);
         }
     }
 
     private void clearForm() {
-        laserName.setText("");
-        laserLocation.setText("");
-        laserText.setText("");
+        binding.laserName.setText("");
+        binding.laserLocation.setText("");
+        binding.laserText.setText("");
     }
 
     @Override
@@ -407,7 +392,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             if (activity != null) {
                 activity.runOnUiThread(() -> {
                     // Fill in lat,lon
-                    laserLocation.setText(LatLngAlt.formatLatLngAlt(loc.latitude, loc.longitude, loc.altitude_gps));
+                    binding.laserLocation.setText(LatLngAlt.formatLatLngAlt(loc.latitude, loc.longitude, loc.altitude_gps));
                 });
             }
         }
