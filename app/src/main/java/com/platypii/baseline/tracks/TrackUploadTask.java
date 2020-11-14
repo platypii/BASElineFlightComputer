@@ -112,6 +112,10 @@ public class TrackUploadTask extends Task {
                 // Read body
                 final String body = IOUtil.toString(conn.getInputStream());
                 return new Gson().fromJson(body, TrackMetadata.class);
+            } else if (status == 400) {
+                // Bad request, get more info
+                final String body = IOUtil.toString(conn.getInputStream());
+                throw new IOException("http bad request " + status + " " + body);
             } else if (status == 401) {
                 throw new AuthException(auth);
             } else {

@@ -1,6 +1,7 @@
 package com.platypii.baseline.places;
 
 import com.platypii.baseline.BaseService;
+import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.util.Exceptions;
 
@@ -51,6 +52,7 @@ public class Places implements BaseService {
                 Log.i(TAG, "Loaded " + places.size() + " places");
             } catch (IOException e) {
                 Log.e(TAG, "Error loading places", e);
+                Exceptions.report(e);
             }
         }
         return places;
@@ -91,8 +93,8 @@ public class Places implements BaseService {
             if (force || !placeFile.isFresh()) {
                 try {
                     FetchPlaces.get(ctx, placeFile.file);
-                    places = null; // Force reload
-                } catch (IOException e) {
+                    places = null; // Reload from place file
+                } catch (IOException | AuthException e) {
                     Log.e(TAG, "Failed to fetch places", e);
                 }
             } else {

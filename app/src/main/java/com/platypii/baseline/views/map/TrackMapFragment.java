@@ -33,6 +33,7 @@ public class TrackMapFragment extends BaseMapFragment {
 
         // Add map layers
         addLayer(new PlacesLayer());
+        updateLayers();
     }
 
     private void loadTrack(@NonNull GoogleMap map, @NonNull TrackData trackData) {
