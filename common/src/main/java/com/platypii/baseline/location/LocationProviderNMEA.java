@@ -151,10 +151,7 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // gpsFix = Numbers.parseInt(split[6], -1); // 0 = Invalid, 1 = Valid SPS, 2 = Valid DGPS, 3 = Valid PPS
                 satellitesUsed = Numbers.parseInt(split[7], -1);
                 hdop = Numbers.parseFloat(split[8]);
-                if (!split[9].isEmpty()) {
-                    if (!split[10].equals("M")) {
-                        Exceptions.report(new NMEAException("Expected meters, was " + split[10] + " in nmea: " + nmea));
-                    }
+                if (!split[9].isEmpty() && split[10].equals("M")) {
                     altitude_gps = Numbers.parseDouble(split[9]);
                 }
                 // double geoidSeparation = parseDouble(split[11]]); // Geoid separation according to WGS-84 ellipsoid

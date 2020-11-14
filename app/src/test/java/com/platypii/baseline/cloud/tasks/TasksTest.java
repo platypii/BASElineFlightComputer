@@ -53,13 +53,15 @@ public class TasksTest {
         Tasks tasks = new Tasks();
         tasks.start(null);
         assertEquals(0, tasks.pending.size());
-        TestTask testTask = new TestTask("id1");
-        tasks.add(testTask);
-        assertEquals(1, tasks.pending.size());
+        TestTask testTask1 = new TestTask("id1");
+        TestTask testTask2 = new TestTask("id2");
+        tasks.add(testTask1);
+        tasks.add(testTask2);
+        assertEquals(2, tasks.pending.size());
         tasks.stop();
-        // Tasks are not persisted across start stop
+        // Tasks are not persisted across start stop, except running task
         tasks.start(null);
-        assertEquals(0, tasks.pending.size());
+        assertEquals(1, tasks.pending.size());
     }
 
 }

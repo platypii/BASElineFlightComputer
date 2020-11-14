@@ -45,6 +45,7 @@ public class Tasks implements BaseService {
 
     public void add(@NonNull Task task) {
         Log.i(TAG, "Adding task " + task);
+        Exceptions.log("Adding task " + task);
         synchronized (pending) {
             if (!pending.contains(task)) {
                 pending.add(task);
@@ -96,14 +97,13 @@ public class Tasks implements BaseService {
     private void runSuccess(@NonNull Task task) {
         Log.i(TAG, "Task success: " + task);
         Analytics.logEvent(context, "task_success", ABundle.of("task_name", task.toString()));
+        sanityCheck();
         synchronized (pending) {
             Task removed = null;
             if (running != task) {
-                Exceptions.report(new IllegalStateException("Invalid pop: " + running + " != " + task));
+                Exceptions.report(new IllegalStateException("Running mismatch: " + running + " != " + task));
             }
-            if (pending.isEmpty()) {
-                Exceptions.report(new IllegalStateException("Invalid pop: " + running + " not in []"));
-            } else {
+            if (!pending.isEmpty()) {
                 removed = pending.remove(0);
             }
             if (running != removed) {
@@ -128,11 +128,16 @@ public class Tasks implements BaseService {
      */
     private void runFailed(@NonNull Task task, @NonNull Throwable e, boolean networkError) {
         Log.e(TAG, "Task failed: " + task, e);
+        Exceptions.log("Task failed: " + task);
         Analytics.logEvent(context, "task_failed", ABundle.of("task_name", task.toString()));
         if (!networkError) {
             Exceptions.report(e);
         }
         synchronized (pending) {
+            if (running != task) {
+                Exceptions.report(new IllegalStateException("Running mismatch (failed): " + running + " != " + task));
+            }
+            sanityCheck();
             running = null;
         }
     }
@@ -156,7 +161,20 @@ public class Tasks implements BaseService {
     @Override
     public void stop() {
         synchronized (pending) {
+            // Remove all except running
             pending.clear();
+            if (running != null) {
+                Log.w(TAG, "Tasks stop but job is still running: " + running);
+                pending.add(running);
+            }
+        }
+    }
+
+    private void sanityCheck() {
+        if (pending.isEmpty()) {
+            Exceptions.report(new IllegalStateException("Pending empty: " + running + " not in []"));
+        } else if (running != pending.get(0)) {
+            Exceptions.report(new IllegalStateException("Invalid head: " + running + " != " + pending.get(0)));
         }
     }
 

@@ -89,16 +89,12 @@ class TrackLabels {
         for (int i = exit; i <= land; i++) {
             freefallCum[i + 1] = freefallCum[i] + inFreefall(FlightMode.getMode(points.get(i)));
         }
-        int deploy = exit;
-        for (int i = exit; i <= land; i++) {
+        int deploy = exit + 1;
+        for (int i = exit + 1; i <= land; i++) {
             // #correct = c(i) + (land - i - total + c(i)) ~= 2 c(i) - i
             if (2 * freefallCum[deploy] - deploy < 2 * freefallCum[i] - i) {
                 deploy = i;
             }
-        }
-        if (deploy <= 0) {
-            Exceptions.report(new IndexOutOfBoundsException("Deploy out of bounds " + deploy + " e=" + exit + " l=" + land + " s=" + points.size()));
-            return 0;
         }
         return deploy - 1;
     }
