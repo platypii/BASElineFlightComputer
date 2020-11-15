@@ -42,6 +42,8 @@ public class ImportCSV {
                 }
             });
             return true;
+        } else {
+            Exceptions.report(new UnsupportedOperationException("Unknown import type: " + intentType));
         }
         return false;
     }
@@ -50,9 +52,9 @@ public class ImportCSV {
      * Copy content file into a new track file
      */
     private static void copyFile(@NonNull Context context, @NonNull Uri uri) {
-        final ContentResolver content = context.getContentResolver();
+        final ContentResolver contentResolver = context.getContentResolver();
         // Get source filename
-        String sourceFilename = resolveFileName(content, uri);
+        String sourceFilename = resolveFileName(contentResolver, uri);
         // Strip CSV extension
         if (sourceFilename != null) sourceFilename = sourceFilename.replaceAll(".(csv|CSV)$", "");
         // Generate destination file
@@ -60,7 +62,7 @@ public class ImportCSV {
         final TrackFile destination = TrackFiles.newTrackFile(logDir, sourceFilename);
         Log.i(TAG, "Importing CSV file " + uri + " as " + sourceFilename + " to " + destination);
         try (OutputStream os = new GZIPOutputStream(new FileOutputStream(destination.file))) {
-            final InputStream is = content.openInputStream(uri);
+            final InputStream is = contentResolver.openInputStream(uri);
             IOUtil.copy(is, os);
             Services.tracks.store.setNotUploaded(destination);
             if (AuthState.getUser() != null) {

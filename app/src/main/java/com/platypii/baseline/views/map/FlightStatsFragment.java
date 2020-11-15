@@ -31,10 +31,10 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener,
     private void update() {
         binding.flightStatsAlti.setText(Convert.altitude(Services.alti.altitude));
         if (Services.alti.climb < 0) {
-            binding.flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_downward_white_24dp, 0, 0, 0);
+            binding.flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.arrow_down, 0, 0, 0);
             binding.flightStatsVario.setText(Convert.speed(-Services.alti.climb));
         } else {
-            binding.flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_arrow_upward_white_24dp, 0, 0, 0);
+            binding.flightStatsVario.setCompoundDrawablesWithIntrinsicBounds(R.drawable.arrow_up, 0, 0, 0);
             binding.flightStatsVario.setText(Convert.speed(Services.alti.climb));
         }
         final double groundSpeed = Services.location.groundSpeed();
