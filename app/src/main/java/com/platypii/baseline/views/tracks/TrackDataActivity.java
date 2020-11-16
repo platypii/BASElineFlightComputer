@@ -11,8 +11,6 @@ import java9.util.concurrent.CompletableFuture;
 /**
  * Common parent class of TrackLocalActivity and TrackRemoteActivity.
  * Represents a class that provides a future TrackData.
- *
- * TODO: If user clicks back but menu is open, close menu and don't go back.
  */
 public abstract class TrackDataActivity extends BaseActivity {
     public final CompletableFuture<TrackData> trackData = new CompletableFuture<>();
