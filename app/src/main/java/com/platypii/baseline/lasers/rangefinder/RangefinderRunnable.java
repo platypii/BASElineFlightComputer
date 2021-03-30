@@ -137,6 +137,7 @@ class RangefinderRunnable implements Runnable {
         }
     }
 
+    @NonNull
     private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {

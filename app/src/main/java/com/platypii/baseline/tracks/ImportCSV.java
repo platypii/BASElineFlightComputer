@@ -42,7 +42,8 @@ public class ImportCSV {
                 }
             });
             return true;
-        } else {
+        } else if (intentType != null) {
+            // Null intent happens on routine startup
             Exceptions.report(new UnsupportedOperationException("Unknown import type: " + intentType));
         }
         return false;

@@ -67,7 +67,7 @@ public class Geo {
      * Moves the location along a bearing (degrees) by a given distance (meters)
      */
     @NonNull
-    public static LatLng moveDirection(double latitude, double longitude, double bearing, double distance) {
+    public static LatLng moveBearing(double latitude, double longitude, double bearing, double distance) {
         final double d = distance / R;
 
         final double lat = Math.toRadians(latitude);

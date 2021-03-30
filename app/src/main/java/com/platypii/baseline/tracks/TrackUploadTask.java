@@ -15,6 +15,8 @@ import com.platypii.baseline.util.MD5;
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import java.io.BufferedOutputStream;
@@ -50,7 +52,10 @@ public class TrackUploadTask extends Task {
     }
 
     @Override
-    public void run(@NonNull Context context) throws AuthException, IOException {
+    public void run(@Nullable Context context) throws AuthException, IOException {
+        if (context == null) {
+            throw new NullPointerException("TrackUploadTask needs Context");
+        }
         if (AuthState.getUser() == null) {
             throw new AuthException("auth required");
         }
@@ -114,7 +119,7 @@ public class TrackUploadTask extends Task {
                 return new Gson().fromJson(body, TrackMetadata.class);
             } else if (status == 400) {
                 // Bad request, get more info
-                final String body = IOUtil.toString(conn.getInputStream());
+                final String body = IOUtil.toString(conn.getErrorStream());
                 throw new IOException("http bad request " + status + " " + body);
             } else if (status == 401) {
                 throw new AuthException(auth);

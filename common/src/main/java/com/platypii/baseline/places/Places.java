@@ -28,6 +28,7 @@ public class Places implements BaseService {
     @Nullable
     private PlaceFile placeFile;
 
+    @NonNull
     public final NearestPlace nearestPlace = new NearestPlace(this);
 
     // In-memory cache of places, lazy loaded on first call to getPlaces()

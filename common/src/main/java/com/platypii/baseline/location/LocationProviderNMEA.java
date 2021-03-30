@@ -229,9 +229,12 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
                 // Overall satellite data (DOP and active satellites)
                 // boolean autoDim = split[1].equals("A"); // A = Auto 2D/3D, M = Forced 2D/3D
                 // gpsFix = split[2].isEmpty() ? 0 : Integer.parseInt(split[2]); // 0 = null, 1 = No fix, 2 = 2D, 3 = 3D
-                pdop = Numbers.parseFloat(split[15]);
-                hdop = Numbers.parseFloat(split[16]);
-                vdop = Numbers.parseFloat(split[17]);
+                if (split.length >= 10) {
+                    // Some devices send shorter GSA sentence
+                    pdop = Numbers.parseFloat(split[split.length - 3]);
+                    hdop = Numbers.parseFloat(split[split.length - 2]);
+                    vdop = Numbers.parseFloat(split[split.length - 1]);
+                }
                 break;
             case "GSV":
                 // Detailed satellite data (satellites in view)

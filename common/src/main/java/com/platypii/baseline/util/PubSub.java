@@ -10,9 +10,12 @@ import java.util.List;
 public class PubSub<T> {
     private static final String TAG = "PubSub";
 
+    @NonNull
     private final List<Subscriber<T>> subs = new ArrayList<>();
+    @NonNull
     private final List<Subscriber<T>> mainSubs = new ArrayList<>();
 
+    @NonNull
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     public void post(T obj) {

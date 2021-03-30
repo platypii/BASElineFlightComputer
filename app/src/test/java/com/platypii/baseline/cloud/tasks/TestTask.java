@@ -2,6 +2,7 @@ package com.platypii.baseline.cloud.tasks;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Task used just for tests.
@@ -25,7 +26,7 @@ public class TestTask extends Task {
     }
 
     @Override
-    public void run(@NonNull Context context) throws Exception {
+    public void run(@Nullable Context context) throws Exception {
         System.out.println("Running a test task...");
         while (wait) {
             Thread.sleep(50);

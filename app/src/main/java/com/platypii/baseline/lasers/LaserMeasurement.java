@@ -144,7 +144,7 @@ public class LaserMeasurement {
         }
     }
 
-    private static double toNumber(String str, boolean metric) {
+    private static double toNumber(@NonNull String str, boolean metric) {
         if (str.isEmpty()) {
             return Double.NaN;
         } else if (str.endsWith("m")) {

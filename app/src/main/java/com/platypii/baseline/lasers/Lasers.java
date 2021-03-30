@@ -34,8 +34,11 @@ public class Lasers implements BaseService {
 
     @Nullable
     private Context context;
+    @NonNull
     public final LaserCache cache = new LaserCache("cache");
+    @NonNull
     public final LaserCache unsynced = new LaserCache("unsynced");
+    @NonNull
     public final LaserLayers layers = new LaserLayers();
 
     @Override

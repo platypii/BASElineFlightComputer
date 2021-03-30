@@ -19,6 +19,7 @@ public class PlacesLayer extends MapLayer {
 
     @Nullable
     private GoogleMap map;
+    @NonNull
     private final Map<Place, Marker> placeMarkers = new HashMap<>();
 
     @Override

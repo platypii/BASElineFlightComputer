@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
  */
 public class LaserLayers {
 
+    @NonNull
     public final List<ProfileLayer> layers = new ArrayList<>();
 
     public void add(@NonNull ProfileLayer layer) {

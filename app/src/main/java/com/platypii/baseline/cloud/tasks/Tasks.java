@@ -29,6 +29,7 @@ import javax.net.ssl.SSLException;
 public class Tasks implements BaseService {
     private static final String TAG = "Tasks";
 
+    @Nullable
     private Context context;
 
     @NonNull

@@ -59,6 +59,7 @@ class UineyeProtocol implements RangefinderProtocol {
     private static final byte[] norange = {4, 0, 5, 9}; // ae-a7-04-00-05-09-bc-b7
 
     // Protocol state
+    @NonNull
     private final RfSentenceIterator sentenceIterator = new RfSentenceIterator();
     private final BluetoothGatt bluetoothGatt;
 

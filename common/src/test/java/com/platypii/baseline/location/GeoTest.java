@@ -34,7 +34,7 @@ public class GeoTest {
 
     @Test
     public void moveDirection() {
-        final LatLng moved = Geo.moveDirection(seattle.latitude, seattle.longitude, bearing, distance);
+        final LatLng moved = Geo.moveBearing(seattle.latitude, seattle.longitude, bearing, distance);
         assertEquals(la.latitude, moved.latitude, 0.01);
         assertEquals(la.longitude, moved.longitude, 0.01);
     }

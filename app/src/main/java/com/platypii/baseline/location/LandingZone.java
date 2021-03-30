@@ -37,7 +37,7 @@ public class LandingZone {
 
             // Compute estimated landing location
             final MLocation currentLocation = Services.location.lastLoc;
-            return currentLocation.moveDirection(bearing, groundDistance);
+            return currentLocation.moveBearing(bearing, groundDistance);
         } else {
             return null;
         }

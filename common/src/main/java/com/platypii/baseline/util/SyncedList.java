@@ -13,7 +13,9 @@ import java.util.LinkedList;
  */
 public class SyncedList<T> implements Iterable<T> {
 
+    @NonNull
     private final LinkedList<T> toCopy = new LinkedList<>();
+    @NonNull
     private final LinkedList<T> values = new LinkedList<>();
     private int maxSize = 0;
     private int size = 0;

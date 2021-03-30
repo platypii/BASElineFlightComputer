@@ -12,6 +12,8 @@ import com.platypii.baseline.lasers.LaserProfile;
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
 import java.io.IOException;
 import org.greenrobot.eventbus.EventBus;
@@ -40,7 +42,10 @@ public class LaserUploadTask extends Task {
     }
 
     @Override
-    public void run(@NonNull Context context) throws AuthException, IOException {
+    public void run(@Nullable Context context) throws AuthException, IOException {
+        if (context == null) {
+            throw new NullPointerException("LaserUploadTask needs Context");
+        }
         if (AuthState.getUser() == null) {
             throw new AuthException("auth required");
         }

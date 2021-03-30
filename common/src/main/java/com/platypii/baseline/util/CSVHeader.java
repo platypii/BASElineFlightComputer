@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class CSVHeader {
 
+    @NonNull
     private final Map<String, Integer> columns = new HashMap<>();
 
     public CSVHeader(@Nullable String line) {

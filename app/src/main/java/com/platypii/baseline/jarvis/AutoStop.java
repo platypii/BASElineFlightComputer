@@ -59,7 +59,7 @@ public class AutoStop {
         // Update state
         if (state == STATE_STARTED) {
             // Look for flight / freefall
-            if (loc.climb < -15 && altMax - alt > minHeight) {
+            if (loc.climb < -10 && altMax - alt > minHeight) {
                 prExited += (1 - prExited) * alpha1;
             } else if (FlightMode.getMode(loc) == FlightMode.MODE_CANOPY && altMax - alt > minHeight) {
                 prExited += (1 - prExited) * alpha2;

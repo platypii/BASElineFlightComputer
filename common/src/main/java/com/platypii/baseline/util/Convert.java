@@ -238,7 +238,7 @@ public class Convert {
             return "";
         } else if (groundSpeed + Math.abs(climb) < 0.5) { // ~1 mph
             return Convert.GLIDE_STATIONARY;
-        } else if (Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 30) {
+        } else if (Double.isInfinite(glideRatio) || Math.abs(glideRatio) > 40) {
             return Convert.GLIDE_LEVEL;
         } else if (groundSpeed < 0.5 && Math.abs(climb) > 0.5) {
             return Convert.GLIDE_VERTICAL;

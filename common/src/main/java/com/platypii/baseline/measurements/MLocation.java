@@ -145,8 +145,8 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
      * Moves the location along a bearing (degrees) by a given distance (meters)
      */
     @NonNull
-    public LatLng moveDirection(double bearing, double distance) {
-        return Geo.moveDirection(latitude, longitude, bearing, distance);
+    public LatLng moveBearing(double bearing, double distance) {
+        return Geo.moveBearing(latitude, longitude, bearing, distance);
     }
 
     /**

@@ -2,12 +2,15 @@ package com.platypii.baseline.cloud.tasks;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.Date;
 
 /**
  * Any background task
  */
 public abstract class Task {
+    @NonNull
     final Date createdAt = new Date();
 
     /**
@@ -20,7 +23,7 @@ public abstract class Task {
     /**
      * Code to execute the task
      */
-    public abstract void run(@NonNull Context context) throws Exception;
+    public abstract void run(@Nullable Context context) throws Exception;
 
     @NonNull
     public abstract TaskType taskType();

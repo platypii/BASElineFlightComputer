@@ -1,6 +1,7 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.BaseService;
+import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.location.MyLocationListener;
@@ -137,7 +138,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
 
         // Write header
         log.write(Measurement.header + "\n");
-        log.write("# " + Services.location.dataSource() + "\n");
+        log.write("# BASEline " + BuildConfig.VERSION_NAME + " " + Services.location.dataSource() + "\n");
 
         // Start sensor updates
         Services.alti.baro.pressureEvents.subscribe(this);

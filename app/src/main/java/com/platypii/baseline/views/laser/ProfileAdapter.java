@@ -22,6 +22,7 @@ class ProfileAdapter extends BaseAdapter {
 
     @NonNull
     private final LayoutInflater inflater;
+    @NonNull
     private final List<ProfileLayer> layers = new ArrayList<>();
 
     ProfileAdapter(@NonNull Context context) {
