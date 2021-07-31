@@ -212,17 +212,14 @@ public class BluetoothService implements BaseService {
      */
     public synchronized void restart(@NonNull Activity activity) {
         Log.i(TAG, "Restarting bluetooth service");
-        if (bluetoothState == BT_STOPPED) {
-            // Just start
-            start(activity);
-        } else {
-            // Stop and start
+        if (bluetoothState != BT_STOPPED) {
+            // Stop first
             stop();
             if (bluetoothState != BT_STOPPED) {
                 Exceptions.report(new IllegalStateException("Error restarting bluetooth: not stopped: " + BT_STATES[bluetoothState]));
             }
-            start(activity);
         }
+        start(activity);
     }
 
     public void addNmeaListener(GpsStatus.NmeaListener listener) {

@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     tools:context="com.platypii.baseline.views.map.MapActivity">
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.platypii.baseline.views.map.MapFragment" />
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/flightStatsFragment"
         android:name="com.platypii.baseline.views.map.FlightStatsFragment"
         android:layout_width="155sp"

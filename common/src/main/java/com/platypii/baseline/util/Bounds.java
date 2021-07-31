@@ -14,11 +14,6 @@ public class Bounds {
     public final Range x = new Range();
     public final Range y = new Range();
 
-//    public double left = Double.NaN;
-//    public double top = Double.NaN;
-//    public double right = Double.NaN;
-//    public double bottom = Double.NaN;
-
     public void set(@NonNull Bounds copy) {
         this.x.min = copy.x.min;
         this.x.max = copy.x.max;

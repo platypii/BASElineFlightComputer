@@ -1,11 +1,11 @@
 package com.platypii.baseline.cloud;
 
 public class AuthException extends Exception {
-    public AuthException(String auth) {
-        super("authorization error - auth: " + auth);
+    public AuthException(String message) {
+        super("authorization error - auth: " + message);
     }
 
-    AuthException(String auth, Exception e) {
-        super("authorization error - auth: " + auth, e);
+    AuthException(String message, Exception e) {
+        super("authorization error - auth: " + message, e);
     }
 }

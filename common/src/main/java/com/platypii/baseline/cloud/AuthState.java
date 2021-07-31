@@ -19,9 +19,10 @@ public abstract class AuthState {
     }
 
     public static class SignedIn extends AuthState {
+        @NonNull
         final String userId;
 
-        public SignedIn(String userId) {
+        public SignedIn(@NonNull String userId) {
             this.userId = userId;
         }
 

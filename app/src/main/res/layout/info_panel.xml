@@ -14,7 +14,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"/>
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
             android:id="@+id/statusPanel"
             android:name="com.platypii.baseline.views.status.SignalStatus"
             android:layout_width="wrap_content"

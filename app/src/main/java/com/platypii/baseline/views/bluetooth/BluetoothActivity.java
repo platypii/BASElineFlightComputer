@@ -24,6 +24,8 @@ public class BluetoothActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityBluetoothBinding.inflate(getLayoutInflater());
+        binding.bluetoothPair.setOnClickListener(this::clickPair);
+        binding.bluetoothSwitch.setOnClickListener(this::clickEnable);
         setContentView(binding.getRoot());
     }
 

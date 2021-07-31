@@ -168,9 +168,6 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
                                 used++;
                             }
                         }
-                        // if (satellitesInView != count || satellitesUsed != used) {
-                        //     Log.v(TAG, "Satellite Status: " + satellitesUsed + "/" + satellitesInView);
-                        // }
                         satellitesInView = count;
                         satellitesUsed = used;
                     } catch (SecurityException e) {

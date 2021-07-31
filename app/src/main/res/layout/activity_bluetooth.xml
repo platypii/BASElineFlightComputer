@@ -18,10 +18,10 @@
 
     <TextView
         android:id="@+id/bluetooth_status"
-        android:layout_width="200dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="6dp"
         android:drawablePadding="8dp"
         android:lines="1"
         android:paddingTop="4dp"
@@ -35,7 +35,6 @@
         android:paddingBottom="16dp"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
-        android:onClick="clickEnable"
         android:text="@string/bluetooth_enabled"/>
 
     <!-- Bluetooth device list -->
@@ -45,7 +44,7 @@
         android:text="@string/bluetooth_devices"
         style="@style/header"/>
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@android:id/list"
         android:name="com.platypii.baseline.views.bluetooth.BluetoothDeviceListFragment"
         android:layout_width="match_parent"
@@ -53,6 +52,7 @@
         android:layout_weight="1"/>
 
     <Button
+        android:id="@+id/bluetooth_pair"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start|center_vertical"
@@ -60,7 +60,6 @@
         android:paddingBottom="16dp"
         android:drawablePadding="10dp"
         android:drawableStart="@drawable/ic_bluetooth_pair"
-        android:onClick="clickPair"
         android:text="@string/bluetooth_pair"/>
 
 </LinearLayout>

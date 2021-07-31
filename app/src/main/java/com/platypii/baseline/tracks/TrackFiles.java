@@ -39,11 +39,10 @@ class TrackFiles {
             } else {
                 Log.e(TAG, "Failed to list track files: " + logDir + " " + logDir.exists());
             }
-            return tracks;
         } else {
             Log.e(TAG, "Track storage directory not available");
-            return tracks;
         }
+        return tracks;
     }
 
     @Nullable

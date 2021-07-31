@@ -27,6 +27,10 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+/**
+ * BaseActivity provides basic BASEline services to activities that extend it.
+ * Authentication mostly.
+ */
 public abstract class BaseActivity extends FragmentActivity {
     private final String TAG = getClass().getSimpleName();
 
@@ -244,7 +248,8 @@ public abstract class BaseActivity extends FragmentActivity {
             userClickedSignIn = false;
             signedOut();
         } else {
-            Log.e(TAG, "Sign in failed: " + e.getStatusCode() + " " + CommonStatusCodes.getStatusCodeString(e.getStatusCode()));
+            Log.e(TAG, "Sign in failed: " + e.getStatusCode() + " " + CommonStatusCodes.getStatusCodeString(e.getStatusCode()), e);
+            Exceptions.report(new IllegalArgumentException("Unexpected status code " + e.getStatusCode()));
             signedOut();
         }
     }
@@ -266,6 +271,7 @@ public abstract class BaseActivity extends FragmentActivity {
                 Services.location.start(getApplication());
             }
         }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override

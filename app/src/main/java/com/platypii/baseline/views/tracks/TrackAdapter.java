@@ -102,11 +102,11 @@ public class TrackAdapter extends BaseAdapter {
             case TYPE_TRACK_LOCAL:
                 final TrackFile trackFile = ((ListTrackFile) item).track;
                 final TextView itemNameView = convertView.findViewById(R.id.list_item_name);
-                final TextView itemSizeView = convertView.findViewById(R.id.list_item_subtitle);
+                final TextView itemSubtitle = convertView.findViewById(R.id.list_item_subtitle);
                 final ProgressBar itemSpinner = convertView.findViewById(R.id.list_spinner);
                 final View itemCheck = convertView.findViewById(R.id.list_check);
                 itemNameView.setText(trackFile.getName());
-                itemSizeView.setText(trackFile.getSize());
+                itemSubtitle.setText(trackFile.getSize());
 
                 // Update based on logging and sync state
                 if (Services.tracks.store.isUploading(trackFile)) {
@@ -124,11 +124,20 @@ public class TrackAdapter extends BaseAdapter {
             case TYPE_TRACK_REMOTE:
                 final TrackMetadata trackData = ((ListTrackData) item).track;
                 final TextView itemNameView2 = convertView.findViewById(R.id.list_item_name);
-                final TextView itemSizeView2 = convertView.findViewById(R.id.list_item_subtitle);
+                final TextView itemSubtitle2 = convertView.findViewById(R.id.list_item_subtitle);
                 final ProgressBar itemSpinner2 = convertView.findViewById(R.id.list_spinner);
                 final View itemCheck2 = convertView.findViewById(R.id.list_check);
                 itemNameView2.setText(trackData.date_string);
-                itemSizeView2.setText(trackData.subtitle());
+                itemSubtitle2.setText(trackData.subtitle());
+                if ("BASE".equals(trackData.jumpType)) {
+                    itemSubtitle2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.type_base, 0, 0, 0);
+                } else if ("Skydive".equals(trackData.jumpType)) {
+                    itemSubtitle2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.type_sky, 0, 0, 0);
+                } else if ("PG".equals(trackData.jumpType)) {
+                    itemSubtitle2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.type_pg, 0, 0, 0);
+                } else {
+                    itemSubtitle2.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                }
                 itemSpinner2.setVisibility(View.GONE);
                 if (trackData.abbrvFile(context).exists() || trackData.localFile(context).exists()) {
                     itemCheck2.setVisibility(View.VISIBLE);
