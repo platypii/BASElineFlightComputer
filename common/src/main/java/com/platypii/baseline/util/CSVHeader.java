@@ -12,7 +12,9 @@ public class CSVHeader {
 
     public CSVHeader(@Nullable String line) {
         if (line != null) {
-            final String[] header = line.split(",");
+            final String[] header = line
+                    .replace("\ufeff", "") // Remove BOM
+                    .split(",");
             for (int i = 0; i < header.length; i++) {
                 columns.put(header[i], i);
             }

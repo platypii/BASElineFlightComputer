@@ -14,7 +14,7 @@ public class DataSeriesTest {
         DataSeries series = new DataSeries();
 
         assertEquals(0, series.size());
-        series.addPoint(1,2);
+        series.addPoint(1, 2);
         assertEquals(1, series.size());
     }
 
@@ -23,7 +23,7 @@ public class DataSeriesTest {
         DataSeries series = new DataSeries();
 
         assertEquals(0, series.size());
-        series.addPoint(1,2);
+        series.addPoint(1, 2);
         assertEquals(1, series.size());
         series.reset();
         assertEquals(0, series.size());
@@ -34,19 +34,19 @@ public class DataSeriesTest {
         DataSeries series = new DataSeries();
 
         assertEquals(0, series.size());
-        series.addPoint(1,2);
+        series.addPoint(1, 2);
         assertEquals(1, series.size());
         series.reset();
         assertEquals(0, series.size());
-        series.addPoint(2,3);
+        series.addPoint(2, 3);
         assertEquals(1, series.size());
     }
 
     @Test
     public void iterator() {
         DataSeries series = new DataSeries();
-        series.addPoint(1,2);
-        series.addPoint(2,3);
+        series.addPoint(1, 2);
+        series.addPoint(2, 3);
 
         int count = 0;
         for (DataSeries.Point point : series) {

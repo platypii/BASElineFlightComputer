@@ -46,22 +46,21 @@ public class LaserPanelFragment extends Fragment implements AdapterView.OnItemCl
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = LaserPanelBinding.inflate(inflater, container, false);
+
+        // On clicks
         binding.chooseTrack.setOnClickListener(this::clickAddTrack);
         binding.chooseLaser.setOnClickListener(this::clickAddProfile);
         binding.addLaser.setOnClickListener(this::clickNewProfile);
-        return binding.getRoot();
-    }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
         final Activity laserActivity = getActivity();
-        if (laserActivity != null && binding.profilesList != null) {
+        if (laserActivity != null) {
             listAdapter = new ProfileAdapter(laserActivity); // TODO: Don't pass activity to adapter
             binding.profilesList.setAdapter(listAdapter);
             binding.profilesList.setOnItemClickListener(this);
         }
+
+        return binding.getRoot();
     }
 
     @Override

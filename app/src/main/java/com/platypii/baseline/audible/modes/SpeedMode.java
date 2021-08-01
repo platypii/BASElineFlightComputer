@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 abstract class SpeedMode extends AudibleMode {
 
-    SpeedMode(String id, String name, float defaultMin, float defaultMax) {
+    SpeedMode(@NonNull String id, @NonNull String name, float defaultMin, float defaultMax) {
         super(id, name, "speed", defaultMin, defaultMax, 0);
     }
 

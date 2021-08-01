@@ -87,9 +87,13 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         // Change listeners
         binding.laserText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
             @Override
             public void afterTextChanged(Editable s) {
                 updateLayers();
@@ -100,8 +104,10 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 updateLayers();
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
         return binding.getRoot();
     }

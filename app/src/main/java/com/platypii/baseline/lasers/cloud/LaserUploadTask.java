@@ -13,7 +13,6 @@ import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.gson.Gson;
 import java.io.IOException;
 import org.greenrobot.eventbus.EventBus;

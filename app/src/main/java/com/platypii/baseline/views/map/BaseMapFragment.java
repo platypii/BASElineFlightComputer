@@ -48,7 +48,7 @@ public class BaseMapFragment extends SupportMapFragment implements OnMapReadyCal
     }
 
     @Override
-    public void onMapClick(LatLng latLng) {
+    public void onMapClick(@NonNull LatLng latLng) {
         for (MapLayer layer : layers) {
             layer.onMapClick(latLng);
         }

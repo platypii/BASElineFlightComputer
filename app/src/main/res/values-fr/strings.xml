@@ -22,6 +22,7 @@
 
     <string name="upload_waiting">En attente de téléchargement</string>
     <string name="uploading">Téléchargement…</string>
+    <string name="downloaded">Téléchargé</string>
     <string name="downloading">Téléchargement…</string>
     <string name="search">Recherche…</string>
 

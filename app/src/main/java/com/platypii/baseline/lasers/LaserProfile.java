@@ -71,6 +71,7 @@ public class LaserProfile {
      * Quadrant 1: laser from bottom
      * Quadrant 2: default x,y
      * Quadrant 4: reversed y,x
+     *
      * @return 0 if invalid
      */
     public int quadrant() {

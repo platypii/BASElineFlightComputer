@@ -28,28 +28,30 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = LaserListBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
         listAdapter = new LaserAdapter(getContext());
         binding.laserList.setAdapter(listAdapter);
         binding.laserList.setOnItemClickListener(this);
 
+        // On search
         binding.laserSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 final String filter = binding.laserSearch.getText().toString().toLowerCase();
                 listAdapter.setFilter(filter);
             }
+
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
+
+        return binding.getRoot();
     }
 
     @Override

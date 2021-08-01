@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
+import java.util.Locale;
 
 /**
  * Preference dialog that converts to/from internal units in the preference,
@@ -49,7 +50,7 @@ public class AudibleMinMaxPreference extends DialogPreference {
         final float value = getValue();
         if (Numbers.isReal(value)) {
             final float valueLocalUnits = value / getMode().units();
-            mEditText.setText(Float.toString(valueLocalUnits));
+            mEditText.setText(String.format(Locale.getDefault(), "%f", valueLocalUnits));
         } else {
             mEditText.setText("");
         }

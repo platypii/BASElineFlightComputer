@@ -20,6 +20,9 @@ public class NewLaserForm {
         this.points = points;
     }
 
+    /**
+     * Save form to preferences
+     */
     public void save(@NonNull Context context) {
         final SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
         if (name.isEmpty() && points.isEmpty()) {
@@ -36,6 +39,9 @@ public class NewLaserForm {
         edit.apply();
     }
 
+    /**
+     * Load from preferences
+     */
     @NonNull
     public static NewLaserForm load(@NonNull Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

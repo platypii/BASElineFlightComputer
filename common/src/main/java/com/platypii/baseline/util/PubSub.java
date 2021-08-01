@@ -7,6 +7,9 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Publish/subscribe with background and main thread awareness
+ */
 public class PubSub<T> {
     private static final String TAG = "PubSub";
 

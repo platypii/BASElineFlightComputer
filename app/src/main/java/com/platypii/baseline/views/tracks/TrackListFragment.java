@@ -26,12 +26,7 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = TrackListBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         // Initialize the ListAdapter
         listAdapter = new TrackAdapter(getActivity());
         binding.trackList.setAdapter(listAdapter);
@@ -42,22 +37,29 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
         if (args != null) {
             final String filter = args.getString(SEARCH_KEY, "");
             if (!filter.isEmpty()) {
-                if (binding.trackSearch != null) binding.trackSearch.setText(filter);
+                binding.trackSearch.setText(filter);
                 listAdapter.setFilter(filter);
             }
         }
 
+        // On search
         binding.trackSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 final String filter = binding.trackSearch.getText().toString().toLowerCase();
                 listAdapter.setFilter(filter);
             }
+
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
+
+        return binding.getRoot();
     }
 
     @Override

@@ -1,9 +1,12 @@
 package com.platypii.baseline.util;
 
+/**
+ * Estimates refresh rate from a time series with missing points
+ */
 public class RefreshRateEstimator {
     private static final float epsilon = 0.05f;
 
-    public float refreshRate = 0;
+    public float refreshRate = 0; // Hz
     private long lastMillis = -1;
 
     // How many misses in a row

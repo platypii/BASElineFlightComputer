@@ -9,7 +9,9 @@ import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,13 +29,13 @@ public class BluetoothDeviceListFragment extends ListFragment {
     @Nullable
     private BluetoothAdapter bluetoothAdapter;
 
+    @Nullable
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Set list adapter
         bluetoothAdapter = new BluetoothAdapter(getActivity(), devices);
         setListAdapter(bluetoothAdapter);
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     private void updateDeviceList() {

@@ -7,6 +7,10 @@ import android.os.IBinder;
 import android.util.Log;
 import androidx.annotation.Nullable;
 
+/**
+ * Foreground service is visible when logging or audible is enabled.
+ * This keeps android from putting the app to sleep.
+ */
 public class ForegroundService extends Service {
     private static final String TAG = "ForegroundService";
 
@@ -63,6 +67,7 @@ public class ForegroundService extends Service {
         }
     }
 
+    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;

@@ -41,7 +41,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:visibility="gone"
-        android:contentDescription="downloaded"
+        android:contentDescription="@string/downloaded"
         android:src="@drawable/checkcircle" />
 
 </RelativeLayout>

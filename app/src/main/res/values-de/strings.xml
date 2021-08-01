@@ -22,6 +22,7 @@
 
     <string name="upload_waiting">Warten bis zum Hochladen</string>
     <string name="uploading">Hochladen…</string>
+    <string name="downloaded">Heruntergeladen</string>
     <string name="downloading">Wird heruntergeladen…</string>
     <string name="search">Suchen…</string>
 

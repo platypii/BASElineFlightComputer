@@ -7,8 +7,11 @@ import androidx.annotation.NonNull;
  */
 public abstract class AudibleMode {
 
+    @NonNull
     public final String id;
+    @NonNull
     public final String name;
+    @NonNull
     private final String unitsName;
 
     // Default mode parameters
@@ -23,7 +26,7 @@ public abstract class AudibleMode {
      * @param defaultMin the default minimum value, in metric
      * @param defaultMax the default maximum value, in metric
      */
-    protected AudibleMode(String id, String name, String unitsName, float defaultMin, float defaultMax, int defaultPrecision) {
+    protected AudibleMode(@NonNull String id, @NonNull String name, @NonNull String unitsName, float defaultMin, float defaultMax, int defaultPrecision) {
         this.id = id;
         this.name = name;
         this.unitsName = unitsName;

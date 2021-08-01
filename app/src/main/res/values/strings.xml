@@ -22,6 +22,7 @@
 
     <string name="upload_waiting">Waiting for upload…</string>
     <string name="uploading">Uploading…</string>
+    <string name="downloaded">Downloaded</string>
     <string name="downloading">Downloading…</string>
     <string name="search">Search…</string>
 

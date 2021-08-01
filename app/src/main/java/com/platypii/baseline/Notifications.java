@@ -77,14 +77,16 @@ class Notifications implements BaseService {
     /**
      * Construct a notification object for a given logging and audible state
      */
+    @NonNull
     static Notification getNotification(@NonNull Context context, boolean logging, boolean audible) {
+        final int flags = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0; // minsdk23
         // Intent to open MainActivity on stop
         final Intent mainIntent = new Intent(context, MainActivity.class);
-        final PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
+        final PendingIntent mainPendingIntent = PendingIntent.getActivity(context, 0, mainIntent, flags);
         // Intent to stop logging and audible
         final Intent stopIntent = new Intent(context, ForegroundService.class);
         stopIntent.setAction(ForegroundService.ACTION_CLICK_STOP);
-        final PendingIntent stopPendingIntent = PendingIntent.getService(context, 0, stopIntent, 0);
+        final PendingIntent stopPendingIntent = PendingIntent.getService(context, 0, stopIntent, flags);
         final NotificationCompat.Action stopAction = new NotificationCompat.Action.Builder(R.drawable.square, "Stop", stopPendingIntent).build();
         // Build the notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
