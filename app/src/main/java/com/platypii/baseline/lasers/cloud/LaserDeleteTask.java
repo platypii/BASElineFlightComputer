@@ -32,7 +32,7 @@ public class LaserDeleteTask implements Runnable {
         Log.i(TAG, "Deleting laser " + laser);
         try {
             // Delete laser
-            final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
+            final LaserApi laserApi = RetrofitClient.getRetrofit().create(LaserApi.class);
             final Response<Void> response = laserApi.delete(laser.laser_id).execute();
             if (response.isSuccessful()) {
                 Log.i(TAG, "Laser delete successful: " + laser);

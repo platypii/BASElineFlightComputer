@@ -3,7 +3,7 @@ package com.platypii.baseline.tracks.cloud;
 import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthException;
-import com.platypii.baseline.cloud.AuthToken;
+import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.events.DownloadEvent;
 import com.platypii.baseline.tracks.TrackAbbrv;
@@ -13,6 +13,7 @@ import com.platypii.baseline.util.Exceptions;
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,8 +32,6 @@ public class DownloadTask implements Runnable {
     private static final String TAG = "DownloadTask";
 
     @NonNull
-    private final Context context;
-    @NonNull
     private final String trackId;
     @NonNull
     private final String trackUrl;
@@ -42,7 +41,6 @@ public class DownloadTask implements Runnable {
     private final File abbrvFile;
 
     public DownloadTask(@NonNull Context context, @NonNull TrackMetadata track) {
-        this.context = context;
         this.trackId = track.track_id;
         this.trackUrl = BaselineCloud.baselineServer + "/tracks/" + track.track_id + "/baseline-track.csv.gz";
         this.trackFile = track.localFile(context);
@@ -56,10 +54,8 @@ public class DownloadTask implements Runnable {
         try {
             if (!trackFile.exists()) {
                 Log.i(TAG, "Downloading track " + trackId);
-                // Get auth token
-                final String authToken = AuthToken.getAuthToken(context);
                 // Make HTTP request
-                downloadTrack(authToken);
+                downloadTrack(AuthState.getToken());
                 // TODO: Check file hash?
                 Log.i(TAG, "Download successful, track " + trackId);
             } else {
@@ -86,10 +82,10 @@ public class DownloadTask implements Runnable {
     /**
      * HTTP get track from baseline
      */
-    private void downloadTrack(@NonNull String auth) throws IOException, AuthException {
+    private void downloadTrack(@Nullable String auth) throws IOException, AuthException {
         final URL url = new URL(trackUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty("Authorization", auth);
+        conn.setRequestProperty("Cookie", auth);
         conn.setRequestProperty("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME);
         conn.addRequestProperty("Accept-Encoding", "identity"); // Without this, okhttp gets confused about gzip
         try {

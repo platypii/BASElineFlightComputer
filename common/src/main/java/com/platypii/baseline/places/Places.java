@@ -93,7 +93,7 @@ public class Places implements BaseService {
             // Fetch places from server, if we need to
             if (force || !placeFile.isFresh()) {
                 try {
-                    FetchPlaces.get(ctx, placeFile.file);
+                    FetchPlaces.get(placeFile.file);
                     places = null; // Reload from place file
                 } catch (IOException | AuthException e) {
                     Log.e(TAG, "Failed to fetch places", e);

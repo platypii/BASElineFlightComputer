@@ -2,10 +2,8 @@ package com.platypii.baseline.places;
 
 import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.cloud.AuthToken;
 import com.platypii.baseline.util.IOUtil;
 
-import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import java.io.File;
@@ -14,13 +12,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 /**
  * Downloads the place database.
- * Uses if-modified-since header and 304 to save bandwidth.
  */
 class FetchPlaces {
     private static final String TAG = "FetchPlaces";
@@ -30,20 +24,16 @@ class FetchPlaces {
     /**
      * Fetch places from BASEline server and saves it as a file
      */
-    static void get(@NonNull Context context, @NonNull File placeFile) throws IOException, AuthException {
+    static void get(@NonNull File placeFile) throws IOException, AuthException {
         Log.i(TAG, "Downloading places");
         final URL url = new URL(placesUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Accept-Encoding", "gzip");
-        if (AuthState.getUser() != null) {
-            conn.setRequestProperty("Authorization", AuthToken.getAuthToken(context));
+        final String token = AuthState.getToken();
+        if (token != null) {
+            conn.setRequestProperty("Cookie", token);
         }
 //        conn.setRequestProperty("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME); // Doesn't work in common lib
-        // Send If-Modified-Since header to help with caching
-        if (placeFile.exists()) {
-            final String dateString = httpDateString(placeFile.lastModified());
-            conn.setRequestProperty("If-Modified-Since", dateString);
-        }
         try {
             // Read response
             final int status = conn.getResponseCode();
@@ -62,18 +52,6 @@ class FetchPlaces {
         } finally {
             conn.disconnect();
         }
-    }
-
-    /**
-     * Formats a Date as an http compatible date string (rfc 2616)
-     *
-     * @param millis milliseconds since the epoch
-     */
-    @NonNull
-    private static String httpDateString(long millis) {
-        final Date date = new Date(millis);
-        final SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-        return httpDateFormat.format(date);
     }
 
 }

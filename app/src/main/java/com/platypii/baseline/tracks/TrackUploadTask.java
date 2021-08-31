@@ -4,7 +4,6 @@ import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.AuthState;
-import com.platypii.baseline.cloud.AuthToken;
 import com.platypii.baseline.cloud.BaselineCloud;
 import com.platypii.baseline.cloud.tasks.Task;
 import com.platypii.baseline.cloud.tasks.TaskType;
@@ -62,7 +61,10 @@ public class TrackUploadTask extends Task {
         Services.tracks.store.setUploading(trackFile);
         try {
             // Get auth token
-            final String authToken = AuthToken.getAuthToken(context);
+            final String authToken = AuthState.getToken();
+            if (authToken == null) {
+                throw new AuthException("Failed to get auth token");
+            }
             // Make HTTP request
             final TrackMetadata track = postTrack(trackFile, authToken);
             // Remove from track store
@@ -89,13 +91,13 @@ public class TrackUploadTask extends Task {
      * HTTP post track to baseline, parse response as TrackMetadata
      */
     @NonNull
-    private static TrackMetadata postTrack(@NonNull TrackFile trackFile, String auth) throws AuthException, IOException, JsonSyntaxException {
+    private static TrackMetadata postTrack(@NonNull TrackFile trackFile, @NonNull String auth) throws AuthException, IOException, JsonSyntaxException {
         final long contentLength = trackFile.file.length();
         final String md5 = MD5.md5(trackFile.file);
         final URL url = new URL(postUrl);
         final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Content-Type", "application/gzip");
-        conn.setRequestProperty("Authorization", auth);
+        conn.setRequestProperty("Cookie", auth);
         conn.setRequestProperty("ETag", md5);
         conn.setRequestProperty("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME);
         // Log.d(TAG, "Uploading file with size " + contentLength);

@@ -50,7 +50,7 @@ public class Tracks implements BaseService {
         if (context != null && AuthState.getUser() != null && (force || cache.shouldRequest())) {
             cache.request();
             try {
-                final TrackApi trackApi = RetrofitClient.getRetrofit(context).create(TrackApi.class);
+                final TrackApi trackApi = RetrofitClient.getRetrofit().create(TrackApi.class);
                 Log.i(TAG, "Listing tracks");
                 trackApi.list().enqueue(new Callback<List<TrackMetadata>>() {
                     @Override

@@ -58,7 +58,7 @@ public class Lasers implements BaseService {
         if (context != null && (force || cache.shouldRequest())) {
             cache.request();
             try {
-                final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
+                final LaserApi laserApi = RetrofitClient.getRetrofit().create(LaserApi.class);
                 // Public vs private based on sign in state
                 final String userId = AuthState.getUser();
                 Log.i(TAG, "Listing laser profiles for user " + userId);

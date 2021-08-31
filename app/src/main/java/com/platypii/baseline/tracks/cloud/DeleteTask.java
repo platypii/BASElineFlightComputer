@@ -36,7 +36,7 @@ public class DeleteTask implements Runnable {
         Log.i(TAG, "Deleting track " + track.track_id);
         try {
             // Delete track
-            final TrackApi trackApi = RetrofitClient.getRetrofit(context).create(TrackApi.class);
+            final TrackApi trackApi = RetrofitClient.getRetrofit().create(TrackApi.class);
             final Response<Void> response = trackApi.delete(track.track_id).execute();
             if (response.isSuccessful()) {
                 Log.i(TAG, "Track delete successful: " + track.track_id);

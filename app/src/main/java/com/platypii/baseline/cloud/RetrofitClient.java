@@ -2,8 +2,6 @@ package com.platypii.baseline.cloud;
 
 import com.platypii.baseline.BuildConfig;
 
-import android.content.Context;
-import androidx.annotation.NonNull;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -15,7 +13,10 @@ public class RetrofitClient {
 
     private static Retrofit retrofit;
 
-    public static Retrofit getRetrofit(@NonNull Context context) {
+    /**
+     * Get a retrofit client with auth interceptor
+     */
+    public static Retrofit getRetrofit() {
         if (retrofit == null) {
             // Interceptor to add auth header
             final Interceptor authInterceptor = chain -> {
@@ -23,11 +24,9 @@ public class RetrofitClient {
                 final Headers.Builder headerBuilder = request.headers().newBuilder();
                 headerBuilder.add("User-Agent", "BASEline Android App/" + BuildConfig.VERSION_NAME);
                 // Get auth token
-                if (AuthState.getUser() != null) {
-                    try {
-                        headerBuilder.add("Authorization", AuthToken.getAuthToken(context));
-                    } catch (AuthException ignored) {
-                    }
+                final String authToken = AuthState.getToken();
+                if (authToken != null) {
+                    headerBuilder.add("Cookie", authToken);
                 }
                 final Headers headers = headerBuilder.build();
                 request = request.newBuilder().headers(headers).build();

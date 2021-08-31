@@ -50,7 +50,7 @@ public class LaserUploadTask extends Task {
         }
         Log.i(TAG, "Uploading laser profile " + laserProfile);
         // Make HTTP request
-        final LaserApi laserApi = RetrofitClient.getRetrofit(context).create(LaserApi.class);
+        final LaserApi laserApi = RetrofitClient.getRetrofit().create(LaserApi.class);
         final Response<LaserProfile> response = laserApi.post(laserProfile).execute();
         if (response.isSuccessful()) {
             final LaserProfile result = response.body();

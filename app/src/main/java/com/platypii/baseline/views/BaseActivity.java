@@ -3,7 +3,10 @@ package com.platypii.baseline.views;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.AuthState;
+import com.platypii.baseline.cloud.BaselineAuth;
+import com.platypii.baseline.util.BaseCallback;
 import com.platypii.baseline.util.Exceptions;
 
 import android.Manifest;
@@ -28,7 +31,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 /**
- * BaseActivity provides basic BASEline services to activities that extend it.
+ * BaseActivity provides basic services to activities that extend it.
  * Authentication mostly.
  */
 public abstract class BaseActivity extends FragmentActivity {
@@ -108,17 +111,6 @@ public abstract class BaseActivity extends FragmentActivity {
 
         // Initialize early services
         Services.create(this);
-
-        // Initialize Google sign in
-        try {
-            final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString(R.string.server_client_id))
-                    .requestEmail()
-                    .build();
-            signInClient = GoogleSignIn.getClient(this, gso);
-        } catch (IllegalArgumentException e) {
-            Exceptions.report(new IllegalArgumentException("Server client id = " + getString(R.string.server_client_id), e));
-        }
     }
 
     @Override
@@ -127,10 +119,6 @@ public abstract class BaseActivity extends FragmentActivity {
         Services.start(this);
 
         super.onStart();
-
-        if (signInClient != null) {
-            signInClient.silentSignIn().addOnCompleteListener(this::onSignInComplete);
-        }
 
         // Bind sign in panel
         signInPanel = findViewById(R.id.sign_in_panel);
@@ -157,11 +145,30 @@ public abstract class BaseActivity extends FragmentActivity {
     };
 
     /**
+     * Initialize the google sign in client
+     */
+    private void initSignIn() {
+        if (signInClient == null) {
+            // Initialize google sign in
+            try {
+                final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.server_client_id))
+                        .requestEmail()
+                        .build();
+                signInClient = GoogleSignIn.getClient(this, gso);
+            } catch (IllegalArgumentException e) {
+                Exceptions.report(new IllegalArgumentException("Server client id = " + getString(R.string.server_client_id), e));
+            }
+        }
+    }
+
+    /**
      * Start user sign in flow
      */
     void clickSignIn() {
         Log.i(TAG, "User clicked sign in");
         firebaseAnalytics.logEvent("click_sign_in", null);
+        initSignIn();
         if (signInClient != null) {
             userClickedSignIn = true;
 
@@ -178,6 +185,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
     void clickSignOut() {
         Log.i(TAG, "User clicked sign out");
+        initSignIn();
         if (signInClient != null) {
             signInClient.signOut()
                     .addOnSuccessListener(aVoid -> {
@@ -213,24 +221,39 @@ public abstract class BaseActivity extends FragmentActivity {
     private void onSignInComplete(@NonNull Task<GoogleSignInAccount> task) {
         AuthState.signingIn = false;
         try {
+            // Google signed in successfully, fetch baseline token
             account = task.getResult(ApiException.class);
-            onSignInSuccess();
+            Log.i(TAG, "Sign in successful for user " + account.getDisplayName());
+            final String userId = account.getId();
+            final String googleToken = account.getIdToken();
+            if (userId != null && googleToken != null) {
+                getBaselineToken(userId, googleToken);
+            } else {
+                Exceptions.report(new AuthException("Failed to get google auth token"));
+            }
         } catch (ApiException e) {
             onSignInFailure(e);
         }
         userClickedSignIn = false;
     }
 
-    private void onSignInSuccess() {
-        // Signed in successfully, show authenticated UI.
-        if (account != null) {
-            Log.i(TAG, "Sign in successful for user " + account.getDisplayName());
-            final String userId = account.getId();
-            firebaseAnalytics.setUserId(userId);
-            setAuthState(new AuthState.SignedIn(userId));
-        } else {
-            Exceptions.report(new NullPointerException("Sign in success, but account is null"));
-        }
+    /**
+     * Google signed in successfully, fetch baseline token
+     */
+    private void getBaselineToken(@NonNull String userId, @NonNull String googleToken) {
+        BaselineAuth.exchangeToken(googleToken, new BaseCallback<String>() {
+            @Override
+            public void onSuccess(@NonNull String baselineToken) {
+                firebaseAnalytics.setUserId(userId);
+                setAuthState(new AuthState.SignedIn(userId, baselineToken));
+            }
+
+            @Override
+            public void onFailure(@NonNull Throwable ex) {
+                Log.w(TAG, "Baseline sign in failed", ex);
+                signedOut();
+            }
+        });
     }
 
     private void onSignInFailure(@NonNull ApiException e) {

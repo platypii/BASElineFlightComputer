@@ -29,13 +29,6 @@ public class TrackData {
         stats = new TrackStats(data);
     }
 
-//    @NonNull
-//    public static CompletableFuture<TrackData> fromTrackFileAsync(@NonNull File trackFile) {
-//        final CompletableFuture<TrackData> future = new CompletableFuture<>();
-//        new Thread(() -> future.complete(new TrackData(trackFile))).start();
-//        return future;
-//    }
-
     @NonNull
     @Override
     public String toString() {
