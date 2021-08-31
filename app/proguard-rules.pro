@@ -37,3 +37,6 @@
 -keepattributes InnerClasses
 
 -dontobfuscate
+
+# For stacktraces // https://developer.android.com/studio/build/shrink-code
+-keepattributes LineNumberTable,SourceFile
