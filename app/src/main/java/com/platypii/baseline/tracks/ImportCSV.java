@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.io.File;
@@ -45,6 +46,7 @@ public class ImportCSV {
         } else if (intentType != null) {
             // Null intent happens on routine startup
             Exceptions.report(new UnsupportedOperationException("Unknown import type: " + intentType));
+            Toast.makeText(context, "Unknown import type " + intentType, Toast.LENGTH_SHORT).show();
         }
         return false;
     }

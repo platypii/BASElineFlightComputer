@@ -178,7 +178,12 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
     @Override
     public void apply(@NonNull MPressure alt) {
         if (!Double.isNaN(alt.pressure)) {
-            logLine(alt.toRow());
+            if (Services.alti.barometerEnabled) {
+                logLine(alt.toRow());
+            } else {
+                // If barometric altimeter is disabled, log it as "alt--" sensor
+                logLine(alt.toRow().replace(",alt,", ",alt-,"));
+            }
         }
     }
 
