@@ -28,7 +28,7 @@ public class LocationStatus {
         // GPS signal status
         if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothState.BT_CONNECTED) {
             // Bluetooth enabled, but not connected
-            icon = R.drawable.ic_warning;
+            icon = R.drawable.warning;
             switch (Services.bluetooth.getState()) {
                 case BluetoothState.BT_STARTING:
                     message = "GPS bluetooth starting...";

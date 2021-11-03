@@ -1,13 +1,12 @@
 package com.platypii.baseline.views.map.layers;
 
-import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.databinding.MapInfoWindowBinding;
 import com.platypii.baseline.places.Place;
 import com.platypii.baseline.views.map.PlaceIcons;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMap;
@@ -84,12 +83,10 @@ public class PlacesLayer extends MapLayer {
         public View getInfoContents(@NonNull Marker marker) {
             final String title = marker.getTitle();
             if (title != null && !title.isEmpty()) {
-                final View v = inflater.inflate(R.layout.map_infowindow, null);
-                final TextView header = v.findViewById(R.id.info_title);
-                final TextView contents = v.findViewById(R.id.info_snippet);
-                header.setText(title);
-                contents.setText(marker.getSnippet());
-                return v;
+                final MapInfoWindowBinding binding = MapInfoWindowBinding.inflate(inflater);
+                binding.infoTitle.setText(title);
+                binding.infoSnippet.setText(marker.getSnippet());
+                return binding.getRoot();
             } else {
                 return null;
             }

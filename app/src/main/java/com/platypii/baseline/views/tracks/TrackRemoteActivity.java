@@ -4,6 +4,7 @@ import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
+import com.platypii.baseline.databinding.ActivityTrackRemoteBinding;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackMetadata;
@@ -17,7 +18,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +32,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class TrackRemoteActivity extends TrackDataActivity implements DialogInterface.OnClickListener {
     private static final String TAG = "TrackRemoteActivity";
 
+    private ActivityTrackRemoteBinding binding;
     @Nullable
     private AlertDialog deleteConfirmation;
 
@@ -40,16 +41,17 @@ public class TrackRemoteActivity extends TrackDataActivity implements DialogInte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_track_remote);
+        binding = ActivityTrackRemoteBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Load track from extras
         try {
             loadTrack();
 
             // Setup button listeners
-            findViewById(R.id.openButton).setOnClickListener(this::clickOpen);
-            findViewById(R.id.mapButton).setOnClickListener(this::clickKml);
-            findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+            binding.buttons.open.setOnClickListener(this::clickOpen);
+            binding.buttons.earth.setOnClickListener(this::clickKml);
+            binding.buttons.delete.setOnClickListener(this::clickDelete);
             setupMenu();
         } catch (IllegalStateException e) {
             Exceptions.report(e);
@@ -108,8 +110,7 @@ public class TrackRemoteActivity extends TrackDataActivity implements DialogInte
      */
     private void updateViews() {
         if (track != null) {
-            final TextView trackLocation = findViewById(R.id.trackLocation);
-            trackLocation.setText(track.location());
+            binding.trackLocation.setText(track.location());
         }
     }
 
@@ -157,7 +158,7 @@ public class TrackRemoteActivity extends TrackDataActivity implements DialogInte
             // Analytics
             firebaseAnalytics.logEvent("click_track_delete_remote_2", ABundle.of("track_id", track.track_id));
             // Disable delete button
-            findViewById(R.id.deleteButton).setEnabled(false);
+            binding.buttons.delete.setEnabled(false);
             // Delete track
             deleteRemote();
         }
@@ -180,7 +181,7 @@ public class TrackRemoteActivity extends TrackDataActivity implements DialogInte
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDeleteFailure(@NonNull SyncEvent.DeleteFailure event) {
         if (event.track_id.equals(track.track_id)) {
-            findViewById(R.id.deleteButton).setEnabled(true);
+            binding.buttons.delete.setEnabled(true);
             // Notify user
             Toast.makeText(getApplicationContext(), "Track delete failed", Toast.LENGTH_SHORT).show();
         }

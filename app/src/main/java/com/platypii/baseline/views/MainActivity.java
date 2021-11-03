@@ -2,6 +2,7 @@ package com.platypii.baseline.views;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.databinding.ActivityMainBinding;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.tracks.ImportCSV;
@@ -17,8 +18,6 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,12 +31,7 @@ public class MainActivity extends BaseActivity {
     // public static final long startTimeMillis = System.currentTimeMillis();
     // public static final long startTimeNano = System.nanoTime();
 
-    @Nullable
-    private Button recordButton;
-    @Nullable
-    private Button audibleButton;
-    @Nullable
-    private TextView clock;
+    private ActivityMainBinding binding;
 
     // Periodic UI updates
     private final Handler handler = new Handler();
@@ -50,19 +44,20 @@ public class MainActivity extends BaseActivity {
         // enableStrictMode();
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Import CSV if app was opened from file browser
         doImport(getIntent());
 
-        // Find views
-        recordButton = findViewById(R.id.recordButton);
-        audibleButton = findViewById(R.id.audibleButton);
-        clock = findViewById(R.id.clock);
-
-        if (audibleButton != null) {
-            audibleButton.setOnLongClickListener(audibleLongClickListener);
-        }
+        binding.record.setOnClickListener(this::clickRecord);
+        binding.audible.setOnClickListener(this::clickAudible);
+        binding.audible.setOnLongClickListener(audibleLongClickListener);
+        binding.alti.setOnClickListener(this::clickAltimeter);
+        binding.nav.setOnClickListener(this::clickNav);
+        binding.tracks.setOnClickListener(this::clickTracks);
+        binding.profiles.setOnClickListener(this::clickLasers);
+        binding.settings.setOnClickListener(this::clickSettings);
     }
 
     @Override
@@ -124,10 +119,8 @@ public class MainActivity extends BaseActivity {
     private void updateUIState() {
         final boolean logging = Services.tracks.logger.isLogging();
         // Update record button state
-        if (recordButton != null) {
-            recordButton.setText(logging ? R.string.action_stop : R.string.action_record);
-            recordButton.setCompoundDrawablesWithIntrinsicBounds(0, logging ? R.drawable.square : R.drawable.circle, 0, 0);
-        }
+        binding.record.setText(logging ? R.string.action_stop : R.string.action_record);
+        binding.record.setCompoundDrawablesWithIntrinsicBounds(0, logging ? R.drawable.square : R.drawable.circle, 0, 0);
         // Update clock state
         if (logging) {
             // Start clock updates
@@ -202,13 +195,11 @@ public class MainActivity extends BaseActivity {
      * Update the text view for timer
      */
     private void updateClock() {
-        if (clock != null) {
-            if (Services.tracks.logger.isLogging()) {
-                Services.tracks.logger.getLogTime(clockBuilder);
-                clock.setText(clockBuilder);
-            } else {
-                clock.setText("");
-            }
+        if (Services.tracks.logger.isLogging()) {
+            Services.tracks.logger.getLogTime(clockBuilder);
+            binding.infoPanel.clock.setText(clockBuilder);
+        } else {
+            binding.infoPanel.clock.setText("");
         }
     }
 
@@ -218,13 +209,11 @@ public class MainActivity extends BaseActivity {
      * Update audible button state
      */
     private void updateAudible() {
-        if (audibleButton != null) {
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (prefs.getBoolean("audible_enabled", false)) {
-                audibleButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio_on, 0, 0);
-            } else {
-                audibleButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio, 0, 0);
-            }
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("audible_enabled", false)) {
+            binding.audible.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio_on, 0, 0);
+        } else {
+            binding.audible.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.audio, 0, 0);
         }
     }
 

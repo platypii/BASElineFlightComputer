@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:singleLine="true"
-        android:drawableRight="@drawable/ic_search"
+        android:drawableRight="@drawable/search"
         android:hint="@string/search" />
 
     <ListView

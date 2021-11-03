@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:inputType="text"
             android:singleLine="true"
-            android:drawableEnd="@drawable/ic_search"
+            android:drawableEnd="@drawable/search"
             android:hint="@string/search" />
 
         <ListView

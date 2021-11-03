@@ -79,6 +79,7 @@
 
         <include
             layout="@layout/track_buttons_local"
+            android:id="@+id/buttons"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="end"/>

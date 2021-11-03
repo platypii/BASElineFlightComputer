@@ -8,7 +8,7 @@
     android:gravity="end">
 
     <Button
-        android:id="@+id/openButton"
+        android:id="@+id/open"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"
@@ -17,16 +17,16 @@
         style="@style/Widget.AppCompat.Button.Borderless" />
 
     <Button
-        android:id="@+id/mapButton"
+        android:id="@+id/earth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"
-        android:drawableEnd="@drawable/ic_earth"
+        android:drawableEnd="@drawable/earth"
         android:text="@string/action_earth"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
     <Button
-        android:id="@+id/deleteButton"
+        android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"

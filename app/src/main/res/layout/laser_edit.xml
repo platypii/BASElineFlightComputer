@@ -92,7 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@id/laserText"
-        android:drawableStart="@drawable/ic_warning"
+        android:drawableStart="@drawable/warning"
         android:drawablePadding="8dp"
         android:visibility="gone"/>
 

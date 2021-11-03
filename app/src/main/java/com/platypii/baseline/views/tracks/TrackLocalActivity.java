@@ -4,6 +4,7 @@ import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
+import com.platypii.baseline.databinding.ActivityTrackLocalBinding;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.tracks.TrackFile;
@@ -17,9 +18,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,9 +31,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class TrackLocalActivity extends TrackDataActivity implements DialogInterface.OnClickListener {
     private static final String TAG = "TrackLocalActivity";
 
-    private ProgressBar uploadProgress;
-    private TextView alertLabel;
-    private Button deleteButton;
+    private ActivityTrackLocalBinding binding;
     @Nullable
     private AlertDialog alertDialog;
 
@@ -44,13 +40,8 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_track_local);
-
-        final TextView filenameLabel = findViewById(R.id.filename);
-        final TextView filesizeLabel = findViewById(R.id.filesize);
-        uploadProgress = findViewById(R.id.uploadProgress);
-        alertLabel = findViewById(R.id.alert_message);
-        deleteButton = findViewById(R.id.deleteButton);
+        binding = ActivityTrackLocalBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Load track from extras
         try {
@@ -58,12 +49,12 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
             loadCharts();
 
             // Update views
-            filenameLabel.setText(trackFile.getName());
-            filesizeLabel.setText(trackFile.getSize());
+            binding.filename.setText(trackFile.getName());
+            binding.filesize.setText(trackFile.getSize());
 
             // Setup button listeners
-            findViewById(R.id.exportButton).setOnClickListener(this::clickExport);
-            findViewById(R.id.deleteButton).setOnClickListener(this::clickDelete);
+            binding.buttons.export.setOnClickListener(this::clickExport);
+            binding.buttons.delete.setOnClickListener(this::clickDelete);
             setupMenu();
         } catch (IllegalStateException e) {
             Exceptions.report(e);
@@ -105,22 +96,22 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
                 Intents.openTrackRemote(this, cloudData);
                 finish();
             } else if (Services.tracks.store.isUploading(trackFile)) {
-                uploadProgress.setProgress(Services.tracks.store.getUploadProgress(trackFile));
-                uploadProgress.setMax((int) trackFile.file.length());
-                uploadProgress.setVisibility(View.VISIBLE);
-                alertLabel.setText(R.string.uploading);
-                alertLabel.setVisibility(View.VISIBLE);
-                deleteButton.setEnabled(false);
+                binding.uploadProgress.setProgress(Services.tracks.store.getUploadProgress(trackFile));
+                binding.uploadProgress.setMax((int) trackFile.file.length());
+                binding.uploadProgress.setVisibility(View.VISIBLE);
+                binding.alertMessage.setText(R.string.uploading);
+                binding.alertMessage.setVisibility(View.VISIBLE);
+                binding.buttons.delete.setEnabled(false);
             } else {
                 // Not uploaded
-                uploadProgress.setVisibility(View.GONE);
+                binding.uploadProgress.setVisibility(View.GONE);
                 if (AuthState.getUser() != null) {
-                    alertLabel.setText(R.string.upload_waiting);
-                    alertLabel.setVisibility(View.VISIBLE);
+                    binding.alertMessage.setText(R.string.upload_waiting);
+                    binding.alertMessage.setVisibility(View.VISIBLE);
                 } else {
-                    alertLabel.setVisibility(View.GONE);
+                    binding.alertMessage.setVisibility(View.GONE);
                 }
-                deleteButton.setEnabled(true);
+                binding.buttons.delete.setEnabled(true);
             }
         }
     }

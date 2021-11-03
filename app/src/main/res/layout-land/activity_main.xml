@@ -14,12 +14,89 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/button_panel"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/audible"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="20dp"
+                android:drawableTop="@drawable/audio_on"
+                android:text="@string/action_audible"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
+            <Button
+                android:id="@+id/nav"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="20dp"
+                android:drawableTop="@drawable/nav"
+                android:text="@string/action_map"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
+            <Button
+                android:id="@+id/profiles"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="20dp"
+                android:drawableTop="@drawable/profiles"
+                android:text="@string/action_profiles"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
+            <Button
+                android:id="@+id/settings"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="20dp"
+                android:drawableTop="@drawable/gears"
+                android:text="@string/action_settings"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/record"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="20dp"
+                android:drawableTop="@drawable/circle"
+                android:text="@string/action_record"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
+            <Button
+                android:id="@+id/alti"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="20dp"
+                android:drawableTop="@drawable/alti"
+                android:text="@string/action_altimeter"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
+            <Button
+                android:id="@+id/tracks"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="20dp"
+                android:drawableTop="@drawable/list"
+                android:text="@string/action_tracks"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
     <include
+        android:id="@+id/info_panel"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

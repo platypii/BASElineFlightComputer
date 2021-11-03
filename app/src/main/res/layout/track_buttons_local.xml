@@ -8,7 +8,7 @@
     android:gravity="end">
 
     <Button
-        android:id="@+id/exportButton"
+        android:id="@+id/export"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"
@@ -17,7 +17,7 @@
         style="@style/Widget.AppCompat.Button.Borderless" />
 
     <Button
-        android:id="@+id/deleteButton"
+        android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="6dp"
