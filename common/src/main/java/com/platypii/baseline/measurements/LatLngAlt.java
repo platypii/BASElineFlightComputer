@@ -20,6 +20,21 @@ public class LatLngAlt {
     }
 
     @NonNull
+    @Override
+    public String toString() {
+        return formatLatLngAlt(lat, lng, alt);
+    }
+
+    @NonNull
+    public static String formatLatLng(double lat, double lng) {
+        if (isReal(lat) && isReal(lng)) {
+            return Numbers.format6.format(lat) + ", " + Numbers.format6.format(lng);
+        } else {
+            return "";
+        }
+    }
+
+    @NonNull
     public static String formatLatLngAlt(double lat, double lng, double alt) {
         if (isReal(lat) && isReal(lng) && isReal(alt)) {
             return Numbers.format6.format(lat) + ", " + Numbers.format6.format(lng) + ", " + Convert.distance(alt);

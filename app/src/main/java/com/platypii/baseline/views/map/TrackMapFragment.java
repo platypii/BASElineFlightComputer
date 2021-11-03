@@ -32,7 +32,7 @@ public class TrackMapFragment extends BaseMapFragment {
         }
 
         // Add map layers
-        addLayer(new PlacesLayer());
+        addLayer(new PlacesLayer(getLayoutInflater()));
         updateLayers();
     }
 

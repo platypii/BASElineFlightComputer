@@ -2,6 +2,7 @@ package com.platypii.baseline.views.map;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.databinding.ActivityMapBinding;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
@@ -12,8 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,12 +23,9 @@ import com.google.android.gms.maps.model.LatLng;
 public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener {
     private static final String TAG = "Map";
 
+    private ActivityMapBinding binding;
     @Nullable
     private MapFragment mapFragment;
-    @Nullable
-    private ImageButton homeButton;
-    @Nullable
-    private ImageView crosshair;
     @Nullable
     private GoogleMap map; // Might be null if Google Play services APK is not available
 
@@ -50,16 +46,11 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_map);
-
-        homeButton = findViewById(R.id.homeButton);
-        crosshair = findViewById(R.id.crosshair);
+        binding = ActivityMapBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Home button listener
-        final ImageButton homeButton = findViewById(R.id.homeButton);
-        if (homeButton != null) {
-            homeButton.setOnClickListener(homeButtonListener);
-        }
+        binding.homeButton.setOnClickListener(homeButtonListener);
 
         // Initialize map
         mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -113,10 +104,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     public void onCameraMoveStarted(int reason) {
         if (reason == REASON_GESTURE) {
             dragged = true;
-            if (crosshair != null && homeButton != null) {
-                crosshair.setVisibility(View.VISIBLE);
-                homeButton.setVisibility(View.VISIBLE);
-            }
+            binding.crosshair.setVisibility(View.VISIBLE);
+            binding.homeButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -160,10 +149,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
                 dragged = false;
                 lastDrag = 0;
                 // Hide crosshair
-                if (crosshair != null && homeButton != null) {
-                    crosshair.setVisibility(View.GONE);
-                    homeButton.setVisibility(View.GONE);
-                }
+                binding.crosshair.setVisibility(View.GONE);
+                binding.homeButton.setVisibility(View.GONE);
                 // Zoom based on altitude
                 final float zoom = MapOptions.getZoom();
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), MapOptions.zoomDuration(), null);

@@ -1,9 +1,13 @@
 package com.platypii.baseline.views.map.layers;
 
+import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.places.Place;
 import com.platypii.baseline.views.map.PlaceIcons;
 
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,11 +24,18 @@ public class PlacesLayer extends MapLayer {
     @Nullable
     private GoogleMap map;
     @NonNull
+    private final LayoutInflater inflater;
+    @NonNull
     private final Map<Place, Marker> placeMarkers = new HashMap<>();
+
+    public PlacesLayer(@NonNull LayoutInflater inflater) {
+        this.inflater = inflater;
+    }
 
     @Override
     public void onAdd(@NonNull GoogleMap map) {
         this.map = map;
+        map.setInfoWindowAdapter(new PlaceInfoWindow());
     }
 
     @Override
@@ -61,8 +72,33 @@ public class PlacesLayer extends MapLayer {
                     .flat(true)
                     .icon(PlaceIcons.icon(place))
                     .title(place.shortName())
+                    .snippet(place.snippet())
             );
             placeMarkers.put(place, placeMarker);
+        }
+    }
+
+    private class PlaceInfoWindow implements GoogleMap.InfoWindowAdapter {
+        @Nullable
+        @Override
+        public View getInfoContents(@NonNull Marker marker) {
+            final String title = marker.getTitle();
+            if (title != null && !title.isEmpty()) {
+                final View v = inflater.inflate(R.layout.map_infowindow, null);
+                final TextView header = v.findViewById(R.id.info_title);
+                final TextView contents = v.findViewById(R.id.info_snippet);
+                header.setText(title);
+                contents.setText(marker.getSnippet());
+                return v;
+            } else {
+                return null;
+            }
+        }
+
+        @Nullable
+        @Override
+        public View getInfoWindow(@NonNull Marker marker) {
+            return null;
         }
     }
 

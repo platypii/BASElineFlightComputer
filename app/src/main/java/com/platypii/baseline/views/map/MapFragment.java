@@ -37,7 +37,7 @@ public class MapFragment extends BaseMapFragment {
         }
 
         // Add map layers
-        addLayer(new PlacesLayer());
+        addLayer(new PlacesLayer(getLayoutInflater()));
         addLayer(new HomeLayer());
         addLayer(new LandingLayer());
         addLayer(new MyPositionLayer());
