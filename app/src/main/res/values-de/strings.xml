@@ -84,6 +84,7 @@
     <string name="title_activity_map">Navigation</string>
     <string name="map_pin">pin</string>
     <string name="map_crosshair">fadenkreuz</string>
+    <string name="layers">Ebenen</string>
 
     <!-- Bluetooth -->
     <string name="title_activity_bluetooth">Bluetooth</string>

@@ -8,6 +8,7 @@ import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.views.BaseActivity;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +36,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     // Activity state
     private boolean ready = false;
+    private static boolean menuOpen = false;
 
     // Drag listener
     private boolean dragged = false;
@@ -49,8 +51,10 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         binding = ActivityMapBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Home button listener
-        binding.homeButton.setOnClickListener(homeButtonListener);
+        // Button listeners
+        binding.mode.setOnClickListener(modeListener);
+        binding.layers.setOnClickListener(layerListener);
+        binding.home.setOnClickListener(homeListener);
 
         // Initialize map
         mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -59,6 +63,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         } else {
             Log.e(TAG, "Failed to get map fragment");
         }
+
+        updateMenu(false);
     }
 
     /**
@@ -79,17 +85,76 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     }
 
     @NonNull
-    private final View.OnClickListener homeButtonListener = new View.OnClickListener() {
-        public void onClick(View arg0) {
-            if (map != null) {
-                final LatLng center = map.getCameraPosition().target;
-                if (center.equals(LandingZone.homeLoc)) {
-                    // Dropped pin on exact same location, delete home
-                    setHome(null);
-                } else {
-                    // Set home location to map center
-                    setHome(center);
-                }
+    private final View.OnClickListener modeListener = view -> {
+        // Roll out map options
+        menuOpen = !menuOpen;
+        updateMenu(true);
+    };
+
+    private void updateMenu(boolean animate) {
+        if (menuOpen) {
+            binding.mode.setImageResource(R.drawable.map_nav);
+            binding.layers.setVisibility(View.VISIBLE);
+            binding.home.setVisibility(View.VISIBLE);
+            binding.crosshair.setVisibility(View.VISIBLE);
+            if (animate) {
+                binding.layers.animate().translationY(0);
+                binding.home.animate().translationY(0);
+            } else {
+                binding.layers.setTranslationY(0);
+                binding.home.setTranslationY(0);
+            }
+        } else {
+            binding.mode.setImageResource(R.drawable.gears);
+            binding.layers.animate()
+                    .translationY(-binding.layers.getHeight())
+                    .withEndAction(() -> binding.layers.setVisibility(View.GONE));
+            binding.home.animate()
+                    .translationY(-2 * binding.home.getHeight())
+                    .withEndAction(() -> binding.home.setVisibility(View.GONE));
+            binding.crosshair.setVisibility(View.GONE);
+        }
+    }
+
+    @NonNull
+    private final View.OnClickListener layerListener = view -> {
+        final String[] layers = {
+                "Exits",
+                "Dropzones",
+//                "Launches"
+        };
+        final boolean[] checked = {
+                MapState.showExits,
+                MapState.showDropzones,
+//                PlacesLayerOptions.showLaunches
+        };
+        new AlertDialog.Builder(MapActivity.this)
+                .setTitle(R.string.layers)
+                .setMultiChoiceItems(layers, checked, (dialog, which, isChecked) -> {
+                    if (which == 0) {
+                        MapState.showExits = isChecked;
+                    } else if (which == 1) {
+                        MapState.showDropzones = isChecked;
+                    } else if (which == 2) {
+                        MapState.showLaunches = isChecked;
+                    }
+                    mapFragment.placesLayer.update();
+                })
+                .setPositiveButton(android.R.string.ok, null)
+                .create()
+                .show();
+    };
+
+    @NonNull
+    private final View.OnClickListener homeListener = view -> {
+        if (map != null) {
+            final LatLng center = map.getCameraPosition().target;
+            if (center.equals(LandingZone.homeLoc)) {
+                // Dropped pin on exact same location, delete home
+                setHome(null);
+            } else {
+                // Set home location to map center
+                setHome(center);
             }
         }
     };
@@ -104,8 +169,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     public void onCameraMoveStarted(int reason) {
         if (reason == REASON_GESTURE) {
             dragged = true;
-            binding.crosshair.setVisibility(View.VISIBLE);
-            binding.homeButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -143,24 +206,23 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
             updateLayers(false);
 
             // Center map on user's location
-            if (dragged && lastDrag > 0 && System.currentTimeMillis() - lastDrag > MapOptions.snapbackTime()) {
-                Log.i(TAG, "Snapping back to current location");
-                // Snap back to point
-                dragged = false;
-                lastDrag = 0;
-                // Hide crosshair
-                binding.crosshair.setVisibility(View.GONE);
-                binding.homeButton.setVisibility(View.GONE);
-                // Zoom based on altitude
-                final float zoom = MapOptions.getZoom();
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), MapOptions.zoomDuration(), null);
-            } else if (!dragged) {
-                // Alternate behavior: jump to point
-                // map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            if (!menuOpen) {
+                if (dragged && lastDrag > 0 && System.currentTimeMillis() - lastDrag > MapOptions.snapbackTime()) {
+                    Log.i(TAG, "Snapping back to current location");
+                    // Snap back to point
+                    dragged = false;
+                    lastDrag = 0;
+                    // Zoom based on altitude
+                    final float zoom = MapOptions.getZoom();
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), MapOptions.zoomDuration(), null);
+                } else if (!dragged) {
+                    // Alternate behavior: jump to point
+                    // map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
-                // Zoom based on altitude
-                final float zoom = MapOptions.getZoom();
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), MapOptions.zoomDuration(), null);
+                    // Zoom based on altitude
+                    final float zoom = MapOptions.getZoom();
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), MapOptions.zoomDuration(), null);
+                }
             }
         }
     }

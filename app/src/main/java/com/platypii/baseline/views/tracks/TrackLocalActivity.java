@@ -122,8 +122,8 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Delete this track?")
                 .setMessage(R.string.delete_local)
-                .setPositiveButton("Delete", this)
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(R.string.action_delete, this)
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 

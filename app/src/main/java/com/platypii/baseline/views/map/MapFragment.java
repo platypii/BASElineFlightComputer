@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.LatLng;
 public class MapFragment extends BaseMapFragment {
     private static final String TAG = "Map";
 
+    public PlacesLayer placesLayer;
+
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
         super.onMapReady(map);
@@ -37,7 +39,7 @@ public class MapFragment extends BaseMapFragment {
         }
 
         // Add map layers
-        addLayer(new PlacesLayer(getLayoutInflater()));
+        addLayer(placesLayer = new PlacesLayer(getLayoutInflater()));
         addLayer(new HomeLayer());
         addLayer(new LandingLayer());
         addLayer(new MyPositionLayer());

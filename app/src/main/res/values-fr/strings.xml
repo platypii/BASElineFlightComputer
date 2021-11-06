@@ -84,6 +84,7 @@
     <string name="title_activity_map">Navigation</string>
     <string name="map_crosshair">réticule</string>
     <string name="map_pin">punaise</string>
+    <string name="layers">Calques</string>
 
     <!-- Bluetooth -->
     <string name="title_activity_bluetooth">Bluetooth</string>

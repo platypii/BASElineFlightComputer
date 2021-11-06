@@ -3,6 +3,7 @@ package com.platypii.baseline.views.map.layers;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.MapInfoWindowBinding;
 import com.platypii.baseline.places.Place;
+import com.platypii.baseline.views.map.MapState;
 import com.platypii.baseline.views.map.PlaceIcons;
 
 import android.view.LayoutInflater;
@@ -41,13 +42,14 @@ public class PlacesLayer extends MapLayer {
     public void update() {
         if (map != null) {
             final LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
-            final List<Place> places = Services.places.getPlacesByArea(bounds);
-            // Remove out of bounds places
+            final List<Place> places = filterPlaces(bounds);
+            // Loop to remove old markers
             final Iterator<Map.Entry<Place, Marker>> it = placeMarkers.entrySet().iterator();
             while (it.hasNext()) {
                 final Map.Entry<Place, Marker> entry = it.next();
-                if (!places.contains(entry.getKey())) {
-                    // Remove from HashMap and GoogleMap
+                final Place place = entry.getKey();
+                if (!places.contains(place)) {
+                    // Remove from GoogleMap and marker map
                     entry.getValue().remove();
                     it.remove();
                 }
@@ -59,6 +61,26 @@ public class PlacesLayer extends MapLayer {
                 }
             }
         }
+    }
+
+    /**
+     * Return places that should be shown based on place options.
+     */
+    private List<Place> filterPlaces(LatLngBounds bounds) {
+        final List<Place> places = Services.places.getPlacesByArea(bounds);
+        // Loop to remove filtered place types
+        final Iterator<Place> it = places.listIterator();
+        while (it.hasNext()) {
+            final Place place = it.next();
+            if ("DZ".equals(place.objectType) && !MapState.showDropzones) {
+                it.remove();
+            } else if (place.isBASE() && !MapState.showExits) {
+                it.remove();
+            } else if ("PG".equals(place.objectType) && !MapState.showLaunches) {
+                it.remove();
+            }
+        }
+        return places;
     }
 
     private void addMarker(@NonNull Place place) {
