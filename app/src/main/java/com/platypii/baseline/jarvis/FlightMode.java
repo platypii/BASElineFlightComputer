@@ -50,6 +50,10 @@ public class FlightMode {
         }
     }
 
+    public static boolean isFlight(int mode) {
+        return mode == MODE_PLANE || mode == MODE_WINGSUIT || mode == MODE_FREEFALL || mode == MODE_CANOPY;
+    }
+
     static String getModeString(int mode) {
         return modeString[mode];
     }

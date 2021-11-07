@@ -3,6 +3,7 @@ package com.platypii.baseline.views.map;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.ActivityMapBinding;
+import com.platypii.baseline.jarvis.FlightMode;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
@@ -36,7 +37,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
 
     // Activity state
     private boolean ready = false;
-    private static boolean menuOpen = false;
+    private static boolean menuOpen = true;
 
     // Drag listener
     private boolean dragged = false;
@@ -64,6 +65,11 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
             Log.e(TAG, "Failed to get map fragment");
         }
 
+        // Switch to navigation mode when in flight
+        if (FlightMode.isFlight(Services.flightComputer.flightMode)) {
+            menuOpen = false;
+        }
+
         updateMenu(false);
     }
 
@@ -79,6 +85,20 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         map.setOnCameraMoveStartedListener(this);
         map.setOnCameraMoveListener(this);
         map.setOnCameraIdleListener(this);
+
+        if (MapState.mapBounds != null) {
+            // Restore map bounds
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(MapState.mapBounds, 0));
+            Log.i(TAG, "Centering map on " + MapState.mapBounds);
+        } else if (Services.location.lastLoc != null) {
+            // Center on last loc
+            final LatLng center = Services.location.lastLoc.latLng();
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(center, MapOptions.getZoom()));
+            Log.i(TAG, "Centering map on " + center);
+        } else {
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, MapOptions.defaultZoom));
+            Log.w(TAG, "Centering map on default " + MapOptions.defaultLatLng);
+        }
 
         ready = true;
         Log.w(TAG, "Map ready");
@@ -234,10 +254,6 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         super.onResume();
         // Start location updates
         Services.location.addListener(this);
-        // Recenter on last location
-        if (Services.location.lastLoc != null) {
-            updateLocation();
-        }
     }
 
     @Override
@@ -245,6 +261,10 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         super.onPause();
         // Stop location updates
         Services.location.removeListener(this);
+        // Save map bounds
+        if (map != null) {
+            MapState.mapBounds = map.getProjection().getVisibleRegion().latLngBounds;
+        }
     }
 
 }

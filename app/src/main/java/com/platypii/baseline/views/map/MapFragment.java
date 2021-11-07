@@ -25,19 +25,6 @@ public class MapFragment extends BaseMapFragment {
     public void onMapReady(@NonNull GoogleMap map) {
         super.onMapReady(map);
 
-        // Center priority: current location, home location, default location
-        if (Services.location.lastLoc != null) {
-            final LatLng center = Services.location.lastLoc.latLng();
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(center, MapOptions.getZoom()));
-            Log.i(TAG, "Centering map on " + center);
-        } else if (LandingZone.homeLoc != null) {
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(LandingZone.homeLoc, MapOptions.defaultZoom));
-            Log.w(TAG, "Centering map on home " + LandingZone.homeLoc);
-        } else {
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, MapOptions.defaultZoom));
-            Log.w(TAG, "Centering map on default " + MapOptions.defaultLatLng);
-        }
-
         // Add map layers
         addLayer(placesLayer = new PlacesLayer(getLayoutInflater()));
         addLayer(new HomeLayer());

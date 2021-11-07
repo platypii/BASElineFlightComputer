@@ -273,8 +273,7 @@ public abstract class BaseActivity extends FragmentActivity {
         } else {
             final int statusCode = e.getStatusCode();
             final String error = GoogleSignInStatusCodes.getStatusCodeString(statusCode);
-            Log.e(TAG, "Sign in failed: " + error, e);
-            Exceptions.report(new IllegalArgumentException("Unexpected status code " + statusCode + " " + error));
+            Exceptions.report(new IllegalArgumentException("Sign in failed: unexpected status code " + statusCode + " " + error));
             signedOut();
         }
     }
