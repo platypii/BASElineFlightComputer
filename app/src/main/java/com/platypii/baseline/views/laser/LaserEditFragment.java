@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.laser;
 
+import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
@@ -10,17 +11,21 @@ import com.platypii.baseline.lasers.LaserProfile;
 import com.platypii.baseline.lasers.NewLaserForm;
 import com.platypii.baseline.lasers.rangefinder.RangefinderService;
 import com.platypii.baseline.location.Geocoder;
+import com.platypii.baseline.location.LocationPermissions;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.LatLngAlt;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.StringUtil;
+import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Spannable;
@@ -36,6 +41,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -66,6 +72,9 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
 
     @Nullable
     private MLocation defaultLocation = null;
+
+    @Nullable
+    private String errorMessage = null;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -119,10 +128,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         Services.location.addListener(this);
         EventBus.getDefault().register(this);
         if (rangefinderEnabled) {
-            final Activity activity = getActivity();
-            if (activity != null) {
-                rangefinder.start(activity);
-            }
+            laserConnect();
         }
         updateRangefinder();
     }
@@ -164,10 +170,10 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         laserProfile.points = LaserMeasurement.parseSafe(binding.laserText.getText().toString(), isMetric());
         final int quadrant = laserProfile.quadrant();
         if (quadrant == 0) {
-            binding.laserWarning.setText("quadrant");
+            binding.laserWarning.setText(R.string.quadrant);
             binding.laserWarning.setVisibility(View.VISIBLE);
         } else if (quadrant == 1) {
-            binding.laserWarning.setText("bottom");
+            binding.laserWarning.setText(R.string.bottom);
             binding.laserWarning.setVisibility(View.VISIBLE);
         } else {
             binding.laserWarning.setVisibility(View.GONE);
@@ -206,10 +212,6 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             }
         }
         // Validate points
-        if (pointString.isEmpty()) {
-            binding.laserText.requestFocus();
-            return "Measurements cannot be empty";
-        }
         try {
             final int count = LaserMeasurement.parse(pointString, metric, true).size();
             if (count == 0) {
@@ -266,10 +268,46 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         Analytics.logEvent(getContext(), "click_laser_edit_connect", null);
         rangefinderEnabled = true;
         updateRangefinder();
+        laserConnect();
+    }
+
+    private void laserConnect() {
         final Activity activity = getActivity();
         if (activity != null) {
+            // Check for location permissions
+            // Note: Activity.checkSelfPermission added in minsdk 23
+            if (!LocationPermissions.isPermissionGranted(activity)) {
+                Log.w(TAG, "Location permission not granted");
+                errorMessage = "Location permission not granted";
+                requestPermissions(LocationPermissions.permissions, BaseActivity.RC_LOCATION);
+            }
+            // Check for location services enabled. Can't scan without location
+            if (!LocationPermissions.isLocationServiceEnabled(activity)) {
+                Log.w(TAG, "Location service not enabled");
+                errorMessage = "Location service disabled";
+                // Request to enable location services
+                promptForLocation(activity);
+            }
             rangefinder.start(activity);
         }
+    }
+
+    /**
+     * Prompt user to enable location services
+     */
+    private void promptForLocation(@NonNull Context context) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Location is required for bluetooth, please enable location services")
+                .setCancelable(false)
+                .setPositiveButton("Yes", (dialog, id) -> Intents.openLocationServiceSettings(context))
+                .setNegativeButton("No", (dialog, id) -> {
+                    // Revert bluetooth state
+                    rangefinderEnabled = false;
+                    updateRangefinder();
+                    dialog.cancel();
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     /**
@@ -330,7 +368,10 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
      * Update rangefinder status views
      */
     private void updateRangefinder() {
-        if (rangefinderEnabled) {
+        if (errorMessage != null) {
+            binding.laserStatus.setText(errorMessage);
+            binding.laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.warning, 0, 0, 0);
+        } else if (rangefinderEnabled) {
             binding.laserConnect.setVisibility(View.GONE);
             if (rangefinder.getState() == BT_CONNECTED) {
                 binding.laserStatus.setText(R.string.rangefinder_connected);
@@ -362,6 +403,24 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == BaseActivity.RC_LOCATION) {
+            if (grantResults.length == 1 && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.i(TAG, "Location permission granted");
+                    errorMessage = null;
+                } else {
+                    Log.w(TAG, "Location permission denied");
+                    errorMessage = "Location permission denied";
+                    rangefinderEnabled = false;
+                    rangefinder.stop();
+                    updateRangefinder();
+                }
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
     private void loadForm() {
         final Context context = getContext();
         if (context != null) {

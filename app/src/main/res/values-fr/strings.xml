@@ -131,6 +131,8 @@
     <string name="clear">Effacer</string>
     <string name="sort">Trier</string>
     <string name="save">Enregistrer</string>
+    <string name="bottom">bas</string>
+    <string name="quadrant">quadrant</string>
     <string name="rangefinder_connect">Activer Bluetooth Télémètre</string>
     <string name="rangefinder_connected">Télémètre connecté</string>
     <string name="rangefinder_searching">Recherche de télémètre…</string>

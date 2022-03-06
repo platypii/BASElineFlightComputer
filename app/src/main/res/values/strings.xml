@@ -131,6 +131,8 @@
     <string name="clear">Clear</string>
     <string name="sort">Sort</string>
     <string name="save">Save</string>
+    <string name="bottom">bottom</string>
+    <string name="quadrant">quadrant</string>
     <string name="rangefinder_connect">Enable bluetooth rangefinder</string>
     <string name="rangefinder_connected">Rangefinder connected</string>
     <string name="rangefinder_searching">Searching for rangefinder…</string>

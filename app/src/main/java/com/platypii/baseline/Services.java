@@ -11,6 +11,7 @@ import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.jarvis.FlightComputer;
 import com.platypii.baseline.lasers.Lasers;
 import com.platypii.baseline.location.LandingZone;
+import com.platypii.baseline.location.LocationPermissions;
 import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.places.Places;
 import com.platypii.baseline.sensors.MySensorManager;
@@ -18,19 +19,18 @@ import com.platypii.baseline.tracks.Tracks;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
-import com.platypii.baseline.views.BaseActivity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+
 import com.google.android.gms.maps.model.LatLng;
+import com.platypii.baseline.views.BaseActivity;
 
 /**
  * Start and stop essential services.
@@ -112,13 +112,11 @@ public class Services {
 
             Log.i(TAG, "Starting location service");
             // Note: Activity.checkSelfPermission added in minsdk 23
-            if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                // Enable location services
+            if (LocationPermissions.isPermissionGranted(appContext)) {
+                // Enable baseline location services
                 location.start(appContext);
             } else {
-                // Request the missing permissions
-                final String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
-                ActivityCompat.requestPermissions(activity, permissions, BaseActivity.RC_LOCATION);
+                ActivityCompat.requestPermissions(activity, LocationPermissions.permissions, BaseActivity.RC_LOCATION);
             }
 
             Log.i(TAG, "Starting sensors");

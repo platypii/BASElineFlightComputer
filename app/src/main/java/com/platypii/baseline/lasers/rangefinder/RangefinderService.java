@@ -51,13 +51,8 @@ public class RangefinderService implements BaseService {
             return;
         }
         final Activity activity = (Activity) context;
-        // TODO: Check for location permission? Can't scan without location permission
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setState(BT_STARTING);
-            startAsync(activity);
-        } else {
-            Log.e(TAG, "Android 5.0+ required for bluetooth LE");
-        }
+        setState(BT_STARTING);
+        startAsync(activity);
     }
 
     /**
@@ -91,7 +86,7 @@ public class RangefinderService implements BaseService {
     public void bluetoothStarted(@NonNull Activity activity) {
         Log.i(TAG, "Bluetooth started late");
         if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bluetoothRunnable == null) {
+            if (bluetoothRunnable == null) {
                 bluetoothRunnable = new RangefinderRunnable(this, activity, bluetoothAdapter);
                 bluetoothThread = new Thread(bluetoothRunnable);
                 bluetoothThread.start();
@@ -118,7 +113,7 @@ public class RangefinderService implements BaseService {
             Log.e(TAG, "Rangefinder service not started");
         }
         setState(BT_STOPPING);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bluetoothRunnable != null && bluetoothThread != null) {
+        if (bluetoothRunnable != null && bluetoothThread != null) {
             // Stop thread
             bluetoothRunnable.stop();
             try {

@@ -131,6 +131,8 @@
     <string name="clear">Löschen</string>
     <string name="sort">Sortieren</string>
     <string name="save">Speichern</string><!-- Sichern -->
+    <string name="bottom">Unterseite</string>
+    <string name="quadrant">Quadrant</string>
     <string name="rangefinder_connect">Aktivieren Sie Bluetooth-Entfernungsmesser</string>
     <string name="rangefinder_connected">Entfernungsmesser verbunden</string>
     <string name="rangefinder_searching">Entfernungsmesser suchen…</string>
