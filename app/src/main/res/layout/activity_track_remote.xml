@@ -48,8 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/trackOptionsMenu"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <include
             layout="@layout/track_buttons_remote"

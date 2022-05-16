@@ -4,6 +4,7 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.views.BaseActivity;
 
+import android.os.Bundle;
 import android.view.View;
 import androidx.activity.OnBackPressedCallback;
 import java9.util.concurrent.CompletableFuture;
@@ -15,17 +16,24 @@ import java9.util.concurrent.CompletableFuture;
 public abstract class TrackDataActivity extends BaseActivity {
     public final CompletableFuture<TrackData> trackData = new CompletableFuture<>();
 
+    private View menu;
+    private View buttons;
+
     protected void setupMenu() {
+        menu = findViewById(R.id.trackMenu);
+        menu.setOnClickListener(this::clickMenuOverlay);
         findViewById(R.id.trackOptionsMenu).setOnClickListener(this::clickMenu);
-        findViewById(R.id.trackMenu).setOnClickListener(this::clickMenuOverlay);
+
+        buttons = menu.findViewById(R.id.buttons);
 
         // Handle back press for menu
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                final View menu = findViewById(R.id.trackMenu);
                 if (menu.getVisibility() == View.VISIBLE) {
-                    menu.setVisibility(View.GONE);
+                    buttons.animate()
+                            .translationY(-menu.getHeight())
+                            .withEndAction(() -> menu.setVisibility(View.INVISIBLE));
                 } else {
                     finish();
                 }
@@ -34,16 +42,19 @@ public abstract class TrackDataActivity extends BaseActivity {
     }
 
     private void clickMenu(View view) {
-        final View menu = findViewById(R.id.trackMenu);
         if (menu.getVisibility() == View.VISIBLE) {
-            menu.setVisibility(View.GONE);
+            buttons.animate()
+                    .translationY(-buttons.getHeight())
+                    .withEndAction(() -> menu.setVisibility(View.INVISIBLE));
         } else {
+            buttons.setTranslationY(-buttons.getHeight());
             menu.setVisibility(View.VISIBLE);
+            buttons.animate().translationY(0);
         }
     }
 
     private void clickMenuOverlay(View view) {
-        findViewById(R.id.trackMenu).setVisibility(View.GONE);
+        menu.setVisibility(View.GONE);
     }
 
 }

@@ -60,8 +60,7 @@
         android:layout_below="@id/trackOptionsMenu"
         android:layout_toStartOf="@id/strut"
         android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <include
             layout="@layout/track_buttons_remote"
