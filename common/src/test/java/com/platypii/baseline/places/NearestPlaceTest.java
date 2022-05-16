@@ -37,7 +37,7 @@ public class NearestPlaceTest {
         placeList.add(moab);
         return new Places() {
             @Override
-            List<Place> getPlaces() {
+            public List<Place> getPlaces() {
                 return placeList;
             }
         };

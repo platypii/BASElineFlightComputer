@@ -11,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -21,11 +23,14 @@ import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.MapMenuBinding;
 import com.platypii.baseline.jarvis.FlightMode;
 import com.platypii.baseline.location.LandingZone;
+import com.platypii.baseline.location.PlaceAdapter;
+import com.platypii.baseline.places.Place;
 
-public class MapMenuFragment extends Fragment {
+public class MapMenuFragment extends Fragment implements AdapterView.OnItemClickListener {
     private static final String TAG = "MapMenu";
 
     private MapMenuBinding binding;
+    private PlaceAdapter listAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -36,6 +41,11 @@ public class MapMenuFragment extends Fragment {
         binding.layers.setOnClickListener(layerListener);
         binding.home.setOnClickListener(homeListener);
         binding.searchBox.addTextChangedListener(searchListener);
+
+        // Initialize the ListAdapter
+        listAdapter = new PlaceAdapter(getContext());
+        binding.searchList.setAdapter(listAdapter);
+        binding.searchList.setOnItemClickListener(this);
 
         // Switch to navigation mode when in flight
         if (FlightMode.isFlight(Services.flightComputer.flightMode)) {
@@ -85,14 +95,14 @@ public class MapMenuFragment extends Fragment {
     private final View.OnClickListener modeListener = view -> {
         if (MapState.menuOpen) {
             // Close the menu
-            final Activity activity = getActivity();
-            if (activity instanceof MapActivity) {
+            final MapActivity mapActivity = getMapActivity();
+            if (mapActivity != null) {
                 // Hide soft keyboard
-                final InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                final InputMethodManager imm = (InputMethodManager) mapActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
                 // Recenter on last location
-                ((MapActivity) activity).resetLastDrag();
+                mapActivity.resetLastDrag();
             }
         }
 
@@ -123,7 +133,7 @@ public class MapMenuFragment extends Fragment {
                     } else if (which == 2) {
                         MapState.showLaunches = isChecked;
                     }
-                    final MapActivity mapActivity = (MapActivity) getActivity();
+                    final MapActivity mapActivity = getMapActivity();
                     if (mapActivity != null) {
                         mapActivity.updatePlacesLayer();
                     }
@@ -135,7 +145,7 @@ public class MapMenuFragment extends Fragment {
 
     @NonNull
     private final View.OnClickListener homeListener = view -> {
-        final MapActivity mapActivity = (MapActivity) getActivity();
+        final MapActivity mapActivity = getMapActivity();
         if (mapActivity != null) {
             final LatLng center = mapActivity.getCenter();
             if (center != null) {
@@ -169,8 +179,30 @@ public class MapMenuFragment extends Fragment {
                 Log.i(TAG, "Searching for: " + searchString);
                 // TODO: Search places
                 binding.searchResults.setVisibility(View.VISIBLE);
+                listAdapter.setFilter(searchString);
             }
         }
     };
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        final Place place = listAdapter.getItem(position);
+        Log.i(TAG, "Map search click " + place);
+        final MapActivity mapActivity = getMapActivity();
+        if (mapActivity != null) {
+            // Zoom to location
+            mapActivity.setCenter(place.latLng(), 14);
+
+            // Hide soft keyboard
+            final InputMethodManager imm = (InputMethodManager) mapActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    @Nullable
+    private MapActivity getMapActivity() {
+        final Activity activity = getActivity();
+        return activity instanceof MapActivity ? (MapActivity) activity : null;
+    }
 
 }

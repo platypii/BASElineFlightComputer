@@ -39,7 +39,11 @@ public class Place {
     }
 
     public boolean isBASE() {
-        return !objectType.isEmpty() && "BASE".contains(objectType);
+        return !objectType.isEmpty() && "BASEO".contains(objectType);
+    }
+
+    public boolean isSkydive() {
+        return !objectType.isEmpty() && objectType.startsWith("DZ");
     }
 
     @Nullable

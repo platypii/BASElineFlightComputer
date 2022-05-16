@@ -46,7 +46,7 @@ public class Places implements BaseService {
      * Load from place file, if necessary
      */
     @Nullable
-    List<Place> getPlaces() {
+    public List<Place> getPlaces() {
         if (places == null && placeFile != null && placeFile.exists()) {
             try {
                 places = placeFile.parse();
