@@ -2,10 +2,16 @@ package com.platypii.baseline.views.map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -17,6 +23,7 @@ import com.platypii.baseline.jarvis.FlightMode;
 import com.platypii.baseline.location.LandingZone;
 
 public class MapMenuFragment extends Fragment {
+    private static final String TAG = "MapMenu";
 
     private MapMenuBinding binding;
 
@@ -28,6 +35,7 @@ public class MapMenuFragment extends Fragment {
         binding.mode.setOnClickListener(modeListener);
         binding.layers.setOnClickListener(layerListener);
         binding.home.setOnClickListener(homeListener);
+        binding.searchBox.addTextChangedListener(searchListener);
 
         // Switch to navigation mode when in flight
         if (FlightMode.isFlight(Services.flightComputer.flightMode)) {
@@ -42,18 +50,27 @@ public class MapMenuFragment extends Fragment {
     private void updateMenu(boolean animate) {
         if (MapState.menuOpen) {
             binding.mode.setImageResource(R.drawable.map_nav);
+            binding.searchBox.setVisibility(View.VISIBLE);
             binding.layers.setVisibility(View.VISIBLE);
             binding.home.setVisibility(View.VISIBLE);
             binding.crosshair.setVisibility(View.VISIBLE);
             if (animate) {
+                binding.searchBox.animate().scaleX(1);
+                binding.searchBox.animate().translationX(0);
                 binding.layers.animate().translationY(0);
                 binding.home.animate().translationY(0);
             } else {
+                binding.searchBox.setScaleX(1);
+                binding.searchBox.setTranslationX(0);
                 binding.layers.setTranslationY(0);
                 binding.home.setTranslationY(0);
             }
         } else {
             binding.mode.setImageResource(R.drawable.gears);
+            binding.searchBox.animate()
+                    .scaleX(0)
+                    .translationX(-0.5f * binding.searchBox.getWidth())
+                    .withEndAction(() -> binding.searchBox.setVisibility(View.GONE));
             binding.layers.animate()
                     .translationY(-binding.layers.getHeight())
                     .withEndAction(() -> binding.layers.setVisibility(View.GONE));
@@ -70,6 +87,10 @@ public class MapMenuFragment extends Fragment {
             // Close the menu
             final Activity activity = getActivity();
             if (activity instanceof MapActivity) {
+                // Hide soft keyboard
+                final InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
                 // Recenter on last location
                 ((MapActivity) activity).resetLastDrag();
             }
@@ -125,6 +146,29 @@ public class MapMenuFragment extends Fragment {
                     // Set home location to map center
                     mapActivity.setHome(center);
                 }
+            }
+        }
+    };
+
+    @NonNull
+    private final TextWatcher searchListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            final String searchString = binding.searchBox.getText().toString();
+            if (searchString.isEmpty()) {
+                binding.searchResults.setVisibility(View.GONE);
+            } else {
+                Log.i(TAG, "Searching for: " + searchString);
+                // TODO: Search places
+                binding.searchResults.setVisibility(View.VISIBLE);
             }
         }
     };
