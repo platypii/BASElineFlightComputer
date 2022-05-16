@@ -1,8 +1,8 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.platypii.baseline.views.map.MapMenuFragment">
 
     <ImageButton
@@ -41,39 +41,45 @@
         android:src="@drawable/ic_pin"
         android:visibility="gone" />
 
-    <EditText
-        android:id="@+id/search_box"
+    <FrameLayout
+        android:id="@+id/search_box_container"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="left|top"
-        android:layout_marginLeft="64dp"
-        android:layout_marginRight="2dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:padding="4dp"
-        android:background="@drawable/panel"
-        android:drawablePadding="4dp"
-        android:drawableRight="@drawable/search_button"
-        android:lines="1"
-        android:hint="@string/search"
-        android:visibility="gone" />
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="2dp">
+
+        <EditText
+            android:id="@+id/search_box"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="left|top"
+            android:padding="4dp"
+            android:background="@drawable/panel"
+            android:drawablePadding="4dp"
+            android:drawableRight="@drawable/search_button"
+            android:lines="1"
+            android:hint="@string/search"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/search_results"
+        android:id="@+id/search_results_container"
         android:layout_width="match_parent"
         android:layout_height="184dp"
         android:layout_gravity="left|top"
-        android:layout_marginLeft="64dp"
-        android:layout_marginRight="2dp"
         android:layout_marginTop="64dp"
-        android:visibility="gone">
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="2dp">
 
         <ListView
-            android:id="@+id/search_list"
+            android:id="@+id/search_results"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="#444444"
+            android:divider="#444"
             android:dividerHeight="1dp"
-            android:background="@drawable/panel" />
+            android:background="@drawable/panel"
+            android:visibility="gone" />
     </FrameLayout>
 
     <ImageView

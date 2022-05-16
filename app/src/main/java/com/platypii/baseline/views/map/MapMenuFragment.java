@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -44,8 +45,10 @@ public class MapMenuFragment extends Fragment implements AdapterView.OnItemClick
 
         // Initialize the ListAdapter
         listAdapter = new PlaceAdapter(getContext());
-        binding.searchList.setAdapter(listAdapter);
-        binding.searchList.setOnItemClickListener(this);
+        binding.searchResults.setAdapter(listAdapter);
+        binding.searchResults.setOnItemClickListener(this);
+        binding.getRoot().setOnTouchListener(this::onTouch);
+        binding.searchBox.setOnFocusChangeListener(this::onSearchFocusChange);
 
         // Switch to navigation mode when in flight
         if (FlightMode.isFlight(Services.flightComputer.flightMode)) {
@@ -57,30 +60,59 @@ public class MapMenuFragment extends Fragment implements AdapterView.OnItemClick
         return binding.getRoot();
     }
 
+    private void onSearchFocusChange(View view, boolean hasFocus) {
+        if (!hasFocus) {
+            final MapActivity mapActivity = getMapActivity();
+            if (mapActivity != null) {
+                // Hide soft keyboard
+                final InputMethodManager imm = (InputMethodManager) mapActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+    }
+
+    private boolean onTouch(View view, MotionEvent motionEvent) {
+        if (view != binding.searchBox) {
+            binding.searchBox.clearFocus();
+        }
+        return false;
+    }
+
     private void updateMenu(boolean animate) {
         if (MapState.menuOpen) {
             binding.mode.setImageResource(R.drawable.map_nav);
             binding.searchBox.setVisibility(View.VISIBLE);
+            final String searchString = binding.searchBox.getText().toString();
+            if (searchString.isEmpty()) {
+                binding.searchResults.setVisibility(View.GONE);
+            } else {
+                binding.searchResults.setVisibility(View.VISIBLE);
+            }
             binding.layers.setVisibility(View.VISIBLE);
             binding.home.setVisibility(View.VISIBLE);
             binding.crosshair.setVisibility(View.VISIBLE);
             if (animate) {
-                binding.searchBox.animate().scaleX(1);
                 binding.searchBox.animate().translationX(0);
+                binding.searchResults.animate().translationX(0);
+                binding.searchResults.animate().translationY(0);
                 binding.layers.animate().translationY(0);
                 binding.home.animate().translationY(0);
             } else {
-                binding.searchBox.setScaleX(1);
                 binding.searchBox.setTranslationX(0);
+                binding.searchResults.setTranslationX(0);
+                binding.searchResults.setTranslationY(0);
                 binding.layers.setTranslationY(0);
                 binding.home.setTranslationY(0);
             }
         } else {
             binding.mode.setImageResource(R.drawable.gears);
             binding.searchBox.animate()
-                    .scaleX(0)
-                    .translationX(-0.5f * binding.searchBox.getWidth())
+                    .translationX(-binding.searchBox.getWidth())
                     .withEndAction(() -> binding.searchBox.setVisibility(View.GONE));
+            binding.searchResults.animate()
+                    .translationX(-binding.searchResults.getWidth())
+                    .translationY(-binding.searchResults.getHeight())
+                    .withEndAction(() -> binding.searchResults.setVisibility(View.GONE));
             binding.layers.animate()
                     .translationY(-binding.layers.getHeight())
                     .withEndAction(() -> binding.layers.setVisibility(View.GONE));
@@ -97,13 +129,11 @@ public class MapMenuFragment extends Fragment implements AdapterView.OnItemClick
             // Close the menu
             final MapActivity mapActivity = getMapActivity();
             if (mapActivity != null) {
-                // Hide soft keyboard
-                final InputMethodManager imm = (InputMethodManager) mapActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
                 // Recenter on last location
                 mapActivity.resetLastDrag();
             }
+            // Unfocus and hide soft keyboard
+            binding.searchBox.clearFocus();
         }
 
         // Roll out map menu
@@ -192,11 +222,9 @@ public class MapMenuFragment extends Fragment implements AdapterView.OnItemClick
         if (mapActivity != null) {
             // Zoom to location
             mapActivity.setCenter(place.latLng(), 14);
-
-            // Hide soft keyboard
-            final InputMethodManager imm = (InputMethodManager) mapActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+        // Unfocus and hide soft keyboard
+        binding.searchBox.clearFocus();
     }
 
     @Nullable

@@ -37,8 +37,12 @@ public class PlaceAdapter extends BaseAdapter {
     }
 
     private void populateItems() {
-        final List<Place> places = Services.places.getPlaces();
         items.clear();
+        // Fast filter for empty search string
+        if (filter.isEmpty()) {
+            return;
+        }
+        final List<Place> places = Services.places.getPlaces();
         // Add places
         if (places != null && !places.isEmpty()) {
             // Sort by country, by name
