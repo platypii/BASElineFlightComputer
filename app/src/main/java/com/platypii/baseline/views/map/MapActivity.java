@@ -76,7 +76,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
             map.moveCamera(CameraUpdateFactory.newLatLngBounds(MapState.mapBounds, 0));
             Log.i(TAG, "Centering map on " + MapState.mapBounds);
         } else if (Services.location.lastLoc != null) {
-            // Center on last loc
+            // Center on last location
             final LatLng center = Services.location.lastLoc.latLng();
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(center, MapOptions.getZoom()));
             Log.i(TAG, "Centering map on " + center);
@@ -135,6 +135,10 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         }
     }
 
+    void resetLastDrag() {
+        lastDrag = 1; // Needs to be greater than 0
+    }
+
     private void updateLayers(boolean force) {
         // Only update layers once per second
         if (mapFragment != null && (force || System.currentTimeMillis() - lastLayerUpdate > maxLayerUpdateDuration)) {
@@ -157,15 +161,13 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
                     // Snap back to point
                     dragged = false;
                     lastDrag = 0;
-                    // Zoom based on altitude
-                    final float zoom = MapOptions.getZoom();
+                    final float zoom = MapOptions.getZoom(); // Zoom based on altitude
                     map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), MapOptions.zoomDuration(), null);
                 } else if (!dragged) {
                     // Alternate behavior: jump to point
                     // map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
-                    // Zoom based on altitude
-                    final float zoom = MapOptions.getZoom();
+                    final float zoom = MapOptions.getZoom(); // Zoom based on altitude
                     map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, zoom), MapOptions.zoomDuration(), null);
                 }
             }

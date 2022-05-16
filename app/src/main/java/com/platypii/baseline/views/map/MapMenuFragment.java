@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.map;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -65,7 +66,16 @@ public class MapMenuFragment extends Fragment {
 
     @NonNull
     private final View.OnClickListener modeListener = view -> {
-        // Roll out map options
+        if (MapState.menuOpen) {
+            // Close the menu
+            final Activity activity = getActivity();
+            if (activity instanceof MapActivity) {
+                // Recenter on last location
+                ((MapActivity) activity).resetLastDrag();
+            }
+        }
+
+        // Roll out map menu
         MapState.menuOpen = !MapState.menuOpen;
         updateMenu(true);
     };
