@@ -1,0 +1,53 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.platypii.baseline.views.map.MapMenuFragment">
+
+    <ImageButton
+        android:id="@+id/layers"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="left|top"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="64dp"
+        android:translationY="-62dp"
+        android:background="@drawable/panel"
+        android:src="@drawable/layers"
+        android:contentDescription="@string/layers"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/home"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="left|top"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="126dp"
+        android:translationY="-124dp"
+        android:background="@drawable/panel"
+        android:contentDescription="@string/map_pin"
+        android:src="@drawable/ic_pin"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/mode"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="left|top"
+        android:layout_margin="2dp"
+        android:background="@drawable/panel"
+        android:src="@drawable/gears"
+        android:contentDescription="@string/action_settings" />
+
+    <ImageView
+        android:id="@+id/crosshair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_crosshair"
+        android:contentDescription="@string/map_crosshair"
+        android:visibility="gone" />
+
+</FrameLayout>
