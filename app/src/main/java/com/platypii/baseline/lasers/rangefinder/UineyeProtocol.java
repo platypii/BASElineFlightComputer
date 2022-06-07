@@ -4,17 +4,14 @@ import com.platypii.baseline.bluetooth.BluetoothUtil;
 import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.views.laser.LaserActivity;
 
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.le.ScanRecord;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.welie.blessed.BluetoothPeripheral;
+import com.welie.blessed.WriteType;
 import java.util.Arrays;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
@@ -40,9 +37,6 @@ class UineyeProtocol implements RangefinderProtocol {
     // Rangefinder characteristic
     private static final UUID rangefinderCharacteristic = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
 
-    // Client Characteristic Configuration (what we subscribe to)
-    private static final UUID clientCharacteristicDescriptor = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
-
     // Say hello to laser
     private static final byte[] appHello = {-82, -89, 4, 0, 6, 10, -68, -73};   // ae-a7-04-00-06-0a-bc-b7
     // Tell laser to shutdown. Uineye app sends this if laser doesn't say hello back in 5s.
@@ -58,10 +52,10 @@ class UineyeProtocol implements RangefinderProtocol {
     // Protocol state
     @NonNull
     private final RfSentenceIterator sentenceIterator = new RfSentenceIterator();
-    private final BluetoothGatt bluetoothGatt;
+    private final BluetoothPeripheral peripheral;
 
-    UineyeProtocol(BluetoothGatt bluetoothGatt) {
-        this.bluetoothGatt = bluetoothGatt;
+    UineyeProtocol(BluetoothPeripheral peripheral) {
+        this.peripheral = peripheral;
     }
 
     @Override
@@ -101,36 +95,18 @@ class UineyeProtocol implements RangefinderProtocol {
     }
 
     private void requestRangefinderService() {
-        final BluetoothGattService service = bluetoothGatt.getService(rangefinderService);
-        final BluetoothGattCharacteristic ch = service.getCharacteristic(rangefinderCharacteristic);
-        if (ch != null) {
-            // Enables notification locally:
-            bluetoothGatt.setCharacteristicNotification(ch, true);
-            // Enables notification on the device
-            final BluetoothGattDescriptor descriptor = ch.getDescriptor(clientCharacteristicDescriptor);
-            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            bluetoothGatt.writeDescriptor(descriptor);
-        }
+        Log.i(TAG, "app -> rf: subscribe");
+        peripheral.setNotify(rangefinderService, rangefinderCharacteristic, true);
     }
 
     private void sendHello() {
         Log.d(TAG, "app -> rf: hello");
-        final BluetoothGattService service = bluetoothGatt.getService(rangefinderService);
-        final BluetoothGattCharacteristic ch = service.getCharacteristic(rangefinderCharacteristic);
-        if (ch != null) {
-            ch.setValue(appHello);
-            bluetoothGatt.writeCharacteristic(ch);
-        }
+        peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHello, WriteType.WITHOUT_RESPONSE);
     }
 
     private void sendHeartbeatAck() {
         Log.d(TAG, "app -> rf: heartbeat ack");
-        final BluetoothGattService service = bluetoothGatt.getService(rangefinderService);
-        final BluetoothGattCharacteristic ch = service.getCharacteristic(rangefinderCharacteristic);
-        if (ch != null) {
-            ch.setValue(appHeartbeatAck);
-            bluetoothGatt.writeCharacteristic(ch);
-        }
+        peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHeartbeatAck, WriteType.WITHOUT_RESPONSE);
     }
 
     private void processMeasurement(@NonNull byte[] value) {
@@ -155,15 +131,15 @@ class UineyeProtocol implements RangefinderProtocol {
     /**
      * Return true iff a bluetooth scan result looks like a rangefinder
      */
-    static boolean isUineye(@NonNull BluetoothDevice device, @Nullable ScanRecord record) {
-        final String deviceName = device.getName();
+    static boolean isUineye(@NonNull BluetoothPeripheral peripheral, @Nullable ScanRecord record) {
+        final String deviceName = peripheral.getName();
         if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId1), manufacturerData1)) {
             // Manufacturer match (kenny's laser)
             return true;
         } else if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId2), manufacturerData2)) {
             // Manufacturer match (hartman's laser)
             return true;
-        } else if (deviceName != null && deviceName.endsWith("BT05")) {
+        } else if (deviceName.endsWith("BT05")) {
             // Device name match
             if (record != null) {
                 // Send manufacturer data to firebase

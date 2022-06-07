@@ -2,13 +2,9 @@ package com.platypii.baseline.lasers.rangefinder;
 
 import com.platypii.baseline.lasers.LaserMeasurement;
 
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import com.welie.blessed.BluetoothPeripheral;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
 
@@ -26,9 +22,6 @@ class ATNProtocol implements RangefinderProtocol {
     // Rangefinder characteristic
     private static final UUID rangefinderCharacteristic = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
 
-    // Client Characteristic Configuration (what we subscribe to)
-    private static final UUID clientCharacteristicDescriptor = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
-
     // Rangefinder responses
     // 10-01-20-00-0b-01-bb-18 // measurement
     // 10-01-a0-ff-58-01-55-b2 // measurement fail
@@ -36,10 +29,10 @@ class ATNProtocol implements RangefinderProtocol {
     // 10-01-91-ff-58-01-bb-5c // fog mode fail yards
 
     // Protocol state
-    private final BluetoothGatt bluetoothGatt;
+    private final BluetoothPeripheral peripheral;
 
-    ATNProtocol(BluetoothGatt bluetoothGatt) {
-        this.bluetoothGatt = bluetoothGatt;
+    ATNProtocol(BluetoothPeripheral peripheral) {
+        this.peripheral = peripheral;
     }
 
     @Override
@@ -77,16 +70,7 @@ class ATNProtocol implements RangefinderProtocol {
 
     private void requestRangefinderService() {
         Log.i(TAG, "app -> rf: subscribe");
-        final BluetoothGattService service = bluetoothGatt.getService(rangefinderService);
-        final BluetoothGattCharacteristic ch = service.getCharacteristic(rangefinderCharacteristic);
-        if (ch != null) {
-            // Enables notification locally:
-            bluetoothGatt.setCharacteristicNotification(ch, true);
-            // Enables notification on the device
-            final BluetoothGattDescriptor descriptor = ch.getDescriptor(clientCharacteristicDescriptor);
-            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            bluetoothGatt.writeDescriptor(descriptor);
-        }
+        peripheral.setNotify(rangefinderService, rangefinderCharacteristic, true);
     }
 
     private void processMeasurement(@NonNull byte[] value) {
@@ -117,8 +101,8 @@ class ATNProtocol implements RangefinderProtocol {
     /**
      * Return true iff a bluetooth scan result looks like a rangefinder
      */
-    static boolean isATN(@NonNull BluetoothDevice device) {
-        return "ATN-LD99".equals(device.getName());
+    static boolean isATN(@NonNull BluetoothPeripheral peripheral) {
+        return "ATN-LD99".equals(peripheral.getName());
     }
 
 }

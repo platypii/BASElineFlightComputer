@@ -29,7 +29,7 @@ public class Permissions {
 
     public static boolean isLocationServiceEnabled(@NonNull Context context) {
         final LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return lm != null && lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     /**

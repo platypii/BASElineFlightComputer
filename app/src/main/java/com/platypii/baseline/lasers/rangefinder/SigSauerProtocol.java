@@ -3,17 +3,13 @@ package com.platypii.baseline.lasers.rangefinder;
 import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.views.laser.LaserActivity;
 
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.le.ScanRecord;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.welie.blessed.BluetoothPeripheral;
 import java.util.Arrays;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
@@ -35,11 +31,8 @@ class SigSauerProtocol implements RangefinderProtocol {
     // Rangefinder characteristic
     private static final UUID rangefinderCharacteristic = UUID.fromString("0000fff2-0000-1000-8000-00805f9b34fb");
 
-    // Client Characteristic Configuration (what we subscribe to)
-    private static final UUID clientCharacteristicDescriptor = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
-
     // Protocol state
-    private final BluetoothGatt bluetoothGatt;
+    private final BluetoothPeripheral peripheral;
 
     // Rangefinder responses
     // Commands: :AR, AI, RB, RPG1, GI, GK, SK
@@ -52,8 +45,8 @@ class SigSauerProtocol implements RangefinderProtocol {
     // :DS = rangefinder settings
     private static final String ack = ":AK";
 
-    SigSauerProtocol(BluetoothGatt bluetoothGatt) {
-        this.bluetoothGatt = bluetoothGatt;
+    SigSauerProtocol(BluetoothPeripheral peripheral) {
+        this.peripheral = peripheral;
     }
 
     @Override
@@ -86,16 +79,7 @@ class SigSauerProtocol implements RangefinderProtocol {
 
     private void requestRangefinderService() {
         Log.i(TAG, "app -> rf: subscribe");
-        final BluetoothGattService service = bluetoothGatt.getService(rangefinderService);
-        final BluetoothGattCharacteristic ch = service.getCharacteristic(rangefinderCharacteristic);
-        if (ch != null) {
-            // Enables notification locally:
-            bluetoothGatt.setCharacteristicNotification(ch, true);
-            // Enables notification on the device
-            final BluetoothGattDescriptor descriptor = ch.getDescriptor(clientCharacteristicDescriptor);
-            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            bluetoothGatt.writeDescriptor(descriptor);
-        }
+        peripheral.setNotify(rangefinderService, rangefinderCharacteristic, true);
     }
 
     private void processMeasurement(@NonNull String str) {
@@ -145,12 +129,12 @@ class SigSauerProtocol implements RangefinderProtocol {
     /**
      * Return true iff a bluetooth scan result looks like a rangefinder
      */
-    static boolean isSigSauer(@NonNull BluetoothDevice device, @Nullable ScanRecord record) {
-        final String deviceName = device.getName();
+    static boolean isSigSauer(@NonNull BluetoothPeripheral peripheral, @Nullable ScanRecord record) {
+        final String deviceName = peripheral.getName();
         if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId), manufacturerData)) {
             // Manufacturer match
             return true;
-        } else if (deviceName != null && deviceName.contains("BDX")) {
+        } else if (deviceName.contains("BDX")) {
             if (record != null) {
                 // Send manufacturer data to firebase
                 final Bundle bundle = new Bundle();

@@ -10,6 +10,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,14 +30,14 @@ public class RangefinderService implements BaseService {
 
     public static final int ENABLE_BLUETOOTH_CODE = 13;
 
+    private Handler handler = new Handler();
+
     // Bluetooth state
     private int bluetoothState = BT_STOPPED;
     @Nullable
     private BluetoothAdapter bluetoothAdapter;
     @Nullable
-    private RangefinderRunnable bluetoothRunnable;
-    @Nullable
-    private Thread bluetoothThread;
+    private BluetoothHandler bluetoothHandler;
 
     @Override
     public void start(@NonNull Context context) {
@@ -63,9 +64,8 @@ public class RangefinderService implements BaseService {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter != null) {
                 if (bluetoothAdapter.isEnabled()) {
-                    bluetoothRunnable = new RangefinderRunnable(this, activity.getApplicationContext(), bluetoothAdapter);
-                    bluetoothThread = new Thread(bluetoothRunnable);
-                    bluetoothThread.start();
+                    bluetoothHandler = new BluetoothHandler(this, activity.getApplicationContext(), handler);
+                    bluetoothHandler.start();
                 } else {
                     // Turn on bluetooth
                     Log.i(TAG, "Requesting to turn on bluetooth");
@@ -84,10 +84,9 @@ public class RangefinderService implements BaseService {
     public void bluetoothStarted(@NonNull Activity activity) {
         Log.i(TAG, "Bluetooth started late");
         if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
-            if (bluetoothRunnable == null) {
-                bluetoothRunnable = new RangefinderRunnable(this, activity, bluetoothAdapter);
-                bluetoothThread = new Thread(bluetoothRunnable);
-                bluetoothThread.start();
+            if (bluetoothHandler == null) {
+                bluetoothHandler = new BluetoothHandler(this, activity.getApplicationContext(), handler);
+                bluetoothHandler.start();
             }
         } else {
             Exceptions.report(new IllegalStateException("Bluetooth supposedly started, but adapter not enabled"));
@@ -111,20 +110,9 @@ public class RangefinderService implements BaseService {
             Log.e(TAG, "Rangefinder service not started");
         }
         setState(BT_STOPPING);
-        if (bluetoothRunnable != null && bluetoothThread != null) {
-            // Stop thread
-            bluetoothRunnable.stop();
-            try {
-                bluetoothThread.join(1000);
-
-                // Thread is dead, clean up
-                bluetoothRunnable = null;
-                bluetoothThread = null;
-                Log.i(TAG, "Rangefinder service stopped cleanly");
-                setState(BT_STOPPED);
-            } catch (InterruptedException e) {
-                Log.e(TAG, "Bluetooth thread interrupted while waiting for it to die", e);
-            }
+        if (bluetoothHandler != null) {
+            bluetoothHandler.stop();
+            Log.i(TAG, "Rangefinder service stopped cleanly");
         }
         setState(BT_STOPPED);
     }
