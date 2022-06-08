@@ -1,17 +1,12 @@
 package com.platypii.baseline.views.map;
 
-import com.platypii.baseline.Services;
-import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.views.map.layers.HomeLayer;
 import com.platypii.baseline.views.map.layers.LandingLayer;
 import com.platypii.baseline.views.map.layers.MyPositionLayer;
 import com.platypii.baseline.views.map.layers.PlacesLayer;
 
-import android.util.Log;
 import androidx.annotation.NonNull;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Main map fragment

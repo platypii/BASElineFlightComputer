@@ -36,7 +36,7 @@
 
     <string name="chart_altitude">altitude</string>
     <string name="chart_speed">speed</string>
-    <string name="chart_gilde">glide</string>
+    <string name="chart_glide">glide</string>
 
     <!-- Auth -->
     <string name="signin_prompt">Sign in with google to sync tracks with\nhttps://baseline.ws/</string>

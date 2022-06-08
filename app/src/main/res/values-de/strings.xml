@@ -36,7 +36,7 @@
 
     <string name="chart_altitude">Höhe</string>
     <string name="chart_speed">Geschwindigkeit</string>
-    <string name="chart_gilde">Gleitzahl</string>
+    <string name="chart_glide">Gleitzahl</string>
 
     <!-- Auth -->
     <string name="signin_prompt">Um Spuren mit https://baseline.ws/ zu synchronisieremelden Sie sich mit Ihrem Google-Konto ann</string>

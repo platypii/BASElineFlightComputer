@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/darkText"
-            android:text="@string/chart_gilde"/>
+            android:text="@string/chart_glide"/>
 
     </LinearLayout>
 

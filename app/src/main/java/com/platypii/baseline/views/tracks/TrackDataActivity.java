@@ -4,7 +4,6 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.tracks.TrackData;
 import com.platypii.baseline.views.BaseActivity;
 
-import android.os.Bundle;
 import android.view.View;
 import androidx.activity.OnBackPressedCallback;
 import java9.util.concurrent.CompletableFuture;

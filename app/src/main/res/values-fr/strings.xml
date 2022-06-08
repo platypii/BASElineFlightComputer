@@ -36,7 +36,7 @@
 
     <string name="chart_altitude">altitude</string>
     <string name="chart_speed">vélocité</string>
-    <string name="chart_gilde">finesse</string>
+    <string name="chart_glide">finesse</string>
 
     <!-- Auth -->
     <string name="signin_prompt">Connectez-vous avec votre compte Google pour synchroniser les pistes avec https://baseline.ws/</string>
