@@ -63,6 +63,7 @@ class LaserAdapter extends BaseAdapter {
                 final String str2 = (o2.place == null ? "" : o2.place.country) + " " + o2.name;
                 return str1.compareTo(str2);
             });
+
             // Add my lasers
             if (userId != null) {
                 sectionCount = 0;
@@ -75,12 +76,24 @@ class LaserAdapter extends BaseAdapter {
                     }
                 }
             }
+
             // Add public lasers
             sectionCount = 0;
             for (LaserProfile laser : lasers) {
-                if ((laser.user_id == null || !laser.user_id.equals(userId)) && LaserSearch.matchLaser(laser, filter)) {
+                if ((laser.user_id == null || !laser.user_id.equals(userId)) && laser.isPublic && LaserSearch.matchLaser(laser, filter)) {
                     if (sectionCount++ == 0) {
                         items.add(new LaserListItem.ListHeader("Public Profiles"));
+                    }
+                    items.add(new LaserListItem.ListLaser(laser));
+                }
+            }
+
+            // Add all remaining lasers
+            sectionCount = 0;
+            for (LaserProfile laser : lasers) {
+                if ((laser.user_id == null || !laser.user_id.equals(userId)) && !laser.isPublic && LaserSearch.matchLaser(laser, filter)) {
+                    if (sectionCount++ == 0) {
+                        items.add(new LaserListItem.ListHeader("All Profiles"));
                     }
                     items.add(new LaserListItem.ListLaser(laser));
                 }
@@ -130,11 +143,7 @@ class LaserAdapter extends BaseAdapter {
                 nameView.setText(laser.name);
                 // Update subtitle
                 final TextView subView = convertView.findViewById(R.id.list_item_subtitle);
-                if (laser.place != null) {
-                    subView.setText(laser.place.country);
-                } else {
-                    subView.setText("");
-                }
+                subView.setText(subtitle(laser));
                 break;
         }
 
@@ -171,6 +180,19 @@ class LaserAdapter extends BaseAdapter {
             return TYPE_LASER;
         } else {
             return items.get(position).getType();
+        }
+    }
+
+    private String subtitle(LaserProfile laser) {
+        final String points = laser.points.size() == 1 ? "1 point" : laser.points.size() + " points";
+        if (laser.place != null) {
+            if (laser.place.region.isEmpty()) {
+                return laser.place.country + " (" + points + ")";
+            } else {
+                return laser.place.region + ", " + laser.place.country + " (" + points + ")";
+            }
+        } else {
+            return points;
         }
     }
 
