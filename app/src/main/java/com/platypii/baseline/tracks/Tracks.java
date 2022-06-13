@@ -4,7 +4,6 @@ import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.RetrofitClient;
-import com.platypii.baseline.cloud.cache.TrackCache;
 import com.platypii.baseline.events.SyncEvent;
 import com.platypii.baseline.tracks.cloud.DeleteTask;
 import com.platypii.baseline.tracks.cloud.TrackApi;
@@ -25,9 +24,9 @@ public class Tracks implements BaseService {
     private static final String TAG = "Tracks";
 
     public final TrackLogger logger = new TrackLogger();
-    public final TrackStore store = new TrackStore();
+    public final LocalTracks local = new LocalTracks();
     public final TrackCache cache = new TrackCache();
-    final UploadManager uploads = new UploadManager();
+    final SyncManager sync = new SyncManager();
 
     @Nullable
     private Context context;
@@ -36,9 +35,9 @@ public class Tracks implements BaseService {
     public void start(@NonNull Context context) {
         this.context = context;
         logger.start(context);
-        store.start(context);
+        local.start(context);
         cache.start(context);
-        uploads.start(context);
+        sync.start(context);
         EventBus.getDefault().register(this);
         listAsync(context, false);
     }
@@ -108,9 +107,9 @@ public class Tracks implements BaseService {
     @Override
     public void stop() {
         EventBus.getDefault().unregister(this);
-        uploads.stop();
+        sync.stop();
         cache.stop();
-        store.stop();
+        local.stop();
         logger.stop();
         context = null;
     }

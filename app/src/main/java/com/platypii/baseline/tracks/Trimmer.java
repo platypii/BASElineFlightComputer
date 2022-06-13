@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Parse location data from track file
  */
-class TrackDataTrimmer {
+class Trimmer {
 
     /**
      * Trim plane ride and ground from track data

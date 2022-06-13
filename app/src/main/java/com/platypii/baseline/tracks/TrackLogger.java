@@ -60,7 +60,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
 
                 // Update state before first byte is written
                 // Otherwise user can browse to it, and uploader might upload it
-                Services.tracks.store.setRecording(trackFile);
+                Services.tracks.local.setRecording(trackFile);
 
                 // Start recording
                 startFileLogging(trackFile.file);
@@ -87,7 +87,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
             logging = false;
             if (trackFile != null) {
                 // Update state before notifying listeners (such as upload manager)
-                Services.tracks.store.setNotUploaded(trackFile);
+                Services.tracks.local.setNotUploaded(trackFile);
                 EventBus.getDefault().post(new LoggingEvent.LoggingStop(trackFile));
             } else {
                 Exceptions.report(new IllegalStateException("Result of stopFileLogging should not be null"));

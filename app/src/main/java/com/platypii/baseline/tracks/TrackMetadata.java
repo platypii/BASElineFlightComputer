@@ -24,11 +24,11 @@ public class TrackMetadata {
     @Nullable
     public final Place place;
     @Nullable
-    public String suit;
+    public final String suit;
     @Nullable
-    public String canopy;
+    public final String canopy;
 
-    TrackMetadata(String track_id, long date, String date_string, String trackUrl, String trackKml, @Nullable Place place, @Nullable String jumpType) {
+    TrackMetadata(String track_id, long date, String date_string, String trackUrl, String trackKml, @Nullable Place place, @Nullable String jumpType, @Nullable String suit, @Nullable String canopy) {
         this.track_id = track_id;
         this.date = date;
         this.date_string = date_string;
@@ -36,6 +36,8 @@ public class TrackMetadata {
         this.trackKml = trackKml;
         this.place = place;
         this.jumpType = jumpType;
+        this.suit = suit;
+        this.canopy = canopy;
     }
 
     /**

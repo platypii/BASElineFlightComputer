@@ -1,7 +1,6 @@
-package com.platypii.baseline.cloud.cache;
+package com.platypii.baseline.util;
 
 import com.platypii.baseline.BaseService;
-import com.platypii.baseline.util.Exceptions;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -38,7 +37,7 @@ public abstract class LocalCache<T> implements BaseService {
 
     private SharedPreferences prefs;
 
-    LocalCache(@NonNull String keyPrefix) {
+    public LocalCache(@NonNull String keyPrefix) {
         CACHE_LAST_REQUEST = keyPrefix + ".list.request_time";
         CACHE_LAST_UPDATE = keyPrefix + ".list.update_time";
         CACHE_LIST = keyPrefix + ".list";
@@ -53,13 +52,13 @@ public abstract class LocalCache<T> implements BaseService {
      * Return Type of List<T>
      */
     @NonNull
-    abstract Type listType();
+    public abstract Type listType();
 
     /**
      * Return the unique id for an item
      */
     @NonNull
-    abstract String getId(@NonNull T item);
+    public abstract String getId(@NonNull T item);
 
     /**
      * Return listing from local cache, does NOT request from server, always returns fast.

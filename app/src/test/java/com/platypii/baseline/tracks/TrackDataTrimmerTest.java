@@ -17,7 +17,7 @@ public class TrackDataTrimmerTest {
         addPoints(untrimmed, 0, 100);
         addPoints(untrimmed, -20, 100);
         addPoints(untrimmed, 0, 100);
-        List<MLocation> trimmed = TrackDataTrimmer.autoTrim(untrimmed);
+        List<MLocation> trimmed = Trimmer.autoTrim(untrimmed);
         assertEquals(200, trimmed.size());
     }
 

@@ -90,13 +90,13 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
     private void updateViews() {
         if (trackFile != null) {
             // Check if upload completed
-            final TrackMetadata cloudData = Services.tracks.store.getCloudData(trackFile);
+            final TrackMetadata cloudData = Services.tracks.local.getCloudData(trackFile);
             if (cloudData != null) {
                 // Track uploaded, open TrackRemoteActivity
                 Intents.openTrackRemote(this, cloudData);
                 finish();
-            } else if (Services.tracks.store.isUploading(trackFile)) {
-                binding.uploadProgress.setProgress(Services.tracks.store.getUploadProgress(trackFile));
+            } else if (Services.tracks.local.isUploading(trackFile)) {
+                binding.uploadProgress.setProgress(Services.tracks.local.getUploadProgress(trackFile));
                 binding.uploadProgress.setMax((int) trackFile.file.length());
                 binding.uploadProgress.setVisibility(View.VISIBLE);
                 binding.alertMessage.setText(R.string.uploading);
@@ -140,9 +140,9 @@ public class TrackLocalActivity extends TrackDataActivity implements DialogInter
     }
 
     private void deleteLocal() {
-        if (Services.tracks.store.isUploading(trackFile)) {
+        if (Services.tracks.local.isUploading(trackFile)) {
             Toast.makeText(getApplicationContext(), "Delete failed, upload in progress", Toast.LENGTH_LONG).show();
-        } else if (Services.tracks.store.delete(trackFile)) {
+        } else if (Services.tracks.local.delete(trackFile)) {
             // Exit activity
             finish();
         } else {

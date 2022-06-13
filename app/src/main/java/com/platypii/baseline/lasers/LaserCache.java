@@ -1,9 +1,8 @@
-package com.platypii.baseline.cloud.cache;
-
-import com.platypii.baseline.lasers.LaserProfile;
+package com.platypii.baseline.lasers;
 
 import androidx.annotation.NonNull;
 import com.google.gson.reflect.TypeToken;
+import com.platypii.baseline.util.LocalCache;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class LaserCache extends LocalCache<LaserProfile> {
      */
     @NonNull
     @Override
-    Type listType() {
+    public Type listType() {
         return new TypeToken<List<LaserProfile>>(){}.getType();
     }
 
@@ -30,7 +29,7 @@ public class LaserCache extends LocalCache<LaserProfile> {
      */
     @NonNull
     @Override
-    String getId(@NonNull LaserProfile item) {
+    public String getId(@NonNull LaserProfile item) {
         return item.laser_id;
     }
 

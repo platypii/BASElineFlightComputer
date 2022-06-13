@@ -4,7 +4,6 @@ import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.RetrofitClient;
-import com.platypii.baseline.cloud.cache.LaserCache;
 import com.platypii.baseline.cloud.tasks.TaskType;
 import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.events.SyncEvent;

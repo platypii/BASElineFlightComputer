@@ -5,12 +5,12 @@ import androidx.annotation.NonNull;
 /**
  * Manages track state: recording, not uploaded, uploading, uploaded
  */
-class TrackState {
+class LocalTrackState {
 
-    static class TrackRecording extends TrackState {
+    static class TrackRecording extends LocalTrackState {
     }
 
-    static class TrackNotUploaded extends TrackState {
+    static class TrackNotUploaded extends LocalTrackState {
         @NonNull
         final TrackFile trackFile;
 
@@ -19,7 +19,7 @@ class TrackState {
         }
     }
 
-    static class TrackUploading extends TrackState {
+    static class TrackUploading extends LocalTrackState {
         @NonNull
         final TrackFile trackFile;
         int progress = 0;
@@ -29,7 +29,7 @@ class TrackState {
         }
     }
 
-    static class TrackUploaded extends TrackState {
+    static class TrackUploaded extends LocalTrackState {
         @NonNull
         final TrackMetadata cloudData;
 

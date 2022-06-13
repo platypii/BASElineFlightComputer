@@ -67,10 +67,10 @@ public class ImportCSV {
         try (OutputStream os = new GZIPOutputStream(new FileOutputStream(destination.file))) {
             final InputStream is = contentResolver.openInputStream(uri);
             IOUtil.copy(is, os);
-            Services.tracks.store.setNotUploaded(destination);
+            Services.tracks.local.setNotUploaded(destination);
             if (AuthState.getUser() != null) {
                 Log.i(TAG, "Uploading imported track " + destination);
-                Services.tasks.add(new TrackUploadTask(destination));
+                Services.tasks.add(new UploadTrackTask(destination));
             }
 
         } catch (IOException e) {

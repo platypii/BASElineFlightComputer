@@ -1,4 +1,4 @@
-package com.platypii.baseline.cloud.cache;
+package com.platypii.baseline.util.cache;
 
 import android.content.Context;
 import androidx.test.core.app.ApplicationProvider;

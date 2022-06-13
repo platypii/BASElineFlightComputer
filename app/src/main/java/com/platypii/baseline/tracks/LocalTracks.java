@@ -2,6 +2,10 @@ package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.tracks.LocalTrackState.TrackNotUploaded;
+import com.platypii.baseline.tracks.LocalTrackState.TrackUploaded;
+import com.platypii.baseline.tracks.LocalTrackState.TrackUploading;
+import com.platypii.baseline.tracks.LocalTrackState.TrackRecording;
 import com.platypii.baseline.util.Exceptions;
 
 import android.content.Context;
@@ -18,13 +22,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Maintains the list of tracks
+ * Maintains the list of tracks and their sync state
  */
-public class TrackStore implements BaseService {
+public class LocalTracks implements BaseService {
     private static final String TAG = "TrackStore";
 
     // Local track files
-    private final Map<TrackFile, TrackState> trackState = new HashMap<>();
+    private final Map<TrackFile, LocalTrackState> trackState = new HashMap<>();
     private boolean initialized = false;
 
     @Override
@@ -38,7 +42,7 @@ public class TrackStore implements BaseService {
                 // Load from disk
                 final List<TrackFile> trackFiles = TrackFiles.getTracks(logDir);
                 for (TrackFile trackFile : trackFiles) {
-                    trackState.put(trackFile, new TrackState.TrackNotUploaded(trackFile));
+                    trackState.put(trackFile, new TrackNotUploaded(trackFile));
                 }
             });
         }
@@ -54,12 +58,12 @@ public class TrackStore implements BaseService {
             Exceptions.report(new IllegalStateException("TrackStore not initialized before getLocalTracks()"));
         }
         final List<TrackFile> tracks = new ArrayList<>();
-        for (TrackState state : trackState.values()) {
-            if (state instanceof TrackState.TrackNotUploaded) {
-                final TrackFile trackFile = ((TrackState.TrackNotUploaded) state).trackFile;
+        for (LocalTrackState state : trackState.values()) {
+            if (state instanceof TrackNotUploaded) {
+                final TrackFile trackFile = ((TrackNotUploaded) state).trackFile;
                 tracks.add(trackFile);
-            } else if (state instanceof TrackState.TrackUploading) {
-                final TrackFile trackFile = ((TrackState.TrackUploading) state).trackFile;
+            } else if (state instanceof TrackUploading) {
+                final TrackFile trackFile = ((TrackUploading) state).trackFile;
                 tracks.add(trackFile);
             }
         }
@@ -73,30 +77,30 @@ public class TrackStore implements BaseService {
     }
 
     void setRecording(@NonNull TrackFile trackFile) {
-        trackState.put(trackFile, new TrackState.TrackRecording());
+        trackState.put(trackFile, new TrackRecording());
     }
 
     void setNotUploaded(@NonNull TrackFile trackFile) {
-        trackState.put(trackFile, new TrackState.TrackNotUploaded(trackFile));
+        trackState.put(trackFile, new TrackNotUploaded(trackFile));
     }
 
     public void setUploading(@NonNull TrackFile trackFile) {
-        final TrackState state = trackState.get(trackFile);
-        if (state instanceof TrackState.TrackNotUploaded) {
-            trackState.put(trackFile, new TrackState.TrackUploading(trackFile));
+        final LocalTrackState state = trackState.get(trackFile);
+        if (state instanceof TrackNotUploaded) {
+            trackState.put(trackFile, new TrackUploading(trackFile));
         } else {
             Log.e(TAG, "Invalid track state transition: " + state + " -> uploading");
         }
     }
 
     void setUploadSuccess(@NonNull TrackFile trackFile, @NonNull TrackMetadata cloudData) {
-        trackState.put(trackFile, new TrackState.TrackUploaded(cloudData));
+        trackState.put(trackFile, new TrackUploaded(cloudData));
     }
 
     public int getUploadProgress(@NonNull TrackFile trackFile) {
-        final TrackState state = trackState.get(trackFile);
-        if (state instanceof TrackState.TrackUploading) {
-            return ((TrackState.TrackUploading) state).progress;
+        final LocalTrackState state = trackState.get(trackFile);
+        if (state instanceof TrackUploading) {
+            return ((TrackUploading) state).progress;
         } else {
             Log.e(TAG, "Invalid track state: cannot get upload progress in state " + state);
             return 0;
@@ -104,24 +108,24 @@ public class TrackStore implements BaseService {
     }
 
     void setUploadProgress(@NonNull TrackFile trackFile, int bytesCopied) {
-        final TrackState state = trackState.get(trackFile);
-        if (state instanceof TrackState.TrackUploading) {
-            ((TrackState.TrackUploading) state).progress = bytesCopied;
+        final LocalTrackState state = trackState.get(trackFile);
+        if (state instanceof TrackUploading) {
+            ((TrackUploading) state).progress = bytesCopied;
         } else {
             Log.e(TAG, "Invalid track state: upload progress in state " + state);
         }
     }
 
     public boolean isUploading(@NonNull TrackFile trackFile) {
-        final TrackState state = trackState.get(trackFile);
-        return state instanceof TrackState.TrackUploading;
+        final LocalTrackState state = trackState.get(trackFile);
+        return state instanceof TrackUploading;
     }
 
     @Nullable
     public TrackMetadata getCloudData(@NonNull TrackFile trackFile) {
-        final TrackState state = trackState.get(trackFile);
-        if (state instanceof TrackState.TrackUploaded) {
-            return ((TrackState.TrackUploaded) state).cloudData;
+        final LocalTrackState state = trackState.get(trackFile);
+        if (state instanceof TrackUploaded) {
+            return ((TrackUploaded) state).cloudData;
         } else {
             return null;
         }
@@ -147,7 +151,7 @@ public class TrackStore implements BaseService {
             // Remove from store
             trackState.remove(trackFile);
             // Reload local tracks
-            Services.tracks.uploads.uploadAll();
+            Services.tracks.sync.uploadAll();
             return true;
         } else {
             return false;

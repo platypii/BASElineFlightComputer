@@ -8,12 +8,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TrackStoreTest {
+public class LocalTracksTest {
 
     // Test track store and state machine
     @Test
     public void setUploading() throws Exception {
-        TrackStore store = new TrackStore();
+        LocalTracks store = new LocalTracks();
 
         File file = Files.createTempFile("tmp", ".csv.gz").toFile();
         TrackFile trackFile = new TrackFile(file);

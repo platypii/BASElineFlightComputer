@@ -16,7 +16,7 @@ import org.greenrobot.eventbus.Subscribe;
  * Manages track uploads.
  * This includes queueing finished tracks, and retrying in the future.
  */
-class UploadManager implements BaseService {
+class SyncManager implements BaseService {
     private static final String TAG = "UploadManager";
 
     @Override
@@ -34,8 +34,8 @@ class UploadManager implements BaseService {
         Services.tasks.removeType(TaskType.trackUpload);
         // Can't upload if you're not signed in
         if (AuthState.getUser() != null) {
-            for (TrackFile track : Services.tracks.store.getLocalTracks()) {
-                Services.tasks.add(new TrackUploadTask(track));
+            for (TrackFile track : Services.tracks.local.getLocalTracks()) {
+                Services.tasks.add(new UploadTrackTask(track));
             }
         }
     }
@@ -44,7 +44,7 @@ class UploadManager implements BaseService {
     public void onLoggingStop(@NonNull LoggingEvent.LoggingStop event) {
         if (AuthState.getUser() != null) {
             Log.i(TAG, "Auto syncing track " + event.trackFile);
-            Services.tasks.add(new TrackUploadTask(event.trackFile));
+            Services.tasks.add(new UploadTrackTask(event.trackFile));
         }
     }
 

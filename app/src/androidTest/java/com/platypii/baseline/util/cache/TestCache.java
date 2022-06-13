@@ -1,7 +1,8 @@
-package com.platypii.baseline.cloud.cache;
+package com.platypii.baseline.util.cache;
 
 import androidx.annotation.NonNull;
 import com.google.gson.reflect.TypeToken;
+import com.platypii.baseline.util.LocalCache;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -12,13 +13,13 @@ class TestCache extends LocalCache<String> {
 
     @NonNull
     @Override
-    Type listType() {
+    public Type listType() {
         return new TypeToken<List<String>>(){}.getType();
     }
 
     @NonNull
     @Override
-    String getId(@NonNull String item) {
+    public String getId(@NonNull String item) {
         return item;
     }
 }

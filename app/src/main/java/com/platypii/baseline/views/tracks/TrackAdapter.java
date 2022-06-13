@@ -49,7 +49,7 @@ public class TrackAdapter extends BaseAdapter {
     private void populateItems() {
         final List<TrackListItem> updated = new ArrayList<>();
         // Add local tracks
-        final List<TrackFile> localTracks = Services.tracks.store.getLocalTracks();
+        final List<TrackFile> localTracks = Services.tracks.local.getLocalTracks();
         if (!localTracks.isEmpty()) {
             updated.add(new ListHeader("Not synced"));
             for (TrackFile track : localTracks) {
@@ -109,9 +109,9 @@ public class TrackAdapter extends BaseAdapter {
                 itemSubtitle.setText(trackFile.getSize());
 
                 // Update based on logging and sync state
-                if (Services.tracks.store.isUploading(trackFile)) {
+                if (Services.tracks.local.isUploading(trackFile)) {
                     // Show upload progress
-                    final int progress = Services.tracks.store.getUploadProgress(trackFile);
+                    final int progress = Services.tracks.local.getUploadProgress(trackFile);
                     final int filesize = (int) trackFile.file.length();
                     itemSpinner.setProgress(progress);
                     itemSpinner.setMax(filesize);

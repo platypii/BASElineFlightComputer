@@ -26,14 +26,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import org.greenrobot.eventbus.EventBus;
 
-public class TrackUploadTask extends Task {
+public class UploadTrackTask extends Task {
     private static final String TAG = "UploadTask";
     private static final String postUrl = BaselineCloud.baselineServer + "/tracks";
 
     @NonNull
     private final TrackFile trackFile;
 
-    TrackUploadTask(@NonNull TrackFile trackFile) {
+    UploadTrackTask(@NonNull TrackFile trackFile) {
         this.trackFile = trackFile;
     }
 
@@ -58,7 +58,7 @@ public class TrackUploadTask extends Task {
             throw new AuthException("auth required");
         }
         Log.i(TAG, "Uploading track " + trackFile);
-        Services.tracks.store.setUploading(trackFile);
+        Services.tracks.local.setUploading(trackFile);
         try {
             // Get auth token
             final String authToken = AuthState.getToken();
@@ -68,7 +68,7 @@ public class TrackUploadTask extends Task {
             // Make HTTP request
             final TrackMetadata track = postTrack(trackFile, authToken);
             // Remove from track store
-            Services.tracks.store.setUploadSuccess(trackFile, track);
+            Services.tracks.local.setUploadSuccess(trackFile, track);
             // Move track to synced directory
             trackFile.archive(track.localFile(context));
             // Add to cloud cache
@@ -79,7 +79,7 @@ public class TrackUploadTask extends Task {
             EventBus.getDefault().post(new SyncEvent.UploadSuccess(trackFile, track));
         } catch (Throwable e) {
             // Update track store
-            Services.tracks.store.setNotUploaded(trackFile);
+            Services.tracks.local.setNotUploaded(trackFile);
             // Notify listeners
             EventBus.getDefault().post(new SyncEvent.UploadFailure(trackFile, e.getMessage()));
             // Re-throw exception to indicate Task failure
@@ -145,7 +145,7 @@ public class TrackUploadTask extends Task {
             bytesCopied += bytesRead;
 
             // Update upload progress state
-            Services.tracks.store.setUploadProgress(trackFile, bytesCopied);
+            Services.tracks.local.setUploadProgress(trackFile, bytesCopied);
             EventBus.getDefault().post(new SyncEvent.UploadProgress(trackFile, bytesCopied));
         }
         is.close();
