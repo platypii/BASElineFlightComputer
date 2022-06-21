@@ -5,7 +5,7 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 26
         targetSdkVersion 33
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -32,5 +32,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.firebase:firebase-crashlytics:18.3.7'
     implementation 'org.greenrobot:eventbus:3.3.1'
+    implementation 'com.github.weliem:blessed-android:2.0.6'
+    implementation 'no.nordicsemi.android:ble:2.6.1'
     testImplementation 'junit:junit:4.13.2'
 }

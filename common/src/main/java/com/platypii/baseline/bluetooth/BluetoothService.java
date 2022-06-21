@@ -14,8 +14,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.platypii.baseline.RequestCodes.RC_BLUE_ENABLE;
@@ -30,7 +30,7 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
  * Class to manage a bluetooth GPS receiver.
  * Note: instantiating this class will not automatically start bluetooth. Call startAsync to connect.
  */
-public class BluetoothService {
+public class BluetoothService extends AbstractBluetoothService {
     private static final String TAG = "Bluetooth";
 
     public final PubSub<NMEA> nmeaUpdates = new PubSub<>();
@@ -49,24 +49,12 @@ public class BluetoothService {
     public float powerLevel = Float.NaN;
     public boolean charging = false;
 
-    public void start(@NonNull Activity activity) {
-        if (BluetoothState.started(getState())) {
-            Exceptions.report(new IllegalStateException("Bluetooth started twice " + BT_STATES[getState()]));
-            return;
-        }
-        if (getState() == BT_STOPPED) {
-            // Start bluetooth thread
-            if (bluetoothRunnable != null) {
-                Log.e(TAG, "Bluetooth thread already started");
-            }
-            bluetoothAdapter = getAdapter(activity);
-            if (bluetoothAdapter != null) {
-                bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
-                bluetoothThread = new Thread(bluetoothRunnable);
-                bluetoothThread.start();
-            }
-        } else {
-            Exceptions.report(new IllegalStateException("Bluetooth already started: " + BT_STATES[getState()]));
+    @Override
+    public void startService(@NonNull Activity activity) {
+        bluetoothAdapter = getAdapter(activity);
+        if (bluetoothAdapter != null) {
+            bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
+            startService(bluetoothRunnable);
         }
     }
 
@@ -103,7 +91,7 @@ public class BluetoothService {
             try {
                 final Set<BluetoothDevice> deviceSet = bluetoothAdapter.getBondedDevices();
                 final List<BluetoothDevice> devices = new ArrayList<>(deviceSet);
-                Collections.sort(devices, new BluetoothDeviceComparator());
+                devices.sort(new BluetoothDeviceComparator());
                 return devices;
             } catch (SecurityException e) {
                 Log.w(TAG, "Tried to get devices, but bluetooth permission denied", e);
@@ -113,6 +101,11 @@ public class BluetoothService {
             Log.w(TAG, "Tried to get devices, but bluetooth is not enabled");
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    protected Stoppable getRunnable() {
+        return bluetoothRunnable;
     }
 
     public int getState() {
@@ -126,10 +119,8 @@ public class BluetoothService {
     public String getDeviceName() {
         if (!preferences.preferenceEnabled) {
             return "Phone";
-        } else if (preferences.preferenceDeviceName != null) {
-            return preferences.preferenceDeviceName;
         } else {
-            return "";
+            return Objects.requireNonNullElse(preferences.preferenceDeviceName, "");
         }
     }
 
@@ -142,11 +133,11 @@ public class BluetoothService {
      */
     @NonNull
     public String getStatusMessage(@NonNull Context context) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
 //            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
 //                return "Bluetooth permission required";
 //            }
-        }
+//        }
         if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
             // Hardware disabled
             return context.getString(R.string.bluetooth_status_disabled);

@@ -66,7 +66,7 @@ public abstract class LocationProvider {
     /**
      * Children should call updateLocation() when they have new location information
      */
-    void updateLocation(@NonNull MLocation loc) {
+    public void updateLocation(@NonNull MLocation loc) {
 //        Log.v(providerName(), "LocationProvider.updateLocation(" + loc + ")");
 
         // Check for duplicate

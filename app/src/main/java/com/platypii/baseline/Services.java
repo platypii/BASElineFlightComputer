@@ -2,6 +2,7 @@ package com.platypii.baseline;
 
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.audible.MyAudible;
+import com.platypii.baseline.bluetooth.BleService;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.BaselineCloud;
@@ -51,7 +52,8 @@ public class Services {
     public static final Tracks tracks = new Tracks();
     public static final Lasers lasers = new Lasers();
     public static final BluetoothService bluetooth = new BluetoothService();
-    public static final LocationService location = new LocationService(bluetooth);
+    public static final BleService bleService = new BleService();
+    public static final LocationService location = new LocationService(bluetooth, bleService);
     public static final MyAltimeter alti = location.alti;
     public static final MySensorManager sensors = new MySensorManager();
     public static final FlightComputer flightComputer = new FlightComputer();
@@ -93,7 +95,8 @@ public class Services {
 
             Log.i(TAG, "Starting bluetooth service");
             if (bluetooth.preferences.preferenceEnabled) {
-                bluetooth.start(activity);
+//                bluetooth.start(activity);
+                bleService.start(activity);
             }
 
             Log.i(TAG, "Starting location service");
@@ -181,6 +184,7 @@ public class Services {
                 lasers.stop();
                 tracks.stop();
                 bluetooth.stop();
+                bleService.stop();
                 initialized = false;
             } else {
                 if (tracks.logger.isLogging()) {
@@ -212,6 +216,7 @@ public class Services {
 
         // Bluetooth
         bluetooth.preferences.load(prefs);
+        bleService.preferences.load(prefs);
 
         // Home location
         final double home_latitude = Numbers.parseDouble(prefs.getString("home_latitude", null));

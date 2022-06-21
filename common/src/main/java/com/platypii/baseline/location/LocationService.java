@@ -1,6 +1,7 @@
 package com.platypii.baseline.location;
 
 import com.platypii.baseline.altimeter.MyAltimeter;
+import com.platypii.baseline.bluetooth.BleService;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.PubSub.Subscriber;
@@ -8,6 +9,7 @@ import com.platypii.baseline.util.PubSub.Subscriber;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 /**
@@ -20,6 +22,7 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
     private static final int LOCATION_NONE = 0;
     private static final int LOCATION_ANDROID = 1;
     private static final int LOCATION_BLUETOOTH = 2;
+    private static final int LOCATION_BLE = 4;
     private int locationMode = LOCATION_NONE;
 
     @NonNull
@@ -32,11 +35,14 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
     private final LocationProviderAndroid locationProviderAndroid;
     @NonNull
     public final LocationProviderBluetooth locationProviderBluetooth;
+    @NonNull
+    private final LocationProviderBLE locationProviderBLE;
 
-    public LocationService(@NonNull BluetoothService bluetooth) {
+    public LocationService(@NonNull BluetoothService bluetooth, @NonNull BleService bleService) {
         this.bluetooth = bluetooth;
         locationProviderAndroid = new LocationProviderAndroid(alti);
         locationProviderBluetooth = new LocationProviderBluetooth(alti, bluetooth);
+        locationProviderBLE = new LocationProviderBLE(bleService);
     }
 
 
@@ -56,10 +62,12 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
     @Override
     public String dataSource() {
         // TODO: Baro?
-        if (locationMode == LOCATION_ANDROID) {
+        if ((locationMode & LOCATION_ANDROID) > 0) {
             return Build.MANUFACTURER + " " + Build.MODEL;
-        } else if (locationMode == LOCATION_BLUETOOTH) {
+        } else if ((locationMode & LOCATION_BLUETOOTH) > 0) {
             return locationProviderBluetooth.dataSource();
+        } else if ((locationMode & LOCATION_BLE) > 0) {
+            return locationProviderBLE.dataSource();
         } else {
             return "None";
         }
@@ -72,12 +80,18 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
         }
         if (bluetooth.preferences.preferenceEnabled) {
             // Start bluetooth location service
-            locationMode = LOCATION_BLUETOOTH;
+            locationMode |= LOCATION_BLUETOOTH;
             locationProviderBluetooth.start(context);
             locationProviderBluetooth.locationUpdates.subscribe(this);
+
+            // TODO: Do we need to do anything special if both normal and BLE sources are available?
+            locationMode |= LOCATION_BLE;
+            locationProviderBLE.start(context);
+            locationProviderBLE.locationUpdates.subscribe(this);
+            // TODO: subscribe to other updates
         } else {
             // Start android location service
-            locationMode = LOCATION_ANDROID;
+            locationMode |= LOCATION_ANDROID;
             locationProviderAndroid.start(context);
             locationProviderAndroid.locationUpdates.subscribe(this);
         }
@@ -101,9 +115,13 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
     }
 
     public void permissionGranted(@NonNull Context context) {
-        if (locationMode == LOCATION_BLUETOOTH) {
+        if ((locationMode & LOCATION_BLUETOOTH) > 0) {
             locationProviderBluetooth.start(context);
-        } else if (locationMode == LOCATION_ANDROID) {
+        }
+        if ((locationMode & LOCATION_BLE) > 0) {
+            locationProviderBLE.start(context);
+        }
+        if ((locationMode & LOCATION_ANDROID) > 0) {
             locationProviderAndroid.start(context);
         }
     }
@@ -119,14 +137,23 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
 
     @Override
     public void stop() {
-        if (locationMode == LOCATION_ANDROID) {
+        if ((locationMode & LOCATION_ANDROID) > 0) {
             // Stop android location service
             locationProviderAndroid.locationUpdates.unsubscribe(this);
             locationProviderAndroid.stop();
-        } else if (locationMode == LOCATION_BLUETOOTH) {
+            locationMode &= ~LOCATION_ANDROID;
+        }
+        if ((locationMode & LOCATION_BLUETOOTH) > 0) {
             // Stop bluetooth location service
             locationProviderBluetooth.locationUpdates.unsubscribe(this);
             locationProviderBluetooth.stop();
+            locationMode &= ~LOCATION_BLUETOOTH;
+        }
+        if ((locationMode & LOCATION_BLE) > 0) {
+            // Stop BLE location service
+            locationProviderBLE.locationUpdates.unsubscribe(this);
+            locationProviderBLE.stop();
+            locationMode &= ~LOCATION_BLE;
         }
         locationMode = LOCATION_NONE;
         super.stop();
