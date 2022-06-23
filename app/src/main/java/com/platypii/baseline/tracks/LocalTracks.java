@@ -25,7 +25,7 @@ import java.util.Map;
  * Maintains the list of tracks and their sync state
  */
 public class LocalTracks implements BaseService {
-    private static final String TAG = "TrackStore";
+    private static final String TAG = "LocalTracks";
 
     // Local track files
     private final Map<TrackFile, LocalTrackState> trackState = new HashMap<>();

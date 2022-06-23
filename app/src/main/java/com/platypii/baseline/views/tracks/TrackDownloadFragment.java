@@ -2,7 +2,9 @@ package com.platypii.baseline.views.tracks;
 
 import com.platypii.baseline.R;
 import com.platypii.baseline.databinding.TrackDownloadBinding;
-import com.platypii.baseline.events.DownloadEvent;
+import com.platypii.baseline.events.SyncEvent.DownloadFailure;
+import com.platypii.baseline.events.SyncEvent.DownloadProgress;
+import com.platypii.baseline.events.SyncEvent.DownloadSuccess;
 import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.tracks.cloud.DownloadTask;
 import com.platypii.baseline.util.Exceptions;
@@ -57,16 +59,16 @@ public class TrackDownloadFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDownloadSuccess(@NonNull DownloadEvent.DownloadSuccess event) {
-        if (event.track_id.equals(track.track_id)) {
+    public void onDownloadSuccess(@NonNull DownloadSuccess event) {
+        if (event.track.equals(track)) {
             // Track download success
             trackFile.complete(event.trackFile);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDownloadFailure(@NonNull DownloadEvent.DownloadFailure event) {
-        if (event.track_id.equals(track.track_id)) {
+    public void onDownloadFailure(@NonNull DownloadFailure event) {
+        if (event.track.equals(track)) {
             Log.w(TAG, "Track download failed " + event);
             binding.downloadProgress.setVisibility(View.GONE);
             binding.downloadStatus.setText(R.string.download_failed);
@@ -75,8 +77,8 @@ public class TrackDownloadFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDownloadProgress(@NonNull DownloadEvent.DownloadProgress event) {
-        if (event.track_id.equals(track.track_id)) {
+    public void onDownloadProgress(@NonNull DownloadProgress event) {
+        if (event.track.equals(track)) {
             // Update progress indicator
             binding.downloadProgress.setProgress(event.progress);
             binding.downloadProgress.setMax(event.total);
