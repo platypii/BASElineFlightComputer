@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.platypii.baseline.views.map.MapMenuFragment">
 
     <ImageButton
@@ -56,11 +55,19 @@
             android:layout_gravity="left|top"
             android:padding="4dp"
             android:background="@drawable/panel"
-            android:drawablePadding="4dp"
-            android:drawableRight="@drawable/search_button"
             android:lines="1"
             android:hint="@string/search"
             android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/search_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="2dp"
+            android:padding="6dp"
+            android:src="@drawable/search_button"/>
+
     </FrameLayout>
 
     <FrameLayout

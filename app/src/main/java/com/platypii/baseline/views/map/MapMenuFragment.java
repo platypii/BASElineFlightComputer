@@ -42,6 +42,7 @@ public class MapMenuFragment extends Fragment implements AdapterView.OnItemClick
         binding.layers.setOnClickListener(layerListener);
         binding.home.setOnClickListener(homeListener);
         binding.searchBox.addTextChangedListener(searchListener);
+        binding.searchClear.setOnClickListener(searchClearListener);
 
         // Initialize the ListAdapter
         listAdapter = new PlaceAdapter(getContext());
@@ -82,6 +83,7 @@ public class MapMenuFragment extends Fragment implements AdapterView.OnItemClick
         if (MapState.menuOpen) {
             binding.mode.setImageResource(R.drawable.map_nav);
             binding.searchBox.setVisibility(View.VISIBLE);
+            binding.searchClear.setVisibility(View.VISIBLE);
             final String searchString = binding.searchBox.getText().toString();
             if (searchString.isEmpty()) {
                 binding.searchResults.setVisibility(View.GONE);
@@ -93,12 +95,14 @@ public class MapMenuFragment extends Fragment implements AdapterView.OnItemClick
             binding.crosshair.setVisibility(View.VISIBLE);
             if (animate) {
                 binding.searchBox.animate().translationX(0);
+                binding.searchClear.animate().translationX(0);
                 binding.searchResults.animate().translationX(0);
                 binding.searchResults.animate().translationY(0);
                 binding.layers.animate().translationY(0);
                 binding.home.animate().translationY(0);
             } else {
                 binding.searchBox.setTranslationX(0);
+                binding.searchClear.setTranslationX(0);
                 binding.searchResults.setTranslationX(0);
                 binding.searchResults.setTranslationY(0);
                 binding.layers.setTranslationY(0);
@@ -109,6 +113,9 @@ public class MapMenuFragment extends Fragment implements AdapterView.OnItemClick
             binding.searchBox.animate()
                     .translationX(-binding.searchBox.getWidth())
                     .withEndAction(() -> binding.searchBox.setVisibility(View.GONE));
+            binding.searchClear.animate()
+                    .translationX(-binding.searchBox.getWidth())
+                    .withEndAction(() -> binding.searchClear.setVisibility(View.GONE));
             binding.searchResults.animate()
                     .translationX(-binding.searchResults.getWidth())
                     .translationY(-binding.searchResults.getHeight())
@@ -205,13 +212,20 @@ public class MapMenuFragment extends Fragment implements AdapterView.OnItemClick
             final String searchString = binding.searchBox.getText().toString();
             if (searchString.isEmpty()) {
                 binding.searchResults.setVisibility(View.GONE);
+                binding.searchClear.setImageResource(R.drawable.search_button);
             } else {
                 Log.i(TAG, "Searching for: " + searchString);
                 // TODO: Search places
                 binding.searchResults.setVisibility(View.VISIBLE);
+                binding.searchClear.setImageResource(R.drawable.search_clear);
                 listAdapter.setFilter(searchString);
             }
         }
+    };
+
+    @NonNull
+    private final View.OnClickListener searchClearListener = view -> {
+        binding.searchBox.setText("");
     };
 
     @Override
