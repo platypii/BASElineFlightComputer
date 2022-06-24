@@ -10,9 +10,17 @@ import java.io.File;
  */
 public abstract class SyncEvent {
 
+    public static abstract class DownloadEvent extends SyncEvent {
+        public TrackMetadata track;
+    }
+    public static abstract class UploadEvent extends SyncEvent {
+        public TrackFile trackFile;
+    }
+    public static abstract class DeleteEvent extends SyncEvent {
+    }
+
     /* Downloads */
-    public static class DownloadProgress extends SyncEvent {
-        public final TrackMetadata track;
+    public static class DownloadProgress extends DownloadEvent {
         public final int progress;
         public final int total;
 
@@ -23,8 +31,7 @@ public abstract class SyncEvent {
         }
     }
 
-    public static class DownloadSuccess extends SyncEvent {
-        public final TrackMetadata track;
+    public static class DownloadSuccess extends DownloadEvent {
         public final File trackFile;
 
         public DownloadSuccess(@NonNull TrackMetadata track, @NonNull File trackFile) {
@@ -33,8 +40,7 @@ public abstract class SyncEvent {
         }
     }
 
-    public static class DownloadFailure extends SyncEvent {
-        public final TrackMetadata track;
+    public static class DownloadFailure extends DownloadEvent {
         public final Exception error;
 
         public DownloadFailure(@NonNull TrackMetadata track, Exception error) {
@@ -44,8 +50,7 @@ public abstract class SyncEvent {
     }
 
     /* Uploads */
-    public static class UploadProgress extends SyncEvent {
-        public final TrackFile trackFile;
+    public static class UploadProgress extends UploadEvent {
         public final int progress;
 
         public UploadProgress(@NonNull TrackFile trackFile, int progress) {
@@ -54,8 +59,7 @@ public abstract class SyncEvent {
         }
     }
 
-    public static class UploadSuccess extends SyncEvent {
-        public final TrackFile trackFile;
+    public static class UploadSuccess extends UploadEvent {
         public final TrackMetadata cloudData;
 
         public UploadSuccess(@NonNull TrackFile trackFile, TrackMetadata cloudData) {
@@ -64,8 +68,7 @@ public abstract class SyncEvent {
         }
     }
 
-    public static class UploadFailure extends SyncEvent {
-        public final TrackFile trackFile;
+    public static class UploadFailure extends UploadEvent {
         public final String error;
 
         public UploadFailure(@NonNull TrackFile trackFile, String error) {
@@ -74,7 +77,8 @@ public abstract class SyncEvent {
         }
     }
 
-    public static class DeleteSuccess extends SyncEvent {
+    /* Deletes */
+    public static class DeleteSuccess extends DeleteEvent {
         public final String track_id;
 
         public DeleteSuccess(@NonNull String track_id) {
@@ -82,7 +86,7 @@ public abstract class SyncEvent {
         }
     }
 
-    public static class DeleteFailure extends SyncEvent {
+    public static class DeleteFailure extends DeleteEvent {
         public final String track_id;
         public final String error;
 

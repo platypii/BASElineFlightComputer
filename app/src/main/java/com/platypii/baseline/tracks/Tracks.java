@@ -25,6 +25,7 @@ public class Tracks implements BaseService {
 
     public final TrackLogger logger = new TrackLogger();
     public final LocalTracks local = new LocalTracks();
+    public final CloudTracks cloud = new CloudTracks();
     public final TrackCache cache = new TrackCache();
     final SyncManager sync = new SyncManager();
 

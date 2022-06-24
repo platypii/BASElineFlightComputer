@@ -1,5 +1,6 @@
 package com.platypii.baseline.tracks;
 
+import android.os.Handler;
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
@@ -9,6 +10,7 @@ import com.platypii.baseline.events.LoggingEvent;
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -23,8 +25,11 @@ class SyncManager implements BaseService {
     public void start(@NonNull Context context) {
         // Listen for track logging stops
         EventBus.getDefault().register(this);
-        // Check for queued tracks to upload
-        uploadAll();
+        // Queue tracks for upload and download
+        new Handler().postDelayed(() -> {
+            uploadAll();
+            downloadAll(context);
+        }, 1000);
     }
 
     /**
@@ -36,6 +41,21 @@ class SyncManager implements BaseService {
         if (AuthState.getUser() != null) {
             for (TrackFile track : Services.tracks.local.getLocalTracks()) {
                 Services.tasks.add(new UploadTrackTask(track));
+            }
+        }
+    }
+
+    /**
+     * Enqueue non-local tracks for downloading
+     */
+    void downloadAll(@NonNull Context context) {
+        Services.tasks.removeType(TaskType.trackUpload);
+        final List<TrackMetadata> cloudTracks = Services.tracks.cache.list();
+        if (cloudTracks != null) {
+            for (TrackMetadata track : cloudTracks) {
+                if (track.starred &&  !track.abbrvFile(context).exists() && !track.localFile(context).exists()) {
+                    Services.tasks.add(new DownloadTrackTask(track));
+                }
             }
         }
     }

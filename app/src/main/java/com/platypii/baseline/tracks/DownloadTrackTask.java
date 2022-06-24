@@ -57,11 +57,11 @@ public class DownloadTrackTask extends Task {
             throw new NullPointerException("TrackUploadTask needs Context");
         }
 
-        Log.i(TAG, "Downloading track " + track);
         try {
             final File trackFile = track.localFile(context);
             if (!trackFile.exists()) {
                 Log.i(TAG, "Downloading track " + track);
+                EventBus.getDefault().post(new DownloadProgress(track, 0, 1));
                 // Make HTTP request
                 downloadTrack(trackFile);
                 Log.i(TAG, "Download successful, track " + track);

@@ -27,6 +27,7 @@ public class TrackMetadata {
     public final String suit;
     @Nullable
     public final String canopy;
+    public boolean starred = false;
 
     TrackMetadata(String track_id, long date, String date_string, String trackUrl, String trackKml, @Nullable Place place, @Nullable String jumpType, @Nullable String suit, @Nullable String canopy) {
         this.track_id = track_id;

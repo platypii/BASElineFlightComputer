@@ -104,12 +104,6 @@ public class Services {
                 bluetooth.start(activity);
             }
 
-            Log.i(TAG, "Starting tracks service");
-            tracks.start(appContext);
-
-            Log.i(TAG, "Starting lasers service");
-            lasers.start(appContext);
-
             Log.i(TAG, "Starting location service");
             // Note: Activity.checkSelfPermission added in minsdk 23
             if (LocationPermissions.isPermissionGranted(appContext)) {
@@ -142,6 +136,12 @@ public class Services {
 
             Log.i(TAG, "Starting task manager");
             tasks.start(appContext);
+
+            Log.i(TAG, "Starting tracks service");
+            tracks.start(appContext);
+
+            Log.i(TAG, "Starting lasers service");
+            lasers.start(appContext);
 
             Log.i(TAG, "Starting cloud services");
             cloud.start(appContext);
