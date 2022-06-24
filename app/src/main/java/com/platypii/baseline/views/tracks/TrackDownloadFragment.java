@@ -1,15 +1,15 @@
 package com.platypii.baseline.views.tracks;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.databinding.TrackDownloadBinding;
 import com.platypii.baseline.events.SyncEvent.DownloadFailure;
 import com.platypii.baseline.events.SyncEvent.DownloadProgress;
 import com.platypii.baseline.events.SyncEvent.DownloadSuccess;
+import com.platypii.baseline.tracks.DownloadTrackTask;
 import com.platypii.baseline.tracks.TrackMetadata;
-import com.platypii.baseline.tracks.cloud.DownloadTask;
 import com.platypii.baseline.util.Exceptions;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import java.io.File;
+import java.io.IOException;
 import java9.util.concurrent.CompletableFuture;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,11 +35,22 @@ public class TrackDownloadFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = TrackDownloadBinding.inflate(inflater, container, false);
 
-        // Load track from arguments
         try {
+            // Load track from arguments
             track = TrackLoader.loadCloudData(getArguments());
+
             // Start download
-            AsyncTask.execute(new DownloadTask(getContext(), track));
+            new Thread(() -> {
+                final DownloadTrackTask task = new DownloadTrackTask(track);
+                try {
+                    task.run(getContext());
+                } catch (AuthException e) {
+                    Log.e(TAG, "Failed to download track auth error", e);
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to download track", e);
+                    Exceptions.report(e);
+                }
+            }).start();
         } catch (IllegalStateException e) {
             Exceptions.report(e);
         }
