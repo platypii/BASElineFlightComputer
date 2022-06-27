@@ -1,12 +1,15 @@
 package com.platypii.baseline.views.charts;
 
+import com.platypii.baseline.Services;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.lasers.LaserProfile;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackData;
+import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.views.charts.layers.ChartLayer;
+import com.platypii.baseline.views.charts.layers.Colors;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 import com.platypii.baseline.views.charts.layers.TrackProfileLayer;
 
@@ -28,6 +31,21 @@ public class FlightProfileTouchable extends FlightProfile {
 
     public FlightProfileTouchable(Context context, AttributeSet attrs) {
         super(context, attrs);
+        addStarredTracks(context);
+    }
+
+    private void addStarredTracks(Context context) {
+        final List<TrackMetadata> tracks = Services.tracks.cache.list();
+        if (tracks != null) {
+            for (TrackMetadata track : tracks) {
+                if (track.starred) {
+                    final TrackData trackData = track.trackData(context);
+                    if (trackData != null) {
+                        addLayer(new TrackProfileLayer(track.track_id, track.getName(), trackData, Colors.starredTracks));
+                    }
+                }
+            }
+        }
     }
 
     private final ScaleGestureDetector scaler = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {

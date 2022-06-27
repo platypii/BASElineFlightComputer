@@ -59,6 +59,16 @@ public class TrackMetadata {
         return new File(trackDir, "tracks/" + track_id + "/track-abbrv.csv");
     }
 
+    @Nullable
+    public TrackData trackData(Context context) {
+        final File trackFile = abbrvFile(context);
+        if (trackFile.exists()) {
+            return new TrackData(trackFile);
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Returns short "Name, Country" string, similar to old location field.
      */

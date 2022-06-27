@@ -19,8 +19,11 @@ public class Colors {
     public static final int modeCanopy = 0xff11dd11;
 
     @ColorInt
+    public static final int starredTracks = 0x706b00ff;
+
+    @ColorInt
     private static final int[] colors = {
-            0xff6f00ff,
+            0xff7f00ff,
             0xffdd1111,
             0xff11cc11,
             0xff2222ee,
