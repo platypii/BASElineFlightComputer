@@ -1,5 +1,6 @@
 package com.platypii.baseline.lasers.rangefinder;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,6 +11,7 @@ import java.util.List;
 // Sometimes 2 sentences come in 1 message
 // Wait for bc-b7:
 class RfSentenceIterator implements Iterator<byte[]> {
+    private static final String TAG = "RfSentenceIterator";
 
     @NonNull
     private final List<Byte> byteBuffer = new ArrayList<>();
@@ -30,10 +32,10 @@ class RfSentenceIterator implements Iterator<byte[]> {
         byteBuffer.add(b);
         if (state == 0) {
             if (b == -82) state = 1;
-            else throw new IllegalStateException("invalid preamble 1");
+            else Log.e(TAG, "invalid preamble 1");
         } else if (state == 1) {
             if (b == -89) state = 2;
-            else throw new IllegalStateException("invalid preamble 2");
+            else Log.e(TAG, "invalid preamble 2");
         } else if (state == 2) {
             if (b == -68) state = 3;
         } else if (state == 3) {

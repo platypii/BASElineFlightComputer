@@ -1,6 +1,5 @@
 package com.platypii.baseline.lasers.rangefinder;
 
-import com.platypii.baseline.bluetooth.BluetoothUtil;
 import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.views.laser.LaserActivity;
 
@@ -32,6 +31,9 @@ class UineyeProtocol implements RangefinderProtocol {
     private static final int manufacturerId2 = 19784;
     private static final byte[] manufacturerData2 = {0, 21, -123, 20, -100, 9}; // 00-15-85-14-9c-09
 
+    private static final int manufacturerId3 = 42841;
+    private static final byte[] manufacturerData3 = {-120, -96, -54, -42, 67, 72, -111, 32};
+
     // Rangefinder service
     private static final UUID rangefinderService = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
     // Rangefinder characteristic
@@ -60,10 +62,13 @@ class UineyeProtocol implements RangefinderProtocol {
 
     @Override
     public void onServicesDiscovered() {
-        sendHello();
-        // TODO: don't sleep. correct behavior is to wait for async write completion.
-        BluetoothUtil.sleep(200);
-        requestRangefinderService();
+        try {
+            requestRangefinderService();
+            sendHello();
+            readRangefinder();
+        } catch (Throwable e) {
+            Log.e(TAG, "rangefinder handshake exception", e);
+        }
     }
 
     @Override
@@ -92,6 +97,11 @@ class UineyeProtocol implements RangefinderProtocol {
         } else {
             Log.w(TAG, "rf -> app: unknown " + byteArrayToHex(value));
         }
+    }
+
+    private void readRangefinder() {
+        Log.i(TAG, "app -> rf: read");
+        peripheral.readCharacteristic(rangefinderService, rangefinderCharacteristic);
     }
 
     private void requestRangefinderService() {
@@ -134,12 +144,12 @@ class UineyeProtocol implements RangefinderProtocol {
     static boolean isUineye(@NonNull BluetoothPeripheral peripheral, @Nullable ScanRecord record) {
         final String deviceName = peripheral.getName();
         if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId1), manufacturerData1)) {
-            // Manufacturer match (kenny's laser)
-            return true;
+            return true; // Manufacturer match (kenny's laser)
         } else if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId2), manufacturerData2)) {
-            // Manufacturer match (hartman's laser)
-            return true;
-        } else if (deviceName.endsWith("BT05")) {
+            return true; // Manufacturer match (hartman's laser)
+        } else if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId3), manufacturerData3)) {
+            return true; // Manufacturer match 2022 version
+        } else if (deviceName.endsWith("BT05") || deviceName.startsWith("Rangefinder") || deviceName.startsWith("Uineye")) {
             // Device name match
             if (record != null) {
                 // Send manufacturer data to firebase
