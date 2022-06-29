@@ -134,6 +134,7 @@ public class BluetoothService implements BaseService {
     }
 
     void setState(int state) {
+        Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         if (bluetoothState == BT_STOPPING && state == BT_CONNECTING) {
             Log.e(TAG, "Invalid bluetooth state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         }
@@ -141,9 +142,8 @@ public class BluetoothService implements BaseService {
             // Only allowed self-transition is connecting -> connecting
             Log.e(TAG, "Null state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         }
-        Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         bluetoothState = state;
-        EventBus.getDefault().post(new BluetoothEvent());
+        EventBus.getDefault().post(new BluetoothEvent(state));
     }
 
     /**

@@ -371,7 +371,11 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         if (errorMessage != null) {
             binding.laserStatus.setText(errorMessage);
             binding.laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.warning, 0, 0, 0);
-        } else if (rangefinderEnabled) {
+            binding.laserStatus.setVisibility(View.VISIBLE);
+        } else {
+            binding.laserStatus.setVisibility(View.GONE);
+        }
+        if (rangefinderEnabled) {
             binding.laserConnect.setVisibility(View.GONE);
             if (rangefinder.getState() == BT_CONNECTED) {
                 binding.laserStatus.setText(R.string.rangefinder_connected);
@@ -383,7 +387,6 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             binding.laserStatus.setVisibility(View.VISIBLE);
         } else {
             binding.laserConnect.setVisibility(View.VISIBLE);
-            binding.laserStatus.setVisibility(View.GONE);
         }
     }
 
@@ -421,6 +424,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
     private void loadForm() {
         final Context context = getContext();
         if (context != null) {

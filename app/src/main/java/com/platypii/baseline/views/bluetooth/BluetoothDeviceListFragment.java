@@ -33,15 +33,22 @@ public class BluetoothDeviceListFragment extends ListFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Set list adapter
-        bluetoothAdapter = new BluetoothAdapter(getActivity(), devices);
-        setListAdapter(bluetoothAdapter);
+        final Activity activity = getActivity();
+        if (activity != null) {
+            bluetoothAdapter = new BluetoothAdapter(activity, devices);
+            setListAdapter(bluetoothAdapter);
+        }
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     private void updateDeviceList() {
         devices.clear();
-        final List<BluetoothDevice> updatedDevices = Services.bluetooth.getDevices();
-        devices.addAll(updatedDevices);
+        try {
+            final List<BluetoothDevice> updatedDevices = Services.bluetooth.getDevices();
+            devices.addAll(updatedDevices);
+        } catch (SecurityException e) {
+            Log.e(TAG, "Error getting device list", e);
+        }
         if (bluetoothAdapter != null) {
             bluetoothAdapter.notifyDataSetChanged();
         }
@@ -50,16 +57,17 @@ public class BluetoothDeviceListFragment extends ListFragment {
     @Override
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
         final BluetoothDevice device = (BluetoothDevice) l.getItemAtPosition(position);
-        Log.i(TAG, "Bluetooth device selected: " + device.getName());
+        final String deviceName = device.getName();
+        Log.i(TAG, "Bluetooth device selected: " + deviceName);
         final Activity activity = getActivity();
         if (activity != null) {
             // Log event
             final Bundle bundle = new Bundle();
             bundle.putString("device_id", device.getAddress());
-            bundle.putString("device_name", device.getName());
+            bundle.putString("device_name", deviceName);
             Analytics.logEvent(activity, "bluetooth_selected", bundle);
             // Save device preference
-            Services.bluetooth.preferences.save(activity, true, device.getAddress(), device.getName());
+            Services.bluetooth.preferences.save(activity, true, device.getAddress(), deviceName);
             Services.bluetooth.restart(activity);
         } else {
             Exceptions.report(new NullPointerException("Null activity on bluetooth device click"));
@@ -81,7 +89,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onBluetoothEvent(BluetoothEvent event) {
+    public void onBluetoothEvent(@NonNull BluetoothEvent event) {
         updateDeviceList();
     }
 
