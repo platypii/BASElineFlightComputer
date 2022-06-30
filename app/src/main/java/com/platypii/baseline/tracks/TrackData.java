@@ -29,6 +29,27 @@ public class TrackData {
         stats = new TrackStats(data);
     }
 
+    private TrackData(@NonNull String name, @NonNull List<MLocation> data, @NonNull TrackStats stats) {
+        this.name = name;
+        this.data = data;
+        this.stats = stats;
+    }
+
+    /**
+     * Return a new TrackData with trimmed data
+     */
+    public TrackData trim(long start, long end) {
+        int startIndex = 0;
+        int endIndex = 0;
+        for (int i = 0; i < data.size(); i++) {
+            final MLocation loc = data.get(i);
+            if (loc.millis < start) startIndex = i;
+            if (loc.millis <= end) endIndex = i;
+        }
+        final List<MLocation> trimmed = data.subList(startIndex, endIndex);
+        return new TrackData(name, trimmed, stats);
+    }
+
     @NonNull
     @Override
     public String toString() {

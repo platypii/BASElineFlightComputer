@@ -146,11 +146,11 @@
     </string-array>
     <string name="help_profiles">
         <![CDATA[
-Compare flight profile data against terrain profiles from known exit points.
+Compare track data against terrain profiles from known exit points.
 
 Chart shows horizontal and vertical distance from the start point.
 
-https://baseline.ws/help/app#profiles
+https://baseline.ws/help#app-profiles
         ]]>
     </string>
 

@@ -12,6 +12,7 @@
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_margin="30dp"
         android:autoLink="web"
         android:text="@string/help_profiles"/>
 

@@ -41,7 +41,8 @@ public class FlightProfileTouchable extends FlightProfile {
                 if (track.starred) {
                     final TrackData trackData = track.trackData(context);
                     if (trackData != null) {
-                        addLayer(new TrackProfileLayer(track.track_id, track.getName(), trackData, Colors.starredTracks));
+                        final TrackData trimmed = trackData.trim(trackData.stats.exit.millis, trackData.stats.deploy.millis);
+                        addLayer(new TrackProfileLayer(track.track_id, track.getName(), trimmed, Colors.starredTracks));
                     }
                 }
             }

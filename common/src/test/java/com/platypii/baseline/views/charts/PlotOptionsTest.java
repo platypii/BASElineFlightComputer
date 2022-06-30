@@ -8,12 +8,12 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class PlotsOptionsTest {
+public class PlotOptionsTest {
 
     @Test
     public void plotOptions() {
         PlotOptions options = new PlotOptions(1, 1);
-        assertEquals(0xffee0000, options.axis_color);
+        assertEquals(0xffdd0000, options.axis_color);
         assertEquals(0xff555555, options.grid_color);
     }
 

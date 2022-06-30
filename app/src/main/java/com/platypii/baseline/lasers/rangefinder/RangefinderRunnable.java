@@ -93,16 +93,17 @@ class RangefinderRunnable implements Runnable {
                 if (service.getState() == BT_STARTING) {
                     final BluetoothDevice device = result.getDevice();
                     final ScanRecord record = result.getScanRecord();
+                    final String deviceName = device.getName();
                     if (ATNProtocol.isATN(device)) {
-                        Log.i(TAG, "ATN rangefinder found, connecting to: " + device.getName());
+                        Log.i(TAG, "ATN rangefinder found, connecting to: " + deviceName);
                         connect(device);
                         protocol = new ATNProtocol(bluetoothGatt);
                     } else if (UineyeProtocol.isUineye(device, record)) {
-                        Log.i(TAG, "Uineye rangefinder found, connecting to: " + device.getName());
+                        Log.i(TAG, "Uineye rangefinder found, connecting to: " + deviceName);
                         connect(device);
                         protocol = new UineyeProtocol(bluetoothGatt);
                     } else if (SigSauerProtocol.isSigSauer(device, record)) {
-                        Log.i(TAG, "SigSauer rangefinder found, connecting to: " + device.getName());
+                        Log.i(TAG, "SigSauer rangefinder found, connecting to: " + deviceName);
                         connect(device);
                         protocol = new SigSauerProtocol(bluetoothGatt);
                     }
