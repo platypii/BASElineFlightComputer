@@ -1,6 +1,7 @@
 package com.platypii.baseline.util;
 
 import androidx.annotation.NonNull;
+import java.text.Normalizer;
 
 public class StringUtil {
 
@@ -20,4 +21,11 @@ public class StringUtil {
         }
         return n;
     }
+
+    public static String normalize(@NonNull String str) {
+        return Normalizer.normalize(str, Normalizer.Form.NFD)
+                .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
+                .toLowerCase();
+    }
+
 }

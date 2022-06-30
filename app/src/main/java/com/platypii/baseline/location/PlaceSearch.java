@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.platypii.baseline.places.Place;
 
+import static com.platypii.baseline.util.StringUtil.normalize;
+
 public class PlaceSearch {
 
     /**
@@ -30,9 +32,9 @@ public class PlaceSearch {
             sb.append(" BASE");
         }
 
-        final String superString = sb.toString().toLowerCase();
+        final String superString = normalize(sb.toString());
         // Break into tokens
-        for (String token : filter.toLowerCase().split(" ")) {
+        for (String token : normalize(filter).split(" ")) {
             if (!superString.contains(token)) {
                 return false;
             }
