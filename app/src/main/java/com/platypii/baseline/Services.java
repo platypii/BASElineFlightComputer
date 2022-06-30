@@ -1,7 +1,6 @@
 package com.platypii.baseline;
 
 import com.platypii.baseline.altimeter.MyAltimeter;
-import com.platypii.baseline.audible.CheckTextToSpeechTask;
 import com.platypii.baseline.audible.MyAudible;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.cloud.AuthState;
@@ -17,7 +16,6 @@ import com.platypii.baseline.places.Places;
 import com.platypii.baseline.sensors.MySensorManager;
 import com.platypii.baseline.tracks.Tracks;
 import com.platypii.baseline.util.Convert;
-import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 
 import android.app.Activity;
@@ -51,9 +49,6 @@ public class Services {
     private static final Handler handler = new Handler();
     private static final int shutdownDelay = 10000;
     private static final Runnable stopRunnable = Services::stopIfIdle;
-
-    // Have we checked for TTS data?
-    private static boolean ttsLoaded = false;
 
     // Services
     public static final Tracks tracks = new Tracks();
@@ -123,13 +118,8 @@ public class Services {
             flightComputer.start(appContext);
 
             // TTS is prerequisite for audible
-            if (ttsLoaded) {
-                Log.i(TAG, "Text-to-speech data already loaded, starting audible");
-                audible.start(appContext);
-            } else {
-                Log.i(TAG, "Checking for text-to-speech data");
-                new CheckTextToSpeechTask(activity).execute();
-            }
+            Log.i(TAG, "Starting audible");
+            audible.start(activity);
 
             Log.i(TAG, "Starting notification service");
             notifications.start(appContext);
@@ -153,24 +143,6 @@ public class Services {
         } else if (initialized) {
             // Every time an activity starts...
             tasks.tendQueue();
-        }
-    }
-
-    /**
-     * BaseActivity calls this function once text-to-speech data is ready
-     */
-    public static void onTtsLoaded(@NonNull Activity context) {
-        // TTS loaded, start the audible
-        Exceptions.log("onTtsLoaded from " + context.getLocalClassName());
-        if (!ttsLoaded) {
-            Log.i(TAG, "Text-to-speech data loaded, starting audible");
-            ttsLoaded = true;
-            if (initialized) {
-                audible.start(context.getApplicationContext());
-            }
-        } else {
-            Log.w(TAG, "Text-to-speech already loaded");
-            Exceptions.report(new IllegalStateException("Text-to-speech loaded twice"));
         }
     }
 

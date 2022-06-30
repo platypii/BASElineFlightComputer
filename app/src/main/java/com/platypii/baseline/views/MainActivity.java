@@ -165,7 +165,7 @@ public class MainActivity extends BaseActivity {
         } else {
             // Start audible
             firebaseAnalytics.logEvent("click_start_audible", null);
-            Services.audible.enableAudible();
+            Services.audible.enableAudible(this);
         }
         updateUIState();
     }

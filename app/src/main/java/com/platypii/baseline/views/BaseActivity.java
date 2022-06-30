@@ -209,7 +209,7 @@ public abstract class BaseActivity extends FragmentActivity {
         } else if (requestCode == RC_TTS_DATA) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 // Notify services that TTS is ready
-                Services.onTtsLoaded(this);
+                Services.audible.onTtsLoaded(this);
             } else {
                 // Missing data, install it
                 Intents.installTts(this);

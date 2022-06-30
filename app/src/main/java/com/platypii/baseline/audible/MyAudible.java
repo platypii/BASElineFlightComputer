@@ -1,5 +1,6 @@
 package com.platypii.baseline.audible;
 
+import android.app.Activity;
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
@@ -9,7 +10,6 @@ import com.platypii.baseline.util.Numbers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -25,11 +25,12 @@ public class MyAudible implements BaseService {
     public final AudibleSettings settings = new AudibleSettings();
     private SharedPreferences prefs;
 
-    @Nullable
-    private Speech speech;
+    @NonNull
+    private final Speech speech = new Speech();
     @Nullable
     private AudibleThread audibleThread;
 
+    // Audible service initialized, but does not mean that speech is ready
     private boolean isInitialized = false;
 
     // When was the last time we announced airplane mode?
@@ -44,47 +45,41 @@ public class MyAudible implements BaseService {
 
     @Override
     public void start(@NonNull Context context) {
+        final Activity activity = (Activity) context;
         Log.i(TAG, "Initializing audible");
         if (!isInitialized) {
             prefs = PreferenceManager.getDefaultSharedPreferences(context);
             settings.load(prefs);
-            startAsync(context);
+            // Audible thread has a handler, which needs to be created in looper thread
+            audibleThread = new AudibleThread();
+            if (settings.isEnabled) {
+                enableAudible(activity);
+            }
+            isInitialized = true;
         } else {
             Log.w(TAG, "Audible initialized twice");
             Exceptions.report(new IllegalStateException("Audible initialized twice"));
         }
     }
 
-    private void startAsync(final Context context) {
-        // Audible thread has a handler, which needs to be created in looper thread
-        audibleThread = new AudibleThread();
-        AsyncTask.execute(() -> {
-            speech = new Speech(context);
-            isInitialized = true;
-            if (settings.isEnabled) {
-                enableAudible();
-            }
-        });
-    }
-
-    public void enableAudible() {
+    public void enableAudible(@NonNull Activity activity) {
         Log.i(TAG, "Starting audible");
-        if (isInitialized) {
-            if (!audibleThread.isRunning()) {
-                boundaryState = STATE_INSIDE;
-                audibleThread.start();
-
-                // Say audible mode
-                speakModeWhenReady();
-
-                // Play first measurement
-                speakWhenReady();
-            } else {
-                Log.w(TAG, "Audible thread already started");
-            }
+        speech.start(activity);
+        if (audibleThread == null) {
+            Log.e(TAG, "Audible thread should not be null");
+        } else if (audibleThread.isRunning()) {
+            Log.w(TAG, "Audible thread already started");
         } else {
-            Log.e(TAG, "Failed to start audible: audible not initialized");
+            boundaryState = STATE_INSIDE;
+            audibleThread.start();
         }
+
+        // Say audible mode
+        speakModeWhenReady();
+        // Play first measurement
+        speakWhenReady();
+
+        // Save to preferences
         settings.isEnabled = true;
         if (prefs != null) {
             final SharedPreferences.Editor editor = prefs.edit();
@@ -102,6 +97,8 @@ public class MyAudible implements BaseService {
         } else {
             Log.e(TAG, "Failed to stop audible: audible not initialized");
         }
+
+        // Save to preferences
         settings.isEnabled = false;
         if (prefs != null) {
             final SharedPreferences.Editor editor = prefs.edit();
@@ -112,14 +109,17 @@ public class MyAudible implements BaseService {
     }
 
     /**
+     * BaseActivity calls this function once text-to-speech data is ready
+     */
+    public void onTtsLoaded(@NonNull Context context) {
+        speech.onTtsLoaded(context);
+    }
+
+    /**
      * Announce the current audible mode
      */
     private void speakModeWhenReady() {
-        if (speech != null) {
-            speech.speakWhenReady(settings.mode.name);
-        } else {
-            Log.e(TAG, "speakModeWhenReady called but speech is null");
-        }
+        speech.speakWhenReady(settings.mode.name);
     }
 
     /**
@@ -130,23 +130,19 @@ public class MyAudible implements BaseService {
             Log.e(TAG, "Should never speak when audible is disabled");
             Exceptions.report(new IllegalStateException("MyAudible.speakNow should never speak when audible is disabled"));
         }
-        if (speech != null) {
-            speech.speakNow(text);
-        } else {
-            Log.e(TAG, "speakNow called but speech is null");
-        }
+        speech.speakNow(text);
     }
 
     void speak() {
         final String measurement = getMeasurement();
-        if (speech != null && !measurement.isEmpty()) {
+        if (!measurement.isEmpty()) {
             speech.speakNow(measurement);
         }
     }
 
     private void speakWhenReady() {
         final String measurement = getMeasurement();
-        if (speech != null && !measurement.isEmpty()) {
+        if (!measurement.isEmpty()) {
             speech.speakWhenReady(measurement);
         }
     }
@@ -228,7 +224,7 @@ public class MyAudible implements BaseService {
             } else {
                 Log.w(TAG, "Stale GPS signal");
             }
-            if (gpsFix && speech != null) {
+            if (gpsFix) {
                 speech.speakNow("Signal lost");
             }
             gpsFix = false;
@@ -252,7 +248,6 @@ public class MyAudible implements BaseService {
             }
             audibleThread = null;
             isInitialized = false;
-            speech = null;
         }
     }
 

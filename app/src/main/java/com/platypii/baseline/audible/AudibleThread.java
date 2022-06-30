@@ -26,13 +26,13 @@ class AudibleThread {
 
     public void start() {
         if (!isRunning) {
-            Log.i(TAG, "Starting audible");
+            Log.i(TAG, "Starting audible thread");
             final int delay = (int) (Services.audible.settings.speechInterval * 1000);
             handler.postDelayed(audibleThread, delay);
             // handler.post(audibleThread);
             isRunning = true;
         } else {
-            Log.e(TAG, "Failed to start audible: audible thread already started");
+            Log.e(TAG, "Failed to start audible thread: already started");
         }
     }
 

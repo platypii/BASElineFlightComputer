@@ -1,5 +1,6 @@
 package com.platypii.baseline.views;
 
+import android.app.Activity;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.audible.AudibleMinMaxPreference;
@@ -95,8 +96,9 @@ public class AudibleSettingsFragment extends PreferenceFragment implements Prefe
             case "audible_enabled":
                 final boolean audibleEnabled = (Boolean) value;
                 if (audibleEnabled) {
-                    Analytics.logEvent(getActivity(), "pref_start_audible", null);
-                    Services.audible.enableAudible();
+                    final Activity activity = getActivity();
+                    Analytics.logEvent(activity, "pref_start_audible", null);
+                    Services.audible.enableAudible(activity);
                 } else {
                     Analytics.logEvent(getActivity(), "pref_stop_audible", null);
                     Services.audible.disableAudible();
