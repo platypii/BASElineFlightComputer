@@ -9,7 +9,6 @@ import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.views.BaseActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -25,42 +24,21 @@ public class BluetoothActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityBluetoothBinding.inflate(getLayoutInflater());
         binding.bluetoothPair.setOnClickListener(this::clickPair);
-        binding.bluetoothSwitch.setOnClickListener(this::clickEnable);
         setContentView(binding.getRoot());
     }
 
     private void updateViews() {
         if (Services.bluetooth.preferences.preferenceDeviceName != null && Services.bluetooth.preferences.preferenceDeviceName.startsWith("XGPS160")) {
-            binding.bluetoothPhoto.setVisibility(View.VISIBLE);
+            binding.gpsPhoto.setImageResource(R.drawable.skypro);
         } else {
-            binding.bluetoothPhoto.setVisibility(View.GONE);
+            binding.gpsPhoto.setImageResource(0);
         }
-        binding.bluetoothSwitch.setChecked(Services.bluetooth.preferences.preferenceEnabled);
         binding.bluetoothStatus.setText(Services.bluetooth.getStatusMessage(this));
         if (Services.bluetooth.getState() == BluetoothState.BT_CONNECTED) {
             binding.bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
         } else {
             binding.bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
         }
-    }
-
-    public void clickEnable(View v) {
-        // Save preference
-        final boolean enable = !Services.bluetooth.preferences.preferenceEnabled;
-        Services.bluetooth.preferences.save(this, enable, Services.bluetooth.preferences.preferenceDeviceId, Services.bluetooth.preferences.preferenceDeviceName);
-        // Start or stop bluetooth
-        if (enable) {
-            Log.i(TAG, "User clicked bluetooth enable");
-            firebaseAnalytics.logEvent("bluetooth_enabled", null);
-            Services.bluetooth.start(this);
-        } else {
-            Log.i(TAG, "User clicked bluetooth disable");
-            firebaseAnalytics.logEvent("bluetooth_disabled", null);
-            Services.bluetooth.stop();
-        }
-        // Switch location source
-        Services.location.restart(this);
-        updateViews();
     }
 
     public void clickPair(View v) {

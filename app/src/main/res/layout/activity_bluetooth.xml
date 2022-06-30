@@ -8,17 +8,16 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/bluetooth_photo"
+        android:id="@+id/gps_photo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:layout_gravity="center"
-        android:visibility="gone"
         android:src="@drawable/skypro"
         android:contentDescription="@string/pref_bluetooth"/>
 
     <TextView
         android:id="@+id/bluetooth_status"
-        android:layout_width="240dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginLeft="6dp"
@@ -26,16 +25,6 @@
         android:lines="1"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"/>
-
-    <Switch
-        android:id="@+id/bluetooth_switch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:text="@string/bluetooth_enabled"/>
 
     <!-- Bluetooth device list -->
     <TextView

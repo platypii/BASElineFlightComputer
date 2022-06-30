@@ -88,9 +88,9 @@
 
     <!-- Bluetooth -->
     <string name="title_activity_bluetooth">Bluetooth</string>
+    <string name="internal_gps">Phone GPS</string>
     <string name="pref_bluetooth">Bluetooth GPS</string>
     <string name="pref_bluetooth_description">Configure bluetooth GPS device</string>
-    <string name="bluetooth_enabled">Use Bluetooth GPS?</string>
     <string name="bluetooth_devices">Devices</string>
     <string name="bluetooth_pair">Pair</string>
     <string name="error_bluetooth_intent">Failed to open bluetooth settings</string>

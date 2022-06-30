@@ -57,18 +57,29 @@ public class BluetoothDeviceListFragment extends ListFragment {
     @Override
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
         final BluetoothDevice device = (BluetoothDevice) l.getItemAtPosition(position);
-        final String deviceName = device.getName();
-        Log.i(TAG, "Bluetooth device selected: " + deviceName);
         final Activity activity = getActivity();
         if (activity != null) {
-            // Log event
-            final Bundle bundle = new Bundle();
-            bundle.putString("device_id", device.getAddress());
-            bundle.putString("device_name", deviceName);
-            Analytics.logEvent(activity, "bluetooth_selected", bundle);
-            // Save device preference
-            Services.bluetooth.preferences.save(activity, true, device.getAddress(), deviceName);
-            Services.bluetooth.restart(activity);
+            if (device != null) {
+                final String deviceName = device.getName();
+                Log.i(TAG, "Bluetooth device selected " + deviceName);
+
+                // Log event
+                final Bundle bundle = new Bundle();
+                bundle.putString("device_id", device.getAddress());
+                bundle.putString("device_name", deviceName);
+                Analytics.logEvent(activity, "bluetooth_selected", bundle);
+
+                // Save device preference
+                Services.bluetooth.preferences.save(activity, true, device.getAddress(), deviceName);
+                Services.bluetooth.restart(activity);
+            } else {
+                Log.i(TAG, "Internal GPS selected");
+                // Save device preference
+                Services.bluetooth.preferences.save(activity, false, null, null);
+                Services.bluetooth.stop();
+            }
+            // Switch location source
+            Services.location.restart(activity);
         } else {
             Exceptions.report(new NullPointerException("Null activity on bluetooth device click"));
         }

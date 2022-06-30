@@ -15,14 +15,15 @@
         android:layout_alignParentTop="true"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="#eeeeee" />
+        android:textColor="#eee" />
+
     <TextView
         android:id="@+id/bluetooth_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/bluetooth_name"
-        android:textSize="14sp"
-        android:textColor="#999999" />
+        android:textColor="#888"
+        android:textSize="12sp" />
 
     <ImageView
         android:id="@+id/bluetooth_checked"
