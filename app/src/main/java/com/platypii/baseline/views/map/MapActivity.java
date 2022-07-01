@@ -6,6 +6,7 @@ import com.platypii.baseline.databinding.ActivityMapBinding;
 import com.platypii.baseline.location.LandingZone;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.BaseActivity;
 
 import android.os.Bundle;
@@ -71,18 +72,22 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         map.setOnCameraMoveListener(this);
         map.setOnCameraIdleListener(this);
 
-        if (MapState.mapBounds != null) {
-            // Restore map bounds
-            map.moveCamera(CameraUpdateFactory.newLatLngBounds(MapState.mapBounds, 0));
-            Log.i(TAG, "Centering map on " + MapState.mapBounds);
-        } else if (Services.location.lastLoc != null) {
-            // Center on last location
-            final LatLng center = Services.location.lastLoc.latLng();
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(center, MapOptions.getZoom()));
-            Log.i(TAG, "Centering map on " + center);
-        } else {
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, MapOptions.defaultZoom));
-            Log.w(TAG, "Centering map on default " + MapOptions.defaultLatLng);
+        try {
+            if (MapState.mapBounds != null) {
+                // Restore map bounds
+                map.moveCamera(CameraUpdateFactory.newLatLngBounds(MapState.mapBounds, 0));
+                Log.i(TAG, "Centering map on " + MapState.mapBounds);
+            } else if (Services.location.lastLoc != null) {
+                // Center on last location
+                final LatLng center = Services.location.lastLoc.latLng();
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(center, MapOptions.getZoom()));
+                Log.i(TAG, "Centering map on " + center);
+            } else {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(MapOptions.defaultLatLng, MapOptions.defaultZoom));
+                Log.w(TAG, "Centering map on default " + MapOptions.defaultLatLng);
+            }
+        } catch (Exception e) {
+            Exceptions.report(e);
         }
 
         ready = true;

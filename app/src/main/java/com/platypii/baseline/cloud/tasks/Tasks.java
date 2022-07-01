@@ -64,7 +64,7 @@ public class Tasks implements BaseService {
             if (running == null && !pending.isEmpty()) {
                 // Start first pending task
                 running = pending.get(0);
-                Exceptions.log("Running task " + running + " from " + TextUtils.join(",", pending));
+                Exceptions.log("Running task " + running + " of " + pending.size());
                 runAsync(running);
             }
         }

@@ -36,7 +36,6 @@ public class Numbers {
             try {
                 return Double.parseDouble(str);
             } catch (NumberFormatException e) {
-                Exceptions.report(e);
                 return Double.NaN;
             }
         }
@@ -70,7 +69,6 @@ public class Numbers {
             try {
                 return Float.parseFloat(str);
             } catch (NumberFormatException e) {
-                Exceptions.report(e);
                 return Float.NaN;
             }
         }
@@ -83,7 +81,6 @@ public class Numbers {
             try {
                 return Integer.parseInt(str);
             } catch (NumberFormatException e) {
-                Exceptions.report(e);
                 return defaultValue;
             }
         }
