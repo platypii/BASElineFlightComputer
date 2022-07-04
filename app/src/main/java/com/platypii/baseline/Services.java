@@ -10,7 +10,6 @@ import com.platypii.baseline.jarvis.AutoStop;
 import com.platypii.baseline.jarvis.FlightComputer;
 import com.platypii.baseline.lasers.Lasers;
 import com.platypii.baseline.location.LandingZone;
-import com.platypii.baseline.location.LocationPermissions;
 import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.places.Places;
 import com.platypii.baseline.sensors.MySensorManager;
@@ -25,10 +24,8 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.platypii.baseline.views.BaseActivity;
 
 /**
  * Start and stop essential services.
@@ -101,11 +98,11 @@ public class Services {
 
             Log.i(TAG, "Starting location service");
             // Note: Activity.checkSelfPermission added in minsdk 23
-            if (LocationPermissions.isPermissionGranted(appContext)) {
+            if (Permissions.isPermissionGranted(appContext)) {
                 // Enable baseline location services
                 location.start(appContext);
             } else {
-                ActivityCompat.requestPermissions(activity, LocationPermissions.permissions, BaseActivity.RC_LOCATION);
+                Permissions.requestLocationPermissions(activity);
             }
 
             Log.i(TAG, "Starting sensors");

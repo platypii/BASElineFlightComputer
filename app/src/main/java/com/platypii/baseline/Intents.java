@@ -174,7 +174,4 @@ public class Intents {
         }
     }
 
-    public static void openLocationServiceSettings(@NonNull Context context) {
-        context.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-    }
 }

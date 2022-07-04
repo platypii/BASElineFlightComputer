@@ -11,7 +11,7 @@ import com.platypii.baseline.lasers.LaserProfile;
 import com.platypii.baseline.lasers.NewLaserForm;
 import com.platypii.baseline.lasers.rangefinder.RangefinderService;
 import com.platypii.baseline.location.Geocoder;
-import com.platypii.baseline.location.LocationPermissions;
+import com.platypii.baseline.Permissions;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.LatLngAlt;
 import com.platypii.baseline.measurements.MLocation;
@@ -276,13 +276,13 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         if (activity != null) {
             // Check for location permissions
             // Note: Activity.checkSelfPermission added in minsdk 23
-            if (!LocationPermissions.isPermissionGranted(activity)) {
+            if (!Permissions.isPermissionGranted(activity)) {
                 Log.w(TAG, "Location permission not granted");
                 errorMessage = "Location permission not granted";
-                requestPermissions(LocationPermissions.permissions, BaseActivity.RC_LOCATION);
+                Permissions.requestLocationPermissions(activity);
             }
             // Check for location services enabled. Can't scan without location
-            if (!LocationPermissions.isLocationServiceEnabled(activity)) {
+            if (!Permissions.isLocationServiceEnabled(activity)) {
                 Log.w(TAG, "Location service not enabled");
                 errorMessage = "Location service disabled";
                 // Request to enable location services
@@ -299,7 +299,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage("Location is required for bluetooth, please enable location services")
                 .setCancelable(false)
-                .setPositiveButton("Yes", (dialog, id) -> Intents.openLocationServiceSettings(context))
+                .setPositiveButton("Yes", (dialog, id) -> Permissions.openLocationSettings(context))
                 .setNegativeButton("No", (dialog, id) -> {
                     // Revert bluetooth state
                     rangefinderEnabled = false;
