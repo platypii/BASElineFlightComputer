@@ -87,10 +87,11 @@
     <string name="layers">Ebenen</string>
 
     <!-- Bluetooth -->
-    <string name="title_activity_bluetooth">Bluetooth</string>
+    <string name="title_activity_bluetooth">GPS-Gerät</string>
+    <string name="bluetooth">Bluetooth</string>
     <string name="internal_gps">GPS des Telefons</string>
-    <string name="pref_bluetooth">Bluetooth GPS</string>
-    <string name="pref_bluetooth_description">Konfigurieren Sie Bluetooth-Gerät</string>
+    <string name="pref_location">GPS-Geräteeinstellungen</string>
+    <string name="pref_location_description">Konfigurieren Sie Bluetooth-Gerät</string>
     <string name="bluetooth_devices">Bluetooth-Geräte</string>
     <string name="bluetooth_pair">Bluetooth-Paar</string>
     <string name="error_bluetooth_intent">Fehlgeschlagen Bluetooth-Einstellungen öffnen</string>

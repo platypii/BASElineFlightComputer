@@ -147,6 +147,20 @@ public class BluetoothService implements BaseService {
     }
 
     /**
+     * Return a string with the gps location device name
+     */
+    @NonNull
+    public String getDeviceName() {
+        if (!preferences.preferenceEnabled) {
+            return "Phone";
+        } else if (preferences.preferenceDeviceName != null) {
+            return preferences.preferenceDeviceName;
+        } else {
+            return "";
+        }
+    }
+
+    /**
      * Return a human-readable string for the bluetooth state
      */
     @NonNull

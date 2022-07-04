@@ -4,4 +4,4 @@
     android:layout_width="28dp"
     android:layout_height="28dp"
     android:src="@drawable/ic_bluetooth_on"
-    android:contentDescription="@string/pref_bluetooth"/>
+    android:contentDescription="@string/bluetooth"/>

@@ -13,7 +13,7 @@
         android:layout_height="120dp"
         android:layout_gravity="center"
         android:src="@drawable/skypro"
-        android:contentDescription="@string/pref_bluetooth"/>
+        android:contentDescription="Skypro XGPS"/>
 
     <TextView
         android:id="@+id/bluetooth_status"

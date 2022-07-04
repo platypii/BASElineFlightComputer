@@ -119,7 +119,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         } else {
             bluetoothPreference.setWidgetLayoutResource(R.layout.icon_bluetooth_off);
         }
-        bluetoothPreference.setSummary(Services.bluetooth.getStatusMessage(activity));
+        bluetoothPreference.setSummary(Services.bluetooth.getDeviceName());
     }
 
     @Override
