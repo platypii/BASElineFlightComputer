@@ -5,13 +5,13 @@
     <string name="set_altitude">Set?</string>
 
     <!-- Bluetooth -->
-    <string name="bluetooth_status_disabled">Bluetooth disabled</string>
-    <string name="bluetooth_status_not_selected">Bluetooth device not selected</string>
-    <string name="bluetooth_status_stopped">Bluetooth stopped</string>
-    <string name="bluetooth_status_starting">Bluetooth starting</string>
-    <string name="bluetooth_status_connecting">Bluetooth connecting</string>
-    <string name="bluetooth_status_connected">Bluetooth connected</string>
-    <string name="bluetooth_status_disconnected">Bluetooth not connected</string>
-    <string name="bluetooth_status_stopping">Bluetooth shutting down</string>
+    <string name="bluetooth_status_disabled">BT disabled</string>
+    <string name="bluetooth_status_not_selected">BT device not selected</string>
+    <string name="bluetooth_status_stopped">BT stopped</string>
+    <string name="bluetooth_status_starting">BT starting</string>
+    <string name="bluetooth_status_connecting">BT connecting</string>
+    <string name="bluetooth_status_connected">BT connected</string>
+    <string name="bluetooth_status_disconnected">BT not connected</string>
+    <string name="bluetooth_status_stopping">BT shutting down</string>
 
 </resources>

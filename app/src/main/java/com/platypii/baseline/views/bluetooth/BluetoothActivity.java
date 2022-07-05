@@ -1,11 +1,15 @@
 package com.platypii.baseline.views.bluetooth;
 
+import androidx.annotation.NonNull;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothState;
 import com.platypii.baseline.databinding.ActivityBluetoothBinding;
 import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.Permissions;
+import com.platypii.baseline.location.MyLocationListener;
+import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.views.BaseActivity;
 
 import android.os.Bundle;
@@ -14,7 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class BluetoothActivity extends BaseActivity {
+public class BluetoothActivity extends BaseActivity implements MyLocationListener {
     private static final String TAG = "BluetoothActivity";
 
     private ActivityBluetoothBinding binding;
@@ -23,25 +27,84 @@ public class BluetoothActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityBluetoothBinding.inflate(getLayoutInflater());
+        binding.btPhone.setOnClickListener(this::clickPhone);
+        binding.btPhoneStatus.setOnClickListener(this::clickPhone);
         binding.bluetoothPair.setOnClickListener(this::clickPair);
         setContentView(binding.getRoot());
     }
 
     private void updateViews() {
-        if (Services.bluetooth.preferences.preferenceDeviceName != null && Services.bluetooth.preferences.preferenceDeviceName.startsWith("XGPS160")) {
-            binding.gpsPhoto.setImageResource(R.drawable.skypro);
+        // Check phone permissions
+        binding.btPhoneStatus.setText("Phone OK");
+        binding.btPhoneStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_green, 0, 0);
+        if (!Services.bluetooth.preferences.preferenceEnabled) {
+            // Check android location permission
+            if (!Permissions.hasLocationPermissions(this)) {
+                binding.btPhoneStatus.setText("Permission required");
+                binding.btPhoneStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_red, 0, 0);
+            } else if (!Permissions.isLocationServiceEnabled(this)) {
+                binding.btPhoneStatus.setText("Location disabled");
+                binding.btPhoneStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_red, 0, 0);
+            }
         } else {
-            binding.gpsPhoto.setImageResource(0);
+            // TODO: Check bluetooth permissions
         }
-        binding.bluetoothStatus.setText(Services.bluetooth.getStatusMessage(this));
-        if (Services.bluetooth.getState() == BluetoothState.BT_CONNECTED) {
-            binding.bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
+        // Bluetooth status
+        if (Services.bluetooth.preferences.preferenceEnabled) {
+            binding.btGps.setVisibility(View.VISIBLE);
+            binding.btGpsStatus.setVisibility(View.VISIBLE);
         } else {
-            binding.bluetoothStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
+            binding.btGps.setVisibility(View.GONE);
+            binding.btGpsStatus.setVisibility(View.GONE);
+        }
+        if (Services.bluetooth.preferences.preferenceDeviceName != null) {
+            binding.btGpsStatus.setText(Services.bluetooth.preferences.preferenceDeviceName);
+        } else {
+            binding.btGpsStatus.setText("");
+        }
+        binding.btGpsStatus.setText(Services.bluetooth.getStatusMessage(this));
+        if (Services.bluetooth.getState() == BluetoothState.BT_CONNECTED) {
+            binding.btGpsStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_green, 0, 0);
+        } else {
+            binding.btGpsStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_red, 0, 0);
+        }
+        // Satellite signal status
+        final long lastFixDuration = Services.location.lastFixDuration();
+        if (lastFixDuration < 0) {
+            binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_red, 0, 0);
+            binding.btSatStatus.setText("No fix");
+        } else if (lastFixDuration > 5000) {
+            binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_red, 0, 0);
+            binding.btSatStatus.setText("No fix");
+        } else if (lastFixDuration > 1100) {
+            binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_yellow, 0, 0);
+            binding.btSatStatus.setText("Last fix " + lastFixDuration / 1000L + "s");
+        } else if (Services.location.refreshRate.refreshRate < 2) {
+            // 1 hz is not enough
+            binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_yellow, 0, 0);
+            binding.btSatStatus.setText(Services.location.lastLoc.satellitesUsed + " satellites (1 Hz)");
+        } else {
+            binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_green, 0, 0);
+            binding.btSatStatus.setText(Services.location.lastLoc.satellitesUsed + " satellites");
         }
     }
 
-    public void clickPair(View v) {
+    private void clickPhone(View view) {
+        if (!Services.bluetooth.preferences.preferenceEnabled) {
+            // Check android location permission
+            if (!Permissions.hasLocationPermissions(this)) {
+                // Request location permissions
+                Permissions.requestLocationPermissions(this);
+            } else if (!Permissions.isLocationServiceEnabled(this)) {
+                // Request to enable location
+                Permissions.openLocationSettings(this);
+            }
+        } else {
+            // TODO: Check bluetooth permissions
+        }
+    }
+
+    private void clickPair(View v) {
         Intents.openBluetoothSettings(this);
     }
 
@@ -50,6 +113,7 @@ public class BluetoothActivity extends BaseActivity {
         super.onResume();
         // Listen for bluetooth updates
         EventBus.getDefault().register(this);
+        Services.location.addListener(this);
         updateViews();
     }
 
@@ -57,11 +121,17 @@ public class BluetoothActivity extends BaseActivity {
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+        Services.location.removeListener(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onBluetoothEvent(BluetoothEvent event) {
         updateViews();
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull MLocation loc) {
+        runOnUiThread(this::updateViews);
     }
 
 }

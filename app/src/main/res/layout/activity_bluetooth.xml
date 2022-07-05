@@ -7,24 +7,70 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/gps_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="120dp"
-        android:layout_gravity="center"
-        android:src="@drawable/skypro"
-        android:contentDescription="Skypro XGPS"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/bluetooth_status"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/bt_phone"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:src="@drawable/phone"
+            android:contentDescription="Phone"/>
+
+        <ImageView
+            android:id="@+id/bt_gps"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:src="@drawable/flysight"
+            android:contentDescription="BT GPS"/>
+
+        <ImageView
+            android:id="@+id/bt_sat"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:src="@drawable/satellite"
+            android:contentDescription="GPS Satellite"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="6dp"
-        android:drawablePadding="8dp"
-        android:lines="1"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"/>
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/bt_phone_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:drawableTop="@drawable/status_red"/>
+
+        <TextView
+            android:id="@+id/bt_gps_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:drawableTop="@drawable/status_red"/>
+
+        <TextView
+            android:id="@+id/bt_sat_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:drawableTop="@drawable/status_red"/>
+
+    </LinearLayout>
 
     <!-- Bluetooth device list -->
     <TextView

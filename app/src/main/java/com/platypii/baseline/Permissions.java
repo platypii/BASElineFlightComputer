@@ -19,7 +19,7 @@ public class Permissions {
 
     private static final String[] locationPermissions = {Manifest.permission.ACCESS_FINE_LOCATION};
 
-    public static boolean isPermissionGranted(@NonNull Context context) {
+    public static boolean hasLocationPermissions(@NonNull Context context) {
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 

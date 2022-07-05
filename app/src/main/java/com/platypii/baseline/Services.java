@@ -98,7 +98,7 @@ public class Services {
 
             Log.i(TAG, "Starting location service");
             // Note: Activity.checkSelfPermission added in minsdk 23
-            if (Permissions.isPermissionGranted(appContext)) {
+            if (Permissions.hasLocationPermissions(appContext)) {
                 // Enable baseline location services
                 location.start(appContext);
             } else {

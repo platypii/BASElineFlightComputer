@@ -1,6 +1,5 @@
 package com.platypii.baseline.views.laser;
 
-import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
@@ -276,7 +275,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         if (activity != null) {
             // Check for location permissions
             // Note: Activity.checkSelfPermission added in minsdk 23
-            if (!Permissions.isPermissionGranted(activity)) {
+            if (!Permissions.hasLocationPermissions(activity)) {
                 Log.w(TAG, "Location permission not granted");
                 errorMessage = "Location permission not granted";
                 Permissions.requestLocationPermissions(activity);
