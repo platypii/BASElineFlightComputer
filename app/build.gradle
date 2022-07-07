@@ -11,8 +11,8 @@ android {
         applicationId "com.platypii.baseline"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 125
-        versionName "5.2-beta"
+        versionCode 126
+        versionName "5.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
