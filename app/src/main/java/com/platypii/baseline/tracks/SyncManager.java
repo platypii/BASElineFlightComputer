@@ -53,7 +53,7 @@ class SyncManager implements BaseService {
         final List<TrackMetadata> cloudTracks = Services.tracks.cache.list();
         if (cloudTracks != null) {
             for (TrackMetadata track : cloudTracks) {
-                if (track.starred &&  !track.abbrvFile(context).exists() && !track.localFile(context).exists()) {
+                if (track.starred && !track.abbrvFile(context).exists() && !track.localFile(context).exists()) {
                     Services.tasks.add(new DownloadTrackTask(track));
                 }
             }

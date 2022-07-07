@@ -121,12 +121,17 @@ class Speech implements TextToSpeech.OnInitListener {
 
     @Override
     public void onInit(int status) {
-        Log.i(TAG, "Text-to-speech is ready");
+        if (isReady) {
+            Log.w(TAG, "Text-to-speech is ready twice");
+        } else {
+            Log.i(TAG, "Text-to-speech is ready");
+        }
         isReady = true;
 
         // Play queued speech
         if (queue != null) {
-            for (String text : queue) {
+            while (!queue.isEmpty()) {
+                final String text = queue.remove(0);
                 speakWhenReady(text);
             }
             queue = null;

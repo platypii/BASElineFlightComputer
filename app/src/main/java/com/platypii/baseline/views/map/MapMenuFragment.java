@@ -247,4 +247,18 @@ public class MapMenuFragment extends Fragment implements AdapterView.OnItemClick
         return activity instanceof MapActivity ? (MapActivity) activity : null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Restore map state
+        binding.searchBox.setText(MapState.searchString);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Save map state
+        MapState.searchString = binding.searchBox.getText().toString();
+    }
+
 }
