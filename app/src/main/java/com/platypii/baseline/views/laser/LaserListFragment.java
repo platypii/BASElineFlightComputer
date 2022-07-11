@@ -22,6 +22,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class LaserListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
+    @NonNull
+    private static String searchString = "";
+
     private LaserAdapter listAdapter;
     private LaserListBinding binding;
 
@@ -58,10 +61,13 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        // Restore search string
+        binding.laserSearch.setText(searchString);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // Add profile to layers
         final LaserListItem item = listAdapter.getItem(position);
         if (item instanceof LaserListItem.ListLaser) {
             final LaserProfile laser = ((LaserListItem.ListLaser) item).laser;
@@ -80,6 +86,8 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        // Save search string
+        searchString = binding.laserSearch.getText().toString();
     }
 
 }

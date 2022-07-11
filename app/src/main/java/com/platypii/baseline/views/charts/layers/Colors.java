@@ -23,14 +23,15 @@ public class Colors {
 
     @ColorInt
     private static final int[] colors = {
-            0xff7f00ff,
-            0xffdd1111,
-            0xff11cc11,
-            0xff2222ee,
+            0xffcc1122,
+            0xff11aa22,
+            0xff1866b4,
             0xffdd77dd,
-            0xff11bbdd,
-            0xffcccc11,
-            0xffbbbbbb
+            0xff11bbcc,
+            0xffbbbb11,
+            0xffbbbbbb,
+            0xffd74d09,
+            0xff7f00ff,
     };
 
     private static int nextIndex = 0;

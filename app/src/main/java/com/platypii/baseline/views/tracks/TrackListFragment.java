@@ -20,6 +20,14 @@ import org.greenrobot.eventbus.ThreadMode;
 public class TrackListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     public static final String SEARCH_KEY = "search_string";
+
+    // Remember search strings for profiles and tracks separately
+    private boolean isProfileSearch;
+    @NonNull
+    private static String trackListingSearch = "";
+    @NonNull
+    private static String trackProfileSearch = "";
+
     protected TrackAdapter listAdapter;
     private TrackListBinding binding;
 
@@ -36,9 +44,10 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
         final Bundle args = getArguments();
         if (args != null) {
             final String filter = args.getString(SEARCH_KEY, "");
-            if (!filter.isEmpty()) {
-                binding.trackSearch.setText(filter);
-                listAdapter.setFilter(filter);
+            isProfileSearch = !filter.isEmpty();
+            if (isProfileSearch && trackProfileSearch.isEmpty()) {
+                // Default from arguments
+                trackProfileSearch = filter;
             }
         }
 
@@ -68,6 +77,10 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
 
         // Listen for sync updates
         EventBus.getDefault().register(this);
+        // Restore search string
+        final String searchString = isProfileSearch ? trackProfileSearch : trackListingSearch;
+        binding.trackSearch.setText(searchString);
+        listAdapter.setFilter(searchString);
     }
 
     @Override
@@ -99,6 +112,12 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        // Save search string
+        if (isProfileSearch) {
+            trackProfileSearch = binding.trackSearch.getText().toString();
+        } else {
+            trackListingSearch = binding.trackSearch.getText().toString();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
