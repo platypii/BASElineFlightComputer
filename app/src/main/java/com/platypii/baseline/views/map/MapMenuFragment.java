@@ -213,11 +213,12 @@ public class MapMenuFragment extends Fragment implements AdapterView.OnItemClick
             if (searchString.isEmpty()) {
                 binding.searchResults.setVisibility(View.GONE);
                 binding.searchClear.setImageResource(R.drawable.search_button);
+                binding.searchClear.setClickable(false);
             } else {
                 Log.i(TAG, "Searching for: " + searchString);
-                // TODO: Search places
                 binding.searchResults.setVisibility(View.VISIBLE);
                 binding.searchClear.setImageResource(R.drawable.search_clear);
+                binding.searchClear.setClickable(true);
                 listAdapter.setFilter(searchString);
             }
         }

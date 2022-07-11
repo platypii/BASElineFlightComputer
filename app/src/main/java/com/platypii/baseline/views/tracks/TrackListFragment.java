@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.tracks;
 
+import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.TrackListBinding;
 import com.platypii.baseline.events.SyncEvent;
@@ -39,6 +40,7 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
         listAdapter = new TrackAdapter(getActivity());
         binding.trackList.setAdapter(listAdapter);
         binding.trackList.setOnItemClickListener(this);
+        binding.trackSearchClear.setOnClickListener(searchClearListener);
 
         // Load filter string from arguments
         final Bundle args = getArguments();
@@ -65,10 +67,26 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
 
             @Override
             public void afterTextChanged(Editable s) {
+                updateSearchClear();
             }
         });
 
         return binding.getRoot();
+    }
+
+    @NonNull
+    private final View.OnClickListener searchClearListener = view -> {
+        binding.trackSearch.setText("");
+    };
+
+    private void updateSearchClear() {
+        if (binding.trackSearch.getText().toString().isEmpty()) {
+            binding.trackSearchClear.setImageResource(R.drawable.search);
+            binding.trackSearchClear.setClickable(false);
+        } else {
+            binding.trackSearchClear.setImageResource(R.drawable.search_clear);
+            binding.trackSearchClear.setClickable(true);
+        }
     }
 
     @Override
@@ -80,6 +98,7 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
         // Restore search string
         final String searchString = isProfileSearch ? trackProfileSearch : trackListingSearch;
         binding.trackSearch.setText(searchString);
+        updateSearchClear();
         listAdapter.setFilter(searchString);
     }
 

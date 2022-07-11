@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.laser;
 
+import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.LaserListBinding;
 import com.platypii.baseline.events.LaserSyncEvent;
@@ -36,7 +37,7 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
         listAdapter = new LaserAdapter(getContext());
         binding.laserList.setAdapter(listAdapter);
         binding.laserList.setOnItemClickListener(this);
-
+        binding.laserSearchClear.setOnClickListener(searchClearListener);
         // On search
         binding.laserSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -51,10 +52,26 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
 
             @Override
             public void afterTextChanged(Editable s) {
+                updateSearchClear();
             }
         });
 
         return binding.getRoot();
+    }
+
+    @NonNull
+    private final View.OnClickListener searchClearListener = view -> {
+        binding.laserSearch.setText("");
+    };
+
+    private void updateSearchClear() {
+        if (binding.laserSearch.getText().toString().isEmpty()) {
+            binding.laserSearchClear.setImageResource(R.drawable.search);
+            binding.laserSearchClear.setClickable(false);
+        } else {
+            binding.laserSearchClear.setImageResource(R.drawable.search_clear);
+            binding.laserSearchClear.setClickable(true);
+        }
     }
 
     @Override
@@ -63,6 +80,7 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
         EventBus.getDefault().register(this);
         // Restore search string
         binding.laserSearch.setText(searchString);
+        updateSearchClear();
     }
 
     @Override
