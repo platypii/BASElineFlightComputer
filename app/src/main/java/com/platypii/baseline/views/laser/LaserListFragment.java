@@ -34,10 +34,12 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
         binding = LaserListBinding.inflate(inflater, container, false);
 
         // Initialize the ListAdapter
-        listAdapter = new LaserAdapter(getContext());
+        listAdapter = new LaserAdapter(getContext(), searchString);
         binding.laserList.setAdapter(listAdapter);
         binding.laserList.setOnItemClickListener(this);
         binding.laserSearchClear.setOnClickListener(searchClearListener);
+        // Restore search string
+        binding.laserSearch.setText(searchString);
         // On search
         binding.laserSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -46,8 +48,8 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                final String filter = binding.laserSearch.getText().toString().toLowerCase();
-                listAdapter.setFilter(filter);
+                searchString = binding.laserSearch.getText().toString();
+                listAdapter.setFilter(searchString);
             }
 
             @Override
@@ -78,8 +80,6 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        // Restore search string
-        binding.laserSearch.setText(searchString);
         updateSearchClear();
     }
 
@@ -104,8 +104,6 @@ public class LaserListFragment extends Fragment implements AdapterView.OnItemCli
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-        // Save search string
-        searchString = binding.laserSearch.getText().toString();
     }
 
 }

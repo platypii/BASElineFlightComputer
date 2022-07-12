@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.tracks;
 
+import android.util.Log;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
@@ -30,6 +31,7 @@ import static com.platypii.baseline.views.tracks.TrackListItem.TYPE_TRACK_REMOTE
  * Track adapter renders a list of tracks, both local and remote
  */
 public class TrackAdapter extends BaseAdapter {
+    private static final String TAG = "TrackAdapter";
 
     @NonNull
     private final Context context;
@@ -38,15 +40,17 @@ public class TrackAdapter extends BaseAdapter {
     private List<TrackListItem> items;
 
     @NonNull
-    private String filter = "";
+    private String filter;
 
-    TrackAdapter(@NonNull Context context) {
+    TrackAdapter(@NonNull Context context, @NonNull String filter) {
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.filter = filter;
         populateItems();
     }
 
     private void populateItems() {
+        final long startTime = System.currentTimeMillis();
         final List<TrackListItem> updated = new ArrayList<>();
         // Add local tracks
         final List<TrackFile> localTracks = Services.tracks.local.getLocalTracks();
@@ -67,6 +71,8 @@ public class TrackAdapter extends BaseAdapter {
             }
         }
         items = updated;
+        final long dt = System.currentTimeMillis() - startTime;
+        Log.d(TAG, "Populate track adapter: \"" + filter + "\" (" + dt + " ms)");
     }
 
     void setFilter(@NonNull String filter) {

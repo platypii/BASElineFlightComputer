@@ -30,6 +30,8 @@ public abstract class LocalCache<T> implements BaseService {
     @NonNull
     private final String CACHE_LIST;
 
+    private List<T> memCache = null;
+
     // Minimum time between requests
     private static final long REQUEST_TTL = 30 * 1000; // 30 seconds
     // Maximum lifetime of a successful listing
@@ -65,11 +67,15 @@ public abstract class LocalCache<T> implements BaseService {
      */
     @Nullable
     public List<T> list() {
+        if (memCache != null) {
+            return memCache;
+        }
         if (prefs != null) {
             final String jsonString = prefs.getString(CACHE_LIST, null);
             if (jsonString != null) {
                 try {
-                    return new Gson().fromJson(jsonString, listType());
+                    memCache = new Gson().fromJson(jsonString, listType());
+                    return memCache;
                 } catch (JsonSyntaxException e) {
                     Exceptions.report(e);
                 }
@@ -137,6 +143,7 @@ public abstract class LocalCache<T> implements BaseService {
             editor.putLong(CACHE_LAST_UPDATE, System.currentTimeMillis());
             editor.putString(CACHE_LIST, json);
             editor.apply();
+            memCache = items;
         } catch (Exception e) {
             Exceptions.report(e); // Usually JSON serialization error
         }
@@ -162,6 +169,7 @@ public abstract class LocalCache<T> implements BaseService {
         editor.remove(CACHE_LAST_UPDATE);
         editor.remove(CACHE_LIST);
         editor.apply();
+        memCache = null;
     }
 
     @Override

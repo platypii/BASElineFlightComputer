@@ -89,8 +89,7 @@ public class LaserActivity extends BaseActivity {
             final MLocation start = event.track.get(0);
             final double x = start.distanceTo(event.location);
             final double y = event.location.altitude_gps - start.altitude_gps;
-            final String yStr = y < 0 ? Convert.distance(-y) + "↓" : Convert.distance(y) + "↑";
-            binding.flightProfileStats.setText(String.format("%s →\n%s", Convert.distance(x), yStr));
+            binding.flightProfileStats.setText(String.format("%s x\n%s y", Convert.distance(x), Convert.distance(y)));
             binding.flightProfileStats.setVisibility(View.VISIBLE);
         } else {
             binding.flightProfileStats.setText("");
@@ -103,8 +102,7 @@ public class LaserActivity extends BaseActivity {
         binding.flightProfile.onChartFocus(event);
         final double x = event.point.x;
         final double y = event.point.y;
-        final String yStr = y < 0 ? Convert.distance(-y) + "↓" : Convert.distance(y) + "↑";
-        binding.flightProfileStats.setText(String.format("%s →\n%s", Convert.distance(x), yStr));
+        binding.flightProfileStats.setText(String.format("%s x\n%s y", Convert.distance(x), Convert.distance(y)));
         binding.flightProfileStats.setVisibility(View.VISIBLE);
     }
 

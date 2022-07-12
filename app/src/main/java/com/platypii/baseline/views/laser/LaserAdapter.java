@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.laser;
 
+import android.util.Log;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
@@ -25,6 +26,7 @@ import static com.platypii.baseline.views.laser.LaserListItem.TYPE_LASER;
  * Profile adapter renders a list of track and laser profiles
  */
 class LaserAdapter extends BaseAdapter {
+    private static final String TAG = "LaserAdapter";
 
     @NonNull
     private final LayoutInflater inflater;
@@ -32,14 +34,16 @@ class LaserAdapter extends BaseAdapter {
 
     // Search filter
     @NonNull
-    private String filter = "";
+    private String filter;
 
-    LaserAdapter(@NonNull Context context) {
+    LaserAdapter(@NonNull Context context, @NonNull String filter) {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.filter = filter;
         populateItems();
     }
 
     private void populateItems() {
+        final long startTime = System.currentTimeMillis();
         final String userId = AuthState.getUser();
         items.clear();
         // Add unsynced lasers
@@ -99,6 +103,8 @@ class LaserAdapter extends BaseAdapter {
                 }
             }
         }
+        final long dt = System.currentTimeMillis() - startTime;
+        Log.d(TAG, "Populate laser adapter: \"" + filter + "\" (" + dt + " ms)");
     }
 
     void setFilter(@NonNull String filter) {

@@ -36,12 +36,6 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = TrackListBinding.inflate(inflater, container, false);
 
-        // Initialize the ListAdapter
-        listAdapter = new TrackAdapter(getActivity());
-        binding.trackList.setAdapter(listAdapter);
-        binding.trackList.setOnItemClickListener(this);
-        binding.trackSearchClear.setOnClickListener(searchClearListener);
-
         // Load filter string from arguments
         final Bundle args = getArguments();
         if (args != null) {
@@ -53,6 +47,17 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
             }
         }
 
+        // Restore search string
+        final String searchString = isProfileSearch ? trackProfileSearch : trackListingSearch;
+        binding.trackSearch.setText(searchString);
+        updateSearchClear();
+
+        // Initialize the ListAdapter
+        listAdapter = new TrackAdapter(getActivity(), searchString);
+        binding.trackList.setAdapter(listAdapter);
+        binding.trackList.setOnItemClickListener(this);
+        binding.trackSearchClear.setOnClickListener(searchClearListener);
+
         // On search
         binding.trackSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -61,7 +66,13 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                final String filter = binding.trackSearch.getText().toString().toLowerCase();
+                final String filter = binding.trackSearch.getText().toString();
+                // Save search string
+                if (isProfileSearch) {
+                    trackProfileSearch = filter;
+                } else {
+                    trackListingSearch = filter;
+                }
                 listAdapter.setFilter(filter);
             }
 
@@ -95,11 +106,6 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
 
         // Listen for sync updates
         EventBus.getDefault().register(this);
-        // Restore search string
-        final String searchString = isProfileSearch ? trackProfileSearch : trackListingSearch;
-        binding.trackSearch.setText(searchString);
-        updateSearchClear();
-        listAdapter.setFilter(searchString);
     }
 
     @Override
@@ -113,9 +119,6 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     private void updateList() {
-        // Update list from track cache
-        listAdapter.notifyDataSetChanged();
-
         // Handle no-tracks case
         final boolean isEmpty = listAdapter.isEmpty();
         binding.tracksEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
@@ -131,12 +134,6 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-        // Save search string
-        if (isProfileSearch) {
-            trackProfileSearch = binding.trackSearch.getText().toString();
-        } else {
-            trackListingSearch = binding.trackSearch.getText().toString();
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
