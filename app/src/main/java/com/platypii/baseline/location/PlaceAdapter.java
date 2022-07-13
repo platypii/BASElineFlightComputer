@@ -1,6 +1,7 @@
 package com.platypii.baseline.location;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import java.util.List;
  * Profile adapter renders a list of track and laser profiles
  */
 public class PlaceAdapter extends BaseAdapter {
+    private static final String TAG = "PlaceAdapter";
 
     @NonNull
     private final LayoutInflater inflater;
@@ -37,6 +39,7 @@ public class PlaceAdapter extends BaseAdapter {
     }
 
     private void populateItems() {
+        final long startTime = System.currentTimeMillis();
         items.clear();
         // Fast filter for empty search string
         if (filter.isEmpty()) {
@@ -52,13 +55,15 @@ public class PlaceAdapter extends BaseAdapter {
                 final String str2 = o2.country + " " + o2.name;
                 return str1.compareTo(str2);
             });
-            // Add public lasers
+            // Add matching places
             for (Place place : places) {
                 if (PlaceSearch.matchPlace(place, filter)) {
                     items.add(place);
                 }
             }
         }
+        final long dt = System.currentTimeMillis() - startTime;
+        Log.d(TAG, "Populate place adapter: \"" + filter + "\" (" + dt + " ms)");
     }
 
     public void setFilter(@NonNull String filter) {
