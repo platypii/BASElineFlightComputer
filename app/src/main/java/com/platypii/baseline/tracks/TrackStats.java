@@ -14,8 +14,11 @@ import java.util.List;
 public class TrackStats {
 
     public final Range altitude = new Range();
+    @Nullable
     public MLocation exit;
+    @Nullable
     public MLocation deploy;
+    @Nullable
     public MLocation land;
 
     @Nullable
