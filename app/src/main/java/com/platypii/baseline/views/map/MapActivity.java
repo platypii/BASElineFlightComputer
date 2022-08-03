@@ -192,6 +192,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         super.onResume();
         // Start location updates
         Services.location.addListener(this);
+        // Load map state
+        MapState.load(this);
     }
 
     @Override
@@ -199,10 +201,11 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         super.onPause();
         // Stop location updates
         Services.location.removeListener(this);
-        // Save map bounds
+        // Save map state
         if (map != null) {
             MapState.mapBounds = map.getProjection().getVisibleRegion().latLngBounds;
         }
+        MapState.save(this);
     }
 
 }
