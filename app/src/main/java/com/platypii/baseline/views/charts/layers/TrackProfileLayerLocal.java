@@ -13,7 +13,7 @@ public class TrackProfileLayerLocal extends TrackProfileLayer {
     public final TrackFile track;
 
     public TrackProfileLayerLocal(@NonNull TrackFile track) {
-        super(track.getName(), track.getName(), new TrackData(track.file), Colors.nextColor());
+        super(track.getName(), track.getName(), new TrackData(track.getName(), track.file), Colors.nextColor());
         this.track = track;
     }
 

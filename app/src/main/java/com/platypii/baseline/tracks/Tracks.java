@@ -13,6 +13,7 @@ import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -28,6 +29,10 @@ public class Tracks implements BaseService {
     public final CloudTracks cloud = new CloudTracks();
     public final TrackCache cache = new TrackCache();
     final SyncManager sync = new SyncManager();
+
+    // Starred track cache
+    @Nullable
+    private List<TrackData> starred;
 
     @Nullable
     private Context context;
@@ -85,6 +90,27 @@ public class Tracks implements BaseService {
         }
     }
 
+    public List<TrackData> getStarredTracks(Context context) {
+        // Check cache
+        if (starred != null) {
+            return starred;
+        }
+        starred = new ArrayList<>();
+        final List<TrackMetadata> tracks = Services.tracks.cache.list();
+        if (tracks != null) {
+            for (TrackMetadata track : tracks) {
+                if (track.starred) {
+                    final TrackData trackData = track.trackData(context);
+                    if (trackData != null && trackData.stats.exit != null && trackData.stats.deploy != null) {
+                        final TrackData trimmed = trackData.trim(trackData.stats.exit.millis, trackData.stats.deploy.millis);
+                        starred.add(trimmed);
+                    }
+                }
+            }
+        }
+        return starred;
+    }
+
     public void deleteTrack(@NonNull Context context, @NonNull TrackMetadata track) {
         new Thread(new DeleteTask(context, track)).start();
     }
@@ -103,6 +129,7 @@ public class Tracks implements BaseService {
     @Subscribe
     public void onSignOut(@NonNull AuthState.SignedOut event) {
         cache.clear();
+        starred = null;
     }
 
     @Override

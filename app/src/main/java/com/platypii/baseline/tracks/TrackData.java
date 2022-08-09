@@ -12,7 +12,7 @@ import java.util.List;
 public class TrackData {
 
     @NonNull
-    private final String name;
+    public final String id;
 
     @NonNull
     public final List<MLocation> data;
@@ -20,8 +20,8 @@ public class TrackData {
     @NonNull
     public final TrackStats stats;
 
-    public TrackData(@NonNull File trackFile) {
-        name = trackFile.getName();
+    public TrackData(@NonNull String id, @NonNull File trackFile) {
+        this.id = id;
         final List<MLocation> all = new TrackFileReader(trackFile).read();
         // Trim plane and ground
         data = Trimmer.autoTrim(all);
@@ -29,8 +29,8 @@ public class TrackData {
         stats = new TrackStats(data);
     }
 
-    private TrackData(@NonNull String name, @NonNull List<MLocation> data, @NonNull TrackStats stats) {
-        this.name = name;
+    private TrackData(@NonNull String id, @NonNull List<MLocation> data, @NonNull TrackStats stats) {
+        this.id = id;
         this.data = data;
         this.stats = stats;
     }
@@ -47,13 +47,13 @@ public class TrackData {
             if (loc.millis <= end) endIndex = i;
         }
         final List<MLocation> trimmed = data.subList(startIndex, endIndex);
-        return new TrackData(name, trimmed, stats);
+        return new TrackData(id, trimmed, stats);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return name;
+        return id;
     }
 
 }

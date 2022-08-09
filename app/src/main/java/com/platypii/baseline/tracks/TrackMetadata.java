@@ -63,7 +63,7 @@ public class TrackMetadata {
     public TrackData trackData(Context context) {
         final File trackFile = abbrvFile(context);
         if (trackFile.exists()) {
-            return new TrackData(trackFile);
+            return new TrackData(track_id, trackFile);
         } else {
             return null;
         }

@@ -6,7 +6,6 @@ import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.lasers.LaserProfile;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.tracks.TrackData;
-import com.platypii.baseline.tracks.TrackMetadata;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.views.charts.layers.ChartLayer;
 import com.platypii.baseline.views.charts.layers.Colors;
@@ -31,21 +30,10 @@ public class FlightProfileTouchable extends FlightProfile {
 
     public FlightProfileTouchable(Context context, AttributeSet attrs) {
         super(context, attrs);
-        addStarredTracks(context);
-    }
 
-    private void addStarredTracks(Context context) {
-        final List<TrackMetadata> tracks = Services.tracks.cache.list();
-        if (tracks != null) {
-            for (TrackMetadata track : tracks) {
-                if (track.starred) {
-                    final TrackData trackData = track.trackData(context);
-                    if (trackData != null && trackData.stats.exit != null && trackData.stats.deploy != null) {
-                        final TrackData trimmed = trackData.trim(trackData.stats.exit.millis, trackData.stats.deploy.millis);
-                        addLayer(new TrackProfileLayer(track.track_id, track.getName(), trimmed, Colors.starredTracks));
-                    }
-                }
-            }
+        // Add starred tracks
+        for (TrackData track : Services.tracks.getStarredTracks(context)) {
+            addLayer(new TrackProfileLayer(track.id, track.id, track, Colors.starredTracks));
         }
     }
 

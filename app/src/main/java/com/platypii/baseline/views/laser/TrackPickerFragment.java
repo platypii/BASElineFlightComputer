@@ -40,7 +40,7 @@ public class TrackPickerFragment extends TrackListFragment {
                 // Check if track is already downloaded
                 final File abbrv = track.abbrvFile(getContext());
                 if (abbrv.exists()) {
-                    final TrackData trackData = new TrackData(abbrv);
+                    final TrackData trackData = new TrackData(track.track_id, abbrv);
                     final TrackProfileLayerRemote cloudLayer = new TrackProfileLayerRemote(track, trackData);
                     addLayer(cloudLayer);
                 } else {
@@ -61,7 +61,7 @@ public class TrackPickerFragment extends TrackListFragment {
                 .commit();
         downloadFrag.trackFile.thenAccept(trackFile -> {
             // Track download success, add to chart
-            final ProfileLayer layer = new TrackProfileLayerRemote(track, new TrackData(trackFile));
+            final ProfileLayer layer = new TrackProfileLayerRemote(track, new TrackData(track.track_id, trackFile));
             addLayer(layer);
             // Pop twice to go back to laser panel
             getParentFragmentManager().popBackStack();
