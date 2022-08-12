@@ -78,8 +78,7 @@ class TrackFileReader {
         final List<MLocation> data = new ArrayList<>();
 
         // Parse header column
-        String line = br.readLine();
-        final CSVHeader columns = new CSVHeader(line);
+        final CSVHeader columns = new CSVHeader(br);
         // Add column aliases
         columns.addMapping("timeMillis", "millis");
         // Handle old files that were not FlySight compatible
@@ -88,6 +87,7 @@ class TrackFileReader {
         columns.addMapping("altitude_gps", "hMSL");
 
         // Parse data rows
+        String line;
         while ((line = br.readLine()) != null) {
             final String[] row = line.split(",");
             final Integer sensorIndex = columns.get("sensor");

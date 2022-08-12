@@ -57,9 +57,9 @@ class PlaceFile {
         // Read place file csv (gzipped)
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), StandardCharsets.UTF_8))) {
             // Parse header column
-            String line = br.readLine();
-            final CSVHeader columns = new CSVHeader(line);
+            final CSVHeader columns = new CSVHeader(br);
             // Parse data rows
+            String line;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
                     try {

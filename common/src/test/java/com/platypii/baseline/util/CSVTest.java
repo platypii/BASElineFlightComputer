@@ -1,5 +1,8 @@
 package com.platypii.baseline.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -8,9 +11,13 @@ public class CSVTest {
 
     private final String firstLine = "date,double,long";
 
+    private final CSVHeader columns = new CSVHeader(new BufferedReader(new StringReader(firstLine)));
+
+    public CSVTest() throws IOException {
+    }
+
     @Test
     public void parseLine() {
-        CSVHeader columns = new CSVHeader(firstLine);
         String[] row = "2018-11-04T16:20:00.99Z,3.14,1024".split(",");
 
         assertEquals(1541348400990L, CSVParse.getColumnDate(row, columns, "date"));
@@ -20,7 +27,6 @@ public class CSVTest {
 
     @Test
     public void parseLineEmpty() {
-        CSVHeader columns = new CSVHeader(firstLine);
         String[] row = ",,".split(",");
 
         assertEquals(-1L, CSVParse.getColumnDate(row, columns, "date"));
@@ -30,7 +36,6 @@ public class CSVTest {
 
     @Test
     public void parseLineBad() {
-        CSVHeader columns = new CSVHeader(firstLine);
         String[] row = firstLine.split(",");
 
         assertEquals(-1L, CSVParse.getColumnDate(row, columns, "date"));

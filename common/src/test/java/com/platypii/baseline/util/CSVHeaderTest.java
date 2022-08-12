@@ -1,5 +1,8 @@
 package com.platypii.baseline.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -10,8 +13,8 @@ public class CSVHeaderTest {
     private final String firstLine = "date,double,long";
 
     @Test
-    public void parseHeader() {
-        CSVHeader header = new CSVHeader(firstLine);
+    public void parseHeader() throws IOException {
+        CSVHeader header = new CSVHeader(stringReader(firstLine));
 
         assertEquals(Integer.valueOf(0), header.get("date"));
         assertEquals(Integer.valueOf(1), header.get("double"));
@@ -20,8 +23,8 @@ public class CSVHeaderTest {
     }
 
     @Test
-    public void parseHeaderWithMapping() {
-        CSVHeader header = new CSVHeader(firstLine);
+    public void parseHeaderWithMapping() throws IOException {
+        CSVHeader header = new CSVHeader(stringReader(firstLine));
         header.addMapping("long", "okay");
 
         assertEquals(Integer.valueOf(0), header.get("date"));
@@ -32,9 +35,13 @@ public class CSVHeaderTest {
     }
 
     @Test
-    public void parseHeaderWithBOM() {
-        CSVHeader header = new CSVHeader("\ufeffdate,double,long");
+    public void parseHeaderWithBOM() throws IOException {
+        CSVHeader header = new CSVHeader(stringReader("\ufeffdate,double,long"));
         assertEquals(Integer.valueOf(0), header.get("date"));
+    }
+
+    private BufferedReader stringReader(String str) {
+        return new BufferedReader(new StringReader(str));
     }
 
 }
