@@ -45,7 +45,8 @@ public class LocationStatus {
             return;
         }
         // GPS signal status
-        if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothState.BT_CONNECTED) {
+        if (Services.bluetooth.preferences.preferenceEnabled &&
+                (Services.bluetooth.getState() != BluetoothState.BT_CONNECTED && Services.bleService.getState() != BluetoothState.BT_CONNECTED)) {
             // Bluetooth enabled, but not connected
             icon = R.drawable.warning;
             switch (Services.bluetooth.getState()) {

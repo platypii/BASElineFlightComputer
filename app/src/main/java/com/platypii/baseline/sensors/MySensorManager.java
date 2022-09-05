@@ -1,11 +1,5 @@
 package com.platypii.baseline.sensors;
 
-import com.platypii.baseline.measurements.MAccel;
-import com.platypii.baseline.measurements.MGravity;
-import com.platypii.baseline.measurements.MRotation;
-import com.platypii.baseline.measurements.MSensor;
-import com.platypii.baseline.util.SyncedList;
-
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -13,8 +7,18 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.platypii.baseline.bluetooth.BleService;
+import com.platypii.baseline.measurements.GenericListener;
+import com.platypii.baseline.measurements.MAccel;
+import com.platypii.baseline.measurements.MGravity;
+import com.platypii.baseline.measurements.MRotation;
+import com.platypii.baseline.measurements.MSensor;
+import com.platypii.baseline.util.SyncedList;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -22,8 +26,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Service to manage orientation sensors, and listeners
  * accelerometer, gravity, gyro, linear accel, magnetic, pressure, humidity, rotation, temp
  */
-public class MySensorManager implements SensorEventListener {
+
+public class MySensorManager implements SensorEventListener, GenericListener {
+
     private static final String TAG = "MySensorManager";
+    private final BleService bleService;
 
     @Nullable
     private SensorManager sensorManager;
@@ -36,6 +43,10 @@ public class MySensorManager implements SensorEventListener {
     public final SyncedList<MSensor> rotation = new SyncedList<>();
 
     private final List<MySensorListener> listeners = new CopyOnWriteArrayList<>();
+
+    public MySensorManager(BleService bleService) {
+        this.bleService = bleService;
+    }
 
     /**
      * Initialize orientation sensor services
@@ -60,6 +71,9 @@ public class MySensorManager implements SensorEventListener {
             sensorManager.registerListener(MySensorManager.this, accelSensor, sensorDelay);
             sensorManager.registerListener(MySensorManager.this, gravitySensor, sensorDelay);
             sensorManager.registerListener(MySensorManager.this, rotationSensor, sensorDelay);
+
+            bleService.addGravityListener(MySensorManager.this);
+            bleService.addRotationListener(MySensorManager.this);
         });
     }
 
@@ -81,25 +95,19 @@ public class MySensorManager implements SensorEventListener {
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
                 measurement = new MAccel(t, (float) Math.sqrt(x * x + y * y + z * z));
+                notifyListeners(measurement);
                 break;
             case Sensor.TYPE_GRAVITY:
                 measurement = new MGravity(t, x, y, z);
-                gravity.append(measurement);
+                onSensorChanged((MGravity) measurement);
                 break;
             case Sensor.TYPE_ROTATION_VECTOR:
             case Sensor.TYPE_MAGNETIC_FIELD:
                 measurement = new MRotation(t, x, y, z);
-                rotation.append(measurement);
+                onSensorChanged((MRotation) measurement);
                 break;
             default:
                 Log.e(TAG, "Received unexpected sensor event");
-        }
-        // Notify listeners
-        if (measurement != null) {
-            enabled = true;
-            for (MySensorListener listener : listeners) {
-                listener.onSensorChanged(measurement);
-            }
         }
     }
 
@@ -148,4 +156,22 @@ public class MySensorManager implements SensorEventListener {
         listeners.remove(listener);
     }
 
+    @Override
+    public void onSensorChanged(MSensor measurement) {
+        if (measurement instanceof MGravity){
+            gravity.append(measurement);
+        } else if (measurement instanceof MRotation){
+            rotation.append(measurement);
+        }
+        notifyListeners(measurement);
+    }
+
+    private void notifyListeners(MSensor measurement) {
+        if (measurement != null) {
+            enabled = true;
+            for (MySensorListener listener : listeners) {
+                listener.onSensorChanged(measurement);
+            }
+        }
+    }
 }

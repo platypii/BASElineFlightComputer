@@ -32,6 +32,10 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 
 public class BleRunnable extends AbstractBluetoothRunnable {
+    static final UUID SERVICE_UUID = UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
+    static final UUID CHAR_RX = UUID.fromString("6E400002-B5A3-F393-E0A9-E50E24DCCA9E"); // to gps
+    static final UUID CHAR_TX = UUID.fromString("6E400003-B5A3-F393-E0A9-E50E24DCCA9E"); // from gps
+
     private static final String TAG = "BleRunnable";
     private final BleService service;
     private final Activity activity;
@@ -46,15 +50,8 @@ public class BleRunnable extends AbstractBluetoothRunnable {
     public void stop() {
         service.setState(BT_STOPPING);
 
+        // TODO: How do we disconnect/unsubscribe from the BLE device?
         central.stopScan();
-        // Close bluetooth socket
-//        if (bluetoothSocket != null) {
-//            try {
-//                bluetoothSocket.close();
-//            } catch (IOException e) {
-//                Log.w(TAG, "Exception closing bluetooth socket", e);
-//            }
-//        }
     }
 
     @Override
@@ -67,13 +64,15 @@ public class BleRunnable extends AbstractBluetoothRunnable {
         BluetoothCentralManagerCallback bluetoothCentralManagerCallback = new BluetoothCentralManagerCallback() {
             @Override
             public void onDiscoveredPeripheral(BluetoothPeripheral peripheral, ScanResult scanResult) {
+                // TODO: use preferences for the exact device ide to connect to
                 Log.i(TAG, "scan result " + peripheral + " " + scanResult);
                 central.stopScan();
                 central.autoConnectPeripheral(peripheral, service.getListener());
             }
+
             public void onConnectedPeripheral(BluetoothPeripheral peripheral) {
                 Log.i(TAG, "peripheral connected");
-                peripheral.setNotify(BleHelper.SERVICE_UUID, BleHelper.CHAR_TX, true);
+                peripheral.setNotify(SERVICE_UUID, CHAR_TX, true);
             }
 
             public void onConnectionFailed(BluetoothPeripheral peripheral, HciStatus status) {
@@ -82,7 +81,7 @@ public class BleRunnable extends AbstractBluetoothRunnable {
         };
 
         central = new BluetoothCentralManager(activity, bluetoothCentralManagerCallback, new Handler(Looper.getMainLooper()));
-        central.scanForPeripheralsWithServices(new UUID[]{BleHelper.SERVICE_UUID});
+        central.scanForPeripheralsWithServices(new UUID[]{SERVICE_UUID});
         return true;
     }
 }

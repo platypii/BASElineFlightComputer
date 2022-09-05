@@ -23,7 +23,7 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
     public final double altitude_gps; // GPS altitude MSL
     private final double vN; // Velocity north
     private final double vE; // Velocity east
-    public float hAcc = Float.NaN; // LatitHorizontal accuracy
+    public float hAcc = Float.NaN; // Horizontal accuracy
     //public float vAcc = Float.NaN; // Vertical accuracy
     //public float sAcc = Float.NaN; // Speed accuracy
     public final float pdop; // Positional dilution of precision

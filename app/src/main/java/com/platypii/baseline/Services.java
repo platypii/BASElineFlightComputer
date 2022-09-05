@@ -55,7 +55,7 @@ public class Services {
     public static final BleService bleService = new BleService();
     public static final LocationService location = new LocationService(bluetooth, bleService);
     public static final MyAltimeter alti = location.alti;
-    public static final MySensorManager sensors = new MySensorManager();
+    public static final MySensorManager sensors = new MySensorManager(bleService);
     public static final FlightComputer flightComputer = new FlightComputer();
     public static final MyAudible audible = new MyAudible();
     private static final Notifications notifications = new Notifications();

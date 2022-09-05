@@ -6,34 +6,46 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.platypii.baseline.location.LocationProvider;
+import com.platypii.baseline.measurements.MGravity;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.measurements.MRotation;
+import com.platypii.baseline.measurements.MSensor;
+import com.platypii.baseline.measurements.Measurement;
+import com.platypii.baseline.measurements.GenericListener;
 import com.welie.blessed.BluetoothPeripheral;
 import com.welie.blessed.BluetoothPeripheralCallback;
 import com.welie.blessed.GattStatus;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class BleService extends AbstractBluetoothService {
-    private static final String TAG = "BLE";
+    private static final String TAG = "BleService";
+    private static final String RACEBOX = "RaceBox";
+
     private final RaceBoxListener bleListener;
 
     @Nullable
     private Stoppable bleRunnable;
-    @Nullable
-    private LocationProvider locationProvider;
     public final BlePreferences preferences = new BlePreferences();
-    private Set<LocationProvider> locationProviders;
+    private Map<Class<? extends Measurement>, Set<GenericListener<?>>> sensorListeners;
+    private Set<LocationProvider> locationListeners;
 
     public BleService() {
         this.bleListener = new RaceBoxListener();
-        this.locationProviders = new HashSet<>();
+        this.sensorListeners = new HashMap<>();
+        this.locationListeners = new HashSet<>();
     }
 
     @Override
@@ -59,8 +71,29 @@ public class BleService extends AbstractBluetoothService {
         return new RaceBoxListener();
     }
 
+    private <T extends MSensor> void addGenericListener(Class<T> clazz, GenericListener<T> listener) {
+        sensorListeners.putIfAbsent(clazz, new HashSet<>());
+        sensorListeners.get(clazz).add(listener);
+    }
+
+    private <T extends MSensor> void removeGenericListener(Class<T> clazz, GenericListener<T> listener) {
+        Optional.ofNullable(sensorListeners.get(clazz)).ifPresent(set -> set.remove(listener));
+    }
+
     public void addListener(LocationProvider locationProvider) {
-        this.locationProviders.add(locationProvider);
+        this.locationListeners.add(locationProvider);
+    }
+
+    public void removeListener(LocationProvider locationProvider) {
+        this.locationListeners.remove(locationProvider);
+    }
+
+    public void addGravityListener(GenericListener gravityListener) {
+        addGenericListener(MGravity.class, gravityListener);
+    }
+
+    public void addRotationListener(GenericListener rotationListener) {
+        addGenericListener(MRotation.class, rotationListener);
     }
 
     private class RaceBoxListener extends BluetoothPeripheralCallback {
@@ -115,8 +148,16 @@ public class BleService extends AbstractBluetoothService {
 
                 ZonedDateTime dateTime = ZonedDateTime.of(year, month, day, hour, min, sec, 0, ZoneId.of("UTC"))
                         .plusNanos(ns); // since racebox nanos can be negative and ZonedDateTime doesn't like that
-                long millis = dateTime.toInstant()
-                        .toEpochMilli();
+                Instant instant = dateTime.toInstant();
+                long nanos = instant.getNano();
+                long millis = instant.toEpochMilli();
+
+                long epochNanos = millis * 1_000_000_000 + nanos;
+
+                if ((lat_lon_flags & 0x01) > 0) {
+                    // lat/long/alt is invalid; discard
+                    return;
+                }
 
                 MLocation loc = new MLocation(millis,
                         latitude, longitude,
@@ -124,10 +165,21 @@ public class BleService extends AbstractBluetoothService {
                         0, 0,
                         0, pdop, 0, 0,
                         num_svs, 0);
-                locationProviders.forEach(provider -> provider.updateLocation(loc));
+                BleService.this.locationListeners.forEach(listener -> listener.updateLocation(loc));
+
+                MRotation rotation = new MRotation(0, (float) rot_x, (float) rot_y, (float) rot_z);
+                notifyListeners(MRotation.class, rotation);
+
+                MGravity gravity = new MGravity(0, (float) g_x, (float) g_y, (float) g_z);
+                notifyListeners(MGravity.class, gravity);
             } catch (Exception e) {
                 Log.e(TAG, String.format("Error parsing BLE message: " + e.getMessage()));
             }
         }
+    }
+
+    private <T extends MSensor> void notifyListeners(Class<T> clazz, T measurement) {
+        this.sensorListeners.getOrDefault(clazz, Collections.emptySet())
+                .forEach(listener -> ((GenericListener<T>) listener).onSensorChanged(measurement));
     }
 }

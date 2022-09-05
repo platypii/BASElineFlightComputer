@@ -44,4 +44,10 @@ public class LocationProviderRaceBox extends LocationProvider {
     public void start(@NonNull Context context) {
         bleService.addListener(this);
     }
+
+    @Override
+    public void stop() {
+        super.stop();
+        bleService.removeListener(this);
+    }
 }
