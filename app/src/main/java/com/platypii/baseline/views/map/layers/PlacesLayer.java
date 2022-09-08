@@ -2,7 +2,10 @@ package com.platypii.baseline.views.map.layers;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.MapInfoWindowBinding;
+import com.platypii.baseline.measurements.LatLngAlt;
+import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.places.Place;
+import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.map.MapState;
 import com.platypii.baseline.views.map.PlaceIcons;
 
@@ -93,10 +96,21 @@ public class PlacesLayer extends MapLayer {
                     .flat(true)
                     .icon(PlaceIcons.icon(place))
                     .title(place.shortName())
-                    .snippet(place.snippet())
+                    .snippet(snippet(place))
             );
             placeMarkers.put(place, placeMarker);
         }
+    }
+
+    @NonNull
+    private String snippet(Place p) {
+        final String region = p.region == null || p.region.isEmpty() ? p.country : p.region + ", " + p.country;
+        final String ll = LatLngAlt.formatLatLng(p.lat, p.lng);
+        final String alt = Double.isNaN(p.alt) ? "" : "\n" + Convert.distance(p.alt) + " MSL";
+        final MLocation loc = Services.location.lastLoc;
+        final String dist = loc == null ? "" : Convert.distance3(loc.distanceTo(p.latLng()));
+        final String distString = dist.isEmpty() ? "" : "\n" + dist + " away";
+        return region + "\n" + ll + alt + distString;
     }
 
     private class PlaceInfoWindow implements GoogleMap.InfoWindowAdapter {

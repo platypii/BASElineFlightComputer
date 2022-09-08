@@ -75,14 +75,6 @@ public class Place {
         }
     }
 
-    @Nullable
-    public String snippet() {
-        final String regionString = region == null || region.isEmpty() ? country : region + ", " + country;
-        final String ll = LatLngAlt.formatLatLng(lat, lng);
-        final String altString = Double.isNaN(alt) ? "" : "\n" + Convert.distance(alt) + " MSL";
-        return regionString + "\n" + ll + altString;
-    }
-
     @NonNull
     @Override
     public String toString() {
