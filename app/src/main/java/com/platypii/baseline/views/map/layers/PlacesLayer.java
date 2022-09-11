@@ -1,5 +1,11 @@
 package com.platypii.baseline.views.map.layers;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+import com.google.android.gms.maps.model.LatLng;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.MapInfoWindowBinding;
 import com.platypii.baseline.measurements.LatLngAlt;
@@ -23,21 +29,36 @@ import java.util.List;
 import java.util.Map;
 
 public class PlacesLayer extends MapLayer {
+    private static final String TAG = "PlacesLayer";
 
     @Nullable
     private GoogleMap map;
     @NonNull
     private final LayoutInflater inflater;
+    @Nullable
+    private final Context context;
     @NonNull
     private final Map<Place, Marker> placeMarkers = new HashMap<>();
 
-    public PlacesLayer(@NonNull LayoutInflater inflater) {
+    public PlacesLayer(@NonNull LayoutInflater inflater, @Nullable Context context) {
         this.inflater = inflater;
+        this.context = context;
     }
 
     @Override
     public void onAdd(@NonNull GoogleMap map) {
         this.map = map;
+        map.setOnInfoWindowClickListener(marker -> {
+            Log.i(TAG, "Place click " + marker.getTitle());
+            if (context != null) {
+                // Copy lat,lng to clipboard and show toast
+                final ClipboardManager clippy = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                final LatLng position = marker.getPosition();
+                final String ll = position.latitude + "," + position.longitude;
+                clippy.setPrimaryClip(ClipData.newPlainText(null, ll));
+                Toast.makeText(context, "Copied: " + ll, Toast.LENGTH_SHORT).show();
+            }
+        });
         map.setInfoWindowAdapter(new PlaceInfoWindow());
     }
 

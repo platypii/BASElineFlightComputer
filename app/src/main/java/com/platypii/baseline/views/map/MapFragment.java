@@ -21,7 +21,7 @@ public class MapFragment extends BaseMapFragment {
         super.onMapReady(map);
 
         // Add map layers
-        addLayer(placesLayer = new PlacesLayer(getLayoutInflater()));
+        addLayer(placesLayer = new PlacesLayer(getLayoutInflater(), getContext()));
         addLayer(new HomeLayer());
         addLayer(new LandingLayer());
         addLayer(new MyPositionLayer());
