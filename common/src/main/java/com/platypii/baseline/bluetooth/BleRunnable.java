@@ -1,10 +1,7 @@
 package com.platypii.baseline.bluetooth;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.le.ScanResult;
-import android.location.GpsStatus;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -12,23 +9,13 @@ import android.util.Log;
 import com.welie.blessed.BluetoothCentralManager;
 import com.welie.blessed.BluetoothCentralManagerCallback;
 import com.welie.blessed.BluetoothPeripheral;
-import com.welie.blessed.BluetoothPeripheralCallback;
-import com.welie.blessed.GattStatus;
 import com.welie.blessed.HciStatus;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.Optional;
 import java.util.UUID;
 
 import androidx.annotation.NonNull;
 
-import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
-import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
-import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 
 public class BleRunnable extends AbstractBluetoothRunnable {
@@ -40,18 +27,22 @@ public class BleRunnable extends AbstractBluetoothRunnable {
     private final BleService service;
     private final Activity activity;
     private BluetoothCentralManager central;
+    private Optional<BluetoothPeripheral> connectedPeripheral;
 
     public BleRunnable(@NonNull BleService service, Activity activity) {
         this.service = service;
         this.activity = activity;
+        connectedPeripheral = Optional.empty();
     }
 
     @Override
     public void stop() {
         service.setState(BT_STOPPING);
 
-        // TODO: How do we disconnect/unsubscribe from the BLE device?
         central.stopScan();
+        connectedPeripheral.ifPresent(p -> p.setNotify(SERVICE_UUID, CHAR_TX, false)); // is both this and cancelConnection necessary?
+        connectedPeripheral.ifPresent(central::cancelConnection);
+        connectedPeripheral = Optional.empty();
     }
 
     @Override
@@ -63,25 +54,37 @@ public class BleRunnable extends AbstractBluetoothRunnable {
     protected boolean connect() {
         BluetoothCentralManagerCallback bluetoothCentralManagerCallback = new BluetoothCentralManagerCallback() {
             @Override
-            public void onDiscoveredPeripheral(BluetoothPeripheral peripheral, ScanResult scanResult) {
-                // TODO: use preferences for the exact device ide to connect to
+            public void onDiscoveredPeripheral(@NonNull BluetoothPeripheral peripheral, @NonNull ScanResult scanResult) {
+                // TODO: use preferences for the exact device id to connect to
                 Log.i(TAG, "scan result " + peripheral + " " + scanResult);
                 central.stopScan();
+                service.preferences.save(activity, service.preferences.preferenceEnabled, peripheral.getAddress(), peripheral.getName());
                 central.autoConnectPeripheral(peripheral, service.getListener());
             }
 
-            public void onConnectedPeripheral(BluetoothPeripheral peripheral) {
-                Log.i(TAG, "peripheral connected");
+            public void onConnectedPeripheral(@NonNull BluetoothPeripheral peripheral) {
+                Log.i(TAG, "BLE peripheral connected: " + peripheral.getAddress() + " \"" + peripheral.getName() + "\"");
+
+                connectedPeripheral = Optional.of(peripheral);
                 peripheral.setNotify(SERVICE_UUID, CHAR_TX, true);
             }
 
-            public void onConnectionFailed(BluetoothPeripheral peripheral, HciStatus status) {
-                Log.i(TAG, "peripheral connection failed");
+            public void onConnectionFailed(@NonNull BluetoothPeripheral peripheral, @NonNull HciStatus status) {
+                Log.e(TAG, "BLE peripheral connection failed");
             }
         };
 
         central = new BluetoothCentralManager(activity, bluetoothCentralManagerCallback, new Handler(Looper.getMainLooper()));
-        central.scanForPeripheralsWithServices(new UUID[]{SERVICE_UUID});
+
+        if (service.preferences.preferenceDeviceId != null) {
+            Log.i(TAG, "Reconnecting to saved BLE device: " + service.preferences.preferenceDeviceId +
+                    " \"" + service.preferences.preferenceDeviceName + "\"");
+            BluetoothPeripheral peripheral = central.getPeripheral(service.preferences.preferenceDeviceId);
+            // could we theoretically use multiple devices at once?
+            central.autoConnectPeripheral(peripheral, service.getListener());
+        } else {
+            central.scanForPeripheralsWithServices(new UUID[]{SERVICE_UUID});
+        }
         return true;
     }
 }
