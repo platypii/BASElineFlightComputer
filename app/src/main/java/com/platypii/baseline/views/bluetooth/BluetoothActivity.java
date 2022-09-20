@@ -10,9 +10,12 @@ import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.Permissions;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.PubSub.Subscriber;
+import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.views.BaseActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import java.util.Locale;
 import org.greenrobot.eventbus.EventBus;
@@ -31,6 +34,8 @@ public class BluetoothActivity extends BaseActivity implements Subscriber<MLocat
         binding.btPhone.setOnClickListener(this::clickPhone);
         binding.btPhoneStatus.setOnClickListener(this::clickPhone);
         binding.bluetoothPair.setOnClickListener(this::clickPair);
+        binding.bleScan.setOnClickListener(this::bleScan);
+        binding.bleScan.setOnLongClickListener(this::clearBle);
         setContentView(binding.getRoot());
     }
 
@@ -108,6 +113,19 @@ public class BluetoothActivity extends BaseActivity implements Subscriber<MLocat
                 Permissions.openLocationSettings(this);
             }
         }
+    }
+
+    private void bleScan(View view) {
+        Analytics.logEvent(this, "click_ble_scan", null);
+        startActivity(new Intent(this, BleActivity.class));
+    }
+
+    private boolean clearBle(View view) {
+        Log.i(TAG, "Clearing saved BLE device");
+        Analytics.logEvent(this, "click_clear_ble", null);
+        Services.bleService.preferences.save(this,Services.bleService.preferences.preferenceEnabled, null, null);
+        Services.bleService.reconnect();
+        return true;
     }
 
     private void clickPair(View v) {

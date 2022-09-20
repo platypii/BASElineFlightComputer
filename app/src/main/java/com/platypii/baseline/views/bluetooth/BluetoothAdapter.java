@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.bluetooth;
 
 import android.os.Build;
+
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 
@@ -12,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import java.util.List;
 
 import static com.platypii.baseline.bluetooth.BluetoothUtil.getDeviceName;
@@ -27,8 +30,15 @@ class BluetoothAdapter extends BaseAdapter {
 
     private final String internalGps;
 
+    private final boolean showPhone;
+
     BluetoothAdapter(@NonNull Context context, @NonNull List<BluetoothDevice> devices) {
+        this(context, devices, true);
+    }
+
+    BluetoothAdapter(@NonNull Context context, @NonNull List<BluetoothDevice> devices, boolean showPhone) {
         this.devices = devices;
+        this.showPhone = showPhone;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         internalGps = context.getString(R.string.internal_gps);
     }
@@ -44,7 +54,7 @@ class BluetoothAdapter extends BaseAdapter {
         final TextView addressView = convertView.findViewById(R.id.bluetooth_id);
         final ImageView checkedView = convertView.findViewById(R.id.bluetooth_checked);
 
-        if (position == 0) {
+        if (showPhone && position == 0) {
             // Internal phone GPS
             nameView.setText(internalGps);
             addressView.setText(Build.MANUFACTURER + " " + Build.MODEL);
@@ -55,7 +65,7 @@ class BluetoothAdapter extends BaseAdapter {
             }
         } else {
             // Bluetooth GPS device
-            final BluetoothDevice device = devices.get(position - 1);
+            final BluetoothDevice device = devices.get(position - (showPhone ? 1 : 0));
             final String deviceName = getDeviceName(device);
             nameView.setText(deviceName);
             addressView.setText(device.getAddress());
@@ -76,12 +86,12 @@ class BluetoothAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return devices.size() + 1;
+        return devices.size() + (showPhone ? 1 : 0);
     }
 
     @Override
     public Object getItem(int position) {
-        return position == 0 ? null : devices.get(position - 1);
+        return showPhone && position == 0 ? null : devices.get(position - (showPhone ? 1 : 0));
     }
 
     @Override

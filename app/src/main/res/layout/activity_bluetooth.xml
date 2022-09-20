@@ -86,15 +86,33 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    <Button
-        android:id="@+id/bluetooth_pair"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="start|center_vertical"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:drawablePadding="10dp"
-        android:drawableStart="@drawable/ic_bluetooth_pair"
-        android:text="@string/bluetooth_pair"/>
+        android:orientation="horizontal"
+        android:gravity="bottom">
+        <Button
+            android:id="@+id/bluetooth_pair"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/ic_bluetooth_pair"
+            android:text="@string/bluetooth_pair"/>
+
+        <Button
+            android:id="@+id/ble_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end|center_vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/ic_bluetooth_pair"
+            android:text="@string/ble_scan"/>
+    </LinearLayout>
+
 
 </LinearLayout>

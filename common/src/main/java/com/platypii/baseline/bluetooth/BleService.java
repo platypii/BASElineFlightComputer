@@ -1,7 +1,10 @@
 package com.platypii.baseline.bluetooth;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.le.ScanResult;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -37,19 +40,21 @@ public class BleService extends AbstractBluetoothService {
     private final RaceBoxListener bleListener;
 
     @Nullable
-    private Stoppable bleRunnable;
+    private BleRunnable bleRunnable;
     public final BlePreferences preferences = new BlePreferences();
     private Map<Class<? extends Measurement>, Set<GenericListener<?>>> sensorListeners;
+    private Set<DeviceScanListener> deviceListeners;
     private Set<LocationProvider> locationListeners;
 
     public BleService() {
         this.bleListener = new RaceBoxListener();
         this.sensorListeners = new HashMap<>();
         this.locationListeners = new HashSet<>();
+        this.deviceListeners = new HashSet<>();
     }
 
     @Override
-    protected Stoppable getRunnable() {
+    protected BleRunnable getRunnable() {
         return bleRunnable;
     }
 
@@ -67,8 +72,14 @@ public class BleService extends AbstractBluetoothService {
         bleRunnable = null;
     }
 
+    public void reconnect(){
+        if (bleRunnable != null) {
+            bleRunnable.reconnect();
+        }
+    }
+
     public BluetoothPeripheralCallback getListener() {
-        return new RaceBoxListener();
+        return bleListener;
     }
 
     private <T extends MSensor> void addGenericListener(Class<T> clazz, GenericListener<T> listener) {
@@ -94,6 +105,24 @@ public class BleService extends AbstractBluetoothService {
 
     public void addRotationListener(GenericListener rotationListener) {
         addGenericListener(MRotation.class, rotationListener);
+    }
+
+    public void removeScanListener(DeviceScanListener scanListener) {
+        deviceListeners.remove(scanListener);
+        if (this.deviceListeners.size() == 0 && bleRunnable != null) {
+            bleRunnable.stopScan();
+        }
+    }
+
+    public void addScanListener(DeviceScanListener scanListener) {
+        deviceListeners.add(scanListener);
+        if (bleRunnable != null) {
+            bleRunnable.startScan();
+        }
+    }
+
+    public void notifyScanListeners(ScanResult scanResult) {
+        this.deviceListeners.forEach(listener -> listener.onScanResult(scanResult));
     }
 
     private class RaceBoxListener extends BluetoothPeripheralCallback {
@@ -181,5 +210,12 @@ public class BleService extends AbstractBluetoothService {
     private <T extends MSensor> void notifyListeners(Class<T> clazz, T measurement) {
         this.sensorListeners.getOrDefault(clazz, Collections.emptySet())
                 .forEach(listener -> ((GenericListener<T>) listener).onSensorChanged(measurement));
+    }
+
+    public void doConnect(Context context, BluetoothDevice device) {
+        preferences.save(context, preferences.preferenceEnabled, device.getAddress(), device.getName());
+        if(bleRunnable != null){
+            bleRunnable.reconnect();
+        }
     }
 }
