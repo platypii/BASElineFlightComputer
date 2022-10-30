@@ -7,10 +7,8 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
-import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
 
@@ -20,7 +18,6 @@ import static com.platypii.baseline.bluetooth.BluetoothUtil.bytesToShort;
 /**
  * This class contains ids, commands, and decoders for ATN laser rangefinders.
  */
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 class ATNProtocol implements RangefinderProtocol {
     private static final String TAG = "ATNProtocol";
 
@@ -120,7 +117,6 @@ class ATNProtocol implements RangefinderProtocol {
     /**
      * Return true iff a bluetooth scan result looks like a rangefinder
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     static boolean isATN(@NonNull BluetoothDevice device) {
         return "ATN-LD99".equals(device.getName());
     }

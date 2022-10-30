@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,7 +33,6 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
  * Thread that reads from bluetooth laser rangefinder.
  * Laser measurements are emitted as EventBus messages.
  */
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 class RangefinderRunnable implements Runnable {
     private static final String TAG = "RangefinderRunnable";
 

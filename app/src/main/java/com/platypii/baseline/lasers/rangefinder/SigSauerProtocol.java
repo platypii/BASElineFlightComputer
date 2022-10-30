@@ -9,13 +9,11 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.le.ScanRecord;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import java.util.Arrays;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
@@ -25,7 +23,6 @@ import static com.platypii.baseline.bluetooth.BluetoothUtil.byteArrayToHex;
 /**
  * This class contains ids, commands, and decoders for Sig Sauer laser rangefinders.
  */
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 class SigSauerProtocol implements RangefinderProtocol {
     private static final String TAG = "SigSauerProtocol";
 
@@ -148,7 +145,6 @@ class SigSauerProtocol implements RangefinderProtocol {
     /**
      * Return true iff a bluetooth scan result looks like a rangefinder
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     static boolean isSigSauer(@NonNull BluetoothDevice device, @Nullable ScanRecord record) {
         final String deviceName = device.getName();
         if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId), manufacturerData)) {

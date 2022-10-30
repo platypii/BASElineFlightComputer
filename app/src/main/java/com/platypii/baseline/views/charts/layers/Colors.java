@@ -5,7 +5,7 @@ import androidx.annotation.ColorInt;
 public class Colors {
 
     @ColorInt
-    public static final int defaultColor = 0xff7f00ff; // Default track color
+    public static final int defaultColor = 0xffa449ff; // Default track color
 
     @ColorInt
     public static final int modeGround = 0xff995522;

@@ -10,11 +10,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import org.greenrobot.eventbus.EventBus;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STARTING;
@@ -59,7 +57,6 @@ public class RangefinderService implements BaseService {
      * Starts bluetooth in an async thread.
      * Even though we're mostly just starting the bluetooth thread, calling getAdapter can be slow.
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void startAsync(@NonNull final Activity activity) {
         AsyncTask.execute(() -> {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

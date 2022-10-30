@@ -142,8 +142,10 @@ public class BluetoothService implements BaseService {
             // Only allowed self-transition is connecting -> connecting
             Log.e(TAG, "Null state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         }
-        bluetoothState = state;
-        EventBus.getDefault().post(new BluetoothEvent(state));
+        if (bluetoothState != state) {
+            bluetoothState = state;
+            EventBus.getDefault().post(new BluetoothEvent(state));
+        }
     }
 
     /**
