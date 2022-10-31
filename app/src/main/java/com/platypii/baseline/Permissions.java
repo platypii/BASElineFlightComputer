@@ -1,23 +1,23 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.views.BaseActivity;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
-
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import com.platypii.baseline.views.BaseActivity;
 
 /**
  * Android permissions helpers
  */
 public class Permissions {
 
-    private static final String[] locationPermissions = {Manifest.permission.ACCESS_FINE_LOCATION};
+    private static final String[] locationPermissions = { Manifest.permission.ACCESS_FINE_LOCATION };
 
     public static boolean hasLocationPermissions(@NonNull Context context) {
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;

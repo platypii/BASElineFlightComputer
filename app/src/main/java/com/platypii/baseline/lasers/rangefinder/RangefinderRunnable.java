@@ -185,8 +185,8 @@ class RangefinderRunnable implements Runnable {
 
     private void disconnected() {
         Log.i(TAG, "Rangefinder disconnected");
-        service.setState(BT_CONNECTING);
-        // TODO: Scan? Or wait for auto-connect?
+        service.setState(BT_STARTING);
+        scan();
     }
 
     void stop() {

@@ -49,6 +49,7 @@ public class RangefinderService implements BaseService {
             return;
         }
         final Activity activity = (Activity) context;
+        Log.i(TAG, "Starting rangefinder service");
         setState(BT_STARTING);
         startAsync(activity);
     }

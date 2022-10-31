@@ -53,6 +53,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
 
 public class LaserEditFragment extends Fragment implements MyLocationListener {
     private static final String TAG = "LaserEditFrag";
@@ -274,7 +275,6 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         final Activity activity = getActivity();
         if (activity != null) {
             // Check for location permissions
-            // Note: Activity.checkSelfPermission added in minsdk 23
             if (!Permissions.hasLocationPermissions(activity)) {
                 Log.w(TAG, "Location permission not granted");
                 errorMessage = "Location permission not granted";
@@ -379,6 +379,9 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             if (rangefinder.getState() == BT_CONNECTED) {
                 binding.laserStatus.setText(R.string.rangefinder_connected);
                 binding.laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_green, 0, 0, 0);
+            } else if (rangefinder.getState() == BT_CONNECTING) {
+                binding.laserStatus.setText(R.string.rangefinder_connecting);
+                binding.laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);
             } else {
                 binding.laserStatus.setText(R.string.rangefinder_searching);
                 binding.laserStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_red, 0, 0, 0);

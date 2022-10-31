@@ -136,6 +136,7 @@
     <string name="quadrant">Quadrant</string>
     <string name="rangefinder_connect">Aktivieren Sie Bluetooth-Entfernungsmesser</string>
     <string name="rangefinder_connected">Entfernungsmesser verbunden</string>
+    <string name="rangefinder_connecting">Entfernungsmesser verbindet…</string>
     <string name="rangefinder_searching">Entfernungsmesser suchen…</string>
     <string-array name="metric_modes">
         <item>Meter</item>

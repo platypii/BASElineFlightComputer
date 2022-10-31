@@ -136,7 +136,8 @@
     <string name="quadrant">quadrant</string>
     <string name="rangefinder_connect">Activer Bluetooth Télémètre</string>
     <string name="rangefinder_connected">Télémètre connecté</string>
-    <string name="rangefinder_searching">Recherche de télémètre…</string>
+    <string name="rangefinder_connecting">Télémètre se connecté…</string>
+    <string name="rangefinder_searching">Télémètre recherche…</string>
     <string-array name="metric_modes">
         <item>Mètres</item>
         <item>Pieds</item>

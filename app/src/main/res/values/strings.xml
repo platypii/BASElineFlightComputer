@@ -136,6 +136,7 @@
     <string name="quadrant">quadrant</string>
     <string name="rangefinder_connect">Enable bluetooth rangefinder</string>
     <string name="rangefinder_connected">Rangefinder connected</string>
+    <string name="rangefinder_connecting">Rangefinder connecting…</string>
     <string name="rangefinder_searching">Searching for rangefinder…</string>
     <string-array name="metric_modes">
         <item>Meters</item>
