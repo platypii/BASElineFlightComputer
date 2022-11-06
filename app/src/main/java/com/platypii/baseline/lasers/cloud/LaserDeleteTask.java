@@ -4,7 +4,6 @@ import com.platypii.baseline.cloud.RetrofitClient;
 import com.platypii.baseline.events.LaserSyncEvent;
 import com.platypii.baseline.lasers.LaserProfile;
 
-import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import java.io.IOException;
@@ -18,12 +17,9 @@ public class LaserDeleteTask implements Runnable {
     private static final String TAG = "LaserDelete";
 
     @NonNull
-    private final Context context;
-    @NonNull
     private final LaserProfile laser;
 
-    public LaserDeleteTask(@NonNull Context context, @NonNull LaserProfile laser) {
-        this.context = context;
+    public LaserDeleteTask(@NonNull LaserProfile laser) {
         this.laser = laser;
     }
 

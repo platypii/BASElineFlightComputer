@@ -1,7 +1,5 @@
 package com.platypii.baseline;
 
-import com.platypii.baseline.views.BaseActivity;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -24,7 +22,7 @@ public class Permissions {
     }
 
     public static void requestLocationPermissions(@NonNull Activity activity) {
-        ActivityCompat.requestPermissions(activity, locationPermissions, BaseActivity.RC_LOCATION);
+        ActivityCompat.requestPermissions(activity, locationPermissions, RequestCodes.RC_LOCATION);
     }
 
     public static boolean isLocationServiceEnabled(@NonNull Context context) {

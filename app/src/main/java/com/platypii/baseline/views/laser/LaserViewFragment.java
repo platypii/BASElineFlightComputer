@@ -108,7 +108,7 @@ public class LaserViewFragment extends Fragment implements DialogInterface.OnCli
             } else {
                 // Delete laser from server
                 binding.laserDelete.setEnabled(false);
-                new Thread(new LaserDeleteTask(getContext(), laser)).start();
+                new Thread(new LaserDeleteTask(laser)).start();
             }
         }
     }

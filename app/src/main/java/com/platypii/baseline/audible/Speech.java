@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.widget.Toast;
 import com.platypii.baseline.R;
+import com.platypii.baseline.RequestCodes;
 import com.platypii.baseline.Services;
 
 import android.speech.tts.TextToSpeech;
@@ -15,7 +16,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.views.BaseActivity;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +62,7 @@ class Speech implements TextToSpeech.OnInitListener {
         final ResolveInfo resolveInfo = pm.resolveActivity(checkIntent, PackageManager.MATCH_DEFAULT_ONLY);
         if (resolveInfo != null) {
             try {
-                activity.startActivityForResult(checkIntent, BaseActivity.RC_TTS_DATA);
+                activity.startActivityForResult(checkIntent, RequestCodes.RC_TTS_DATA);
                 return true;
             } catch (ActivityNotFoundException e) {
                 Log.e(TAG, "Failed to check for TTS package", e);

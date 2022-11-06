@@ -2,6 +2,7 @@ package com.platypii.baseline.views;
 
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
+import com.platypii.baseline.RequestCodes;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.AuthState;
@@ -36,11 +37,6 @@ import com.google.firebase.analytics.FirebaseAnalytics;
  */
 public abstract class BaseActivity extends FragmentActivity {
     private final String TAG = getClass().getSimpleName();
-
-    /* Request codes used to invoke user interactions */
-    private static final int RC_SIGN_IN = 0;
-    public static final int RC_LOCATION = 1;
-    public static final int RC_TTS_DATA = 2;
 
     protected FirebaseAnalytics firebaseAnalytics;
 
@@ -177,7 +173,7 @@ public abstract class BaseActivity extends FragmentActivity {
             updateAuthState();
 
             final Intent signInIntent = signInClient.getSignInIntent();
-            startActivityForResult(signInIntent, RC_SIGN_IN);
+            startActivityForResult(signInIntent, RequestCodes.RC_SIGN_IN);
         } else {
             Exceptions.report(new NullPointerException("Clicked sign in, but SignInClient is null"));
         }
@@ -203,10 +199,10 @@ public abstract class BaseActivity extends FragmentActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == RequestCodes.RC_SIGN_IN) {
             final Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             task.addOnCompleteListener(this::onSignInComplete);
-        } else if (requestCode == RC_TTS_DATA) {
+        } else if (requestCode == RequestCodes.RC_TTS_DATA) {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                 // Notify services that TTS is ready
                 Services.audible.onTtsLoaded(this);
@@ -288,7 +284,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == RC_LOCATION) {
+        if (requestCode == RequestCodes.RC_LOCATION) {
             if (grantResults.length == 1 &&
                     permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION) &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {

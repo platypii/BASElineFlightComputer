@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java9.util.concurrent.CompletableFuture;
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Logger;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 

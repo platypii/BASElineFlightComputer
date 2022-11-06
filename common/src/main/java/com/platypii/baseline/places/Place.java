@@ -1,8 +1,5 @@
 package com.platypii.baseline.places;
 
-import com.platypii.baseline.measurements.LatLngAlt;
-import com.platypii.baseline.util.Convert;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.LatLng;

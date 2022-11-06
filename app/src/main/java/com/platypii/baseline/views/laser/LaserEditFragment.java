@@ -1,6 +1,7 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.RequestCodes;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.databinding.LaserEditBinding;
@@ -17,7 +18,6 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.StringUtil;
-import com.platypii.baseline.views.BaseActivity;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 
 import android.Manifest;
@@ -410,7 +410,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == BaseActivity.RC_LOCATION) {
+        if (requestCode == RequestCodes.RC_LOCATION) {
             if (grantResults.length == 1 && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.i(TAG, "Location permission granted");
