@@ -6,15 +6,12 @@ import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 
-import android.content.Context;
 import android.location.GpsStatus;
-import android.location.LocationManager;
 import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
+abstract class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
     protected final String TAG = "ProviderNMEA";
     private static final String NMEA_TAG = "NMEA";
 
@@ -38,10 +35,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
     private int satellitesInView = -1;
     private int satellitesUsed = -1;
 
-    // Android Location manager
-    @Nullable
-    private static LocationManager manager;
-
     @NonNull
     @Override
     protected String providerName() {
@@ -56,29 +49,6 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
 
     LocationProviderNMEA(MyAltimeter alti) {
         this.alti = alti;
-    }
-
-    /**
-     * Start location updates
-     *
-     * @param context The Application context
-     */
-    @Override
-    public void start(@NonNull Context context) throws SecurityException {
-        // Start NMEA updates
-        manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        if (manager != null) {
-            try {
-                final boolean nmeaSuccess = manager.addNmeaListener(this);
-                if (!nmeaSuccess) {
-                    Log.e(TAG, "Failed to start NMEA updates");
-                }
-            } catch (SecurityException e) {
-                Log.e(TAG, "Failed to start NMEA location service, permission denied");
-            }
-        } else {
-            Log.e(TAG, "failed to get android location manager");
-        }
     }
 
     private void updateLocation() {
@@ -277,12 +247,4 @@ class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaLis
         }
     }
 
-    @Override
-    public void stop() {
-        super.stop();
-        if (manager != null) {
-            manager.removeNmeaListener(this);
-            manager = null;
-        }
-    }
 }

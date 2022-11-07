@@ -10,7 +10,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 /**
- * Meta location provider that uses bluetooth, nmea, or android location source
+ * Meta location provider that uses bluetooth or android location source
  */
 public class LocationService extends LocationProvider {
     private static final String TAG = "LocationService";
@@ -21,10 +21,6 @@ public class LocationService extends LocationProvider {
     private static final int LOCATION_BLUETOOTH = 2;
     private int locationMode = LOCATION_NONE;
 
-    // Set to true on first android NMEA location
-    // If we are getting NMEA, we can disable android location provider
-    private boolean nmeaReceived = false;
-
     @NonNull
     private final BluetoothService bluetooth;
 
@@ -32,49 +28,26 @@ public class LocationService extends LocationProvider {
     public final MyAltimeter alti = new MyAltimeter(this);
 
     @NonNull
-    private final LocationProviderNMEA locationProviderNMEA;
-    @NonNull
     private final LocationProviderAndroid locationProviderAndroid;
     @NonNull
     private final LocationProviderBluetooth locationProviderBluetooth;
 
     public LocationService(@NonNull BluetoothService bluetooth) {
         this.bluetooth = bluetooth;
-        locationProviderNMEA = new LocationProviderNMEA(alti);
         locationProviderAndroid = new LocationProviderAndroid(alti);
         locationProviderBluetooth = new LocationProviderBluetooth(alti, bluetooth);
     }
 
-    private final MyLocationListener nmeaListener = new MyLocationListener() {
+    private final MyLocationListener androidListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
-            nmeaReceived = true;
+            // Only use android location if we aren't using bluetooth
             if (!bluetooth.preferences.preferenceEnabled) {
                 updateLocation(loc);
             }
         }
     };
-    private final MyLocationListener androidListener = new MyLocationListener() {
-        private int overrideCount = 0;
 
-        @Override
-        public void onLocationChanged(@NonNull MLocation loc) {
-            // Only use android location if we aren't getting NMEA
-            // This happens on some random phones and inside the android emulator
-            if (!bluetooth.preferences.preferenceEnabled && !nmeaReceived) {
-                // Log on powers of 2
-                overrideCount++;
-                if (overrideCount > 2 && isPower2(overrideCount)) {
-                    Log.w(TAG, "No NMEA data, falling back to android loc #" + overrideCount + ": " + loc);
-                }
-                updateLocation(loc);
-            }
-        }
-
-        private boolean isPower2(int n) {
-            return (n & (n - 1)) == 0;
-        }
-    };
     private final MyLocationListener bluetoothListener = new MyLocationListener() {
         @Override
         public void onLocationChanged(@NonNull MLocation loc) {
@@ -116,8 +89,6 @@ public class LocationService extends LocationProvider {
         } else {
             Log.i(TAG, "Starting location service in android mode");
             locationMode = LOCATION_ANDROID;
-            locationProviderNMEA.start(context);
-            locationProviderNMEA.addListener(nmeaListener);
             locationProviderAndroid.start(context);
             locationProviderAndroid.addListener(androidListener);
         }
@@ -136,8 +107,6 @@ public class LocationService extends LocationProvider {
     public void stop() {
         if (locationMode == LOCATION_ANDROID) {
             Log.i(TAG, "Stopping android location service");
-            locationProviderNMEA.removeListener(nmeaListener);
-            locationProviderNMEA.stop();
             locationProviderAndroid.removeListener(androidListener);
             locationProviderAndroid.stop();
         } else if (locationMode == LOCATION_BLUETOOTH) {
