@@ -47,7 +47,11 @@ public class BluetoothActivity extends BaseActivity implements MyLocationListene
                 binding.btPhoneStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_red, 0, 0);
             }
         } else {
-            // TODO: Check bluetooth permissions
+            // Check bluetooth permissions
+            if (!Permissions.hasBluetoothPermissions(this)) {
+                binding.btPhoneStatus.setText("Permission required");
+                binding.btPhoneStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_red, 0, 0);
+            }
         }
         // Bluetooth status
         if (Services.bluetooth.preferences.preferenceEnabled) {
@@ -99,8 +103,6 @@ public class BluetoothActivity extends BaseActivity implements MyLocationListene
                 // Request to enable location
                 Permissions.openLocationSettings(this);
             }
-        } else {
-            // TODO: Check bluetooth permissions
         }
     }
 
@@ -111,6 +113,11 @@ public class BluetoothActivity extends BaseActivity implements MyLocationListene
     @Override
     public void onResume() {
         super.onResume();
+        // Check bluetooth permissions to scan and connect
+        if (!Permissions.hasBluetoothPermissions(this)) {
+            Permissions.requestBluetoothPermissions(this);
+        }
+
         // Listen for bluetooth updates
         EventBus.getDefault().register(this);
         Services.location.addListener(this);

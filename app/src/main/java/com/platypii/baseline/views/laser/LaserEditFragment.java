@@ -130,6 +130,11 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         if (rangefinderEnabled) {
             laserConnect();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         updateRangefinder();
     }
 
@@ -271,23 +276,39 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         laserConnect();
     }
 
+    private boolean checkPermissions(@NonNull Activity activity) {
+        // Check for location permissions
+        if (!Permissions.hasLocationPermissions(activity)) {
+            Log.w(TAG, "Location permission required");
+            errorMessage = "Location permission required";
+            requestPermissions(Permissions.btPermissions(), RequestCodes.RC_BLUE_ALL);
+            return false;
+        }
+        // Check for location services enabled. Can't scan without location
+        if (!Permissions.isLocationServiceEnabled(activity)) {
+            Log.w(TAG, "Location service disabled");
+            errorMessage = "Location service disabled";
+            // Request to enable location services
+            promptForLocation(activity);
+            return false;
+        }
+        // Check bluetooth permissions
+        if (!Permissions.hasBluetoothPermissions(activity)) {
+            Log.w(TAG, "Bluetooth permissions required");
+            errorMessage = "Bluetooth permission required";
+            requestPermissions(Permissions.btPermissions(), RequestCodes.RC_BLUE_ALL);
+            return false;
+        }
+        // TODO: Check if bluetooth is enabled
+        return true;
+    }
+
     private void laserConnect() {
         final Activity activity = getActivity();
         if (activity != null) {
-            // Check for location permissions
-            if (!Permissions.hasLocationPermissions(activity)) {
-                Log.w(TAG, "Location permission not granted");
-                errorMessage = "Location permission not granted";
-                Permissions.requestLocationPermissions(activity);
+            if (checkPermissions(activity)) {
+                rangefinder.start(activity);
             }
-            // Check for location services enabled. Can't scan without location
-            if (!Permissions.isLocationServiceEnabled(activity)) {
-                Log.w(TAG, "Location service not enabled");
-                errorMessage = "Location service disabled";
-                // Request to enable location services
-                promptForLocation(activity);
-            }
-            rangefinder.start(activity);
         }
     }
 
@@ -397,6 +418,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RequestCodes.RC_BLUE_ENABLE) {
             if (resultCode == Activity.RESULT_OK) {
+                Log.i(TAG, "Bluetooth enabled");
                 // Notify rangefinder service that bluetooth was enabled
                 rangefinder.bluetoothStarted(getActivity());
             } else {
@@ -423,6 +445,26 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
                     updateRangefinder();
                 }
             }
+        }
+        if (requestCode == RequestCodes.RC_BLUE_ALL) {
+            int success = 0;
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    success++;
+                }
+            }
+            if (permissions.length == success) {
+                Log.i(TAG, "Bluetooth permission granted");
+                errorMessage = null;
+                final Context context = getContext();
+                if (context != null) {
+                    rangefinder.start(context);
+                }
+            } else {
+                Log.w(TAG, "Bluetooth permission not granted");
+                rangefinderEnabled = false;
+            }
+            updateRangefinder();
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }

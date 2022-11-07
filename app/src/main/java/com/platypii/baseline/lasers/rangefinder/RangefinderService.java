@@ -63,7 +63,7 @@ public class RangefinderService implements BaseService {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter != null) {
                 if (bluetoothAdapter.isEnabled()) {
-                    bluetoothHandler = new BluetoothHandler(this, activity.getApplicationContext(), handler);
+                    bluetoothHandler = new BluetoothHandler(this, activity, handler);
                     bluetoothHandler.start();
                 } else {
                     // Turn on bluetooth
@@ -84,7 +84,7 @@ public class RangefinderService implements BaseService {
         Log.i(TAG, "Bluetooth started late");
         if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
             if (bluetoothHandler == null) {
-                bluetoothHandler = new BluetoothHandler(this, activity.getApplicationContext(), handler);
+                bluetoothHandler = new BluetoothHandler(this, activity, handler);
                 bluetoothHandler.start();
             }
         } else {

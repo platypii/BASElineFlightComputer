@@ -94,6 +94,14 @@ public class LocationService extends LocationProvider {
         }
     }
 
+    public void permissionGranted(@NonNull Context context) {
+        if (locationMode == LOCATION_BLUETOOTH) {
+            locationProviderBluetooth.start(context);
+        } else if (locationMode == LOCATION_ANDROID) {
+            locationProviderAndroid.start(context);
+        }
+    }
+
     /**
      * Stops and then starts location services, such as when switch bluetooth on or off.
      */

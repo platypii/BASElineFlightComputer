@@ -97,12 +97,10 @@ public class Services {
             }
 
             Log.i(TAG, "Starting location service");
-            // Note: Activity.checkSelfPermission added in minsdk 23
-            if (Permissions.hasLocationPermissions(appContext)) {
-                // Enable baseline location services
-                location.start(appContext);
-            } else {
-                Permissions.requestLocationPermissions(activity);
+            location.start(appContext);
+            if (!Permissions.hasLocationPermissions(appContext)) {
+                Log.w(TAG, "Missing location permissions");
+//                Permissions.requestLocationPermissions(activity);
             }
 
             Log.i(TAG, "Starting sensors");

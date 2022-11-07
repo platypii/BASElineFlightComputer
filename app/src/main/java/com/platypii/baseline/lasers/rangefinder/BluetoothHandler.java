@@ -1,12 +1,13 @@
 package com.platypii.baseline.lasers.rangefinder;
 
+import com.platypii.baseline.Permissions;
 import com.platypii.baseline.bluetooth.BluetoothState;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
-import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -35,6 +36,8 @@ class BluetoothHandler {
     @NonNull
     private final RangefinderService service;
     @NonNull
+    private final Activity activity;
+    @NonNull
     private final BluetoothCentralManager central;
     @Nullable
     private BluetoothPeripheral currentPeripheral;
@@ -43,18 +46,33 @@ class BluetoothHandler {
 
     boolean connected = false;
 
-    BluetoothHandler(@NonNull RangefinderService service, @NonNull Context context, @NonNull Handler handler) {
+    BluetoothHandler(@NonNull RangefinderService service, @NonNull Activity activity, @NonNull Handler handler) {
         this.service = service;
-        central = new BluetoothCentralManager(context, bluetoothCentralManagerCallback, handler);
+        this.activity = activity;
+        central = new BluetoothCentralManager(activity.getApplicationContext(), bluetoothCentralManagerCallback, handler);
     }
 
     public void start() {
         if (BluetoothState.started(service.getState())) {
-            scan();
+            scanIfPermitted();
         } else if (service.getState() == BT_SCANNING) {
             Log.w(TAG, "Already searching");
         } else if (service.getState() == BT_STOPPING || service.getState() != BT_STOPPED) {
             Log.w(TAG, "Already stopping");
+        }
+    }
+
+    private void scanIfPermitted() {
+        if (Permissions.hasBluetoothPermissions(activity)) {
+            Log.d(TAG, "Bluetooth permitted, starting scan");
+            scan();
+        } else {
+            if (!Permissions.hasLocationPermissions(activity)) {
+                Log.w(TAG, "Location permission required");
+            } else {
+                Log.w(TAG, "Bluetooth permission required");
+            }
+            Permissions.requestBluetoothPermissions(activity);
         }
     }
 
@@ -121,7 +139,7 @@ class BluetoothHandler {
             currentPeripheral = null;
             // Go back to searching
             if (BluetoothState.started(service.getState())) {
-                scan();
+                scanIfPermitted();
             }
         }
 
@@ -131,6 +149,7 @@ class BluetoothHandler {
                 Log.e(TAG, "Invalid BT state: " + BluetoothState.BT_STATES[service.getState()]);
             }
 
+            // TODO: Check for bluetooth connect permission
             final ScanRecord record = scanResult.getScanRecord();
             final String deviceName = peripheral.getName();
             if (ATNProtocol.isATN(peripheral)) {

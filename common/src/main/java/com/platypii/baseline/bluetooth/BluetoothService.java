@@ -1,5 +1,8 @@
 package com.platypii.baseline.bluetooth;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import androidx.core.app.ActivityCompat;
 import com.platypii.baseline.BaseService;
 import com.platypii.baseline.common.R;
 import com.platypii.baseline.events.BluetoothEvent;
@@ -170,6 +173,11 @@ public class BluetoothService implements BaseService {
      */
     @NonNull
     public String getStatusMessage(@NonNull Context context) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+//            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+//                return "Bluetooth permission required";
+//            }
+        }
         if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
             // Hardware disabled
             return context.getString(R.string.bluetooth_status_disabled);

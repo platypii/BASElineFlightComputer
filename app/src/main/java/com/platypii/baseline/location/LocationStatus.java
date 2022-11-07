@@ -33,6 +33,10 @@ public class LocationStatus {
             icon = R.drawable.warning;
             message = "Location permission required";
             return;
+        } else if (Services.bluetooth.preferences.preferenceEnabled && !Permissions.hasBluetoothPermissions(context)) {
+            icon = R.drawable.warning;
+            message = "Bluetooth permission required";
+            return;
         } else if (Services.bluetooth.preferences.preferenceEnabled && !Services.bluetooth.isEnabled()) {
             icon = R.drawable.warning;
             message = "Bluetooth disabled";

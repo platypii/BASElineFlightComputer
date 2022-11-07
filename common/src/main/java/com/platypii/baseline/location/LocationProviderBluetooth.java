@@ -1,5 +1,6 @@
 package com.platypii.baseline.location;
 
+import com.platypii.baseline.Permissions;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.measurements.MLocation;
@@ -61,6 +62,9 @@ class LocationProviderBluetooth extends LocationProviderNMEA implements MyLocati
      */
     @Override
     public void start(@NonNull Context context) throws SecurityException {
+        if (!Permissions.hasBluetoothPermissions(context)) {
+            Log.w(TAG, "Bluetooth permissions required");
+        }
         // Start NMEA updates
         bluetooth.addNmeaListener(this);
     }

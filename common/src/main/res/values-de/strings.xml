@@ -5,6 +5,7 @@
     <string name="set_altitude">Einstellen</string>
 
     <!-- Bluetooth -->
+    <string name="bluetooth_status_permission">BT berechtigung erforderlich</string>
     <string name="bluetooth_status_disabled">BT deaktiviertabled</string>
     <string name="bluetooth_status_not_selected">BT nicht ausgewählt</string>
     <string name="bluetooth_status_stopped">BT gestoppt</string>

@@ -288,7 +288,7 @@ public abstract class BaseActivity extends FragmentActivity {
             if (grantResults.length == 1 &&
                     permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION) &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Services.location.start(getApplication());
+                Services.location.permissionGranted(getApplicationContext());
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
