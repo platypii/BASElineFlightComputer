@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import org.greenrobot.eventbus.EventBus;
 
+import static com.platypii.baseline.RequestCodes.RC_BLUE_ENABLE;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STARTING;
@@ -34,8 +35,6 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
  */
 public class BluetoothService implements BaseService {
     private static final String TAG = "Bluetooth";
-
-    private static final int ENABLE_BLUETOOTH_CODE = 13;
 
     // Android shared preferences for bluetooth
     public final BluetoothPreferences preferences = new BluetoothPreferences();
@@ -107,7 +106,7 @@ public class BluetoothService implements BaseService {
             // Turn on bluetooth
             // TODO: Handle result?
             final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            activity.startActivityForResult(enableBluetoothIntent, ENABLE_BLUETOOTH_CODE);
+            activity.startActivityForResult(enableBluetoothIntent, RC_BLUE_ENABLE);
         }
         return bluetoothAdapter;
     }
@@ -160,6 +159,10 @@ public class BluetoothService implements BaseService {
         } else {
             return "";
         }
+    }
+
+    public boolean isEnabled() {
+        return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
     }
 
     /**

@@ -395,7 +395,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RangefinderService.ENABLE_BLUETOOTH_CODE) {
+        if (requestCode == RequestCodes.RC_BLUE_ENABLE) {
             if (resultCode == Activity.RESULT_OK) {
                 // Notify rangefinder service that bluetooth was enabled
                 rangefinder.bluetoothStarted(getActivity());

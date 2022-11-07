@@ -40,7 +40,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     @NonNull
     @Override
     protected String dataSource() {
-        return "Android " + Build.MANUFACTURER + " " + Build.MODEL;
+        return Build.MANUFACTURER + " " + Build.MODEL;
     }
 
     LocationProviderAndroid(MyAltimeter alti) {

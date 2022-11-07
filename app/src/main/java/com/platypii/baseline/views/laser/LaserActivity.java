@@ -1,11 +1,11 @@
 package com.platypii.baseline.views.laser;
 
 import com.platypii.baseline.R;
+import com.platypii.baseline.RequestCodes;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.ActivityLaserBinding;
 import com.platypii.baseline.events.ChartFocusEvent;
 import com.platypii.baseline.events.ProfileLayerEvent;
-import com.platypii.baseline.lasers.rangefinder.RangefinderService;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.BaseActivity;
@@ -116,7 +116,7 @@ public class LaserActivity extends BaseActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RangefinderService.ENABLE_BLUETOOTH_CODE) {
+        if (requestCode == RequestCodes.RC_BLUE_ENABLE) {
             // Send activity result to fragment
             final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.laserPanel);
             if (fragment != null) {

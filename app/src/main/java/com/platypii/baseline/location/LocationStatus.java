@@ -1,11 +1,14 @@
 package com.platypii.baseline.location;
 
+import com.platypii.baseline.Permissions;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothState;
 import com.platypii.baseline.util.StringBuilderUtil;
 
+import android.content.Context;
 import android.util.Log;
+import androidx.annotation.NonNull;
 
 /**
  * Represents the current state of GPS, including bluetooth info
@@ -23,8 +26,18 @@ public class LocationStatus {
     /**
      * Get GPS status info from services
      */
-    public static void updateStatus() {
+    public static void updateStatus(@NonNull Context context) {
         satellites = 0;
+        // Check permissions
+        if (!Services.bluetooth.preferences.preferenceEnabled && !Permissions.hasLocationPermissions(context)) {
+            icon = R.drawable.warning;
+            message = "Location permission required";
+            return;
+        } else if (Services.bluetooth.preferences.preferenceEnabled && !Services.bluetooth.isEnabled()) {
+            icon = R.drawable.warning;
+            message = "Bluetooth disabled";
+            return;
+        }
         // GPS signal status
         if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothState.BT_CONNECTED) {
             // Bluetooth enabled, but not connected

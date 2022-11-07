@@ -1,11 +1,14 @@
 package com.platypii.baseline.views.status;
 
+import com.platypii.baseline.Permissions;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.StatusPanelBinding;
 import com.platypii.baseline.location.LocationStatus;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -34,7 +37,23 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = StatusPanelBinding.inflate(inflater, container, false);
+        binding.signalStatus.setOnClickListener(this::checkPermissions);
         return binding.getRoot();
+    }
+
+    private void checkPermissions(View view) {
+        final Activity activity = getActivity();
+        if (activity != null) {
+            if (!Services.bluetooth.preferences.preferenceEnabled) {
+                if (!Permissions.hasLocationPermissions(activity)) {
+                    Permissions.requestLocationPermissions(activity);
+                }
+            } else {
+                if (!Services.bluetooth.isEnabled()) {
+                    // TODO: Request to enable bluetooth
+                }
+            }
+        }
     }
 
     @Override
@@ -56,7 +75,10 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
      * Update the views for GPS signal strength
      */
     private void update() {
-        LocationStatus.updateStatus();
+        final Context context = getContext();
+        if (context != null) {
+            LocationStatus.updateStatus(context);
+        }
         binding.signalStatus.setCompoundDrawablesWithIntrinsicBounds(LocationStatus.icon, 0, 0, 0);
         binding.signalStatus.setText(LocationStatus.message);
         if (LocationStatus.satellites > 0) {

@@ -15,11 +15,12 @@
         android:layout_centerHorizontal="true"/>
 
     <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/statusPanel"
-            android:name="com.platypii.baseline.views.status.SignalStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"/>
+        android:id="@+id/statusPanel"
+        android:name="com.platypii.baseline.views.status.SignalStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="2dp"/>
 
 </RelativeLayout>

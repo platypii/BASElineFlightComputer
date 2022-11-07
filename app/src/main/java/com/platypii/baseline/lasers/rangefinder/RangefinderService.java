@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import org.greenrobot.eventbus.EventBus;
 
+import static com.platypii.baseline.RequestCodes.RC_BLUE_ENABLE;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STARTING;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STATES;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
@@ -28,9 +29,7 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 public class RangefinderService implements BaseService {
     private static final String TAG = "RangefinderService";
 
-    public static final int ENABLE_BLUETOOTH_CODE = 13;
-
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     // Bluetooth state
     private int bluetoothState = BT_STOPPED;
@@ -70,7 +69,7 @@ public class RangefinderService implements BaseService {
                     // Turn on bluetooth
                     Log.i(TAG, "Requesting to turn on bluetooth");
                     final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    activity.startActivityForResult(enableBluetoothIntent, ENABLE_BLUETOOTH_CODE);
+                    activity.startActivityForResult(enableBluetoothIntent, RC_BLUE_ENABLE);
                 }
             } else {
                 Log.w(TAG, "Bluetooth adapter not found");
