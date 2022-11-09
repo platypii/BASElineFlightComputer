@@ -6,6 +6,7 @@ import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
 
 import android.content.Context;
+import android.location.GnssStatus;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -27,7 +28,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     @Nullable
     private LocationManager manager;
 
-    // Satellite data comes from GpsStatusListener
+    // Satellite data comes from GnssStatus
     private int satellitesInView = -1;
     private int satellitesUsed = -1;
 
@@ -60,7 +61,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
                 if (manager.getProvider(LocationManager.GPS_PROVIDER) != null) {
                     // TODO: Specify looper thread?
                     manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                    manager.addGpsStatusListener(this);
+                    requestStatusUpdates();
                 } else {
                     Log.e(TAG, "Failed to get android location provider");
                 }
@@ -141,30 +142,19 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 
-    private GpsStatus gpsStatus;
+    private GnssStatus.Callback onGnssStatusChanged;
 
-    @Override
-    public void onGpsStatusChanged(int event) {
-        switch (event) {
-            case GpsStatus.GPS_EVENT_STARTED:
-                Log.i(TAG, "GPS started");
-                break;
-            case GpsStatus.GPS_EVENT_STOPPED:
-                Log.i(TAG, "GPS stopped");
-                break;
-            case GpsStatus.GPS_EVENT_FIRST_FIX:
-                Log.i(TAG, "GPS first fix");
-                break;
-            case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-                if (manager != null) {
+    private void requestStatusUpdates() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // minsdk24
+            // Use GnssStatus on newer android
+            onGnssStatusChanged = new GnssStatus.Callback() {
+                @Override
+                public void onSatelliteStatusChanged(@NonNull GnssStatus status) {
                     try {
-                        gpsStatus = manager.getGpsStatus(gpsStatus);
-                        final Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
-                        int count = 0;
+                        final int count = status.getSatelliteCount();
                         int used = 0;
-                        for (GpsSatellite sat : satellites) {
-                            count++;
-                            if (sat.usedInFix()) {
+                        for (int i = 0; i < count; i++) {
+                            if (status.usedInFix(i)) {
                                 used++;
                             }
                         }
@@ -174,6 +164,34 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
                         Exceptions.report(e);
                     }
                 }
+            };
+            manager.registerGnssStatusCallback(onGnssStatusChanged);
+        } else {
+            manager.addGpsStatusListener(this);
+        }
+    }
+
+    private GpsStatus gpsStatus;
+
+    @Override
+    public void onGpsStatusChanged(int event) {
+        if (event == GpsStatus.GPS_EVENT_SATELLITE_STATUS && manager != null) {
+            try {
+                gpsStatus = manager.getGpsStatus(gpsStatus);
+                final Iterable<GpsSatellite> satellites = gpsStatus.getSatellites();
+                int count = 0;
+                int used = 0;
+                for (GpsSatellite sat : satellites) {
+                    count++;
+                    if (sat.usedInFix()) {
+                        used++;
+                    }
+                }
+                satellitesInView = count;
+                satellitesUsed = used;
+            } catch (SecurityException e) {
+                Exceptions.report(e);
+            }
         }
     }
 
@@ -181,7 +199,12 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
     public void stop() {
         super.stop();
         if (manager != null) {
-            manager.removeGpsStatusListener(this);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                manager.unregisterGnssStatusCallback(onGnssStatusChanged);
+                onGnssStatusChanged = null;
+            } else {
+                manager.removeGpsStatusListener(this);
+            }
             try {
                 manager.removeUpdates(this);
             } catch (SecurityException e) {
