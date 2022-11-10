@@ -27,7 +27,9 @@ class BluetoothRunnable implements Stoppable {
 
     private static final UUID DEFAULT_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    private static final int reconnectDelay = 500; // milliseconds
+    private static final int reconnectDelayMin = 500; // milliseconds
+    private static final int reconnectDelayMax = 2000; // milliseconds
+    private static int reconnectDelay = reconnectDelayMin; // milliseconds
 
     @NonNull
     private final BluetoothService service;
@@ -51,6 +53,7 @@ class BluetoothRunnable implements Stoppable {
             final boolean isConnected = connect();
             if (service.getState() == BT_CONNECTING && isConnected) {
                 service.setState(BT_CONNECTED);
+                reconnectDelay = reconnectDelayMin;
 
                 // Start processing NMEA sentences
                 processSentences();
@@ -61,6 +64,8 @@ class BluetoothRunnable implements Stoppable {
                 // Sleep before reconnect
                 try {
                     Thread.sleep(reconnectDelay);
+                    // Exponential backoff
+                    reconnectDelay = Math.min(reconnectDelayMax, (int)(reconnectDelay * 1.1));
                 } catch (InterruptedException ie) {
                     Log.e(TAG, "Bluetooth thread interrupted");
                 }
@@ -81,32 +86,37 @@ class BluetoothRunnable implements Stoppable {
      * @return true iff bluetooth socket was connect successfully
      */
     private boolean connect() {
-        if (!bluetoothAdapter.isEnabled()) {
-            Log.w(TAG, "Bluetooth is not enabled");
-            return false;
-        } else if (service.preferences.preferenceDeviceId == null) {
-            Log.w(TAG, "Cannot connect: bluetooth device not selected");
-            return false;
-        }
-        // Get bluetooth device
-        final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(service.preferences.preferenceDeviceId);
-        UUID uuid = DEFAULT_UUID;
-        final ParcelUuid[] uuids = bluetoothDevice.getUuids();
-        if (uuids != null && uuids.length > 0) {
-            uuid = uuids[0].getUuid();
-        }
-        // Connect to bluetooth device
-        String deviceName = bluetoothDevice.getName();
-        if (deviceName == null) deviceName = uuid.toString();
-        Log.i(TAG, "Connecting to bluetooth device: " + deviceName);
         try {
-            bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
-            bluetoothSocket.connect();
+            if (!bluetoothAdapter.isEnabled()) {
+                Log.w(TAG, "Bluetooth is not enabled");
+                return false;
+            } else if (service.preferences.preferenceDeviceId == null) {
+                Log.w(TAG, "Cannot connect: bluetooth device not selected");
+                return false;
+            }
+            // Get bluetooth device
+            final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(service.preferences.preferenceDeviceId);
+            UUID uuid = DEFAULT_UUID;
+            final ParcelUuid[] uuids = bluetoothDevice.getUuids();
+            if (uuids != null && uuids.length > 0) {
+                uuid = uuids[0].getUuid();
+            }
+            // Connect to bluetooth device
+            String deviceName = bluetoothDevice.getName();
+            if (deviceName == null) deviceName = uuid.toString();
+            Log.i(TAG, "Connecting to bluetooth device: " + deviceName);
+            try {
+                bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+                bluetoothSocket.connect();
 
-            // Connected to bluetooth device
-            return true;
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to connect to bluetooth device: " + e.getMessage());
+                // Connected to bluetooth device
+                return true;
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to connect to bluetooth device: " + e.getMessage());
+                return false;
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, "Failed to connect to bluetooth: permission exception", e);
             return false;
         }
     }

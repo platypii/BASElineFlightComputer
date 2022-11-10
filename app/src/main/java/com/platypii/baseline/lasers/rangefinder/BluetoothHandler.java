@@ -2,6 +2,7 @@ package com.platypii.baseline.lasers.rangefinder;
 
 import com.platypii.baseline.Permissions;
 import com.platypii.baseline.bluetooth.BluetoothState;
+import com.platypii.baseline.util.Exceptions;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -65,13 +66,14 @@ class BluetoothHandler {
     private void scanIfPermitted() {
         if (Permissions.hasBluetoothPermissions(activity)) {
             Log.d(TAG, "Bluetooth permitted, starting scan");
-            scan();
-        } else {
-            if (!Permissions.hasLocationPermissions(activity)) {
-                Log.w(TAG, "Location permission required");
-            } else {
-                Log.w(TAG, "Bluetooth permission required");
+            try {
+                scan();
+            } catch (SecurityException e) {
+                Log.e(TAG, "Permission exception while bluetooth scanning", e);
+                Exceptions.report(e);
             }
+        } else {
+            Log.w(TAG, "Bluetooth permission required");
             Permissions.requestBluetoothPermissions(activity);
         }
     }

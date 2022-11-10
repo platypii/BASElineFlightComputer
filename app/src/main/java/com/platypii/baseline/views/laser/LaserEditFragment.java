@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Spannable;
@@ -277,25 +278,15 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     }
 
     private boolean checkPermissions(@NonNull Activity activity) {
-        // Check for location permissions
-        if (!Permissions.hasLocationPermissions(activity)) {
-            Log.w(TAG, "Location permission required");
-            errorMessage = "Location permission required";
-            requestPermissions(Permissions.btPermissions(), RequestCodes.RC_BLUE_ALL);
-            return false;
-        }
-        // Check for location services enabled. Can't scan without location
-        if (!Permissions.isLocationServiceEnabled(activity)) {
-            Log.w(TAG, "Location service disabled");
-            errorMessage = "Location service disabled";
-            // Request to enable location services
-            promptForLocation(activity);
-            return false;
-        }
         // Check bluetooth permissions
         if (!Permissions.hasBluetoothPermissions(activity)) {
-            Log.w(TAG, "Bluetooth permissions required");
-            errorMessage = "Bluetooth permission required";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                Log.w(TAG, "Bluetooth permission required");
+                errorMessage = "Bluetooth permission required";
+            } else {
+                Log.w(TAG, "Location permission required");
+                errorMessage = "Location permission required";
+            }
             requestPermissions(Permissions.btPermissions(), RequestCodes.RC_BLUE_ALL);
             return false;
         }

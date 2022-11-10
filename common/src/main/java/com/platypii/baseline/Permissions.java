@@ -62,9 +62,11 @@ public class Permissions {
     }
 
     public static boolean hasBluetoothPermissions(@NonNull Context context) {
-        return hasBluetoothConnectPermissions(context)
-                && hasBluetoothScanPermissions(context)
-                && hasLocationPermissions(context);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return hasBluetoothConnectPermissions(context) && hasBluetoothScanPermissions(context);
+        } else {
+            return hasLocationPermissions(context);
+        }
     }
 
     public static void requestBluetoothPermissions(@NonNull Activity activity) {
