@@ -29,9 +29,9 @@ public class LocationStatus {
     public static void updateStatus(@NonNull Context context) {
         satellites = 0;
         // Check permissions
-        if (!Services.bluetooth.preferences.preferenceEnabled && !Permissions.hasLocationPermissions(context)) {
+        if (!Services.bluetooth.preferences.preferenceEnabled && !Permissions.hasFineLocationPermissions(context)) {
             icon = R.drawable.warning;
-            message = "Location permission required";
+            message = "Precise location required";
             return;
         } else if (Services.bluetooth.preferences.preferenceEnabled && !Permissions.hasBluetoothConnectPermissions(context)) {
             icon = R.drawable.warning;

@@ -424,17 +424,15 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == RequestCodes.RC_LOCATION) {
-            if (grantResults.length == 1 && permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.i(TAG, "Location permission granted");
-                    errorMessage = null;
-                } else {
-                    Log.w(TAG, "Location permission denied");
-                    errorMessage = "Location permission denied";
-                    rangefinderEnabled = false;
-                    rangefinder.stop();
-                    updateRangefinder();
-                }
+            if (Permissions.isLocationGranted(permissions, grantResults)) {
+                Log.i(TAG, "Location permission granted");
+                errorMessage = null;
+            } else {
+                Log.w(TAG, "Location permission denied");
+                errorMessage = "Location permission denied";
+                rangefinderEnabled = false;
+                rangefinder.stop();
+                updateRangefinder();
             }
         }
         if (requestCode == RequestCodes.RC_BLUE_ALL) {

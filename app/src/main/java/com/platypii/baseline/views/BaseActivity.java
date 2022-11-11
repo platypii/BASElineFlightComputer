@@ -1,6 +1,7 @@
 package com.platypii.baseline.views;
 
 import com.platypii.baseline.Intents;
+import com.platypii.baseline.Permissions;
 import com.platypii.baseline.R;
 import com.platypii.baseline.RequestCodes;
 import com.platypii.baseline.Services;
@@ -285,9 +286,7 @@ public abstract class BaseActivity extends FragmentActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == RequestCodes.RC_LOCATION) {
-            if (grantResults.length == 1 &&
-                    permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION) &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (Permissions.isLocationGranted(permissions, grantResults)) {
                 Services.location.permissionGranted(getApplicationContext());
             }
         }

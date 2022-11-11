@@ -49,7 +49,7 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
         final Activity activity = getActivity();
         if (activity != null) {
             if (!Services.bluetooth.preferences.preferenceEnabled) {
-                if (!Permissions.hasLocationPermissions(activity)) {
+                if (!Permissions.hasFineLocationPermissions(activity)) {
                     Permissions.requestLocationPermissions(activity);
                 }
             } else {
