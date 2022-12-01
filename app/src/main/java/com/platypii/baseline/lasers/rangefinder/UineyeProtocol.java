@@ -1,6 +1,7 @@
 package com.platypii.baseline.lasers.rangefinder;
 
 import com.platypii.baseline.lasers.LaserMeasurement;
+import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.views.laser.LaserActivity;
 
 import android.bluetooth.le.ScanRecord;
@@ -122,8 +123,17 @@ class UineyeProtocol implements RangefinderProtocol {
     private void processMeasurement(@NonNull byte[] value) {
         Log.d(TAG, "rf -> app: measure " + byteArrayToHex(value));
 
-        final boolean metric = value[21] == 0x01;
-        final double units = metric ? 1 : 0.9144; // yards or meters
+        final double units; // unit multiplier
+        if (value[21] == 1) {
+            units = 1; // meters
+        } else if (value[21] == 2) {
+            units = 0.9144; // yards
+        } else if (value[21] == 3) {
+            units = 0.3048; // feet
+        } else {
+            Exceptions.report(new IllegalStateException("Unexpected units value from uineye " + value[21]));
+            units = 0;
+        }
         final double pitch = bytesToShort(value[3], value[4]) * 0.1 * units; // degrees
 //        final double total = Util.bytesToShort(value[5], value[6]) * 0.1 * units; // meters
         double vert = bytesToShort(value[7], value[8]) * 0.1 * units; // meters
