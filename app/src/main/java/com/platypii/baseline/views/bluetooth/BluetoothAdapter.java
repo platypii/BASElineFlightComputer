@@ -54,7 +54,10 @@ class BluetoothAdapter extends BaseAdapter {
         } else {
             // Bluetooth GPS device
             final BluetoothDevice device = devices.get(position - 1);
-            final String deviceName = device.getName();
+            String deviceName = device.getName();
+            if (deviceName == null) {
+                deviceName = "";
+            }
             nameView.setText(deviceName);
             addressView.setText(device.getAddress());
             if (deviceName.contains("GPS")) {

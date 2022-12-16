@@ -1,6 +1,7 @@
 package com.platypii.baseline.tracks;
 
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.Exceptions;
 
 import androidx.annotation.NonNull;
 import java.io.File;
@@ -39,15 +40,20 @@ public class TrackData {
      * Return a new TrackData with trimmed data
      */
     public TrackData trim(long start, long end) {
-        int startIndex = 0;
-        int endIndex = 0;
-        for (int i = 0; i < data.size(); i++) {
-            final MLocation loc = data.get(i);
-            if (loc.millis < start) startIndex = i;
-            if (loc.millis <= end) endIndex = i;
+        try {
+            int startIndex = 0;
+            int endIndex = 0;
+            for (int i = 0; i < data.size(); i++) {
+                final MLocation loc = data.get(i);
+                if (loc.millis < start) startIndex = i;
+                if (loc.millis <= end) endIndex = i;
+            }
+            final List<MLocation> trimmed = data.subList(startIndex, endIndex);
+            return new TrackData(id, trimmed, stats);
+        } catch (Exception e) {
+            Exceptions.report(e);
+            return this;
         }
-        final List<MLocation> trimmed = data.subList(startIndex, endIndex);
-        return new TrackData(id, trimmed, stats);
     }
 
     @NonNull

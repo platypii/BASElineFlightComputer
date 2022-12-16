@@ -137,6 +137,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     void setCenter(@NonNull LatLng latLng, float zoom) {
         if (map != null) {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+            updateLayers(true);
         }
     }
 
