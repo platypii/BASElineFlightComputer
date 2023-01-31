@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- baseline-dev client id -->
+    <string name="server_client_id" translatable="false">289372967607-pi8s06hvp85qpncrrfmecpdu7mp303gc.apps.googleusercontent.com</string>
+
+</resources>

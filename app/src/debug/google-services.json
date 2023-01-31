@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "289372967607",
+    "project_id": "baseline-dev-375905",
+    "storage_bucket": "baseline-dev-375905.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:289372967607:android:fa3a645c4696777061b332",
+        "android_client_info": {
+          "package_name": "com.platypii.baseline"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "289372967607-3i55fmd47d61ta5o8f21fr166ehe7qhe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.platypii.baseline",
+            "certificate_hash": "cebd797dedb16e36f314bde876f0f3fbe36880d2"
+          }
+        },
+        {
+          "client_id": "289372967607-uelmg4ie1a3n6si4sk2q0dgml8mj75hm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKRVZnJZ8J6Q3ZWCnzgE4rySk1waTZr5Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "289372967607-uelmg4ie1a3n6si4sk2q0dgml8mj75hm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,9 +11,7 @@ import com.platypii.baseline.cloud.BaselineAuth;
 import com.platypii.baseline.util.BaseCallback;
 import com.platypii.baseline.util.Exceptions;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
