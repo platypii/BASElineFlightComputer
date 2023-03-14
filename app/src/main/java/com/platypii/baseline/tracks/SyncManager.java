@@ -1,7 +1,7 @@
 package com.platypii.baseline.tracks;
 
 import android.os.Handler;
-import com.platypii.baseline.BaseService;
+
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.tasks.TaskType;
@@ -18,10 +18,9 @@ import org.greenrobot.eventbus.Subscribe;
  * Manages track uploads.
  * This includes queueing finished tracks, and retrying in the future.
  */
-class SyncManager implements BaseService {
+class SyncManager {
     private static final String TAG = "UploadManager";
 
-    @Override
     public void start(@NonNull Context context) {
         // Listen for track logging stops
         EventBus.getDefault().register(this);
@@ -80,7 +79,6 @@ class SyncManager implements BaseService {
         Services.tasks.removeType(TaskType.trackUpload);
     }
 
-    @Override
     public void stop() {
         EventBus.getDefault().unregister(this);
     }

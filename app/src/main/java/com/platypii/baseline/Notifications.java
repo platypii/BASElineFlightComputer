@@ -22,14 +22,13 @@ import org.greenrobot.eventbus.ThreadMode;
 /**
  * Manage notification bars
  */
-class Notifications implements BaseService {
+class Notifications {
     static final int notificationId = 117;
     private static final String channelId = "baseline_active_channel_01";
 
     @Nullable
     private Context context;
 
-    @Override
     public void start(@NonNull Context context) {
         this.context = context;
 
@@ -134,7 +133,6 @@ class Notifications implements BaseService {
         context.startService(service);
     }
 
-    @Override
     public void stop() {
         EventBus.getDefault().unregister(this);
         context = null;

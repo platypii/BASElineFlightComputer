@@ -1,6 +1,5 @@
 package com.platypii.baseline.places;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.util.Exceptions;
@@ -20,7 +19,7 @@ import org.greenrobot.eventbus.Subscribe;
 /**
  * Manages the place database
  */
-public class Places implements BaseService {
+public class Places {
     private static final String TAG = "Places";
 
     @Nullable
@@ -35,7 +34,6 @@ public class Places implements BaseService {
     @Nullable
     private List<Place> places = null;
 
-    @Override
     public void start(@NonNull Context context) {
         this.context = context;
         updateAsync(false);
@@ -118,7 +116,6 @@ public class Places implements BaseService {
         updateAsync(true);
     }
 
-    @Override
     public void stop() {
         EventBus.getDefault().unregister(this);
         context = null;

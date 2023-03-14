@@ -1,7 +1,5 @@
 package com.platypii.baseline.util;
 
-import com.platypii.baseline.BaseService;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -20,7 +18,7 @@ import java.util.List;
  *
  * @param <T> the java type of the items
  */
-public abstract class LocalCache<T> implements BaseService {
+public abstract class LocalCache<T> {
 
     // Preference keys
     @NonNull
@@ -45,7 +43,6 @@ public abstract class LocalCache<T> implements BaseService {
         CACHE_LIST = keyPrefix + ".list";
     }
 
-    @Override
     public void start(@NonNull Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
@@ -171,9 +168,4 @@ public abstract class LocalCache<T> implements BaseService {
         editor.apply();
         memCache = null;
     }
-
-    @Override
-    public void stop() {
-    }
-
 }

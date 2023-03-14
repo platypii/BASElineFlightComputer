@@ -1,6 +1,5 @@
 package com.platypii.baseline.location;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 import com.platypii.baseline.util.RefreshRateEstimator;
@@ -12,7 +11,7 @@ import androidx.annotation.NonNull;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class LocationProvider implements BaseService {
+public abstract class LocationProvider {
     // Duration until location considered stale, in milliseconds
     private static final long LOCATION_TTL = 10000;
 
@@ -43,7 +42,6 @@ public abstract class LocationProvider implements BaseService {
      *
      * @param context The Application context
      */
-    @Override
     public abstract void start(@NonNull Context context);
 
     /**
@@ -190,7 +188,6 @@ public abstract class LocationProvider implements BaseService {
         return Double.NaN;
     }
 
-    @Override
     public void stop() {
         if (!listeners.isEmpty()) {
             Log.w(providerName(), "Stopping location service, but listeners are still listening");

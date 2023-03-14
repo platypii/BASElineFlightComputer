@@ -1,6 +1,5 @@
 package com.platypii.baseline.altimeter;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.util.Exceptions;
@@ -26,7 +25,7 @@ import java.util.Arrays;
  * Altitude is measured AGL. Ground level is set to zero on initialization.
  * Kalman filter is used to smooth barometer data.
  */
-public class BaroAltimeter implements BaseService, SensorEventListener {
+public class BaroAltimeter implements SensorEventListener {
     private static final String TAG = "BaroAltimeter";
 
     @NonNull
@@ -59,7 +58,6 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
      *
      * @param context The Application context
      */
-    @Override
     public void start(@NonNull final Context context) {
         // Get a new preference manager
         if (sensorManager == null) {
@@ -170,7 +168,6 @@ public class BaroAltimeter implements BaseService, SensorEventListener {
         return SCALE * (1 - Math.pow(pressure / pressure0, EXP));
     }
 
-    @Override
     public void stop() {
         if (sensorManager != null) {
             sensorManager.unregisterListener(this);

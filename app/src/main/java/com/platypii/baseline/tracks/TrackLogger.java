@@ -1,6 +1,5 @@
 package com.platypii.baseline.tracks;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.LoggingEvent;
@@ -29,7 +28,7 @@ import org.greenrobot.eventbus.EventBus;
  * Logs location, altitude, every scrap of data we can get to a file.
  * AKA- The Black Box flight recorder
  */
-public class TrackLogger implements MyLocationListener, MySensorListener, BaseService, PubSub.Subscriber<MPressure> {
+public class TrackLogger implements MyLocationListener, MySensorListener, PubSub.Subscriber<MPressure> {
     private static final String TAG = "TrackLogger";
 
     private boolean logging = false;
@@ -225,7 +224,6 @@ public class TrackLogger implements MyLocationListener, MySensorListener, BaseSe
         }
     }
 
-    @Override
     public void stop() {
         if (logging) {
             Log.w(TAG, "TrackLogger.stop() called, but still logging");

@@ -1,7 +1,7 @@
 package com.platypii.baseline.audible;
 
 import android.app.Activity;
-import com.platypii.baseline.BaseService;
+
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.jarvis.FlightMode;
@@ -19,7 +19,7 @@ import org.greenrobot.eventbus.EventBus;
 /**
  * Periodically gives audio feedback
  */
-public class MyAudible implements BaseService {
+public class MyAudible {
     private static final String TAG = "Audible";
 
     public final AudibleSettings settings = new AudibleSettings();
@@ -43,12 +43,10 @@ public class MyAudible implements BaseService {
     private static final int STATE_MAX = 1;
     private int boundaryState = STATE_INSIDE;
 
-    @Override
-    public void start(@NonNull Context context) {
-        final Activity activity = (Activity) context;
+    public void start(@NonNull Activity activity) {
         Log.i(TAG, "Initializing audible");
         if (!isInitialized) {
-            prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            prefs = PreferenceManager.getDefaultSharedPreferences(activity);
             settings.load(prefs);
             // Audible thread has a handler, which needs to be created in looper thread
             audibleThread = new AudibleThread();
@@ -240,7 +238,6 @@ public class MyAudible implements BaseService {
     /**
      * Stop audible service
      */
-    @Override
     public void stop() {
         if (isInitialized) {
             if (settings.isEnabled) {

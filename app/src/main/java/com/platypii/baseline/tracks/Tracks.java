@@ -1,6 +1,5 @@
 package com.platypii.baseline.tracks;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.RetrofitClient;
@@ -21,7 +20,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Tracks implements BaseService {
+public class Tracks {
     private static final String TAG = "Tracks";
 
     public final TrackLogger logger = new TrackLogger();
@@ -37,7 +36,6 @@ public class Tracks implements BaseService {
     @Nullable
     private Context context;
 
-    @Override
     public void start(@NonNull Context context) {
         this.context = context;
         logger.start(context);
@@ -132,12 +130,9 @@ public class Tracks implements BaseService {
         starred = null;
     }
 
-    @Override
     public void stop() {
         EventBus.getDefault().unregister(this);
         sync.stop();
-        cache.stop();
-        local.stop();
         logger.stop();
         context = null;
     }

@@ -1,13 +1,11 @@
 package com.platypii.baseline.lasers.rangefinder;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.bluetooth.BluetoothState;
 import com.platypii.baseline.events.RangefinderEvent;
 import com.platypii.baseline.util.Exceptions;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -26,7 +24,7 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
  * Class to manage a bluetooth laser rangefinder.
  * Note: instantiating this class will not automatically start bluetooth. Call start to connect.
  */
-public class RangefinderService implements BaseService {
+public class RangefinderService {
     private static final String TAG = "RangefinderService";
 
     private final Handler handler = new Handler();
@@ -38,17 +36,11 @@ public class RangefinderService implements BaseService {
     @Nullable
     private BluetoothHandler bluetoothHandler;
 
-    @Override
-    public void start(@NonNull Context context) {
+    public void start(@NonNull Activity activity) {
         if (BluetoothState.started(bluetoothState)) {
             Exceptions.report(new IllegalStateException("Rangefinder started twice"));
             return;
         }
-        if (!(context instanceof Activity)) {
-            Exceptions.report(new ClassCastException("Rangefinder context must be an activity"));
-            return;
-        }
-        final Activity activity = (Activity) context;
         Log.i(TAG, "Starting rangefinder service");
         setState(BT_STARTING);
         startAsync(activity);
@@ -102,7 +94,6 @@ public class RangefinderService implements BaseService {
         EventBus.getDefault().post(new RangefinderEvent());
     }
 
-    @Override
     public synchronized void stop() {
         Log.i(TAG, "Stopping rangefinder service");
         if (!BluetoothState.started(bluetoothState)) {

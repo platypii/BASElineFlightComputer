@@ -1,6 +1,5 @@
 package com.platypii.baseline.sensors;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.measurements.MAccel;
 import com.platypii.baseline.measurements.MGravity;
 import com.platypii.baseline.measurements.MRotation;
@@ -23,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Service to manage orientation sensors, and listeners
  * accelerometer, gravity, gyro, linear accel, magnetic, pressure, humidity, rotation, temp
  */
-public class MySensorManager implements SensorEventListener, BaseService {
+public class MySensorManager implements SensorEventListener {
     private static final String TAG = "MySensorManager";
 
     @Nullable
@@ -43,7 +42,6 @@ public class MySensorManager implements SensorEventListener, BaseService {
      *
      * @param context The Application context
      */
-    @Override
     public void start(@NonNull final Context context) {
         Log.i(TAG, "Starting sensor manager");
         AsyncTask.execute(() -> {
@@ -124,7 +122,6 @@ public class MySensorManager implements SensorEventListener, BaseService {
         return enabled;
     }
 
-    @Override
     public void stop() {
         if (sensorManager != null) {
             sensorManager.unregisterListener(this);

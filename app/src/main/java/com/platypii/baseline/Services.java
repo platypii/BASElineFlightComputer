@@ -110,7 +110,7 @@ public class Services {
             alti.start(appContext);
 
             Log.i(TAG, "Starting flight services");
-            flightComputer.start(appContext);
+            flightComputer.start();
 
             // TTS is prerequisite for audible
             Log.i(TAG, "Starting audible");
@@ -171,7 +171,6 @@ public class Services {
                 Log.i(TAG, "All activities have stopped. Stopping services.");
                 // Stop services
                 places.stop();
-                cloud.stop();
                 tasks.stop();
                 notifications.stop();
                 audible.stop();

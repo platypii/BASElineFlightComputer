@@ -1,13 +1,11 @@
 package com.platypii.baseline.jarvis;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.AudibleEvent;
 import com.platypii.baseline.events.LoggingEvent;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
 
-import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import org.greenrobot.eventbus.EventBus;
@@ -17,7 +15,7 @@ import org.greenrobot.eventbus.ThreadMode;
 /**
  * Situational awareness engine
  */
-public class FlightComputer implements BaseService, MyLocationListener {
+public class FlightComputer implements MyLocationListener {
     private static final String TAG = "FlightComputer";
 
     @NonNull
@@ -34,7 +32,7 @@ public class FlightComputer implements BaseService, MyLocationListener {
         return FlightMode.getModeString(flightMode);
     }
 
-    public void start(@NonNull Context context) {
+    public void start() {
         // Start listening for updates
         Services.location.addListener(this);
         EventBus.getDefault().register(this);

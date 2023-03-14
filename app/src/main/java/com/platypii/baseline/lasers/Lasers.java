@@ -1,6 +1,5 @@
 package com.platypii.baseline.lasers;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.cloud.RetrofitClient;
@@ -28,7 +27,7 @@ import retrofit2.Response;
 /**
  * List lasers from the cloud
  */
-public class Lasers implements BaseService {
+public class Lasers {
     private static final String TAG = "Lasers";
 
     @Nullable
@@ -40,7 +39,6 @@ public class Lasers implements BaseService {
     @NonNull
     public final LaserLayers layers = new LaserLayers();
 
-    @Override
     public void start(@NonNull Context context) {
         this.context = context;
         cache.start(context);
@@ -178,7 +176,6 @@ public class Lasers implements BaseService {
         layers.remove(event.track_id);
     }
 
-    @Override
     public void stop() {
         EventBus.getDefault().unregister(this);
         Services.tasks.removeType(TaskType.laserUpload);

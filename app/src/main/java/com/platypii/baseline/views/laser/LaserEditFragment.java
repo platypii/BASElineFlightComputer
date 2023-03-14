@@ -20,7 +20,6 @@ import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.StringUtil;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -436,6 +435,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             }
         }
         if (requestCode == RequestCodes.RC_BLUE_ALL) {
+            // Check for all permissions granted
             int success = 0;
             for (int i = 0; i < permissions.length; i++) {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
@@ -445,9 +445,9 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
             if (permissions.length == success) {
                 Log.i(TAG, "Bluetooth permission granted");
                 errorMessage = null;
-                final Context context = getContext();
-                if (context != null) {
-                    rangefinder.start(context);
+                final Activity activity = getActivity();
+                if (activity != null) {
+                    rangefinder.start(activity);
                 }
             } else {
                 Log.w(TAG, "Bluetooth permission not granted");

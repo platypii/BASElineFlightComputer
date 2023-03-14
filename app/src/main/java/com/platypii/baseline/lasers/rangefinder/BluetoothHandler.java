@@ -63,6 +63,9 @@ class BluetoothHandler {
         }
     }
 
+    /**
+     * Check if bluetooth permissions are granted, and then scan().
+     */
     private void scanIfPermitted() {
         if (Permissions.hasBluetoothPermissions(activity)) {
             Log.d(TAG, "Bluetooth permitted, starting scan");
@@ -78,6 +81,9 @@ class BluetoothHandler {
         }
     }
 
+    /**
+     * Scan for bluetooth peripherals
+     */
     private void scan() {
         service.setState(BT_SCANNING);
         // Scan for peripherals with a certain service UUIDs
@@ -190,6 +196,10 @@ class BluetoothHandler {
         // TODO: Log event
     }
 
+    /**
+     * Send bluetooth messages to the protocol for parsing.
+     * @param value the bluetooth message to parse
+     */
     private void processBytes(@NonNull byte[] value) {
         if (protocol != null) {
             protocol.processBytes(value);

@@ -1,6 +1,5 @@
 package com.platypii.baseline.altimeter;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.location.LocationProvider;
 import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.location.TimeOffset;
@@ -25,7 +24,7 @@ import androidx.annotation.NonNull;
  *
  * TODO: Correct barometer drift with GPS
  */
-public class MyAltimeter implements BaseService, MyLocationListener, PubSub.Subscriber<MPressure> {
+public class MyAltimeter implements MyLocationListener, PubSub.Subscriber<MPressure> {
     private static final String TAG = "MyAltimeter";
 
     @NonNull
@@ -70,7 +69,6 @@ public class MyAltimeter implements BaseService, MyLocationListener, PubSub.Subs
      *
      * @param context The Application context
      */
-    @Override
     public void start(@NonNull final Context context) {
         AsyncTask.execute(() -> {
             if (!started) {
@@ -196,7 +194,6 @@ public class MyAltimeter implements BaseService, MyLocationListener, PubSub.Subs
         return gpsFilter.v();
     }
 
-    @Override
     public void stop() {
         baro.pressureEvents.unsubscribe(this);
         baro.stop();

@@ -1,9 +1,5 @@
 package com.platypii.baseline.bluetooth;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import androidx.core.app.ActivityCompat;
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.common.R;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.util.Exceptions;
@@ -36,7 +32,7 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
  * Class to manage a bluetooth GPS receiver.
  * Note: instantiating this class will not automatically start bluetooth. Call startAsync to connect.
  */
-public class BluetoothService implements BaseService {
+public class BluetoothService {
     private static final String TAG = "Bluetooth";
 
     // Android shared preferences for bluetooth
@@ -57,17 +53,11 @@ public class BluetoothService implements BaseService {
 
     final List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
 
-    @Override
-    public void start(@NonNull Context context) {
+    public void start(@NonNull Activity activity) {
         if (BluetoothState.started(bluetoothState)) {
             Exceptions.report(new IllegalStateException("Bluetooth started twice " + BT_STATES[bluetoothState]));
             return;
         }
-        if (!(context instanceof Activity)) {
-            Exceptions.report(new ClassCastException("Bluetooth context must be an activity"));
-            return;
-        }
-        final Activity activity = (Activity) context;
         if (bluetoothState == BT_STOPPED) {
             setState(BT_STARTING);
             // Start bluetooth thread
@@ -205,7 +195,6 @@ public class BluetoothService implements BaseService {
         }
     }
 
-    @Override
     public synchronized void stop() {
         if (bluetoothState != BT_STOPPED) {
             Log.i(TAG, "Stopping bluetooth service");

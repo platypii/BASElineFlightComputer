@@ -33,6 +33,11 @@ public class LaserMeasurement {
         return String.format(Locale.US, "%.1f, %.1f", x, y);
     }
 
+    /**
+     * Parse text laser profile into a list of measurements
+     * @param strict should parses throw exceptions?
+     * @throws ParseException if there was a parsing error in strict mode
+     */
     @NonNull
     public static List<LaserMeasurement> parse(@NonNull String pointString, boolean metric, boolean strict) throws ParseException {
         final List<LaserMeasurement> points = new ArrayList<>();
@@ -87,6 +92,9 @@ public class LaserMeasurement {
         }
     }
 
+    /**
+     * Render a list of measurements into a standard text string
+     */
     @NonNull
     public static CharSequence render(@NonNull List<LaserMeasurement> points, boolean metric) {
         final double units = metric ? 1 : 3.28084;

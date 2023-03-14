@@ -1,6 +1,5 @@
 package com.platypii.baseline.tracks;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.tracks.LocalTrackState.TrackNotUploaded;
 import com.platypii.baseline.tracks.LocalTrackState.TrackUploaded;
@@ -24,14 +23,13 @@ import java.util.Map;
 /**
  * Maintains the list of tracks and their sync state
  */
-public class LocalTracks implements BaseService {
+public class LocalTracks {
     private static final String TAG = "LocalTracks";
 
     // Local track files
     private final Map<TrackFile, LocalTrackState> trackState = new HashMap<>();
     private boolean initialized = false;
 
-    @Override
     public void start(@NonNull Context context) {
         if (!initialized) {
             initialized = true;
@@ -70,10 +68,6 @@ public class LocalTracks implements BaseService {
         // Sort by date descending
         Collections.sort(tracks, (track1, track2) -> -track1.getName().compareTo(track2.getName()));
         return tracks;
-    }
-
-    @Override
-    public void stop() {
     }
 
     void setRecording(@NonNull TrackFile trackFile) {

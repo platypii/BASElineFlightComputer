@@ -1,14 +1,12 @@
 package com.platypii.baseline.cloud;
 
-import com.platypii.baseline.BaseService;
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class BaselineCloud implements BaseService {
+public class BaselineCloud {
 
     public static final String baselineServer = "https://baseline.ws";
 
@@ -27,13 +25,7 @@ public class BaselineCloud implements BaseService {
         }
     }
 
-    @Override
     public void start(@NonNull Context context) {
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
-
-    @Override
-    public void stop() {
-    }
-
 }

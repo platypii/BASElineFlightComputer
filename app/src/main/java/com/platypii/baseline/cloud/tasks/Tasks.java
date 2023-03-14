@@ -1,6 +1,5 @@
 package com.platypii.baseline.cloud.tasks;
 
-import com.platypii.baseline.BaseService;
 import com.platypii.baseline.cloud.AuthException;
 import com.platypii.baseline.util.ABundle;
 import com.platypii.baseline.util.Analytics;
@@ -26,7 +25,7 @@ import javax.net.ssl.SSLException;
  * This class tracks state of task execution.
  * Only one task will execute at a time.
  */
-public class Tasks implements BaseService {
+public class Tasks {
     private static final String TAG = "Tasks";
 
     @Nullable
@@ -37,7 +36,6 @@ public class Tasks implements BaseService {
     @Nullable
     private Task running = null;
 
-    @Override
     public void start(@NonNull Context context) {
         this.context = context;
         // Start pending work
@@ -159,7 +157,6 @@ public class Tasks implements BaseService {
         }
     }
 
-    @Override
     public void stop() {
         synchronized (pending) {
             // Remove all except running
