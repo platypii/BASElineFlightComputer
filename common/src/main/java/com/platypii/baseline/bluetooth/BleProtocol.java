@@ -1,4 +1,4 @@
-package com.platypii.baseline.lasers.rangefinder;
+package com.platypii.baseline.bluetooth;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.le.ScanRecord;

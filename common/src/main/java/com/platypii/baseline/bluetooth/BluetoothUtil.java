@@ -2,6 +2,7 @@ package com.platypii.baseline.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 import androidx.annotation.NonNull;
+import com.welie.blessed.BluetoothBytesParser;
 
 public class BluetoothUtil {
 
@@ -10,15 +11,8 @@ public class BluetoothUtil {
      * "foo".getBytes() -> "66-6f-6f"
      */
     @NonNull
-    public static String byteArrayToHex(@NonNull byte[] a) {
-        final StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < a.length; i++) {
-            if (i > 0) {
-                sb.append('-');
-            }
-            sb.append(String.format("%02x", a[i]));
-        }
-        return sb.toString();
+    public static String byteArrayToHex(@NonNull byte[] bytes) {
+        return BluetoothBytesParser.asHexString(bytes, "-");
     }
 
     public static short bytesToShort(byte b1, byte b2) {

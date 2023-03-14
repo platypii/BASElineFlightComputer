@@ -1,5 +1,6 @@
 package com.platypii.baseline.lasers.rangefinder;
 
+import com.platypii.baseline.bluetooth.BleProtocol;
 import com.platypii.baseline.lasers.LaserMeasurement;
 
 import android.bluetooth.le.ScanRecord;

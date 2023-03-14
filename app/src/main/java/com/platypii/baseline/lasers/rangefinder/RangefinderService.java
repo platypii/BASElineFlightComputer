@@ -1,6 +1,7 @@
 package com.platypii.baseline.lasers.rangefinder;
 
 import com.platypii.baseline.Intents;
+import com.platypii.baseline.bluetooth.BleService;
 import com.platypii.baseline.bluetooth.BluetoothState;
 import com.platypii.baseline.util.Exceptions;
 
@@ -23,7 +24,7 @@ public class RangefinderService {
     @Nullable
     private BluetoothAdapter bluetoothAdapter;
     @Nullable
-    private BluetoothHandler bluetoothHandler;
+    private BleService bluetoothHandler;
 
     public void start(@NonNull Activity activity) {
         if (BluetoothState.started(getState())) {
@@ -34,8 +35,8 @@ public class RangefinderService {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null) {
             if (bluetoothAdapter.isEnabled()) {
-                bluetoothHandler = new BluetoothHandler(activity);
-                bluetoothHandler.start();
+                bluetoothHandler = new BleService();
+                bluetoothHandler.start(activity);
             } else {
                 // Turn on bluetooth
                 Log.i(TAG, "Requesting to turn on bluetooth");
@@ -54,8 +55,12 @@ public class RangefinderService {
         Log.i(TAG, "Bluetooth started late");
         if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
             if (bluetoothHandler == null) {
-                bluetoothHandler = new BluetoothHandler(activity);
-                bluetoothHandler.start();
+                bluetoothHandler = new BleService(
+                        new UineyeProtocol(),
+                        new ATNProtocol(),
+                        new SigSauerProtocol()
+                );
+                bluetoothHandler.start(activity);
             }
         } else {
             Exceptions.report(new IllegalStateException("Bluetooth supposedly started, but adapter not enabled"));
