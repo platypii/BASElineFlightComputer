@@ -2,6 +2,7 @@ package com.platypii.baseline.bluetooth;
 
 import com.platypii.baseline.common.R;
 import com.platypii.baseline.location.NMEA;
+import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.PubSub;
 
@@ -34,6 +35,10 @@ public class BluetoothService {
     private static final String TAG = "Bluetooth";
 
     public final PubSub<NMEA> nmeaUpdates = new PubSub<>();
+    public final PubSub<MLocation> locationUpdates = new PubSub<>();
+
+    // BLE subsystem
+    public final BleService ble = new BleService(new MohawkProtocol(locationUpdates));
 
     // Android shared preferences for bluetooth
     public final BluetoothPreferences preferences = new BluetoothPreferences();
@@ -55,15 +60,20 @@ public class BluetoothService {
             return;
         }
         if (getState() == BT_STOPPED) {
-            // Start bluetooth thread
-            if (bluetoothRunnable != null) {
-                Log.e(TAG, "Bluetooth thread already started");
-            }
             bluetoothAdapter = getAdapter(activity);
-            if (bluetoothAdapter != null) {
-                bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
-                bluetoothThread = new Thread(bluetoothRunnable);
-                bluetoothThread.start();
+            if (preferences.preferenceBle) {
+                // Start bluetooth LE
+                ble.start(activity);
+            } else {
+                // Start bluetooth thread
+                if (bluetoothRunnable != null) {
+                    Log.e(TAG, "Bluetooth thread already started");
+                }
+                if (bluetoothAdapter != null) {
+                    bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
+                    bluetoothThread = new Thread(bluetoothRunnable);
+                    bluetoothThread.start();
+                }
             }
         } else {
             Exceptions.report(new IllegalStateException("Bluetooth already started: " + BT_STATES[getState()]));
@@ -116,7 +126,11 @@ public class BluetoothService {
     }
 
     public int getState() {
-        return bluetoothRunnable != null ? bluetoothRunnable.bluetoothState : BT_STOPPED;
+        if (preferences.preferenceBle) {
+            return ble.bluetoothState;
+        } else {
+            return bluetoothRunnable != null ? bluetoothRunnable.bluetoothState : BT_STOPPED;
+        }
     }
 
     /**
@@ -192,6 +206,8 @@ public class BluetoothService {
             }
             Log.i(TAG, "Stopped bluetooth service");
         }
+        // Stop bluetooth LE
+        ble.stop();
     }
 
     /**

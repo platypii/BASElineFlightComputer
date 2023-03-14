@@ -72,7 +72,13 @@ public class BluetoothDeviceListFragment extends ListFragment {
                 }
 
                 // Save device preference
-                Services.bluetooth.preferences.save(activity, true, device.getAddress(), deviceName);
+                boolean ble = false;
+                try {
+                    ble = device.getType() != BluetoothDevice.DEVICE_TYPE_CLASSIC;
+                } catch (SecurityException e) {
+                    Exceptions.report(e);
+                }
+                Services.bluetooth.preferences.save(activity, true, device.getAddress(), deviceName, ble);
                 // Update ui
                 EventBus.getDefault().post(new BluetoothEvent());
                 // Start / restart bluetooth service
@@ -86,7 +92,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
             } else {
                 Log.i(TAG, "Internal GPS selected");
                 // Save device preference
-                Services.bluetooth.preferences.save(activity, false, null, null);
+                Services.bluetooth.preferences.save(activity, false, null, null, false);
                 // Update ui
                 EventBus.getDefault().post(new BluetoothEvent());
                 // Stop bluetooth service if needed

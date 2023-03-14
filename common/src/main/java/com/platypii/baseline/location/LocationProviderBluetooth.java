@@ -3,6 +3,7 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.Permissions;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
+import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 
 import android.content.Context;
@@ -62,6 +63,11 @@ public class LocationProviderBluetooth extends LocationProviderNMEA {
         }
         // Start NMEA updates
         bluetooth.nmeaUpdates.subscribe(this);
+        bluetooth.locationUpdates.subscribe(this::onLocationUpdate);
+    }
+
+    private void onLocationUpdate(MLocation loc) {
+        locationUpdates.post(loc);
     }
 
     @Override

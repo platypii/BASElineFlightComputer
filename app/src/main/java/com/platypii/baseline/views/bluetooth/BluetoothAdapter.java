@@ -59,7 +59,7 @@ class BluetoothAdapter extends BaseAdapter {
             final String deviceName = getDeviceName(device);
             nameView.setText(deviceName);
             addressView.setText(device.getAddress());
-            if (deviceName.contains("GPS")) {
+            if (deviceName.contains("GPS") || deviceName.startsWith("Mohawk")) {
                 nameView.setTextColor(0xffeeeeee);
             } else {
                 nameView.setTextColor(0xffbbbbbb);
