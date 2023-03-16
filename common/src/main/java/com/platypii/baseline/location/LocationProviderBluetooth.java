@@ -37,14 +37,14 @@ class LocationProviderBluetooth extends LocationProviderNMEA implements MyLocati
      * Listen for GPPWR command
      */
     @Override
-    public void onNmeaReceived(long timestamp, @NonNull String nmea) {
+    public void apply(@NonNull NMEA nmea) {
         // Parse PWR command
-        if (nmea.startsWith("$GPPWR")) {
-            final String[] split = NMEA.splitNmea(nmea);
+        if (nmea.sentence.startsWith("$GPPWR")) {
+            final String[] split = NMEA.splitNmea(nmea.sentence);
             bluetooth.powerLevel = NMEA.parsePowerLevel(split);
             bluetooth.charging = Numbers.parseInt(split[5], 0) == 1;
-        } else if (nmea.startsWith("$")) {
-            super.onNmeaReceived(timestamp, nmea);
+        } else if (nmea.sentence.startsWith("$")) {
+            super.apply(nmea);
         } else {
             Log.w(TAG, "Unexpected bluetooth message: " + nmea);
         }
@@ -66,12 +66,12 @@ class LocationProviderBluetooth extends LocationProviderNMEA implements MyLocati
             Log.w(TAG, "Bluetooth permissions required");
         }
         // Start NMEA updates
-        bluetooth.addNmeaListener(this);
+        bluetooth.nmeaUpdates.subscribe(this);
     }
 
     @Override
     public void stop() {
         super.stop();
-        bluetooth.removeNmeaListener(this);
+        bluetooth.nmeaUpdates.unsubscribe(this);
     }
 }

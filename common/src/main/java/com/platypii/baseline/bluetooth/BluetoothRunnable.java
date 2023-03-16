@@ -1,9 +1,10 @@
 package com.platypii.baseline.bluetooth;
 
+import com.platypii.baseline.location.NMEA;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.location.GpsStatus;
 import android.os.ParcelUuid;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -131,9 +132,7 @@ class BluetoothRunnable implements Stoppable {
             String line;
             while (service.getState() == BT_CONNECTED && (line = reader.readLine()) != null) {
                 // Update listeners
-                for (GpsStatus.NmeaListener listener : service.listeners) {
-                    listener.onNmeaReceived(System.currentTimeMillis(), line);
-                }
+                service.nmeaUpdates.post(new NMEA(System.currentTimeMillis(), line));
             }
         } catch (IOException e) {
             if (service.getState() == BT_CONNECTED) {

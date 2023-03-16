@@ -5,13 +5,13 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.util.PubSub.Subscriber;
 
-import android.location.GpsStatus;
 import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
 
-abstract class LocationProviderNMEA extends LocationProvider implements GpsStatus.NmeaListener {
+abstract class LocationProviderNMEA extends LocationProvider implements Subscriber<NMEA> {
     protected final String TAG = "ProviderNMEA";
     private static final String NMEA_TAG = "NMEA";
 
@@ -64,20 +64,17 @@ abstract class LocationProviderNMEA extends LocationProvider implements GpsStatu
      * Location and velocity data is set as NMEA commands arrive.
      * Location is officially updated when we receive the RMC "recommended minimum data" command.
      *
-     * @param timestamp milliseconds
-     * @param nmea the NMEA string
+     * @param msg the NMEA message
      */
     @Override
-    public void onNmeaReceived(long timestamp, String nmea) {
+    public void apply(@NonNull NMEA msg) {
+        String nmea = msg.sentence;
         // Log.v(NMEA_TAG, "[" + timestamp + "] " + nmea.trim()); // Trim because logcat fails on trailing \0
-        if (nmea.charAt(0) == '$') {
-            handleNmea(timestamp, nmea);
-        } else {
+        if (nmea.charAt(0) != '$') {
             Log.e(NMEA_TAG, "Failed to parse " + nmea.trim());
+            return;
         }
-    }
 
-    private void handleNmea(long timestamp, String nmea) {
         nmea = NMEA.cleanNmea(nmea);
         if (nmea.length() < 8) {
             return;
@@ -90,7 +87,7 @@ abstract class LocationProviderNMEA extends LocationProvider implements GpsStatu
             // Recurse on split sentences
             for (String str : split) {
                 if (!str.isEmpty()) {
-                    onNmeaReceived(timestamp, "$" + str);
+                    apply(new NMEA(msg.timestamp, "$" + str));
                 }
             }
         }

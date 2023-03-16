@@ -2,14 +2,15 @@ package com.platypii.baseline.bluetooth;
 
 import com.platypii.baseline.common.R;
 import com.platypii.baseline.events.BluetoothEvent;
+import com.platypii.baseline.location.NMEA;
 import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.util.PubSub;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
-import android.location.GpsStatus;
 import android.os.AsyncTask;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -35,6 +36,8 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 public class BluetoothService {
     private static final String TAG = "Bluetooth";
 
+    public PubSub<NMEA> nmeaUpdates = new PubSub<>();
+
     // Android shared preferences for bluetooth
     public final BluetoothPreferences preferences = new BluetoothPreferences();
 
@@ -50,8 +53,6 @@ public class BluetoothService {
     // Bluetooth device battery level
     public float powerLevel = Float.NaN;
     public boolean charging = false;
-
-    final List<GpsStatus.NmeaListener> listeners = new ArrayList<>();
 
     public void start(@NonNull Activity activity) {
         if (BluetoothState.started(bluetoothState)) {
@@ -237,13 +238,4 @@ public class BluetoothService {
         }
         start(activity);
     }
-
-    public void addNmeaListener(GpsStatus.NmeaListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeNmeaListener(GpsStatus.NmeaListener listener) {
-        listeners.remove(listener);
-    }
-
 }

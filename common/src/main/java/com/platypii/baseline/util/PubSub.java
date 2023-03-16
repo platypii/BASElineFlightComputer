@@ -28,13 +28,15 @@ public class PubSub<T> {
             }
         }
         // Run on UI thread
-        handler.post(() -> {
-            synchronized (mainSubs) {
-                for (Subscriber<T> sub : mainSubs) {
-                    sub.apply(obj);
+        if (!mainSubs.isEmpty()) {
+            handler.post(() -> {
+                synchronized (mainSubs) {
+                    for (Subscriber<T> sub : mainSubs) {
+                        sub.apply(obj);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void subscribe(@NonNull Subscriber<T> sub) {

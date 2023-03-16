@@ -13,10 +13,19 @@ import java.util.TimeZone;
 /**
  * NMEA decoding functions
  */
-class NMEA {
+public class NMEA {
     private static final String TAG = "NMEA";
 
     private static final Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+
+    // NMEA message
+    final long timestamp;
+    final String sentence;
+
+    public NMEA(long timestamp, String sentence) {
+        this.timestamp = timestamp;
+        this.sentence = sentence;
+    }
 
     /**
      * Parse DDDMM.MMMM,N into decimal degrees
