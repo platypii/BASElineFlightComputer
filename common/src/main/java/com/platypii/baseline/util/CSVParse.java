@@ -3,9 +3,7 @@ package com.platypii.baseline.util;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.Date;
 
 /**
  * Parse data from CSV files
@@ -109,21 +107,31 @@ public class CSVParse {
         }
     }
 
-    private static SimpleDateFormat df;
-
     static long parseFlySightDate(@NonNull String dateString) throws ParseException {
-        // Lazy init
-        if (df == null) {
-            // 2018-01-25T11:48:09.80Z
-            df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        // 2018-01-25T11:48:09.80Z
+        if (!Character.isDigit(dateString.charAt(0))) {
+            return -1;
         }
+
+        // Parse manually for speed
+        final int year = Integer.parseInt(dateString.substring(0, 4)) - 1900;
+        final int month = Integer.parseInt(dateString.substring(5, 7)) - 1;
+        final int day = Integer.parseInt(dateString.substring(8, 10));
+        final int hour = Integer.parseInt(dateString.substring(11, 13));
+        final int minute = Integer.parseInt(dateString.substring(14, 16));
+        final int second = Integer.parseInt(dateString.substring(17, 19));
+        final long whole = Date.UTC(year, month, day, hour, minute, second);
+
         // Handle milliseconds separately
         long millis = 0;
-        final int len = dateString.length();
-        if (dateString.charAt(len - 4) == '.') {
-            millis = 10 * Long.parseLong(dateString.substring(len - 3, len - 1));
+        final int dotIndex = 19;
+        if (dateString.charAt(dotIndex) == '.') {
+            final int len = dateString.length();
+            final int digits = Math.min(3, len - dotIndex - 2);
+            final String zeros = "000".substring(digits);
+            final String milliString = dateString.substring(dotIndex + 1, dotIndex + digits + 1) + zeros;
+            millis = Long.parseLong(milliString);
         }
-        return df.parse(dateString).getTime() + millis;
+        return whole + millis;
     }
 }
