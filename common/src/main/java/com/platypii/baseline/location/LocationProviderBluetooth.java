@@ -3,14 +3,13 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.Permissions;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
 
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 
-class LocationProviderBluetooth extends LocationProviderNMEA implements MyLocationListener {
+class LocationProviderBluetooth extends LocationProviderNMEA {
     protected final String TAG = "ProviderBluetooth";
 
     @NonNull
@@ -48,11 +47,6 @@ class LocationProviderBluetooth extends LocationProviderNMEA implements MyLocati
         } else {
             Log.w(TAG, "Unexpected bluetooth message: " + nmea);
         }
-    }
-
-    @Override
-    public void onLocationChanged(@NonNull MLocation loc) {
-        updateLocation(loc);
     }
 
     /**

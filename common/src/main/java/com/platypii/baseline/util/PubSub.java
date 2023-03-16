@@ -39,6 +39,13 @@ public class PubSub<T> {
         }
     }
 
+    /**
+     * Post in a thread so that the caller doesn't block
+     */
+    public void postAsync(T obj) {
+        new Thread(() -> post(obj)).start();
+    }
+
     public void subscribe(@NonNull Subscriber<T> sub) {
         synchronized (subs) {
             subs.add(sub);
@@ -65,6 +72,13 @@ public class PubSub<T> {
                 Log.e(TAG, "Unexpected main listener unsubscribed");
             }
         }
+    }
+
+    /**
+     * Return true if there are no subscribers
+     */
+    public boolean isEmpty() {
+        return subs.isEmpty() && mainSubs.isEmpty();
     }
 
     public interface Subscriber<S> {

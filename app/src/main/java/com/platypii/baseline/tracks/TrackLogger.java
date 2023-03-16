@@ -3,13 +3,12 @@ package com.platypii.baseline.tracks;
 import com.platypii.baseline.BuildConfig;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.events.LoggingEvent;
-import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.measurements.Measurement;
 import com.platypii.baseline.sensors.MySensorListener;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.util.PubSub;
+import com.platypii.baseline.util.PubSub.Subscriber;
 import com.platypii.baseline.util.StringBuilderUtil;
 
 import android.content.Context;
@@ -28,7 +27,7 @@ import org.greenrobot.eventbus.EventBus;
  * Logs location, altitude, every scrap of data we can get to a file.
  * AKA- The Black Box flight recorder
  */
-public class TrackLogger implements MyLocationListener, MySensorListener, PubSub.Subscriber<MPressure> {
+public class TrackLogger implements MySensorListener, Subscriber<MPressure> {
     private static final String TAG = "TrackLogger";
 
     private boolean logging = false;
@@ -141,7 +140,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, PubSub
 
         // Start sensor updates
         Services.alti.baro.pressureEvents.subscribe(this);
-        Services.location.addListener(this);
+        Services.location.locationUpdates.subscribe(this::onLocationChanged);
         Services.sensors.addListener(this);
 
         Log.i(TAG, "Logging to " + logFile);
@@ -156,7 +155,7 @@ public class TrackLogger implements MyLocationListener, MySensorListener, PubSub
 
         // Stop sensor updates
         Services.alti.baro.pressureEvents.unsubscribe(this);
-        Services.location.removeListener(this);
+        Services.location.locationUpdates.unsubscribe(this::onLocationChanged);
         Services.sensors.removeListener(this);
 
         // Close file writer
@@ -189,7 +188,6 @@ public class TrackLogger implements MyLocationListener, MySensorListener, PubSub
     /**
      * Listen for location updates
      */
-    @Override
     public void onLocationChanged(@NonNull MLocation measure) {
         if (!Double.isNaN(measure.latitude) && !Double.isNaN(measure.longitude)) {
             logLine(measure.toRow());

@@ -2,12 +2,12 @@ package com.platypii.baseline.views.charts;
 
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.location.LocationProvider;
-import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.AdjustBounds;
 import com.platypii.baseline.util.Bounds;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.PubSub.Subscriber;
 import com.platypii.baseline.util.SyncedList;
 import com.platypii.baseline.views.charts.layers.EllipseLayer;
 
@@ -18,7 +18,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class SpeedChartLive extends PlotSurface implements MyLocationListener {
+public class SpeedChartLive extends PlotSurface implements Subscriber<MLocation> {
 
     private static final int AXIS_SPEED = 0;
     @NonNull
@@ -230,18 +230,18 @@ public class SpeedChartLive extends PlotSurface implements MyLocationListener {
         this.locationService = locationService;
         this.altimeter = altimeter;
         // Start listening for location updates
-        locationService.addListener(this);
+        locationService.locationUpdates.subscribe(this);
     }
 
     public void stop() {
         // Stop listening for location updates
         if (locationService != null) {
-            locationService.removeListener(this);
+            locationService.locationUpdates.unsubscribe(this);
         }
     }
 
     @Override
-    public void onLocationChanged(@NonNull MLocation loc) {
+    public void apply(@NonNull MLocation loc) {
         history.append(loc);
     }
 

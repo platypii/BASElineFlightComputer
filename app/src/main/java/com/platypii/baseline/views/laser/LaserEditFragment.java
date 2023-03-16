@@ -12,11 +12,11 @@ import com.platypii.baseline.lasers.NewLaserForm;
 import com.platypii.baseline.lasers.rangefinder.RangefinderService;
 import com.platypii.baseline.location.Geocoder;
 import com.platypii.baseline.Permissions;
-import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.LatLngAlt;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Convert;
+import com.platypii.baseline.util.PubSub.Subscriber;
 import com.platypii.baseline.util.StringUtil;
 import com.platypii.baseline.views.charts.layers.LaserProfileLayer;
 
@@ -55,7 +55,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
 
-public class LaserEditFragment extends Fragment implements MyLocationListener {
+public class LaserEditFragment extends Fragment implements Subscriber<MLocation> {
     private static final String TAG = "LaserEditFrag";
 
     @NonNull
@@ -125,7 +125,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     public void onStart() {
         super.onStart();
         Services.lasers.layers.add(editLayer);
-        Services.location.addListener(this);
+        Services.location.locationUpdates.subscribeMain(this);
         EventBus.getDefault().register(this);
         if (rangefinderEnabled) {
             laserConnect();
@@ -488,16 +488,11 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     }
 
     @Override
-    public void onLocationChanged(@NonNull MLocation loc) {
+    public void apply(@NonNull MLocation loc) {
         if (defaultLocation == null) {
             defaultLocation = loc;
-            final Activity activity = getActivity();
-            if (activity != null) {
-                activity.runOnUiThread(() -> {
-                    // Fill in lat,lon
-                    binding.laserLocation.setText(LatLngAlt.formatLatLngAlt(loc.latitude, loc.longitude, loc.altitude_gps));
-                });
-            }
+            // Fill in lat,lon
+            binding.laserLocation.setText(LatLngAlt.formatLatLngAlt(loc.latitude, loc.longitude, loc.altitude_gps));
         }
     }
 
@@ -505,7 +500,7 @@ public class LaserEditFragment extends Fragment implements MyLocationListener {
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-        Services.location.removeListener(this);
+        Services.location.locationUpdates.unsubscribeMain(this);
         if (rangefinderEnabled) {
             rangefinder.stop();
         }

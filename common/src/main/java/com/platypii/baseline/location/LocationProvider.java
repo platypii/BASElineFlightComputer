@@ -2,21 +2,16 @@ package com.platypii.baseline.location;
 
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.util.PubSub;
 import com.platypii.baseline.util.RefreshRateEstimator;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class LocationProvider {
     // Duration until location considered stale, in milliseconds
     private static final long LOCATION_TTL = 10000;
-
-    // Listeners
-    private final List<MyLocationListener> listeners = new CopyOnWriteArrayList<>();
 
     // Moving average of refresh rate in Hz
     public final RefreshRateEstimator refreshRate = new RefreshRateEstimator();
@@ -24,6 +19,8 @@ public abstract class LocationProvider {
     // History
     public MLocation lastLoc; // last location received
     private MLocation prevLoc; // 2nd to last
+
+    public final PubSub<MLocation> locationUpdates = new PubSub<>();
 
     /**
      * Give a useful name to the inherited provider
@@ -67,20 +64,6 @@ public abstract class LocationProvider {
     }
 
     /**
-     * Add a new listener to be notified of location updates
-     */
-    public void addListener(@NonNull MyLocationListener listener) {
-        listeners.add(listener);
-    }
-
-    /**
-     * Remove a listener from location updates
-     */
-    public void removeListener(@NonNull MyLocationListener listener) {
-        listeners.remove(listener);
-    }
-
-    /**
      * Children should call updateLocation() when they have new location information
      */
     void updateLocation(@NonNull MLocation loc) {
@@ -106,18 +89,9 @@ public abstract class LocationProvider {
 
         refreshRate.addSample(lastLoc.millis);
 
-        // Notify listeners (using AsyncTask so the manager never blocks!)
-        AsyncTask.execute(updateRunner);
+        // Notify listeners (async so the service never blocks!)
+        locationUpdates.postAsync(lastLoc);
     }
-
-    private final Runnable updateRunner = new Runnable() {
-        @Override
-        public void run() {
-            for (MyLocationListener listener : listeners) {
-                listener.onLocationChanged(lastLoc);
-            }
-        }
-    };
 
     /**
      * Helper method for getting latest speed in m/s
@@ -189,7 +163,7 @@ public abstract class LocationProvider {
     }
 
     public void stop() {
-        if (!listeners.isEmpty()) {
+        if (!locationUpdates.isEmpty()) {
             Log.w(providerName(), "Stopping location service, but listeners are still listening");
         }
     }

@@ -3,7 +3,7 @@ package com.platypii.baseline.views.altimeter;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.ActivityAltimeterBinding;
 import com.platypii.baseline.measurements.MAltitude;
-import com.platypii.baseline.util.PubSub;
+import com.platypii.baseline.util.PubSub.Subscriber;
 import com.platypii.baseline.views.BaseActivity;
 
 import android.content.pm.ActivityInfo;
@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class AltimeterActivity extends BaseActivity implements PubSub.Subscriber<MAltitude> {
+public class AltimeterActivity extends BaseActivity implements Subscriber<MAltitude> {
 
     private ActivityAltimeterBinding binding;
 

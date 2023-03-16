@@ -3,6 +3,7 @@ package com.platypii.baseline.location;
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.PubSub.Subscriber;
 
 import android.content.Context;
 import android.os.Build;
@@ -12,7 +13,7 @@ import androidx.annotation.NonNull;
 /**
  * Meta location provider that uses bluetooth or android location source
  */
-public class LocationService extends LocationProvider {
+public class LocationService extends LocationProvider implements Subscriber<MLocation> {
     private static final String TAG = "LocationService";
 
     // What data source to pull from
@@ -38,24 +39,12 @@ public class LocationService extends LocationProvider {
         locationProviderBluetooth = new LocationProviderBluetooth(alti, bluetooth);
     }
 
-    private final MyLocationListener androidListener = new MyLocationListener() {
-        @Override
-        public void onLocationChanged(@NonNull MLocation loc) {
-            // Only use android location if we aren't using bluetooth
-            if (!bluetooth.preferences.preferenceEnabled) {
-                updateLocation(loc);
-            }
-        }
-    };
 
-    private final MyLocationListener bluetoothListener = new MyLocationListener() {
-        @Override
-        public void onLocationChanged(@NonNull MLocation loc) {
-            if (bluetooth.preferences.preferenceEnabled) {
-                updateLocation(loc);
-            }
-        }
-    };
+    @Override
+    public void apply(MLocation loc) {
+        // Re-post location update
+        updateLocation(loc);
+    }
 
     @NonNull
     @Override
@@ -85,12 +74,12 @@ public class LocationService extends LocationProvider {
             Log.i(TAG, "Starting location service in bluetooth mode");
             locationMode = LOCATION_BLUETOOTH;
             locationProviderBluetooth.start(context);
-            locationProviderBluetooth.addListener(bluetoothListener);
+            locationProviderBluetooth.locationUpdates.subscribe(this);
         } else {
             Log.i(TAG, "Starting location service in android mode");
             locationMode = LOCATION_ANDROID;
             locationProviderAndroid.start(context);
-            locationProviderAndroid.addListener(androidListener);
+            locationProviderAndroid.locationUpdates.subscribe(this);
         }
     }
 
@@ -115,11 +104,11 @@ public class LocationService extends LocationProvider {
     public void stop() {
         if (locationMode == LOCATION_ANDROID) {
             Log.i(TAG, "Stopping android location service");
-            locationProviderAndroid.removeListener(androidListener);
+            locationProviderAndroid.locationUpdates.unsubscribe(this);
             locationProviderAndroid.stop();
         } else if (locationMode == LOCATION_BLUETOOTH) {
             Log.i(TAG, "Stopping bluetooth location service");
-            locationProviderBluetooth.removeListener(bluetoothListener);
+            locationProviderBluetooth.locationUpdates.unsubscribe(this);
             locationProviderBluetooth.stop();
         }
         locationMode = LOCATION_NONE;

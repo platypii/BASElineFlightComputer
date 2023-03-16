@@ -1,12 +1,12 @@
 package com.platypii.baseline.altimeter;
 
 import com.platypii.baseline.location.LocationProvider;
-import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.location.TimeOffset;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.util.PubSub;
+import com.platypii.baseline.util.PubSub.Subscriber;
 import com.platypii.baseline.util.filters.Filter;
 import com.platypii.baseline.util.filters.FilterKalman;
 
@@ -21,23 +21,24 @@ import androidx.annotation.NonNull;
  * The main Altimeter class.
  * This class integrates sensor readings from barometer and GPS to model the altitude of the phone.
  * Altitude is measured both AGL and AMSL. Ground level is set to zero on initialization.
- *
- * TODO: Correct barometer drift with GPS
  */
-public class MyAltimeter implements MyLocationListener, PubSub.Subscriber<MPressure> {
+public class MyAltimeter implements Subscriber<MPressure> {
     private static final String TAG = "MyAltimeter";
 
     @NonNull
     public final PubSub<MAltitude> altitudeEvents = new PubSub<>();
 
+    @NonNull
     private final LocationProvider location;
     private boolean started = false;
 
     // Barometric altimeter
+    @NonNull
     public final BaroAltimeter baro = new BaroAltimeter();
     public boolean barometerEnabled = true;
 
     // GPS altitude kalman filter
+    @NonNull
     private final Filter gpsFilter = new FilterKalman();
     private MLocation lastLoc;
 
@@ -51,6 +52,7 @@ public class MyAltimeter implements MyLocationListener, PubSub.Subscriber<MPress
     // public static double verticalAcceleration = Double.NaN;
 
     // Ground level
+    @NonNull
     public final GroundLevel groundLevel = new GroundLevel();
 
     // Sample counts
@@ -59,7 +61,7 @@ public class MyAltimeter implements MyLocationListener, PubSub.Subscriber<MPress
 
     private long lastFixMillis; // milliseconds
 
-    public MyAltimeter(LocationProvider location) {
+    public MyAltimeter(@NonNull LocationProvider location) {
         this.location = location;
     }
 
@@ -82,11 +84,7 @@ public class MyAltimeter implements MyLocationListener, PubSub.Subscriber<MPress
                 groundLevel.start(prefs);
 
                 // Start GPS updates
-                if (location != null) {
-                    location.addListener(MyAltimeter.this);
-                } else {
-                    Log.e(TAG, "Location services should be initialized before altimeter");
-                }
+                location.locationUpdates.subscribe(this::updateGPS);
             } else {
                 Log.e(TAG, "MyAltimeter already started");
             }
@@ -95,14 +93,6 @@ public class MyAltimeter implements MyLocationListener, PubSub.Subscriber<MPress
 
     public double altitudeAGL() {
         return groundLevel.altitudeAGL();
-    }
-
-    /**
-     * Location Listener
-     */
-    @Override
-    public void onLocationChanged(@NonNull MLocation loc) {
-        updateGPS(loc);
     }
 
     /**
@@ -197,7 +187,7 @@ public class MyAltimeter implements MyLocationListener, PubSub.Subscriber<MPress
     public void stop() {
         baro.pressureEvents.unsubscribe(this);
         baro.stop();
-        location.removeListener(this);
+        location.locationUpdates.unsubscribe(this::updateGPS);
         if (started) {
             started = false;
         } else {

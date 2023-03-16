@@ -4,9 +4,9 @@ import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.ActivityMapBinding;
 import com.platypii.baseline.location.LandingZone;
-import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Exceptions;
+import com.platypii.baseline.util.PubSub.Subscriber;
 import com.platypii.baseline.views.BaseActivity;
 
 import android.os.Bundle;
@@ -18,10 +18,13 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraIdleListener;
+import com.google.android.gms.maps.GoogleMap.OnCameraMoveListener;
+import com.google.android.gms.maps.GoogleMap.OnCameraMoveStartedListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 
-public class MapActivity extends BaseActivity implements MyLocationListener, OnMapReadyCallback, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener {
+public class MapActivity extends BaseActivity implements OnCameraIdleListener, OnCameraMoveListener, OnCameraMoveStartedListener, OnMapReadyCallback, Subscriber<MLocation> {
     private static final String TAG = "Map";
 
     private ActivityMapBinding binding;
@@ -114,9 +117,8 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         }
     }
 
-    @Override
-    public void onLocationChanged(@NonNull MLocation loc) {
-        runOnUiThread(updateLocationRunnable);
+    public void apply(@NonNull MLocation loc) {
+        updateLocation();
     }
 
     void setHome(@Nullable LatLng home) {
@@ -186,13 +188,11 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
         }
     }
 
-    private final Runnable updateLocationRunnable = this::updateLocation;
-
     @Override
     protected void onResume() {
         super.onResume();
         // Start location updates
-        Services.location.addListener(this);
+        Services.location.locationUpdates.subscribeMain(this);
         // Load map state
         MapState.load(this);
     }
@@ -201,7 +201,7 @@ public class MapActivity extends BaseActivity implements MyLocationListener, OnM
     protected void onPause() {
         super.onPause();
         // Stop location updates
-        Services.location.removeListener(this);
+        Services.location.locationUpdates.unsubscribeMain(this);
         // Save map state
         if (map != null) {
             MapState.mapBounds = map.getProjection().getVisibleRegion().latLngBounds;

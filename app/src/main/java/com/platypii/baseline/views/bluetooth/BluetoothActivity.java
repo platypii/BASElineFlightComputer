@@ -8,8 +8,8 @@ import com.platypii.baseline.bluetooth.BluetoothState;
 import com.platypii.baseline.databinding.ActivityBluetoothBinding;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.Permissions;
-import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.PubSub.Subscriber;
 import com.platypii.baseline.views.BaseActivity;
 
 import android.os.Bundle;
@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class BluetoothActivity extends BaseActivity implements MyLocationListener {
+public class BluetoothActivity extends BaseActivity implements Subscriber<MLocation> {
     private static final String TAG = "BluetoothActivity";
 
     private ActivityBluetoothBinding binding;
@@ -120,7 +120,7 @@ public class BluetoothActivity extends BaseActivity implements MyLocationListene
 
         // Listen for bluetooth updates
         EventBus.getDefault().register(this);
-        Services.location.addListener(this);
+        Services.location.locationUpdates.subscribeMain(this);
         updateViews();
     }
 
@@ -128,7 +128,7 @@ public class BluetoothActivity extends BaseActivity implements MyLocationListene
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
-        Services.location.removeListener(this);
+        Services.location.locationUpdates.unsubscribeMain(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -137,8 +137,8 @@ public class BluetoothActivity extends BaseActivity implements MyLocationListene
     }
 
     @Override
-    public void onLocationChanged(@NonNull MLocation loc) {
-        runOnUiThread(this::updateViews);
+    public void apply(@NonNull MLocation loc) {
+        updateViews();
     }
 
 }

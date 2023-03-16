@@ -2,12 +2,12 @@ package com.platypii.baseline.views;
 
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.ActivitySensorsBinding;
-import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.measurements.MPressure;
 import com.platypii.baseline.measurements.MSensor;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
+import com.platypii.baseline.util.PubSub.Subscriber;
 import com.platypii.baseline.util.SyncedList;
 import com.platypii.baseline.views.charts.SensorPlot;
 
@@ -27,7 +27,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 @SuppressLint("SetTextI18n")
-public class SensorActivity extends BaseActivity implements MyLocationListener {
+public class SensorActivity extends BaseActivity implements Subscriber<MLocation> {
 
     private ActivitySensorsBinding binding;
 
@@ -63,7 +63,7 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
         super.onResume();
 
         // Start GPS updates
-        Services.location.addListener(this);
+        Services.location.locationUpdates.subscribeMain(this);
         updateGPS();
 
         // Start altitude updates
@@ -87,7 +87,7 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
         handler.removeCallbacks(updateRunnable);
         updateRunnable = null;
         EventBus.getDefault().unregister(this);
-        Services.location.removeListener(this);
+        Services.location.locationUpdates.unsubscribeMain(this);
     }
 
     private void addPlot(String label, @Nullable SyncedList<MSensor> history) {
@@ -220,8 +220,8 @@ public class SensorActivity extends BaseActivity implements MyLocationListener {
 
     // Listeners
     @Override
-    public void onLocationChanged(@NonNull MLocation loc) {
-        runOnUiThread(this::updateGPS);
+    public void apply(@NonNull MLocation loc) {
+        updateGPS();
     }
 
     /**

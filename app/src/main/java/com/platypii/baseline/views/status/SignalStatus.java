@@ -4,8 +4,8 @@ import com.platypii.baseline.Permissions;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.StatusPanelBinding;
 import com.platypii.baseline.location.LocationStatus;
-import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MLocation;
+import com.platypii.baseline.util.PubSub.Subscriber;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -24,7 +24,7 @@ import static com.platypii.baseline.RequestCodes.RC_BLUE_ENABLE;
 /**
  * Show the user their GPS status
  */
-public class SignalStatus extends BaseStatus implements MyLocationListener {
+public class SignalStatus extends BaseStatus implements Subscriber<MLocation> {
 
     private StatusPanelBinding binding;
 
@@ -76,7 +76,7 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
         handler.post(signalRunnable);
 
         // Listen for location updates
-        Services.location.addListener(this);
+        Services.location.locationUpdates.subscribe(this);
     }
 
 
@@ -101,7 +101,7 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
     private final Runnable updateRunnable = this::update;
 
     @Override
-    public void onLocationChanged(@NonNull MLocation loc) {
+    public void apply(@NonNull MLocation loc) {
         handler.post(updateRunnable);
     }
 
@@ -109,7 +109,7 @@ public class SignalStatus extends BaseStatus implements MyLocationListener {
     public void onStop() {
         super.onStop();
         handler.removeCallbacks(signalRunnable);
-        Services.location.removeListener(this);
+        Services.location.locationUpdates.unsubscribe(this);
     }
 
 }

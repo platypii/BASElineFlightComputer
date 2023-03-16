@@ -3,14 +3,12 @@ package com.platypii.baseline.views.map;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.FlightStatsBinding;
-import com.platypii.baseline.location.MyLocationListener;
 import com.platypii.baseline.measurements.MAltitude;
 import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.util.Numbers;
-import com.platypii.baseline.util.PubSub;
+import com.platypii.baseline.util.PubSub.Subscriber;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +16,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-public class FlightStatsFragment extends Fragment implements MyLocationListener, PubSub.Subscriber<MAltitude> {
+public class FlightStatsFragment extends Fragment implements Subscriber<MAltitude> {
 
     private FlightStatsBinding binding;
 
@@ -47,8 +45,6 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener,
         }
     }
 
-    private final Runnable updateRunnable = this::update;
-
     /**
      * Listen for altitude updates
      */
@@ -57,19 +53,15 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener,
         update();
     }
 
-    @Override
     public void onLocationChanged(@NonNull MLocation loc) {
-        final Activity activity = getActivity();
-        if (activity != null) {
-            activity.runOnUiThread(updateRunnable);
-        }
+        update();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         // Start sensor updates
-        Services.location.addListener(this);
+        Services.location.locationUpdates.subscribeMain(this::onLocationChanged);
         Services.alti.altitudeEvents.subscribeMain(this);
         update();
     }
@@ -78,7 +70,7 @@ public class FlightStatsFragment extends Fragment implements MyLocationListener,
     public void onPause() {
         super.onPause();
         // Stop sensor updates
-        Services.location.removeListener(this);
+        Services.location.locationUpdates.unsubscribeMain(this::onLocationChanged);
         Services.alti.altitudeEvents.unsubscribeMain(this);
     }
 
