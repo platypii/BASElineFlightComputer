@@ -1,7 +1,7 @@
 package com.platypii.baseline.lasers.rangefinder;
 
 import com.platypii.baseline.bluetooth.BluetoothState;
-import com.platypii.baseline.events.RangefinderEvent;
+import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.util.Exceptions;
 
 import android.app.Activity;
@@ -91,7 +91,7 @@ public class RangefinderService {
     void setState(int state) {
         Log.d(TAG, "Rangefinder bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         bluetoothState = state;
-        EventBus.getDefault().post(new RangefinderEvent());
+        EventBus.getDefault().post(new BluetoothEvent());
     }
 
     public synchronized void stop() {

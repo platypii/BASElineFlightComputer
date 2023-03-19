@@ -64,7 +64,7 @@ public class DataSeries implements Iterable<DataSeries.Point> {
 
     @NonNull
     public Iterator<Point> iterator() {
-        return new Iterator<Point>() {
+        return new Iterator<>() {
             private int i = 0;
 
             public boolean hasNext() {

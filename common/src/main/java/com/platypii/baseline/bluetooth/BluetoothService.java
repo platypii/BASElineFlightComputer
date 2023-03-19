@@ -137,7 +137,7 @@ public class BluetoothService {
         }
         if (bluetoothState != state) {
             bluetoothState = state;
-            EventBus.getDefault().post(new BluetoothEvent(state));
+            EventBus.getDefault().post(new BluetoothEvent());
         }
     }
 

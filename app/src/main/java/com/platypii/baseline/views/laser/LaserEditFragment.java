@@ -5,7 +5,7 @@ import com.platypii.baseline.RequestCodes;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.cloud.AuthState;
 import com.platypii.baseline.databinding.LaserEditBinding;
-import com.platypii.baseline.events.RangefinderEvent;
+import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.lasers.LaserProfile;
 import com.platypii.baseline.lasers.NewLaserForm;
@@ -370,7 +370,7 @@ public class LaserEditFragment extends Fragment implements Subscriber<MLocation>
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onBluetoothEvent(@NonNull RangefinderEvent event) {
+    public void onBluetoothEvent(@NonNull BluetoothEvent event) {
         updateRangefinder();
     }
 
