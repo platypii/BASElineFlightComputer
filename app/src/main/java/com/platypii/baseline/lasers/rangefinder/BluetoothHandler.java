@@ -44,10 +44,10 @@ class BluetoothHandler {
     private BluetoothPeripheral currentPeripheral;
     @Nullable
     private RangefinderProtocol protocol;
+    @NonNull
+    private final Handler handler = new Handler();
 
-    boolean connected = false;
-
-    BluetoothHandler(@NonNull RangefinderService service, @NonNull Activity activity, @NonNull Handler handler) {
+    BluetoothHandler(@NonNull RangefinderService service, @NonNull Activity activity) {
         this.service = service;
         this.activity = activity;
         central = new BluetoothCentralManager(activity.getApplicationContext(), bluetoothCentralManagerCallback, handler);
@@ -119,7 +119,10 @@ class BluetoothHandler {
         public void onCharacteristicUpdate(@NonNull BluetoothPeripheral peripheral, @NonNull byte[] value, @NonNull BluetoothGattCharacteristic characteristic, @NonNull final GattStatus status) {
             if (status != GattStatus.SUCCESS) return;
             if (value.length == 0) return;
-            processBytes(value);
+            // Send bluetooth messages to the protocol for parsing
+            if (protocol != null) {
+                protocol.processBytes(value);
+            }
         }
     };
 
@@ -130,7 +133,6 @@ class BluetoothHandler {
         public void onConnectedPeripheral(@NonNull BluetoothPeripheral connectedPeripheral) {
             currentPeripheral = connectedPeripheral;
             Log.i(TAG, "Rangefinder connected " + connectedPeripheral.getName());
-            connected = true;
             service.setState(BT_CONNECTED);
         }
 
@@ -143,7 +145,6 @@ class BluetoothHandler {
         @Override
         public void onDisconnectedPeripheral(@NonNull final BluetoothPeripheral peripheral, @NonNull final HciStatus status) {
             Log.i(TAG, "Rangefinder disconnected " + peripheral.getName() + " with status " + status);
-            connected = false;
             currentPeripheral = null;
             // Go back to searching
             if (BluetoothState.started(service.getState())) {
@@ -194,16 +195,6 @@ class BluetoothHandler {
         // Connect to device
         central.connectPeripheral(peripheral, peripheralCallback);
         // TODO: Log event
-    }
-
-    /**
-     * Send bluetooth messages to the protocol for parsing.
-     * @param value the bluetooth message to parse
-     */
-    private void processBytes(@NonNull byte[] value) {
-        if (protocol != null) {
-            protocol.processBytes(value);
-        }
     }
 
     void stop() {

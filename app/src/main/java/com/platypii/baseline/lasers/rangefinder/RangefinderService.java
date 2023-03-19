@@ -7,7 +7,6 @@ import com.platypii.baseline.util.Exceptions;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -27,8 +26,6 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 public class RangefinderService {
     private static final String TAG = "RangefinderService";
 
-    private final Handler handler = new Handler();
-
     // Bluetooth state
     private int bluetoothState = BT_STOPPED;
     @Nullable
@@ -43,30 +40,20 @@ public class RangefinderService {
         }
         Log.i(TAG, "Starting rangefinder service");
         setState(BT_STARTING);
-        startAsync(activity);
-    }
-
-    /**
-     * Starts bluetooth in an async thread.
-     * Even though we're mostly just starting the bluetooth thread, calling getAdapter can be slow.
-     */
-    private void startAsync(@NonNull final Activity activity) {
-        AsyncTask.execute(() -> {
-            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            if (bluetoothAdapter != null) {
-                if (bluetoothAdapter.isEnabled()) {
-                    bluetoothHandler = new BluetoothHandler(this, activity, handler);
-                    bluetoothHandler.start();
-                } else {
-                    // Turn on bluetooth
-                    Log.i(TAG, "Requesting to turn on bluetooth");
-                    final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    activity.startActivityForResult(enableBluetoothIntent, RC_BLUE_ENABLE);
-                }
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter != null) {
+            if (bluetoothAdapter.isEnabled()) {
+                bluetoothHandler = new BluetoothHandler(this, activity);
+                bluetoothHandler.start();
             } else {
-                Log.w(TAG, "Bluetooth adapter not found");
+                // Turn on bluetooth
+                Log.i(TAG, "Requesting to turn on bluetooth");
+                final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                activity.startActivityForResult(enableBluetoothIntent, RC_BLUE_ENABLE);
             }
-        });
+        } else {
+            Log.w(TAG, "Bluetooth adapter not found");
+        }
     }
 
     /**
@@ -76,7 +63,7 @@ public class RangefinderService {
         Log.i(TAG, "Bluetooth started late");
         if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
             if (bluetoothHandler == null) {
-                bluetoothHandler = new BluetoothHandler(this, activity, handler);
+                bluetoothHandler = new BluetoothHandler(this, activity);
                 bluetoothHandler.start();
             }
         } else {

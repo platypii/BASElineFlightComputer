@@ -11,7 +11,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,25 +64,15 @@ public class BluetoothService {
             if (bluetoothRunnable != null) {
                 Log.e(TAG, "Bluetooth thread already started");
             }
-            startAsync(activity);
-        } else {
-            Exceptions.report(new IllegalStateException("Bluetooth already started: " + BT_STATES[bluetoothState]));
-        }
-    }
-
-    /**
-     * Starts bluetooth in an asynctask.
-     * Even though we're mostly just starting the bluetooth thread, calling getAdapter can be slow.
-     */
-    private void startAsync(@NonNull final Activity activity) {
-        AsyncTask.execute(() -> {
             bluetoothAdapter = getAdapter(activity);
             if (bluetoothAdapter != null) {
                 bluetoothRunnable = new BluetoothRunnable(BluetoothService.this, bluetoothAdapter);
                 bluetoothThread = new Thread(bluetoothRunnable);
                 bluetoothThread.start();
             }
-        });
+        } else {
+            Exceptions.report(new IllegalStateException("Bluetooth already started: " + BT_STATES[bluetoothState]));
+        }
     }
 
     /**
