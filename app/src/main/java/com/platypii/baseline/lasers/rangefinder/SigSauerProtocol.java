@@ -19,7 +19,7 @@ import static com.platypii.baseline.bluetooth.BluetoothUtil.byteArrayToHex;
 /**
  * This class contains ids, commands, and decoders for Sig Sauer laser rangefinders.
  */
-class SigSauerProtocol implements RangefinderProtocol {
+class SigSauerProtocol extends BleProtocol {
     private static final String TAG = "SigSauerProtocol";
 
     // Manufacturer ID
@@ -30,9 +30,6 @@ class SigSauerProtocol implements RangefinderProtocol {
     private static final UUID rangefinderService = UUID.fromString("49535343-fe7d-4ae5-8fa9-9fafd205e455");
     // Rangefinder characteristic
     private static final UUID rangefinderCharacteristic = UUID.fromString("0000fff2-0000-1000-8000-00805f9b34fb");
-
-    // Protocol state
-    private final BluetoothPeripheral peripheral;
 
     // Rangefinder responses
     // Commands: :AR, AI, RB, RPG1, GI, GK, SK
@@ -45,17 +42,15 @@ class SigSauerProtocol implements RangefinderProtocol {
     // :DS = rangefinder settings
     private static final String ack = ":AK";
 
-    SigSauerProtocol(BluetoothPeripheral peripheral) {
-        this.peripheral = peripheral;
+    @Override
+    public void onServicesDiscovered(@NonNull BluetoothPeripheral peripheral) {
+        // Request rangefinder service
+        Log.i(TAG, "app -> rf: subscribe");
+        peripheral.setNotify(rangefinderService, rangefinderCharacteristic, true);
     }
 
     @Override
-    public void onServicesDiscovered() {
-        requestRangefinderService();
-    }
-
-    @Override
-    public void processBytes(byte[] value) {
+    public void processBytes(@NonNull BluetoothPeripheral peripheral, @NonNull byte[] value) {
         final String str = new String(value);
         if (str.startsWith(ack)) {
             Log.d(TAG, "rf -> app: ack");
@@ -70,16 +65,6 @@ class SigSauerProtocol implements RangefinderProtocol {
         } else {
             Log.w(TAG, "rf -> app: unknown " + str);
         }
-    }
-
-    @Override
-    public UUID getCharacteristic() {
-        return rangefinderCharacteristic;
-    }
-
-    private void requestRangefinderService() {
-        Log.i(TAG, "app -> rf: subscribe");
-        peripheral.setNotify(rangefinderService, rangefinderCharacteristic, true);
     }
 
     private void processMeasurement(@NonNull String str) {
@@ -129,7 +114,8 @@ class SigSauerProtocol implements RangefinderProtocol {
     /**
      * Return true iff a bluetooth scan result looks like a rangefinder
      */
-    static boolean isSigSauer(@NonNull BluetoothPeripheral peripheral, @Nullable ScanRecord record) {
+    @Override
+    public boolean canParse(@NonNull BluetoothPeripheral peripheral, @Nullable ScanRecord record) {
         final String deviceName = peripheral.getName();
         if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId), manufacturerData)) {
             // Manufacturer match

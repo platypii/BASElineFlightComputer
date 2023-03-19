@@ -2,8 +2,10 @@ package com.platypii.baseline.lasers.rangefinder;
 
 import com.platypii.baseline.lasers.LaserMeasurement;
 
+import android.bluetooth.le.ScanRecord;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.welie.blessed.BluetoothPeripheral;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
@@ -14,7 +16,7 @@ import static com.platypii.baseline.bluetooth.BluetoothUtil.bytesToShort;
 /**
  * This class contains ids, commands, and decoders for ATN laser rangefinders.
  */
-class ATNProtocol implements RangefinderProtocol {
+class ATNProtocol extends BleProtocol {
     private static final String TAG = "ATNProtocol";
 
     // Rangefinder service
@@ -28,20 +30,15 @@ class ATNProtocol implements RangefinderProtocol {
     // 10-01-10-02-0c-00-79-68 // fog mode
     // 10-01-91-ff-58-01-bb-5c // fog mode fail yards
 
-    // Protocol state
-    private final BluetoothPeripheral peripheral;
-
-    ATNProtocol(BluetoothPeripheral peripheral) {
-        this.peripheral = peripheral;
+    @Override
+    public void onServicesDiscovered(@NonNull BluetoothPeripheral peripheral) {
+        // Request rangefinder service
+        Log.i(TAG, "app -> rf: subscribe");
+        peripheral.setNotify(rangefinderService, rangefinderCharacteristic, true);
     }
 
     @Override
-    public void onServicesDiscovered() {
-        requestRangefinderService();
-    }
-
-    @Override
-    public void processBytes(@NonNull byte[] value) {
+    public void processBytes(@NonNull BluetoothPeripheral peripheral, @NonNull byte[] value) {
         final String hex = byteArrayToHex(value);
         if (value[0] == 16 && value[1] == 1) {
             // Check for bits we haven't seen before
@@ -61,16 +58,6 @@ class ATNProtocol implements RangefinderProtocol {
         } else {
             Log.w(TAG, "rf -> app: unknown " + hex);
         }
-    }
-
-    @Override
-    public UUID getCharacteristic() {
-        return rangefinderCharacteristic;
-    }
-
-    private void requestRangefinderService() {
-        Log.i(TAG, "app -> rf: subscribe");
-        peripheral.setNotify(rangefinderService, rangefinderCharacteristic, true);
     }
 
     private void processMeasurement(@NonNull byte[] value) {
@@ -101,7 +88,8 @@ class ATNProtocol implements RangefinderProtocol {
     /**
      * Return true iff a bluetooth scan result looks like a rangefinder
      */
-    static boolean isATN(@NonNull BluetoothPeripheral peripheral) {
+    @Override
+    public boolean canParse(@NonNull BluetoothPeripheral peripheral, @Nullable ScanRecord record) {
         return "ATN-LD99".equals(peripheral.getName());
     }
 

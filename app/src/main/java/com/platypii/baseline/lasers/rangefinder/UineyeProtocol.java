@@ -22,7 +22,7 @@ import static com.platypii.baseline.bluetooth.BluetoothUtil.bytesToShort;
 /**
  * This class contains ids, commands, and decoders for Uineye / Hawkeye laser rangefinders.
  */
-class UineyeProtocol implements RangefinderProtocol {
+class UineyeProtocol extends BleProtocol {
     private static final String TAG = "UineyeProtocol";
 
     // Manufacturer ID
@@ -55,42 +55,34 @@ class UineyeProtocol implements RangefinderProtocol {
     // Protocol state
     @NonNull
     private final RfSentenceIterator sentenceIterator = new RfSentenceIterator();
-    private final BluetoothPeripheral peripheral;
-
-    UineyeProtocol(BluetoothPeripheral peripheral) {
-        this.peripheral = peripheral;
-    }
 
     @Override
-    public void onServicesDiscovered() {
+    public void onServicesDiscovered(@NonNull BluetoothPeripheral peripheral) {
         try {
-            requestRangefinderService();
-            sendHello();
-            readRangefinder();
+            // Request rangefinder service
+            Log.i(TAG, "app -> rf: subscribe");
+            peripheral.setNotify(rangefinderService, rangefinderCharacteristic, true);
+            sendHello(peripheral);
+            readRangefinder(peripheral);
         } catch (Throwable e) {
             Log.e(TAG, "rangefinder handshake exception", e);
         }
     }
 
     @Override
-    public void processBytes(@NonNull byte[] value) {
+    public void processBytes(@NonNull BluetoothPeripheral peripheral, @NonNull byte[] value) {
         sentenceIterator.addBytes(value);
         while (sentenceIterator.hasNext()) {
-            processSentence(sentenceIterator.next());
+            processSentence(peripheral, sentenceIterator.next());
         }
     }
 
-    @Override
-    public UUID getCharacteristic() {
-        return rangefinderCharacteristic;
-    }
-
-    private void processSentence(@NonNull byte[] value) {
+    private void processSentence(@NonNull BluetoothPeripheral peripheral, @NonNull byte[] value) {
         if (Arrays.equals(value, laserHello)) {
             Log.i(TAG, "rf -> app: hello");
         } else if (Arrays.equals(value, heartbeat)) {
             Log.d(TAG, "rf -> app: heartbeat");
-            sendHeartbeatAck();
+            sendHeartbeatAck(peripheral);
         } else if (Arrays.equals(value, norange)) {
             Log.i(TAG, "rf -> app: norange");
         } else if (value[0] == 23 && value[1] == 0) {
@@ -100,22 +92,17 @@ class UineyeProtocol implements RangefinderProtocol {
         }
     }
 
-    private void readRangefinder() {
+    private void readRangefinder(@NonNull BluetoothPeripheral peripheral) {
         Log.i(TAG, "app -> rf: read");
         peripheral.readCharacteristic(rangefinderService, rangefinderCharacteristic);
     }
 
-    private void requestRangefinderService() {
-        Log.i(TAG, "app -> rf: subscribe");
-        peripheral.setNotify(rangefinderService, rangefinderCharacteristic, true);
-    }
-
-    private void sendHello() {
+    private void sendHello(@NonNull BluetoothPeripheral peripheral) {
         Log.d(TAG, "app -> rf: hello");
         peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHello, WriteType.WITHOUT_RESPONSE);
     }
 
-    private void sendHeartbeatAck() {
+    private void sendHeartbeatAck(@NonNull BluetoothPeripheral peripheral) {
         Log.d(TAG, "app -> rf: heartbeat ack");
         peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHeartbeatAck, WriteType.WITHOUT_RESPONSE);
     }
@@ -151,7 +138,8 @@ class UineyeProtocol implements RangefinderProtocol {
     /**
      * Return true iff a bluetooth scan result looks like a rangefinder
      */
-    static boolean isUineye(@NonNull BluetoothPeripheral peripheral, @Nullable ScanRecord record) {
+    @Override
+    public boolean canParse(@NonNull BluetoothPeripheral peripheral, @Nullable ScanRecord record) {
         final String deviceName = peripheral.getName();
         if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId1), manufacturerData1)) {
             return true; // Manufacturer match (kenny's laser)

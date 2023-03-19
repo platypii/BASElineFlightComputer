@@ -6,7 +6,6 @@ import com.platypii.baseline.util.Exceptions;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.os.Handler;
@@ -16,8 +15,6 @@ import androidx.annotation.Nullable;
 import com.welie.blessed.BluetoothCentralManager;
 import com.welie.blessed.BluetoothCentralManagerCallback;
 import com.welie.blessed.BluetoothPeripheral;
-import com.welie.blessed.BluetoothPeripheralCallback;
-import com.welie.blessed.GattStatus;
 import com.welie.blessed.HciStatus;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
@@ -25,11 +22,9 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_SCANNING;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
-import static com.platypii.baseline.bluetooth.BluetoothUtil.byteArrayToHex;
 
 /**
- * Thread that reads from bluetooth connection.
- * Rangefinder messages are emitted as events.
+ * BLE handler for scanning and connecting to bluetooth LE devices.
  */
 class BluetoothHandler {
     private static final String TAG = "BluetoothHandler";
@@ -40,17 +35,19 @@ class BluetoothHandler {
     private final Activity activity;
     @NonNull
     private final BluetoothCentralManager central;
+    @NonNull
+    private final BleProtocol[] protocols = {
+            new UineyeProtocol(),
+            new ATNProtocol(),
+            new SigSauerProtocol()
+    };
     @Nullable
     private BluetoothPeripheral currentPeripheral;
-    @Nullable
-    private RangefinderProtocol protocol;
-    @NonNull
-    private final Handler handler = new Handler();
 
     BluetoothHandler(@NonNull RangefinderService service, @NonNull Activity activity) {
         this.service = service;
         this.activity = activity;
-        central = new BluetoothCentralManager(activity.getApplicationContext(), bluetoothCentralManagerCallback, handler);
+        central = new BluetoothCentralManager(activity.getApplicationContext(), bluetoothCentralManagerCallback, new Handler());
     }
 
     public void start() {
@@ -93,40 +90,7 @@ class BluetoothHandler {
         central.scanForPeripherals(); // TODO: filter with services
     }
 
-    // Callback for peripherals
-    private final BluetoothPeripheralCallback peripheralCallback = new BluetoothPeripheralCallback() {
-        @Override
-        public void onServicesDiscovered(@NonNull BluetoothPeripheral peripheral) {
-            Log.i(TAG, "Bluetooth services discovered for " + peripheral.getName());
-            protocol.onServicesDiscovered();
-        }
-
-        @Override
-        public void onNotificationStateUpdate(@NonNull final BluetoothPeripheral peripheral, @NonNull final BluetoothGattCharacteristic characteristic, @NonNull final GattStatus status) {
-            if (status != GattStatus.SUCCESS) {
-                Log.e(TAG, "Failed changing notification state for " + characteristic.getUuid());
-            }
-        }
-
-        @Override
-        public void onCharacteristicWrite(@NonNull BluetoothPeripheral peripheral, @NonNull byte[] value, @NonNull BluetoothGattCharacteristic characteristic, @NonNull final GattStatus status) {
-            if (status != GattStatus.SUCCESS) {
-                Log.w(TAG, "Failed writing " + byteArrayToHex(value) + " to " + characteristic.getUuid());
-            }
-        }
-
-        @Override
-        public void onCharacteristicUpdate(@NonNull BluetoothPeripheral peripheral, @NonNull byte[] value, @NonNull BluetoothGattCharacteristic characteristic, @NonNull final GattStatus status) {
-            if (status != GattStatus.SUCCESS) return;
-            if (value.length == 0) return;
-            // Send bluetooth messages to the protocol for parsing
-            if (protocol != null) {
-                protocol.processBytes(value);
-            }
-        }
-    };
-
-    // Callback for central
+    // Callback for bluetooth central
     private final BluetoothCentralManagerCallback bluetoothCentralManagerCallback = new BluetoothCentralManagerCallback() {
 
         @Override
@@ -161,18 +125,11 @@ class BluetoothHandler {
             // TODO: Check for bluetooth connect permission
             final ScanRecord record = scanResult.getScanRecord();
             final String deviceName = peripheral.getName();
-            if (ATNProtocol.isATN(peripheral)) {
-                Log.i(TAG, "ATN rangefinder found, connecting to: " + deviceName);
-                connect(peripheral);
-                protocol = new ATNProtocol(peripheral);
-            } else if (UineyeProtocol.isUineye(peripheral, record)) {
-                Log.i(TAG, "Uineye rangefinder found, connecting to: " + deviceName);
-                connect(peripheral);
-                protocol = new UineyeProtocol(peripheral);
-            } else if (SigSauerProtocol.isSigSauer(peripheral, record)) {
-                Log.i(TAG, "SigSauer rangefinder found, connecting to: " + deviceName);
-                connect(peripheral);
-                protocol = new SigSauerProtocol(peripheral);
+            for (BleProtocol protocol : protocols) {
+                if (protocol.canParse(peripheral, record)) {
+                    Log.i(TAG, protocol + " device found, connecting to: " + deviceName);
+                    connect(peripheral, protocol);
+                }
             }
         }
 
@@ -186,14 +143,14 @@ class BluetoothHandler {
         }
     };
 
-    private void connect(@NonNull BluetoothPeripheral peripheral) {
+    private void connect(@NonNull BluetoothPeripheral peripheral, @NonNull BleProtocol protocol) {
         if (service.getState() != BT_SCANNING) {
             Log.e(TAG, "Invalid BT state: " + BluetoothState.BT_STATES[service.getState()]);
         }
         central.stopScan();
         service.setState(BT_CONNECTING);
         // Connect to device
-        central.connectPeripheral(peripheral, peripheralCallback);
+        central.connectPeripheral(peripheral, protocol);
         // TODO: Log event
     }
 
