@@ -2,6 +2,7 @@ package com.platypii.baseline.lasers.rangefinder;
 
 import com.platypii.baseline.Permissions;
 import com.platypii.baseline.bluetooth.BluetoothState;
+import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.util.Exceptions;
 
 import android.app.Activity;
@@ -16,10 +17,13 @@ import com.welie.blessed.BluetoothCentralManager;
 import com.welie.blessed.BluetoothCentralManagerCallback;
 import com.welie.blessed.BluetoothPeripheral;
 import com.welie.blessed.HciStatus;
+import org.greenrobot.eventbus.EventBus;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_SCANNING;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STARTING;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STATES;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 
@@ -29,8 +33,9 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 class BluetoothHandler {
     private static final String TAG = "BluetoothHandler";
 
-    @NonNull
-    private final RangefinderService service;
+    // Bluetooth state
+    int bluetoothState = BT_STOPPED;
+
     @NonNull
     private final Activity activity;
     @NonNull
@@ -44,20 +49,14 @@ class BluetoothHandler {
     @Nullable
     private BluetoothPeripheral currentPeripheral;
 
-    BluetoothHandler(@NonNull RangefinderService service, @NonNull Activity activity) {
-        this.service = service;
+    BluetoothHandler(@NonNull Activity activity) {
         this.activity = activity;
         central = new BluetoothCentralManager(activity.getApplicationContext(), bluetoothCentralManagerCallback, new Handler());
     }
 
     public void start() {
-        if (BluetoothState.started(service.getState())) {
-            scanIfPermitted();
-        } else if (service.getState() == BT_SCANNING) {
-            Log.w(TAG, "Already searching");
-        } else if (service.getState() == BT_STOPPING || service.getState() != BT_STOPPED) {
-            Log.w(TAG, "Already stopping");
-        }
+        setState(BT_STARTING);
+        scanIfPermitted();
     }
 
     /**
@@ -82,7 +81,7 @@ class BluetoothHandler {
      * Scan for bluetooth peripherals
      */
     private void scan() {
-        service.setState(BT_SCANNING);
+        setState(BT_SCANNING);
         // Scan for peripherals with a certain service UUIDs
         central.startPairingPopupHack();
         Log.i(TAG, "Scanning for laser rangefinders");
@@ -94,10 +93,10 @@ class BluetoothHandler {
     private final BluetoothCentralManagerCallback bluetoothCentralManagerCallback = new BluetoothCentralManagerCallback() {
 
         @Override
-        public void onConnectedPeripheral(@NonNull BluetoothPeripheral connectedPeripheral) {
-            currentPeripheral = connectedPeripheral;
-            Log.i(TAG, "Rangefinder connected " + connectedPeripheral.getName());
-            service.setState(BT_CONNECTED);
+        public void onConnectedPeripheral(@NonNull BluetoothPeripheral peripheral) {
+            currentPeripheral = peripheral;
+            Log.i(TAG, "Rangefinder connected " + peripheral.getName());
+            setState(BT_CONNECTED);
         }
 
         @Override
@@ -111,15 +110,15 @@ class BluetoothHandler {
             Log.i(TAG, "Rangefinder disconnected " + peripheral.getName() + " with status " + status);
             currentPeripheral = null;
             // Go back to searching
-            if (BluetoothState.started(service.getState())) {
+            if (BluetoothState.started(bluetoothState)) {
                 scanIfPermitted();
             }
         }
 
         @Override
         public void onDiscoveredPeripheral(@NonNull BluetoothPeripheral peripheral, @NonNull ScanResult scanResult) {
-            if (service.getState() != BT_SCANNING) {
-                Log.e(TAG, "Invalid BT state: " + BluetoothState.BT_STATES[service.getState()]);
+            if (bluetoothState != BT_SCANNING) {
+                Log.e(TAG, "Invalid BT state: " + BT_STATES[bluetoothState]);
             }
 
             // TODO: Check for bluetooth connect permission
@@ -144,18 +143,24 @@ class BluetoothHandler {
     };
 
     private void connect(@NonNull BluetoothPeripheral peripheral, @NonNull BleProtocol protocol) {
-        if (service.getState() != BT_SCANNING) {
-            Log.e(TAG, "Invalid BT state: " + BluetoothState.BT_STATES[service.getState()]);
+        if (bluetoothState != BT_SCANNING) {
+            Log.e(TAG, "Invalid BT state: " + BT_STATES[bluetoothState]);
         }
         central.stopScan();
-        service.setState(BT_CONNECTING);
+        setState(BT_CONNECTING);
         // Connect to device
         central.connectPeripheral(peripheral, protocol);
         // TODO: Log event
     }
 
+    private void setState(int state) {
+        Log.d(TAG, "Rangefinder bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
+        bluetoothState = state;
+        EventBus.getDefault().post(new BluetoothEvent());
+    }
+
     void stop() {
-        service.setState(BT_STOPPING);
+        setState(BT_STOPPING);
         // Stop scanning
         central.stopScan();
         if (currentPeripheral != null) {
@@ -163,7 +168,7 @@ class BluetoothHandler {
         }
         // Don't close central because it won't come back if we re-start
 //        central.close();
-        service.setState(BT_STOPPED);
+        setState(BT_STOPPED);
     }
 
 }
