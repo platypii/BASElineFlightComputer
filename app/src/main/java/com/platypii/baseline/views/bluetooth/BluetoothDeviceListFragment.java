@@ -22,6 +22,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import static com.platypii.baseline.bluetooth.BluetoothUtil.getDeviceName;
+
 public class BluetoothDeviceListFragment extends ListFragment {
     private static final String TAG = "BluetoothDeviceList";
 
@@ -60,7 +62,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
         final Activity activity = getActivity();
         if (activity != null) {
             if (device != null) {
-                final String deviceName = device.getName();
+                final String deviceName = getDeviceName(device);
                 Log.i(TAG, "Bluetooth device selected " + deviceName);
 
                 // Log event

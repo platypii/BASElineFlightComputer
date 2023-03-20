@@ -7,6 +7,8 @@ import com.platypii.baseline.views.tracks.TrackLoader;
 import com.platypii.baseline.views.tracks.TrackLocalActivity;
 import com.platypii.baseline.views.tracks.TrackRemoteActivity;
 
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,6 +19,8 @@ import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
+
+import static com.platypii.baseline.RequestCodes.RC_BLUE_ENABLE;
 
 public class Intents {
     private static final String TAG = "Intents";
@@ -174,4 +178,13 @@ public class Intents {
         }
     }
 
+    public static void requestEnableBluetooth(@NonNull Activity activity) {
+        Log.i(TAG, "Requesting to turn on bluetooth");
+        final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        try {
+            activity.startActivityForResult(enableBluetoothIntent, RC_BLUE_ENABLE);
+        } catch (SecurityException e) {
+            Exceptions.report(e);
+        }
+    }
 }

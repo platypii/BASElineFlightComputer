@@ -35,7 +35,7 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 public class BluetoothService {
     private static final String TAG = "Bluetooth";
 
-    public PubSub<NMEA> nmeaUpdates = new PubSub<>();
+    public final PubSub<NMEA> nmeaUpdates = new PubSub<>();
 
     // Android shared preferences for bluetooth
     public final BluetoothPreferences preferences = new BluetoothPreferences();
@@ -89,7 +89,11 @@ public class BluetoothService {
             // Turn on bluetooth
             // TODO: Handle result?
             final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            activity.startActivityForResult(enableBluetoothIntent, RC_BLUE_ENABLE);
+            try {
+                activity.startActivityForResult(enableBluetoothIntent, RC_BLUE_ENABLE);
+            } catch (SecurityException e) {
+                Exceptions.report(e);
+            }
         }
         return bluetoothAdapter;
     }
@@ -101,10 +105,15 @@ public class BluetoothService {
     public List<BluetoothDevice> getDevices() {
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null) {
-            final Set<BluetoothDevice> deviceSet = bluetoothAdapter.getBondedDevices();
-            final List<BluetoothDevice> devices = new ArrayList<>(deviceSet);
-            Collections.sort(devices, new BluetoothDeviceComparator());
-            return devices;
+            try {
+                final Set<BluetoothDevice> deviceSet = bluetoothAdapter.getBondedDevices();
+                final List<BluetoothDevice> devices = new ArrayList<>(deviceSet);
+                Collections.sort(devices, new BluetoothDeviceComparator());
+                return devices;
+            } catch (SecurityException e) {
+                Log.w(TAG, "Tried to get devices, but bluetooth permission denied", e);
+                return new ArrayList<>();
+            }
         } else {
             Log.w(TAG, "Tried to get devices, but bluetooth is not enabled");
             return new ArrayList<>();

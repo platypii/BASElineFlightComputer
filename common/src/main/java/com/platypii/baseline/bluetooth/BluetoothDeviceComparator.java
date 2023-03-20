@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothDevice;
 import androidx.annotation.NonNull;
 import java.util.Comparator;
 
+import static com.platypii.baseline.bluetooth.BluetoothUtil.getDeviceName;
+
 /**
  * Used to put GPS at top of device list
  */
@@ -14,11 +16,6 @@ public class BluetoothDeviceComparator implements Comparator<BluetoothDevice> {
     }
 
     private int score(@NonNull BluetoothDevice device) {
-        final String deviceName = device.getName();
-        if (deviceName != null && deviceName.contains("GPS")) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return getDeviceName(device).contains("GPS") ? 1 : 0;
     }
 }

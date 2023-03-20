@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.status;
 
+import com.platypii.baseline.Intents;
 import com.platypii.baseline.Permissions;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.databinding.StatusPanelBinding;
@@ -8,9 +9,7 @@ import com.platypii.baseline.measurements.MLocation;
 import com.platypii.baseline.util.PubSub.Subscriber;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -18,8 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import java.util.Locale;
-
-import static com.platypii.baseline.RequestCodes.RC_BLUE_ENABLE;
 
 /**
  * Show the user their GPS status
@@ -58,8 +55,7 @@ public class SignalStatus extends BaseStatus implements Subscriber<MLocation> {
                 }
                 if (!Services.bluetooth.isEnabled()) {
                     // Request to enable bluetooth
-                    final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    activity.startActivityForResult(enableBluetoothIntent, RC_BLUE_ENABLE);
+                    Intents.requestEnableBluetooth(activity);
                 }
             }
         }

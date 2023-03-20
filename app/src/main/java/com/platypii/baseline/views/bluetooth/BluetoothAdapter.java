@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.List;
 
+import static com.platypii.baseline.bluetooth.BluetoothUtil.getDeviceName;
+
 class BluetoothAdapter extends BaseAdapter {
 
     @NonNull
@@ -54,10 +56,7 @@ class BluetoothAdapter extends BaseAdapter {
         } else {
             // Bluetooth GPS device
             final BluetoothDevice device = devices.get(position - 1);
-            String deviceName = device.getName();
-            if (deviceName == null) {
-                deviceName = "";
-            }
+            final String deviceName = getDeviceName(device);
             nameView.setText(deviceName);
             addressView.setText(device.getAddress());
             if (deviceName.contains("GPS")) {

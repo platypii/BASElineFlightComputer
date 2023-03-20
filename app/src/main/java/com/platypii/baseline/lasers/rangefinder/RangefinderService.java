@@ -1,5 +1,6 @@
 package com.platypii.baseline.lasers.rangefinder;
 
+import com.platypii.baseline.Intents;
 import com.platypii.baseline.bluetooth.BluetoothState;
 import com.platypii.baseline.util.Exceptions;
 
@@ -10,7 +11,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static com.platypii.baseline.RequestCodes.RC_BLUE_ENABLE;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
 
 /**
@@ -40,7 +40,7 @@ public class RangefinderService {
                 // Turn on bluetooth
                 Log.i(TAG, "Requesting to turn on bluetooth");
                 final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                activity.startActivityForResult(enableBluetoothIntent, RC_BLUE_ENABLE);
+                Intents.requestEnableBluetooth(activity);
             }
         } else {
             Log.w(TAG, "Bluetooth adapter not found");

@@ -1,5 +1,6 @@
 package com.platypii.baseline.bluetooth;
 
+import android.bluetooth.BluetoothDevice;
 import androidx.annotation.NonNull;
 
 public class BluetoothUtil {
@@ -22,6 +23,15 @@ public class BluetoothUtil {
 
     public static short bytesToShort(byte b1, byte b2) {
         return (short) (((b1 & 0xff) << 8) | (b2 & 0xff));
+    }
+
+    @NonNull
+    public static String getDeviceName(@NonNull BluetoothDevice device) {
+        try {
+            return device.getName();
+        } catch (SecurityException ignored) {
+            return "";
+        }
     }
 
     /**

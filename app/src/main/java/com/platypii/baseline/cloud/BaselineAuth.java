@@ -17,7 +17,7 @@ public class BaselineAuth {
     public static void exchangeToken(@NonNull String googleToken, BaseCallback<String> cb) {
         final AuthApi authApi = RetrofitClient.getRetrofit().create(AuthApi.class);
         final RequestBody body = RequestBody.create(MediaType.get("text/plain"), googleToken);
-        authApi.exchangeToken(body).enqueue(new Callback<Void>() {
+        authApi.exchangeToken(body).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 final String cookie = response.headers().get("set-cookie");

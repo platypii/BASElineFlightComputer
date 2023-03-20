@@ -60,7 +60,7 @@ public class Lasers {
                 final String userId = AuthState.getUser();
                 Log.i(TAG, "Listing laser profiles for user " + userId);
                 final Call<List<LaserProfile>> laserCall = userId != null ? laserApi.byUser(userId) : laserApi.getPublic();
-                laserCall.enqueue(new Callback<List<LaserProfile>>() {
+                laserCall.enqueue(new Callback<>() {
                     @Override
                     public void onResponse(@NonNull Call<List<LaserProfile>> call, @NonNull Response<List<LaserProfile>> response) {
                         final List<LaserProfile> lasers = response.body();

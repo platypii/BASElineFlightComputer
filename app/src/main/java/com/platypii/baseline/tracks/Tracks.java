@@ -55,7 +55,7 @@ public class Tracks {
             try {
                 final TrackApi trackApi = RetrofitClient.getRetrofit().create(TrackApi.class);
                 Log.i(TAG, "Listing tracks");
-                trackApi.list().enqueue(new Callback<List<TrackMetadata>>() {
+                trackApi.list().enqueue(new Callback<>() {
                     @Override
                     public void onResponse(@NonNull Call<List<TrackMetadata>> call, @NonNull Response<List<TrackMetadata>> response) {
                         final List<TrackMetadata> tracks = response.body();

@@ -61,7 +61,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
                 if (manager.getProvider(LocationManager.GPS_PROVIDER) != null) {
                     // TODO: Specify looper thread?
                     manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                    requestStatusUpdates();
+                    requestStatusUpdates(manager);
                 } else {
                     Log.e(TAG, "Failed to get android location provider");
                 }
@@ -144,7 +144,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
 
     private GnssStatus.Callback onGnssStatusChanged;
 
-    private void requestStatusUpdates() {
+    private void requestStatusUpdates(@NonNull LocationManager manager) throws SecurityException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // minsdk24
             // Use GnssStatus on newer android
             onGnssStatusChanged = new GnssStatus.Callback() {

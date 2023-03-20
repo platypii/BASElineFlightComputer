@@ -236,7 +236,7 @@ public abstract class BaseActivity extends FragmentActivity {
      * Google signed in successfully, fetch baseline token
      */
     private void getBaselineToken(@NonNull String userId, @NonNull String googleToken) {
-        BaselineAuth.exchangeToken(googleToken, new BaseCallback<String>() {
+        BaselineAuth.exchangeToken(googleToken, new BaseCallback<>() {
             @Override
             public void onSuccess(@NonNull String baselineToken) {
                 firebaseAnalytics.setUserId(userId);

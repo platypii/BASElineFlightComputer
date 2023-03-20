@@ -19,6 +19,7 @@ import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
+import static com.platypii.baseline.bluetooth.BluetoothUtil.getDeviceName;
 
 /**
  * Thread that reads from bluetooth input stream, and turns into NMEA sentences
@@ -103,8 +104,8 @@ class BluetoothRunnable implements Stoppable {
                 uuid = uuids[0].getUuid();
             }
             // Connect to bluetooth device
-            String deviceName = bluetoothDevice.getName();
-            if (deviceName == null) deviceName = uuid.toString();
+            String deviceName = getDeviceName(bluetoothDevice);
+            if (deviceName.isEmpty()) deviceName = uuid.toString();
             Log.i(TAG, "Connecting to bluetooth device: " + deviceName);
             try {
                 bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
