@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'com.google.firebase.firebase-perf'
 
 android {
     namespace 'com.platypii.baseline'
@@ -11,8 +10,8 @@ android {
         applicationId "com.platypii.baseline"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 134
-        versionName "5.6"
+        versionCode 135
+        versionName "5.7-beta"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -46,8 +45,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.google.firebase:firebase-core:21.1.1'
-    implementation 'com.google.firebase:firebase-perf:20.3.1'
+    implementation 'com.google.firebase:firebase-analytics:21.2.0'
+    implementation 'com.google.firebase:firebase-crashlytics:18.3.5'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
