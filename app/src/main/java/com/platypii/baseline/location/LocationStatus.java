@@ -10,6 +10,8 @@ import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STATES;
+
 /**
  * Represents the current state of GPS, including bluetooth info
  */
@@ -50,12 +52,15 @@ public class LocationStatus {
                 case BluetoothState.BT_STARTING:
                     message = "GPS bluetooth starting...";
                     break;
+                case BluetoothState.BT_SCANNING:
+                    message = "GPS bluetooth scanning...";
+                    break;
                 case BluetoothState.BT_CONNECTING:
                     message = "GPS bluetooth connecting...";
                     break;
                 default:
                     message = "GPS bluetooth not connected";
-                    Log.e(TAG, "Bluetooth inconsistent state: preference enabled, state = " + Services.bluetooth.getState());
+                    Log.e(TAG, "Bluetooth inconsistent state: preference enabled, state " + BT_STATES[Services.bluetooth.getState()]);
             }
         } else {
             // Internal GPS, or bluetooth connected:

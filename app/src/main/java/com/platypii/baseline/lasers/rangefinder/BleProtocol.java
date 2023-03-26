@@ -13,7 +13,7 @@ public abstract class BleProtocol extends BluetoothPeripheralCallback {
     /**
      * Return true if the protocol knows how to use the peripheral
      */
-    public abstract boolean canParse(BluetoothPeripheral peripheral, @Nullable ScanRecord record);
+    public abstract boolean canParse(@NonNull BluetoothPeripheral peripheral, @Nullable ScanRecord record);
 
     /**
      * Initialize communication with a peripheral

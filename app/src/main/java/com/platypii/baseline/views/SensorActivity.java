@@ -143,7 +143,7 @@ public class SensorActivity extends BaseActivity implements Subscriber<MLocation
                 binding.longitudeLabel.setText("Long: ");
             }
             binding.gpsAltitudeLabel.setText("GPS altitude: " + Convert.distance(loc.altitude_gps, 2, true));
-            binding.gpsFallrateLabel.setText("GPS fallrate: " + Convert.speed(-Services.alti.gpsClimb(), 2, true));
+            binding.gpsFallrateLabel.setText("GPS fallrate: " + Convert.speed(-loc.climb, 2, true));
             binding.hAccLabel.setText("hAcc: " + Convert.distance(loc.hAcc));
             binding.pdopLabel.setText(String.format(Locale.getDefault(), "pdop: %.1f", loc.pdop));
             binding.hdopLabel.setText(String.format(Locale.getDefault(), "hdop: %.1f", loc.hdop));

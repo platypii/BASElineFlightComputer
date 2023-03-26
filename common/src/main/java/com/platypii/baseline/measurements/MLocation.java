@@ -9,7 +9,10 @@ import com.platypii.baseline.util.Numbers;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class MLocation extends Measurement implements Comparable<MLocation> {
     private static final String TAG = "MLocation";
@@ -89,12 +92,6 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
         return sb.toString();
     }
 
-    @NonNull
-    @Override
-    public String toString() {
-        return String.format(Locale.US, "MLocation(%d,%.6f,%.6f,%.1f,%.0f,%.0f)", millis, latitude, longitude, altitude_gps, vN, vE);
-    }
-
     public double groundSpeed() {
         return Math.sqrt(vN * vN + vE * vE);
     }
@@ -159,6 +156,15 @@ public class MLocation extends Measurement implements Comparable<MLocation> {
 
     public boolean equals(@NonNull MLocation loc) {
         return loc.millis == millis && loc.latitude == latitude && loc.longitude == longitude && loc.vN == vN && loc.vE == vE;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final String date = sdf.format(new Date(millis));
+        return String.format(Locale.US, "MLocation(%s,%.6f,%.6f,%.1f,%.0f,%.0f)", date, latitude, longitude, altitude_gps, vN, vE);
     }
 
     /**
