@@ -1,7 +1,6 @@
 package com.platypii.baseline.bluetooth;
 
 import com.platypii.baseline.common.R;
-import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.location.NMEA;
 import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.PubSub;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import org.greenrobot.eventbus.EventBus;
 
 import static com.platypii.baseline.RequestCodes.RC_BLUE_ENABLE;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
@@ -40,12 +38,10 @@ public class BluetoothService {
     // Android shared preferences for bluetooth
     public final BluetoothPreferences preferences = new BluetoothPreferences();
 
-    // Bluetooth state
-    private int bluetoothState = BT_STOPPED;
     @Nullable
     private BluetoothAdapter bluetoothAdapter;
     @Nullable
-    private Stoppable bluetoothRunnable;
+    private BluetoothRunnable bluetoothRunnable;
     @Nullable
     private Thread bluetoothThread;
 
@@ -54,12 +50,11 @@ public class BluetoothService {
     public boolean charging = false;
 
     public void start(@NonNull Activity activity) {
-        if (BluetoothState.started(bluetoothState)) {
-            Exceptions.report(new IllegalStateException("Bluetooth started twice " + BT_STATES[bluetoothState]));
+        if (BluetoothState.started(getState())) {
+            Exceptions.report(new IllegalStateException("Bluetooth started twice " + BT_STATES[getState()]));
             return;
         }
-        if (bluetoothState == BT_STOPPED) {
-            setState(BT_STARTING);
+        if (getState() == BT_STOPPED) {
             // Start bluetooth thread
             if (bluetoothRunnable != null) {
                 Log.e(TAG, "Bluetooth thread already started");
@@ -71,7 +66,7 @@ public class BluetoothService {
                 bluetoothThread.start();
             }
         } else {
-            Exceptions.report(new IllegalStateException("Bluetooth already started: " + BT_STATES[bluetoothState]));
+            Exceptions.report(new IllegalStateException("Bluetooth already started: " + BT_STATES[getState()]));
         }
     }
 
@@ -121,22 +116,7 @@ public class BluetoothService {
     }
 
     public int getState() {
-        return bluetoothState;
-    }
-
-    void setState(int state) {
-        Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
-        if (bluetoothState == BT_STOPPING && state == BT_CONNECTING) {
-            Log.e(TAG, "Invalid bluetooth state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
-        }
-        if (bluetoothState == state && state != BT_CONNECTING) {
-            // Only allowed self-transition is connecting -> connecting
-            Log.e(TAG, "Null state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
-        }
-        if (bluetoothState != state) {
-            bluetoothState = state;
-            EventBus.getDefault().post(new BluetoothEvent());
-        }
+        return bluetoothRunnable != null ? bluetoothRunnable.bluetoothState : BT_STOPPED;
     }
 
     /**
@@ -177,7 +157,7 @@ public class BluetoothService {
             // Bluetooth preference enabled, but device not selected
             return context.getString(R.string.bluetooth_status_not_selected);
         } else {
-            switch (bluetoothState) {
+            switch (getState()) {
                 case BT_STOPPED:
                     return context.getString(R.string.bluetooth_status_stopped);
                 case BT_STARTING:
@@ -195,7 +175,7 @@ public class BluetoothService {
     }
 
     public synchronized void stop() {
-        if (bluetoothState != BT_STOPPED) {
+        if (getState() != BT_STOPPED) {
             Log.i(TAG, "Stopping bluetooth service");
             // Stop thread
             if (bluetoothRunnable != null && bluetoothThread != null) {
@@ -206,7 +186,7 @@ public class BluetoothService {
                     // Thread is dead, clean up
                     bluetoothRunnable = null;
                     bluetoothThread = null;
-                    if (bluetoothState != BT_STOPPED) {
+                    if (getState() != BT_STOPPED) {
                         Log.e(TAG, "Unexpected bluetooth state: state should be STOPPED when thread has stopped");
                     }
                 } catch (InterruptedException e) {
@@ -214,10 +194,9 @@ public class BluetoothService {
                 }
                 Log.i(TAG, "Bluetooth service stopped");
             } else {
-                Log.e(TAG, "Cannot stop bluetooth: runnable is null: " + BT_STATES[bluetoothState]);
+                Log.e(TAG, "Cannot stop bluetooth: runnable is null: " + BT_STATES[getState()]);
                 // Set state to stopped since it prevents getting stuck in state STOPPING
             }
-            setState(BT_STOPPED);
         }
     }
 
@@ -227,12 +206,10 @@ public class BluetoothService {
      */
     public synchronized void restart(@NonNull Activity activity) {
         Log.i(TAG, "Restarting bluetooth service");
-        if (bluetoothState != BT_STOPPED) {
-            // Stop first
-            stop();
-            if (bluetoothState != BT_STOPPED) {
-                Exceptions.report(new IllegalStateException("Error restarting bluetooth: not stopped: " + BT_STATES[bluetoothState]));
-            }
+        // Stop first
+        stop();
+        if (getState() != BT_STOPPED) {
+            Exceptions.report(new IllegalStateException("Error restarting bluetooth: not stopped: " + BT_STATES[getState()]));
         }
         start(activity);
     }

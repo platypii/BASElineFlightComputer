@@ -1,5 +1,6 @@
 package com.platypii.baseline.bluetooth;
 
+import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.location.NMEA;
 
 import android.bluetooth.BluetoothAdapter;
@@ -14,9 +15,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import org.greenrobot.eventbus.EventBus;
 
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STARTING;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_STATES;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPING;
 import static com.platypii.baseline.bluetooth.BluetoothUtil.getDeviceName;
@@ -39,6 +43,9 @@ class BluetoothRunnable implements Stoppable {
     private final BluetoothAdapter bluetoothAdapter;
     private BluetoothSocket bluetoothSocket;
 
+    // Bluetooth state
+    int bluetoothState = BT_STOPPED;
+
     BluetoothRunnable(@NonNull BluetoothService service, @NonNull BluetoothAdapter bluetoothAdapter) {
         this.service = service;
         this.bluetoothAdapter = bluetoothAdapter;
@@ -47,22 +54,23 @@ class BluetoothRunnable implements Stoppable {
     @Override
     public void run() {
         Log.i(TAG, "Bluetooth thread starting");
+        setState(BT_STARTING);
 
         // Reconnect loop
-        while (service.getState() != BT_STOPPING) {
+        while (bluetoothState != BT_STOPPING) {
             // Connect to bluetooth GPS
-            service.setState(BT_CONNECTING);
+            setState(BT_CONNECTING);
             final boolean isConnected = connect();
-            if (service.getState() == BT_CONNECTING && isConnected) {
-                service.setState(BT_CONNECTED);
+            if (bluetoothState == BT_CONNECTING && isConnected) {
+                setState(BT_CONNECTED);
                 reconnectDelay = reconnectDelayMin;
 
                 // Start processing NMEA sentences
                 processSentences();
             }
             // Are we restarting or stopping?
-            if (service.getState() != BT_STOPPING) {
-                service.setState(BT_CONNECTING);
+            if (bluetoothState != BT_STOPPING) {
+                setState(BT_CONNECTING);
                 // Sleep before reconnect
                 try {
                     Thread.sleep(reconnectDelay);
@@ -78,7 +86,7 @@ class BluetoothRunnable implements Stoppable {
         }
 
         // Bluetooth service stopped
-        service.setState(BT_STOPPED);
+        setState(BT_STOPPED);
     }
 
     /**
@@ -131,12 +139,12 @@ class BluetoothRunnable implements Stoppable {
             final InputStream is = bluetoothSocket.getInputStream();
             final BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String line;
-            while (service.getState() == BT_CONNECTED && (line = reader.readLine()) != null) {
+            while (bluetoothState == BT_CONNECTED && (line = reader.readLine()) != null) {
                 // Update listeners
                 service.nmeaUpdates.post(new NMEA(System.currentTimeMillis(), line));
             }
         } catch (IOException e) {
-            if (service.getState() == BT_CONNECTED) {
+            if (bluetoothState == BT_CONNECTED) {
                 Log.e(TAG, "Error reading from bluetooth socket", e);
             }
         } finally {
@@ -144,9 +152,26 @@ class BluetoothRunnable implements Stoppable {
         }
     }
 
+    private void setState(int state) {
+        if (bluetoothState != state) {
+            Log.d(TAG, "Bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
+        }
+        if (bluetoothState == BT_STOPPING && state == BT_CONNECTING) {
+            Log.e(TAG, "Illegal bluetooth state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
+        }
+        if (bluetoothState == state && state != BT_CONNECTING) {
+            // Only allowed self-transition is connecting -> connecting
+            Log.e(TAG, "Null state transition: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
+        }
+        if (bluetoothState != state) {
+            bluetoothState = state;
+            EventBus.getDefault().post(new BluetoothEvent());
+        }
+    }
+
     @Override
     public void stop() {
-        service.setState(BT_STOPPING);
+        setState(BT_STOPPING);
 
         // Close bluetooth socket
         if (bluetoothSocket != null) {
