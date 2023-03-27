@@ -56,6 +56,7 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
      */
     @Override
     public void start(@NonNull Context context) throws SecurityException {
+        Log.i(TAG, "Starting bluetooth location service " + bluetooth.getDeviceName());
         if (!Permissions.hasBluetoothPermissions(context)) {
             Log.w(TAG, "Bluetooth permissions required");
         }
@@ -65,6 +66,7 @@ class LocationProviderBluetooth extends LocationProviderNMEA {
 
     @Override
     public void stop() {
+        Log.i(TAG, "Stopping bluetooth location service");
         super.stop();
         bluetooth.nmeaUpdates.unsubscribe(this);
     }

@@ -14,6 +14,7 @@ import com.platypii.baseline.views.BaseActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import java.util.Locale;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -82,14 +83,17 @@ public class BluetoothActivity extends BaseActivity implements Subscriber<MLocat
             binding.btSatStatus.setText("No fix");
         } else if (lastFixDuration > 1100) {
             binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_yellow, 0, 0);
-            binding.btSatStatus.setText("Last fix " + lastFixDuration / 1000L + "s");
-        } else if (Services.location.refreshRate.refreshRate < 2) {
-            // 1 hz is not enough
-            binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_yellow, 0, 0);
-            binding.btSatStatus.setText(Services.location.lastLoc.satellitesUsed + " satellites (1 Hz)");
+            binding.btSatStatus.setText("Last fix " + lastFixDuration / 1000L + "s"); // TODO: Periodic updater for last fix
         } else {
-            binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_green, 0, 0);
-            binding.btSatStatus.setText(Services.location.lastLoc.satellitesUsed + " satellites");
+            final int sats = Services.location.lastLoc.satellitesUsed;
+            final int hz = (int)(Services.location.refreshRate() + 0.5f);
+            // 1 hz is not enough
+            if (hz >= 2) {
+                binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_green, 0, 0);
+            } else {
+                binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_yellow, 0, 0);
+            }
+            binding.btSatStatus.setText(String.format(Locale.getDefault(), "%d satellite %d Hz", sats, hz));
         }
     }
 

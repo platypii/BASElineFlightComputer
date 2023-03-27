@@ -71,15 +71,32 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
             Log.e(TAG, "Location service already started");
         }
         if (bluetooth.preferences.preferenceEnabled) {
-            Log.i(TAG, "Starting location service in bluetooth mode");
+            // Start bluetooth location service
             locationMode = LOCATION_BLUETOOTH;
             locationProviderBluetooth.start(context);
             locationProviderBluetooth.locationUpdates.subscribe(this);
         } else {
-            Log.i(TAG, "Starting location service in android mode");
+            // Start android location service
             locationMode = LOCATION_ANDROID;
             locationProviderAndroid.start(context);
             locationProviderAndroid.locationUpdates.subscribe(this);
+        }
+    }
+
+    @Override
+    public long lastFixDuration() {
+        if (bluetooth.preferences.preferenceEnabled) {
+            return locationProviderBluetooth.lastFixDuration();
+        } else {
+            return locationProviderAndroid.lastFixDuration();
+        }
+    }
+
+    public float refreshRate() {
+        if (bluetooth.preferences.preferenceEnabled) {
+            return locationProviderBluetooth.refreshRate.refreshRate;
+        } else {
+            return locationProviderAndroid.refreshRate.refreshRate;
         }
     }
 
@@ -94,7 +111,7 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
     /**
      * Stops and then starts location services, such as when switch bluetooth on or off.
      */
-    public void restart(@NonNull Context context) {
+    public synchronized void restart(@NonNull Context context) {
         Log.i(TAG, "Restarting location service");
         stop();
         start(context);
@@ -103,11 +120,11 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
     @Override
     public void stop() {
         if (locationMode == LOCATION_ANDROID) {
-            Log.i(TAG, "Stopping android location service");
+            // Stop android location service
             locationProviderAndroid.locationUpdates.unsubscribe(this);
             locationProviderAndroid.stop();
         } else if (locationMode == LOCATION_BLUETOOTH) {
-            Log.i(TAG, "Stopping bluetooth location service");
+            // Stop bluetooth location service
             locationProviderBluetooth.locationUpdates.unsubscribe(this);
             locationProviderBluetooth.stop();
         }

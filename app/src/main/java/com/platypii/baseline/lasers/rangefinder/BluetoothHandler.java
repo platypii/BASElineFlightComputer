@@ -164,7 +164,8 @@ class BluetoothHandler {
         // Stop scanning
         central.stopScan();
         if (currentPeripheral != null) {
-            currentPeripheral.cancelConnection();
+            // Central cancel does more checks
+            central.cancelConnection(currentPeripheral);
         }
         // Don't close central because it won't come back if we re-start
 //        central.close();

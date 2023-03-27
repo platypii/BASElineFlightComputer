@@ -55,6 +55,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
      */
     @Override
     public void start(@NonNull Context context) throws SecurityException {
+        Log.i(TAG, "Starting android location service");
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (manager != null) {
             try {
@@ -197,6 +198,7 @@ class LocationProviderAndroid extends LocationProvider implements LocationListen
 
     @Override
     public void stop() {
+        Log.i(TAG, "Stopping android location service");
         super.stop();
         if (manager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

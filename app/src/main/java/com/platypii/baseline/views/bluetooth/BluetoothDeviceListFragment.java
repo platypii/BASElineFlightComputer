@@ -73,13 +73,21 @@ public class BluetoothDeviceListFragment extends ListFragment {
 
                 // Save device preference
                 Services.bluetooth.preferences.save(activity, true, device.getAddress(), deviceName);
+                // Update ui
+                EventBus.getDefault().post(new BluetoothEvent());
+                // Start / restart bluetooth service
                 Services.bluetooth.restart(activity);
             } else {
                 Log.i(TAG, "Internal GPS selected");
                 // Save device preference
                 Services.bluetooth.preferences.save(activity, false, null, null);
+                // Update ui
+                EventBus.getDefault().post(new BluetoothEvent());
+                // Stop bluetooth service if needed
                 Services.bluetooth.stop();
             }
+            // Update ui
+            EventBus.getDefault().post(new BluetoothEvent());
             // Switch location source
             Services.location.restart(activity);
         } else {
