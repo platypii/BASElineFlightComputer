@@ -175,28 +175,22 @@ public class BluetoothService {
     }
 
     public synchronized void stop() {
-        if (getState() != BT_STOPPED) {
+        if (bluetoothRunnable != null && bluetoothThread != null) {
             Log.i(TAG, "Stopping bluetooth service");
-            // Stop thread
-            if (bluetoothRunnable != null && bluetoothThread != null) {
-                bluetoothRunnable.stop();
-                try {
-                    bluetoothThread.join(1000);
+            bluetoothRunnable.stop();
+            try {
+                bluetoothThread.join(1000);
 
-                    // Thread is dead, clean up
-                    bluetoothRunnable = null;
-                    bluetoothThread = null;
-                    if (getState() != BT_STOPPED) {
-                        Log.e(TAG, "Unexpected bluetooth state: state should be STOPPED when thread has stopped");
-                    }
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "Bluetooth thread interrupted while waiting for it to die", e);
+                // Thread is dead, clean up
+                bluetoothRunnable = null;
+                bluetoothThread = null;
+                if (getState() != BT_STOPPED) {
+                    Log.e(TAG, "Unexpected bluetooth state: state should be STOPPED when thread has stopped");
                 }
-                Log.i(TAG, "Bluetooth service stopped");
-            } else {
-                Log.e(TAG, "Cannot stop bluetooth: runnable is null: " + BT_STATES[getState()]);
-                // Set state to stopped since it prevents getting stuck in state STOPPING
+            } catch (InterruptedException e) {
+                Log.e(TAG, "Bluetooth thread interrupted while waiting for it to die", e);
             }
+            Log.i(TAG, "Stopped bluetooth service");
         }
     }
 
