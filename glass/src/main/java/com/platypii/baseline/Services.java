@@ -2,7 +2,7 @@ package com.platypii.baseline;
 
 import com.platypii.baseline.altimeter.MyAltimeter;
 import com.platypii.baseline.bluetooth.BluetoothService;
-import com.platypii.baseline.location.LocationServiceBlue;
+import com.platypii.baseline.location.LocationService;
 import com.platypii.baseline.places.Places;
 import com.platypii.baseline.util.Convert;
 import com.platypii.baseline.views.BaseActivity;
@@ -38,7 +38,7 @@ public class Services {
     // Services
     private static SharedPreferences prefs;
     public static final BluetoothService bluetooth = new BluetoothService();
-    public static final LocationServiceBlue location = new LocationServiceBlue(bluetooth);
+    public static final LocationService location = new LocationService(bluetooth);
     public static final MyAltimeter alti = location.alti;
     public static final Places places = new Places();
 
