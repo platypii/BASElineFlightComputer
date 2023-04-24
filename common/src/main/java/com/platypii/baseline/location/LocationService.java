@@ -28,6 +28,9 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
     @NonNull
     private final BluetoothService bluetooth;
 
+    @NonNull
+    private final BleService bleService;
+
     // LocationService owns the alti, because it solved the circular dependency problem
     public final MyAltimeter alti = new MyAltimeter(this);
 
@@ -40,6 +43,7 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
 
     public LocationService(@NonNull BluetoothService bluetooth, @NonNull BleService bleService) {
         this.bluetooth = bluetooth;
+        this.bleService = bleService;
         locationProviderAndroid = new LocationProviderAndroid(alti);
         locationProviderBluetooth = new LocationProviderBluetooth(alti, bluetooth);
         locationProviderBLE = new LocationProviderBLE(bleService);
@@ -83,13 +87,15 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
             locationMode |= LOCATION_BLUETOOTH;
             locationProviderBluetooth.start(context);
             locationProviderBluetooth.locationUpdates.subscribe(this);
-
+        }
+        if (bleService.preferences.preferenceEnabled) {
             // TODO: Do we need to do anything special if both normal and BLE sources are available?
             locationMode |= LOCATION_BLE;
             locationProviderBLE.start(context);
             locationProviderBLE.locationUpdates.subscribe(this);
-            // TODO: subscribe to other updates
-        } else {
+            // TODO: subscribe to other updates?
+        }
+        if (!(bluetooth.preferences.preferenceEnabled || bleService.preferences.preferenceEnabled)) {
             // Start android location service
             locationMode |= LOCATION_ANDROID;
             locationProviderAndroid.start(context);
@@ -101,6 +107,8 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
     public long lastFixDuration() {
         if (bluetooth.preferences.preferenceEnabled) {
             return locationProviderBluetooth.lastFixDuration();
+        } else if (bleService.preferences.preferenceEnabled) {
+            return locationProviderBLE.lastFixDuration();
         } else {
             return locationProviderAndroid.lastFixDuration();
         }

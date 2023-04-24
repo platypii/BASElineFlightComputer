@@ -95,7 +95,9 @@ public class Services {
 
             Log.i(TAG, "Starting bluetooth service");
             if (bluetooth.preferences.preferenceEnabled) {
-//                bluetooth.start(activity);
+                bluetooth.start(activity);
+            }
+            if (bleService.preferences.preferenceEnabled) {
                 bleService.start(activity);
             }
 

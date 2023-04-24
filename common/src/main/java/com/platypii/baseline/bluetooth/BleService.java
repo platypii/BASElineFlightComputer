@@ -60,10 +60,8 @@ public class BleService extends AbstractBluetoothService {
 
     @Override
     protected void startService(@NonNull Activity activity) {
-        AsyncTask.execute(() -> {
-            bleRunnable = new BleRunnable(this, activity);
-            startService(bleRunnable);
-        });
+        bleRunnable = new BleRunnable(this, activity);
+        startService(bleRunnable);
     }
 
     @Override
@@ -126,9 +124,11 @@ public class BleService extends AbstractBluetoothService {
     }
 
     private class RaceBoxListener extends BluetoothPeripheralCallback {
-        public void onCharacteristicUpdate(BluetoothPeripheral peripheral, byte[] value, BluetoothGattCharacteristic characteristic, GattStatus status) {
+        public void onCharacteristicUpdate(@NonNull BluetoothPeripheral peripheral, byte[] value,
+                                           @NonNull BluetoothGattCharacteristic characteristic,
+                                           @NonNull GattStatus status) {
             try {
-                Log.d(TAG, "Got BLE message: " + Arrays.toString(value));
+                Log.v(TAG, "Got BLE message: " + Arrays.toString(value));
                 ByteBufferReader buff = new ByteBufferReader(value);
                 int header = buff.getUnsignedShortAsInt();
                 short clazz = buff.getByte();
@@ -185,6 +185,7 @@ public class BleService extends AbstractBluetoothService {
 
                 if ((lat_lon_flags & 0x01) > 0) {
                     // lat/long/alt is invalid; discard
+                    Log.d(TAG, "Discarding invalid message");
                     return;
                 }
 
@@ -194,6 +195,7 @@ public class BleService extends AbstractBluetoothService {
                         0, 0,
                         0, pdop, 0, 0,
                         num_svs, 0);
+                Log.d(TAG, String.format("New location: %s", loc));
                 BleService.this.locationListeners.forEach(listener -> listener.updateLocation(loc));
 
                 MRotation rotation = new MRotation(0, (float) rot_x, (float) rot_y, (float) rot_z);
@@ -202,7 +204,7 @@ public class BleService extends AbstractBluetoothService {
                 MGravity gravity = new MGravity(0, (float) g_x, (float) g_y, (float) g_z);
                 notifyListeners(MGravity.class, gravity);
             } catch (Exception e) {
-                Log.e(TAG, String.format("Error parsing BLE message: " + e.getMessage()));
+                Log.e(TAG, "Error parsing BLE message", e);
             }
         }
     }
@@ -213,7 +215,7 @@ public class BleService extends AbstractBluetoothService {
     }
 
     public void doConnect(Context context, BluetoothDevice device) {
-        preferences.save(context, preferences.preferenceEnabled, device.getAddress(), device.getName());
+        preferences.save(context, true, device.getAddress(), device.getName());
         if(bleRunnable != null){
             bleRunnable.reconnect();
         }

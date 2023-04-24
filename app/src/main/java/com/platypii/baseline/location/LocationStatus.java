@@ -31,22 +31,22 @@ public class LocationStatus {
     public static void updateStatus(@NonNull Context context) {
         satellites = 0;
         // Check permissions
-        if (!Services.bluetooth.preferences.preferenceEnabled && !Permissions.hasFineLocationPermissions(context)) {
+        if (!(Services.bluetooth.preferences.preferenceEnabled || Services.bleService.preferences.preferenceEnabled) && !Permissions.hasFineLocationPermissions(context)) {
             icon = R.drawable.warning;
             message = "Precise location required";
             return;
-        } else if (Services.bluetooth.preferences.preferenceEnabled && !Permissions.hasBluetoothConnectPermissions(context)) {
+        } else if ((Services.bluetooth.preferences.preferenceEnabled || Services.bleService.preferences.preferenceEnabled) && !Permissions.hasBluetoothConnectPermissions(context)) {
             icon = R.drawable.warning;
             message = "Bluetooth permission required";
             return;
-        } else if (Services.bluetooth.preferences.preferenceEnabled && !Services.bluetooth.isEnabled()) {
+        } else if ((Services.bluetooth.preferences.preferenceEnabled && !Services.bluetooth.isEnabled()) && !Services.bleService.preferences.preferenceEnabled) {
             icon = R.drawable.warning;
             message = "Bluetooth disabled";
             return;
         }
         // GPS signal status
-        if (Services.bluetooth.preferences.preferenceEnabled &&
-                (Services.bluetooth.getState() != BluetoothState.BT_CONNECTED && Services.bleService.getState() != BluetoothState.BT_CONNECTED)) {
+        if ((Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothState.BT_CONNECTED ) ||
+                (Services.bleService.preferences.preferenceEnabled && Services.bleService.getState() != BluetoothState.BT_CONNECTED)) {
             // Bluetooth enabled, but not connected
             icon = R.drawable.warning;
             switch (Services.bluetooth.getState()) {
@@ -83,7 +83,7 @@ public class LocationStatus {
                     satellites = Services.location.lastLoc.satellitesUsed;
                 } else {
                     sb.setLength(0);
-                    if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() == BluetoothState.BT_CONNECTED) {
+                    if (Services.bluetooth.preferences.preferenceEnabled && (Services.bluetooth.getState() == BluetoothState.BT_CONNECTED ||  Services.bleService.getState() == BluetoothState.BT_CONNECTED)) {
                         sb.append("GPS bluetooth ");
                         icon = R.drawable.status_blue;
                     } else {
@@ -104,7 +104,7 @@ public class LocationStatus {
         }
 
         // Barometer status
-        if (!Services.bluetooth.preferences.preferenceEnabled && Services.alti.barometerEnabled && Services.alti.baro_sample_count == 0) {
+        if (!(Services.bluetooth.preferences.preferenceEnabled || Services.bleService.preferences.preferenceEnabled) && Services.alti.barometerEnabled && Services.alti.baro_sample_count == 0) {
             message = message + " (no baro)";
         }
     }

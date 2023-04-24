@@ -23,6 +23,9 @@ public class BleActivity extends BaseActivity implements DeviceScanListener {
     @Override
     public void onResume() {
         super.onResume();
+        if(!Services.bleService.preferences.preferenceEnabled){
+            Services.bleService.start(this);
+        }
         Services.bleService.addScanListener(this);
     }
 

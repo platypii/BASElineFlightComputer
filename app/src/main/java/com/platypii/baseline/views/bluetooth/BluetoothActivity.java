@@ -123,7 +123,7 @@ public class BluetoothActivity extends BaseActivity implements Subscriber<MLocat
     private boolean clearBle(View view) {
         Log.i(TAG, "Clearing saved BLE device");
         Analytics.logEvent(this, "click_clear_ble", null);
-        Services.bleService.preferences.save(this,Services.bleService.preferences.preferenceEnabled, null, null);
+        Services.bleService.preferences.save(this, false, null, null);
         Services.bleService.reconnect();
         return true;
     }

@@ -33,6 +33,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:18.3.7'
     implementation 'org.greenrobot:eventbus:3.3.1'
     implementation 'com.github.weliem:blessed-android:2.0.6'
-    implementation 'no.nordicsemi.android:ble:2.6.1'
     testImplementation 'junit:junit:4.13.2'
 }

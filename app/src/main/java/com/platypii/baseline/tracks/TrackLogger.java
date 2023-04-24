@@ -41,6 +41,9 @@ public class TrackLogger implements MySensorListener, Subscriber<MPressure> {
     private TrackFile trackFile;
     private BufferedWriter log;
 
+    // Capturing a method reference on instantiation since each time a method reference is used it creates a new synthetic lambda instance
+    private final Subscriber<MLocation> locationChangedListener = this::onLocationChanged;
+
     public void start(@NonNull final Context context) {
         AsyncTask.execute(() -> logDir = TrackFiles.getTrackDirectory(context));
     }
@@ -140,7 +143,7 @@ public class TrackLogger implements MySensorListener, Subscriber<MPressure> {
 
         // Start sensor updates
         Services.alti.baro.pressureEvents.subscribe(this);
-        Services.location.locationUpdates.subscribe(this::onLocationChanged);
+        Services.location.locationUpdates.subscribe(locationChangedListener);
         Services.sensors.addListener(this);
 
         Log.i(TAG, "Logging to " + logFile);
@@ -155,7 +158,7 @@ public class TrackLogger implements MySensorListener, Subscriber<MPressure> {
 
         // Stop sensor updates
         Services.alti.baro.pressureEvents.unsubscribe(this);
-        Services.location.locationUpdates.unsubscribe(this::onLocationChanged);
+        Services.location.locationUpdates.unsubscribe(locationChangedListener);
         Services.sensors.removeListener(this);
 
         // Close file writer

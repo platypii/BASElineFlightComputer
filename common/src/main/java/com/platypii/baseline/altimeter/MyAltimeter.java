@@ -61,6 +61,9 @@ public class MyAltimeter implements Subscriber<MPressure> {
 
     private long lastFixMillis; // milliseconds
 
+    // Capturing a method reference on instantiation since each time a method reference is used it creates a new synthetic lambda instance
+    private final Subscriber<MLocation> updateGPSListener = this::updateGPS;
+
     public MyAltimeter(@NonNull LocationProvider location) {
         this.location = location;
     }
@@ -84,7 +87,7 @@ public class MyAltimeter implements Subscriber<MPressure> {
                 groundLevel.start(prefs);
 
                 // Start GPS updates
-                location.locationUpdates.subscribe(this::updateGPS);
+                location.locationUpdates.subscribe(updateGPSListener);
             } else {
                 Log.e(TAG, "MyAltimeter already started");
             }
@@ -187,7 +190,7 @@ public class MyAltimeter implements Subscriber<MPressure> {
     public void stop() {
         baro.pressureEvents.unsubscribe(this);
         baro.stop();
-        location.locationUpdates.unsubscribe(this::updateGPS);
+        location.locationUpdates.unsubscribe(updateGPSListener);
         if (started) {
             started = false;
         } else {
