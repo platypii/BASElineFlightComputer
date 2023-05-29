@@ -162,6 +162,16 @@ public abstract class LocationProvider {
         return Double.NaN;
     }
 
+    /**
+     * Reset the state of the location provider.
+     * This is useful when switching devices.
+     */
+    public void reset() {
+        lastLoc = null;
+        prevLoc = null;
+        refreshRate.reset();
+    }
+
     public void stop() {
         if (!locationUpdates.isEmpty()) {
             Log.w(providerName(), "Stopping location service, but listeners are still listening");

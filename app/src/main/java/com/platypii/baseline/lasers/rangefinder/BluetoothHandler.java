@@ -36,8 +36,8 @@ class BluetoothHandler {
     // Bluetooth state
     int bluetoothState = BT_STOPPED;
 
-    @NonNull
-    private final Activity activity;
+    @Nullable
+    private Activity activity;
     @NonNull
     private final BluetoothCentralManager central;
     @NonNull
@@ -49,12 +49,12 @@ class BluetoothHandler {
     @Nullable
     private BluetoothPeripheral currentPeripheral;
 
-    BluetoothHandler(@NonNull Activity activity) {
-        this.activity = activity;
+    BluetoothHandler() {
         central = new BluetoothCentralManager(activity.getApplicationContext(), bluetoothCentralManagerCallback, new Handler());
     }
 
-    public void start() {
+    public void start(@NonNull Activity activity) {
+        this.activity = activity;
         setState(BT_STARTING);
         scanIfPermitted();
     }
@@ -84,7 +84,7 @@ class BluetoothHandler {
         setState(BT_SCANNING);
         // Scan for peripherals with a certain service UUIDs
         central.startPairingPopupHack();
-        Log.i(TAG, "Scanning for laser rangefinders");
+        Log.i(TAG, "Scanning for BLE peripherals");
         // TODO: Check for permissions
         central.scanForPeripherals(); // TODO: filter with services
     }
@@ -95,19 +95,19 @@ class BluetoothHandler {
         @Override
         public void onConnectedPeripheral(@NonNull BluetoothPeripheral peripheral) {
             currentPeripheral = peripheral;
-            Log.i(TAG, "Rangefinder connected " + peripheral.getName());
+            Log.i(TAG, "BLE connected " + peripheral.getName());
             setState(BT_CONNECTED);
         }
 
         @Override
         public void onConnectionFailed(@NonNull BluetoothPeripheral peripheral, @NonNull final HciStatus status) {
-            Log.e(TAG, "Rangefinder connection " + peripheral.getName() + " failed with status " + status);
-            start(); // start over
+            Log.e(TAG, "BLE connection " + peripheral.getName() + " failed with status " + status);
+            start(activity); // start over
         }
 
         @Override
         public void onDisconnectedPeripheral(@NonNull final BluetoothPeripheral peripheral, @NonNull final HciStatus status) {
-            Log.i(TAG, "Rangefinder disconnected " + peripheral.getName() + " with status " + status);
+            Log.i(TAG, "BLE disconnected " + peripheral.getName() + " with status " + status);
             currentPeripheral = null;
             // Go back to searching
             if (BluetoothState.started(bluetoothState)) {
@@ -118,7 +118,7 @@ class BluetoothHandler {
         @Override
         public void onDiscoveredPeripheral(@NonNull BluetoothPeripheral peripheral, @NonNull ScanResult scanResult) {
             if (bluetoothState != BT_SCANNING) {
-                Log.e(TAG, "Invalid BT state: " + BT_STATES[bluetoothState]);
+                Log.e(TAG, "Invalid BLE state: " + BT_STATES[bluetoothState]);
             }
 
             // TODO: Check for bluetooth connect permission
@@ -137,14 +137,14 @@ class BluetoothHandler {
             Log.i(TAG, "bluetooth adapter changed state to " + state);
             if (state == BluetoothAdapter.STATE_ON) {
                 // Bluetooth is on now, start scanning again
-                start();
+                start(activity);
             }
         }
     };
 
     private void connect(@NonNull BluetoothPeripheral peripheral, @NonNull BleProtocol protocol) {
         if (bluetoothState != BT_SCANNING) {
-            Log.e(TAG, "Invalid BT state: " + BT_STATES[bluetoothState]);
+            Log.e(TAG, "Invalid BLE state: " + BT_STATES[bluetoothState]);
         }
         central.stopScan();
         setState(BT_CONNECTING);
@@ -154,7 +154,7 @@ class BluetoothHandler {
     }
 
     private void setState(int state) {
-        Log.d(TAG, "Rangefinder bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
+        Log.d(TAG, "BLE bluetooth state: " + BT_STATES[bluetoothState] + " -> " + BT_STATES[state]);
         bluetoothState = state;
         EventBus.getDefault().post(new BluetoothEvent());
     }
@@ -171,5 +171,4 @@ class BluetoothHandler {
 //        central.close();
         setState(BT_STOPPED);
     }
-
 }

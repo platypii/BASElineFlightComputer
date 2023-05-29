@@ -39,4 +39,9 @@ public class RefreshRateEstimator {
         lastMillis = millis;
     }
 
+    public void reset() {
+        refreshRate = 0;
+        lastMillis = -1;
+        missedCount = 0;
+    }
 }

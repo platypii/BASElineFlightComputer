@@ -62,14 +62,14 @@ public class BluetoothDeviceListFragment extends ListFragment {
         final Activity activity = getActivity();
         if (activity != null) {
             if (device != null) {
+                final String deviceId = device.getAddress();
                 final String deviceName = getDeviceName(device);
                 Log.i(TAG, "Bluetooth device selected " + deviceName);
 
-                // Log event
-                final Bundle bundle = new Bundle();
-                bundle.putString("device_id", device.getAddress());
-                bundle.putString("device_name", deviceName);
-                Analytics.logEvent(activity, "bluetooth_selected", bundle);
+                if (deviceId != null && !deviceId.equals(Services.bluetooth.preferences.preferenceDeviceId)) {
+                    // Changed bluetooth device, reset state
+                    Services.location.locationProviderBluetooth.reset();
+                }
 
                 // Save device preference
                 Services.bluetooth.preferences.save(activity, true, device.getAddress(), deviceName);
@@ -77,6 +77,12 @@ public class BluetoothDeviceListFragment extends ListFragment {
                 EventBus.getDefault().post(new BluetoothEvent());
                 // Start / restart bluetooth service
                 Services.bluetooth.restart(activity);
+
+                // Log event
+                final Bundle bundle = new Bundle();
+                bundle.putString("device_id", device.getAddress());
+                bundle.putString("device_name", deviceName);
+                Analytics.logEvent(activity, "bluetooth_selected", bundle);
             } else {
                 Log.i(TAG, "Internal GPS selected");
                 // Save device preference

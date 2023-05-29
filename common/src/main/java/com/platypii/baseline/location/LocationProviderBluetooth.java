@@ -9,7 +9,7 @@ import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 
-class LocationProviderBluetooth extends LocationProviderNMEA {
+public class LocationProviderBluetooth extends LocationProviderNMEA {
     protected final String TAG = "ProviderBluetooth";
 
     @NonNull

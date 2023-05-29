@@ -31,7 +31,7 @@ public class LocationService extends LocationProvider implements Subscriber<MLoc
     @NonNull
     private final LocationProviderAndroid locationProviderAndroid;
     @NonNull
-    private final LocationProviderBluetooth locationProviderBluetooth;
+    public final LocationProviderBluetooth locationProviderBluetooth;
 
     public LocationService(@NonNull BluetoothService bluetooth) {
         this.bluetooth = bluetooth;

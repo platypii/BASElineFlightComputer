@@ -171,8 +171,8 @@ class BluetoothRunnable implements Stoppable {
 
     @Override
     public void stop() {
+        Log.i(TAG, "Stopping bluetooth runnable");
         setState(BT_STOPPING);
-
         // Close bluetooth socket
         if (bluetoothSocket != null) {
             try {
