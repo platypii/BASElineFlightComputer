@@ -151,29 +151,33 @@ public class BleService extends AbstractBluetoothService {
                 short fix_status_flags = buff.getByte();
                 short date_time_flags = buff.getByte(); // bit 5 - 1=available confirmation fo adate/time validity; bit6 - 1=confirmed utc date validity; bit7 - 1=confirmed utc time validity
                 short num_svs = buff.getByte(); // the number of space vehicles used to compute the solution
-                double longitude = buff.getInt() / Math.pow(10, 7); // coordinates of the receiver with a factor of 10^7
-                double latitude = buff.getInt() / Math.pow(10, 7); // coordinates of the receiver with a factor of 10^7
-                double wgs_alt = buff.getInt() / 1000.0; // Altitude in millimetres - in the coordinate system of the Ellipsoid
-                double msl_alt = buff.getInt() / 1000.0; // Altitude in millimetres - an approximation of altitude above Mean Sea Level
+                double longitude = buff.getInt() * 1e-7; // coordinates of the receiver with a factor of 10^7
+                double latitude = buff.getInt() * 1e-7; // coordinates of the receiver with a factor of 10^7
+                double wgs_alt = buff.getInt() * 1e-3; // Altitude in millimetres - in the coordinate system of the Ellipsoid
+                double msl_alt = buff.getInt() * 1e-3; // Altitude in millimetres - an approximation of altitude above Mean Sea Level
                 long horiz_acc = buff.getUnsignedIntAsLong(); // indication of the receiver’s location error in centimetres
                 long vert_acc = buff.getUnsignedIntAsLong();
-                int speed = buff.getInt(); // ground speed of the vehicle in millimetres per second.
-                double heading = buff.getInt() / Math.pow(10, 5); // direction of motion in degrees with a factor of 10^5, where zero is North
+                double speed = buff.getInt() * 1e-3; // ground speed of the vehicle in millimetres per second.
+                double bearing = buff.getInt() * 1e-5; // direction of motion in degrees with a factor of 10^5, where zero is North
                 long speed_acc = buff.getUnsignedIntAsLong(); // estimation of the error of the Speed field in millimetres per second
-                double heading_acc = buff.getUnsignedIntAsLong() / Math.pow(10, 5); // estimation of the error of the Heading fid in degrees with a factor of 10^5
-                float pdop = (float) (buff.getUnsignedShortAsInt() / 100.0); // Position Dilution of Precision - indicates the error propagation of the satellite
+                double heading_acc = buff.getUnsignedIntAsLong() * 1e-5; // estimation of the error of the Heading fid in degrees with a factor of 10^5
+                float pdop = (float) (buff.getUnsignedShortAsInt() * 1e-2); // Position Dilution of Precision - indicates the error propagation of the satellite
                 // configuration. Usually directly related to the number of satellites. Value is with
                 // a factor  of 100
                 short lat_lon_flags = buff.getByte(); // bit0- 1=invalid lat,long,wgs/msl alt; bit4..1 differential correction age
                 short batt_status = buff.getByte(); // contains charging status in the most significant bit (1 if charging) and
                 // estimation of the battery level in percentage in the remaining 7 bits
-                double g_x = buff.getShort() / 1000.0; // acceleration on the 3 axis in milli-g
-                double g_y = buff.getShort() / 1000.0;
-                double g_z = buff.getShort() / 1000.0;
-                double rot_x = buff.getShort() / 100.0; // speed of rotation on the 3 axis in centi- degrees per second
-                double rot_y = buff.getShort() / 100.0;
-                double rot_z = buff.getShort() / 100.0;
+                double g_x = buff.getShort() * 1e-3; // acceleration on the 3 axis in milli-g
+                double g_y = buff.getShort() * 1e-3;
+                double g_z = buff.getShort() * 1e-3;
+                double rot_x = buff.getShort() * 1e-2; // speed of rotation on the 3 axis in centi- degrees per second
+                double rot_y = buff.getShort() * 1e-2;
+                double rot_z = buff.getShort() * 1e-2;
                 short checksum = buff.getShort();
+
+                // Computed parameters
+                double vN = speed * Math.cos(Math.toRadians(bearing));
+                double vE = speed * Math.sin(Math.toRadians(bearing));
 
                 ZonedDateTime dateTime = ZonedDateTime.of(year, month, day, hour, min, sec, 0, ZoneId.of("UTC"))
                         .plusNanos(ns); // since racebox nanos can be negative and ZonedDateTime doesn't like that
@@ -189,14 +193,16 @@ public class BleService extends AbstractBluetoothService {
                     return;
                 }
 
-                MLocation loc = new MLocation(millis,
-                        latitude, longitude,
-                        msl_alt, 0,
-                        0, 0,
-                        0, pdop, 0, 0,
-                        num_svs, 0);
-                Log.d(TAG, String.format("New location: %s", loc));
-                BleService.this.locationListeners.forEach(listener -> listener.updateLocation(loc));
+                if (latitude != 0 || longitude != 0) {
+                    MLocation loc = new MLocation(millis,
+                            latitude, longitude,
+                            msl_alt, 0,
+                            vN, vE,
+                            0, pdop, 0, 0,
+                            num_svs, 0);
+                    Log.d(TAG, String.format("New location: %s", loc));
+                    BleService.this.locationListeners.forEach(listener -> listener.updateLocation(loc));
+                }
 
                 MRotation rotation = new MRotation(0, (float) rot_x, (float) rot_y, (float) rot_z);
                 notifyListeners(MRotation.class, rotation);
