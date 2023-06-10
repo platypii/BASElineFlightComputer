@@ -99,12 +99,12 @@ class UineyeProtocol extends BleProtocol {
 
     private void sendHello(@NonNull BluetoothPeripheral peripheral) {
         Log.d(TAG, "app -> rf: hello");
-        peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHello, WriteType.WITHOUT_RESPONSE);
+        peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHello, WriteType.WITH_RESPONSE);
     }
 
     private void sendHeartbeatAck(@NonNull BluetoothPeripheral peripheral) {
         Log.d(TAG, "app -> rf: heartbeat ack");
-        peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHeartbeatAck, WriteType.WITHOUT_RESPONSE);
+        peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHeartbeatAck, WriteType.WITH_RESPONSE);
     }
 
     private void processMeasurement(@NonNull byte[] value) {

@@ -49,12 +49,12 @@ class BluetoothHandler {
     @Nullable
     private BluetoothPeripheral currentPeripheral;
 
-    BluetoothHandler() {
+    BluetoothHandler(@NonNull Activity activity) {
+        this.activity = activity;
         central = new BluetoothCentralManager(activity.getApplicationContext(), bluetoothCentralManagerCallback, new Handler());
     }
 
-    public void start(@NonNull Activity activity) {
-        this.activity = activity;
+    public void start() {
         setState(BT_STARTING);
         scanIfPermitted();
     }
@@ -102,7 +102,7 @@ class BluetoothHandler {
         @Override
         public void onConnectionFailed(@NonNull BluetoothPeripheral peripheral, @NonNull final HciStatus status) {
             Log.e(TAG, "BLE connection " + peripheral.getName() + " failed with status " + status);
-            start(activity); // start over
+            start(); // start over
         }
 
         @Override
@@ -137,7 +137,7 @@ class BluetoothHandler {
             Log.i(TAG, "bluetooth adapter changed state to " + state);
             if (state == BluetoothAdapter.STATE_ON) {
                 // Bluetooth is on now, start scanning again
-                start(activity);
+                start();
             }
         }
     };

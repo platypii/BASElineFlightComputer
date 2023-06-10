@@ -34,8 +34,8 @@ public class RangefinderService {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null) {
             if (bluetoothAdapter.isEnabled()) {
-                bluetoothHandler = new BluetoothHandler();
-                bluetoothHandler.start(activity);
+                bluetoothHandler = new BluetoothHandler(activity);
+                bluetoothHandler.start();
             } else {
                 // Turn on bluetooth
                 Log.i(TAG, "Requesting to turn on bluetooth");
@@ -54,8 +54,8 @@ public class RangefinderService {
         Log.i(TAG, "Bluetooth started late");
         if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
             if (bluetoothHandler == null) {
-                bluetoothHandler = new BluetoothHandler();
-                bluetoothHandler.start(activity);
+                bluetoothHandler = new BluetoothHandler(activity);
+                bluetoothHandler.start();
             }
         } else {
             Exceptions.report(new IllegalStateException("Bluetooth supposedly started, but adapter not enabled"));

@@ -41,7 +41,7 @@ dependencies {
     annotationProcessor 'androidx.annotation:annotation:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.fragment:fragment:1.5.7'
-    implementation 'com.github.weliem:blessed-android:2.4.1'
+    implementation 'com.github.weliem:blessed-android:2.4.2'
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
