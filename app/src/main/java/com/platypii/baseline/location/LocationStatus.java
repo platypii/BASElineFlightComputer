@@ -97,7 +97,9 @@ public class LocationStatus {
                     StringBuilderUtil.format2f(sb, Services.location.refreshRate.refreshRate);
                     sb.append("Hz");
                     message = sb;
-                    satellites = Services.location.lastLoc.satellitesUsed;
+                    if (Services.location.lastLoc != null) {
+                        satellites = Services.location.lastLoc.satellitesUsed;
+                    }
                 }
             }
         }
