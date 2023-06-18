@@ -3,10 +3,9 @@ package com.platypii.baseline.lasers.rangefinder;
 import com.platypii.baseline.bluetooth.BleProtocol;
 import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.util.Exceptions;
-import com.platypii.baseline.views.laser.LaserActivity;
 
 import android.bluetooth.le.ScanRecord;
-import android.os.Bundle;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.util.SparseArray;
 import androidx.annotation.NonNull;
@@ -14,6 +13,7 @@ import androidx.annotation.Nullable;
 import com.welie.blessed.BluetoothPeripheral;
 import com.welie.blessed.WriteType;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
 
@@ -35,6 +35,12 @@ class UineyeProtocol extends BleProtocol {
 
     private static final int manufacturerId3 = 42841;
     private static final byte[] manufacturerData3 = {-120, -96, -54, -42, 67, 72, -111, 32};
+
+    private static final int manufacturerId4 = 42841;
+    private static final byte[] manufacturerData4 = {-120, -96, 63, -117, 103, 69, 35, 1};
+
+    private static final int manufacturerId5 = 42841;
+    private static final byte[] manufacturerData5 = {-120, -96, -25, -118, 103, 69, 35, 1};
 
     // Rangefinder service
     private static final UUID rangefinderService = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
@@ -148,23 +154,44 @@ class UineyeProtocol extends BleProtocol {
             return true; // Manufacturer match (hartman's laser)
         } else if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId3), manufacturerData3)) {
             return true; // Manufacturer match 2022 version
-        } else if (deviceName.endsWith("BT05") || deviceName.startsWith("Rangefinder") || deviceName.startsWith("Uineye")) {
-            // Device name match
-            if (record != null) {
-                // Send manufacturer data to firebase
-                final Bundle bundle = new Bundle();
-                bundle.putString("rf_device_name", deviceName);
-                final SparseArray<byte[]> mfg = record.getManufacturerSpecificData();
-                for (int i = 0; i < mfg.size(); i++) {
-                    final String key = "mfg_" + mfg.keyAt(i);
-                    final String hex = byteArrayToHex(mfg.valueAt(i));
-                    bundle.putString(key, hex);
-                }
-                LaserActivity.firebaseAnalytics.logEvent("manufacturer_data", bundle);
-            }
+        } else if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId4), manufacturerData4)) {
+            return true; // Manufacturer match 2023 version
+        } else if (record != null && Arrays.equals(record.getManufacturerSpecificData(manufacturerId5), manufacturerData5)) {
+            return true; // Manufacturer match 2023 version
+        } else if (
+                (record != null && hasRangefinderService(record))
+                        || deviceName.endsWith("BT05")
+                        || deviceName.startsWith("Rangefinder")
+                        || deviceName.startsWith("Uineye")) {
+            // Send manufacturer data to firebase
+            final String mfg = toManufacturerString(record);
+            Exceptions.report(new Exception("Uineye laser unknown mfg data: " + deviceName + " " + mfg));
             return true;
         } else {
             return false;
+        }
+    }
+
+    private boolean hasRangefinderService(@NonNull ScanRecord record) {
+        final List<ParcelUuid> uuids = record.getServiceUuids();
+        return uuids != null && uuids.contains(new ParcelUuid(rangefinderService));
+    }
+
+    private String toManufacturerString(@Nullable ScanRecord record) {
+        if (record != null) {
+            final StringBuilder sb = new StringBuilder();
+            final SparseArray<byte[]> mfg = record.getManufacturerSpecificData();
+            for (int i = 0; i < mfg.size(); i++) {
+                final String key = "" + mfg.keyAt(i);
+                final String hex = byteArrayToHex(mfg.valueAt(i));
+                sb.append(key);
+                sb.append('=');
+                sb.append(hex);
+                sb.append(';');
+            }
+            return sb.toString();
+        } else {
+            return null;
         }
     }
 

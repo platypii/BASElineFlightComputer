@@ -1,6 +1,7 @@
 package com.platypii.baseline.lasers.rangefinder;
 
 import com.platypii.baseline.Intents;
+import com.platypii.baseline.bluetooth.BleProtocol;
 import com.platypii.baseline.bluetooth.BleService;
 import com.platypii.baseline.bluetooth.BluetoothState;
 import com.platypii.baseline.util.Exceptions;
@@ -25,6 +26,12 @@ public class RangefinderService {
     private BluetoothAdapter bluetoothAdapter;
     @Nullable
     private BleService bluetoothHandler;
+    @NonNull
+    private final BleProtocol protocols[] = {
+            new ATNProtocol(),
+            new SigSauerProtocol(),
+            new UineyeProtocol()
+    };
 
     public void start(@NonNull Activity activity) {
         if (BluetoothState.started(getState())) {
@@ -35,7 +42,7 @@ public class RangefinderService {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null) {
             if (bluetoothAdapter.isEnabled()) {
-                bluetoothHandler = new BleService();
+                bluetoothHandler = new BleService(protocols);
                 bluetoothHandler.start(activity);
             } else {
                 // Turn on bluetooth
@@ -55,11 +62,7 @@ public class RangefinderService {
         Log.i(TAG, "Bluetooth started late");
         if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
             if (bluetoothHandler == null) {
-                bluetoothHandler = new BleService(
-                        new UineyeProtocol(),
-                        new ATNProtocol(),
-                        new SigSauerProtocol()
-                );
+                bluetoothHandler = new BleService(protocols);
                 bluetoothHandler.start(activity);
             }
         } else {
