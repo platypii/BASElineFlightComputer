@@ -1,6 +1,8 @@
 package com.platypii.baseline.views.bluetooth;
 
 import com.platypii.baseline.Services;
+import com.platypii.baseline.bluetooth.BluetoothDeviceComparator;
+import com.platypii.baseline.bluetooth.BluetoothItem;
 import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.util.Analytics;
 import com.platypii.baseline.util.Exceptions;
@@ -17,17 +19,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import static com.platypii.baseline.bluetooth.BluetoothUtil.getDeviceName;
-
 public class BluetoothDeviceListFragment extends ListFragment {
     private static final String TAG = "BluetoothDeviceList";
 
-    private final List<BluetoothDevice> devices = new ArrayList<>();
+    private final List<BluetoothItem> devices = new ArrayList<>();
+    private final Set<BluetoothItem> deviceSet = new HashSet<>();
     @Nullable
     private BluetoothAdapter bluetoothAdapter;
 
@@ -45,12 +48,16 @@ public class BluetoothDeviceListFragment extends ListFragment {
 
     private void updateDeviceList() {
         devices.clear();
+        deviceSet.clear();
         try {
-            final List<BluetoothDevice> updatedDevices = Services.bluetooth.getDevices();
-            devices.addAll(updatedDevices);
+            for (BluetoothDevice device : Services.bluetooth.getBondedDevices()) {
+                deviceSet.add(new BluetoothItem(device));
+            }
         } catch (SecurityException e) {
             Log.e(TAG, "Error getting device list", e);
         }
+        devices.addAll(deviceSet);
+        devices.sort(new BluetoothDeviceComparator());
         if (bluetoothAdapter != null) {
             bluetoothAdapter.notifyDataSetChanged();
         }
@@ -58,27 +65,19 @@ public class BluetoothDeviceListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-        final BluetoothDevice device = (BluetoothDevice) l.getItemAtPosition(position);
+        final BluetoothItem device = (BluetoothItem) l.getItemAtPosition(position);
         final Activity activity = getActivity();
         if (activity != null) {
             if (device != null) {
-                final String deviceId = device.getAddress();
-                final String deviceName = getDeviceName(device);
-                Log.i(TAG, "Bluetooth device selected " + deviceName);
+                Log.i(TAG, "Bluetooth device selected " + device.name);
 
-                if (deviceId != null && !deviceId.equals(Services.bluetooth.preferences.preferenceDeviceId)) {
+                if (!device.address.equals(Services.bluetooth.preferences.preferenceDeviceId)) {
                     // Changed bluetooth device, reset state
                     Services.location.locationProviderBluetooth.reset();
                 }
 
                 // Save device preference
-                boolean ble = false;
-                try {
-                    ble = device.getType() != BluetoothDevice.DEVICE_TYPE_CLASSIC;
-                } catch (SecurityException e) {
-                    Exceptions.report(e);
-                }
-                Services.bluetooth.preferences.save(activity, true, device.getAddress(), deviceName, ble);
+                Services.bluetooth.preferences.save(activity, true, device.address, device.name, device.ble);
                 // Update ui
                 EventBus.getDefault().post(new BluetoothEvent());
                 // Start / restart bluetooth service
@@ -86,8 +85,8 @@ public class BluetoothDeviceListFragment extends ListFragment {
 
                 // Log event
                 final Bundle bundle = new Bundle();
-                bundle.putString("device_id", device.getAddress());
-                bundle.putString("device_name", deviceName);
+                bundle.putString("device_id", device.address);
+                bundle.putString("device_name", device.name);
                 Analytics.logEvent(activity, "bluetooth_selected", bundle);
             } else {
                 Log.i(TAG, "Internal GPS selected");

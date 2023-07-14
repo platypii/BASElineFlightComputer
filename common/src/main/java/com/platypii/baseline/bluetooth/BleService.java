@@ -123,7 +123,7 @@ public class BleService {
 
         @Override
         public void onDisconnectedPeripheral(@NonNull final BluetoothPeripheral peripheral, @NonNull final HciStatus status) {
-            Log.i(TAG, "Rangefinder disconnected " + peripheral.getName() + " with status " + status);
+            Log.i(TAG, "BLE disconnected " + peripheral.getName() + " with status " + status);
             currentPeripheral = null;
             // Go back to searching
             if (BluetoothState.started(bluetoothState)) {

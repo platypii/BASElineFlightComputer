@@ -135,14 +135,14 @@ public class MySensorManager implements SensorEventListener {
     }
 
     /**
-     * Add a new listener to be notified of location updates
+     * Add a new listener to be notified of sensor updates
      */
     public void addListener(MySensorListener listener) {
         listeners.add(listener);
     }
 
     /**
-     * Remove a listener from location updates
+     * Remove a listener from sensor updates
      */
     public void removeListener(MySensorListener listener) {
         listeners.remove(listener);

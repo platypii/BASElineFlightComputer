@@ -26,7 +26,7 @@ public class Intents {
     private static final String TAG = "Intents";
 
     /**
-     * Open track activity
+     * Open track activity for local track file
      */
     public static void openTrackLocal(@NonNull Context context, @NonNull TrackFile trackFile) {
         final Intent intent = new Intent(context, TrackLocalActivity.class);
@@ -34,6 +34,9 @@ public class Intents {
         context.startActivity(intent);
     }
 
+    /**
+     * Open track activity for cloud track
+     */
     public static void openTrackRemote(@NonNull Context context, @NonNull TrackMetadata track) {
         final Intent intent = new Intent(context, TrackRemoteActivity.class);
         intent.putExtra(TrackLoader.EXTRA_TRACK_ID, track.track_id);

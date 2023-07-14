@@ -14,9 +14,7 @@ import android.content.Intent;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.platypii.baseline.RequestCodes.RC_BLUE_ENABLE;
@@ -104,24 +102,21 @@ public class BluetoothService {
     }
 
     /**
-     * Return list of bonded devices, with GPS devices first
+     * Return list of bonded devices
      */
     @NonNull
-    public List<BluetoothDevice> getDevices() {
+    public Set<BluetoothDevice> getBondedDevices() {
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null) {
             try {
-                final Set<BluetoothDevice> deviceSet = bluetoothAdapter.getBondedDevices();
-                final List<BluetoothDevice> devices = new ArrayList<>(deviceSet);
-                Collections.sort(devices, new BluetoothDeviceComparator());
-                return devices;
+                return bluetoothAdapter.getBondedDevices();
             } catch (SecurityException e) {
                 Log.w(TAG, "Tried to get devices, but bluetooth permission denied", e);
-                return new ArrayList<>();
+                return new HashSet<>();
             }
         } else {
             Log.w(TAG, "Tried to get devices, but bluetooth is not enabled");
-            return new ArrayList<>();
+            return new HashSet<>();
         }
     }
 

@@ -3,8 +3,8 @@ package com.platypii.baseline.views.bluetooth;
 import android.os.Build;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
+import com.platypii.baseline.bluetooth.BluetoothItem;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,18 +16,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.List;
 
-import static com.platypii.baseline.bluetooth.BluetoothUtil.getDeviceName;
-
 class BluetoothAdapter extends BaseAdapter {
 
     @NonNull
-    private final List<BluetoothDevice> devices;
+    private final List<BluetoothItem> devices;
 
     private final LayoutInflater inflater;
 
     private final String internalGps;
 
-    BluetoothAdapter(@NonNull Context context, @NonNull List<BluetoothDevice> devices) {
+    BluetoothAdapter(@NonNull Context context, @NonNull List<BluetoothItem> devices) {
         this.devices = devices;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         internalGps = context.getString(R.string.internal_gps);
@@ -55,16 +53,15 @@ class BluetoothAdapter extends BaseAdapter {
             }
         } else {
             // Bluetooth GPS device
-            final BluetoothDevice device = devices.get(position - 1);
-            final String deviceName = getDeviceName(device);
-            nameView.setText(deviceName);
-            addressView.setText(device.getAddress());
-            if (deviceName.contains("GPS") || deviceName.startsWith("Mohawk")) {
+            final BluetoothItem device = devices.get(position - 1);
+            nameView.setText(device.name);
+            addressView.setText(device.address);
+            if (device.name.contains("GPS") || device.name.startsWith("Mohawk")) {
                 nameView.setTextColor(0xffeeeeee);
             } else {
                 nameView.setTextColor(0xffbbbbbb);
             }
-            if (device.getAddress().equals(Services.bluetooth.preferences.preferenceDeviceId)) {
+            if (device.address.equals(Services.bluetooth.preferences.preferenceDeviceId)) {
                 checkedView.setVisibility(View.VISIBLE);
             } else {
                 checkedView.setVisibility(View.GONE);
