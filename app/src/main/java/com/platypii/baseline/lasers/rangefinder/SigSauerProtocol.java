@@ -27,6 +27,9 @@ class SigSauerProtocol extends BleProtocol {
     private static final int manufacturerId = 1179;
     private static final byte[] manufacturerData = {2, 0, -1, -1, -1, -1, 2, 0, -1, -1, -1, -1}; // 02-00-ff-ff-ff-ff-02-00-ff-ff-ff-ff
 
+    // Kilo 2200 BDX, device name K2200BDX-151515
+    // private static final byte[] manufacturerData2 = {}; // 02-88-ff-ff-ff-ff-02-88-ff-ff-ff-ff-0f-00-00
+
     // Rangefinder service
     private static final UUID rangefinderService = UUID.fromString("49535343-fe7d-4ae5-8fa9-9fafd205e455");
     // Rangefinder characteristic

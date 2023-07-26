@@ -63,6 +63,9 @@ class UineyeProtocol extends BleProtocol {
     @NonNull
     private final RfSentenceIterator sentenceIterator = new RfSentenceIterator();
 
+    // Send bluetooth message expecting response
+    WriteType withResponse = WriteType.WITH_RESPONSE;
+
     @Override
     public void onServicesDiscovered(@NonNull BluetoothPeripheral peripheral) {
         try {
@@ -106,12 +109,18 @@ class UineyeProtocol extends BleProtocol {
 
     private void sendHello(@NonNull BluetoothPeripheral peripheral) {
         Log.d(TAG, "app -> rf: hello");
-        peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHello, WriteType.WITH_RESPONSE);
+        try {
+            peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHello, withResponse);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Uineye pre-2023 does not support with_response");
+            withResponse = WriteType.WITHOUT_RESPONSE;
+            sendHello(peripheral);
+        }
     }
 
     private void sendHeartbeatAck(@NonNull BluetoothPeripheral peripheral) {
         Log.d(TAG, "app -> rf: heartbeat ack");
-        peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHeartbeatAck, WriteType.WITH_RESPONSE);
+        peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic, appHeartbeatAck, withResponse);
     }
 
     private void processMeasurement(@NonNull byte[] value) {
@@ -133,7 +142,7 @@ class UineyeProtocol extends BleProtocol {
         double vert = bytesToShort(value[7], value[8]) * 0.1 * units; // meters
         double horiz = bytesToShort(value[9], value[10]) * 0.1 * units; // meters
 //        double bearing = (value[22] & 0xff) * 360.0 / 256.0; // degrees
-        if (pitch < 0) {
+        if (pitch < 0 && vert > 0) {
             vert = -vert;
         }
 
