@@ -13,9 +13,10 @@ public class BluetoothDeviceComparator implements Comparator<BluetoothItem> {
     }
 
     private int score(@NonNull BluetoothItem device) {
+        if (device.name.isEmpty()) return 0;
         if (device.name.startsWith("Mohawk")) return 2;
-        else if (device.name.startsWith("RaceBox")) return 1;
-        else if (device.name.contains("GPS")) return 1;
-        else return 0;
+        if (device.name.startsWith("RaceBox")) return 1;
+        if (device.name.contains("GPS")) return 1;
+        return 0;
     }
 }

@@ -62,6 +62,10 @@ public class BleService {
         }
         Log.i(TAG, "Starting BLE service");
         setState(BT_STARTING);
+        if (activity == null) {
+            Exceptions.report(new NullPointerException("activity should not be null"));
+            return;
+        }
         central = new BluetoothCentralManager(activity.getApplicationContext(), bluetoothCentralManagerCallback, handler);
 
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

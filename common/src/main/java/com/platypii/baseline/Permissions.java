@@ -1,5 +1,7 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.util.Exceptions;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -37,7 +39,12 @@ public class Permissions {
     }
 
     public static boolean hasLocationPermissions(@NonNull Context context) {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED;
+        try {
+            return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED;
+        } catch (Exception e) {
+            Exceptions.report(e);
+            return false;
+        }
     }
 
     public static boolean hasFineLocationPermissions(@NonNull Context context) {
@@ -76,7 +83,12 @@ public class Permissions {
 
     public static boolean hasBluetoothConnectPermissions(@NonNull Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED;
+            try {
+                return ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PERMISSION_GRANTED;
+            } catch (Exception e) {
+                Exceptions.report(e);
+                return false;
+            }
         } else {
             return true;
         }

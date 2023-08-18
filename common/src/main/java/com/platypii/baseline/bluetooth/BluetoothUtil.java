@@ -22,7 +22,8 @@ public class BluetoothUtil {
     @NonNull
     public static String getDeviceName(@NonNull BluetoothDevice device) {
         try {
-            return device.getName();
+            final String name = device.getName();
+            return name == null ? "" : name;
         } catch (SecurityException ignored) {
             return "";
         }
