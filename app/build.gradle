@@ -10,8 +10,8 @@ android {
         compileSdk 33
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 141
-        versionName "5.10-beta"
+        versionCode 142
+        versionName "5.10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
