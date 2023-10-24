@@ -135,9 +135,9 @@ public class TrackAdapter extends BaseAdapter {
                 final View itemCheck2 = convertView.findViewById(R.id.list_check);
                 itemNameView2.setText(trackData.date_string);
                 itemSubtitle2.setText(trackData.subtitle());
-                if ("BASE".equals(trackData.jumpType)) {
+                if (trackData.isBASE()) {
                     itemSubtitle2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.type_base, 0, 0, 0);
-                } else if ("Skydive".equals(trackData.jumpType)) {
+                } else if (trackData.isSkydive()) {
                     itemSubtitle2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.type_sky, 0, 0, 0);
                 } else if ("PG".equals(trackData.jumpType)) {
                     itemSubtitle2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.type_pg, 0, 0, 0);
