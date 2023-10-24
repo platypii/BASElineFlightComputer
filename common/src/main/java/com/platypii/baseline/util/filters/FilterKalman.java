@@ -46,7 +46,7 @@ public class FilterKalman implements Filter {
     public void update(double z, double dt) {
         // Check for input exceptions
         if (Double.isNaN(z)) {
-            Log.e(TAG, "Invalid update: z = NaN");
+            Log.w(TAG, "Invalid update: z = NaN");
             return;
         }
         // Ignore invalid time delta

@@ -8,6 +8,7 @@ import com.platypii.baseline.events.SyncEvent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class TrackListFragment extends Fragment implements AdapterView.OnItemClickListener {
+    private static final String TAG = "TrackListFrag";
 
     public static final String SEARCH_KEY = "search_string";
 
@@ -119,6 +121,7 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     private void updateList() {
+        listAdapter.notifyDataSetChanged();
         // Handle no-tracks case
         final boolean isEmpty = listAdapter.isEmpty();
         binding.tracksEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
@@ -138,6 +141,9 @@ public class TrackListFragment extends Fragment implements AdapterView.OnItemCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(@NonNull SyncEvent event) {
+        // Download progress is noisy
+        if (event instanceof SyncEvent.DownloadProgress) return;
+        Log.i(TAG, "Sync event updating track list " + event);
         updateList();
     }
 
