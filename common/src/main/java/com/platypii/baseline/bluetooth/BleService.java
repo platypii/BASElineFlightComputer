@@ -115,7 +115,7 @@ public class BleService {
         @Override
         public void onConnectedPeripheral(@NonNull BluetoothPeripheral peripheral) {
             currentPeripheral = peripheral;
-            Log.i(TAG, "BLE connected " + peripheral.getName());
+            Log.i(TAG, "BLE connected " + peripheral.getAddress() + " " + peripheral.getName());
             setState(BT_CONNECTED);
         }
 

@@ -11,6 +11,7 @@ import android.util.SparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.welie.blessed.BluetoothPeripheral;
+import com.welie.blessed.WriteType;
 import java.util.Arrays;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
@@ -27,30 +28,59 @@ class SigSauerProtocol extends BleProtocol {
     private static final int manufacturerId = 1179;
     private static final byte[] manufacturerData = {2, 0, -1, -1, -1, -1, 2, 0, -1, -1, -1, -1}; // 02-00-ff-ff-ff-ff-02-00-ff-ff-ff-ff
 
-    // Kilo 2200 BDX, device name K2200BDX-151515
+    // Kilo 2200 BDX, device name K2200BDX-015157
     // private static final byte[] manufacturerData2 = {}; // 02-88-ff-ff-ff-ff-02-88-ff-ff-ff-ff-0f-00-00
+    // From NRF: 9b-04-02-88-ff-ff-ff-ff-0f-00-00
+    // Company: nVisti, LLC <0x049B>
+    // 0x288FFFFFFFF0F0000
 
     // Rangefinder service
     private static final UUID rangefinderService = UUID.fromString("49535343-fe7d-4ae5-8fa9-9fafd205e455");
     // Rangefinder characteristic
-    private static final UUID rangefinderCharacteristic = UUID.fromString("0000fff2-0000-1000-8000-00805f9b34fb");
+    private static final UUID rangefinderCharacteristic1 = UUID.fromString("0000fff1-0000-1000-8000-00805f9b34fb");
+    private static final UUID rangefinderCharacteristic2 = UUID.fromString("0000fff2-0000-1000-8000-00805f9b34fb");
 
-    // Rangefinder responses
-    // Commands: :AR, AI, RB, RPG1, GI, GK, SK
-    // For sight: :SE, GB, RB=version
+    // Rangefinder commands
+    // Sight: :S3=dump :SE=settings :SU=sub :E3S=echo :GB=brightness :RB=version
     // :AB,2,el,wd1,,range,
+    // :AI
     // :AK = ack
-    // :NA = no ack
-    // :VR = rangefinder version
-    // :DP,,,,,,temp,alt,ws,wd
+    // :AR = artificial range
+    // :AX = latitude
+    // :CP = current profile
+    // :DP,,,,,,temp,alt,ws,wd = profile data
     // :DS = rangefinder settings
+    // :DU = device unlock
+    // :EG = get environment
+    // :ES = secondary effects
+    // :GI = ???
+    // :GK = ???
+    // :HB = wifi heartbeat
+    // :MR = manual range
+    // :NA = no ack (:NAK)
+    // :VR = rangefinder version
+    // :PN = display pin
+    // :RA = reticle alignment
+    // :RB = ???
+    // :RPG1 = ???
+    // :SK = license key
+    // :VR = ack for DD
+    // :WM = wind meter
+    // :PC = set profile checksum
     private static final String ack = ":AK";
 
     @Override
     public void onServicesDiscovered(@NonNull BluetoothPeripheral peripheral) {
         // Request rangefinder service
         Log.i(TAG, "app -> rf: subscribe");
-        peripheral.setNotify(rangefinderService, rangefinderCharacteristic, true);
+        peripheral.setNotify(rangefinderService, rangefinderCharacteristic2, true);
+
+        // Send unlock code
+        // This is required for later gen SigSauer lasers, and will fail silently for old ones
+        final String deviceName = peripheral.getName();
+        final String du = appendChecksum(":DU," + deviceUnlockCode(deviceName));
+        Log.i(TAG, "app -> rf: unlock " + deviceName);
+        peripheral.writeCharacteristic(rangefinderService, rangefinderCharacteristic1, du.getBytes(), WriteType.WITHOUT_RESPONSE);
     }
 
     @Override
@@ -86,15 +116,17 @@ class SigSauerProtocol extends BleProtocol {
 //        }
 //        Log.d(TAG, "rf -> app: measure " + el + " " + wd1 + " " + range + " " + energy + " " + velocity + " " + incl);
 
-        double total = Double.parseDouble(split[5]) * 0.9144; // meters
-        double pitch = Double.parseDouble(split[11]); // degrees
+        final double total = Double.parseDouble(split[5]) * 0.9144; // meters
+        final double pitch = Double.parseDouble(split[11]); // degrees
 
-        double horiz = total * Math.cos(Math.toRadians(pitch)); // meters
-        double vert = total * Math.sin(Math.toRadians(pitch)); // meters
+        final double horiz = total * Math.cos(Math.toRadians(pitch)); // meters
+        final double vert = total * Math.sin(Math.toRadians(pitch)); // meters
 
-        final LaserMeasurement meas = new LaserMeasurement(horiz, vert);
-        Log.i(TAG, "rf -> app: measure " + meas);
-        EventBus.getDefault().post(meas);
+        if (horiz != 0 || vert != 0) {
+            final LaserMeasurement meas = new LaserMeasurement(horiz, vert);
+            Log.i(TAG, "rf -> app: measure " + meas);
+            EventBus.getDefault().post(meas);
+        }
     }
 
     /**
@@ -141,6 +173,22 @@ class SigSauerProtocol extends BleProtocol {
         } else {
             return false;
         }
+    }
+
+    private static int deviceUnlockCode(@NonNull String str) {
+        int sum = 0;
+        for (byte b : str.getBytes()) {
+            sum += (b + sum + sum % 12 * 13 + 2) * 432;
+        }
+        return Math.abs(sum * 3);
+    }
+
+    private static String appendChecksum(@NonNull String str) {
+        int sum = 0;
+        for (char ch : str.toCharArray()) {
+            sum ^= ch;
+        }
+        return String.format("%s,%02X\r", str, sum ^ 13 ^ 171);
     }
 
 }
