@@ -83,7 +83,9 @@ public class BleService {
      * Check if bluetooth permissions are granted, and then scan().
      */
     private void scanIfPermitted(@NonNull Activity activity) {
-        if (Permissions.hasBluetoothPermissions(activity)) {
+        if (activity == null) {
+            Exceptions.report(new NullPointerException("activity should not be null"));
+        } else if (Permissions.hasBluetoothPermissions(activity)) {
             Log.d(TAG, "Bluetooth permitted, starting scan");
             try {
                 scan();

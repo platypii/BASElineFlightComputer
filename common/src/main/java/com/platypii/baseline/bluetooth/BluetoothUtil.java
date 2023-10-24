@@ -1,7 +1,10 @@
 package com.platypii.baseline.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.ScanRecord;
+import android.util.SparseArray;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.welie.blessed.BluetoothBytesParser;
 
 public class BluetoothUtil {
@@ -36,6 +39,27 @@ public class BluetoothUtil {
         try {
             Thread.sleep(t);
         } catch (InterruptedException ignored) {
+        }
+    }
+
+    /**
+     * Serialize manufacturer data into a string
+     */
+    public static String toManufacturerString(@Nullable ScanRecord record) {
+        if (record != null && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            final StringBuilder sb = new StringBuilder();
+            final SparseArray<byte[]> mfg = record.getManufacturerSpecificData();
+            for (int i = 0; i < mfg.size(); i++) {
+                final String key = "" + mfg.keyAt(i);
+                final String hex = byteArrayToHex(mfg.valueAt(i));
+                sb.append(key);
+                sb.append('=');
+                sb.append(hex);
+                sb.append(';');
+            }
+            return sb.toString();
+        } else {
+            return null;
         }
     }
 }

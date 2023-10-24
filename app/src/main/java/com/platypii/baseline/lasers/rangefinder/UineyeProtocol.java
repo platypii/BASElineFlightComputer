@@ -1,5 +1,6 @@
 package com.platypii.baseline.lasers.rangefinder;
 
+import com.platypii.baseline.bluetooth.BleException;
 import com.platypii.baseline.bluetooth.BleProtocol;
 import com.platypii.baseline.lasers.LaserMeasurement;
 import com.platypii.baseline.util.Exceptions;
@@ -7,7 +8,6 @@ import com.platypii.baseline.util.Exceptions;
 import android.bluetooth.le.ScanRecord;
 import android.os.ParcelUuid;
 import android.util.Log;
-import android.util.SparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.welie.blessed.BluetoothPeripheral;
@@ -19,6 +19,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import static com.platypii.baseline.bluetooth.BluetoothUtil.byteArrayToHex;
 import static com.platypii.baseline.bluetooth.BluetoothUtil.bytesToShort;
+import static com.platypii.baseline.bluetooth.BluetoothUtil.toManufacturerString;
 
 /**
  * This class contains ids, commands, and decoders for Uineye / Hawkeye laser rangefinders.
@@ -174,7 +175,7 @@ class UineyeProtocol extends BleProtocol {
                         || deviceName.startsWith("Uineye")) {
             // Send manufacturer data to firebase
             final String mfg = toManufacturerString(record);
-            Exceptions.report(new Exception("Uineye laser unknown mfg data: " + deviceName + " " + mfg));
+            Exceptions.report(new BleException("Uineye laser unknown mfg data: " + deviceName + " " + mfg));
             return true;
         } else {
             return false;
@@ -185,23 +186,4 @@ class UineyeProtocol extends BleProtocol {
         final List<ParcelUuid> uuids = record.getServiceUuids();
         return uuids != null && uuids.contains(new ParcelUuid(rangefinderService));
     }
-
-    private String toManufacturerString(@Nullable ScanRecord record) {
-        if (record != null) {
-            final StringBuilder sb = new StringBuilder();
-            final SparseArray<byte[]> mfg = record.getManufacturerSpecificData();
-            for (int i = 0; i < mfg.size(); i++) {
-                final String key = "" + mfg.keyAt(i);
-                final String hex = byteArrayToHex(mfg.valueAt(i));
-                sb.append(key);
-                sb.append('=');
-                sb.append(hex);
-                sb.append(';');
-            }
-            return sb.toString();
-        } else {
-            return null;
-        }
-    }
-
 }

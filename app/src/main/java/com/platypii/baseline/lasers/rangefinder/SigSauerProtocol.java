@@ -1,13 +1,12 @@
 package com.platypii.baseline.lasers.rangefinder;
 
+import com.platypii.baseline.bluetooth.BleException;
 import com.platypii.baseline.bluetooth.BleProtocol;
 import com.platypii.baseline.lasers.LaserMeasurement;
-import com.platypii.baseline.views.laser.LaserActivity;
+import com.platypii.baseline.util.Exceptions;
 
 import android.bluetooth.le.ScanRecord;
-import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.welie.blessed.BluetoothPeripheral;
@@ -16,7 +15,7 @@ import java.util.Arrays;
 import java.util.UUID;
 import org.greenrobot.eventbus.EventBus;
 
-import static com.platypii.baseline.bluetooth.BluetoothUtil.byteArrayToHex;
+import static com.platypii.baseline.bluetooth.BluetoothUtil.toManufacturerString;
 
 /**
  * This class contains ids, commands, and decoders for Sig Sauer laser rangefinders.
@@ -159,15 +158,8 @@ class SigSauerProtocol extends BleProtocol {
         } else if (deviceName.contains("BDX")) {
             if (record != null) {
                 // Send manufacturer data to firebase
-                final Bundle bundle = new Bundle();
-                bundle.putString("rf_device_name", deviceName);
-                final SparseArray<byte[]> mfg = record.getManufacturerSpecificData();
-                for (int i = 0; i < mfg.size(); i++) {
-                    final String key = "mfg_" + mfg.keyAt(i);
-                    final String hex = byteArrayToHex(mfg.valueAt(i));
-                    bundle.putString(key, hex);
-                }
-                LaserActivity.firebaseAnalytics.logEvent("manufacturer_data", bundle);
+                final String mfg = toManufacturerString(record);
+                Exceptions.report(new BleException("SigSauer laser unknown mfg data: " + deviceName + " " + mfg));
             }
             return true;
         } else {
