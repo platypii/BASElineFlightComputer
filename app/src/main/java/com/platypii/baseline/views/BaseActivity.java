@@ -147,12 +147,12 @@ public abstract class BaseActivity extends FragmentActivity {
             // Initialize google sign in
             try {
                 final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(getString(R.string.server_client_id))
+                        .requestIdToken(getString(com.platypii.baseline.common.R.string.server_client_id))
                         .requestEmail()
                         .build();
                 signInClient = GoogleSignIn.getClient(this, gso);
             } catch (IllegalArgumentException e) {
-                Exceptions.report(new IllegalArgumentException("Server client id = " + getString(R.string.server_client_id), e));
+                Exceptions.report(new IllegalArgumentException("Server client id = " + getString(com.platypii.baseline.common.R.string.server_client_id), e));
             }
         }
     }

@@ -27,11 +27,11 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    annotationProcessor 'androidx.annotation:annotation:1.7.0'
+    annotationProcessor 'androidx.annotation:annotation:1.8.0'
     implementation 'com.github.weliem:blessed-android:2.4.2'
-    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    implementation 'com.google.android.gms:play-services-auth:21.2.0'
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
-    implementation 'com.google.firebase:firebase-crashlytics:18.5.0'
+    implementation 'com.google.firebase:firebase-crashlytics:19.0.0'
     implementation 'org.greenrobot:eventbus:3.3.1'
     testImplementation 'junit:junit:4.13.2'
 }
