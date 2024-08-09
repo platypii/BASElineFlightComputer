@@ -3,6 +3,8 @@ package com.platypii.baseline;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import androidx.annotation.Nullable;
@@ -58,7 +60,11 @@ public class ForegroundService extends Service {
             // Show notification
             Log.i(TAG, "Showing notification");
             final Notification notification = Notifications.getNotification(this, logging, audible);
-            startForeground(Notifications.notificationId, notification);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                startForeground(Notifications.notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION);
+            } else {
+                startForeground(Notifications.notificationId, notification);
+            }
         } else {
             // Stop service
             Log.i(TAG, "Stopping foreground service");
