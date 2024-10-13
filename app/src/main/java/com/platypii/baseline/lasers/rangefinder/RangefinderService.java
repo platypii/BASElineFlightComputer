@@ -30,6 +30,7 @@ public class RangefinderService {
     private final BleProtocol protocols[] = {
             new ATNProtocol(),
             new SigSauerProtocol(),
+            new TerrapinProtocol(),
             new UineyeProtocol()
     };
 
