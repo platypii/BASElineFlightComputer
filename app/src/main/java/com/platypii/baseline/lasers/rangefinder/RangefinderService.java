@@ -47,7 +47,6 @@ public class RangefinderService {
             } else {
                 // Turn on bluetooth
                 Log.i(TAG, "Requesting to turn on bluetooth");
-                final Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 Intents.requestEnableBluetooth(activity);
             }
         } else {

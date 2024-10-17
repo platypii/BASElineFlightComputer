@@ -106,7 +106,7 @@ public class BleService {
         setState(BT_SCANNING);
         // Scan for peripherals with a certain service UUIDs
         central.startPairingPopupHack();
-        Log.i(TAG, "Scanning for laser rangefinders");
+        Log.i(TAG, "Scanning for ble devices");
         // TODO: Check for permissions
         central.scanForPeripherals(); // TODO: filter with services
     }

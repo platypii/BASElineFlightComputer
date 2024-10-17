@@ -45,10 +45,11 @@ public class LocationStatus {
             return;
         }
         // GPS signal status
-        if (Services.bluetooth.preferences.preferenceEnabled && Services.bluetooth.getState() != BluetoothState.BT_CONNECTED) {
+        final int btState = Services.bluetooth.getState();
+        if (Services.bluetooth.preferences.preferenceEnabled && btState != BluetoothState.BT_CONNECTED) {
             // Bluetooth enabled, but not connected
             icon = R.drawable.warning;
-            switch (Services.bluetooth.getState()) {
+            switch (btState) {
                 case BluetoothState.BT_STARTING:
                     message = "GPS bluetooth starting...";
                     break;
@@ -60,7 +61,7 @@ public class LocationStatus {
                     break;
                 default:
                     message = "GPS bluetooth not connected";
-                    Log.e(TAG, "Bluetooth inconsistent state: preference enabled, state " + BT_STATES[Services.bluetooth.getState()]);
+                    Log.e(TAG, "Bluetooth inconsistent state: preference enabled, state " + BT_STATES[btState]);
             }
         } else {
             // Internal GPS, or bluetooth connected:

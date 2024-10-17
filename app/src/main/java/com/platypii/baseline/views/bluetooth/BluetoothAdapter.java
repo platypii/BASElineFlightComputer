@@ -56,7 +56,7 @@ class BluetoothAdapter extends BaseAdapter {
             final BluetoothItem device = devices.get(position - 1);
             nameView.setText(device.name);
             addressView.setText(device.address);
-            if (device.name.contains("GPS") || device.name.startsWith("Mohawk")) {
+            if (device.name.contains("GPS") || device.name.startsWith("FlySight") || device.name.startsWith("Mohawk")) {
                 nameView.setTextColor(0xffeeeeee);
             } else {
                 nameView.setTextColor(0xffbbbbbb);

@@ -67,7 +67,7 @@ public class LocationProviderBluetooth extends LocationProviderNMEA {
     }
 
     private void onLocationUpdate(MLocation loc) {
-        locationUpdates.post(loc);
+        updateLocation(loc);
     }
 
     @Override

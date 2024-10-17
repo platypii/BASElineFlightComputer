@@ -37,7 +37,10 @@ public class BluetoothService {
     public final PubSub<MLocation> locationUpdates = new PubSub<>();
 
     // BLE subsystem
-    public final BleService ble = new BleService(new MohawkProtocol(locationUpdates));
+    public final BleService ble = new BleService(
+            new MohawkProtocol(locationUpdates),
+            new Flysight2Protocol(locationUpdates)
+    );
 
     // Android shared preferences for bluetooth
     public final BluetoothPreferences preferences = new BluetoothPreferences();
