@@ -38,15 +38,15 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    annotationProcessor 'androidx.annotation:annotation:1.8.1'
+    annotationProcessor 'androidx.annotation:annotation:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.fragment:fragment:1.8.2'
-    implementation 'com.github.weliem:blessed-android:2.4.2'
+    implementation 'androidx.fragment:fragment:1.8.4'
+    implementation 'com.github.weliem:blessed-android:2.5.0'
     implementation 'com.google.android.gms:play-services-auth:21.2.0'
     implementation 'com.google.android.gms:play-services-maps:19.0.0'
-    implementation 'com.google.code.gson:gson:2.8.9'
-    implementation 'com.google.firebase:firebase-analytics:22.0.2'
-    implementation 'com.google.firebase:firebase-crashlytics:19.0.3'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.firebase:firebase-analytics:22.1.2'
+    implementation 'com.google.firebase:firebase-crashlytics:19.2.1'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
@@ -55,7 +55,7 @@ dependencies {
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test:runner:1.6.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     implementation project(':common')
 }
