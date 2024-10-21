@@ -14,5 +14,6 @@
     <string name="bluetooth_status_connected">BT angeschlossen</string>
     <string name="bluetooth_status_disconnected">BT nicht angeschlossen</string>
     <string name="bluetooth_status_stopping">BT stoppt</string>
+    <string name="bluetooth_status_scanning">BT scannt</string>
 
 </resources>

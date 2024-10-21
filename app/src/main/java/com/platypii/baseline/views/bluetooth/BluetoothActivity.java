@@ -62,11 +62,6 @@ public class BluetoothActivity extends BaseActivity implements Subscriber<MLocat
             binding.btGps.setVisibility(View.GONE);
             binding.btGpsStatus.setVisibility(View.GONE);
         }
-        if (Services.bluetooth.preferences.preferenceDeviceName != null) {
-            binding.btGpsStatus.setText(Services.bluetooth.preferences.preferenceDeviceName);
-        } else {
-            binding.btGpsStatus.setText("");
-        }
         binding.btGpsStatus.setText(Services.bluetooth.getStatusMessage(this));
         if (Services.bluetooth.getState() == BluetoothState.BT_CONNECTED) {
             binding.btGpsStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_green, 0, 0);

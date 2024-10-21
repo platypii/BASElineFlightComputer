@@ -20,6 +20,7 @@ import java.util.Set;
 import static com.platypii.baseline.RequestCodes.RC_BLUE_ENABLE;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTED;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_CONNECTING;
+import static com.platypii.baseline.bluetooth.BluetoothState.BT_SCANNING;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STARTING;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STATES;
 import static com.platypii.baseline.bluetooth.BluetoothState.BT_STOPPED;
@@ -177,6 +178,8 @@ public class BluetoothService {
                     return context.getString(R.string.bluetooth_status_connected);
                 case BT_STOPPING:
                     return context.getString(R.string.bluetooth_status_stopping);
+                case BT_SCANNING:
+                    return context.getString(R.string.bluetooth_status_scanning);
                 default:
                     return "";
             }
