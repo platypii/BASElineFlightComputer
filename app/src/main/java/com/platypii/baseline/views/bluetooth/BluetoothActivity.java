@@ -88,7 +88,11 @@ public class BluetoothActivity extends BaseActivity implements Subscriber<MLocat
             } else {
                 binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_yellow, 0, 0);
             }
-            binding.btSatStatus.setText(String.format(Locale.getDefault(), "%d satellite %d Hz", sats, hz));
+            if (sats >= 0) {
+                binding.btSatStatus.setText(String.format(Locale.getDefault(), "%d satellite %d Hz", sats, hz));
+            } else {
+                binding.btSatStatus.setText(String.format(Locale.getDefault(), "%d Hz", hz));
+            }
         }
     }
 

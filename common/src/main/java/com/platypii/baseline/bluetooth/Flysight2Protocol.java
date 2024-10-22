@@ -29,6 +29,9 @@ public class Flysight2Protocol extends BleProtocol {
     private static final UUID flysightCharacteristicTX = UUID.fromString("00000001-8e22-4541-9d4c-21edae82ed19");
     private static final UUID flysightCharacteristicRX = UUID.fromString("00000002-8e22-4541-9d4c-21edae82ed19");
 
+    private static final long gpsEpochMilliseconds = 315964800000L - 18000L; // January 6, 1980 - 18s
+    private static final long millisecondsPerWeek = 604800000L;
+
     public Flysight2Protocol(@NonNull PubSub<MLocation> locationUpdates) {
         this.locationUpdates = locationUpdates;
     }
@@ -56,14 +59,21 @@ public class Flysight2Protocol extends BleProtocol {
     public void processBytes(@NonNull BluetoothPeripheral peripheral, @NonNull byte[] value) {
         try {
             final ByteBuffer buf = ByteBuffer.wrap(value).order(ByteOrder.LITTLE_ENDIAN);
-            final int iTow = buf.getInt(0); // gps time of week
+            final int tow = buf.getInt(0); // gps time of week
             final double lng = buf.getInt(4) * 1e-7;
             final double lat = buf.getInt(8) * 1e-7;
             final double alt = buf.getInt(12) * 1e-3;
             final double vN = buf.getInt(16) * 1e-3;
             final double vE = buf.getInt(20) * 1e-3;
             final double climb = buf.getInt(24) * -1e-3;
-            final long millis = System.currentTimeMillis(); // TODO
+
+            // Calculate gps week from current system time
+            final long now = System.currentTimeMillis();
+            final long gpsTime = now - gpsEpochMilliseconds;
+            final long gpsWeek = gpsTime / millisecondsPerWeek;
+            // TODO: Check if near the start or end of the week
+            // Calculate epoch time from time-of-week
+            final long millis = gpsWeek * millisecondsPerWeek + tow + gpsEpochMilliseconds;
 
             final int locationError = LocationCheck.validate(lat, lng);
             if (locationError == LocationCheck.VALID) {
