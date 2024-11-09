@@ -319,19 +319,6 @@ class TerrapinProtocol extends BleProtocol {
         return Arrays.copyOf(unescaped, j);
     }
 
-    @NonNull
-    private byte[] swapEndianness(@NonNull byte[] data) {
-        if (data.length % 2 != 0) {
-            Log.w(TAG, "rf -> app: data length must be even " + byteArrayToHex(data));
-        }
-        final byte[] swapped = new byte[data.length];
-        for (int i = 0; i < data.length; i += 2) {
-            swapped[i] = data[i + 1];
-            swapped[i + 1] = data[i];
-        }
-        return swapped;
-    }
-
     /**
      * Endian-swapped short from byte array
      */

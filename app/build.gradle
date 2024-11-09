@@ -10,8 +10,8 @@ android {
         compileSdk 34
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 146
-        versionName "5.12"
+        versionCode 148
+        versionName "5.13"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -38,16 +38,16 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    annotationProcessor 'androidx.annotation:annotation:1.9.0'
+    annotationProcessor 'androidx.annotation:annotation:1.9.1'
     implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.fragment:fragment:1.8.4'
+    implementation 'androidx.fragment:fragment:1.8.5'
     implementation 'com.github.weliem:blessed-android:2.5.0'
     implementation 'com.google.android.gms:play-services-auth:21.2.0'
     implementation 'com.google.android.gms:play-services-maps:19.0.0'
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.code.gson:gson:2.11.0'
     implementation 'com.google.firebase:firebase-analytics:22.1.2'
     implementation 'com.google.firebase:firebase-crashlytics:19.2.1'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.4' // minsdk24
