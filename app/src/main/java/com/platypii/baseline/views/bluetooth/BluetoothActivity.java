@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.bluetooth;
 
+import android.os.Handler;
 import androidx.annotation.NonNull;
 import com.platypii.baseline.Intents;
 import com.platypii.baseline.R;
@@ -23,6 +24,16 @@ public class BluetoothActivity extends BaseActivity implements Subscriber<MLocat
     private static final String TAG = "BluetoothActivity";
 
     private ActivityBluetoothBinding binding;
+
+    // Periodic UI updates
+    private static final int signalUpdateInterval = 200; // milliseconds
+    private final Handler handler = new Handler();
+    private final Runnable signalRunnable = new Runnable() {
+        public void run() {
+            updateViews();
+            handler.postDelayed(this, signalUpdateInterval);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +136,8 @@ public class BluetoothActivity extends BaseActivity implements Subscriber<MLocat
         EventBus.getDefault().register(this);
         Services.location.locationUpdates.subscribeMain(this);
         updateViews();
+        // Start regular ui updates
+        handler.post(signalRunnable);
     }
 
     @Override
@@ -132,6 +145,7 @@ public class BluetoothActivity extends BaseActivity implements Subscriber<MLocat
         super.onPause();
         EventBus.getDefault().unregister(this);
         Services.location.locationUpdates.unsubscribeMain(this);
+        handler.removeCallbacks(signalRunnable);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
