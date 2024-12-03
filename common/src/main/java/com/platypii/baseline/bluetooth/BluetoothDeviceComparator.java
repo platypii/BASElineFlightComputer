@@ -16,6 +16,7 @@ public class BluetoothDeviceComparator implements Comparator<BluetoothItem> {
      * Devices with higher score will appear higher in the sorted list
      */
     private int score(@NonNull BluetoothItem device) {
+        if (device.internal) return 5;
         if (device.name.isEmpty()) return 0;
         if (device.name.startsWith("FlySight")) return 4;
         if (device.name.startsWith("Mohawk")) return 3;

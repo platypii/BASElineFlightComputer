@@ -11,6 +11,7 @@
     <string name="action_map">Karte</string>
     <string name="action_tracks">Spuren</string>
     <string name="action_profiles">Profile</string>
+    <string name="action_flysight">FlySight</string>
     <string name="action_settings">Einstellungen</string>
 
     <!-- Track Activity -->

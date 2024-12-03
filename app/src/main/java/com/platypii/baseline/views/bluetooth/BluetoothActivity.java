@@ -91,7 +91,10 @@ public class BluetoothActivity extends BaseActivity implements Subscriber<MLocat
             binding.btSatStatus.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.status_yellow, 0, 0);
             binding.btSatStatus.setText("Last fix " + lastFixDuration / 1000L + "s"); // TODO: Periodic updater for last fix
         } else {
-            final int sats = Services.location.lastLoc.satellitesUsed;
+            int sats = -1;
+            if (Services.location.lastLoc != null) {
+                sats = Services.location.lastLoc.satellitesUsed;
+            }
             final int hz = (int)(Services.location.refreshRate() + 0.5f);
             // 1 hz is not enough
             if (hz >= 2) {

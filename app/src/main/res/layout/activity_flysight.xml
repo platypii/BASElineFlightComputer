@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/bt_phone"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:src="@drawable/phone"
+            android:contentDescription="Phone"/>
+
+        <ImageView
+            android:id="@+id/bt_gps"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:src="@drawable/flysight"
+            android:contentDescription="BT GPS"/>
+
+        <ImageView
+            android:id="@+id/bt_sat"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:src="@drawable/satellite"
+            android:contentDescription="GPS Satellite"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/bt_phone_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:drawableTop="@drawable/status_red"/>
+
+        <TextView
+            android:id="@+id/bt_gps_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:drawableTop="@drawable/status_red"/>
+
+        <TextView
+            android:id="@+id/bt_sat_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:drawableTop="@drawable/status_red"/>
+
+    </LinearLayout>
+
+    <!-- Devices -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        style="@style/header"
+        android:text="@string/bluetooth_devices" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@android:id/list"
+        android:name="com.platypii.baseline.views.bluetooth.FlysightDeviceListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- GPS info -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        style="@style/header"
+        android:text="FlySight" />
+
+    <TextView
+        android:id="@+id/bluetoothStatusLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="Bluetooth: " />
+
+    <TextView
+        android:id="@+id/flysightGpsLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+</LinearLayout>

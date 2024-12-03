@@ -91,6 +91,14 @@
                 android:text="@string/action_tracks"
                 style="@style/Widget.AppCompat.Button.Borderless" />
 
+            <Button
+                android:id="@+id/flysight"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/button_flysight"
+                android:text="@string/action_flysight"
+                style="@style/Widget.AppCompat.Button.Borderless" />
+
         </LinearLayout>
 
     </LinearLayout>

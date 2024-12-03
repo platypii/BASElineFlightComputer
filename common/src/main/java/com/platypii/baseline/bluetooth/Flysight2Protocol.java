@@ -1,5 +1,6 @@
 package com.platypii.baseline.bluetooth;
 
+import com.platypii.baseline.events.BluetoothEvent;
 import com.platypii.baseline.location.LocationCheck;
 import com.platypii.baseline.location.NMEAException;
 import com.platypii.baseline.measurements.MLocation;
@@ -16,7 +17,10 @@ import com.welie.blessed.WriteType;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+import org.greenrobot.eventbus.EventBus;
 
 public class Flysight2Protocol extends BleProtocol {
     private static final String TAG = "FlysightProtocol";
@@ -38,14 +42,25 @@ public class Flysight2Protocol extends BleProtocol {
     private static final long gpsEpochMilliseconds = 315964800000L - 18000L; // January 6, 1980 - 18s
     private static final long millisecondsPerWeek = 604800000L;
 
+    // List of scanned devices
+    public final Set<BluetoothPeripheral> scanResults = new HashSet<>();
+
     public Flysight2Protocol(@NonNull PubSub<MLocation> locationUpdates) {
         this.locationUpdates = locationUpdates;
     }
 
     @Override
     public boolean canParse(@NonNull BluetoothPeripheral peripheral, @Nullable ScanRecord record) {
-        // TODO: Check address
-        return peripheral.getName().equals("FlySight");
+        if (peripheral.getName().equals("FlySight")) {
+            // Add to list of devices
+            scanResults.add(peripheral);
+            // Update bluetooth ui
+            EventBus.getDefault().post(new BluetoothEvent());
+
+            // TODO: Only return true for currently paired device
+            return true;
+        }
+        return false;
     }
 
     @Override

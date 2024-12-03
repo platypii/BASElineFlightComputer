@@ -1,6 +1,5 @@
 package com.platypii.baseline.views.bluetooth;
 
-import android.os.Build;
 import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothItem;
@@ -23,12 +22,9 @@ class BluetoothAdapter extends BaseAdapter {
 
     private final LayoutInflater inflater;
 
-    private final String internalGps;
-
     BluetoothAdapter(@NonNull Context context, @NonNull List<BluetoothItem> devices) {
         this.devices = devices;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        internalGps = context.getString(R.string.internal_gps);
     }
 
     @Override
@@ -42,20 +38,18 @@ class BluetoothAdapter extends BaseAdapter {
         final TextView addressView = convertView.findViewById(R.id.bluetooth_id);
         final ImageView checkedView = convertView.findViewById(R.id.bluetooth_checked);
 
-        if (position == 0) {
+        // Bluetooth GPS device
+        final BluetoothItem device = devices.get(position);
+        nameView.setText(device.name);
+        addressView.setText(device.address);
+        if (device.internal) {
             // Internal phone GPS
-            nameView.setText(internalGps);
-            addressView.setText(Build.MANUFACTURER + " " + Build.MODEL);
             if (!Services.bluetooth.preferences.preferenceEnabled) {
                 checkedView.setVisibility(View.VISIBLE);
             } else {
                 checkedView.setVisibility(View.GONE);
             }
         } else {
-            // Bluetooth GPS device
-            final BluetoothItem device = devices.get(position - 1);
-            nameView.setText(device.name);
-            addressView.setText(device.address);
             if (device.name.contains("GPS") || device.name.startsWith("FlySight") || device.name.startsWith("Mohawk")) {
                 nameView.setTextColor(0xffeeeeee);
             } else {
@@ -73,12 +67,12 @@ class BluetoothAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return devices.size() + 1;
+        return devices.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return position == 0 ? null : devices.get(position - 1);
+        return devices.get(position);
     }
 
     @Override

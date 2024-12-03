@@ -5,6 +5,7 @@ import com.platypii.baseline.util.Exceptions;
 import android.bluetooth.BluetoothDevice;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.welie.blessed.BluetoothPeripheral;
 
 import static com.platypii.baseline.bluetooth.BluetoothUtil.getDeviceName;
 
@@ -12,6 +13,7 @@ public class BluetoothItem {
     public final String name;
     public final String address;
     public boolean ble;
+    public final boolean internal;
 
     public BluetoothItem(@NonNull BluetoothDevice device) {
         name = getDeviceName(device);
@@ -22,6 +24,21 @@ public class BluetoothItem {
         } catch (SecurityException e) {
             Exceptions.report(e);
         }
+        internal = false;
+    }
+
+    public BluetoothItem(@NonNull BluetoothPeripheral peripheral) {
+        name = peripheral.getName();
+        address = peripheral.getAddress();
+        ble = true;
+        internal = false;
+    }
+
+    public BluetoothItem(@NonNull String name, @NonNull String address, boolean ble, boolean internal) {
+        this.name = name;
+        this.address = address;
+        this.ble = ble;
+        this.internal = internal;
     }
 
     @Override

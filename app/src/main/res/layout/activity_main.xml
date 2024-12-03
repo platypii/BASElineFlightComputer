@@ -92,6 +92,15 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/flysight"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableTop="@drawable/button_flysight"
+            android:text="@string/action_flysight"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+
+        <Button
             android:id="@+id/settings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

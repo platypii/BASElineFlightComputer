@@ -1,5 +1,6 @@
 package com.platypii.baseline.views.bluetooth;
 
+import com.platypii.baseline.R;
 import com.platypii.baseline.Services;
 import com.platypii.baseline.bluetooth.BluetoothDeviceComparator;
 import com.platypii.baseline.bluetooth.BluetoothItem;
@@ -9,6 +10,7 @@ import com.platypii.baseline.util.Exceptions;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +35,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
     private final Set<BluetoothItem> deviceSet = new HashSet<>();
     @Nullable
     private BluetoothAdapter bluetoothAdapter;
+    private String internalGps = "Phone GPS"; // cached "Phone GPS" string from context
 
     @Nullable
     @Override
@@ -40,19 +43,29 @@ public class BluetoothDeviceListFragment extends ListFragment {
         // Set list adapter
         final Activity activity = getActivity();
         if (activity != null) {
+            internalGps = activity.getString(R.string.internal_gps);
             bluetoothAdapter = new BluetoothAdapter(activity, devices);
             setListAdapter(bluetoothAdapter);
         }
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+    protected Set<BluetoothItem> getDeviceList() {
+        final Set<BluetoothItem> devices = new HashSet<>();
+        for (BluetoothDevice device : Services.bluetooth.getBondedDevices()) {
+            devices.add(new BluetoothItem(device));
+        }
+        // Add internal phone gps
+        final String phoneName = Build.MANUFACTURER + " " + Build.MODEL;
+        deviceSet.add(new BluetoothItem(internalGps, phoneName, false, true));
+        return devices;
+    }
+
     private void updateDeviceList() {
         devices.clear();
         deviceSet.clear();
         try {
-            for (BluetoothDevice device : Services.bluetooth.getBondedDevices()) {
-                deviceSet.add(new BluetoothItem(device));
-            }
+            deviceSet.addAll(getDeviceList());
         } catch (SecurityException e) {
             Log.e(TAG, "Error getting device list", e);
         }
@@ -68,7 +81,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
         final BluetoothItem device = (BluetoothItem) l.getItemAtPosition(position);
         final Activity activity = getActivity();
         if (activity != null) {
-            if (device != null) {
+            if (!device.internal) {
                 Log.i(TAG, "Bluetooth device selected " + device.name);
 
                 if (!device.address.equals(Services.bluetooth.preferences.preferenceDeviceId)) {
@@ -76,7 +89,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
                     Services.location.locationProviderBluetooth.reset();
                 }
 
-                // Save device preference
+                // Save bluetooth device and enable bluetooth
                 Services.bluetooth.preferences.save(activity, true, device.address, device.name, device.ble);
                 // Update ui
                 EventBus.getDefault().post(new BluetoothEvent());
@@ -90,7 +103,7 @@ public class BluetoothDeviceListFragment extends ListFragment {
                 Analytics.logEvent(activity, "bluetooth_selected", bundle);
             } else {
                 Log.i(TAG, "Internal GPS selected");
-                // Save device preference
+                // Clear bluetooth device and disable bluetooth
                 Services.bluetooth.preferences.save(activity, false, null, null, false);
                 // Update ui
                 EventBus.getDefault().post(new BluetoothEvent());

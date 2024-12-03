@@ -57,6 +57,7 @@ public class MainActivity extends BaseActivity {
         binding.nav.setOnClickListener(this::clickNav);
         binding.tracks.setOnClickListener(this::clickTracks);
         binding.profiles.setOnClickListener(this::clickLasers);
+        binding.flysight.setOnClickListener(this::clickFlysight);
         binding.settings.setOnClickListener(this::clickSettings);
     }
 
@@ -184,6 +185,11 @@ public class MainActivity extends BaseActivity {
     public void clickLasers(View v) {
         firebaseAnalytics.logEvent("click_lasers", null);
         startActivity(new Intent(this, LaserActivity.class));
+    }
+
+    public void clickFlysight(View v) {
+        firebaseAnalytics.logEvent("click_flysight", null);
+        startActivity(new Intent(this, FlysightActivity.class));
     }
 
     public void clickSettings(View v) {
