@@ -4,8 +4,8 @@
     <string name="app_name_long">BASEline Flight Computer</string>
 
     <!-- Home Screen -->
-    <string name="action_record">Rekord</string>
-    <string name="action_stop">Stop</string>
+    <string name="action_record">Aufzeichnen</string>
+    <string name="action_stop">Anhalten</string>
     <string name="action_audible">Audible</string>
     <string name="action_altimeter">Alti</string>
     <string name="action_map">Karte</string>
@@ -28,18 +28,18 @@
 
     <string name="download_failed">Dateidownload fehlgeschlagen</string>
 
-    <string name="delete_local">Möchten sie diese Daten wirklich von diesem Geraet löschen? Die Daten wurden noch nicht online synchronisiert.</string>
-    <string name="delete_remote">Möchten sie diese Daten wirklich von diesem BASEline löschen?</string>
+    <string name="delete_local">Möchten Sie diese Daten wirklich von diesem Gerät löschen? Die Daten wurden noch nicht online synchronisiert.</string>
+    <string name="delete_remote">Möchten Sie diese Daten wirklich von diesem BASEline löschen?</string>
 
     <string name="error_export_intent">Export der Datei fehlgeschlagen</string>
-    <string name="error_map_intent">Google earth konnte nicht geoeffnet werden</string>
+    <string name="error_map_intent">Google Earth konnte nicht geöffnet werden</string>
 
     <string name="chart_altitude">Höhe</string>
     <string name="chart_speed">Geschwindigkeit</string>
     <string name="chart_glide">Gleitzahl</string>
 
     <!-- Auth -->
-    <string name="signin_prompt">Um Spuren mit https://baseline.ws/ zu synchronisieremelden Sie sich mit Ihrem Google-Konto ann</string>
+    <string name="signin_prompt">Um Spuren mit https://baseline.ws/ zu synchronisieren, melden Sie sich mit Ihrem Google-Konto an</string>
     <string name="signin_success">Angemeldet</string>
     <string name="signin_failed">Anmeldung fehlgeschlagen</string>
     <string name="signout_success">Abgemeldet</string>
@@ -47,10 +47,10 @@
     <string name="no_tracks">Keine Spuren</string>
 
     <string-array name="audible_modes">
-        <item>Horizontal Speed</item>
-        <item>Vertical Speed</item>
-        <item>Total Speed</item>
-        <item>Glide Ratio</item>
+        <item>Horizontale Geschwindigkeit</item>
+        <item>Vertikale Geschwindigkeit</item>
+        <item>Gesamtgeschwindigkeit</item>
+        <item>Gleitverhältnis</item>
         <item>Navigation</item>
     </string-array>
     <string-array name="audible_modes_values">
@@ -66,7 +66,7 @@
 
     <string name="error_audible_not_available">Audible Fehler: Text-to-Speech nicht verfügbar</string>
 
-    <string name="pref_audible_enabled">Akutisches feedback aktivieren</string>
+    <string name="pref_audible_enabled">Akustisches Feedback aktivieren</string>
     <string name="pref_audible_enabled_description">Aktivieren Sie eine akustische Rückmeldung</string>
     <string name="pref_audible_quiet">Flugmodus</string>
     <string name="pref_audible_quiet_description">Stille während der Flugzeugfahrt</string>
@@ -82,35 +82,35 @@
 
     <!-- Map -->
     <string name="title_activity_map">Navigation</string>
-    <string name="map_pin">pin</string>
-    <string name="map_crosshair">fadenkreuz</string>
+    <string name="map_pin">Marker</string>
+    <string name="map_crosshair">Fadenkreuz</string>
     <string name="layers">Ebenen</string>
 
     <!-- Bluetooth -->
     <string name="title_activity_bluetooth">GPS-Gerät</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="internal_gps">GPS des Telefons</string>
-    <string name="pref_location">GPS-Geräteeinstellungen</string>
-    <string name="pref_location_description">Konfigurieren Sie Bluetooth-Gerät</string>
+    <string name="pref_location">GPS-Gerät</string>
+    <string name="pref_location_description">Konfigurieren Sie das Bluetooth-Gerät</string>
     <string name="bluetooth_devices">Bluetooth-Geräte</string>
-    <string name="bluetooth_pair">Bluetooth-Paar</string>
-    <string name="error_bluetooth_intent">Fehlgeschlagen Bluetooth-Einstellungen öffnen</string>
+    <string name="bluetooth_pair">Gerät koppeln</string>
+    <string name="error_bluetooth_intent">Fehler beim Öffnen der Bluetooth-Einstellungen</string>
     <string name="bluetooth_selected">Ausgewählt</string>
 
     <!-- Settings -->
     <string name="title_activity_settings">Einstellungen</string>
     <string name="pref_metric">Metrisch</string>
     <string name="pref_metric_description">Metrische Einheiten verwenden</string>
-    <string name="pref_auto_stop">Stoppen Sie automatisch</string>
-    <string name="pref_auto_stop_description">Stoppen Sie die Aufzeichnungsdaten und Akutisches bei der Landung</string>
+    <string name="pref_auto_stop">Automatisch stoppen</string>
+    <string name="pref_auto_stop_description">Stoppen Sie die Aufzeichnungsdaten und Akustisches bei der Landung</string>
     <string name="pref_barometer">Barometer</string>
     <string name="pref_barometer_description">Verwenden Sie einen barometrischen Höhenmesser</string>
     <string name="pref_audible_settings">Akustische Einstellungen</string>
     <string name="pref_audible_settings_description">Konfigurieren von akustischen Optionen</string>
     <string name="pref_sensor_info">Sensorinformationen</string>
-    <string name="pref_sensor_info_description">Anzeige von sensordaten</string>
+    <string name="pref_sensor_info_description">Anzeige von Sensordaten</string>
     <string name="pref_sign_in">Anmelden</string>
-    <string name="pref_sign_in_description">Melden Sie sich mit Ihrem Google-Konto ann</string>
+    <string name="pref_sign_in_description">Melden Sie sich mit Ihrem Google-Konto an</string>
     <string name="pref_sign_out">Abmelden</string>
     <string name="pref_sign_out_description">Abmelden</string>
     <string name="pref_help">Hilfebereich</string>
@@ -129,15 +129,15 @@
     <string name="new_profile">Neues Profil</string>
     <string name="profile_name">Profilname</string>
     <string name="profile_location">Breite, Länge, Höhe</string>
-    <string name="clear">Löschen</string>
+    <string name="clear">Leeren</string>
     <string name="sort">Sortieren</string>
-    <string name="save">Speichern</string><!-- Sichern -->
+    <string name="save">Speichern</string>
     <string name="bottom">Unterseite</string>
     <string name="quadrant">Quadrant</string>
     <string name="rangefinder_connect">Aktivieren Sie Bluetooth-Entfernungsmesser</string>
     <string name="rangefinder_connected">Entfernungsmesser verbunden</string>
     <string name="rangefinder_connecting">Entfernungsmesser verbindet…</string>
-    <string name="rangefinder_searching">Entfernungsmesser suchen…</string>
+    <string name="rangefinder_searching">Suche nach Entfernungsmesser…</string>
     <string-array name="metric_modes">
         <item>Meter</item>
         <item>Fuß</item>
@@ -148,7 +148,7 @@
     </string-array>
     <string name="help_profiles">
         <![CDATA[
-Vergleichen Sie Flugprofildaten gegen Geländeprofilen aus bekannten Ausgangspunkten.
+Vergleichen Sie Flugprofildaten mit Geländeprofilen aus bekannten Ausgangspunkten.
 
 Das Diagramm zeigt die horizontale und vertikale Entfernung vom Startpunkt.
 
@@ -157,6 +157,6 @@ https://baseline.ws/help#app-profiles
     </string>
 
     <!-- Errors -->
-    <string name="error_open_browser">Kann nicht öffnen</string>
+    <string name="error_open_browser">Fehler beim Öffnen des Browsers</string>
 
 </resources>

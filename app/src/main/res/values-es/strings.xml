@@ -1,0 +1,163 @@
+<resources>
+
+    <string name="app_name">BASEline</string>
+    <string name="app_name_long">BASEline Flight Computer</string>
+
+    <!-- Home Screen -->
+    <string name="action_record">Grabar</string>
+    <string name="action_stop">Detener</string>
+    <string name="action_audible">Audible</string>
+    <string name="action_altimeter">Alti</string>
+    <string name="action_map">Mapa</string>
+    <string name="action_tracks">Pistas</string>
+    <string name="action_profiles">Perfiles</string>
+    <string name="action_settings">Configuración</string>
+
+    <!-- Track Activity -->
+    <string name="menu">Menú</string>
+    <string name="action_open">baseline.ws</string>
+    <string name="action_earth">Earth</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_export">Exportar</string>
+
+    <string name="upload_waiting">Esperando para subir…</string>
+    <string name="uploading">Subiendo…</string>
+    <string name="downloaded">Descargado</string>
+    <string name="downloading">Descargando…</string>
+    <string name="search">Buscar…</string>
+
+    <string name="download_failed">La descarga de la pista ha fallado</string>
+
+    <string name="delete_local">¿Está seguro de que desea eliminar esta pista del dispositivo local? Aún no se ha sincronizado en línea.</string>
+    <string name="delete_remote">¿Está seguro de que desea eliminar esta pista de BASEline?</string>
+
+    <string name="error_export_intent">No se pudo exportar el archivo de trayectorias</string>
+    <string name="error_map_intent">No se pudo abrir Google Earth</string>
+
+    <string name="chart_altitude">altitud</string>
+    <string name="chart_speed">velocidad</string>
+    <string name="chart_glide">planeo</string>
+
+    <!-- Auth -->
+    <string name="signin_prompt">Inicia sesión con Google para sincronizar pistas con
+https://baseline.ws/</string>
+    <string name="signin_success">Sesión iniciada</string>
+    <string name="signin_failed">No se pudo ingresar</string>
+    <string name="signout_success">Sesión cerrada</string>
+
+    <string name="no_tracks">Sin pistas</string>
+
+    <string-array name="audible_modes">
+        <item>Velocidad horizontal</item>
+        <item>Velocidad vertical</item>
+        <item>Velocidad total</item>
+        <item>Relación de planeo</item>
+        <item>Navegación</item>
+    </string-array>
+    <string-array name="audible_modes_values">
+        <item>horizontal_speed</item>
+        <item>vertical_speed</item>
+        <item>total_speed</item>
+        <item>glide_ratio</item>
+        <item>navigation</item>
+    </string-array>
+
+    <!-- Audible settings -->
+    <string name="title_activity_audible_settings">Configuración de Audible</string>
+
+    <string name="error_audible_not_available">Error de Audible: texto a voz no disponible</string>
+
+    <string name="pref_audible_enabled">Habilitar Audible</string>
+    <string name="pref_audible_enabled_description">Habilitar retroalimentación audible</string>
+    <string name="pref_audible_quiet">Modo avión</string>
+    <string name="pref_audible_quiet_description">Silencio durante el vuelo en avión</string>
+
+    <string name="pref_audible_mode">Modo de medición</string>
+
+    <string name="pref_audible_min">Valor mínimo</string>
+    <string name="pref_audible_max">Valor máximo</string>
+
+    <string name="pref_audible_precision">Precisión</string>
+    <string name="pref_audible_interval">Intervalo de locución</string>
+    <string name="pref_audible_rate">Velocidad del locución</string>
+
+    <!-- Map -->
+    <string name="title_activity_map">Navegación</string>
+    <string name="map_crosshair">Punto de mira</string>
+    <string name="map_pin">Marcador</string>
+    <string name="layers">Capas</string>
+
+    <!-- Bluetooth -->
+    <string name="title_activity_bluetooth">Dispositivo GPS</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="internal_gps">GPS del teléfono</string>
+    <string name="pref_location">Dispositivo GPS</string>
+    <string name="pref_location_description">Configurar dispositivo GPS Bluetooth</string>
+    <string name="bluetooth_devices">Dispositivos</string>
+    <string name="bluetooth_pair">Emparejar</string>
+    <string name="error_bluetooth_intent">No se pudieron abrir los ajustes de Bluetooth</string>
+    <string name="bluetooth_selected">Seleccionado</string>
+
+    <!-- Settings -->
+    <string name="title_activity_settings">Configuración</string>
+    <string name="pref_metric">Métrico</string>
+    <string name="pref_metric_description">Usar unidades métricas</string>
+    <string name="pref_auto_stop">Parada automática</string>
+    <string name="pref_auto_stop_description">Detener registro y audible al aterrizar</string>
+    <string name="pref_barometer">Barómetro</string>
+    <string name="pref_barometer_description">Usar altímetro barométrico</string>
+    <string name="pref_audible_settings">Ajustes de Audible</string>
+    <string name="pref_audible_settings_description">Configurar opciones de Audible</string>
+    <string name="pref_sensor_info">Información del sensor</string>
+    <string name="pref_sensor_info_description">Mostrar datos del sensor en bruto</string>
+    <string name="pref_sign_in">Iniciar sesión</string>
+    <string name="pref_sign_in_description">Inicia sesión con tu cuenta de Google</string>
+    <string name="pref_sign_out">Cerrar sesión</string>
+    <string name="pref_sign_out_description">Cerrar sesión</string>
+    <string name="pref_help">Ayuda</string>
+    <string name="pref_help_description">Manual de usuario de BASEline</string>
+    <string name="pref_privacy">Privacidad</string>
+    <string name="pref_privacy_description">Política de privacidad de BASEline</string>
+
+    <!-- Notifications -->
+    <string name="notify_audible">Audible habilitado</string>
+    <string name="notify_audible_logging">Audible habilitado, registrando datos</string>
+    <string name="notify_logging">Grabando datos</string>
+
+    <!-- Laser -->
+    <string name="tracks">Trayectorias</string>
+    <string name="profiles">Perfiles</string>
+    <string name="new_profile">Nuevo perfil</string>
+    <string name="profile_name">Nombre del perfil</string>
+    <string name="profile_location">Latitud, longitud, altitud</string>
+    <string name="clear">Borrar</string>
+    <string name="sort">Ordenar</string>
+    <string name="save">Guardar</string>
+    <string name="bottom">Fondo</string>
+    <string name="quadrant">Cuadrante</string>
+    <string name="rangefinder_connect">Habilitar telémetro Bluetooth</string>
+    <string name="rangefinder_connected">Telémetro conectado</string>
+    <string name="rangefinder_connecting">Conectando telémetro…</string>
+    <string name="rangefinder_searching">Buscando telémetro…</string>
+    <string-array name="metric_modes">
+        <item>Metros</item>
+        <item>Pies</item>
+    </string-array>
+    <string-array name="metric_modes_values">
+        <item>meters</item>
+        <item>feet</item>
+    </string-array>
+    <string name="help_profiles">
+        <![CDATA[
+Compare los datos de la trayectorias con los perfiles del terreno desde puntos de salida conocidos.
+
+El gráfico muestra la distancia horizontal y vertical desde el punto de inicio.
+
+https://baseline.ws/help#app-profiles
+        ]]>
+    </string>
+
+    <!-- Errors -->
+    <string name="error_open_browser">No se pudo abrir el navegador</string>
+
+</resources>

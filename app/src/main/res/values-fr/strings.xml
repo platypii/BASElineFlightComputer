@@ -4,7 +4,7 @@
     <string name="app_name_long">BASEline Flight Computer</string>
 
     <!-- Home Screen -->
-    <string name="action_record">Record</string>
+    <string name="action_record">Enregistrer</string>
     <string name="action_stop">Arrêter</string>
     <string name="action_audible">Audible</string>
     <string name="action_altimeter">Alti</string>
@@ -20,37 +20,37 @@
     <string name="action_delete">Supprimer</string>
     <string name="action_export">Exporter</string>
 
-    <string name="upload_waiting">En attente de téléchargement</string>
-    <string name="uploading">Téléchargement…</string>
+    <string name="upload_waiting">En attente de téléversement</string>
+    <string name="uploading">Envoi en cours…</string>
     <string name="downloaded">Téléchargé</string>
     <string name="downloading">Téléchargement…</string>
     <string name="search">Recherche…</string>
 
-    <string name="download_failed">Piste téléchargement a échoué</string>
+    <string name="download_failed">Le téléchargement de la piste a échoué</string>
 
-    <string name="delete_local">Voulez-vous vraiment supprimer cette piste?</string>
-    <string name="delete_remote">Voulez-vous vraiment supprimer cette piste?</string>
+    <string name="delete_local">Voulez-vous vraiment supprimer cette piste du dispositif local? Elle n\'a pas encore été synchronisée en ligne.</string>
+    <string name="delete_remote">Voulez-vous vraiment supprimer cette piste de BASEline?</string>
 
     <string name="error_export_intent">Impossible d\'exporter le fichier de piste</string>
     <string name="error_map_intent">Impossible d\'ouvrir google earth</string>
 
     <string name="chart_altitude">altitude</string>
-    <string name="chart_speed">vélocité</string>
+    <string name="chart_speed">vitesse</string>
     <string name="chart_glide">finesse</string>
 
     <!-- Auth -->
     <string name="signin_prompt">Connectez-vous avec votre compte Google pour synchroniser les pistes avec https://baseline.ws/</string>
     <string name="signin_success">Connecté</string>
-    <string name="signin_failed">Connexion refusée</string>
-    <string name="signout_success">Deconnecté</string>
+    <string name="signin_failed">Connexion échouée</string>
+    <string name="signout_success">Déconnecté</string>
 
     <string name="no_tracks">pas de pistes</string>
 
     <string-array name="audible_modes">
-        <item>Horizontal Speed</item>
-        <item>Vertical Speed</item>
-        <item>Total Speed</item>
-        <item>Glide Ratio</item>
+        <item>Vitesse horizontale</item>
+        <item>Vitesse verticale</item>
+        <item>Vitesse totale</item>
+        <item>Finesse</item>
         <item>Navigation</item>
     </string-array>
     <string-array name="audible_modes_values">
@@ -74,7 +74,7 @@
     <string name="pref_audible_mode">Mode mesure</string>
 
     <string name="pref_audible_min">Valeur minimale</string>
-    <string name="pref_audible_max">Valeur minimum</string>
+    <string name="pref_audible_max">Valeur maximale</string>
 
     <string name="pref_audible_precision">Précision</string>
     <string name="pref_audible_interval">Intervalle de parole</string>
@@ -87,10 +87,10 @@
     <string name="layers">Calques</string>
 
     <!-- Bluetooth -->
-    <string name="title_activity_bluetooth">GPS appareil</string>
+    <string name="title_activity_bluetooth">Appareil GPS</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="internal_gps">GPS du téléphone</string>
-    <string name="pref_location">GPS appareil</string>
+    <string name="pref_location">Appareil GPS</string>
     <string name="pref_location_description">Configurer le périphérique bluetooth</string>
     <string name="bluetooth_devices">Périphériques Bluetooth</string>
     <string name="bluetooth_pair">Appairage</string>
@@ -102,9 +102,9 @@
     <string name="pref_metric">Métrique</string>
     <string name="pref_metric_description">Utiliser des unités métriques</string>
     <string name="pref_auto_stop">Arrêter automatiquement</string>
-    <string name="pref_auto_stop_description">Arrêtez l\'enregistrement et audible lors de l\'atterrissage</string>
+    <string name="pref_auto_stop_description">Arrête l\'enregistrement et l\'audible lors de l\'atterrissage</string>
     <string name="pref_barometer">Baromètre</string>
-    <string name="pref_barometer_description">Utilisez altimètre barométrique</string>
+    <string name="pref_barometer_description">Utilisez l\'altimètre barométrique</string>
     <string name="pref_audible_settings">Paramètres audibles</string>
     <string name="pref_audible_settings_description">Configurer les options audibles</string>
     <string name="pref_sensor_info">Informations du capteur</string>
@@ -134,10 +134,10 @@
     <string name="save">Enregistrer</string>
     <string name="bottom">bas</string>
     <string name="quadrant">quadrant</string>
-    <string name="rangefinder_connect">Activer Bluetooth Télémètre</string>
+    <string name="rangefinder_connect">Activer le télémètre Bluetooth</string>
     <string name="rangefinder_connected">Télémètre connecté</string>
-    <string name="rangefinder_connecting">Télémètre se connecté…</string>
-    <string name="rangefinder_searching">Télémètre recherche…</string>
+    <string name="rangefinder_connecting">Télémètre en cours de connexion…</string>
+    <string name="rangefinder_searching">Recherche du télémètre…</string>
     <string-array name="metric_modes">
         <item>Mètres</item>
         <item>Pieds</item>
@@ -148,15 +148,15 @@
     </string-array>
     <string name="help_profiles">
         <![CDATA[
-Comparer les données de profil de vol contre des profils de terrain des points de sortie connus.
+Comparez les données de profil de vol contre des profils de terrain des points de sortie connus.
 
-Graphique montre la distance horizontale et verticale du point de départ.
+Le graphique montre la distance horizontale et verticale du point de départ.
 
 https://baseline.ws/help#app-profiles
         ]]>
     </string>
 
     <!-- Errors -->
-    <string name="error_open_browser">Impossible d\'ouvrir</string>
+    <string name="error_open_browser">Impossible d\'ouvrir le navigateur</string>
 
 </resources>
