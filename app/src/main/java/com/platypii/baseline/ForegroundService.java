@@ -1,5 +1,7 @@
 package com.platypii.baseline;
 
+import com.platypii.baseline.util.Exceptions;
+
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
@@ -58,12 +60,20 @@ public class ForegroundService extends Service {
     private void updateNotification() {
         if (logging || audible) {
             // Show notification
+            if (!Permissions.hasLocationPermissions(this)) {
+                Log.w(TAG, "Cannot start foreground service without location permission");
+                return;
+            }
             Log.i(TAG, "Showing notification");
-            final Notification notification = Notifications.getNotification(this, logging, audible);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(Notifications.notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION);
-            } else {
-                startForeground(Notifications.notificationId, notification);
+            try {
+                final Notification notification = Notifications.getNotification(this, logging, audible);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    startForeground(Notifications.notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION);
+                } else {
+                    startForeground(Notifications.notificationId, notification);
+                }
+            } catch (Exception e) {
+                Exceptions.report(e);
             }
         } else {
             // Stop service
