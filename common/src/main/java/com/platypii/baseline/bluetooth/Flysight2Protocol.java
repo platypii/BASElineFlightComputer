@@ -7,6 +7,7 @@ import com.platypii.baseline.util.Exceptions;
 import com.platypii.baseline.util.PubSub;
 
 import android.bluetooth.le.ScanRecord;
+import android.os.ParcelUuid;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +17,7 @@ import com.welie.blessed.WriteType;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class Flysight2Protocol extends BleProtocol {
@@ -44,8 +46,25 @@ public class Flysight2Protocol extends BleProtocol {
 
     @Override
     public boolean canParse(@NonNull BluetoothPeripheral peripheral, @Nullable ScanRecord record) {
-        // TODO: Check address
-        return peripheral.getName().equals("FlySight");
+        if (record != null) {
+            // Check services
+            final List<ParcelUuid> services = record.getServiceUuids();
+            if (services != null) {
+                for (ParcelUuid parcelUuid : services) {
+                    if (parcelUuid.getUuid().equals(flysightService1)) {
+                        return true;
+                    }
+                }
+            }
+            // Check manufacturer
+//            final byte[] mfg = record.getManufacturerSpecificData(2523);
+//            if (mfg != null && mfg.length == 1 && mfg[0] == 0) {
+//                return true;
+//            }
+        }
+        if (peripheral.getName().startsWith("KFS")) return true;
+        if (peripheral.getName().startsWith("FlySight")) return true;
+        return false;
     }
 
     @Override
